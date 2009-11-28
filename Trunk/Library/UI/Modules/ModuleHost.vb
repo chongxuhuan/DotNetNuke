@@ -332,7 +332,7 @@ Namespace DotNetNuke.UI.Modules
                 Dim cacheKey As String = cache.GenerateCacheKey(_ModuleConfiguration.TabModuleID, varyBy)
                 Dim cachedBytes As Byte() = ModuleCache.ModuleCachingProvider.Instance(_ModuleConfiguration.GetEffectiveCacheMethod).GetModule(_ModuleConfiguration.TabModuleID, cacheKey)
                 If Not cachedBytes Is Nothing AndAlso cachedBytes.Length > 0 Then
-                    _cachedContent = System.Text.Encoding.ASCII.GetString(cachedBytes)
+                    _cachedContent = System.Text.Encoding.UTF8.GetString(cachedBytes)
                     bSuccess = True
                 End If
             Catch ex As Exception
@@ -414,7 +414,7 @@ Namespace DotNetNuke.UI.Modules
 
                     If Not String.IsNullOrEmpty(_cachedOutput) AndAlso (Not HttpContext.Current.Request.Browser.Crawler) Then
                         'Save content to cache
-                        Dim moduleContent As Byte() = System.Text.Encoding.ASCII.GetBytes(_cachedOutput)
+                        Dim moduleContent As Byte() = System.Text.Encoding.UTF8.GetBytes(_cachedOutput)
                         Dim cache As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(_ModuleConfiguration.GetEffectiveCacheMethod)
                         Dim varyBy As New System.Collections.Generic.SortedDictionary(Of String, String)
                         varyBy.Add("locale", System.Threading.Thread.CurrentThread.CurrentCulture.ToString)
