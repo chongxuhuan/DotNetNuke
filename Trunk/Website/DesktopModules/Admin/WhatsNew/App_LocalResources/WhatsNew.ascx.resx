@@ -1,0 +1,717 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="footer.text" xml:space="preserve">
+    <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
+  </data>
+  <data name="header.text" xml:space="preserve">
+    <value>Below is a summary of the major features for each release. For more information about a specific issue please refer to the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
+  </data>
+  <data name="WhatsNew.04.09.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Fixed issues with the URL Rewriter.&amp;#160; There were several issues which could result in unreachable pages using friendly URLs.&amp;#160; We have added in validation logic to prevent pages from being created which would violate folder naming standards or which would result in two pages receiving the same Human Friendly URL.&lt;/li&gt;
+    &lt;li&gt;Fixed longstanding issue in the file based caching provider.&amp;#160; There was invalid logic in the caching provider which prevented it from working correctly.&amp;#160; The provider has been re-written to resolve the problem and provide a stable platform for web-farm scenarios.&lt;/li&gt;
+    &lt;li&gt;Fixed several dictionary errors.&amp;#160; These errors mostly occurred under heavy load or were otherwise intermittent.&amp;#160; Dictionary usage was evaluated throughout DNN and updated to utilize thread-safe approaches for updating and caching the dictionary.&lt;/li&gt;
+    &lt;li&gt;Fixed an issue that prevented users in certain locales from adding modules to div based panes.&lt;/li&gt;
+    &lt;li&gt;Added a new default skin that is more contemporary&lt;/li&gt;
+    &lt;li&gt;Added a new default template that removes much of the clutter and unnecessary information.&lt;/li&gt;
+    &lt;li&gt;Added a new Text skin object that allows you to add localized text to your skin.&lt;/li&gt;
+    &lt;li&gt;Added a new Styles skin object that allows you to insert additional stylesheets into the page header.&amp;#160; Stylesheets can be optionally included using IE Conditional Comments.&lt;/li&gt;
+    &lt;li&gt;Enhanced the Search skin object to include the option to display a dropdown list of web/site search options.&lt;/li&gt;
+    &lt;li&gt;Enhanced the Update Notification Service to display information on new language packs that are available for locales which are currently installed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;span class="NormalRed"&gt;Critical &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno21/tabid/1174/Default.aspx"&gt;Authentication blindspot in User functions&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span class="NormalRed"&gt;Critical &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/Community/Blogs/tabid/825/EntryID/1987/Default.aspx"&gt;Validation failure in Repository Module&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span class="NormalRed"&gt;Critical &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno23/tabid/1176/Default.aspx"&gt;Validation failure when loading skins&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span class="Normal"&gt;Low &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno22/tabid/1175/Default.aspx"&gt;Information leakage in Install Wizard&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.0 packages.&amp;#160; Please see the specific project pages for notes on what bugs or enhancements were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleDocuments/tabid/826/Default.aspx"&gt;Documents 04.01.00&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleEvents/tabid/833/Default.aspx"&gt;Events 04.00.02&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleHelp/tabid/850/Default.aspx"&gt;Help 03.00.02&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;HTML 04.08.01&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleLinks/tabid/857/Default.aspx"&gt;Links 04.00.01&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleNews/tabid/847/Default.aspx"&gt;NewsFeeds 04.00.00&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleRepository/tabid/830/Default.aspx"&gt;Repository 03.01.15 &lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleSurvey/tabid/837/Default.aspx"&gt;Survey 04.50.00&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleUserDefinedTable/tabid/877/Default.aspx"&gt;UserDefinedTable 03.05.01&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleWiki/tabid/848/Default.aspx"&gt;Wiki 04.01.00 &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ProviderFCKeditor/tabid/934/Default.aspx"&gt;FCK Html Editor Provider 02.00.02&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ProviderAuthentication/tabid/840/Default.aspx"&gt;AD Authentication Provider 01.00.04&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</value>
+  </data>
+  <data name="notestitle.text" xml:space="preserve">
+    <value>What's New in {0} </value>
+  </data>
+  <data name="WhatsNew.04.09.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Fixed issue with the cache which was preventing proper operation of the 
+	scheduler.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with web crawlers which could cause thrashing in the cache&lt;/li&gt;
+    &lt;li&gt;Fixed issue with the EventQueue to remove events that result in an 
+	error.&amp;nbsp; This prevents an event from filling the event log with errors.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with the RoleController.GetUserRoles method which introduced 
+	a breaking change in 4.9.0.&lt;/li&gt;
+    &lt;li&gt;Added a new column to the version table to distinguish between Community 
+	Edition and Professional Edition installs&lt;/li&gt;
+    &lt;li&gt;Added a new feature for logging server restarts in a web farm 
+	environment.&lt;/li&gt;
+    &lt;li&gt;Added a new admin Dashboard page.&amp;nbsp; The dashboard provides a single 
+	page where hosts can view an overall snapshot of their site.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;span class="NormalRed"&gt;Critical &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno24/tabid/1188/Default.aspx"&gt;
+	User can access additional roles for which they do not have permissions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.1 packages.&amp;#160; Please see the specific project pages for notes on what bugs or enhancements were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ModuleDocuments/tabid/826/Default.aspx"&gt;
+	Survey 04.60.00&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;
+	&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ProviderAuthentication/tabid/840/Default.aspx"&gt;
+	AD Authentication Provider 01.00.05&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.00.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul &gt;
+	&lt;li&gt;
+	Added &lt;a href="http://jquery.com/" target="_blank"&gt;jQuery&lt;/a&gt; support 
+	to the core platform.&amp;#160; jQuery will now be distributed as part of the 
+	DotNetNuke installation and will be available for use by module developers.&lt;/li&gt;
+	&lt;li&gt;
+	Added support for Internet Explorer 8 Web Slices.&amp;#160; Administrators can 
+	configure any module to use IE8 Web Slices including the ability to set 
+	time-to-live and expiration values.&lt;/li&gt;
+	&lt;li&gt;
+	Removed distinction between admin modules and pages and normal pages.&amp;#160; This 
+	allows administrators to easily delegate access to any portion of the 
+	application to any group of users.&lt;/li&gt;
+	&lt;li&gt;
+	Updated the installation services to support manifest files for all 
+	extension types.&amp;#160; Now skins, containers, providers and modules are all first 
+	class citizens that can be installed and uninstalled.&lt;/li&gt;
+	&lt;li&gt;
+	Expanded XHTML, WCAG and ADA compliance.&lt;/li&gt;
+	&lt;li&gt;
+	Refactored core to improve support for Unit Testing.&amp;#160; Refactored several 
+	core classes to use interfaces and added a simple component factory to 
+	provide dependency injection support.&amp;#160;&lt;/li&gt;
+	&lt;li&gt;
+	Added ability to deny permissions in the permissions grid.&amp;#160; This new feature 
+	extends the permission framework to give administrators greater flexibility 
+	in defining permissions.&lt;/li&gt;
+	&lt;li&gt;
+	Added Widget framework.&amp;#160; The new Widget framework allows you to quickly add 
+	JavaScript/html widgets to your site with very little effort.&amp;#160; The framework 
+	supports the use of a simple object tag based representation which means you 
+	don’t have to know JavaScript in order to add the widgets.&lt;/li&gt;
+	&lt;li&gt;
+	Added new Object notation for using skin objects in Skins.&amp;#160; Skin designers 
+	will no longer need to include separate XML files when creating and 
+	packaging skins.&amp;#160; No more funky “[SKINOBJECT]” tags littering your html.&amp;#160; 
+	This significantly simplifies the process of creating skins and further 
+	opens up skin development to a broader group of designers.&amp;#160; If you include a 
+	simple JavaScript reference in your HTML skin, you can even get a full 
+	WYSIWYG experience when designing your skin.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Includes a rollup of all 4.x security fixes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.0.0 packages.&amp;#160; Please see the specific project pages for notes on what bugs or enhancements were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;
+	&lt;a target="_blank" href="http://www.dotnetnuke.com/Products/Development/Forge/ProviderAuthentication/tabid/840/Default.aspx"&gt;
+	AD Authentication Provider 05.00.0&lt;/a&gt;&lt;a href="http://www.dotnetnuke.com/Products/Development/Forge/ProviderAuthentication/tabid/840/Default.aspx"&gt;0&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+In addition to these highlights there are literally hundreds of bug fixes in 
+this release.&lt;/p&gt;</value>
+  </data>
+  <data name="WhatsNew.04.09.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Added the ability to perform permanent redirect from an existing page 
+	using the page settings screen.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with the permanent forms authentication cookie which cause 
+	problems in SSO environments.&lt;/li&gt;
+	&lt;li&gt;Fixed issue which required a workaround to import page templates into a 
+	portal&lt;/li&gt;
+	&lt;li&gt;Fixed a caching issue which prevented modules from being properly cached 
+	if they used a specific caching method overload&lt;/li&gt;
+	&lt;li&gt;Fixed issue which resulted in an error installing the Broadcast Polling 
+	Provider&lt;/li&gt;
+	&lt;li&gt;Fixed tab redirect issue which allowed a user to directly navigate to a 
+	tab which was supposed to redirect to another URL&lt;/li&gt;
+	&lt;li&gt;Fixed a continuous redirect issue which occurred when trying to upgrade 
+	from early 4.x releases to 4.9.1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.2 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;FckEditor Provider 2.0.3&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.00.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Added the ability to automatically update user roles without requiring 
+	the user to logout and log back in.&lt;/li&gt;
+	&lt;li&gt;Changed the user deletion code to use a soft-delete rather than removing 
+	the user record.&amp;nbsp; This ensures that modules like the Forums behave 
+	correctly for a previously &amp;quot;deleted&amp;quot; user.&lt;/li&gt;
+	&lt;li&gt;Added IP logging to the User&amp;#39;s table to capture the last IP address from 
+	which a user logged in. &lt;/li&gt;
+	&lt;li&gt;Fixed breaking change with case sensitivity in the name of skin panes.&amp;nbsp; 
+	This fix restores the case-insensitivity of previous DotNetNuke releases.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change with ModuleId in DotNetNuke 5.0 which changed 
+	ModuleId to a readonly value.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in CBO.FillDictionary to restore previous 
+	behavior.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change which prevented legacy skins from being installed 
+	when using the auto-install option.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change which prevented updated DLLs from being replaced 
+	when repairing a module installation.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in HumanFriendlyUrls which prevented querystrings 
+	from being properly read when using HumanFriendlyUrls&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in legacy modules which would not store a zip file 
+	which was not designated as a resource file.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in legacy modules which ignored zip directories.&amp;nbsp; 
+	DNN 5 changed this behavior.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in default.css which resulted in changes to 
+	existing skin layouts.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with roles module which prevented users from delegating role 
+	administration to a non-admin user.&lt;/li&gt;
+	&lt;li&gt;Fixed issue which prevented some users from logging out due to the 
+	inability of the system to detect their country.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with Module Action Menu which prevented it from opening 
+	links in new windows.&lt;/li&gt;
+	&lt;li&gt;Fixed issue that results in an error when the Cache logs an error under 
+	the new CACHE_ERROR event type&lt;/li&gt;
+	&lt;li&gt;Fixed a packaging issue with FCKEditor which caused the LinkEditor to 
+	cause an unhandled exception.&lt;/li&gt;
+	&lt;li&gt;Fixed an issue which resulted in the system not being able to display 
+	the portalaliases screen&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed version nformation leakage issue in the install wizard&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.0.1 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Forms and List 05.00.00&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;FckHtmlEditorProvider 2.0.3 &lt;/li&gt;
+	&lt;li&gt;AD Provider 05.00.01&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="ControlTitle_.Text" xml:space="preserve">
+    <value>What's New</value>
+  </data>
+  <data name="WhatsNew.04.09.03" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Add Office 2007 File Extensions to default allowable file extensions in Host Settings&lt;/li&gt;
+    &lt;li&gt;Add reference to SQL Server 2008 to Install Wizard to make it clear that SQL Server 2008 is supported&lt;/li&gt;
+    &lt;li&gt;Moved Whats New Module/Page to Host menu as it contains content which is not applicable to the Administrator&lt;/li&gt;
+    &lt;li&gt;Corrected a problem with "Auto" installation option which would occur when using a non-dbo database user&lt;/li&gt;
+    &lt;li&gt;Inline updates to Text/HTML were not HTML encoded when stored in the database&lt;/li&gt;
+    &lt;li&gt;App_Browser renamed to App_Browsers in order for ASP.NET to recognize it incorrectly&lt;/li&gt;
+    &lt;li&gt;Pages in the navigation menu linked directly to a file no longer served the file correctly&lt;/li&gt;
+    &lt;li&gt;Can not delete Portal if search items exist in the database which are associated to the portal&lt;/li&gt;
+    &lt;li&gt;Removed None Specified option for Folders in Page Export feature as it could cause an error if a user clicked Export without selecting a folder.&lt;/li&gt;
+    &lt;li&gt;Fixed major performance issue when adding new portals which would cause the system to unload and reload all cached objects&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;span class="Normal"&gt;Low &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno25/tabid/1260/Default.aspx"&gt;HTML/Script Code Injection Vulnerability&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.3 packages.&amp;#160; Please see the specific project pages for notes on what bugs or enhancements were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Development/Forge/ModuleAnnouncements/tabid/924/Default.aspx"&gt;
+	Announcements 04.00.02&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.04.09.04" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Fixed a major module caching issue which resulted in empty content for webcrawlers&lt;/li&gt;
+    &lt;li&gt;Improved performance of FormatRemoveSQL method&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;span class="Normal"&gt;Low &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/securitybulletinno26/tabid/1275/Default.aspx"&gt;Errorpage information leakage&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span class="Normal"&gt;Low &lt;/span&gt;- &lt;a target="_blank" href="http://www.dotnetnuke.com/News/SecurityPolicy/securitybulletinno27/tabid/1276/Default.aspx"&gt;HTML/Script Code Injection Vulnerability&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.4 packages.&amp;#160; Please see the specific project pages for notes on what bugs or enhancements were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a target="_blank" href="http://www.dotnetnuke.com/Development/Forge/ModuleAnnouncements/tabid/924/Default.aspx"&gt;
+	Announcements 04.00.03&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;Removed the AD Provider so that it cannot be installed by the Install 
+	Wizard.&amp;nbsp; It can still be manually installed.&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.01.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Added Content Versioning and simple workflow to the HTML module.&lt;/li&gt;
+	&lt;li&gt;Added Admin Console module to simplify access to administrator and host 
+	pages&lt;/li&gt;
+	&lt;li&gt;Added publicly accessbile skin engine lifecycle events&lt;/li&gt;
+	&lt;li&gt;Added audit trails to core system tables&lt;/li&gt;
+	&lt;li&gt;Added built in support for Google Analytics&lt;/li&gt;
+	&lt;li&gt;Added custom sitemap priorities&lt;/li&gt;
+	&lt;li&gt;Enhanced the permission system to use the provider model, allowing for 
+	custom permission providers&lt;/li&gt;
+	&lt;li&gt;Enhanced caching to enable access by distributed caching systems&lt;/li&gt;
+	&lt;li&gt;Enhanced installation and upgrade logic to automatically detect .Net 3.5 
+	and to upgrade the web.config as appropriate.&lt;/li&gt;
+	&lt;li&gt;Enhanced the extensions pages to show which modules are used and to show 
+	the pages where they are currently in use&lt;/li&gt;
+	&lt;li&gt;Enhanced the Scheduler to show a checklist of available servers in the 
+	webfarm where scheduled tasks can be executed.&lt;/li&gt;
+	&lt;li&gt;Enhanced the Scheduler to support multiple instances running on the same 
+	server&lt;/li&gt;
+	&lt;li&gt;Fixed issue with removing Superuser role from a user.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with deleting users which was not fully recognized by the 
+	rest of the application.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with upgrades which would fail if .Net 3.5 was installed&lt;/li&gt;
+	&lt;li&gt;Fixed issue with skins installed using the batch installer.&lt;/li&gt;
+	&lt;li&gt;Fixed change to GetModulesByDefinition API method which resulted in 
+	breaking change from DotNetNuke 4.x&lt;/li&gt;
+	&lt;li&gt;Fixed CloakText API method which was broken in 5.0.1&lt;/li&gt;
+	&lt;li&gt;Fixed issue with stored procedure for Dashboard which would fail with an 
+	error if database account did not have permissions to the MSDB database.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where pages added while on a host page will not be 
+	associated with a portal.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the ReturnURL for the SendPassword and Register links 
+	on the Login page were broken.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.1.0 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Forms and List 05.00.02&lt;/li&gt;
+	&lt;li&gt;Announcements 04.00.03&lt;/li&gt;
+	&lt;li&gt;Reports 05.01.00&lt;/li&gt;
+	&lt;li&gt;Events 05.00.01&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;FckHtmlEditorProvider 02.00.04 &lt;/li&gt;
+	&lt;li&gt;AD Provider 05.00.02&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.01.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue which mis-assigned page permissions to new modules&lt;/li&gt;
+	&lt;li&gt;Fixed issue where a fallback language is not defined&lt;/li&gt;
+	&lt;li&gt;Fixed issue&amp;nbsp; where portal administrator could not manage user roles&lt;/li&gt;
+	&lt;li&gt;Added core sqlconnection pool segmentation to protect core from any 
+	module issues&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Authenticated Caching setting was not getting saved 
+	correctly&lt;/li&gt;
+	&lt;li&gt;Fixed issue where code sub-directories are not properly removed in 
+	web.config&lt;/li&gt;
+	&lt;li&gt;Fixed issue with UpgradeIndicator which could throw an error under some 
+	conditions&lt;/li&gt;
+	&lt;li&gt;Fixed issue where data could become corrupted under extremely heavy load&lt;/li&gt;
+	&lt;li&gt;Fixed issue where GetPortalRoles stored procedure was missing new audit 
+	fields&lt;/li&gt;
+	&lt;li&gt;Fixed issue where some DataReaders were not guaranteed to be closed if 
+	an error occured&lt;/li&gt;
+	&lt;li&gt;Fixed issue where GetFolders API method was changed resulting in a 
+	breaking change&lt;/li&gt;
+	&lt;li&gt;Improved performance by removing use of regular expressions in 
+	Globals.CreateValidId&lt;/li&gt;
+	&lt;li&gt;Fixed issue where all installed languages are enabled on all portals 
+	after an upgrade&lt;/li&gt;
+	&lt;li&gt;Fixed sitemap priority to use invariant format&lt;/li&gt;
+	&lt;li&gt;Fixed issue where 05.00.00 SQL Upgrade script is incompatible with SQL 
+	Server 2000&lt;/li&gt;
+	&lt;li&gt;Fixed issue where HTML/TEXT module was not correctly handling Encoded 
+	data&lt;/li&gt;
+	&lt;li&gt;Fixed issue where hierarchical lists are not properly deleted&lt;/li&gt;
+	&lt;li&gt;Fixed performance issue where delayed loading of some PortalSettings 
+	results in race condition&lt;/li&gt;
+	&lt;li&gt;Fixed issue where banners were not properly rotated&lt;/li&gt;
+	&lt;li&gt;Fixed issue where &amp;quot;Create Language Pack&amp;quot; creates an empty package&lt;/li&gt;
+	&lt;li&gt;Fixed upgrade issue when Active Directory provider is installed&lt;/li&gt;
+	&lt;li&gt;Fixed issue which changed the Edit Module permission in 5.1 and restored 
+	the 4.9.4 behavior.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the resource verifier misses files to report&lt;/li&gt;
+	&lt;li&gt;Fixed issue with control panel after installing the Turkish Language 
+	Pack&lt;/li&gt;
+	&lt;li&gt;Fixed issue where deprecated properties of the Membership provider 
+	resulted in errors in the Token Replace API&lt;/li&gt;
+	&lt;li&gt;Fixed PageLoadException errors caused by specific UserAgents being mis-identified 
+	by the browser definition files&lt;/li&gt;
+	&lt;li&gt;Fixed issue where &amp;quot;Premium Modules&amp;quot; settings don&amp;#39;t work for upgraded 
+	sites&lt;/li&gt;
+	&lt;li&gt;Removed Classic ControlPanel from the distribution&lt;/li&gt;
+	&lt;li&gt;Improved locking mechanism of GetCachedData&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.1.1 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML 05.01.01&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;FilebasedCachingProvider 05.01.01 &lt;/li&gt;
+	&lt;li&gt;DatabaseLoggingProvider 05.01.01&lt;/li&gt;
+	&lt;li&gt;AspNetMembershipProvider 05.01.01&lt;/li&gt;
+	&lt;li&gt;DNNMembershipProvider 05.01.01&lt;/li&gt;
+	&lt;li&gt;SearchProvider 05.01.01&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.01.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue which caused modules not be properly upgraded to 5.x if they 
+	were missing a manifest file&lt;/li&gt;
+	&lt;li&gt;Fixed issue where register link on the login module did not work when 
+	portal was configured for private membership&lt;/li&gt;
+	&lt;li&gt;Fixed issue where en-US language was always enabled after an upgrade&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the language pack writer was not creating full 
+	language packs.&lt;/li&gt;
+	&lt;li&gt;Re-added the PageStatePersistence setting to the Host Settings page with 
+	additional warning messages.&lt;/li&gt;
+	&lt;li&gt;Fixed breaking change in ActionBase where properties were inadvertently 
+	removed instead of being marked obsolete.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where User settings were relying on default values, but the 
+	email API was not aware of the defaults.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the HasObjectDependencies property of ScheduleItem was 
+	not properly calculated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML/Script Code Injection Vulnerability in ClientAPI &lt;/li&gt;
+	&lt;li&gt;HTML/Script Code Injection Vulnerability when operating with multiple languages&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.1.2 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML 05.01.03&lt;/li&gt;
+	&lt;li&gt;Events 05.00.02&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Assemblies&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;WebControls 02.02.00&lt;/li&gt;
+	&lt;li&gt;ClientAPI 04.01.02&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.04.09.05" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue which caused the starter kit not to install properly&lt;/li&gt;
+	&lt;li&gt;Fixed issue where cache was not working properly for web crawlers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML/Script Code Injection Vulnerability in ClientAPI &lt;/li&gt;
+	&lt;li&gt;HTML/Script Code Injection Vulnerability when operating with multiple languages&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 4.9.5 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML 04.09.05&lt;/li&gt;
+	&lt;li&gt;Events 05.00.02&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Assemblies&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;WebControls 02.02.00&lt;/li&gt;
+	&lt;li&gt;ClientAPI 04.01.02&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.01.03" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Added the ability to specify a subject line when emailing event viewer 
+	logs&lt;/li&gt;
+	&lt;li&gt;Modified the event viewer to include event logs as email attachments 
+	when emailing the event logs&lt;/li&gt;
+	&lt;li&gt;Added the ability to use dictionary objects for token replacement in 
+	system messages&lt;/li&gt;
+	&lt;li&gt;Fixed an issue which caused an error whenever edititng the Site 
+	Settings.&lt;/li&gt;
+	&lt;li&gt;Fixed issue which caused an error trying to retrieve a role group by 
+	name&lt;/li&gt;
+	&lt;li&gt;Fixed an issue which prevented a skin from being able to be re-installed 
+	or uninstalled.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Html module was displaying unpublished content&lt;/li&gt;
+	&lt;li&gt;Fixed issue where URLs for pages within the site were always being 
+	created as relative which is a change from previous versions.&lt;/li&gt;
+	&lt;li&gt;Removed solution explorer page from the Admin menu and removed the 
+	Marketplace feed from the OPML file.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with upgrading DotNetNuke 4.x skins when upgrading site to 
+	DotNetNuke 5.x&lt;/li&gt;
+	&lt;li&gt;Fixed issue which resulted in incorrect URL for SiteMap in a child 
+	portal&lt;/li&gt;
+	&lt;li&gt;Fixed issue which caused error when deleting files from the Host file 
+	manager.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.1.3 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML 05.01.04&lt;/li&gt;
+	&lt;li&gt;Form and Lists 05.00.03&lt;/li&gt;
+	&lt;li&gt;Forum 04.05.03&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;AspNetMembershipProvider 05.01.03&lt;/li&gt;
+	&lt;li&gt;DNNMembershipProvider 05.01.03&lt;/li&gt;
+	&lt;li&gt;FileBasedCachingProvider 05.01.03&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.02.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Added Module Information to the Help page &lt;/li&gt;
+	&lt;li&gt;Added ability to view and edit the source files for a module&lt;/li&gt;
+	&lt;li&gt;Enhanced the module creation wizard to simplify creating new module 
+	definitions&lt;/li&gt;
+	&lt;li&gt;Added the ability to automatically create a test page as a step in the 
+	module creation wizard&lt;/li&gt;
+	&lt;li&gt;Added a core API to support content localization&lt;/li&gt;
+	&lt;li&gt;Added the ability to import/export page and module settings&lt;/li&gt;
+	&lt;li&gt;Added the ability to immediately run a scheduled task&lt;/li&gt;
+	&lt;li&gt;Added module caching provider API&lt;/li&gt;
+	&lt;li&gt;Converted existing module caching feature to use new provider&lt;/li&gt;
+	&lt;li&gt;Added page output caching provider API&lt;/li&gt;
+	&lt;li&gt;Fixed issue where upgraded sites do not properly set the default 
+	Language&lt;/li&gt;
+	&lt;li&gt;Fixed issue where scheduler could execute a a long-running task multiple 
+	times&lt;/li&gt;
+	&lt;li&gt;Fixed issue where improperly formatted email addresses could result in 
+	error when sending system emails&lt;/li&gt;
+	&lt;li&gt;Fixed issue which resulted in incorrect URL for SiteMap in a child 
+	portal&lt;/li&gt;
+	&lt;li&gt;Fixed issue which caused error when deleting files from the Host file 
+	manager.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue where Install Wizard could leak version information to 
+	anonymous users&lt;/li&gt;
+	&lt;li&gt;Fixed issue where search page might be vulnerable to script injection&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.2.0 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML 05.02.00&lt;/li&gt;
+	&lt;li&gt;Gallery 04.03.00&lt;/li&gt;
+	&lt;li&gt;Wiki 04.02.00&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;FileModuleCachingProvider 05.02.00&lt;/li&gt;
+	&lt;li&gt;MemoryModuleCachingProvider 05.02.00&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+</root>

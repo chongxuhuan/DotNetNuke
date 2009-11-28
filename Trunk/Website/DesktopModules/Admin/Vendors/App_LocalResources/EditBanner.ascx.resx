@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="ResMimeType">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="Version">
+		<value>1.0.0.0</value>
+	</resheader>
+	<resheader name="Reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="Writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="plBannerName.Text">
+		<value>Banner Name</value>
+	</data>
+	<data name="plBannerName.Help">
+		<value>Enter a name for the Banner. The Name will be displayed as alternate text for the displayed image</value>
+	</data>
+	<data name="BannerName.ErrorMessage">
+		<value>You Must Enter a Banner Name</value>
+	</data>
+	<data name="plBannerType.Text">
+		<value>Banner Type</value>
+	</data>
+	<data name="plBannerType.Help">
+		<value>Select a type of Banner to display</value>
+	</data>
+	<data name="plBannerGroup.Text">
+		<value>Banner Group</value>
+	</data>
+	<data name="plBannerGroup.Help">
+		<value>Enter a banner group if you wish to relate a set of banners</value>
+	</data>
+	<data name="plImage.Text">
+		<value>Image/Link</value>
+	</data>
+	<data name="plImage.Help">
+		<value>For graphical banners you should specify the banner image ( by either uploading an image file or linking to a remote image file via URL ). For text banners you should specify the URL you want displayed in the ad text.</value>
+	</data>
+	<data name="plWidth.Text">
+		<value>Width</value>
+	</data>
+	<data name="plWidth.Help">
+		<value>Enter the banner image width. This is optional for image banners but is mandatory for flash banners.</value>
+	</data>
+	<data name="plHeight.Text">
+		<value>Height</value>
+	</data>
+	<data name="plHeight.Help">
+		<value>Enter the banner image height. This is optional for image banners but is mandatory for flash banners.</value>
+	</data>
+	<data name="plDescription.Text">
+		<value>Text/Script</value>
+	</data>
+	<data name="plDescription.Help">
+		<value>Enter a banner description. This will be used as alternate text for Image banners or as the actual text for Text banners</value>
+	</data>
+	<data name="plURL.Text">
+		<value>URL</value>
+	</data>
+	<data name="plURL.Help">
+		<value>Enter the URL which you wish the user to be directed to if they click the banner. If you do not enter a URL, the URL for the Vendor will be used</value>
+	</data>
+	<data name="plImpressions.Text">
+		<value>Impressions</value>
+	</data>
+	<data name="plImpressions.Help">
+		<value>Enter the number of Impressions to display. For unlimited Impressions enter Zero (0).</value>
+	</data>
+	<data name="Impressions.ErrorMessage">
+		<value>&lt;br&gt;You Must Enter a Valid Number of Impressions</value>
+	</data>
+	<data name="plCPM.Text">
+		<value>CPM/Cost</value>
+	</data>
+	<data name="plCPM.Help">
+		<value>CPM is the cost for 1000 Impressions. Cost may also be a flat fee.</value>
+	</data>
+	<data name="CPM.ErrorMessage">
+		<value>You Must Enter a Valid CPM or Cost</value>
+	</data>
+	<data name="plStartDate.Text">
+		<value>Start Date</value>
+	</data>
+	<data name="plStartDate.Help">
+		<value>Use the Start Date to control when the ad campaign should start</value>
+	</data>
+	<data name="plEndDate.Text">
+		<value>End Date</value>
+	</data>
+	<data name="plEndDate.Help">
+		<value>Use the End Date to control when the ad campaign should end</value>
+	</data>
+	<data name="plCriteria.Text">
+		<value>Criteria</value>
+	</data>
+	<data name="plCriteria.Help">
+		<value>Specify whether the campaign should end when the Impressions are used AND/OR the End Date is past</value>
+	</data>
+	<data name="cmdEmail.Text">
+		<value>Email Status to Vendor</value>
+	</data>
+	<data name="ControlTitle_banner.Text">
+		<value>Edit Banner</value>
+	</data>
+	<data name="ModuleHelp.Text">
+		<value>&lt;h1&gt;About The Banners Module&lt;/h1&gt;
+
+&lt;p&gt;The Banners Module displays rotating banner advertising for Site and Host Vendors.  &lt;/p&gt;
+
+&lt;h1&gt;Set Banner Options&lt;/h1&gt;
+
+&lt;ol&gt;&lt;li&gt;Add a &lt;b&gt;Banners&lt;/b&gt; module, or go to an existing &lt;b&gt;Banners&lt;/b&gt; module.&lt;/li&gt;
+&lt;li&gt;Click &lt;b&gt;Set Banner Options&lt;/b&gt;. 
+&lt;li&gt;At Banner Source&lt;/b&gt;, select &lt;b&gt;Site&lt;/b&gt; or &lt;b&gt;Host&lt;/b&gt;. 
+&lt;li&gt;At Banner Type&lt;/b&gt;, select the banner type.
+&lt;li&gt;At Banner Count&lt;/b&gt;, select the nubmer of banners to be displayed. 
+&lt;li&gt;Click &lt;b&gt;Update&lt;/b&gt;.&lt;/ol&gt;</value>
+	</data>
+	<data name="EmailSuccess.Text">
+		<value>Email sent</value>
+	</data>
+	<data name="EmailFailure.Text">
+		<value>Email not sent: {0}</value>
+	</data>
+	<data name="cmdCopy.Text">
+		<value>Copy</value>
+	</data>
+</root>

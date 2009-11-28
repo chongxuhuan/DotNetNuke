@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="ResMimeType">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="Version">
+        <value>1.0.0.0</value>
+    </resheader>
+    <resheader name="Reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="Writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="UserMembership_Approved.Text">
+        <value>Authorized:</value>
+    </data>
+    <data name="UserMembership_Approved.Help">
+        <value>Is the User Authorized for the site.</value>
+    </data>
+    <data name="UserMembership_CreatedDate.Text">
+        <value>Created Date:</value>
+    </data>
+    <data name="UserMembership_CreatedDate.Help">
+        <value>Date this user was created</value>
+    </data>
+    <data name="UserMembership_LastActivityDate.Text">
+        <value>Last Activity Date:</value>
+    </data>
+    <data name="UserMembership_LastActivityDate.Help">
+        <value>Date of last activity by this user</value>
+    </data>
+    <data name="UserMembership_LastLoginDate.Text">
+        <value>Last Login Date:</value>
+    </data>
+    <data name="UserMembership_LastLoginDate.Help">
+        <value>Date this user last logged in</value>
+    </data>
+    <data name="UserMembership_LastPasswordChangeDate.Text">
+        <value>Last Password Change:</value>
+    </data>
+    <data name="UserMembership_LastPasswordChangeDate.Help">
+        <value>Date the user last changed his/her password</value>
+    </data>
+    <data name="UserMembership_LastLockoutDate.Text">
+        <value>Last Lock-out Date:</value>
+    </data>
+    <data name="UserMembership_LastLockoutDate.Help">
+        <value>Date this user was last locked out, due to repetitive failed logins</value>
+    </data>
+    <data name="UserMembership_IsOnLine.Text">
+        <value>User Is On Line:</value>
+    </data>
+    <data name="UserMembership_IsOnLine.Help">
+        <value>Is the user online at the moment</value>
+    </data>
+    <data name="UserMembership_LockedOut.Text">
+        <value>Locked Out:</value>
+    </data>
+    <data name="UserMembership_LockedOut.Help">
+        <value>Is the User Locked Out due to too many failed login attempts</value>
+    </data>
+    <data name="cmdAuthorize.Text">
+        <value>Authorize User</value>
+    </data>
+    <data name="cmdUnAuthorize.Text">
+        <value>UnAuthorize User</value>
+    </data>
+    <data name="cmdUnLock.Text">
+        <value>Unlock Account</value>
+    </data>
+    <data name="UserMembership_UpdatePassword.Text">
+        <value>Update Password</value>
+    </data>
+    <data name="UserMembership_UpdatePassword.Help">
+        <value>Force this user to update their password</value>
+    </data>
+    <data name="cmdPassword.Text">
+        <value>Force Password Change</value>
+    </data>
+</root>

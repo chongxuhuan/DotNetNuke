@@ -1,0 +1,2 @@
+<%@ Control language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.UI.Skins.Controls.Privacy" CodeFile="Privacy.ascx.vb" %>
+<asp:hyperlink id="hypPrivacy" runat="server" cssclass="SkinObject" enableviewstate="False"></asp:hyperlink>

@@ -1,0 +1,77 @@
+﻿@import url("jquery-ui-themeroller.css");
+
+#dashboardTabs {
+        padding: 15px;
+        margin: 3px 0 20px 0;
+        border: 1px solid #ccc;
+        background: #fff;
+        height:100%;
+        min-height:300px;
+}
+
+#tablist {
+        margin: 0;
+        padding: 0 0 20px 10px;
+}
+
+#tablist li {
+        margin: 0;
+        padding: 0;
+        display: inline;
+        list-style-type: none;
+}
+
+#tablist a:link, #tablist a:visited {
+        float: left;
+        line-height: 14px;
+        font-weight: bold;
+        padding: 0 12px 6px 12px;
+        text-decoration: none;
+        color: #708491;
+}
+
+#tablist a:link.active, #tablist a:visited.active, #tablist a:hover {
+		color: #036;
+        background: url(images/pyramid.gif) no-repeat bottom center;
+}
+
+.dashboardPanel 
+{
+	padding: 10px;
+}
+
+.dashboardPanel table td
+{
+	padding: 2px 4px;
+}
+
+.dashboardPanel table th
+{
+	padding: 2px 4px;
+	font-size: 1em;
+	font-weight: bold;
+	color: #036;
+	border-bottom: 1px solid #9FB1BC;
+}
+
+.dashboardTableAlt 
+{
+	background-color: #eee;
+}
+
+.dashboardGrid
+{
+	margin: 10px;
+}
+
+.dashboardPerfView
+{
+	cursor:pointer;
+}
+
+#ajaxLoad
+{
+	display:none;
+	margin:5px 0;
+	padding:0;
+}

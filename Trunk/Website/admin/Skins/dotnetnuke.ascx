@@ -1,0 +1,2 @@
+<%@ Control language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.UI.Skins.Controls.DotNetNuke" CodeFile="DotNetNuke.ascx.vb" %>
+<asp:hyperlink id="hypDotNetNuke" cssclass="Normal" runat="server" font-size="9px" enableviewstate="False"></asp:hyperlink>
