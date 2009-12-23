@@ -74,7 +74,7 @@ Namespace DotNetNuke.Services.ModuleCache
             Return DataCache.GetCache(Of Byte())(cacheKey)
         End Function
 
-        Public Overrides Sub PurgeCache()
+        Public Overrides Sub PurgeCache(ByVal portalId As Integer)
             DataCache.ClearCache(cachePrefix)
         End Sub
 
@@ -87,7 +87,7 @@ Namespace DotNetNuke.Services.ModuleCache
             DataCache.SetCache(cacheKey, moduleOutput, dep, Date.UtcNow.Add(duration), System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, Nothing)
         End Sub
 
-        Public Overrides Sub PurgeExpiredItems()
+        Public Overrides Sub PurgeExpiredItems(ByVal portalId As Integer)
             Throw New NotSupportedException()
         End Sub
 

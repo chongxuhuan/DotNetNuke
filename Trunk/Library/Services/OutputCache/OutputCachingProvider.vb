@@ -36,9 +36,9 @@ Namespace DotNetNuke.Services.OutputCache
         End Function
 
         Public Shared Sub RemoveItemFromAllProviders(ByVal tabId As Integer)
-            For Each kvp As KeyValuePair(Of String, OutputCachingProvider) In GetProviderList()
-                kvp.Value.Remove(tabId)
-            Next
+                For Each kvp As KeyValuePair(Of String, OutputCachingProvider) In GetProviderList()
+                    kvp.Value.Remove(tabId)
+                Next
         End Sub
 
 #End Region
@@ -49,8 +49,8 @@ Namespace DotNetNuke.Services.OutputCache
         Public MustOverride Function GetItemCount(ByVal tabId As Integer) As Integer
         Public MustOverride Function GetOutput(ByVal tabId As Integer, ByVal cacheKey As String) As Byte()
         Public MustOverride Function GetResponseFilter(ByVal tabId As Integer, ByVal maxVaryByCount As Integer, ByVal responseFilter As Stream, ByVal cacheKey As String, ByVal cacheDuration As TimeSpan) As OutputCacheResponseFilter
-        Public MustOverride Sub PurgeCache()
-        Public MustOverride Sub PurgeExpiredItems()
+        Public MustOverride Sub PurgeCache(ByVal portalId As Integer)
+        Public MustOverride Sub PurgeExpiredItems(ByVal portalId As Integer)
         Public MustOverride Sub Remove(ByVal tabId As Integer)
         Public MustOverride Overloads Sub SetOutput(ByVal tabId As Integer, ByVal cacheKey As String, ByVal duration As TimeSpan, ByVal output As Byte())
         Public MustOverride Function StreamOutput(ByVal tabId As Integer, ByVal cacheKey As String, ByVal context As HttpContext) As Boolean

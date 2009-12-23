@@ -159,6 +159,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
         End Sub
 
         Private Function CreateControl(ByVal controlSrc As String) As String
+
             Dim folder As String = FileSystemUtils.RemoveTrailingSlash(GetSourceFolder())
             Dim className As String = GetClassName()
             Dim moduleControlPath As String = Server.MapPath("DesktopModules/" + folder + "/" + controlSrc)
@@ -559,11 +560,16 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     Case "New"
                         If Not String.IsNullOrEmpty(rblLanguage.SelectedValue) Then
                             If Not String.IsNullOrEmpty(cboModule.SelectedValue) Then
+                                Dim controlSrc As String = txtFile.Text
+                                If Not controlSrc.EndsWith(".ascx") Then
+                                    controlSrc += ".ascx"
+                                End If
+
                                 'First create the control
-                                strMessage = CreateControl(txtFile.Text)
+                                strMessage = CreateControl(controlSrc)
                                 If String.IsNullOrEmpty(strMessage) Then
                                     'Next import the control
-                                    moduleDefinition = ImportControl(txtFile.Text)
+                                    moduleDefinition = ImportControl(controlSrc)
                                 End If
                             Else
                                 strMessage = Localization.GetString("ModuleFolder", Me.LocalResourceFile)

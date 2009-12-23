@@ -118,6 +118,7 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
         Private Function CreateScheduleItem() As ScheduleItem
             Dim objScheduleItem As New ScheduleItem
             objScheduleItem.TypeFullName = txtType.Text
+            objScheduleItem.FriendlyName = txtFriendlyName.Text
             If txtTimeLapse.Text = "" Or txtTimeLapse.Text = "0" Or txtTimeLapse.Text = "-1" Then
                 objScheduleItem.TimeLapse = Null.NullInteger
             Else

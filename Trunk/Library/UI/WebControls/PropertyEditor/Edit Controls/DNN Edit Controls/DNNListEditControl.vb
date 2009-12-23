@@ -125,7 +125,7 @@ Namespace DotNetNuke.UI.WebControls
             Get
                 If _List Is Nothing Then
                     Dim objListController As New ListController
-                    _List = objListController.GetListEntryInfoCollection(ListName, ParentKey)
+                    _List = objListController.GetListEntryInfoCollection(ListName, ParentKey, Me.PortalId)
                 End If
                 Return _List
             End Get

@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.SchedulingProvider" type="Provider" version="05.02.00">
+    <package name="DotNetNuke.SchedulingProvider" type="Provider" version="05.02.01">
       <friendlyName>DotNetNuke Scheduling Provider</friendlyName>
       <description>DotNetNuke Scheduling Provider Project provides a scheduling service</description>
       <dependencies/>
@@ -18,7 +18,7 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.DNNScheduler.dll</name>
-              <version>05.02.00</version>
+              <version>05.02.01</version>
             </assembly>
           </assemblies>
         </component>

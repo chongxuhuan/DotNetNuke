@@ -868,7 +868,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             ShowCacheRows()
         End Sub
         Protected Sub cmdClearAllPageCache_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdClearAllPageCache.Click
-            OutputCache.OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).PurgeCache()
+            OutputCache.OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).PurgeCache(Me.PortalId)
             ShowCacheRows()
         End Sub
         Private Sub ShowCacheRows()

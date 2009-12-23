@@ -57,8 +57,8 @@ Namespace DotNetNuke.Services.ModuleCache
         Public MustOverride Function GenerateCacheKey(ByVal tabModuleId As Integer, ByVal varyBy As SortedDictionary(Of String, String)) As String
         Public MustOverride Function GetItemCount(ByVal tabModuleId As Integer) As Integer
         Public MustOverride Function GetModule(ByVal tabModuleId As Integer, ByVal cacheKey As String) As Byte()
-        Public MustOverride Sub PurgeCache()
-        Public MustOverride Sub PurgeExpiredItems()
+        Public MustOverride Sub PurgeCache(ByVal portalId As Integer)
+        Public MustOverride Sub PurgeExpiredItems(ByVal portalId As Integer)
         Public MustOverride Sub Remove(ByVal tabModuleId As Integer)
         Public MustOverride Overloads Sub SetModule(ByVal tabModuleId As Integer, ByVal cacheKey As String, ByVal duration As TimeSpan, ByVal moduleOutput As Byte())
 

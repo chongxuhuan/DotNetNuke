@@ -54,7 +54,6 @@ Namespace DotNetNuke.Services.ModuleCache
 
 #Region "Private Methods"
 
-
         Private Function GenerateCacheKeyHash(ByVal tabModuleId As Integer, ByVal cacheKey As String) As String
             Dim hash As Byte() = Text.ASCIIEncoding.ASCII.GetBytes(cacheKey)
             Dim md5 As System.Security.Cryptography.MD5CryptoServiceProvider = New System.Security.Cryptography.MD5CryptoServiceProvider()
@@ -67,19 +66,26 @@ Namespace DotNetNuke.Services.ModuleCache
         End Function
 
         Private Shared Function GetCachedItemCount(ByVal tabModuleId As Integer) As Integer
-            Return Directory.GetFiles(FileProvider.GetCacheFolder(), "*" + FileProvider.DataFileExtension).Length
+            Return Directory.GetFiles(GetCacheFolder(), "*" + FileProvider.DataFileExtension).Length
         End Function
 
         Private Shared Function GetCachedOutputFileName(ByVal tabModuleId As Integer, ByVal cacheKey As String) As String
             Return String.Concat(GetCacheFolder(), cacheKey, DataFileExtension)
         End Function
 
-        Private Shared Function GetCacheFolder() As String
-            Dim cacheFolder As String = String.Concat(PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath, "\Cache\Modules\")
+        Private Shared Function GetCacheFolder(ByVal portalId As Integer) As String
+            Dim portalController As PortalController = New PortalController()
+            Dim portalInfo As PortalInfo = portalController.GetPortal(portalId)
+            Dim cacheFolder As String = String.Concat(portalInfo.HomeDirectoryMapPath(), "\Cache\Modules\")
             If Not Directory.Exists(cacheFolder) Then
                 Directory.CreateDirectory(cacheFolder)
             End If
             Return cacheFolder
+        End Function
+
+        Private Shared Function GetCacheFolder() As String
+            Dim portalId As Integer = PortalController.GetCurrentPortalSettings.PortalId
+            Return GetCacheFolder(portalId)
         End Function
 
         Private Function IsFileExpired(ByVal file As String) As Boolean
@@ -157,15 +163,15 @@ Namespace DotNetNuke.Services.ModuleCache
 
         End Function
 
-        Public Overrides Sub PurgeCache()
-            PurgeCache(GetCacheFolder())
+        Public Overrides Sub PurgeCache(ByVal portalId As Integer)
+            PurgeCache(GetCacheFolder(portalId))
         End Sub
 
-        Public Overrides Sub PurgeExpiredItems()
+        Public Overrides Sub PurgeExpiredItems(ByVal portalId As Integer)
             Dim filesNotDeleted As New System.Text.StringBuilder()
             Dim i As Integer = 0
 
-            For Each File As String In Directory.GetFiles(GetCacheFolder(), "*" + FileProvider.AttribFileExtension)
+            For Each File As String In Directory.GetFiles(GetCacheFolder(portalId), "*" + FileProvider.AttribFileExtension)
                 If IsFileExpired(File) Then
                     Dim fileToDelete As String = File.Replace(FileProvider.AttribFileExtension, FileProvider.DataFileExtension)
                     If Not DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(fileToDelete, 100, 200) Then
@@ -185,18 +191,27 @@ Namespace DotNetNuke.Services.ModuleCache
             Dim attribFile As String = GetAttribFileName(tabModuleId, cacheKey)
             Dim cachedOutputFile As String = GetCachedOutputFileName(tabModuleId, cacheKey)
 
-            If File.Exists(cachedOutputFile) Then
-                DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(cachedOutputFile, 100, 200)
-            End If
+            Try
+                If File.Exists(cachedOutputFile) Then
+                    DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(cachedOutputFile, 100, 200)
+                End If
 
-            Dim captureStream As New FileStream(cachedOutputFile, FileMode.CreateNew, FileAccess.Write)
-            captureStream.Write(output, 0, output.Length)
-            captureStream.Close()
+                Dim captureStream As New FileStream(cachedOutputFile, FileMode.CreateNew, FileAccess.Write)
+                captureStream.Write(output, 0, output.Length)
+                captureStream.Close()
 
-            Dim oWrite As System.IO.StreamWriter
-            oWrite = File.CreateText(attribFile)
-            oWrite.WriteLine(Date.UtcNow.Add(duration).ToString(CultureInfo.InvariantCulture))
-            oWrite.Close()
+                Dim oWrite As System.IO.StreamWriter
+                oWrite = File.CreateText(attribFile)
+                oWrite.WriteLine(Date.UtcNow.Add(duration).ToString(CultureInfo.InvariantCulture))
+                oWrite.Close()
+            Catch ex As Exception
+                ' TODO: Need to implement multi-threading.  
+                ' The current code is not thread safe and threw error if two threads tried creating cache file
+                ' A thread could create a file between the time another thread deleted it and tried to create new cache file.
+                ' This would result in a system.IO.IOException.  Also, there was no error handling in place so the 
+                ' Error would bubble up to the user and provide details on the file structure of the site.
+                LogException(ex)
+            End Try
 
         End Sub
 

@@ -38,11 +38,15 @@ Namespace DotNetNuke.Services.ModuleCache
         End Sub
         Public Overrides Sub DoWork()
             Try
-
+                Dim portals As ArrayList
+                Dim portalController As PortalController = New PortalController()
+                portals = portalController.GetPortals()
                 For Each kvp As KeyValuePair(Of String, ModuleCachingProvider) In ModuleCachingProvider.GetProviderList()
                     Try
-                        kvp.Value.PurgeExpiredItems()
-                        Me.ScheduleHistoryItem.AddLogNote(String.Format("Purged Module cache for {0}.  ", kvp.Key))
+                        For Each portal As PortalInfo In portals
+                            kvp.Value.PurgeExpiredItems(portal.PortalID)
+                            Me.ScheduleHistoryItem.AddLogNote(String.Format("Purged Module cache for {0}.  ", kvp.Key))
+                        Next
                     Catch ex As NotSupportedException
                         'some Module caching providers don't use this feature
                     End Try

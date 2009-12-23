@@ -264,7 +264,10 @@ Namespace DotNetNuke.Common.Utilities
 
         Public Shared Sub ClearModuleCache(ByVal TabId As Integer)
             CachingProvider.Instance().Clear("Module", TabId.ToString)
-            OutputCache.OutputCachingProvider.RemoveItemFromAllProviders(TabId)
+            Dim portals As Dictionary(Of Integer, Integer) = PortalController.GetPortalDictionary
+            If portals.ContainsKey(TabId) Then
+                OutputCache.OutputCachingProvider.RemoveItemFromAllProviders(TabId)
+            End If
         End Sub
 
         Public Shared Sub ClearModulePermissionsCachesByPortal(ByVal PortalId As Integer)

@@ -704,14 +704,6 @@
                             IsExpanded="False" Section="tblOther" ResourceKey="Other" />
                         <table id="tblOther" cellspacing="2" cellpadding="2" summary="Appearance Design Table"
                             border="0" runat="server">
-                            <tr visible="false">
-                                <td class="SubHead" style="width: 250px">
-                                    <dnn:Label ID="plAJAX" ControlName="chkAJAX" runat="server" />
-                                </td>
-                                <td>
-                                    <asp:CheckBox ID="chkAJAX" CssClass="NormalTextBox" runat="server" />
-                                </td>
-                            </tr>
                             <tr>
                                 <td class="SubHead" style="width: 250px">
                                     <dnn:Label ID="plControlPanel" Text="Control Panel:" ControlName="cboControlPanel"

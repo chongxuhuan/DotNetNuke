@@ -89,7 +89,8 @@ Namespace DotNetNuke.Services.Installer
         End Sub
 
         Private Shared Sub ProcessLegacySkin(ByVal skinFolder As String, ByVal skinType As String)
-            Dim skinName As String = Path.GetFileNameWithoutExtension(skinFolder)
+            'Dim skinName As String = Path.GetFileNameWithoutExtension(skinFolder)
+            Dim skinName As String = Path.GetFileName(skinFolder)
             If skinName <> "_default" Then
 
                 Dim skin As New SkinPackageInfo

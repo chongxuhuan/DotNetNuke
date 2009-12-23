@@ -52,4 +52,4 @@ The following items have been deprecated and are no longer supported and will no
 - The BroadcastPollingCachingProvider (June 23, 2009) was deprecated due to known performance issues. The recommended replacements are the FileBasedCachingProvider or WebRequestCachingProvider (PE only)
 - The XMLLoggingProvider (June 23, 2009)  was deprecated due to known performance problems. The recommended replacement is the DBLoggingProvider (which has been the default since 3.3)
 
-Note: SQL 2000/MSDE 2000 support was dropped wit the release of 5.2 (November 2009)
+Note: SQL 2000/MSDE 2000 support was dropped with the release of 5.2 (November 2009)

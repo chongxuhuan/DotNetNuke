@@ -237,7 +237,7 @@ Namespace DotNetNuke.Modules.Admin.Host
             chkDemoSignup.Checked = Entities.Host.Host.DemoSignup
             chkCopyright.Checked = Entities.Host.Host.DisplayCopyright
             chkUsersOnline.Checked = Entities.Host.Host.EnableUsersOnline
-            chkAJAX.Checked = Entities.Host.Host.EnableAJAX
+
             txtUsersOnlineTime.Text = Entities.Host.Host.UsersOnlineTimeWindow.ToString
             txtAutoAccountUnlock.Text = Entities.Host.Host.AutoAccountUnlockDuration.ToString
             txtProxyServer.Text = Entities.Host.Host.ProxyServer
@@ -574,7 +574,7 @@ Namespace DotNetNuke.Modules.Admin.Host
                         End If
                     End If
                     objHostSettings.UpdateHostSetting("DisableUsersOnline", Convert.ToString(IIf(chkUsersOnline.Checked, "N", "Y")), False, False)
-                    objHostSettings.UpdateHostSetting("EnableAJAX", Convert.ToString(IIf(chkAJAX.Checked, "Y", "N")), False, False)
+
 
                     objHostSettings.UpdateHostSetting("AutoAccountUnlockDuration", txtAutoAccountUnlock.Text, False, False)
                     objHostSettings.UpdateHostSetting("UsersOnlineTime", txtUsersOnlineTime.Text, False, False)

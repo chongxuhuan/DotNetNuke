@@ -90,8 +90,9 @@ Namespace DotNetNuke.Framework
         ''' <history>
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("MS AJax is now required for DotNetNuke 5.0 and above - value no longer read from Host.EnableAjax")> _
         Public Shared Function IsHostEnabled() As Boolean
-            Return Host.EnableAJAX
+            Return True
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -136,7 +137,7 @@ Namespace DotNetNuke.Framework
                 End If
 
                 If Not m_IsInstalledLoaded Then
-                    m_IsInstalled = Not ScriptManagerType() Is Nothing And IsHostEnabled()
+                    m_IsInstalled = Not ScriptManagerType() Is Nothing
                     m_IsInstalledLoaded = True
                 End If
             End If

@@ -1,11 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6E370A5-ECF3-4AAD-AF79-3D392D963861}"
-	ProjectSection(SolutionItems) = preProject
-		Symbols\DotNetNuke_Community_Symbols.dnn = Symbols\DotNetNuke_Community_Symbols.dnn
-		Symbols\license.txt = Symbols\license.txt
-		Symbols\releaseNotes.txt = Symbols\releaseNotes.txt
-	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
 	EndProjectSection

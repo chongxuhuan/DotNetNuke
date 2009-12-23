@@ -27,10 +27,15 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
 	Public Class SchedulingController
 
+        <Obsolete("Obsoleted in 5.2.1 - use overload that pass's a FriendlyName")> _
         Public Shared Function AddSchedule(ByVal TypeFullName As String, ByVal TimeLapse As Integer, ByVal TimeLapseMeasurement As String, ByVal RetryTimeLapse As Integer, ByVal RetryTimeLapseMeasurement As String, ByVal RetainHistoryNum As Integer, ByVal AttachToEvent As String, ByVal CatchUpEnabled As Boolean, ByVal Enabled As Boolean, ByVal ObjectDependencies As String, ByVal Servers As String) As Integer
+            AddSchedule(TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, TypeFullName)
+        End Function
+
+        Public Shared Function AddSchedule(ByVal TypeFullName As String, ByVal TimeLapse As Integer, ByVal TimeLapseMeasurement As String, ByVal RetryTimeLapse As Integer, ByVal RetryTimeLapseMeasurement As String, ByVal RetainHistoryNum As Integer, ByVal AttachToEvent As String, ByVal CatchUpEnabled As Boolean, ByVal Enabled As Boolean, ByVal ObjectDependencies As String, ByVal Servers As String, ByVal FriendlyName As String) As Integer
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("TypeFullName", TypeFullName, Entities.Portals.PortalController.GetCurrentPortalSettings, Entities.Users.UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.SCHEDULE_CREATED)
-            Return DataProvider.Instance.AddSchedule(TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, Entities.Users.UserController.GetCurrentUserInfo.UserID)
+            Return DataProvider.Instance.AddSchedule(TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, Entities.Users.UserController.GetCurrentUserInfo.UserID, FriendlyName)
         End Function
 
         Public Shared Function AddScheduleHistory(ByVal objScheduleHistoryItem As ScheduleHistoryItem) As Integer
@@ -122,8 +127,13 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             CoreScheduler.ReloadSchedule()
         End Sub
 
+        <Obsolete("Obsoleted in 5.2.1 - use overload that pass's a FriendlyName")> _
         Public Shared Sub UpdateSchedule(ByVal ScheduleID As Integer, ByVal TypeFullName As String, ByVal TimeLapse As Integer, ByVal TimeLapseMeasurement As String, ByVal RetryTimeLapse As Integer, ByVal RetryTimeLapseMeasurement As String, ByVal RetainHistoryNum As Integer, ByVal AttachToEvent As String, ByVal CatchUpEnabled As Boolean, ByVal Enabled As Boolean, ByVal ObjectDependencies As String, ByVal Servers As String)
-            DataProvider.Instance.UpdateSchedule(ScheduleID, TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, Entities.Users.UserController.GetCurrentUserInfo.UserID)
+            UpdateSchedule(ScheduleID, TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, TypeFullName)
+        End Sub
+
+        Public Shared Sub UpdateSchedule(ByVal ScheduleID As Integer, ByVal TypeFullName As String, ByVal TimeLapse As Integer, ByVal TimeLapseMeasurement As String, ByVal RetryTimeLapse As Integer, ByVal RetryTimeLapseMeasurement As String, ByVal RetainHistoryNum As Integer, ByVal AttachToEvent As String, ByVal CatchUpEnabled As Boolean, ByVal Enabled As Boolean, ByVal ObjectDependencies As String, ByVal Servers As String, ByVal FriendlyName As String)
+            DataProvider.Instance.UpdateSchedule(ScheduleID, TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement, RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers, Entities.Users.UserController.GetCurrentUserInfo.UserID, FriendlyName)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("TypeFullName", TypeFullName, Entities.Portals.PortalController.GetCurrentPortalSettings, Entities.Users.UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.SCHEDULE_UPDATED)
         End Sub

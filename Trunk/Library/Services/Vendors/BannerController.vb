@@ -30,8 +30,6 @@ Namespace DotNetNuke.Services.Vendors
 
         Private BannerClickThroughPage As String = "/DesktopModules/Admin/Banners/BannerClickThrough.aspx"
 
-        Private Shared LastBannerUsedDictionary As New Dictionary(Of String, Integer)
-
 #End Region
 
 #Region "Private Methods"
@@ -73,11 +71,47 @@ Namespace DotNetNuke.Services.Vendors
 
         End Function
 
+        Public Function IsBannerActive(ByVal objBanner As BannerInfo) As Boolean
+            Dim blnValid As Boolean = True
+
+            If Null.IsNull(objBanner.StartDate) = False And Now < objBanner.StartDate Then
+                blnValid = False
+            End If
+
+            If blnValid Then
+                Select Case objBanner.Criteria
+                    Case 0 ' AND = cancel the banner when the Impressions expire
+                        If objBanner.Impressions < objBanner.Views And objBanner.Impressions <> 0 Then
+                            blnValid = False
+                        End If
+                    Case 1 ' OR = cancel the banner if either the EndDate OR Impressions expire
+                        If (objBanner.Impressions < objBanner.Views And objBanner.Impressions <> 0) Or _
+                          (Now > objBanner.EndDate And Null.IsNull(objBanner.EndDate) = False) Then
+                            blnValid = False
+                        End If
+                End Select
+            End If
+
+            Return blnValid
+        End Function
+
         Private Function LoadBannersCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
-            Dim portalId As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
+            Dim PortalId As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
             Dim BannerTypeId As Integer = DirectCast(cacheItemArgs.ParamList(1), Integer)
             Dim GroupName As String = DirectCast(cacheItemArgs.ParamList(2), String)
-            Return CBO.FillCollection(Of BannerInfo)(DataProvider.Instance().FindBanners(portalId, BannerTypeId, GroupName))
+
+            ' get list of all banners
+            Dim FullBannerList As List(Of BannerInfo) = CBO.FillCollection(Of BannerInfo)(DataProvider.Instance().FindBanners(PortalId, BannerTypeId, GroupName))
+
+            ' create list of active banners
+            Dim ActiveBannerList As New List(Of BannerInfo)
+            For Each objBanner As BannerInfo In FullBannerList
+                If IsBannerActive(objBanner) Then
+                    ActiveBannerList.Add(objBanner)
+                End If
+            Next
+
+            Return ActiveBannerList
         End Function
 
 #End Region
@@ -181,90 +215,61 @@ Namespace DotNetNuke.Services.Vendors
             Return CBO.FillCollection(DataProvider.Instance().GetBanners(VendorId), GetType(BannerInfo))
         End Function
 
-        Public Function IsBannerActive(ByVal objBanner As BannerInfo) As Boolean
-            Dim blnValid As Boolean = True
-
-            If Null.IsNull(objBanner.StartDate) = False And Now < objBanner.StartDate Then
-                blnValid = False
-            End If
-
-            If blnValid Then
-                Select Case objBanner.Criteria
-                    Case 0 ' AND = cancel the banner when the Impressions expire
-                        If objBanner.Impressions < objBanner.Views And objBanner.Impressions <> 0 Then
-                            blnValid = False
-                        End If
-                    Case 1 ' OR = cancel the banner if either the EndDate OR Impressions expire
-                        If (objBanner.Impressions < objBanner.Views And objBanner.Impressions <> 0) Or _
-                          (Now > objBanner.EndDate And Null.IsNull(objBanner.EndDate) = False) Then
-                            blnValid = False
-                        End If
-                End Select
-            End If
-
-            Return blnValid
-        End Function
-
         Public Function LoadBanners(ByVal PortalId As Integer, ByVal ModuleId As Integer, ByVal BannerTypeId As Integer, ByVal GroupName As String, ByVal Banners As Integer) As ArrayList
             If GroupName Is Nothing Then
                 GroupName = Null.NullString
             End If
 
-            ' cache key
+            ' set cache key
             Dim cacheKey As String = String.Format(DataCache.BannersCacheKey, PortalId, BannerTypeId, GroupName)
-            ' get banners
+
+            ' get list of active banners
             Dim bannersList As List(Of BannerInfo) = CBO.GetCachedObject(Of List(Of BannerInfo))(New CacheItemArgs(cacheKey, DataCache.BannersCacheTimeOut, DataCache.BannersCachePriority, PortalId, BannerTypeId, GroupName), AddressOf LoadBannersCallback)
 
             ' create return collection
             Dim arReturnBanners As New ArrayList(Banners)
 
             If bannersList.Count > 0 Then
+
                 If Banners > bannersList.Count Then
                     Banners = bannersList.Count
                 End If
 
-                ' get last index for rotation
-                Dim lastBannerUsed As Integer = 0
-                'Check Dictionary
-                If LastBannerUsedDictionary.TryGetValue(cacheKey, lastBannerUsed) Then
-                    'Not in Dictionary so get Random Start Value
-                    'maxValue in Random.Next is exclusive so we use the total count of banners
-                    lastBannerUsed = New Random().Next(0, bannersList.Count)
-                End If
-
+                ' set Random start index based on the list of banners
+                Dim intIndex As Integer = New Random().Next(0, bannersList.Count)
+                ' set counter
                 Dim intCounter As Integer = 1
 
                 While intCounter <= bannersList.Count And arReturnBanners.Count <> Banners
-                    ' manage the rotation 
-                    lastBannerUsed += 1
-                    If lastBannerUsed > (bannersList.Count - 1) Then
-                        lastBannerUsed = 0
+                    ' manage the rotation for the circular collection
+                    intIndex += 1
+                    If intIndex > (bannersList.Count - 1) Then
+                        intIndex = 0
                     End If
 
                     ' get the banner object
-                    Dim objBanner As BannerInfo = bannersList(lastBannerUsed)
+                    Dim objBanner As BannerInfo = bannersList(intIndex)
 
                     ' add to return collection
-                    If IsBannerActive(objBanner) Then
-                        arReturnBanners.Add(objBanner)
+                    arReturnBanners.Add(objBanner)
 
-                        ' update banner
-                        objBanner.Views += 1
-                        If Null.IsNull(objBanner.StartDate) Then
-                            objBanner.StartDate = Now
-                        End If
-                        If Null.IsNull(objBanner.EndDate) And objBanner.Views >= objBanner.Impressions And objBanner.Impressions <> 0 Then
-                            objBanner.EndDate = Now
-                        End If
-                        ' update database
-                        DataProvider.Instance().UpdateBannerViews(objBanner.BannerId, objBanner.StartDate, objBanner.EndDate)
+                    ' update banner attributes
+                    objBanner.Views += 1
+                    If Null.IsNull(objBanner.StartDate) Then
+                        objBanner.StartDate = Now
+                    End If
+                    If Null.IsNull(objBanner.EndDate) And objBanner.Views >= objBanner.Impressions And objBanner.Impressions <> 0 Then
+                        objBanner.EndDate = Now
+                    End If
+                    DataProvider.Instance().UpdateBannerViews(objBanner.BannerId, objBanner.StartDate, objBanner.EndDate)
+
+                    ' expire cached collection of banners if a banner is no longer active
+                    If Not IsBannerActive(objBanner) Then
+                        DataCache.RemoveCache(cacheKey)
                     End If
 
                     intCounter += 1
                 End While
-
-                ' save last index for rotation
-                LastBannerUsedDictionary(cacheKey) = lastBannerUsed
             End If
 
             Return arReturnBanners

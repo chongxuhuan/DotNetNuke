@@ -2500,6 +2500,14 @@ Namespace DotNetNuke.Services.Upgrade
                         ModuleDefID = GetModuleDefinition("Marketplace", "Marketplace")
                         AddModuleToPage(newPage, ModuleDefID, "Marketplace", "~/images/icon_marketplace_32px.gif")
 
+                    Case "5.2.1"
+                        ' UpgradeDefaultLanguages is a temporary procedure containing code that
+                        ' needed to execute after the 5.1.3 application upgrade code above
+                        DataProvider.Instance.ExecuteNonQuery("UpgradeDefaultLanguages")
+
+                        ' This procedure is not intended to be part of the database schema
+                        ' and is therefore dropped once it has been executed.
+                        DataProvider.Instance.ExecuteSQL("DROP PROCEDURE {databaseOwner}{objectQualifier}UpgradeDefaultLanguages")
                 End Select
 
             Catch ex As Exception

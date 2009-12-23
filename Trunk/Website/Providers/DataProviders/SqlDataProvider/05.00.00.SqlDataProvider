@@ -1551,7 +1551,7 @@ EXECUTE sp_rename N'{databaseOwner}Tmp_{objectQualifier}Packages', N'{objectQual
 
 ALTER TABLE {databaseOwner}{objectQualifier}Packages ADD CONSTRAINT PK_{objectQualifier}Packages PRIMARY KEY CLUSTERED ( PackageID ) 
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Packages ON {objectQualifier}Packages ( [Owner], Name, PortalID )
+CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Packages ON {objectQualifier}Packages ( [Owner], Name, PackageType, PortalID )
 
 ALTER TABLE {databaseOwner}{objectQualifier}Assemblies ADD CONSTRAINT FK_{objectQualifier}PackageAssemblies_PackageAssemblies FOREIGN KEY ( PackageID ) REFERENCES {databaseOwner}{objectQualifier}Packages ( PackageID ) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
 	

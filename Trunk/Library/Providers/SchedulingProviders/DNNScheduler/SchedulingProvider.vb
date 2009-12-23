@@ -73,7 +73,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             CoreScheduler.RemoveFromScheduleQueue(objScheduleItem)
 
             'save item
-            objScheduleItem.ScheduleID = SchedulingController.AddSchedule(objScheduleItem.TypeFullName, objScheduleItem.TimeLapse, objScheduleItem.TimeLapseMeasurement, objScheduleItem.RetryTimeLapse, objScheduleItem.RetryTimeLapseMeasurement, objScheduleItem.RetainHistoryNum, objScheduleItem.AttachToEvent, objScheduleItem.CatchUpEnabled, objScheduleItem.Enabled, objScheduleItem.ObjectDependencies, objScheduleItem.Servers)
+            objScheduleItem.ScheduleID = SchedulingController.AddSchedule(objScheduleItem.TypeFullName, objScheduleItem.TimeLapse, objScheduleItem.TimeLapseMeasurement, objScheduleItem.RetryTimeLapse, objScheduleItem.RetryTimeLapseMeasurement, objScheduleItem.RetainHistoryNum, objScheduleItem.AttachToEvent, objScheduleItem.CatchUpEnabled, objScheduleItem.Enabled, objScheduleItem.ObjectDependencies, objScheduleItem.Servers, objScheduleItem.FriendlyName)
 
             'Add schedule to queue
             RunScheduleItemNow(objScheduleItem)
@@ -229,7 +229,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             CoreScheduler.RemoveFromScheduleQueue(objScheduleItem)
 
             'save item
-            SchedulingController.UpdateSchedule(objScheduleItem.ScheduleID, objScheduleItem.TypeFullName, objScheduleItem.TimeLapse, objScheduleItem.TimeLapseMeasurement, objScheduleItem.RetryTimeLapse, objScheduleItem.RetryTimeLapseMeasurement, objScheduleItem.RetainHistoryNum, objScheduleItem.AttachToEvent, objScheduleItem.CatchUpEnabled, objScheduleItem.Enabled, objScheduleItem.ObjectDependencies, objScheduleItem.Servers)
+            SchedulingController.UpdateSchedule(objScheduleItem.ScheduleID, objScheduleItem.TypeFullName, objScheduleItem.TimeLapse, objScheduleItem.TimeLapseMeasurement, objScheduleItem.RetryTimeLapse, objScheduleItem.RetryTimeLapseMeasurement, objScheduleItem.RetainHistoryNum, objScheduleItem.AttachToEvent, objScheduleItem.CatchUpEnabled, objScheduleItem.Enabled, objScheduleItem.ObjectDependencies, objScheduleItem.Servers, objScheduleItem.FriendlyName)
 
             'Add schedule to queue
             RunScheduleItemNow(objScheduleItem)

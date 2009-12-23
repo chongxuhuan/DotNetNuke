@@ -590,10 +590,14 @@ Namespace DotNetNuke.Services.Localization
             Dim cacheKey As String = resourceFileName.Replace("~/", "/").ToLowerInvariant()
             If Not String.IsNullOrEmpty(ApplicationPath) Then
                 If ApplicationPath.ToLowerInvariant <> "/portals" Then
-                    cacheKey = cacheKey.Replace(ApplicationPath.ToLowerInvariant(), "")
+                    If cacheKey.StartsWith(ApplicationPath.ToLowerInvariant()) Then
+                        cacheKey = cacheKey.Substring(ApplicationPath.Length)
+                    End If
                 Else
                     cacheKey = "~" & cacheKey
-                    cacheKey = cacheKey.Replace("~" & ApplicationPath.ToLowerInvariant(), "")
+                    If cacheKey.StartsWith("~" & ApplicationPath.ToLowerInvariant()) Then
+                        cacheKey = cacheKey.Substring(ApplicationPath.Length + 1)
+                    End If
                 End If
             End If
 

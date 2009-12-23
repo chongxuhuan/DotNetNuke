@@ -1054,9 +1054,9 @@
     <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Providers\HtmlEditorProviders\FCKEditorProvider\bin\DotNetNuke.FckHtmlEditorProvider.dll" DestinationFolder="..\Website\bin\" />
-      <Copy SourceFiles="bin\DotNetNuke.dll" DestinationFolder="..\Website\bin" />
-      <Copy SourceFiles="bin\DotNetNuke.pdb" DestinationFolder="..\Website\bin" />
-      <Copy SourceFiles="bin\DotNetNuke.xml" DestinationFolder="..\Website\bin" />
-      <Copy SourceFiles="Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll" DestinationFolder="..\Website\bin\" />
+    <Copy SourceFiles="bin\DotNetNuke.dll" DestinationFolder="..\Website\bin" />
+    <Copy SourceFiles="bin\DotNetNuke.pdb" DestinationFolder="..\Website\bin" />
+    <Copy SourceFiles="bin\DotNetNuke.xml" DestinationFolder="..\Website\bin" />
+    <Copy SourceFiles="Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll" DestinationFolder="..\Website\bin\" />
   </Target>
 </Project>

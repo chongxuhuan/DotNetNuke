@@ -714,4 +714,54 @@ were corrected with each release.&lt;/p&gt;
 	&lt;li&gt;MemoryModuleCachingProvider 05.02.00&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
+  <data name="WhatsNew.05.02.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue where banners were not properly rotated according to the 
+	specified views/clicks&lt;/li&gt;
+	&lt;li&gt;&amp;nbsp;Fixed issue where upgrades could fail if the the user account did 
+	not have permission to update objects in some db schemas&lt;/li&gt;
+	&lt;li&gt;Fixed issue where list values were visible outside of the Portal where 
+	they were created.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where caching providers were not rendering unicode 
+	characters properly.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with missing Telerik assembly in the source package.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Ajax HostSetting was not properly set on upgrade from 
+	4.x installations.&lt;/li&gt;
+	&lt;li&gt;Fixed issues where upgrades would fail with a unique index violation&lt;/li&gt;
+	&lt;li&gt;Fixed issue with the Starter Kit which was missing HTML module files&lt;/li&gt;
+	&lt;li&gt;Fixed issue where page templates were not working correctly&lt;/li&gt;
+	&lt;li&gt;Fixed default settings for the module and output caching providers&lt;/li&gt;
+	&lt;li&gt;Fixed issue which prevented Blog module from working after some upgrades 
+	to 5.x&lt;/li&gt;
+	&lt;li&gt;Fixed issue when creating a new module in the Module Definition Wizard 
+	if the .ascx extension was not specified.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where localization was not working if the application 
+	virtual directory name was also part of the module name.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the FriendlyName for Schedule Items was not being 
+	saved.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where GetUserCountByPortal was making excessive database 
+	calls instead of using cached values&lt;/li&gt;
+	&lt;li&gt;Added binding redirect setting in web.config to prevent versioning 
+	issues with Telerik assembly&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.2.0 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements 
+were corrected with each release.&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Form and List 05.01.01&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;FileModuleCachingProvider 05.02.01&lt;/li&gt;
+	&lt;li&gt;MemoryModuleCachingProvider 05.02.01&lt;/li&gt;
+	&lt;li&gt;SchedulingProvider 05.02.01&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
 </root>

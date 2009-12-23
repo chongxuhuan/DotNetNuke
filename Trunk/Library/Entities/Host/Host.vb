@@ -362,6 +362,7 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	01/28/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("MS AJax is now required for DotNetNuke 5.0 and above")> _
         Public Shared ReadOnly Property EnableAJAX() As Boolean
             Get
                 Return GetHostSettingAsBoolean("EnableAJAX", True)

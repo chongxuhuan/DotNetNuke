@@ -38,11 +38,16 @@ Namespace DotNetNuke.Services.OutputCache
         End Sub
         Public Overrides Sub DoWork()
             Try
+                Dim portals As ArrayList
+                Dim portalController As PortalController = New PortalController()
+                portals = portalController.GetPortals()
 
                 For Each kvp As KeyValuePair(Of String, OutputCachingProvider) In OutputCachingProvider.GetProviderList()
                     Try
-                        kvp.Value.PurgeExpiredItems()
+                        For Each portal As PortalInfo In portals
+                            kvp.Value.PurgeExpiredItems(portal.PortalID)
                         Me.ScheduleHistoryItem.AddLogNote(String.Format("Purged output cache for {0}.  ", kvp.Key))
+                        Next
                     Catch ex As NotSupportedException
                         'some output caching providers don't use this feature
                     End Try

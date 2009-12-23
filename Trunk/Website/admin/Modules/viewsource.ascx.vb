@@ -147,7 +147,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
         ''' -----------------------------------------------------------------------------
         Private Sub cmdCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
             Try
-                Response.Redirect(Convert.ToString(ViewState("UrlReferrer")), True)
+                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
@@ -174,16 +174,17 @@ Namespace DotNetNuke.Modules.Admin.Modules
                     ' reset attributes
                     If File.Exists(srcPhysicalPath) Then
                         File.SetAttributes(srcPhysicalPath, FileAttributes.Normal)
+
+                        ' write file
+                        Dim objStream As StreamWriter
+                        objStream = File.CreateText(srcPhysicalPath)
+                        objStream.WriteLine(txtSource.Text)
+                        objStream.Close()
                     End If
 
-                    ' write file
-                    Dim objStream As StreamWriter
-                    objStream = File.CreateText(srcPhysicalPath)
-                    objStream.WriteLine(txtSource.Text)
-                    objStream.Close()
                 End If
 
-                Response.Redirect(Convert.ToString(ViewState("UrlReferrer")), True)
+                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try

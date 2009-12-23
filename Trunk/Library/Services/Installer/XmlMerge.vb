@@ -340,7 +340,20 @@ Namespace DotNetNuke.Services.Installer
                     Else
                         If actionNode.Attributes("targetpath") IsNot Nothing Then
                             Dim path As String = actionNode.Attributes("targetpath").Value
-                            targetNode = rootNode.SelectSingleNode(path)
+                            'targetNode = rootNode.SelectSingleNode(path)
+
+                            If actionNode.Attributes("nameSpace") Is Nothing Then
+                                targetNode = rootNode.SelectSingleNode(path)
+                            Else
+                                'Use Namespace Manager
+                                Dim xmlNameSpace As String = actionNode.Attributes("nameSpace").Value
+                                Dim xmlNameSpacePrefix As String = actionNode.Attributes("nameSpacePrefix").Value
+
+                                Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(TargetConfig.NameTable)
+                                nsmgr.AddNamespace(xmlNameSpacePrefix, xmlNameSpace)
+                                targetNode = rootNode.SelectSingleNode(path, nsmgr)
+                            End If
+
                         End If
                     End If
 
