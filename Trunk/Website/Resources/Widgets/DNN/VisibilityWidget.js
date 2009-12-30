@@ -1,6 +1,6 @@
 /*
   DotNetNuke® - http://www.dotnetnuke.com
-  Copyright (c) 2002-2007
+  Copyright (c) 2002-2010
   by DotNetNuke Corporation
  
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -27,6 +27,7 @@
 	''' </remarks>
 	''' <history>
 	'''     Version 1.0.0: Oct. 28, 2007, Nik Kalyani, nik.kalyani@dotnetnuke.com 
+    '''     Version 1.1.0: Dec. 29, 2009, Joe Brinkman, joe.brinkman@dotnetnuke.com
 	''' </history>
 	''' -----------------------------------------------------------------------------
 */
@@ -45,16 +46,18 @@ DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.prototype =
         render : 
         function()
         {
-            var widgetHtml = "";
+			var data = 	{
+							useAlternatingClasses: 'true',
+							expandClassName: 'expand',
+							collapseClassName: 'collapse',
+							targetElement: '',
+							eventSourceElement: '',
+							closeElement: '',
+							title: '',
+							toggleFunction: DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.animate
+						};
+			
             var params = this._widget.childNodes;
-            var useAlternatingClasses = "true";
-            var expandClassName = "expand";
-            var collapseClassName = "collapse";
-            var targetElementId = "";
-            var eventSourceElementId = "";
-            var closeElementId = "";
-			var visibilityState = "closed";
-            var title = "";
             for(var p=0;p<params.length;p++)
             {
                 try
@@ -62,105 +65,91 @@ DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.prototype =
                     var paramName = params[p].name.toLowerCase();
                     switch(paramName)
                     {
-                        case "usealternatingclasses" : useAlternatingClasses = params[p].value; break;
-                        case "expandclassname" : expandClassName = params[p].value; break;
-                        case "collapseclassname" : collapseClassName = params[p].value; break;
-                        case "targetelementid"  : targetElementId = params[p].value; break;
-                        case "eventsourceelementid" : eventSourceElementId = params[p].value; break;
-                        case "closeelementid" : closeElementId = params[p].value; break;
-                        case "title" : title = params[p].value; break;
+                        case "usealternatingclasses" : data.useAlternatingClasses = params[p].value; break;
+                        case "expandclassname" : data.expandClassName = params[p].value; break;
+                        case "collapseclassname" : data.collapseClassName = params[p].value; break;
+                        case "targetelementid"  : data.targetElement = jQuery('#' + params[p].value); break;
+                        case "eventsourceelementid" : data.eventSourceElement = jQuery('#' + params[p].value); break;
+                        case "closeelementid" : data.closeElement = jQuery('#' + params[p].value); break;
+                        case "title" : data.title = params[p].value; break;
+                        case "togglefunction" : data.toggleFunction = eval(params[p].value); break;
                     }
                 }
                 catch(e)
                 {                
                 }
             }
-            if (targetElementId != "")
+			
+            if (data.targetElement.length == 1)
             {
-                var input 
-                if (eventSourceElementId != "")
-                {
-                  input = $get(eventSourceElementId);
 
-				  if (closeElementId != "")
-				  {
-					  var close = $get(closeElementId)
-					  close.setAttribute("visibilityState", "open");
-					  close.setAttribute("useAlternatingClasses", "false");
-					  close.setAttribute("targetElementId", targetElementId);
-					  $addHandler(close, "click", DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility);
-				  }
+				var input 
+				if (data.eventSourceElement.length == 1)
+                {
+					input = data.eventSourceElement;
+					if (data.closeElement.length == 1)
+					{
+						data.closeElement.bind('click', 
+							data, 
+							DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility);
+					}
                 }
                  
-                if (input == null)
+
+				if (input == null)
                 {  
-                  input = document.createElement("input");
-                  input.setAttribute("type", "button");
-                  input.className = expandClassName;
-                  input.title = title;
+					input = jQuery('<input type="button" />')
+						.addClass(data.expandClassName)
+						.attr('title', data.title);
                 }              
                 
-                if (useAlternatingClasses == "true")
+                if (data.useAlternatingClasses == "true")
                 {
-                  input.className = expandClassName;
-                  input.setAttribute("expandClassName", expandClassName);
-                  input.setAttribute("collapseClassName", collapseClassName);
+					input.addClass(data.expandClassName);
                 }
                 
-                input.setAttribute("useAlternatingClasses", useAlternatingClasses);
-                input.setAttribute("targetElementId", targetElementId);
-				input.setAttribute("visibilityState", "closed");
-                $addHandler(input, "click", DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility);
-                
-                
-                if (eventSourceElementId == "")
-                {
-                  DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.callBaseMethod(this, "render", [input]);
-                }              
+				input.bind('click', 
+					data,
+					DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility );
+			
+                DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.callBaseMethod(this, "render", input.get(0));
             }            
         }                
         // END: render
 }
 
-DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility = function(sender)
+DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.toggleVisibility = function(e)
 {
-    var iconObject = sender.target;
-    if (iconObject.getAttribute("targetElementId") == null) return;
+    var iconObject = jQuery(e.target);
+    if (e.data.targetElement.length == 0) return;
 
-    var toolbox = $get(iconObject.getAttribute("targetElementId"));
-    var visibilityState = iconObject.getAttribute("visibilityState");
-    var expandClassName = iconObject.getAttribute("expandClassName");
-    var collapseClassName = iconObject.getAttribute("collapseClassName");
-    var useAlternatingClasses = iconObject.getAttribute("useAlternatingClasses");
-   
-   
-    if (useAlternatingClasses == "true")
+    if (e.data.useAlternatingClasses == "true")
     {
-      if (visibilityState == "closed")
-      {
-          iconObject.className = collapseClassName;
-          toolbox.style.display = "block";
-		  iconObject.setAttribute("visibilityState", "open");
-      }
-      else
-      {
-          iconObject.className = expandClassName;
-          toolbox.style.display = "none";
-		  iconObject.setAttribute("visibilityState", "closed");
-      }
-    }
-    else
-    {
-		if (visibilityState == "closed")
+		if (e.data.targetElement.is(":visible"))
 		{
-			toolbox.style.display = "block";
+			iconObject
+				.removeClass(e.data.collapseClassName)
+				.addClass(e.data.expandClassName);
 		}
 		else
 		{
-			toolbox.style.display = "none";
+			iconObject
+				.removeClass(e.data.expandClassName)
+				.addClass(e.data.collapseClassName);
 		}
     }
+	
+	if (jQuery.isFunction(e.data.toggleFunction))
+	{
+		e.data.toggleFunction(e);
+	}
+	
 }
+
+DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.animate = function(e){
+	e.data.targetElement.toggle();
+}
+
 DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.inheritsFrom(DotNetNuke.UI.WebControls.Widgets.BaseWidget);
 DotNetNuke.UI.WebControls.Widgets.VisibilityWidget.registerClass("DotNetNuke.UI.WebControls.Widgets.VisibilityWidget", DotNetNuke.UI.WebControls.Widgets.BaseWidget);
 DotNetNuke.UI.WebControls.Widgets.renderWidgetType("DotNetNuke.UI.WebControls.Widgets.VisibilityWidget");
