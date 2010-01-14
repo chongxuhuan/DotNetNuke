@@ -164,7 +164,7 @@ Namespace DotNetNuke.Services.FileSystem
         Public Function GetMappedDirectory(ByVal VirtualDirectory As String) As String
             Dim MappedDir As String = Convert.ToString(DataCache.GetCache("DirMap:" + VirtualDirectory))
             Try
-                If MappedDir = "" Then
+                If MappedDir = "" AndAlso Not HttpContext.Current Is Nothing Then
                     MappedDir = FileSystemUtils.AddTrailingSlash(HttpContext.Current.Server.MapPath(VirtualDirectory))
                     DataCache.SetCache("DirMap:" + VirtualDirectory, MappedDir)
                 End If

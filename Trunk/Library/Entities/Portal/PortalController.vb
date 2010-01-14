@@ -1573,6 +1573,7 @@ Namespace DotNetNuke.Entities.Portals
                     objTab = tabPair.Value
                     'soft delete Tab
                     objTab.TabName = objTab.TabName & "_old"
+                    objTab.TabPath = GenerateTabPath(objTab.ParentId, objTab.TabName)
                     objTab.IsDeleted = True
                     objTabs.UpdateTab(objTab)
                     'Delete all Modules

@@ -35,7 +35,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Provider.AspNetProvider.xml</DocumentationFile>
     <BaseAddress>1025835008</BaseAddress>
     <ConfigurationOverrideFile>
@@ -54,7 +54,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Provider.AspNetProvider.xml</DocumentationFile>
     <BaseAddress>1025835008</BaseAddress>
     <ConfigurationOverrideFile>
@@ -98,7 +98,7 @@
       <Name>Provider.Membership.DataProvider</Name>
       <Project>{B15A45FA-02F8-4F09-A04B-13B7920CABCE}</Project>
       <Package>{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</Package>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +132,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <Extension>zip</Extension>
+    <DNNFileName>AspNetMembershipProvider</DNNFileName>
+    <PackageName>AspNetMembershipProvider</PackageName>
+    <Providers>
+    </Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\MembershipProviderPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  </Target>
 </Project>

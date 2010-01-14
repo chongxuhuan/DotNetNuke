@@ -338,7 +338,7 @@ Namespace DotNetNuke.Services.Mail
                     smtpClient.Send(objMail)
                     SendMail = ""
                 Catch exc As SmtpFailedRecipientException
-                    SendMail = String.Format(Localize.GetString("FailedRecipient"), exc.FailedRecipient)
+                    SendMail = String.Format(Localize.GetString("FailedRecipient"), HttpContext.Current.Server.HtmlEncode(exc.FailedRecipient))
                     LogException(exc)
                 Catch exc As SmtpException
                     SendMail = Localize.GetString("SMTPConfigurationProblem")

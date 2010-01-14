@@ -372,6 +372,7 @@ Namespace DotNetNuke.Modules.Admin.Vendors
                             Custom.Clear()
                             Custom.Add(txtFirstName.Text)
                             Custom.Add(txtLastName.Text)
+                            Custom.Add(txtVendorName.Text)
 
                             strMessage = Mail.SendMail(PortalSettings.Email, txtEmail.Text, "", _
                                 Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_SUBJECT"), _

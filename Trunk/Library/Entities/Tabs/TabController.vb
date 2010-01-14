@@ -213,8 +213,7 @@ Namespace DotNetNuke.Entities.Tabs
             Dim returnTabs As New ArrayList()
             For Each kvp As KeyValuePair(Of Integer, TabInfo) In GetTabsByPortal(PortalId)
                 Dim objTab As TabInfo = kvp.Value
-
-                If objTab.TabName = TabName Then
+                If String.Compare(objTab.TabName, TabName, True) = 0 Then
                     returnTabs.Add(objTab)
                 End If
             Next

@@ -789,9 +789,8 @@ Namespace DotNetNuke.UI.WebControls
         ''' -----------------------------------------------------------------------------
         Protected Overrides Sub OnPreRender(ByVal e As EventArgs)
             'Generate Random Challenge Text
-            If Not Page.IsPostBack Then
-                _CaptchaText = GetNextCaptcha()
-            End If
+            _CaptchaText = GetNextCaptcha()
+
 
             'Enable Viewstate Encryption
             Page.RegisterRequiresViewStateEncryption()
@@ -821,6 +820,8 @@ Namespace DotNetNuke.UI.WebControls
             writer.AddAttribute(HtmlTextWriterAttribute.Border, "0")
             If ToolTip.Length > 0 Then
                 writer.AddAttribute(HtmlTextWriterAttribute.Alt, ToolTip)
+            Else
+                writer.AddAttribute(HtmlTextWriterAttribute.Alt, Localization.GetString("CaptchaAlt.Text", Localization.SharedResourceFile))
             End If
             writer.RenderBeginTag(HtmlTextWriterTag.Img)
             writer.RenderEndTag()

@@ -35,7 +35,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.DNNMenuNavigationProvider.xml</DocumentationFile>
     <BaseAddress>1759444992</BaseAddress>
     <ConfigurationOverrideFile>
@@ -54,7 +54,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.DNNMenuNavigationProvider.xml</DocumentationFile>
     <BaseAddress>1759444992</BaseAddress>
     <ConfigurationOverrideFile>
@@ -130,9 +130,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <Extension>zip</Extension>
+    <DNNFileName>DNNMenuNavigationProvider</DNNFileName>
+    <PackageName>DNNMenuNavigationProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\ProviderPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  </Target>
 </Project>

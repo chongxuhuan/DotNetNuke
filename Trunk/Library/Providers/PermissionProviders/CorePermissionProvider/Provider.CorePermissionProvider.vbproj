@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Provider.CorePermissionProvider.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
@@ -37,7 +37,7 @@
     <DefineTrace>true</DefineTrace>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Provider.CorePermissionProvider.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
@@ -81,11 +81,14 @@
     <Folder Include="My Project\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>CorePermissionProvider</DNNFileName>
+    <PackageName>CorePermissionProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\ProviderPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

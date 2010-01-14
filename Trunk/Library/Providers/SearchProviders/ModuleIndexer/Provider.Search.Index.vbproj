@@ -35,7 +35,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Search.Index.xml</DocumentationFile>
     <BaseAddress>797310976</BaseAddress>
     <ConfigurationOverrideFile>
@@ -54,7 +54,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Search.Index.xml</DocumentationFile>
     <BaseAddress>797310976</BaseAddress>
     <ConfigurationOverrideFile>
@@ -124,9 +124,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <Extension>zip</Extension>
+    <DNNFileName>SearchIndexProvider</DNNFileName>
+    <PackageName>SearchIndexProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\ProviderPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  </Target>
 </Project>

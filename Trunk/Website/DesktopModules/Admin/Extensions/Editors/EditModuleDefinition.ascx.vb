@@ -368,11 +368,15 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             cboOwner.Items.Clear()
             Dim arrFolders As String() = Directory.GetDirectories(Common.Globals.ApplicationMapPath & "\DesktopModules\")
             For Each strFolder As String In arrFolders
-                Dim item As New ListItem(strFolder.Replace(Path.GetDirectoryName(strFolder) & "\", ""))
-                If item.Value = selectedValue Then
-                    item.Selected = True
+                Dim files() As String = Directory.GetFiles(strFolder, "*.ascx")
+                'exclude module folders
+                If files.Length = 0 OrElse strFolder.ToLower = "admin" Then
+                    Dim item As New ListItem(strFolder.Replace(Path.GetDirectoryName(strFolder) & "\", ""))
+                    If item.Value = selectedValue Then
+                        item.Selected = True
+                    End If
+                    cboOwner.Items.Add(item)
                 End If
-                cboOwner.Items.Add(item)
             Next
             cboOwner.Items.Insert(0, New ListItem("<" & Services.Localization.Localization.GetString("Not_Specified", Services.Localization.Localization.SharedResourceFile) & ">", ""))
         End Sub

@@ -172,7 +172,7 @@
     <value>Name:</value>
   </data>
   <data name="plOwner1.Help" xml:space="preserve">
-    <value>Module Developers are encouraged to use a "unique" folder inside DesktopModules for all the development, to avoid potential clashes with other developers.  Select the folder you would like to use for your Module Development.</value>
+    <value>Module Developers are encouraged to use a "unique" folder inside DesktopModules for all the development, to avoid potential clashes with other developers.  Select the folder you would like to use for your Module Development. Note: Folders with user controls (.ascx files) and the core admin folder are excluded from this list.</value>
   </data>
   <data name="plOwner1.Text" xml:space="preserve">
     <value>Owner Folder:</value>
@@ -228,7 +228,7 @@
     <value>Folder Name:</value>
   </data>
   <data name="plOwner2.Help" xml:space="preserve">
-    <value>Enter a name for the new ownerfolder.</value>
+    <value>Enter a name for the new owner folder.</value>
   </data>
   <data name="plOwner2.Text" xml:space="preserve">
     <value>Folder Name:</value>

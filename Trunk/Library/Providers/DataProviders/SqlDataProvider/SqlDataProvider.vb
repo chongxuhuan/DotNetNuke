@@ -222,16 +222,30 @@ Namespace DotNetNuke.Data
         End Function
 
         Private Function GrantStoredProceduresPermission(ByVal Permission As String, ByVal LoginOrRole As String) As String
-      
             Dim SQL As String = String.Empty
             Dim Exceptions As String = String.Empty
-            If LoginOrRole.ToLower = "sa" OrElse LoginOrRole.ToLower = "dbo" Then
-                'sa and dbo user already has exceute rights and attempt to GRANT them errors out
-                Return Exceptions
-            End If
             Try
-                ' grant rights to a login or role for all stored procedures use SQL 2005 syntax
-                SQL += "GRANT EXECUTE TO [" & LoginOrRole & "]"
+                ' grant rights to a login or role for all stored procedures
+                SQL += "if exists (select * from dbo.sysusers where name='" & LoginOrRole & "')"
+                SQL += "  begin"
+                SQL += "    declare @exec nvarchar(2000) "
+                SQL += "    declare @name varchar(150) "
+                SQL += "    declare sp_cursor cursor for select o.name as name "
+                SQL += "    from dbo.sysobjects o "
+                SQL += "    where ( OBJECTPROPERTY(o.id, N'IsProcedure') = 1 or OBJECTPROPERTY(o.id, N'IsExtendedProc') = 1 or OBJECTPROPERTY(o.id, N'IsReplProc') = 1 ) "
+                SQL += "    and OBJECTPROPERTY(o.id, N'IsMSShipped') = 0 "
+                SQL += "    and o.name not like N'#%%' "
+                SQL += "    and (left(o.name,len('" & ObjectQualifier & "')) = '" & ObjectQualifier & "' or left(o.name,7) = 'aspnet_') "
+                SQL += "    open sp_cursor "
+                SQL += "    fetch sp_cursor into @name "
+                SQL += "    while @@fetch_status >= 0 "
+                SQL += "      begin"
+                SQL += "        select @exec = 'grant " & Permission & " on [' +  @name  + '] to [" & LoginOrRole & "]'"
+                SQL += "        execute (@exec)"
+                SQL += "        fetch sp_cursor into @name "
+                SQL += "      end "
+                SQL += "    deallocate sp_cursor"
+                SQL += "  end "
                 SqlHelper.ExecuteNonQuery(UpgradeConnectionString, CommandType.Text, SQL)
             Catch objException As SqlException
                 Exceptions += objException.ToString & vbCrLf & vbCrLf & SQL & vbCrLf & vbCrLf

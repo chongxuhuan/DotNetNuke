@@ -195,7 +195,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DeployModule">
+  <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
   </Target>
   <ProjectExtensions>
     <VisualStudio>
@@ -216,6 +216,13 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>dnn_HTML</DNNFileName>
+    <PackageName>HTML_Community</PackageName>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
   <Target Name="DeployModule">
     <CreateItem Include="*.ascx">
       <Output TaskParameter="Include" ItemName="MySourceFiles" />

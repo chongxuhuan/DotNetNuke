@@ -268,10 +268,10 @@
     <value>Select the default display mode for the Users Grid</value>
   </data>
   <data name="Security_CaptchaLogin.Text" xml:space="preserve">
-    <value>Use CAPTCHA For Login:</value>
+    <value>Use CAPTCHA For Associating Logins:</value>
   </data>
   <data name="Security_CaptchaLogin.Help" xml:space="preserve">
-    <value>Indicate whether this site should use CAPTCHA for Login</value>
+    <value>Indicate whether this site should use CAPTCHA for associating Logins e.g. openid, liveid, cardspace</value>
   </data>
   <data name="Security_CaptchaRegister.Text" xml:space="preserve">
     <value>Use CAPTCHA For Registration:</value>

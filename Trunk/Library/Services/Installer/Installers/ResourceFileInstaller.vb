@@ -311,13 +311,16 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Dim filePath As String = System.IO.Path.Combine(path, fileName)
 
                 Try
-                    Util.DeleteFile(filePath, PhysicalBasePath, Log)
+                    If DeleteFiles = True Then
+                        Util.DeleteFile(filePath, PhysicalBasePath, Log)
+                    End If
                 Catch ex As Exception
                     Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
                 End Try
             Next
-
-            Util.DeleteFile(Manifest, PhysicalBasePath, Log)
+            If DeleteFiles = True Then
+                Util.DeleteFile(Manifest, PhysicalBasePath, Log)
+            End If
         End Sub
 
 #End Region

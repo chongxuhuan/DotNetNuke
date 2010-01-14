@@ -1032,6 +1032,9 @@
   <data name="InvalidCaptcha.Text" xml:space="preserve">
     <value>Incorrect Security Code</value>
   </data>
+  <data name="CaptchaAlt.Text" xml:space="preserve">
+    <value>CAPTCHA image</value>
+  </data>
   <data name="PrivateConfirmationMessage.Text" xml:space="preserve">
     <value>&lt;b&gt;An e-mail with your details has been sent to the portal administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/b&gt;</value>
   </data>

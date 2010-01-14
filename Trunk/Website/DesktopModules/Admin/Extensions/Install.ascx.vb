@@ -524,10 +524,9 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' -----------------------------------------------------------------------------
         Protected Sub wizInstall_CancelButtonClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles wizInstall.CancelButtonClick
             Try
-                If Installer IsNot Nothing Then
-                    Installer.DeleteTempFolder()
+                If Not String.IsNullOrEmpty(TempInstallFolder) AndAlso Directory.Exists(TempInstallFolder) Then
+                    Directory.Delete(TempInstallFolder, True)
                 End If
-
                 'Redirect to Definitions page
                 Response.Redirect(ReturnURL(), True)
             Catch exc As Exception    'Module failed to load
