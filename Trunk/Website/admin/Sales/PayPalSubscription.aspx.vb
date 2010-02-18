@@ -73,7 +73,12 @@ Namespace DotNetNuke.Modules.Admin.Sales
 
                 If intUserID <> -1 And intRoleId <> -1 And strProcessorUserId <> "" Then
 
-                    strPayPalURL = "https://www.paypal.com/cgi-bin/webscr?"
+                    ' Sandbox mode
+                    If settings.ContainsKey("paypalsandbox") AndAlso Not String.IsNullOrEmpty(settings("paypalsandbox")) AndAlso settings("paypalsandbox") = "True" Then
+                        strPayPalURL = "https://www.sandbox.paypal.com/cgi-bin/webscr?"
+                    Else
+                        strPayPalURL = "https://www.paypal.com/cgi-bin/webscr?"
+                    End If
 
                     If Not Request.QueryString("cancel") Is Nothing Then
                         ' build the cancellation PayPal URL
@@ -144,21 +149,21 @@ Namespace DotNetNuke.Modules.Admin.Sales
                         End Try
 
                         ' Return URL
-                        If (settings.ContainsKey("paypalsubscriptionreturn") And Not String.IsNullOrEmpty(settings("paypalsubscriptionreturn"))) Then
+                        If settings.ContainsKey("paypalsubscriptionreturn") AndAlso Not String.IsNullOrEmpty(settings("paypalsubscriptionreturn")) Then
                             strPayPalURL += "&return=" & HTTPPOSTEncode(settings("paypalsubscriptionreturn"))
                         Else
                             strPayPalURL += "&return=" & HTTPPOSTEncode(AddHTTP(GetDomainName(Request)))
                         End If
 
                         ' Cancellation URL
-                        If (settings.ContainsKey("paypalsubscriptioncancelreturn") And Not String.IsNullOrEmpty(settings("paypalsubscriptioncancelreturn"))) Then
+                        If settings.ContainsKey("paypalsubscriptioncancelreturn") AndAlso Not String.IsNullOrEmpty(settings("paypalsubscriptioncancelreturn")) Then
                             strPayPalURL += "&cancel_return=" & HTTPPOSTEncode(settings("paypalsubscriptioncancelreturn"))
                         Else
                             strPayPalURL += "&cancel_return=" & HTTPPOSTEncode(AddHTTP(GetDomainName(Request)))
                         End If
 
                         ' Instant Payment Notification URL
-                        If (settings.ContainsKey("paypalsubscriptionnotifyurl") And Not String.IsNullOrEmpty(settings("paypalsubscriptionnotifyurl"))) Then
+                        If settings.ContainsKey("paypalsubscriptionnotifyurl") AndAlso Not String.IsNullOrEmpty(settings("paypalsubscriptionnotifyurl")) Then
                             strPayPalURL += "&notify_url=" & HTTPPOSTEncode(settings("paypalsubscriptionnotifyurl"))
                         Else
                             strPayPalURL += "&notify_url=" & HTTPPOSTEncode(AddHTTP(GetDomainName(Request)) & "/admin/Sales/PayPalIPN.aspx")
@@ -171,7 +176,7 @@ Namespace DotNetNuke.Modules.Admin.Sales
                     Response.Redirect(strPayPalURL, True)
                 Else
                     ' Cancellation URL
-                    If (settings.ContainsKey("paypalsubscriptioncancelreturn") And Not String.IsNullOrEmpty(settings("paypalsubscriptioncancelreturn"))) Then
+                    If settings.ContainsKey("paypalsubscriptioncancelreturn") AndAlso Not String.IsNullOrEmpty(settings("paypalsubscriptioncancelreturn")) Then
                         strPayPalURL = settings("paypalsubscriptioncancelreturn")
                     Else
                         strPayPalURL = AddHTTP(GetDomainName(Request))

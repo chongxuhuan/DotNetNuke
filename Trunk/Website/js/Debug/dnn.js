@@ -21,7 +21,7 @@ dnn.extend = function(dest, src)
 }
 	
 dnn.extend(dnn, {
-    apiversion: new Number('04.01'),
+    apiversion: new Number('04.02'),
     pns: '',
     ns: 'dnn',
     diagnostics: null,

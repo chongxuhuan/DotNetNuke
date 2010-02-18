@@ -27,6 +27,7 @@ Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Security.Permissions
+Imports System.Linq
 
 Namespace DotNetNuke.Modules.Admin.Tabs
 
@@ -79,12 +80,12 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     txtKeyWords.Text = objTab.KeyWords
                     ctlURL.Url = objTab.Url
                 End If
-				ctlIcon.Url = objTab.IconFile
-				ctlIconLarge.Url = objTab.IconFileLarge
-				If Not cboParentTab.Items.FindByValue(objTab.ParentId.ToString) Is Nothing Then
-					cboParentTab.ClearSelection()
-					cboParentTab.Items.FindByValue(objTab.ParentId.ToString).Selected = True
-				End If
+                ctlIcon.Url = objTab.IconFile
+                ctlIconLarge.Url = objTab.IconFileLarge
+                If Not cboParentTab.Items.FindByValue(objTab.ParentId.ToString) Is Nothing Then
+                    cboParentTab.ClearSelection()
+                    cboParentTab.Items.FindByValue(objTab.ParentId.ToString).Selected = True
+                End If
                 chkMenu.Checked = objTab.IsVisible
 
                 chkDisableLink.Checked = objTab.DisableLink
@@ -121,11 +122,11 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 ShowPermissions(Not objTab.IsSuperTab AndAlso TabPermissionController.CanAdminPage)
                 ctlAudit.Entity = objTab
 
-                
+
             End If
 
             ' copy page options
-            cboCopyPage.DataSource = GetTabs(True, False)
+            cboCopyPage.DataSource = GetTabs(True, False, False)
             cboCopyPage.DataBind()
             rowModules.Visible = False
         End Sub
@@ -164,9 +165,9 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
         Private Sub BindTabControls(ByVal objTab As TabInfo)
             If String.IsNullOrEmpty(strAction) OrElse strAction = "copy" Then
-                cboParentTab.DataSource = GetTabs(True, True)
+                cboParentTab.DataSource = GetTabs(True, True, False)
             Else
-                cboParentTab.DataSource = GetTabs(False, True)
+                cboParentTab.DataSource = GetTabs(False, True, True)
             End If
             cboParentTab.DataBind()
 
@@ -316,7 +317,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             Next
         End Sub
 
-        Private Function GetTabs(ByVal includeCurrent As Boolean, ByVal includeURL As Boolean) As List(Of TabInfo)
+        Private Function GetTabs(ByVal includeCurrent As Boolean, ByVal includeURL As Boolean, ByVal includeParent As Boolean) As List(Of TabInfo)
             Dim noneSpecified As String = "<" + Localization.GetString("None_Specified") + ">"
             Dim tabs As New List(Of TabInfo)()
             Dim controller As New TabController
@@ -337,6 +338,12 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 GetHostTabs(tabs)
             Else
                 tabs = TabController.GetPortalTabs(PortalId, excludeTabId, PortalSecurity.IsInRole("Administrators"), noneSpecified, True, False, includeURL, False, True)
+                'Need to include the Parent Tab if its not already in the list of tabs
+                Dim parentTab = (From tab In tabs Select tab Where tab.TabID = PortalSettings.ActiveTab.ParentId).FirstOrDefault
+
+                If includeParent And Not PortalSettings.ActiveTab.ParentId = Null.NullInteger And parentTab Is Nothing Then
+                    tabs.Add(controller.GetTab(PortalSettings.ActiveTab.ParentId, PortalId, False))
+                End If
                 If Me.UserInfo.IsSuperUser And TabId = Null.NullInteger Then
                     GetHostTabs(tabs)
                 End If
@@ -441,7 +448,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In objModules.GetTabModules(TabID)
                 Dim objModule As ModuleInfo = kvp.Value
 
-                If ModulePermissionController.CanAdminModule(objModule) AndAlso Not objModule.IsDeleted AndAlso Not objModule.AllTabs Then
+                If TabPermissionController.CanAddContentToPage() AndAlso Not objModule.IsDeleted AndAlso Not objModule.AllTabs Then
                     arrModules.Add(objModule)
                 End If
             Next

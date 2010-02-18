@@ -134,7 +134,7 @@ Namespace DotNetNuke.Entities.Modules
             oAppStartMessage.Attributes.Add("UserID", userID.ToString)
 
             'send it to occur on next App_Start Event
-            EventQueueController.SendMessage(oAppStartMessage, "Application_Start")
+            EventQueueController.SendMessage(oAppStartMessage, "Application_Start_FirstRequest")
         End Sub
 
         Private Shared Function DeserializeModule(ByVal nodeModule As XmlNode, ByVal nodePane As XmlNode, ByVal PortalId As Integer, ByVal TabId As Integer, ByVal ModuleDefId As Integer) As ModuleInfo
@@ -493,7 +493,9 @@ Namespace DotNetNuke.Entities.Modules
                 '    objModule.CacheMethod = Host.Host.ModuleCachingMethod
                 'End If
 
-                ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod).Remove(objModule.TabModuleID)
+                If HttpContext.Current IsNot Nothing Then
+                    ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod).Remove(objModule.TabModuleID)
+                End If
             Next
         End Sub
 

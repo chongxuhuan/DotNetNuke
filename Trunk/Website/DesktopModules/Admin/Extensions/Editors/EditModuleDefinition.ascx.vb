@@ -158,6 +158,12 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             End If
         End Sub
 
+        Private Function InvalidFilename(ByVal fileName As String) As Boolean
+            Dim invalidFilenameChars As New Regex("[" & Regex.Escape(System.IO.Path.GetInvalidFileNameChars) & "]")
+            Return invalidFilenameChars.IsMatch(fileName)
+        End Function
+
+
         Private Function CreateControl(ByVal controlSrc As String) As String
 
             Dim folder As String = FileSystemUtils.RemoveTrailingSlash(GetSourceFolder())
@@ -189,7 +195,8 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             If cboModule.SelectedValue <> "" Then
                 strClass += cboModule.SelectedValue
             End If
-            Return strClass
+            'return class and remove any spaces that might appear in folder structure
+            Return strClass.Replace(" ", "")
         End Function
         Private Function GetSourceFolder() As String
             Dim strFolder As String = Null.NullString
@@ -277,7 +284,6 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 objModuleControl.SupportsPartialRendering = False
 
                 ModuleControlController.AddModuleControl(objModuleControl)
-
             Catch exc As Exception
                 LogException(exc)
                 DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Services.Localization.Localization.GetString("ImportControl.ErrorMessage", Me.LocalResourceFile), DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
@@ -463,6 +469,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     cmdAddModule.Visible = False
                     rowFile1.Visible = False
                     rowFile2.Visible = False
+                    rowLang.Visible = False
                     rowName.Visible = False
                     rowDescription.Visible = False
                     rowSource.Visible = False
@@ -475,6 +482,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     cmdAddModule.Visible = True
                     rowFile1.Visible = False
                     rowFile2.Visible = True
+                    rowLang.Visible = True
                     rowName.Visible = True
                     rowDescription.Visible = True
                     rowSource.Visible = False
@@ -487,6 +495,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     cmdAddModule.Visible = False
                     rowFile1.Visible = True
                     rowFile2.Visible = False
+                    rowLang.Visible = False
                     rowName.Visible = True
                     rowDescription.Visible = True
                     rowSource.Visible = False
@@ -499,6 +508,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     cmdAddModule.Visible = True
                     rowFile1.Visible = True
                     rowFile2.Visible = False
+                    rowLang.Visible = False
                     rowName.Visible = True
                     rowDescription.Visible = True
                     rowSource.Visible = False
@@ -511,6 +521,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     cmdAddModule.Visible = False
                     rowFile1.Visible = True
                     rowFile2.Visible = False
+                    rowLang.Visible = False
                     rowName.Visible = False
                     rowDescription.Visible = False
                     rowSource.Visible = False
@@ -562,30 +573,62 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 Select Case cboCreate.SelectedValue
                     Case ""
                     Case "New"
-                        If Not String.IsNullOrEmpty(rblLanguage.SelectedValue) Then
-                            If Not String.IsNullOrEmpty(cboModule.SelectedValue) Then
-                                Dim controlSrc As String = txtFile.Text
-                                If Not controlSrc.EndsWith(".ascx") Then
-                                    controlSrc += ".ascx"
-                                End If
+                        If String.IsNullOrEmpty(cboModule.SelectedValue) Then
+                            strMessage = Localization.GetString("ModuleFolder", Me.LocalResourceFile)
+                            Exit Select
+                        End If
 
-                                'First create the control
-                                strMessage = CreateControl(controlSrc)
-                                If String.IsNullOrEmpty(strMessage) Then
-                                    'Next import the control
-                                    moduleDefinition = ImportControl(controlSrc)
-                                End If
-                            Else
-                                strMessage = Localization.GetString("ModuleFolder", Me.LocalResourceFile)
-                            End If
-                        Else
+                        If String.IsNullOrEmpty(rblLanguage.SelectedValue) Then
                             strMessage = Localization.GetString("LanguageError", Me.LocalResourceFile)
+                            Exit Select
+                        End If
+
+                        'remove spaces so file is created correctly
+                        Dim controlSrc As String = txtFile.Text.Replace(" ", "")
+                        If InvalidFilename(controlSrc) Then
+                            strMessage = Localization.GetString("InvalidFilename", Me.LocalResourceFile)
+                            Exit Select
+                        End If
+
+                        If String.IsNullOrEmpty(controlSrc) Then
+                            strMessage = Localization.GetString("MissingControl", Me.LocalResourceFile)
+                            Exit Select
+                        End If
+                        If String.IsNullOrEmpty(txtName.Text) Then
+                            strMessage = Localization.GetString("MissingFriendlyname", Me.LocalResourceFile)
+                            Exit Select
+                        End If
+                        If Not controlSrc.EndsWith(".ascx") Then
+                            controlSrc += ".ascx"
+                        End If
+
+                        Dim uniqueName As Boolean = True
+                        Dim packages As List(Of PackageInfo) = New List(Of PackageInfo)
+                        For Each package As PackageInfo In PackageController.GetPackages()
+                            If package.Name = txtName.Text OrElse package.FriendlyName = txtName.Text Then
+                                uniqueName = False
+                                Exit For
+                            End If
+                        Next
+
+                        If uniqueName = False Then
+                            strMessage = Localization.GetString("NonuniqueName", Me.LocalResourceFile)
+                            Exit Select
+                        End If
+                        'First create the control
+                        strMessage = CreateControl(controlSrc)
+                        If String.IsNullOrEmpty(strMessage) Then
+                            'Next import the control
+                            moduleDefinition = ImportControl(controlSrc)
                         End If
                     Case "Control"
                         moduleDefinition = ImportControl(cboFile.SelectedValue)
                     Case "Template"
                     Case "Manifest"
-                        moduleDefinition = ImportManifest()
+                        If String.IsNullOrEmpty(cboFile.SelectedValue) Then
+                            strMessage = Localization.GetString("MissingManifest", Me.LocalResourceFile)
+                            Exit Select
+                        End If
                 End Select
 
                 If moduleDefinition Is Nothing Then

@@ -38,7 +38,7 @@
 	<tr id="rowModule2" runat="server" visible="false">
 		<td class="SubHead" style="width:175px"><dnn:label id="plModule2" runat="server" controlname="txtModule" /></td>
 		<td style="width:575px">
-            <asp:TextBox ID="txtModule" Runat="server" CssClass="NormalTextBox" MaxLength="255" Width="300"/>&nbsp;&nbsp;
+            <asp:TextBox ID="txtModule" Runat="server" CssClass="NormalTextBox" MaxLength="255" Width="300" ValidationGroup="first"/>&nbsp;&nbsp; 
             <dnn:commandbutton cssclass="CommandButton" id="cmdSaveModule" resourcekey="cmdSave" runat="server" ImageUrl="~/images/save.gif"/>
             <dnn:commandbutton cssclass="CommandButton" id="cmdCancelModule" resourcekey="cmdCancel" runat="server" ImageUrl="~/images/lt.gif"/>
         </td>
@@ -50,12 +50,17 @@
        </td>
     </tr>
 	<tr id="rowFile2" runat="server" visible="false">
-        <td class="SubHead" style="width:175px" valign="top"><dnn:label id="plFile2" controlname="txtFile" runat="server" /></td>
+        <td class="SubHead" style="width:175px" valign="top"><dnn:label id="plLang" controlname="rblLanguage" runat="server" /></td>
         <td valign="top" style="width:575px">
             <asp:RadioButtonList ID="rblLanguage" runat="server" RepeatDirection="Horizontal">
                 <asp:ListItem Value="C#" resourcekey="CSharp" />
                 <asp:ListItem Value="VB" resourcekey="VisualBasic" />
             </asp:RadioButtonList>
+       </td>
+    </tr>
+    <tr id="rowLang" runat="server" visible="false">
+        <td class="SubHead" style="width:175px" valign="top"><dnn:label id="plFile2" controlname="txtFile" runat="server" /></td>
+        <td valign="top" style="width:575px">
             <asp:TextBox ID="txtFile" Runat="server" CssClass="NormalTextBox" MaxLength="255" Width="300"/>&nbsp;&nbsp;
        </td>
     </tr>

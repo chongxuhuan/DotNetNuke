@@ -191,7 +191,7 @@ Namespace DotNetNuke.UI.WebControls
 
         Protected ReadOnly Property PortalId() As Integer
             Get
-
+                Return PortalSettings.Current.PortalId
             End Get
         End Property
 

@@ -496,6 +496,39 @@ Namespace DotNetNuke.Common.Utilities
             End If
         End Function
 
+        ''' <summary>
+        ''' The MapPath method maps the specified relative or virtual path to the corresponding physical directory on the server.
+        ''' </summary>
+        ''' <param name="path">Specifies the relative or virtual path to map to a physical directory. If Path starts with either 
+        ''' a forward (/) or backward slash (\), the MapPath method returns a path as if Path were a full, virtual path. If Path 
+        ''' doesn't start with a slash, the MapPath method returns a path relative to the directory of the .asp file being processed</param>
+        ''' <returns></returns>
+        ''' <remarks>If path is a null reference (Nothing in Visual Basic), then the MapPath method returns the full physical path 
+        ''' of the directory that contains the current application</remarks>
+        Public Shared Function MapPath(ByVal path As String) As String
+            Dim convertedPath As String = path
+            If ApplicationPath.Length > 1 AndAlso convertedPath.StartsWith(ApplicationPath) Then
+                convertedPath = convertedPath.Substring(ApplicationPath.Length)
+            End If
+            convertedPath = convertedPath.Replace("/", "\")
+
+            If path.StartsWith("~") Or path.StartsWith(".") Or path.StartsWith("/") Then
+                Dim appMapPath As String = DotNetNuke.Common.Globals.ApplicationMapPath
+                If convertedPath.Length > 1 Then
+                    convertedPath = String.Concat(AddTrailingSlash(DotNetNuke.Common.Globals.ApplicationMapPath), convertedPath.Substring(1))
+                Else
+                    convertedPath = DotNetNuke.Common.Globals.ApplicationMapPath
+                End If
+            End If
+            convertedPath = System.IO.Path.GetFullPath(convertedPath)
+
+            If Not convertedPath.StartsWith(DotNetNuke.Common.Globals.ApplicationMapPath) Then
+                Throw New System.Web.HttpException()
+            End If
+
+            Return convertedPath
+        End Function
+
 #End Region
 
 #Region "Public Methods"
@@ -1522,7 +1555,7 @@ Namespace DotNetNuke.Common.Utilities
 				Dim objPortalController As New PortalController
 				Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
 				Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
-				Dim sourceFolderName As String = GetSubFolderPath(fileName, settings.PortalId)
+                Dim sourceFolderName As String = GetSubFolderPath(fileName, FolderPortalId)
 				Dim sourceFileName As String = GetFileName(fileName)
 				Dim folder As FolderInfo = objFolderController.GetFolder(FolderPortalId, sourceFolderName, False)
 				Dim file As DotNetNuke.Services.FileSystem.FileInfo = objFileController.GetFile(sourceFileName, FolderPortalId, folder.FolderID)

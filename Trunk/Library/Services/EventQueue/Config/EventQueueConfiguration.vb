@@ -94,6 +94,16 @@ Namespace DotNetNuke.Services.EventQueue.Config
 
         End Sub
 
+        Private Shared Sub RegisterEventSubscription(ByVal config As EventQueueConfiguration, ByVal eventname As String, ByVal subscriber As SubscriberInfo)
+            Dim e As New PublishedEvent
+            e.EventName = eventname
+            e.Subscribers = subscriber.ID
+            config.PublishedEvents.Add(e.EventName, e)
+            If Not config.EventQueueSubscribers.ContainsKey(subscriber.ID) Then
+                config.EventQueueSubscribers.Add(subscriber.ID, subscriber)
+            End If
+        End Sub
+
         Private Function Serialize() As String
             Dim settings As New XmlWriterSettings()
             settings.ConformanceLevel = ConformanceLevel.Document
@@ -155,15 +165,15 @@ Namespace DotNetNuke.Services.EventQueue.Config
                     config.Deserialize(FileSystemUtils.ReadFile(filePath))
                 Else
                     'make a default config file
-                    Dim si As New SubscriberInfo("DNN Core")
-                    Dim e As New PublishedEvent
-                    e.EventName = "Application_Start"
-                    e.Subscribers = si.ID
                     config = New EventQueueConfiguration
                     config.PublishedEvents = New Dictionary(Of String, PublishedEvent)
-                    config.PublishedEvents.Add(e.EventName, e)
                     config.EventQueueSubscribers = New Dictionary(Of String, SubscriberInfo)
-                    config.EventQueueSubscribers.Add(si.ID, si)
+
+                    Dim subscriber As New SubscriberInfo("DNN Core")
+
+                    RegisterEventSubscription(config, "Application_Start", subscriber)
+                    RegisterEventSubscription(config, "Application_Start_FirstRequest", subscriber)
+
                     Dim oStream As StreamWriter = File.CreateText(filePath)
                     oStream.WriteLine(config.Serialize())
                     oStream.Close()

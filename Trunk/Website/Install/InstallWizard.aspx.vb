@@ -374,6 +374,8 @@ Namespace DotNetNuke.Services.Install
                     lblPermissionsError.Text = LocalizeString("PermissionsError").Replace("{0}", ApplicationMapPath)
                 End If
             End If
+
+
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -474,7 +476,7 @@ Namespace DotNetNuke.Services.Install
                 usrHost.Email = superUser.Email
             End If
 
-            ShowButton(customButton, True)
+            'ShowButton(customButton, True)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -1062,16 +1064,15 @@ Namespace DotNetNuke.Services.Install
                 trIntegrated.Visible = Not isOracle
                 trUser.Visible = Not chkIntegrated.Checked OrElse isOracle
                 trPassword.Visible = Not chkIntegrated.Checked OrElse isOracle
-
+                If isSQLDb Then
+                    chkOwner.Enabled = True
+                Else
+                    chkOwner.Enabled = False
+                End If
                 chkOwner.Checked = (Config.GetDataBaseOwner() = "dbo.")
                 txtqualifier.Text = Config.GetObjectQualifer()
-
-                ShowButton(customButton, True)
-                EnableButton(nextButton, True)
             Else
                 tblDatabase.Visible = False
-                customButton.Visible = False
-                EnableButton(nextButton, False)
             End If
         End Sub
 
@@ -1100,9 +1101,6 @@ Namespace DotNetNuke.Services.Install
                     lblPermissionsError.Text = ""
                 Case 1
                     lblDataBaseError.Text = ""
-
-                    'Page 1 Permissions
-                    ShowButton(customButton, True)
                 Case 2
                     lblPermissionsError.Text = ""
 
@@ -1196,6 +1194,10 @@ Namespace DotNetNuke.Services.Install
                 If Not String.IsNullOrEmpty(txtDatabase.Text) And Not isSQLFile Then
                     builder("Initial Catalog") = txtDatabase.Text
                 End If
+                If String.IsNullOrEmpty(txtDatabase.Text) And Not isSQLFile Then
+                    lblDataBaseError.Text = LocalizeString("DbNameError")
+                    Return False
+                End If
                 If Not String.IsNullOrEmpty(txtFile.Text) And isSQLFile Then
                     builder("attachdbfilename") = "|DataDirectory|" + txtFile.Text
                 End If
@@ -1261,11 +1263,14 @@ Namespace DotNetNuke.Services.Install
 
                 If strMessage <> "" Then
                     lblHostUserError.Text = String.Format(LocalizeString("SMTPError"), String.Format(LocalizeString("EmailErrorMessage"), strMessage))
+                    Return False
                 Else
                     lblHostUserError.Text = String.Format(LocalizeString("SMTPSuccess"), LocalizeString("EmailSentMessage"))
+                    Return True
                 End If
             Else
                 lblHostUserError.Text = String.Format(LocalizeString("SMTPError"), LocalizeString("SpecifyHostEmailMessage"))
+                Return False
             End If
         End Function
 
@@ -1674,13 +1679,12 @@ Namespace DotNetNuke.Services.Install
 
             Select Case wizInstall.ActiveStepIndex
                 Case 1
-                    'Page 1 - Permissions
-                    Dim customButton As LinkButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton")
-                    customButton.Text = "<img src=""" + ApplicationPath + "/images/icon_filemanager_16px.gif"" border=""0"" /> " + LocalizeString("TestPerm")
+                    'Page 1 - File Permissions
+                    BindPermissions(True)
                 Case 2
-                    'Page 2 - Database
-                    Dim customButton As LinkButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton")
-                    customButton.Text = "<img src=""" + ApplicationPath + "/images/icon_sql_16px.gif"" border=""0"" /> " + LocalizeString("TestDB")
+                    ''Page 2 - Database
+                    'Dim customButton As LinkButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton")
+                    'customButton.Text = "<img src=""" + ApplicationPath + "/images/icon_sql_16px.gif"" border=""0"" /> " + LocalizeString("TestDB")
                 Case 4
                     'Page 4 - SMTP Settings
                     Dim customButton As LinkButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton")
@@ -1753,17 +1757,28 @@ Namespace DotNetNuke.Services.Install
         ''' -----------------------------------------------------------------------------
         Protected Sub wizInstall_CustomButtonClick(ByVal sender As Object, ByVal e As System.EventArgs)
 
-            Select Case wizInstall.ActiveStepIndex
-                Case 1
-                    'Page 1 - File Permissions
-                    BindPermissions(True)
-                Case 2
-                    'Page 2 - Database Connection String
-                    TestDatabaseConnection()
-                Case 4
-                    'Page 4 - SMTP Server
-                    TestSMTPSettings()
-            End Select
+            'Select Case wizInstall.ActiveStepIndex
+            '    Case 1
+            '        'Page 1 - File Permissions
+            '        BindPermissions(True)
+            '        If Not PermissionsValid Then
+            '            Dim customButton As LinkButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton")
+            '            customButton.Text = "<img src=""" + ApplicationPath + "/images/icon_filemanager_16px.gif"" border=""0"" /> " + LocalizeString("TestPerm")
+            '            ShowButton(GetWizardButton("StepNavigationTemplateContainerID", "CustomButton"), True)
+            '            EnableButton(GetWizardButton("StepNavigationTemplateContainerID", "StepNextButton"), False)
+            '        Else
+            '            ShowButton(GetWizardButton("StepNavigationTemplateContainerID", "CustomButton"), False)
+            '            EnableButton(GetWizardButton("StepNavigationTemplateContainerID", "StepNextButton"), True)
+            '        End If
+            '    Case 2
+            '        'Page 2 - Database Connection String
+            '        If TestDatabaseConnection() Then
+            '            EnableButton(GetWizardButton("StepNavigationTemplateContainerID", "StepNextButton"), True)
+            '        End If
+            '    Case 4
+            '        'Page 4 - SMTP Server
+            '        TestSMTPSettings()
+            'End Select
         End Sub
 
         Protected Sub wizInstall_FinishButtonClick(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.WizardNavigationEventArgs) Handles wizInstall.FinishButtonClick
@@ -1823,6 +1838,7 @@ Namespace DotNetNuke.Services.Install
 
                         'Get Base DatabaseVersion
                         GetBaseDataBaseVersion()
+
                     Else
                         e.Cancel = True
                     End If
@@ -1831,6 +1847,13 @@ Namespace DotNetNuke.Services.Install
                     e.Cancel = Not TestDataBaseInstalled()
                 Case 4
                     'Page 4 - Host User
+                    'Check if SMTP needs to be tested
+                    If Not txtSMTPServer.Text = String.Empty Then
+                        If Not TestSMTPSettings() Then
+                            e.Cancel = True
+                            Return
+                        End If
+                    End If
                     e.Cancel = Not InstallHost()
                 Case 5
                     'Page 5 - Modules

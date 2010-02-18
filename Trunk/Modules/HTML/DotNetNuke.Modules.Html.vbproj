@@ -195,8 +195,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
-  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
@@ -223,14 +221,18 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="DeployModule">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageModule">
+  </Target>
+  <Target Name="DebugProvider">
     <CreateItem Include="*.ascx">
       <Output TaskParameter="Include" ItemName="MySourceFiles" />
     </CreateItem>
     <CreateItem Include="App_LocalResources\*.resx">
       <Output TaskParameter="Include" ItemName="MyLocalResourceFilesFiles" />
     </CreateItem>
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\DotNetNuke.Modules.Html.dll" DestinationFolder="..\..\Website\bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="@(MySourceFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
     <Copy SourceFiles="@(MyLocalResourceFilesFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML\App_LocalResources" />
   </Target>

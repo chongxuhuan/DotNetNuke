@@ -220,7 +220,7 @@ Namespace DotNetNuke.Services.Mail
                 If myAtt <> "" Then attachments.Add(New Attachment(myAtt))
             Next
 
-            Return SendMail(MailFrom, MailTo, Cc, Bcc, MailFrom, Priority, Subject, BodyFormat, BodyEncoding, Body, attachments, _
+            Return SendMail(MailFrom, MailTo, Cc, Bcc, ReplyTo, Priority, Subject, BodyFormat, BodyEncoding, Body, attachments, _
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 

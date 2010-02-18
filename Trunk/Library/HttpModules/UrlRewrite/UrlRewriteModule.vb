@@ -546,6 +546,13 @@ Namespace DotNetNuke.HttpModules
                 HttpContext.Current.Server.Transfer(strURL)
             End If
 
+            If app.Context.Items("FirstRequest") IsNot Nothing Then
+                app.Context.Items.Remove("FirstRequest")
+
+                'Process any messages in the EventQueue for the Application_Start_FirstRequest event
+                DotNetNuke.Services.EventQueue.EventQueueController.ProcessMessages("Application_Start_FirstRequest")
+            End If
+
         End Sub
 
         Public Sub Dispose() Implements IHttpModule.Dispose

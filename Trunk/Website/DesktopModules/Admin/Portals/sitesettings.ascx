@@ -191,6 +191,18 @@
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plPassword" runat="server" ControlName="txtPassword" /></td>
                                     <td class="NormalTextBox" valign="top" style="width:450px"><asp:TextBox ID="txtPassword" CssClass="NormalTextBox" runat="server" style="width:450px" MaxLength="50" TextMode="Password" /></td>
                                 </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plPayPaylReturnURL" runat="server" ControlName="txtPayPaylReturnURL" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:TextBox ID="txtPayPalReturnURL" CssClass="NormalTextBox" runat="server" style="width:450px" MaxLength="255" /></td>
+                                </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plPayPaylCancelURL" runat="server" ControlName="txtPayPaylCancelURL" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:TextBox ID="txtPayPalCancelURL" CssClass="NormalTextBox" runat="server" style="width:450px" MaxLength="255" /></td>
+                                </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plPayPalSandboxEnabled" runat="server" ControlName="chkPayPalSandboxEnabled" /></td>
+                                    <td class="NormalTextBox" valign="top"><asp:CheckBox ID="chkPayPalSandboxEnabled" runat="server" /></td>
+                                </tr>
                             </table>
                             <br/>
                             <dnn:SectionHead ID="dshUsability" CssClass="Head" runat="server" Text="Usability Settings" Section="tblUsability" ResourceKey="Usability" IsExpanded="False" />

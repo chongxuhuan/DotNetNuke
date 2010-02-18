@@ -461,7 +461,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Test Database Connection</value>
   </data>
   <data name="TestPerm.Text" xml:space="preserve">
-    <value>Test Permissions</value>
+    <value>Retest Permissions</value>
   </data>
   <data name="Title.Text" xml:space="preserve">
     <value>DotNetNuke Installation Wizard</value>
@@ -596,5 +596,8 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
   </data>
   <data name="InstallFailed.Text" xml:space="preserve">
     <value>Failure installing Database Scripts</value>
+  </data>
+  <data name="DbNameError.Text" xml:space="preserve">
+    <value>&lt;b&gt;&lt;font color='red'&gt;You must enter the name of the database.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
 </root>

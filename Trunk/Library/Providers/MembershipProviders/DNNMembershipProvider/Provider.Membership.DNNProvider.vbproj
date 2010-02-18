@@ -139,4 +139,9 @@
   <Import Project="..\..\..\..\BuildScripts\MembershipProviderPackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
   </Target>
+  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
+  </Target>
 </Project>

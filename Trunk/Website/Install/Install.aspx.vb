@@ -44,7 +44,7 @@ Namespace DotNetNuke.Services.Install
             Response.Write("<h2>Execute Scripts Status Report</h2>")
             Response.Flush()
 
-            Dim strProviderPath As String = DataProvider.Instance().GetProviderPath()
+            Dim strProviderPath As String = DotNetNuke.Data.DataProvider.Instance().GetProviderPath()
             If Not strProviderPath.StartsWith("ERROR:") Then
                 Services.Upgrade.Upgrade.ExecuteScripts(strProviderPath)
             End If
@@ -84,7 +84,7 @@ Namespace DotNetNuke.Services.Install
                 HtmlUtils.WriteHeader(Response, "install")
 
                 ' get path to script files
-                Dim strProviderPath As String = DataProvider.Instance().GetProviderPath()
+                Dim strProviderPath As String = DotNetNuke.Data.DataProvider.Instance().GetProviderPath()
                 If Not strProviderPath.StartsWith("ERROR:") Then
 
                     Response.Write("<h2>Version: " & FormatVersion(DotNetNukeContext.Current.Application.Version) & "</h2>")
@@ -128,12 +128,12 @@ Namespace DotNetNuke.Services.Install
             Response.Flush()
 
             ' get path to script files
-            Dim strProviderPath As String = DataProvider.Instance().GetProviderPath()
+            Dim strProviderPath As String = DotNetNuke.Data.DataProvider.Instance().GetProviderPath()
             If Not strProviderPath.StartsWith("ERROR:") Then
                 Dim strDatabaseVersion As String
 
                 ' get current database version
-                Dim dr As IDataReader = DataProvider.Instance().GetDataBaseVersion
+                Dim dr As IDataReader = DotNetNuke.Data.DataProvider.Instance().GetDataBaseVersion
                 If dr.Read Then
                     'Call Upgrade with the current DB Version to upgrade an
                     'existing DNN installation
@@ -170,7 +170,7 @@ Namespace DotNetNuke.Services.Install
                         Response.Write("<br><br>")
                         Response.Write("<h2>Upgrade Status Report</h2>")
                         Response.Flush()
-                        Services.Upgrade.Upgrade.UpgradeDNN(strProviderPath, DataProvider.Instance().GetVersion)
+                        Services.Upgrade.Upgrade.UpgradeDNN(strProviderPath, DotNetNuke.Data.DataProvider.Instance().GetVersion)
 
                         'Install optional resources if present
                         Upgrade.Upgrade.InstallPackages("Module", True)
@@ -277,12 +277,12 @@ Namespace DotNetNuke.Services.Install
 
         Private Sub NoUpgrade()
             ' get path to script files
-            Dim strProviderPath As String = DataProvider.Instance().GetProviderPath()
+            Dim strProviderPath As String = DotNetNuke.Data.DataProvider.Instance().GetProviderPath()
             If Not strProviderPath.StartsWith("ERROR:") Then
                 Dim strDatabaseVersion As String
                 ' get current database version
                 Try
-                    Dim dr As IDataReader = DataProvider.Instance().GetDataBaseVersion
+                    Dim dr As IDataReader = DotNetNuke.Data.DataProvider.Instance().GetDataBaseVersion
                     If dr.Read Then
                         'Write out Header
                         HtmlUtils.WriteHeader(Response, "none")

@@ -791,7 +791,6 @@ Namespace DotNetNuke.UI.WebControls
             'Generate Random Challenge Text
             _CaptchaText = GetNextCaptcha()
 
-
             'Enable Viewstate Encryption
             Page.RegisterRequiresViewStateEncryption()
 

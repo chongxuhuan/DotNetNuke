@@ -184,6 +184,9 @@ Namespace DotNetNuke.Common
                     'Process any messages in the EventQueue for the Application_Start event
                     EventQueue.EventQueueController.ProcessMessages("Application_Start")
 
+                    'Set Flag so we can determine the first Page Request after Application Start
+                    app.Context.Items.Add("FirstRequest", True)
+
                     'Log Server information
                     ServerController.UpdateServerActivity(New ServerInfo())
                 End If

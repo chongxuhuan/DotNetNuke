@@ -153,14 +153,14 @@
   <data name="plDescription.Text" xml:space="preserve">
     <value>Description:</value>
   </data>
-  <data name="plFile1.help" xml:space="preserve">
+  <data name="plFile1.Help" xml:space="preserve">
     <value>Select the resource to use to create your module.</value>
   </data>
   <data name="plFile1.Text" xml:space="preserve">
     <value>Resource:</value>
   </data>
   <data name="plModule1.Help" xml:space="preserve">
-    <value>Select the folder you would like to use for your module.  You can create a new folder by selecting the Add Folder button.</value>
+    <value>This is the folder where your module files and folders are populated.</value>
   </data>
   <data name="plModule1.Text" xml:space="preserve">
     <value>Module Folder:</value>
@@ -169,7 +169,7 @@
     <value>Enter a Friendly Name for your module.</value>
   </data>
   <data name="plName.Text" xml:space="preserve">
-    <value>Name:</value>
+    <value>Module Name:</value>
   </data>
   <data name="plOwner1.Help" xml:space="preserve">
     <value>Module Developers are encouraged to use a "unique" folder inside DesktopModules for all the development, to avoid potential clashes with other developers.  Select the folder you would like to use for your Module Development. Note: Folders with user controls (.ascx files) and the core admin folder are excluded from this list.</value>
@@ -204,10 +204,10 @@
 &lt;/script&gt;</value>
   </data>
   <data name="plFile2.Help" xml:space="preserve">
-    <value>Enter a name for the new module control, and choose the language to  use.</value>
+    <value>Enter a name for the new module control</value>
   </data>
   <data name="plFile2.Text" xml:space="preserve">
-    <value>File Name/Language:</value>
+    <value>File Name:</value>
   </data>
   <data name="VisualBasic.Text" xml:space="preserve">
     <value>Visual Basic</value>
@@ -232,5 +232,29 @@
   </data>
   <data name="plOwner2.Text" xml:space="preserve">
     <value>Folder Name:</value>
+  </data>
+  <data name="plLang.Help" xml:space="preserve">
+    <value>Choose the language to  use.</value>
+  </data>
+  <data name="plLang.Text" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="ImportControl.ErrorMessage" xml:space="preserve">
+    <value>There was an error importing the module control, please see the event log for further details</value>
+  </data>
+  <data name="InvalidFilename.Text" xml:space="preserve">
+    <value>File names cannot contain invalid characters</value>
+  </data>
+  <data name="MissingControl.Text" xml:space="preserve">
+    <value>You must provide a file name for the module control</value>
+  </data>
+  <data name="MissingFriendlyname.Text" xml:space="preserve">
+    <value>You must provide a name for the module</value>
+  </data>
+  <data name="NonuniqueName.Text" xml:space="preserve">
+    <value>A package already exists with this name  - please provide an alternative Name</value>
+  </data>
+  <data name="MissingManifest.Text" xml:space="preserve">
+    <value>You must provide a mainfest file (.dnn or .dnn5 file)</value>
   </data>
 </root>

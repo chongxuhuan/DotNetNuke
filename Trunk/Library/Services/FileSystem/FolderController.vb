@@ -165,7 +165,7 @@ Namespace DotNetNuke.Services.FileSystem
             Dim MappedDir As String = Convert.ToString(DataCache.GetCache("DirMap:" + VirtualDirectory))
             Try
                 If MappedDir = "" AndAlso Not HttpContext.Current Is Nothing Then
-                    MappedDir = FileSystemUtils.AddTrailingSlash(HttpContext.Current.Server.MapPath(VirtualDirectory))
+                    MappedDir = FileSystemUtils.AddTrailingSlash(FileSystemUtils.MapPath(VirtualDirectory))
                     DataCache.SetCache("DirMap:" + VirtualDirectory, MappedDir)
                 End If
             Catch exc As Exception
@@ -176,7 +176,7 @@ Namespace DotNetNuke.Services.FileSystem
 
         Public Sub SetMappedDirectory(ByVal VirtualDirectory As String)
             Try
-                Dim MappedDir As String = FileSystemUtils.AddTrailingSlash(HttpContext.Current.Server.MapPath(VirtualDirectory))
+                Dim MappedDir As String = FileSystemUtils.AddTrailingSlash(FileSystemUtils.MapPath(VirtualDirectory))
                 DataCache.SetCache("DirMap:" + VirtualDirectory, MappedDir)
             Catch exc As Exception
                 LogException(exc)
@@ -185,7 +185,8 @@ Namespace DotNetNuke.Services.FileSystem
 
         Public Sub SetMappedDirectory(ByVal VirtualDirectory As String, ByVal context As HttpContext)
             Try
-                Dim MappedDir As String = FileSystemUtils.AddTrailingSlash(context.Server.MapPath(VirtualDirectory))
+                ' The logic here was updated to use the new FileSystemUtils.MapPath so that we have consistent behavior with other Overloads
+                Dim MappedDir As String = FileSystemUtils.AddTrailingSlash(FileSystemUtils.MapPath(VirtualDirectory))
                 DataCache.SetCache("DirMap:" + VirtualDirectory, MappedDir)
             Catch exc As Exception
                 LogException(exc)

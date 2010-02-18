@@ -1,0 +1,5 @@
+<MSDeploy.iisApp>
+	<iisapp path="DotNetNuke" />
+	<setAcl path="DotNetNuke" setAclAccess="Modify" />
+	<dbfullSql path="installSQL.sql" transacted="false" />
+</MSDeploy.iisApp>

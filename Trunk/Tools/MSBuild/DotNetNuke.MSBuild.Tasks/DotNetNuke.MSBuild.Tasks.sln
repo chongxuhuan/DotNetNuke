@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks", "DotNetNuke.MSBuild.Tasks.csproj", "{D9E0719E-A293-491A-B686-11D18E37097D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks.Tests", "DotNetNuke.MSBuild.Tasks.Tests\DotNetNuke.MSBuild.Tasks.Tests.csproj", "{9002299D-C200-43E3-AB37-3326C8AECBA0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F10F41E1-D852-426E-BECA-7871375128C7}"
+	ProjectSection(SolutionItems) = preProject
+		DotNetNuke.MSBuild.Tasks.vsmdi = DotNetNuke.MSBuild.Tasks.vsmdi
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = DotNetNuke.MSBuild.Tasks.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9002299D-C200-43E3-AB37-3326C8AECBA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9002299D-C200-43E3-AB37-3326C8AECBA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9002299D-C200-43E3-AB37-3326C8AECBA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9002299D-C200-43E3-AB37-3326C8AECBA0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -76,8 +76,9 @@ Namespace DotNetNuke.Services.ModuleCache
         Private Shared Function GetCacheFolder(ByVal portalId As Integer) As String
             Dim portalController As PortalController = New PortalController()
             Dim portalInfo As PortalInfo = portalController.GetPortal(portalId)
+
             Dim cacheFolder As String = String.Concat(portalInfo.HomeDirectoryMapPath(), "\Cache\Modules\")
-            If Not Directory.Exists(cacheFolder) Then
+            If Not Directory.Exists(cacheFolder) AndAlso Path.IsPathRooted(cacheFolder) Then
                 Directory.CreateDirectory(cacheFolder)
             End If
             Return cacheFolder

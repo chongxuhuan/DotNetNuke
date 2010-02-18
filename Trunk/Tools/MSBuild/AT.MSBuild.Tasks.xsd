@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/developer/msbuild/2003" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="Microsoft.Build.Commontypes.xsd" />
+	<xs:element name="IncrementBuildNumber" substitutionGroup="msb:Task">
+		<xs:annotation>
+			<xs:documentation>Increment version in exising file.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent mixed="false">
+				<xs:extension base="msb:TaskType">
+					<xs:attribute name="FilePath" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>Complete path to version file.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="UseVersion" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Replace existing version with given.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="AutoIncrementVersion" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>Auto increment existing version.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="UpdateFileVersion" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>Update AssemblyFileVersion.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShellCommand" substitutionGroup="msb:Task">
+		<xs:annotation>
+			<xs:documentation>Run any given shell command.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent mixed="false">
+				<xs:extension base="msb:TaskType">
+					<xs:attribute name="Command" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>Complete shell command.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="WaitCompletion" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>Wait for shell command to complete.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CreateVSTemplate" substitutionGroup="msb:Task">
+		<xs:annotation>
+			<xs:documentation>Create VS template file from any given directory.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent mixed="false">
+				<xs:extension base="msb:TaskType">
+					<xs:attribute name="RootPath" type="xs:string" use="required" />
+					<xs:attribute name="OutputPath" type="xs:string" />
+					<xs:attribute name="Name" type="xs:string" />
+					<xs:attribute name="Description" type="xs:string" />
+					<xs:attribute name="ProjectType" type="xs:string" />
+					<xs:attribute name="ProjectSubType" type="xs:string" />
+					<xs:attribute name="SortOrder" type="xs:string" />
+					<xs:attribute name="CreateNewFolder" type="xs:string" />
+					<xs:attribute name="DefaultName" type="xs:string" />
+					<xs:attribute name="ProvideDefaultName" type="xs:string" />
+					<xs:attribute name="PromptForSaveOnCreation" type="xs:string" />
+					<xs:attribute name="EnableEditOfLocationField" type="xs:string" />
+					<xs:attribute name="EnableLocationBrowseButton" type="xs:string" />
+					<xs:attribute name="LocationField" type="xs:string" />
+					<xs:attribute name="Icon" type="xs:string" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GetAbsolutePath" substitutionGroup="msb:Task">
+		<xs:annotation>
+			<xs:documentation>Combine relative path with root path and return absolute path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent mixed="false">
+				<xs:extension base="msb:TaskType">
+					<xs:attribute name="RootPath" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>Root path (one with drive latter). Generally $(MSBuildProjectDirectory) is used.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="RelativePath" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>Relative path.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="AbsolutePath" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>[Optional] [Output] Returened Absolute Path.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

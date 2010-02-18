@@ -1248,7 +1248,11 @@ Namespace DotNetNuke.Entities.Host
         ''' </history>
         Public Shared ReadOnly Property jQueryUrl() As String
             Get
-                Return GetHostSettingAsString("jQueryUrl", jQuery.DefaultHostedUrl)
+                If HttpContext.Current.Request.IsSecureConnection = True Then
+                    Return GetHostSettingAsString("jQueryUrl", jQuery.DefaultHostedUrl).Replace("http://", "https://")
+                Else
+                    Return GetHostSettingAsString("jQueryUrl", jQuery.DefaultHostedUrl)
+                End If
             End Get
         End Property
 

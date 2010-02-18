@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Checkout" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Checkout">
+    <Exec Command="svn cleanup C:\CCNet_Builds\GetLatest_Fortress\WorkingDirectory" />
+    <Exec Command="svn commit -m Fortress_Update C:\CCNet_Builds\GetLatest_Fortress\WorkingDirectory" />
+  </Target>
+</Project>

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -762,6 +762,133 @@ were corrected with each release.&lt;/p&gt;
 	&lt;li&gt;FileModuleCachingProvider 05.02.01&lt;/li&gt;
 	&lt;li&gt;MemoryModuleCachingProvider 05.02.01&lt;/li&gt;
 	&lt;li&gt;SchedulingProvider 05.02.01&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.02.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue where tabname lookup&amp;#39;s were case-sensitive and caused 
+	problems when loading controls.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Captcha control did not include a value for the Alt 
+	attribute.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the Create New Module wizard allowed the user to 
+	select an invalid &amp;#39;Owner&amp;#39; folder.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where uninstalling a module with &amp;#39;delete files&amp;#39; unchecked 
+	deletes the files anyway.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where GetMappedDirectory would log an exception during 
+	install.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the Starter kit was missing the HTML module.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the source package did not include the HTML module.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with missing databaseowner and objectqualifier tags in the 
+	5.2.1 SqlDataProvider script.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where portal templates ceased working in 5.2.1.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with page quotas where GetTabCount stored procedure had not 
+	been updated for localization changes introduced in 5.2.0.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Host email test fails but no email addresses are 
+	listed in the error message.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where temp files were left if extension installation was 
+	cancelled.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Captcha was not regenerated if login failed.&lt;/li&gt;
+	&lt;li&gt;Reverted syntax that grants stored procedure permissions to previous 
+	version, as GRANT EXECUTE TO was problematic on shared hosts.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where vendor registration email did not contain the vendor 
+	name.&lt;/li&gt;
+	&lt;li&gt;Added the ability to specify a custom animation function for the 
+	Visibility Widget.&lt;/li&gt;
+	&lt;li&gt;Updated title and help text to make optional for forcing a captcha for 
+	associating logins clearer.&lt;/li&gt;
+	&lt;li&gt;Added documentation to the Dynamic Module template that is displayed 
+	when a new module is created using the template.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;No modules or providers have been updated in the 5.2.2 packages.&lt;/p&gt;</value>
+  </data>
+  <data name="WhatsNew.05.02.03" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed the issue where LinkClick.aspx links were incorrect for child portals&lt;/li&gt;
+	&lt;li&gt;Fixed the issue with the PayPal URL settings.&lt;/li&gt;
+	&lt;li&gt;Fixed the issue with logging into the site on 1st page load after upgrade.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where hosted jQuery did not use the correct protocol when SSL 
+	enabled.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with inconsistent file/folder permissions tests. Test now runs 
+	when the page is shown and user cannot progress until tests pass.&lt;/li&gt;
+	&lt;li&gt;Fixed the issue with the SynchronizeModule in all install modes causing 
+	an object reference error.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where captcha control showed after succesful registration if 
+	the SMTP settings were not correct&lt;/li&gt;
+	&lt;li&gt;Fixed issue where error message failed to display if control was not created&lt;/li&gt;
+	&lt;li&gt;Fixed the issue where the Portal name was hard coded as &amp;#39;PortalName&amp;#39; when 
+	assigning modules to portals.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where security roles were not properly enforced between child 
+	portals.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where large/javascript heavy pages could suffer from an MS Ajax 
+	DeserializePrimitiveObject Invocation error&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the user is unable to change dbowner in the install wizard.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where spaces in control names caused error in new module control 
+	wizard&lt;/li&gt;
+	&lt;li&gt;Fixed issue with allowing a blank database name in Installation Wizard.&lt;/li&gt;
+	&lt;li&gt;Fixed the issue where the www. subdomain of a domain is not part of the 
+	portal aliases of a portal&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the Parent Tab was not showing in drop down if the user 
+	had no edit rights on it.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where list values in profile properties only work on Portal 
+	with PortalID=0&lt;/li&gt;
+	&lt;li&gt;Fixed issue when unzipping files in the Host File Manager&lt;/li&gt;
+	&lt;li&gt;Fixed issue where module message warning was not XHTML compliant&lt;/li&gt;
+	&lt;li&gt;Fixed the issue where sometimes there were event log errors during installation 
+	from importing HTML modules.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where installer feedback was not using passed parameter to output 
+	feeback messages&lt;/li&gt;
+	&lt;li&gt;Fixed issue with custom name space in Starter Kits.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where errors were logged during automated installs.&lt;/li&gt;
+	&lt;li&gt;Enhanced create new module form to split file language and file name onto 
+	seperate lines, and updated help text&lt;/li&gt;
+	&lt;li&gt;Fixed missing objectqualifer in dataprovider script which could fail to 
+	update installs without a default language&lt;/li&gt;
+	&lt;li&gt;Updated data provider reference to use fully qualified typename which could 
+	cause compilation issues with third party modules in some rare instances.&lt;/li&gt;
+	&lt;li&gt;Fixed validation error handling in new module wizard&lt;/li&gt;
+	&lt;li&gt;Updated text on create new module screen to clarify that make new folder 
+	is only available on &amp;quot;New&amp;quot; option&lt;/li&gt;
+	&lt;li&gt;Fixed issue where it was possible to create a module with a name or friendlyname 
+	the same as an existing package&lt;/li&gt;
+	&lt;li&gt;Fixed issue where invalid control name could crash New Module wizard&lt;/li&gt;
+	&lt;li&gt;Fixed the validation of Module Control Name when creating a new module manually.&lt;/li&gt;
+	&lt;li&gt;Enhanced New Module wizard to make friendly name a required field.&lt;/li&gt;
+	&lt;li&gt;When using the create new module you can specify a control with spaces e.g. 
+	&amp;quot;my control&amp;quot;. Whilst this is valid for a control definition, as that is used 
+	to create the file and also the inherits statement an error is caused as neither 
+	of support spaces. To resolve we added code to remove spaces from control names 
+	as they&amp;#39;re not allowed.&lt;/li&gt;
+	&lt;li&gt;Modified Install Wizard so that all tests must pass before installtion may 
+	proceed. Tests are conducted either on entering the page or on clicking the 
+	Next button.&lt;/li&gt;
+	&lt;li&gt;Updated layout and help text of the &amp;quot;Create New Module&amp;quot; form and added some 
+	code to remove spaces from module names to ensure only valid files are created.&lt;/li&gt;
+	&lt;li&gt;Added the ability to use the PayPal sandbox for validating PayPal configuration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno32/tabid/1507/Default.aspx"&gt;
+	User account escalation Vulnerability&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.2.0 packages. 
+Please see the specific project pages for notes on what bugs or enhancements were 
+corrected with each release. &lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Events Module 05.00.03&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
 </root>

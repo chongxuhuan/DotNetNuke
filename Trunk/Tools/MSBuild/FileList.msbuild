@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="BlankTarget">
+  <!-- Default excludes (excluded from all packages) -->
+  <ItemGroup>
+    <DefaultExclude Include="$(SourceFolder)Starter_Kit\**" />
+    <DefaultExclude Include="$(SourceFolder)Deploy\**" />
+    <DefaultExclude Include="$(SourceFolder)Symbols\**" />
+    <DefaultExclude Include="$(SourceFolder)Tools\**" />
+    <DefaultExclude Include="$(SourceFolder)Tests\**" />
+    <DefaultExclude Include="$(SourceFolder)Library\**\bin\**" Exclude="$(SourceFolder)**\MSAJAX\bin\**; $(SourceFolder)**\DataAccessBlock\bin\**; $(SourceFolder)**\SharpZipLib\bin\**; $(SourceFolder)**\DotNetNuke.WebControls\bin\**; $(SourceFolder)**\DotNetNuke.WebUtility\bin\**; $(SourceFolder)**\SolpartMenu\bin\**; $(SourceFolder)**\Ftb3HtmlEditorProvider\bin\FreeTextBox.dll; $(SourceFolder)Library\Providers\**\bin\*.*; $(SourceFolder)**\Telerik\bin\**" />
+    <DefaultExclude Include="$(SourceFolder)Website\bin\**\*.xml" />
+    <DefaultExclude Include="$(SourceFolder)Website\Documentation\*.doc" />
+    <DefaultExclude Include="$(SourceFolder)Website\bin\dotnetnuke.modules.*" />
+    <DefaultExclude Include="$(SourceFolder)Website\desktopmodules\html\**" />
+    <DefaultExclude Include="$(SourceFolder)**\obj\**" />
+    <DefaultExclude Include="$(SourceFolder)**\Release\**" Exclude="$(SourceFolder)**\*.js;" />
+    <DefaultExclude Include="$(SourceFolder)**\Debug\**" />
+    <DefaultExclude Include="$(SourceFolder)**\*.user" />
+    <DefaultExclude Include="$(SourceFolder)**\*.suo" />
+    <DefaultExclude Include="$(SourceFolder)**\thumbs.db" />
+    <DefaultExclude Include="$(SourceFolder)**\*.pdb" />
+    <DefaultExclude Include="$(SourceFolder)**\_sgvault\**" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for source package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <SourceExclude Include="$(SourceFolder)Website\web.config" />
+    <SourceExclude Include="$(SourceFolder)Website\bin\telerik.*" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for install package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <InstallExclude Include="$(SourceFolder)*.*" />
+    <InstallExclude Include="$(SourceFolder)Library\**" />
+    <InstallExclude Include="$(SourceFolder)**\*.build" />
+    <InstallExclude Include="$(SourceFolder)BuildScripts\**" />
+    <InstallExclude Include="$(SourceFolder)Modules\**" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for upgrade package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <UpgradeExclude Include="$(SourceFolder)BuildScripts\**" />
+    <UpgradeExclude Include="$(SourceFolder)Modules\**" />
+    <UpgradeExclude Include="$(SourceFolder)*.*" />
+    <UpgradeExclude Include="$(SourceFolder)**\System.Web.Extensions.dll;" />
+    <UpgradeExclude Include="$(SourceFolder)Library\**" />
+    <UpgradeExclude Include="$(SourceFolder)**\*.build" />
+    <UpgradeExclude Include="$(SourceFolder)Website\App_Data\Database.mdf" />
+    <UpgradeExclude Include="$(SourceFolder)Website\Install\Skin\*.zip" />
+    <UpgradeExclude Include="$(SourceFolder)Website\Install\Container\*.zip" />
+    <UpgradeExclude Include="$(SourceFolder)Website\web.config" />
+    <UpgradeExclude Include="$(SourceFolder)Website\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SourceZipFile Include="$(SourceFolder)**\*.*" Exclude="@(DefaultExclude); @(SourceExclude)" />
+  </ItemGroup>
+  <ItemGroup>
+    <InstallZipFile Include="$(SourceFolder)**\*.*" Exclude="@(DefaultExclude); @(InstallExclude)" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpgradeZipFile Include="$(SourceFolder)**\*.*" Exclude="@(DefaultExclude); @(UpgradeExclude)" />
+  </ItemGroup>
+  <Target Name="BlankTarget">
+    <!-- Blank Target just to satisfy MSBuild requirements. -->
+  </Target>
+</Project>

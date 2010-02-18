@@ -647,6 +647,8 @@ Namespace DotNetNuke.Modules.Admin.Users
         Protected Sub cmdRegister_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdRegister.Click
             If ((UseCaptcha AndAlso ctlCaptcha.IsValid) OrElse (Not UseCaptcha)) AndAlso _
                         ctlUser.IsValid AndAlso ((RequireProfile AndAlso ctlProfile.IsValid) OrElse (Not RequireProfile)) Then
+                'hide the succesful captcha
+                trCaptcha.Visible = False
                 'Call the Create User method of the User control so that it can create
                 'the user and raise the appropriate event(s)
                 ctlUser.CreateUser()

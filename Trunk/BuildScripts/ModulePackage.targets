@@ -8,13 +8,13 @@
                     XmlFileName="$(DNNFileName).dnn">
       <Output TaskParameter="Value" PropertyName="Version" />
     </XmlRead>
-    <CreateItem Include="*.dnn">
+    <CreateItem Include="$(DNNFileName).dnn">
       <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
     </CreateItem>
     <CreateItem Include="*.txt">
       <Output TaskParameter="Include" ItemName="PackageTextFiles" />
     </CreateItem>
-    <CreateItem Include="*.ascx">
+    <CreateItem Include="*.ascx;*.css">
       <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
     </CreateItem>
     <CreateItem Include="App_LocalResources\*.resx">
@@ -23,15 +23,43 @@
     <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
       <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
     </CreateItem>
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\DotNetNuke.Modules.Html.dll" DestinationFolder="..\..\Website\bin" />
+    <CreateItem Include="images\*.*">
+      <Output TaskParameter="Include" ItemName="MyImages" />
+    </CreateItem>
+    <CreateItem Include="js\*.js">
+      <Output TaskParameter="Include" ItemName="MyJsFiles" />
+    </CreateItem>
+    <CreateItem Include="keys\*.*">
+      <Output TaskParameter="Include" ItemName="MyKeys" />
+    </CreateItem>
+    <CreateItem Include="Documentation\*.*">
+      <Output TaskParameter="Include" ItemName="MyDocumentationFiles" />
+    </CreateItem>
+    <CreateItem Include="*.asmx">
+      <Output TaskParameter="Include" ItemName="MyWebServiceFiles" />
+    </CreateItem>
+    <ItemGroup>
+      <AssemblyExclude Include="$(MSBuildProjectDirectory)\bin\DotNetNuke.dll" />
+      <AssemblyExclude Include="$(MSBuildProjectDirectory)\bin\DotNetNuke.Professional.dll" />
+    </ItemGroup>
+    <CreateItem Include="$(MSBuildProjectDirectory)\bin\*.*" Exclude="@(AssemblyExclude)">
+      <Output TaskParameter="Include" ItemName="MyAssemblyFiles" />
+    </CreateItem>
+    <CreateItem Include="$(MSBuildProjectDirectory)\bin\*.dll" Exclude="@(AssemblyExclude)">
+      <Output TaskParameter="Include" ItemName="MyAssemblies" />
+    </CreateItem>
+    <Copy SourceFiles="@(MyAssemblyFiles)" DestinationFolder="..\..\Website\bin" />
+    <Copy SourceFiles="@(MyAssemblies)" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
     <Copy SourceFiles="@(PackageSourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
     <Copy SourceFiles="@(PackageSqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Providers\DataProviders\SqlDataProvider" />
     <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageTextFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="@(MyImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package\images" />
+    <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\js" />
+    <Copy SourceFiles="@(MyKeys)" DestinationFolder="$(MSBuildProjectDirectory)\Package\keys" />
+    <Copy SourceFiles="@(MyWebServiceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(MyDocumentationFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Documentation" />
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
     </CreateItem>

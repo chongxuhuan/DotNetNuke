@@ -150,8 +150,8 @@ Namespace DotNetNuke.HttpModules.Membership
                         ' get roles from UserRoles table
                         arrPortalRoles = objRoleController.GetRolesByUser(objUser.UserID, _portalSettings.PortalId)
 
-                        ' create a string to persist the roles
-                        Dim strPortalRoles As String = Join(arrPortalRoles, New Char() {";"c})
+                        ' create a string to persist the roles, attach a portalID so that cross-portal impersonation cannot occur
+                        Dim strPortalRoles As String = _portalSettings.PortalId & "!!" & Join(arrPortalRoles, New Char() {";"c})
 
                         ' create a cookie authentication ticket ( version, user name, issue time, expires every hour, don't persist cookie, roles )
                         Dim RolesTicket As New FormsAuthenticationTicket(1, Context.User.Identity.Name, CurrentDateTime, CurrentDateTime.AddHours(1), False, strPortalRoles)
@@ -174,9 +174,18 @@ Namespace DotNetNuke.HttpModules.Membership
                             Dim RoleTicket As FormsAuthenticationTicket = FormsAuthentication.Decrypt(Context.Request.Cookies("portalroles").Value)
 
                             If Not RoleTicket Is Nothing Then
-                                ' convert the string representation of the role data into a string array
-                                ' and store it in the Roles Property of the User
-                                objUser.Roles = RoleTicket.UserData.Split(";"c)
+                                ' get the role data and split it into portalid and a string array of role data
+                                Dim rolesdata As String = RoleTicket.UserData
+                                Dim mySplit() As Char = "!!".ToCharArray
+                                'need to use StringSplitOptions.None to preserve case where superuser has no roles
+                                Dim RolesParts As String() = rolesdata.Split(mySplit, StringSplitOptions.None)
+
+                                'if cookie is for a different portal than current force a refresh of roles else used cookie cached version
+                                If Convert.ToInt32(RolesParts(0)) <> _portalSettings.PortalId Then
+                                    objUser.Roles = objRoleController.GetRolesByUser(objUser.UserID, _portalSettings.PortalId)
+                                Else
+                                    objUser.Roles = RolesParts(2).Split(";"c)
+                                End If
                             Else
                                 objUser.Roles = objRoleController.GetRolesByUser(objUser.UserID, _portalSettings.PortalId)
                             End If

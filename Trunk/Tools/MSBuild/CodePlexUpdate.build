@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Compile" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <Target Name="Checkout">
+              <SvnCheckout RepositoryPath="https://dnnhelp.svn.codeplex.com/svn" 
+                           LocalPath="C:\CCNet_Builds\Update CodePlex\WorkingDirectory">      
+                <Output TaskParameter="Revision" PropertyName="Revision" />
+              </SvnCheckout>
+              <Message Text="Revision: $(Revision)"/>
+            </Target>
+</Project>

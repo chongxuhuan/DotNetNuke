@@ -239,7 +239,7 @@
                     <asp:Label ID="lblStep2Title" runat="server" /></h2>
                 <asp:Label ID="lblStep2Detail" runat="Server" />
                 <hr />
-                <table cellpadding="0" cellspacing="0" border="0">
+                <table cellpadding="0" cellspacing="5" border="0">
                     <tr>
                         <td class="NormalBold" style="width: 150px;">
                             <asp:Label ID="lblChooseDatabase" runat="server" />
@@ -251,7 +251,7 @@
                     </tr>
                 </table>
                 <br />
-                <table id="tblDatabase" runat="Server" visible="False" cellpadding="0" cellspacing="0"
+                <table id="tblDatabase" runat="Server" visible="False" cellpadding="5" cellspacing="0"
                     border="0">
                     <tr>
                         <td class="NormalBold" style="width: 150px;" height="30" valign="top">

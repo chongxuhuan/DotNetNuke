@@ -2,7 +2,7 @@
 var DNN_HIGHLIGHT_COLOR='#9999FF';var COL_DELIMITER=String.fromCharCode(18);var ROW_DELIMITER=String.fromCharCode(17);var QUOTE_REPLACEMENT=String.fromCharCode(19);var KEY_LEFT_ARROW=37;var KEY_UP_ARROW=38;var KEY_RIGHT_ARROW=39;var KEY_DOWN_ARROW=40;var KEY_RETURN=13;var KEY_ESCAPE=27;Type.registerNamespace('dnn');dnn.extend=function(dest,src)
 {for(s in src)
 dest[s]=src[s];return dest;}
-dnn.extend(dnn,{apiversion:new Number('04.01'),pns:'',ns:'dnn',diagnostics:null,vars:null,dependencies:new Array(),isLoaded:false,delay:[],_delayedSet:null,getVars:function()
+dnn.extend(dnn,{apiversion:new Number('04.02'),pns:'',ns:'dnn',diagnostics:null,vars:null,dependencies:new Array(),isLoaded:false,delay:[],_delayedSet:null,getVars:function()
 {if(this.vars==null)
 {var ctl=dnn.dom.getById('__dnnVariable');if(ctl.value.indexOf('`')==0)
 ctl.value=ctl.value.substring(1).replace(/`/g,'"');if(ctl.value.indexOf('__scdoff')!=-1)

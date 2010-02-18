@@ -286,7 +286,7 @@
     <value>Is Premium Module?</value>
   </data>
   <data name="ctlPortals_Available.Text" xml:space="preserve">
-    <value>Available</value>
+    <value>UnAssigned</value>
   </data>
   <data name="ctlPortals_Selected.Text" xml:space="preserve">
     <value>Assigned</value>

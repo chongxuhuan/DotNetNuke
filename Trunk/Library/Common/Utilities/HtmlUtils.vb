@@ -443,8 +443,8 @@ Namespace DotNetNuke.Common.Utilities
                     strMessage += "&nbsp;"
                 Next
                 strMessage += message
-                HttpContext.Current.Response.Write(strMessage)
-                HttpContext.Current.Response.Flush()
+                response.Write(strMessage)
+                response.Flush()
             End If
 
         End Sub

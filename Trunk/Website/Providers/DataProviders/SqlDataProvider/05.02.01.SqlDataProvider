@@ -200,7 +200,7 @@ WHILE @@FETCH_STATUS = 0
    BEGIN
 set @LanguageID=(select languageid from {databaseOwner}{objectQualifier}Languages where CultureCode=@DefaultLanguage)
 
-if  not exists(select * from PortalLanguages where PortalID=@PortalID) 
+if  not exists(select * from {databaseOwner}{objectQualifier}PortalLanguages where PortalID=@PortalID) 
 
 exec {databaseOwner}[{objectQualifier}AddPortalLanguage] @PortalId,@LanguageId,-1
 

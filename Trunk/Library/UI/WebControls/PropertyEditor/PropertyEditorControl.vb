@@ -826,7 +826,7 @@ Namespace DotNetNuke.UI.WebControls
             panel.Controls.Add(label)
 
             If GroupHeaderIncludeRule Then
-                panel.Controls.Add(New LiteralControl("<hr noshade size=""1""/>"))
+                panel.Controls.Add(New LiteralControl("<hr noshade=""noshade"" size=""1""/>"))
             End If
 
             Controls.Add(panel)

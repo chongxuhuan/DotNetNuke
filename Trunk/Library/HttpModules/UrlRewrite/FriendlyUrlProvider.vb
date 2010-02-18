@@ -263,12 +263,6 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             Dim matchString As String = ""
 
             If Not (portalAlias = Null.NullString) Then
-                'TODO: Revisit this commented code which converts all page URLs to relative URL.  This caused problems in some use-cases.
-                'If IsPagePath Then
-                '    matchString = AddHTTP(portalAlias)
-                '    Dim urlBase As New UriBuilder(matchString)
-                '    matchString = urlBase.Path
-                'Else
                 If Not (HttpContext.Current.Items("UrlRewrite:OriginalUrl") Is Nothing) Then
                     Dim originalUrl As String = HttpContext.Current.Items("UrlRewrite:OriginalUrl").ToString()
 
@@ -284,6 +278,24 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                         portalMatch = Regex.Match(originalUrl, "^?alias=" & portalAlias, RegexOptions.IgnoreCase)
                         If Not (portalMatch Is Match.Empty) Then
                             matchString = AddHTTP(portalAlias)
+                        End If
+                    End If
+
+                    If (matchString = "") Then
+                        'Manage the special case of child portals 
+                        'http://www.domain.com/child/default.aspx
+                        Dim tempurl As String = HttpContext.Current.Request.Url.Host & ResolveUrl(friendlyPath)
+                        If Not tempurl.Contains(portalAlias) Then
+                            matchString = AddHTTP(portalAlias)
+                        End If
+                    End If
+
+                    If (matchString = "") Then
+                        ' manage the case where the current hostname is www.domain.com and the portalalias is domain.com
+                        ' (this occurs when www.domain.com is not listed as portal alias for the portal, but domain.com is)
+                        portalMatch = Regex.Match(originalUrl, "^" & AddHTTP("www." & portalAlias), RegexOptions.IgnoreCase)
+                        If Not (portalMatch Is Match.Empty) Then
+                            matchString = AddHTTP("www." & portalAlias)
                         End If
                     End If
                 End If

@@ -358,6 +358,16 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     txtUserId.Text = objPortal.ProcessorUserId
                     txtPassword.Attributes.Add("value", objPortal.ProcessorPassword)
 
+                    ' use sandbox?
+                    Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", PortalId, "False"))
+                    chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
+
+                    ' return url after payment or on cancel
+                    Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", PortalId, Null.NullString)
+                    txtPayPalReturnURL.Text = strPayPalReturnURL
+                    Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", PortalId, Null.NullString)
+                    txtPayPalCancelURL.Text = strPayPalCancelURL
+
                     ' usability settings
                     chkInlineEditor.Checked = PortalSettings.InlineEditorEnabled
 
@@ -720,6 +730,10 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(intPortalId, "ControlPanelMode", optControlPanelMode.SelectedItem.Value, False)
                     PortalController.UpdatePortalSetting(intPortalId, "ControlPanelVisibility", optControlPanelVisibility.SelectedItem.Value, False)
                     PortalController.UpdatePortalSetting(intPortalId, "ControlPanelSecurity", optControlPanelSecurity.SelectedItem.Value, False)
+
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString, True)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, True)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, True)
 
                     If IsSuperUser() Then
                         PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False)

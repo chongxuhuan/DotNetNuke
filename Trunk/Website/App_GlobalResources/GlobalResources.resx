@@ -867,7 +867,7 @@ Website: [Custom:14]</value>
   <data name="EMAIL_VENDOR_REGISTRATION_BODY.Text" xml:space="preserve">
     <value>Dear [Custom:0] [Custom:1],
  
- [Custom:1], has been successfully registered at [Portal:PortalName].
+ [Custom:2], has been successfully registered at [Portal:PortalName].
  
  Thank you,
  

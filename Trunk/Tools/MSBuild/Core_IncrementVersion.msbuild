@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="IncrementVersion" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+	<Import Project="AT.MSBuild.Tasks.Targets" />
+
+	<PropertyGroup>
+		<DefaultVersion>05.00.00.00000</DefaultVersion>
+		<!-- Name of the directory where the packages are built (relatieve to working directory) -->
+		<SourceCompletePath>$(MSBuildProjectDirectory)\$(SourceFolder)</SourceCompletePath>
+		<!--SourceGear's Vault related properties-->
+		<VaultApp>$(ProgramFilesDir)\sourcegear\Fortress client\vault.exe</VaultApp>
+		<VaultCommonOptions>$(SGVaultOptions) Core_Development </VaultCommonOptions>
+		<VaultRepository> $/DotNetNuke_5_Maintenance</VaultRepository>
+	</PropertyGroup>
+	
+	<!-- Various Tasks Starts From Here-->
+	<Target Name="IncrementVersion">
+		<ShellCommand Command="$(VaultApp) SetWorkingFolder $(VaultCommonOptions) $(VaultRepository) $(SourceCompletePath)" WaitCompletion="True" />
+		<ShellCommand Command="$(VaultApp) CheckOut $(VaultCommonOptions) $(VaultRepository)/Library/AssemblyInfo.vb" WaitCompletion="True" />
+		<ShellCommand Command="$(VaultApp) CheckOut $(VaultCommonOptions) $(VaultRepository)/Website/App_Code/AssemblyInfo.vb" WaitCompletion="True" />
+		<IncrementBuildNumber Condition="'$(VersionType)'!= 'DefaultVersion'" FilePath="$(SourceCompletePath)\Library\AssemblyInfo.vb">
+			<Output TaskParameter="BuildVersion" PropertyName="BuildVersion">
+			</Output>
+			<Output TaskParameter="ReleaseVersion" PropertyName="ReleaseVersion">
+			</Output>
+		</IncrementBuildNumber>
+		<IncrementBuildNumber Condition="'$(VersionType)'== 'DefaultVersion'" FilePath="$(SourceCompletePath)\Library\AssemblyInfo.vb" UseVersion="$(DefaultVersion)">
+			<Output TaskParameter="BuildVersion" PropertyName="BuildVersion">
+			</Output>
+			<Output TaskParameter="ReleaseVersion" PropertyName="ReleaseVersion">
+			</Output>
+		</IncrementBuildNumber>
+		<IncrementBuildNumber FilePath="$(SourceCompletePath)\Website\App_Code\AssemblyInfo.vb" UseVersion="$(BuildVersion)" />
+		<ShellCommand Command="$(VaultApp) Checkin $(VaultCommonOptions) $(VaultRepository)/Library/AssemblyInfo.vb -comment 'CCNET'" WaitCompletion="True" />
+		<ShellCommand Command="$(VaultApp) Checkin $(VaultCommonOptions) $(VaultRepository)/Website/App_Code/AssemblyInfo.vb -comment 'CCNET'" WaitCompletion="True" />
+		<Message Text="New version : $(BuildVersion)" />
+	</Target>
+</Project>

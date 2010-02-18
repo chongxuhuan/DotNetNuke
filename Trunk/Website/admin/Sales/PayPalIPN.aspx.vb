@@ -18,6 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports System.Collections.Generic
 Imports System.Net
 Imports System.IO
 Imports DotNetNuke.Security.Roles
@@ -100,7 +101,17 @@ Namespace DotNetNuke.Modules.Admin.Sales
                 Next
                 ' postback to verify the source
                 If blnValid Then
-                    Dim objRequest As HttpWebRequest = CType(WebRequest.Create("https://www.paypal.com/cgi-bin/webscr"), HttpWebRequest)
+                    Dim settings As Dictionary(Of String, String) = PortalController.GetPortalSettingsDictionary(PortalSettings.PortalId)
+                    Dim strPayPalURL As String
+
+                    ' Sandbox mode
+                    If settings.ContainsKey("paypalsandbox") AndAlso Not String.IsNullOrEmpty(settings("paypalsandbox")) AndAlso settings("paypalsandbox") = "True" Then
+                        strPayPalURL = "https://www.sandbox.paypal.com/cgi-bin/webscr?"
+                    Else
+                        strPayPalURL = "https://www.paypal.com/cgi-bin/webscr?"
+                    End If
+
+                    Dim objRequest As HttpWebRequest = CType(WebRequest.Create(strPayPalURL), HttpWebRequest)
                     objRequest.Method = "POST"
                     objRequest.ContentLength = strPost.Length
                     objRequest.ContentType = "application/x-www-form-urlencoded"
