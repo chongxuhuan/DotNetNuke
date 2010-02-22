@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Checkout" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="Checkout">
-    <Exec Command="svn checkout https://dnnhelp.svn.codeplex.com/svn C:\CCNet_Builds\GetLatest_Fortress\WorkingDirectory" />
-  </Target>
-</Project>
