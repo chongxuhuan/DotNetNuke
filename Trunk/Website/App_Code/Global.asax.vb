@@ -82,6 +82,8 @@ Namespace DotNetNuke.Common
             ComponentFactory.InstallComponents(New ProviderInstaller("permissions", GetType(DotNetNuke.Security.Permissions.PermissionProvider)))
             ComponentFactory.InstallComponents(New ProviderInstaller("outputCaching", GetType(DotNetNuke.Services.OutputCache.OutputCachingProvider)))
             ComponentFactory.InstallComponents(New ProviderInstaller("moduleCaching", GetType(DotNetNuke.Services.ModuleCache.ModuleCachingProvider)))
+            ComponentFactory.InstallComponents(New ProviderInstaller("sitemap", GetType(DotNetNuke.Services.Sitemap.SitemapProvider)))
+
             Dim provider As DotNetNuke.Security.Permissions.PermissionProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of DotNetNuke.Security.Permissions.PermissionProvider)()
             If provider Is Nothing Then
                 ComponentFactory.RegisterComponentInstance(Of DotNetNuke.Security.Permissions.PermissionProvider)(New DotNetNuke.Security.Permissions.PermissionProvider())

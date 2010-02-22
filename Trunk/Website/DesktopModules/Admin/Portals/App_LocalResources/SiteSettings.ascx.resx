@@ -150,8 +150,8 @@
   <data name="plGUID.Help" xml:space="preserve">
     <value>The globally unique identifier which can be used to identify this portal.</value>
   </data>
-  <data name="Marketing.Text" xml:space="preserve">
-    <value>Site Marketing</value>
+  <data name="Submission.Text" xml:space="preserve">
+    <value>Site Submission</value>
   </data>
   <data name="plSearchEngine.Text" xml:space="preserve">
     <value>Search Engine:</value>

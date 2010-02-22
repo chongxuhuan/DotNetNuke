@@ -28,6 +28,7 @@ Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Security.Permissions
 Imports System.Linq
+Imports DotNetNuke.Entities.Content
 
 Namespace DotNetNuke.Modules.Admin.Tabs
 
@@ -48,6 +49,28 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 #Region "Private Members"
 
         Private strAction As String = ""
+        Private _Tab As TabInfo
+
+#End Region
+
+#Region "Protected Properties"
+
+        Protected ReadOnly Property Tab() As TabInfo
+            Get
+                If _Tab Is Nothing Then
+                    Select Case strAction
+                        Case "", "add", "copy"
+                            _Tab = New TabInfo()
+                            _Tab.TabID = Null.NullInteger
+                            _Tab.PortalID = PortalId
+                        Case Else
+                            Dim objTabs As New TabController
+                            _Tab = objTabs.GetTab(TabId, PortalId, False)
+                    End Select
+                End If
+                Return _Tab
+            End Get
+        End Property
 
 #End Region
 
@@ -64,71 +87,76 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         '''                       and localisation
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub BindData()
-            Dim objTabs As New TabController
-            Dim objTab As TabInfo = objTabs.GetTab(TabId, PortalId, False)
+        Private Sub BindTab()
 
-            'Load TabControls
-            BindTabControls(objTab)
+            If Not Page.IsPostBack Then
+                'Load TabControls
+                BindTabControls(Tab)
 
-            If Not objTab Is Nothing Then
+                If Not Tab Is Nothing Then
+                    If strAction <> "copy" Then
+                        txtTabName.Text = Tab.TabName
+                        txtTitle.Text = Tab.Title
+                        txtDescription.Text = Tab.Description
+                        txtKeyWords.Text = Tab.KeyWords
+                        ctlURL.Url = Tab.Url
+                    End If
+                    ctlIcon.Url = Tab.IconFile
+                    ctlIconLarge.Url = Tab.IconFileLarge
+                    If Not cboParentTab.Items.FindByValue(Tab.ParentId.ToString) Is Nothing Then
+                        cboParentTab.ClearSelection()
+                        cboParentTab.Items.FindByValue(Tab.ParentId.ToString).Selected = True
+                    End If
+                    chkMenu.Checked = Tab.IsVisible
 
-                If strAction <> "copy" Then
-                    txtTabName.Text = objTab.TabName
-                    txtTitle.Text = objTab.Title
-                    txtDescription.Text = objTab.Description
-                    txtKeyWords.Text = objTab.KeyWords
-                    ctlURL.Url = objTab.Url
+                    chkDisableLink.Checked = Tab.DisableLink
+                    If TabId = PortalSettings.AdminTabId OrElse TabId = PortalSettings.SplashTabId OrElse _
+                        TabId = PortalSettings.HomeTabId OrElse TabId = PortalSettings.LoginTabId OrElse _
+                        TabId = PortalSettings.UserTabId OrElse TabId = PortalSettings.SuperTabId Then
+                        chkDisableLink.Enabled = False
+                    End If
+
+                    ctlSkin.SkinSrc = Tab.SkinSrc
+                    ctlContainer.SkinSrc = Tab.ContainerSrc
+
+                    If PortalSettings.SSLEnabled Then
+                        chkSecure.Enabled = True
+                        chkSecure.Checked = Tab.IsSecure
+                    Else
+                        chkSecure.Enabled = False
+                        chkSecure.Checked = Tab.IsSecure
+                    End If
+                    txtPriority.Text = Tab.SiteMapPriority.ToString()
+                    If Not Null.IsNull(Tab.StartDate) Then
+                        txtStartDate.Text = Tab.StartDate.ToShortDateString
+                    End If
+                    If Not Null.IsNull(Tab.EndDate) Then
+                        txtEndDate.Text = Tab.EndDate.ToShortDateString
+                    End If
+                    If Tab.RefreshInterval <> Null.NullInteger Then
+                        txtRefreshInterval.Text = Tab.RefreshInterval.ToString
+                    End If
+
+                    txtPageHeadText.Text = Tab.PageHeadText
+                    chkPermanentRedirect.Checked = Tab.PermanentRedirect
+
+                    ShowPermissions(Not Tab.IsSuperTab AndAlso TabPermissionController.CanAdminPage)
+                    ctlAudit.Entity = Tab
+
+                    termsSelector.PortalId = Tab.PortalID
+                    termsSelector.Terms = Tab.Terms
+                    termsSelector.DataBind()
                 End If
-                ctlIcon.Url = objTab.IconFile
-                ctlIconLarge.Url = objTab.IconFileLarge
-                If Not cboParentTab.Items.FindByValue(objTab.ParentId.ToString) Is Nothing Then
-                    cboParentTab.ClearSelection()
-                    cboParentTab.Items.FindByValue(objTab.ParentId.ToString).Selected = True
-                End If
-                chkMenu.Checked = objTab.IsVisible
 
-                chkDisableLink.Checked = objTab.DisableLink
-                If TabId = PortalSettings.AdminTabId OrElse TabId = PortalSettings.SplashTabId OrElse _
-                    TabId = PortalSettings.HomeTabId OrElse TabId = PortalSettings.LoginTabId OrElse _
-                    TabId = PortalSettings.UserTabId OrElse TabId = PortalSettings.SuperTabId Then
-                    chkDisableLink.Enabled = False
+                If strAction = "" OrElse strAction = "add" OrElse strAction = "copy" Then
+                    InitializeTab()
                 End If
 
-                ctlSkin.SkinSrc = objTab.SkinSrc
-                ctlContainer.SkinSrc = objTab.ContainerSrc
-
-                If PortalSettings.SSLEnabled Then
-                    chkSecure.Enabled = True
-                    chkSecure.Checked = objTab.IsSecure
-                Else
-                    chkSecure.Enabled = False
-                    chkSecure.Checked = objTab.IsSecure
-                End If
-                txtPriority.Text = objTab.SiteMapPriority.ToString()
-                If Not Null.IsNull(objTab.StartDate) Then
-                    txtStartDate.Text = objTab.StartDate.ToShortDateString
-                End If
-                If Not Null.IsNull(objTab.EndDate) Then
-                    txtEndDate.Text = objTab.EndDate.ToShortDateString
-                End If
-                If objTab.RefreshInterval <> Null.NullInteger Then
-                    txtRefreshInterval.Text = objTab.RefreshInterval.ToString
-                End If
-
-                txtPageHeadText.Text = objTab.PageHeadText
-                chkPermanentRedirect.Checked = objTab.PermanentRedirect
-
-                ShowPermissions(Not objTab.IsSuperTab AndAlso TabPermissionController.CanAdminPage)
-                ctlAudit.Entity = objTab
-
-
+                ' copy page options
+            	cboCopyPage.DataSource = GetTabs(True, False, False)
+                cboCopyPage.DataBind()
+                rowModules.Visible = False
             End If
-
-            ' copy page options
-            cboCopyPage.DataSource = GetTabs(True, False, False)
-            cboCopyPage.DataBind()
-            rowModules.Visible = False
         End Sub
 
         Private Sub BindBeforeAfterTabControls()
@@ -364,26 +392,10 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub InitializeTab()
-            'Load TabControls
-            BindTabControls(Nothing)
-
-            ' Populate Tab Names, etc.
-            txtTabName.Text = ""
-            txtTitle.Text = ""
-            txtDescription.Text = ""
-            txtKeyWords.Text = ""
-            chkMenu.Checked = True
-            txtPriority.Text = (0.5F).ToString
-
-            BindBeforeAfterTabControls()
-
             If Not cboPositionTab.Items.FindByValue(TabId.ToString) Is Nothing Then
                 cboPositionTab.ClearSelection()
                 cboPositionTab.Items.FindByValue(TabId.ToString).Selected = True
             End If
-
-            ' hide the upload new file link until the tab has been saved
-            chkDisableLink.Checked = False
 
             cboFolders.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString("None_Specified") + ">", "-"))
             Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalId, False, False, "READ, WRITE")
@@ -401,13 +413,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     LoadTemplates()
                 End If
             Next
-
-            ShowPermissions(TabPermissionController.CanAdminPage)
-
-            ' copy page options
-            cboCopyPage.DataSource = TabController.GetPortalTabs(PortalId, Null.NullInteger, True, "<" + Services.Localization.Localization.GetString("None_Specified") + ">", True, False, False, True, False)
-            cboCopyPage.DataBind()
-            rowModules.Visible = False
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -498,15 +503,13 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             strIconLarge = ctlIconLarge.Url
 
             Dim objTabs As New TabController
-            Dim objTab As New TabInfo
 
-            objTab.TabID = TabId
-            objTab.TabName = txtTabName.Text
-            objTab.Title = txtTitle.Text
-            objTab.Description = txtDescription.Text
-            objTab.KeyWords = txtKeyWords.Text
-            objTab.IsVisible = chkMenu.Checked
-            objTab.DisableLink = chkDisableLink.Checked
+            Tab.TabName = txtTabName.Text
+            Tab.Title = txtTitle.Text
+            Tab.Description = txtDescription.Text
+            Tab.KeyWords = txtKeyWords.Text
+            Tab.IsVisible = chkMenu.Checked
+            Tab.DisableLink = chkDisableLink.Checked
 
             Dim parentTab As TabInfo = Nothing
             If cboParentTab.SelectedItem IsNot Nothing Then
@@ -516,41 +519,44 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             End If
 
             If parentTab IsNot Nothing Then
-                objTab.PortalID = parentTab.PortalID
-                objTab.ParentId = parentTab.TabID
-                objTab.Level = parentTab.Level + 1
+                Tab.PortalID = parentTab.PortalID
+                Tab.ParentId = parentTab.TabID
+                Tab.Level = parentTab.Level + 1
             Else
                 If strAction = "edit" AndAlso TabId = PortalSettings.SuperTabId Then
-                    objTab.PortalID = Null.NullInteger
+                    Tab.PortalID = Null.NullInteger
                 Else
-                    objTab.PortalID = PortalId
+                    Tab.PortalID = PortalId
                 End If
-                objTab.ParentId = Null.NullInteger
-                objTab.Level = 0
+                Tab.ParentId = Null.NullInteger
+                Tab.Level = 0
             End If
-            objTab.IconFile = strIcon
-            objTab.IconFileLarge = strIconLarge
-            objTab.IsDeleted = False
-            objTab.Url = ctlURL.Url
+            Tab.IconFile = strIcon
+            Tab.IconFileLarge = strIconLarge
+            Tab.IsDeleted = False
+            Tab.Url = ctlURL.Url
 
-            objTab.TabPermissions.Clear()
-            If objTab.PortalID <> Null.NullInteger Then
-                objTab.TabPermissions.AddRange(dgPermissions.Permissions)
+            Tab.TabPermissions.Clear()
+            If Tab.PortalID <> Null.NullInteger Then
+                Tab.TabPermissions.AddRange(dgPermissions.Permissions)
             End If
 
-            objTab.SkinSrc = ctlSkin.SkinSrc
-            objTab.ContainerSrc = ctlContainer.SkinSrc
-            objTab.TabPath = GenerateTabPath(objTab.ParentId, objTab.TabName)
+            Tab.Terms.Clear()
+            Tab.Terms.AddRange(termsSelector.Terms)
+
+            Tab.SkinSrc = ctlSkin.SkinSrc
+            Tab.ContainerSrc = ctlContainer.SkinSrc
+            Tab.TabPath = GenerateTabPath(Tab.ParentId, Tab.TabName)
 
             'Check for invalid 
-            If Regex.IsMatch(objTab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase) Then
+            If Regex.IsMatch(Tab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase) Then
                 Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabName", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Return Null.NullInteger
             End If
 
             'Validate Tab Path
             If String.IsNullOrEmpty(strAction) Then
-                Dim tabID As Integer = TabController.GetTabByTabPath(objTab.PortalID, objTab.TabPath)
+                Dim tabID As Integer = TabController.GetTabByTabPath(Tab.PortalID, Tab.TabPath)
 
                 If tabID <> Null.NullInteger Then
                     Dim existingTab As TabInfo = objTabs.GetTab(tabID, PortalId, False)
@@ -565,61 +571,61 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             End If
 
             If txtStartDate.Text <> "" Then
-                objTab.StartDate = Convert.ToDateTime(txtStartDate.Text)
+                Tab.StartDate = Convert.ToDateTime(txtStartDate.Text)
             Else
-                objTab.StartDate = Null.NullDate
+                Tab.StartDate = Null.NullDate
             End If
             If txtEndDate.Text <> "" Then
-                objTab.EndDate = Convert.ToDateTime(txtEndDate.Text)
+                Tab.EndDate = Convert.ToDateTime(txtEndDate.Text)
             Else
-                objTab.EndDate = Null.NullDate
+                Tab.EndDate = Null.NullDate
             End If
-            If objTab.StartDate > Null.NullDate AndAlso objTab.EndDate > Null.NullDate AndAlso objTab.StartDate.AddDays(1) >= objTab.EndDate Then
+            If Tab.StartDate > Null.NullDate AndAlso Tab.EndDate > Null.NullDate _
+                            AndAlso Tab.StartDate.AddDays(1) >= Tab.EndDate Then
                 Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabDates", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Return Null.NullInteger
             End If
             If txtRefreshInterval.Text.Length > 0 AndAlso IsNumeric(txtRefreshInterval.Text) Then
-                objTab.RefreshInterval = Convert.ToInt32(txtRefreshInterval.Text)
+                Tab.RefreshInterval = Convert.ToInt32(txtRefreshInterval.Text)
             End If
 
-
-            objTab.SiteMapPriority = Single.Parse(txtPriority.Text)
-            objTab.PageHeadText = txtPageHeadText.Text
-            objTab.IsSecure = chkSecure.Checked
-            objTab.PermanentRedirect = chkPermanentRedirect.Checked
+            Tab.SiteMapPriority = Single.Parse(txtPriority.Text)
+            Tab.PageHeadText = txtPageHeadText.Text
+            Tab.IsSecure = chkSecure.Checked
+            Tab.PermanentRedirect = chkPermanentRedirect.Checked
 
             If strAction = "edit" Then
                 ' trap circular tab reference
-                If cboParentTab.SelectedItem IsNot Nothing AndAlso objTab.TabID <> Int32.Parse(cboParentTab.SelectedItem.Value) _
+                If cboParentTab.SelectedItem IsNot Nothing AndAlso Tab.TabID <> Int32.Parse(cboParentTab.SelectedItem.Value) _
                                     AndAlso Not IsCircularReference(Int32.Parse(cboParentTab.SelectedItem.Value)) Then
-                    objTabs.UpdateTab(objTab)
-                    If Me.IsHostMenu AndAlso objTab.PortalID <> Null.NullInteger Then
+                    objTabs.UpdateTab(Tab)
+                    If Me.IsHostMenu AndAlso Tab.PortalID <> Null.NullInteger Then
                         'Host Tab moved to Portal so clear Host cache
                         objTabs.ClearCache(Null.NullInteger)
                     End If
-                    If Not Me.IsHostMenu AndAlso objTab.PortalID = Null.NullInteger Then
+                    If Not Me.IsHostMenu AndAlso Tab.PortalID = Null.NullInteger Then
                         'Portal Tab moved to Host so clear portal cache
                         objTabs.ClearCache(PortalId)
                     End If
-                    UpdateTabSettings(objTab.TabID)
+                    UpdateTabSettings(Tab.TabID)
                 End If
             Else ' add or copy
                 If cboPositionTab.SelectedItem Is Nothing Then
-                    objTab.TabID = objTabs.AddTab(objTab)
+                    Tab.TabID = objTabs.AddTab(Tab)
                 Else
 
                     Dim positionTabID As Integer = Int32.Parse(cboPositionTab.SelectedItem.Value)
 
                     If rbInsertPosition.SelectedValue = "After" And positionTabID > Null.NullInteger Then
-                        objTab.TabID = objTabs.AddTabAfter(objTab, positionTabID)
+                        Tab.TabID = objTabs.AddTabAfter(Tab, positionTabID)
                     ElseIf rbInsertPosition.SelectedValue = "Before" And positionTabID > Null.NullInteger Then
-                        objTab.TabID = objTabs.AddTabBefore(objTab, positionTabID)
+                        Tab.TabID = objTabs.AddTabBefore(Tab, positionTabID)
                     Else
-                        objTab.TabID = objTabs.AddTab(objTab)
+                        Tab.TabID = objTabs.AddTab(Tab)
                     End If
                 End If
 
-                UpdateTabSettings(objTab.TabID)
+                UpdateTabSettings(Tab.TabID)
 
                 Dim copyTabId As Integer = Int32.Parse(cboCopyPage.SelectedItem.Value)
                 If copyTabId <> -1 Then
@@ -650,7 +656,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                                     newModule.ModuleID = Null.NullInteger
                                 End If
 
-                                newModule.TabID = objTab.TabID
+                                newModule.TabID = Tab.TabID
                                 newModule.ModuleTitle = txtCopyTitle.Text
                                 newModule.ModuleID = objModules.AddModule(newModule)
 
@@ -681,7 +687,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             Skin.AddModuleMessage(Me, Localization.GetString("BadTemplate", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                             Return Null.NullInteger
                         End Try
-                        TabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), objTab.PortalID, objTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
+                        TabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), Tab.PortalID, Tab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
                     End If
                 End If
             End If
@@ -695,10 +701,10 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
             'Update Cached Tabs as TabPath may be needed before cache is cleared
             Dim tempTab As TabInfo = Nothing
-            If New TabController().GetTabsByPortal(PortalId).TryGetValue(objTab.TabID, tempTab) Then
-                tempTab.TabPath = objTab.TabPath
+            If New TabController().GetTabsByPortal(PortalId).TryGetValue(Tab.TabID, tempTab) Then
+                tempTab.TabPath = Tab.TabPath
             End If
-            Return objTab.TabID
+            Return Tab.TabID
         End Function
 
         Private Sub UpdateTabSettings(ByVal tabId As Integer)
@@ -727,6 +733,26 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             If Not TabPermissionController.HasTabPermission("ADD,EDIT,COPY,DELETE,MANAGE") Then
                 Response.Redirect(AccessDeniedURL(), True)
             End If
+            If Not (Request.QueryString("action") Is Nothing) Then
+                strAction = Request.QueryString("action").ToLower
+            End If
+
+            If Tab.ContentItemId = Null.NullInteger AndAlso Tab.TabID <> Null.NullInteger Then
+                'This tab does not have a valid ContentItem
+                'create ContentItem
+                Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+                If String.IsNullOrEmpty(Tab.Title) Then
+                    Tab.Content = Tab.TabName
+                Else
+                    Tab.Content = Tab.Title
+                End If
+                Tab.Indexed = False
+                Tab.ContentItemId = contentController.AddContentItem(Tab)
+
+                Dim tabCtl As New TabController
+                tabCtl.UpdateTab(Tab)
+            End If
+
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -744,10 +770,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
                 Dim objModules As New ModuleController
-
-                If Not (Request.QueryString("action") Is Nothing) Then
-                    strAction = Request.QueryString("action").ToLower
-                End If
 
                 'this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdStartCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtStartDate)
@@ -802,7 +824,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     Select Case strAction
                         Case "", "add"       ' add
                             CheckQuota()
-                            InitializeTab()
                             rowTemplate1.Visible = True
                             rowTemplate2.Visible = True
                             dshCopy.Visible = TabPermissionController.CanCopyPage()
@@ -812,7 +833,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             ctlURL.IncludeActiveTab = True
                             ctlAudit.Visible = False
                         Case "edit"
-                            BindData()
                             Dim tabCtrl As New TabController
                             rowCopyPerm.Visible = (TabPermissionController.CanAdminPage() AndAlso tabCtrl.GetTabsByPortal(PortalId).DescendentsOf(TabId).Count > 0)
                             rowCopySkin.Visible = True
@@ -823,7 +843,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             ctlAudit.Visible = True
                         Case "copy"
                             CheckQuota()
-                            InitializeTab()
                             dshCopy.Visible = TabPermissionController.CanCopyPage()
                             tblCopy.Visible = TabPermissionController.CanCopyPage()
                             If Not cboCopyPage.Items.FindByValue(TabId.ToString) Is Nothing Then
@@ -838,7 +857,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                                 Response.Redirect(AddHTTP(PortalAlias.HTTPAlias), True)
                             Else
                                 strAction = "edit"
-                                BindData()
                                 dshCopy.Visible = False
                                 tblCopy.Visible = False
                                 cmdDelete.Visible = TabPermissionController.CanDeletePage()
@@ -846,6 +864,8 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             ctlURL.IncludeActiveTab = False
                             ctlAudit.Visible = True
                     End Select
+
+                    BindTab()
 
                     'Set the tab id of the permissions grid to the TabId (Note If in add mode
                     'this means that the default permissions inherit from the parent)

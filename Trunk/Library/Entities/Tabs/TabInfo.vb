@@ -26,17 +26,17 @@ Imports DotNetNuke.Services.Tokens
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Security.Permissions
 Imports System.Xml
+Imports DotNetNuke.Entities.Content
 
 Namespace DotNetNuke.Entities.Tabs
 
     <XmlRoot("tab", IsNullable:=False)> <Serializable()> Public Class TabInfo
-        Inherits BaseEntityInfo
+        Inherits ContentItem
         Implements IHydratable
         Implements IPropertyAccess
 
 #Region "Private Members"
 
-        Private _TabID As Integer
         Private _TabOrder As Integer
         Private _PortalID As Integer
         Private _TabName As String
@@ -104,6 +104,10 @@ Namespace DotNetNuke.Entities.Tabs
             _EndDate = Null.NullDate
             _RefreshInterval = Null.NullInteger
             _PageHeadText = Null.NullString
+
+            _SiteMapPriority = 0.5F
+            _IsVisible = True
+            _DisableLink = False
         End Sub
 
 #End Region
@@ -111,15 +115,6 @@ Namespace DotNetNuke.Entities.Tabs
 #Region "Public Properties"
 
 #Region "Tab Properties"
-
-        <XmlElement("tabid")> Public Property TabID() As Integer
-            Get
-                Return _TabID
-            End Get
-            Set(ByVal Value As Integer)
-                _TabID = Value
-            End Set
-        End Property
 
         <XmlElement("taborder")> Public Property TabOrder() As Integer
             Get
@@ -595,6 +590,8 @@ Namespace DotNetNuke.Entities.Tabs
                 Next
             End If
 
+            objTabInfo.ContentItemId = Me.ContentItemId
+
             ' initialize collections which are populated later
             objTabInfo.Panes = New ArrayList
             objTabInfo.Modules = New ArrayList
@@ -707,8 +704,10 @@ Namespace DotNetNuke.Entities.Tabs
         ''' 	[cnurse]	01/15/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub Fill(ByVal dr As System.Data.IDataReader) Implements IHydratable.Fill
-            TabID = Null.SetNullInteger(dr("TabID"))
+        Public Overrides Sub Fill(ByVal dr As System.Data.IDataReader)
+            'Call the base classes fill method to populate base class proeprties
+            MyBase.FillInternal(dr)
+
             TabOrder = Null.SetNullInteger(dr("TabOrder"))
             PortalID = Null.SetNullInteger(dr("PortalID"))
             TabName = Null.SetNullString(dr("TabName"))
@@ -738,8 +737,6 @@ Namespace DotNetNuke.Entities.Tabs
             BreadCrumbs = Nothing
             Panes = Nothing
             Modules = Nothing
-            'Call the base classes fill method to populate base class proeprties
-            MyBase.FillInternal(dr)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -751,7 +748,7 @@ Namespace DotNetNuke.Entities.Tabs
         ''' 	[cnurse]	01/15/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <XmlIgnore()> Public Property KeyID() As Integer Implements IHydratable.KeyID
+        <XmlIgnore()> Public Overrides Property KeyID() As Integer
             Get
                 Return TabID
             End Get
@@ -806,7 +803,7 @@ Namespace DotNetNuke.Entities.Tabs
 
 #End Region
 
-       
+
     End Class
 
 End Namespace

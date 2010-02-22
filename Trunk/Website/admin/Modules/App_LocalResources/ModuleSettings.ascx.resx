@@ -381,4 +381,10 @@
   <data name="CacheInherited.Text" xml:space="preserve">
     <value>Inherited</value>
   </data>
+  <data name="plTags.Help" xml:space="preserve">
+    <value>Select items from the drop-down to tag this Module.</value>
+  </data>
+  <data name="plTags.Text" xml:space="preserve">
+    <value>Tags:</value>
+  </data>
 </root>

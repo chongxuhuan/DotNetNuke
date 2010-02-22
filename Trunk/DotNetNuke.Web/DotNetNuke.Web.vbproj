@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B1699614-39D4-468A-AB1D-A2FBA97CADDF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>DotNetNuke.Web</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WebControl</MyType>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Nonshipping>true</Nonshipping>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>DotNetNuke.Web.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>DotNetNuke.Web.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotNetNuke.WebUtility, Version=4.1.2.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Web.UI, Version=2009.3.1104.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Data" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Management" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.vb" />
+    <Compile Include="Mvp\Framework\AttributeBasedViewStateSerializer.vb" />
+    <Compile Include="Mvp\Framework\IPresenterEnvironment.vb" />
+    <Compile Include="Mvp\Framework\IView.vb" />
+    <Compile Include="Mvp\Framework\NameValueCollectionExtensions.vb" />
+    <Compile Include="Mvp\Framework\Presenter.vb" />
+    <Compile Include="Mvp\Framework\PresenterEnvironment.vb" />
+    <Compile Include="Mvp\Framework\PresenterModel.vb" />
+    <Compile Include="Mvp\Framework\ViewBase.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Mvp\Framework\ViewStateAttribute.vb" />
+    <Compile Include="UI\ILocalize.vb" />
+    <Compile Include="UI\RibbonBarManager.vb" />
+    <Compile Include="UI\Utilities.vb" />
+    <Compile Include="UI\WebControls\DnnButton.vb" />
+    <Compile Include="UI\WebControls\DnnGrid.vb" />
+    <Compile Include="UI\WebControls\DnnTreeView.vb" />
+    <Compile Include="UI\WebControls\DnnTextBox.vb" />
+    <Compile Include="UI\WebControls\DnnListBox.vb" />
+    <Compile Include="UI\WebControls\DnnComboBox.vb" />
+    <Compile Include="UI\WebControls\DnnRibbonBarTool.vb" />
+    <Compile Include="UI\WebControls\DnnFieldLabel.vb" />
+    <Compile Include="UI\WebControls\DnnFieldLiteral.vb" />
+    <Compile Include="UI\WebControls\DnnImageTextButton.vb" />
+    <Compile Include="UI\WebControls\DnnImageTextLink.vb" />
+    <Compile Include="UI\WebControls\DnnLabel.vb" />
+    <Compile Include="UI\WebControls\DnnLiteral.vb" />
+    <Compile Include="UI\WebControls\DnnMultiPage.vb" />
+    <Compile Include="UI\WebControls\DnnRadioButton.vb" />
+    <Compile Include="UI\WebControls\DnnRibbonBar.vb" />
+    <Compile Include="UI\WebControls\DnnRibbonBarGroup.vb" />
+    <Compile Include="UI\WebControls\DnnRibbonBarGroupCollection.vb" />
+    <Compile Include="UI\WebControls\DnnTab.vb" />
+    <Compile Include="UI\WebControls\DnnTabCollection.vb" />
+    <Compile Include="UI\WebControls\DnnTabPanel.vb" />
+    <Compile Include="UI\WebControls\DnnTabStrip.vb" />
+    <Compile Include="UI\WebControls\DnnWindowManager.vb" />
+    <Compile Include="UI\WebControls\IDnnRibbonBarTool.vb" />
+    <Compile Include="UI\WebControls\RibbonBarToolInfo.vb" />
+    <Compile Include="Validators\AttributeBasedObjectValidator.vb" />
+    <Compile Include="Validators\DataAnnotationsObjectValidator.vb" />
+    <Compile Include="Validators\ObjectValidator.vb" />
+    <Compile Include="Validators\PropertyBasedObjectValidator.vb" />
+    <Compile Include="Validators\ValidationError.vb" />
+    <Compile Include="Validators\ValidationResult.vb" />
+    <Compile Include="Validators\Validator.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library\DotNetNuke.Library.vbproj">
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="My Project\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild" DependsOnTargets="CopyExternalsToWebsiteBin">
+  </Target>
+  <Target Name="CopyExternalsToWebsiteBin">
+    <Copy SourceFiles="bin\DotNetNuke.Web.dll" DestinationFolder="..\Website\bin\" />
+  </Target>
+</Project>

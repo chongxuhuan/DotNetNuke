@@ -29,6 +29,8 @@ Imports System.IO
 Imports DotNetNuke.Services.EventQueue
 Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Security.Permissions
+Imports DotNetNuke.Entities.Content
+Imports DotNetNuke.Entities.Content.Taxonomy
 
 Namespace DotNetNuke.Entities.Modules
 
@@ -515,7 +517,23 @@ Namespace DotNetNuke.Entities.Modules
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             ' add module
             If Null.IsNull(objModule.ModuleID) Then
-                objModule.ModuleID = dataProvider.AddModule(objModule.PortalID, objModule.ModuleDefID, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+                Dim typeController As IContentTypeController = New ContentTypeController
+                Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
+                                                 Where t.ContentType = "Module" _
+                                                 Select t) _
+                                                 .SingleOrDefault
+
+                Dim contentController As IContentController = New ContentController()
+                objModule.Content = objModule.ModuleTitle
+                objModule.ContentTypeId = contentType.ContentTypeId
+                objModule.Indexed = False
+                Dim contentItemID As Integer = contentController.AddContentItem(objModule)
+
+                'Add Module
+                objModule.ModuleID = dataProvider.AddModule(contentItemID, objModule.PortalID, objModule.ModuleDefID, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+
+                'Now we have the ModuleID - update the contentItem
+                contentController.UpdateContentItem(objModule)
 
                 objEventLog.AddLog(objModule, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_CREATED)
                 ' set module permissions
@@ -717,12 +735,25 @@ Namespace DotNetNuke.Entities.Modules
         '''    [sleupold]   1007-09-24 documented
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub DeleteModule(ByVal ModuleId As Integer)
-            dataProvider.DeleteModule(ModuleId)
+        Public Sub DeleteModule(ByVal moduleId As Integer)
+            'Get the module
+            Dim objModule As ModuleInfo = GetModule(moduleId)
+
+            'Delete Module
+            dataProvider.DeleteModule(moduleId)
+
+            'Remove the Content Item
+            If objModule.ContentItemId > Null.NullInteger Then
+                Dim ctl As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+                ctl.DeleteContentItem(objModule)
+            End If
+
+            'Log deletion
             Dim objEventLog As New Services.Log.EventLog.EventLogController
-            objEventLog.AddLog("ModuleId", ModuleId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.MODULE_DELETED)
+            objEventLog.AddLog("ModuleId", moduleId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.MODULE_DELETED)
+
             'Delete Search Items for this Module
-            dataProvider.DeleteSearchItems(ModuleId)
+            dataProvider.DeleteSearchItems(moduleId)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -1018,7 +1049,14 @@ Namespace DotNetNuke.Entities.Modules
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateModule(ByVal objModule As ModuleInfo)
             ' update module
-            dataProvider.UpdateModule(objModule.ModuleID, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+            dataProvider.UpdateModule(objModule.ModuleID, objModule.ContentItemId, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+
+            'Update Tags
+            Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
+            termController.RemoveTermsFromContent(objModule)
+            For Each _Term As Term In objModule.Terms
+                termController.AddTermToContent(_Term, objModule)
+            Next
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(objModule, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_UPDATED)
 

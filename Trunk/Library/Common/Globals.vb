@@ -2178,7 +2178,7 @@ Namespace DotNetNuke.Common
             End If
 
             'only add language to url if more than one locale is enabled, and if admin did not turn it off
-            If Localization.GetLocales(settings.PortalId).Count > 1 AndAlso settings.EnableUrlLanguage Then
+            If (settings IsNot Nothing) AndAlso (Localization.GetLocales(settings.PortalId).Count > 1 AndAlso settings.EnableUrlLanguage) Then
                 If Language = "" Then
                     strURL += "&language=" & Thread.CurrentThread.CurrentCulture.Name
                 Else
@@ -2286,7 +2286,7 @@ Namespace DotNetNuke.Common
             If (url.ToCharArray()(1) = "/" Or url.ToCharArray()(1) = "\") Then
 
                 ' Url looks like ~/ or ~\
-                If (Common.Globals.ApplicationPath.Length > 1) Then
+                If (Not String.IsNullOrEmpty(Common.Globals.ApplicationPath)) AndAlso (Common.Globals.ApplicationPath.Length > 1) Then
                     Return Common.Globals.ApplicationPath + "/" & url.Substring(2)
                 Else
                     Return "/" & url.Substring(2)
@@ -2295,7 +2295,7 @@ Namespace DotNetNuke.Common
             Else
 
                 ' Url look like ~something
-                If (Common.Globals.ApplicationPath.Length > 1) Then
+                If (Not String.IsNullOrEmpty(Common.Globals.ApplicationPath)) AndAlso (Common.Globals.ApplicationPath.Length > 1) Then
                     Return Common.Globals.ApplicationPath & "/" & url.Substring(1)
                 Else
                     Return Common.Globals.ApplicationPath & url.Substring(1)

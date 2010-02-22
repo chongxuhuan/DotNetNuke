@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Services.ModuleCache
 Imports System.Linq
+Imports DotNetNuke.Entities.Content
 
 
 Namespace DotNetNuke.Modules.Admin.Modules
@@ -215,7 +216,47 @@ Namespace DotNetNuke.Modules.Admin.Modules
 
 #End Region
 
-#Region "protected Methods"
+#Region "Private Methods"
+
+        Private Sub BindModuleCacheProviderList()
+            cboCacheProvider.DataSource = GetFilteredProviders(ModuleCache.ModuleCachingProvider.GetProviderList(), "ModuleCachingProvider")
+            cboCacheProvider.DataBind()
+
+            cboCacheProvider.Items.Insert(0, New ListItem(Localization.GetString("None_Specified"), ""))
+
+            If Not String.IsNullOrEmpty([Module].GetEffectiveCacheMethod) AndAlso cboCacheProvider.Items.FindByValue([Module].GetEffectiveCacheMethod) IsNot Nothing Then
+                cboCacheProvider.Items.FindByValue([Module].GetEffectiveCacheMethod).Selected = True
+            Else
+                'select the None Specified value
+                cboCacheProvider.Items(0).Selected = True
+            End If
+            lblCacheInherited.Visible = [Module].CacheMethod <> [Module].GetEffectiveCacheMethod
+
+        End Sub
+
+        ''' <summary>
+        ''' GetFilteredProviders takes a Dictionary and a string and returns an IEnumerable list
+        ''' where the key is modified by the filter string.
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="providerList">A dictionary object containing the list of objects</param>
+        ''' <param name="keyFilter">A string used for filtering the key name</param>
+        ''' <returns>An enumeration with the modified and unmodified keys.</returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''     [jbrinkman]    11/17/2009  Initial release
+        ''' </history>
+        Private Function GetFilteredProviders(Of T)(ByVal providerList As Dictionary(Of String, T), ByVal keyFilter As String) As IEnumerable
+            Dim providers = From provider In providerList _
+                            Let filteredkey = provider.Key.Replace(keyFilter, String.Empty) _
+                            Select filteredkey, provider.Key
+
+            Return providers
+        End Function
+
+#End Region
+
+#Region "Protected Methods"
 
         Protected Function GetInstalledOnLink(ByVal dataItem As Object) As String
             Dim returnValue As StringBuilder = New StringBuilder()
@@ -256,6 +297,17 @@ Namespace DotNetNuke.Modules.Admin.Modules
             ' get ModuleId
             If Not (Request.QueryString("ModuleId") Is Nothing) Then
                 ModuleId = Int32.Parse(Request.QueryString("ModuleId"))
+            End If
+
+            If [Module].ContentItemId = Null.NullInteger AndAlso [Module].TabID <> Null.NullInteger Then
+                'This tab does not have a valid ContentItem
+                'create ContentItem
+                Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+                [Module].Content = [Module].ModuleTitle
+                [Module].Indexed = False
+                [Module].ContentItemId = contentController.AddContentItem([Module])
+
+                objModules.UpdateModule([Module])
             End If
 
             ' Verify that the current user has access to edit this module
@@ -381,6 +433,9 @@ Namespace DotNetNuke.Modules.Admin.Modules
                         tblSpecific.Visible = False
                     End If
 
+                    termsSelector.PortalId = [Module].PortalID
+                    termsSelector.Terms = [Module].Terms
+                    termsSelector.DataBind()
                 End If
 
             Catch exc As Exception    'Module failed to load
@@ -489,68 +544,68 @@ Namespace DotNetNuke.Modules.Admin.Modules
                         cboTab.Enabled = False
                     End If
 
-                    ' update module
-                    Dim objModule As ModuleInfo = objModules.GetModule(ModuleId, TabId, False)
-
-                    objModule.ModuleID = ModuleId
-                    objModule.ModuleTitle = txtTitle.Text
-                    objModule.Alignment = cboAlign.SelectedItem.Value
-                    objModule.Color = txtColor.Text
-                    objModule.Border = txtBorder.Text
-                    objModule.IconFile = ctlIcon.Url
+                    [Module].ModuleID = ModuleId
+                    [Module].ModuleTitle = txtTitle.Text
+                    [Module].Alignment = cboAlign.SelectedItem.Value
+                    [Module].Color = txtColor.Text
+                    [Module].Border = txtBorder.Text
+                    [Module].IconFile = ctlIcon.Url
                     If txtCacheDuration.Text <> "" Then
-                        objModule.CacheTime = Int32.Parse(txtCacheDuration.Text)
+                        [Module].CacheTime = Int32.Parse(txtCacheDuration.Text)
                     Else
-                        objModule.CacheTime = 0
+                        [Module].CacheTime = 0
                     End If
                     'If cboCacheProvider.SelectedValue <> "" Then
-                    objModule.CacheMethod = cboCacheProvider.SelectedValue
+                    [Module].CacheMethod = cboCacheProvider.SelectedValue
                     'End If
-                    objModule.TabID = TabId
-                    If Not objModule.AllTabs = chkAllTabs.Checked Then
+                    [Module].TabID = TabId
+                    If Not [Module].AllTabs = chkAllTabs.Checked Then
                         AllTabsChanged = True
                     End If
-                    objModule.AllTabs = chkAllTabs.Checked
+                    [Module].AllTabs = chkAllTabs.Checked
                     Select Case Int32.Parse(cboVisibility.SelectedItem.Value)
-                        Case 0 : objModule.Visibility = VisibilityState.Maximized
-                        Case 1 : objModule.Visibility = VisibilityState.Minimized
-                        Case 2 : objModule.Visibility = VisibilityState.None
+                        Case 0 : [Module].Visibility = VisibilityState.Maximized
+                        Case 1 : [Module].Visibility = VisibilityState.Minimized
+                        Case 2 : [Module].Visibility = VisibilityState.None
                     End Select
-                    objModule.IsDeleted = False
-                    objModule.Header = txtHeader.Text
-                    objModule.Footer = txtFooter.Text
+                    [Module].IsDeleted = False
+                    [Module].Header = txtHeader.Text
+                    [Module].Footer = txtFooter.Text
                     If Not String.IsNullOrEmpty(txtStartDate.Text) Then
-                        objModule.StartDate = Convert.ToDateTime(txtStartDate.Text)
+                        [Module].StartDate = Convert.ToDateTime(txtStartDate.Text)
                     Else
-                        objModule.StartDate = Null.NullDate
+                        [Module].StartDate = Null.NullDate
                     End If
                     If Not String.IsNullOrEmpty(txtEndDate.Text) Then
-                        objModule.EndDate = Convert.ToDateTime(txtEndDate.Text)
+                        [Module].EndDate = Convert.ToDateTime(txtEndDate.Text)
                     Else
-                        objModule.EndDate = Null.NullDate
+                        [Module].EndDate = Null.NullDate
                     End If
-                    objModule.ContainerSrc = ctlModuleContainer.SkinSrc
+                    [Module].ContainerSrc = ctlModuleContainer.SkinSrc
 
-                    objModule.ModulePermissions.Clear()
-                    objModule.ModulePermissions.AddRange(dgPermissions.Permissions)
+                    [Module].ModulePermissions.Clear()
+                    [Module].ModulePermissions.AddRange(dgPermissions.Permissions)
 
-                    objModule.InheritViewPermissions = chkInheritPermissions.Checked
-                    objModule.DisplayTitle = chkDisplayTitle.Checked
-                    objModule.DisplayPrint = chkDisplayPrint.Checked
-                    objModule.DisplaySyndicate = chkDisplaySyndicate.Checked
-                    objModule.IsWebSlice = chkWebSlice.Checked
-                    objModule.WebSliceTitle = txtWebSliceTitle.Text
+                    [Module].Terms.Clear()
+                    [Module].Terms.AddRange(termsSelector.Terms)
+
+                    [Module].InheritViewPermissions = chkInheritPermissions.Checked
+                    [Module].DisplayTitle = chkDisplayTitle.Checked
+                    [Module].DisplayPrint = chkDisplayPrint.Checked
+                    [Module].DisplaySyndicate = chkDisplaySyndicate.Checked
+                    [Module].IsWebSlice = chkWebSlice.Checked
+                    [Module].WebSliceTitle = txtWebSliceTitle.Text
                     If Not String.IsNullOrEmpty(txtWebSliceExpiry.Text) Then
-                        objModule.WebSliceExpiryDate = Convert.ToDateTime(txtWebSliceExpiry.Text)
+                        [Module].WebSliceExpiryDate = Convert.ToDateTime(txtWebSliceExpiry.Text)
                     Else
-                        objModule.WebSliceExpiryDate = Null.NullDate
+                        [Module].WebSliceExpiryDate = Null.NullDate
                     End If
                     If Not String.IsNullOrEmpty(txtWebSliceTTL.Text) Then
-                        objModule.WebSliceTTL = Convert.ToInt32(txtWebSliceTTL.Text)
+                        [Module].WebSliceTTL = Convert.ToInt32(txtWebSliceTTL.Text)
                     End If
-                    objModule.IsDefaultModule = chkDefault.Checked
-                    objModule.AllModules = chkAllModules.Checked
-                    objModules.UpdateModule(objModule)
+                    [Module].IsDefaultModule = chkDefault.Checked
+                    [Module].AllModules = chkAllModules.Checked
+                    objModules.UpdateModule([Module])
 
                     'Update Custom Settings
                     If SettingsControl IsNot Nothing Then
@@ -614,42 +669,6 @@ Namespace DotNetNuke.Modules.Admin.Modules
             End Try
         End Sub
 #End Region
-        Private Sub BindModuleCacheProviderList()
-            cboCacheProvider.DataSource = GetFilteredProviders(ModuleCache.ModuleCachingProvider.GetProviderList(), "ModuleCachingProvider")
-            cboCacheProvider.DataBind()
-
-            cboCacheProvider.Items.Insert(0, New ListItem(Localization.GetString("None_Specified"), ""))
-
-            If Not String.IsNullOrEmpty([Module].GetEffectiveCacheMethod) AndAlso cboCacheProvider.Items.FindByValue([Module].GetEffectiveCacheMethod) IsNot Nothing Then
-                cboCacheProvider.Items.FindByValue([Module].GetEffectiveCacheMethod).Selected = True
-            Else
-                'select the None Specified value
-                cboCacheProvider.Items(0).Selected = True
-            End If
-            lblCacheInherited.Visible = [Module].CacheMethod <> [Module].GetEffectiveCacheMethod
-
-        End Sub
-
-
-        ''' <summary>
-        ''' GetFilteredProviders takes a Dictionary and a string and returns an IEnumerable list
-        ''' where the key is modified by the filter string.
-        ''' </summary>
-        ''' <typeparam name="T"></typeparam>
-        ''' <param name="providerList">A dictionary object containing the list of objects</param>
-        ''' <param name="keyFilter">A string used for filtering the key name</param>
-        ''' <returns>An enumeration with the modified and unmodified keys.</returns>
-        ''' <remarks></remarks>
-        ''' <history>
-        '''     [jbrinkman]    11/17/2009  Initial release
-        ''' </history>
-        Private Function GetFilteredProviders(Of T)(ByVal providerList As Dictionary(Of String, T), ByVal keyFilter As String) As IEnumerable
-            Dim providers = From provider In providerList _
-                            Let filteredkey = provider.Key.Replace(keyFilter, String.Empty) _
-                            Select filteredkey, provider.Key
-
-            Return Providers
-        End Function
 
     End Class
 

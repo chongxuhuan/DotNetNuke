@@ -978,6 +978,10 @@ Namespace DotNetNuke.Common.Utilities
 
 #End Region
 
+        Public Shared Function FillQueryable(Of TItem)(ByVal dr As IDataReader) As IQueryable(Of TItem)
+            Return FillListFromReader(Of TItem)(dr, New List(Of TItem), True).AsQueryable()
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' FillSortedList fills a SortedList of objects from a DataReader

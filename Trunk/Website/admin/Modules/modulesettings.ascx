@@ -1,4 +1,5 @@
 <%@ Control language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.Modules.Admin.Modules.ModuleSettingsPage" CodeFile="ModuleSettings.ascx.vb" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Modules.Taxonomy" Namespace="DotNetNuke.Modules.Taxonomy.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
@@ -21,11 +22,15 @@
 						<table id="tblDetails" cellspacing="2" cellpadding="2" summary="Appearance Design Table" border="0" runat="server">
 							<tr>
 								<td class="SubHead" style="width:150px"><dnn:label id="plFriendlyName" text="Module:" runat="server" controlname="lblFriendlyName"></dnn:label></td>
-								<td><asp:TextBox ID="txtFriendlyName" runat="server" CssClass="NormalTextBox" Width="450" Enabled="False"></asp:TextBox></td>
+								<td><asp:TextBox ID="txtFriendlyName" runat="server" CssClass="NormalTextBox" Width="525" Enabled="False"></asp:TextBox></td>
 							</tr>
 							<tr>
 								<td class="SubHead" style="width:150px"><dnn:label id="plTitle" text="Title:" runat="server" controlname="txtTitle"></dnn:label></td>
-								<td><asp:textbox id="txtTitle" runat="server" cssclass="NormalTextBox" style="width:450px"></asp:textbox></td>
+								<td><asp:textbox id="txtTitle" runat="server" cssclass="NormalTextBox" style="width:525px"></asp:textbox></td>
+							</tr>
+                            <tr>
+                                <td><dnn:Label ID="plTags" runat="server" cssClass="SubHead" ControlName="termsSelector"/></td>
+                                <td><dnn:TermsSelector ID="termsSelector" runat="server" Height="250px" Width="525px"/></td>
 							</tr>
 							<tr id="rowPerm" runat="server">
 								<td colspan="2" align="left">

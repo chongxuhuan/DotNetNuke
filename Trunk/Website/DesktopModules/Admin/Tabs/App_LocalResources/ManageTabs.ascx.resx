@@ -450,4 +450,10 @@
   <data name="BadTemplate.Text" xml:space="preserve">
     <value>The page template is not a valid xml document.  Please select a different template and try again.</value>
   </data>
+  <data name="plTags.Help" xml:space="preserve">
+    <value>Select items from the drop-down to tag this Page.</value>
+  </data>
+  <data name="plTags.Text" xml:space="preserve">
+    <value>Tags:</value>
+  </data>
 </root>

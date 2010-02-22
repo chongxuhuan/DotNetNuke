@@ -1,5 +1,6 @@
 <%@ Page Language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.Framework.DefaultPage" CodeFile="Default.aspx.vb" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Common.Controls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnnui" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <asp:literal id="skinDocType" runat="server"></asp:literal>
 <html<%= HtmlAttributeList %>>
 <head id="Head" runat="server">
@@ -27,6 +28,7 @@
         <asp:PlaceHolder ID="SkinPlaceHolder" runat="server" />
         <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />
         <input id="__dnnVariable" runat="server" name="__dnnVariable" type="hidden" />
+        <dnnui:DnnWindowManager ID="DnnWindowManager" runat="server" Visible="False"></dnnui:DnnWindowManager>
     </dnn:Form>
 </body>
 </html>

@@ -24,6 +24,7 @@ Imports DotNetNuke.Services.Tokens
 Imports DotNetNuke.Entities.Modules.Definitions
 Imports DotNetNuke.Security.Permissions
 Imports System.Collections.Generic
+Imports DotNetNuke.Entities.Content
 
 Namespace DotNetNuke.Entities.Modules
 
@@ -40,14 +41,13 @@ Namespace DotNetNuke.Entities.Modules
     ''' </history>
     ''' -----------------------------------------------------------------------------
     <XmlRoot("module", IsNullable:=False)> <Serializable()> Public Class ModuleInfo
-        Inherits BaseEntityInfo
+        Inherits ContentItem
         Implements IHydratable
         Implements IPropertyAccess
 
 #Region "Private Members"
 
         'Module Properties
-        Private _ModuleID As Integer
         Private _PortalID As Integer
         Private _ModuleTitle As String
         Private _AllTabs As Boolean
@@ -60,7 +60,6 @@ Namespace DotNetNuke.Entities.Modules
 
         'TabModule Properties
         Private _TabModuleID As Integer
-        Private _TabID As Integer
         Private _PaneName As String
         Private _ModuleOrder As Integer
         Private _CacheTime As Integer
@@ -115,9 +114,7 @@ Namespace DotNetNuke.Entities.Modules
             'initialize the properties that can be null
             'in the database
             _PortalID = Null.NullInteger
-            _TabID = Null.NullInteger
             _TabModuleID = Null.NullInteger
-            _ModuleID = Null.NullInteger
             _DesktopModuleID = Null.NullInteger
             _ModuleDefID = Null.NullInteger
             _ModuleTitle = Null.NullString
@@ -142,15 +139,6 @@ Namespace DotNetNuke.Entities.Modules
 #Region "Public Properties"
 
 #Region "Module Properties"
-
-        <XmlElement("moduleID")> Public Property ModuleID() As Integer
-            Get
-                Return _ModuleID
-            End Get
-            Set(ByVal Value As Integer)
-                _ModuleID = Value
-            End Set
-        End Property
 
         <XmlElement("portalid")> Public Property PortalID() As Integer
             Get
@@ -243,15 +231,6 @@ Namespace DotNetNuke.Entities.Modules
             End Get
             Set(ByVal Value As Integer)
                 _TabModuleID = Value
-            End Set
-        End Property
-
-        <XmlElement("tabid")> Public Property TabID() As Integer
-            Get
-                Return _TabID
-            End Get
-            Set(ByVal Value As Integer)
-                _TabID = Value
             End Set
         End Property
 
@@ -542,6 +521,7 @@ Namespace DotNetNuke.Entities.Modules
 #End Region
 
 #Region "Module Setting Properties"
+
         <XmlIgnore()> Public ReadOnly Property ModuleSettings() As Hashtable
             Get
                 If _ModuleSettings Is Nothing Then
@@ -556,6 +536,7 @@ Namespace DotNetNuke.Entities.Modules
                 Return _ModuleSettings
             End Get
         End Property
+
 #End Region
 
 #Region "TabModule Setting Properties"
@@ -679,10 +660,11 @@ Namespace DotNetNuke.Entities.Modules
             objModuleInfo._ModulePermissions = Me._ModulePermissions
             objModuleInfo._TabPermissions = Me._TabPermissions
 
+            objModuleInfo.ContentItemId = Me.ContentItemId
+
             Return objModuleInfo
 
         End Function
-
 
         Public Function GetEffectiveCacheMethod() As String
 
@@ -709,41 +691,41 @@ Namespace DotNetNuke.Entities.Modules
 
         Public Sub Initialize(ByVal PortalId As Integer)
             _PortalID = PortalId
-            _TabID = -1
-            _ModuleID = -1
-            _ModuleDefID = -1
-            _ModuleOrder = -1
-            _PaneName = ""
-            _ModuleTitle = ""
+            '_TabID = -1
+            '_ModuleID = -1
+            _ModuleDefID = Null.NullInteger
+            _ModuleOrder = Null.NullInteger
+            _PaneName = Null.NullString
+            _ModuleTitle = Null.NullString
             _CacheTime = 0
-            _CacheMethod = ""
-            _Alignment = ""
-            _Color = ""
-            _Border = ""
-            _IconFile = ""
-            _AllTabs = False
+            _CacheMethod = Null.NullString
+            _Alignment = Null.NullString
+            _Color = Null.NullString
+            _Border = Null.NullString
+            _IconFile = Null.NullString
+            _AllTabs = Null.NullBoolean
             _Visibility = VisibilityState.Maximized
-            _IsDeleted = False
-            _Header = ""
-            _Footer = ""
+            _IsDeleted = Null.NullBoolean
+            _Header = Null.NullString
+            _Footer = Null.NullString
             _StartDate = Null.NullDate
             _EndDate = Null.NullDate
             _DisplayTitle = True
             _DisplayPrint = True
-            _DisplaySyndicate = False
-            _IsWebSlice = False
+            _DisplaySyndicate = Null.NullBoolean
+            _IsWebSlice = Null.NullBoolean
             _WebSliceTitle = ""
             _WebSliceExpiryDate = Null.NullDate
             _WebSliceTTL = 0
-            _InheritViewPermissions = False
-            _ContainerSrc = ""
-            _DesktopModuleID = -1
-            _ModuleControlId = -1
-            _ContainerPath = ""
+            _InheritViewPermissions = Null.NullBoolean
+            _ContainerSrc = Null.NullString
+            _DesktopModuleID = Null.NullInteger
+            _ModuleControlId = Null.NullInteger
+            _ContainerPath = Null.NullString
             _PaneModuleIndex = 0
             _PaneModuleCount = 0
-            _IsDefaultModule = False
-            _AllModules = False
+            _IsDefaultModule = Null.NullBoolean
+            _AllModules = Null.NullBoolean
 
             ' get default module settings
             If PortalSettings.Current.DefaultModuleId > Null.NullInteger AndAlso PortalSettings.Current.DefaultTabId > Null.NullInteger Then
@@ -776,10 +758,11 @@ Namespace DotNetNuke.Entities.Modules
         ''' 	[cnurse]	01/14/2008   Documented
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub Fill(ByVal dr As System.Data.IDataReader) Implements IHydratable.Fill
+        Public Overrides Sub Fill(ByVal dr As System.Data.IDataReader)
+            'Call the base classes fill method to populate base class properties
+            MyBase.FillInternal(dr)
+
             PortalID = Null.SetNullInteger(dr("PortalID"))
-            TabID = Null.SetNullInteger(dr("TabID"))
-            ModuleID = Null.SetNullInteger(dr("ModuleID"))
             ModuleDefID = Null.SetNullInteger(dr("ModuleDefID"))
             ModuleTitle = Null.SetNullString(dr("ModuleTitle"))
             AllTabs = Null.SetNullBoolean(dr("AllTabs"))
@@ -789,8 +772,6 @@ Namespace DotNetNuke.Entities.Modules
             Footer = Null.SetNullString(dr("Footer"))
             StartDate = Null.SetNullDateTime(dr("StartDate"))
             EndDate = Null.SetNullDateTime(dr("EndDate"))
-            'Call the base classes fill method to populate base class properties
-            MyBase.FillInternal(dr)
 
             Try
                 TabModuleID = Null.SetNullInteger(dr("TabModuleID"))
@@ -820,7 +801,6 @@ Namespace DotNetNuke.Entities.Modules
 
                 DesktopModuleID = Null.SetNullInteger(dr("DesktopModuleID"))
 
-
                 ModuleControlId = Null.SetNullInteger(dr("ModuleControlID"))
             Catch ex As Exception
 
@@ -836,7 +816,7 @@ Namespace DotNetNuke.Entities.Modules
         ''' 	[cnurse]	01/14/2008   Documented
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <XmlIgnore()> Public Property KeyID() As Integer Implements IHydratable.KeyID
+        <XmlIgnore()> Public Overrides Property KeyID() As Integer
             Get
                 Return ModuleID
             End Get
@@ -989,6 +969,7 @@ Namespace DotNetNuke.Entities.Modules
                 Return CacheLevel.fullyCacheable
             End Get
         End Property
+
 #End Region
 
 #Region "Obsolete"

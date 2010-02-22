@@ -28,6 +28,8 @@ Imports System.Xml
 Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Security.Permissions
 Imports System.Threading
+Imports DotNetNuke.Entities.Content
+Imports DotNetNuke.Entities.Content.Taxonomy
 
 Namespace DotNetNuke.Entities.Tabs
 
@@ -89,13 +91,40 @@ Namespace DotNetNuke.Entities.Tabs
                 'Tab exists so Throw
                 Throw New TabExistsException(iTabID, "Tab Exists")
             Else
-                iTabID = provider.AddTab(objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, objTab.ParentId, _
+                'First create ContentItem as we need the ContentItemID
+                Dim typeController As IContentTypeController = New ContentTypeController
+                Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
+                                                 Where t.ContentType = "Tab" _
+                                                 Select t) _
+                                                 .SingleOrDefault
+
+                Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+                If String.IsNullOrEmpty(objTab.Title) Then
+                    objTab.Content = objTab.TabName
+                Else
+                    objTab.Content = objTab.Title
+                End If
+                objTab.ContentTypeId = contentType.ContentTypeId
+                objTab.Indexed = False
+                Dim contentItemID As Integer = contentController.AddContentItem(objTab)
+
+                'Add Module
+                iTabID = provider.AddTab(contentItemID, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, objTab.ParentId, _
                          objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, objTab.Url, _
                          objTab.SkinSrc, objTab.ContainerSrc, objTab.TabPath, objTab.StartDate, objTab.EndDate, _
                          objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
                          objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, Entities.Host.Host.ContentLocale.ToString)
 
                 objTab.TabID = iTabID
+
+                'Now we have the TabID - update the contentItem
+                contentController.UpdateContentItem(objTab)
+
+                Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
+                termController.RemoveTermsFromContent(objTab)
+                For Each _Term As Term In objTab.Terms
+                    termController.AddTermToContent(_Term, objTab)
+                Next
 
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
                 objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_CREATED)
@@ -148,6 +177,24 @@ Namespace DotNetNuke.Entities.Tabs
 
             'UpdateOrder 
             UpdateTabOrder(objTab, updateTabPath)
+        End Sub
+
+        Private Sub DeleteTabInternal(ByVal tabId As Integer, ByVal portalId As Integer)
+            'Get the tab from the Cache
+            Dim objTab As TabInfo = GetTab(tabId, portalId, False)
+
+            'Delete Tab
+            provider.DeleteTab(tabId)
+
+            'Remove the Content Item
+            If objTab.ContentItemId > Null.NullInteger Then
+                Dim ctl As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+                ctl.DeleteContentItem(objTab)
+            End If
+
+            'Log deletion
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            objEventLog.AddLog("TabID", tabId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_DELETED)
         End Sub
 
         Private Sub DemoteTab(ByVal objTab As TabInfo, ByVal siblingTabs As List(Of TabInfo))
@@ -338,7 +385,7 @@ Namespace DotNetNuke.Entities.Tabs
                 Dim oldTabPath As String = objtab.TabPath
                 objtab.TabPath = GenerateTabPath(objtab.ParentId, objtab.TabName)
                 If oldTabPath <> objtab.TabPath Then
-                    provider.UpdateTab(objtab.TabID, objtab.PortalID, objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
+                    provider.UpdateTab(objtab.TabID, objtab.ContentItemId, objtab.PortalID, objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
                            objtab.ParentId, objtab.IconFile, objtab.IconFileLarge, objtab.Title, objtab.Description, _
                            objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
                            objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
@@ -512,6 +559,98 @@ Namespace DotNetNuke.Entities.Tabs
             Return tabID
         End Function
 
+        Public Sub MoveTabAfter(ByVal objTab As TabInfo, ByVal afterTabId As Integer)
+            If (objTab.TabID < 0) Then
+                Return
+            End If
+
+            'Get the List of tabs with the same parent
+            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
+            Dim siblingCount As Integer = siblingTabs.Count
+
+            'First make sure that the siblings are sorted correctly
+            UpdateTabOrder(siblingTabs, 2)
+
+            'New tab is to be inserted into the siblings List after TabId=afterTabId
+            For index As Integer = 0 To siblingCount - 1
+                Dim sibling As TabInfo = siblingTabs(index)
+                If sibling.TabID = afterTabId Then
+                    'we need to insert the tab here
+                    objTab.Level = sibling.Level
+                    objTab.TabOrder = sibling.TabOrder + 2
+
+                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
+                    UpdateTabOrder(objTab, False)
+
+                    'We need to update the taborder for the remaining items, excluding the current tab
+                    'UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, 2)
+                    Dim remainingTabOrder As Integer = objTab.TabOrder
+                    For remainingIndex As Integer = index + 1 To siblingCount - 1
+                        Dim remainingTab As TabInfo = siblingTabs(remainingIndex)
+
+                        If (remainingTab.TabID = objTab.TabID) Then
+                            Continue For
+                        End If
+                        remainingTabOrder = remainingTabOrder + 2
+                        remainingTab.TabOrder = remainingTabOrder
+
+                        'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
+                        UpdateTabOrder(remainingTab, False)
+                    Next
+                    Exit For
+                End If
+            Next
+
+            'Clear the Cache
+            ClearCache(objTab.PortalID)
+        End Sub
+
+        Public Sub MoveTabBefore(ByVal objTab As TabInfo, ByVal beforeTabId As Integer)
+            If (objTab.TabID < 0) Then
+                Return
+            End If
+
+            'Get the List of tabs with the same parent
+            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
+            Dim siblingCount As Integer = siblingTabs.Count
+
+            'First make sure that the siblings are sorted correctly
+            UpdateTabOrder(siblingTabs, 2)
+
+            'New tab is to be inserted into the siblings List before TabId=beforeTabId
+            For index As Integer = 0 To siblingCount - 1
+                Dim sibling As TabInfo = siblingTabs(index)
+                If sibling.TabID = beforeTabId Then
+                    'we need to insert the tab here
+                    objTab.Level = sibling.Level
+                    objTab.TabOrder = sibling.TabOrder
+
+                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
+                    UpdateTabOrder(objTab, False)
+
+                    'We need to update the taborder for the remaining items, including the current one
+                    Dim remainingTabOrder As Integer = objTab.TabOrder
+                    For remainingIndex As Integer = index To siblingCount - 1
+                        Dim remainingTab As TabInfo = siblingTabs(remainingIndex)
+
+                        If (remainingTab.TabID = objTab.TabID) Then
+                            Continue For
+                        End If
+
+                        remainingTabOrder = remainingTabOrder + 2
+                        remainingTab.TabOrder = remainingTabOrder
+
+                        'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
+                        UpdateTabOrder(remainingTab, False)
+                    Next
+                    Exit For
+                End If
+            Next
+
+            'Clear the Cache
+            ClearCache(objTab.PortalID)
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Adds a tab before the specified tab
@@ -622,15 +761,10 @@ Namespace DotNetNuke.Entities.Tabs
                 For index As Integer = 0 To siblingCount - 1
                     Dim sibling As TabInfo = siblingTabs(index)
                     If sibling.TabID = TabId Then
-                        'This is the tab we are deleting - so delete it from data store
-                        provider.DeleteTab(TabId)
-
-                        Dim objEventLog As New Services.Log.EventLog.EventLogController
-                        objEventLog.AddLog("TabID", TabId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_DELETED)
+                        DeleteTabInternal(TabId, PortalId)
 
                         'We need to update the taborder for the remaining items
                         UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, -2)
-
                         Exit For
                     End If
                 Next
@@ -658,13 +792,8 @@ Namespace DotNetNuke.Entities.Tabs
             If deleteDescendants AndAlso descendantList.Count > 0 Then
                 'Iterate through descendants from bottom - which will remove children first
                 For i As Integer = descendantList.Count - 1 To 0 Step -1
-                    'delete it from data store
-                    provider.DeleteTab(descendantList(i).TabID)
-
-                    Dim objEventLog As New Services.Log.EventLog.EventLogController
-                    objEventLog.AddLog("TabID", descendantList(i).TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_DELETED)
+                    DeleteTabInternal(descendantList(i).TabID, PortalId)
                 Next
-
                 ClearCache(PortalId)
             End If
 
@@ -810,12 +939,19 @@ Namespace DotNetNuke.Entities.Tabs
             Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
 
             'Update Tab to DataStore
-            provider.UpdateTab(updatedTab.TabID, updatedTab.PortalID, updatedTab.TabName, updatedTab.IsVisible, updatedTab.DisableLink, _
+            provider.UpdateTab(updatedTab.TabID, updatedTab.ContentItemId, updatedTab.PortalID, updatedTab.TabName, updatedTab.IsVisible, updatedTab.DisableLink, _
                 updatedTab.ParentId, updatedTab.IconFile, updatedTab.IconFileLarge, updatedTab.Title, updatedTab.Description, updatedTab.KeyWords, _
                 updatedTab.IsDeleted, updatedTab.Url, updatedTab.SkinSrc, updatedTab.ContainerSrc, updatedTab.TabPath, _
                 updatedTab.StartDate, updatedTab.EndDate, updatedTab.RefreshInterval, updatedTab.PageHeadText, _
                 updatedTab.IsSecure, updatedTab.PermanentRedirect, updatedTab.SiteMapPriority, _
                 UserController.GetCurrentUserInfo.UserID, CultureCode)
+
+            'Update Tags
+            Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
+            termController.RemoveTermsFromContent(updatedTab)
+            For Each _Term As Term In updatedTab.Terms
+                termController.AddTermToContent(_Term, updatedTab)
+            Next
 
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(updatedTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
@@ -1188,7 +1324,7 @@ Namespace DotNetNuke.Entities.Tabs
 
             For Each objTab As TabInfo In childTabs
                 If TabPermissionController.CanAdminPage(objTab) Then
-                    provider.UpdateTab(objTab.TabID, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
+                    provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
                           objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
                           objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
                           objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
@@ -1651,7 +1787,7 @@ Namespace DotNetNuke.Entities.Tabs
         <Obsolete("This method has replaced in DotNetNuke 5.0 by CopyDesignToChildren(TabInfo,String, String)")> _
         Public Sub CopyDesignToChildren(ByVal tabs As ArrayList, ByVal skinSrc As String, ByVal containerSrc As String)
             For Each objTab As TabInfo In tabs
-                provider.UpdateTab(objTab.TabID, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
+                provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
                      objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
                      objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
                      objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _

@@ -1,4 +1,5 @@
 <%@ Control Language="vb" AutoEventWireup="false" Explicit="True" CodeFile="ManageTabs.ascx.vb" Inherits="DotNetNuke.Modules.Admin.Tabs.ManageTabs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Modules.Taxonomy" Namespace="DotNetNuke.Modules.Taxonomy.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
@@ -28,25 +29,29 @@
                                         <dnn:Label ID="plTabName" runat="server" ResourceKey="TabName" Suffix=":" HelpKey="TabNameHelp" ControlName="txtTabName"/>
                                     </td>
                                     <td width="525">
-                                        <asp:TextBox ID="txtTabName" CssClass="NormalTextBox" runat="server" MaxLength="50" Width="300"/>
+                                        <asp:TextBox ID="txtTabName" CssClass="NormalTextBox" runat="server" MaxLength="50" Width="525"/>
                                         <asp:RequiredFieldValidator ID="valTabName" CssClass="NormalRed" runat="server" resourcekey="valTabName.ErrorMessage" Display="Dynamic" ControlToValidate="txtTabName"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" width="200"><dnn:Label ID="plTitle" runat="server" ResourceKey="Title" Suffix=":" HelpKey="TitleHelp" ControlName="txtTitle"/></td>
-                                    <td><asp:TextBox ID="txtTitle" CssClass="NormalTextBox" runat="server" MaxLength="200" Width="300"/></td>
+                                    <td><asp:TextBox ID="txtTitle" CssClass="NormalTextBox" runat="server" MaxLength="200" Width="525"/></td>
                                 </tr>
                                 <tr>
-                                    <td class="SubHead" width="200"><dnn:Label ID="plDescription" runat="server" ResourceKey="Description" Suffix=":" HelpKey="DescriptionHelp" ControlName="txtDescription"/></td>
-                                    <td class="NormalTextBox" width="525"><asp:TextBox ID="txtDescription" CssClass="NormalTextBox" runat="server" MaxLength="500" Width="300" TextMode="MultiLine" Rows="3"/></td>
+                                    <td class="SubHead" style="vertical-align:top; width:200px"><dnn:Label ID="plDescription" runat="server" ResourceKey="Description" Suffix=":" HelpKey="DescriptionHelp" ControlName="txtDescription"/></td>
+                                    <td class="NormalTextBox" width="525"><asp:TextBox ID="txtDescription" CssClass="NormalTextBox" runat="server" MaxLength="525" Width="525" TextMode="MultiLine" Rows="2"/></td>
                                 </tr>
                                 <tr>
-                                    <td class="SubHead" width="200"><dnn:Label ID="plKeywords" runat="server" ResourceKey="KeyWords" Suffix=":" HelpKey="KeyWordsHelp" ControlName="txtKeyWords"/></td>
-                                    <td class="NormalTextBox" width="525"><asp:TextBox ID="txtKeyWords" CssClass="NormalTextBox" runat="server" MaxLength="500" Width="300" TextMode="MultiLine" Rows="3"/></td>
+                                    <td class="SubHead" style="vertical-align:top; width:200px"><dnn:Label ID="plKeywords" runat="server" ResourceKey="KeyWords" Suffix=":" HelpKey="KeyWordsHelp" ControlName="txtKeyWords"/></td>
+                                    <td class="NormalTextBox" width="525"><asp:TextBox ID="txtKeyWords" CssClass="NormalTextBox" runat="server" MaxLength="500" Width="525" TextMode="MultiLine" Rows="2"/></td>
+                                </tr>
+                                <tr>
+                                    <td><dnn:Label ID="plTags" runat="server" cssClass="SubHead" ControlName="termsSelector"/></td>
+                                    <td><dnn:TermsSelector ID="termsSelector" runat="server" Height="250" Width="525"/></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" width="200"><dnn:Label ID="plParentTab" runat="server" ResourceKey="ParentTab" ControlName="cboParentTab"/></td>
-                                    <td width="325"><asp:DropDownList ID="cboParentTab" CssClass="NormalTextBox" runat="server" Width="300" DataTextField="IndentedTabName" DataValueField="TabId"/></td>
+                                    <td width="525"><asp:DropDownList ID="cboParentTab" CssClass="NormalTextBox" runat="server" Width="300" DataTextField="IndentedTabName" DataValueField="TabId"/></td>
                                 </tr>
                                 <tr id="trInsertPositionRow" runat="server">
                                     <td class="SubHead" width="200"><dnn:Label ID="plInsertPosition" runat="server" ResourceKey="InsertPosition" ControlName="cboPositionTab" /></td>

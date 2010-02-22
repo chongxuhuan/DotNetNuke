@@ -78,6 +78,12 @@ Namespace DotNetNuke.Services.Localization
             End Get
         End Property
 
+        Public Shared ReadOnly Property ExceptionsResourceFile() As String
+            Get
+                Return ApplicationResourceDirectory + "/Exceptions.resx"
+            End Get
+        End Property
+
         Public Shared ReadOnly Property GlobalResourceFile() As String
             Get
                 Return ApplicationResourceDirectory + "/GlobalResources.resx"
@@ -757,6 +763,23 @@ Namespace DotNetNuke.Services.Localization
             objEventLog.AddLog(language, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_DELETED)
             DataCache.ClearHostCache(True)
         End Sub
+
+        Public Shared Function GetExceptionMessage(ByVal key As String, ByVal defaultValue As String) As String
+            If HttpContext.Current Is Nothing Then
+                Return defaultValue
+            Else
+                Return GetString(key, ExceptionsResourceFile)
+            End If
+        End Function
+
+        Public Shared Function GetExceptionMessage(ByVal key As String, ByVal defaultValue As String, ByVal ParamArray params() As Object) As String
+            If HttpContext.Current Is Nothing Then
+                Return String.Format(defaultValue, params)
+            Else
+                Return String.Format(GetString(key, ExceptionsResourceFile), params)
+            End If
+            Return String.Format(GetString(key, ExceptionsResourceFile), params)
+        End Function
 
         Public Shared Function GetLocale(ByVal code As String) As Locale
             Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(Null.NullInteger)

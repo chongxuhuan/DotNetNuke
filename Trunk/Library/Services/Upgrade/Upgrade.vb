@@ -2508,6 +2508,12 @@ Namespace DotNetNuke.Services.Upgrade
                         ' This procedure is not intended to be part of the database schema
                         ' and is therefore dropped once it has been executed.
                         DataProvider.Instance.ExecuteSQL("DROP PROCEDURE {databaseOwner}{objectQualifier}UpgradeDefaultLanguages")
+                    Case "5.3.0"
+                        Dim ModuleDefID As Integer
+
+                        'Add new Sitemap settings module
+                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
+                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
                 End Select
 
             Catch ex As Exception
