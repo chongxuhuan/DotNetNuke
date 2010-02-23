@@ -70,12 +70,6 @@ Namespace DotNetNuke.Data
                 _connectionString = Settings("connectionString")
             End If
 
-            If Not String.IsNullOrEmpty(Settings("upgradeConnectionString")) Then
-                _upgradeConnectionString = Settings("upgradeConnectionString")
-            Else
-                _upgradeConnectionString = _connectionString
-            End If
-
             _objectQualifier = Settings("objectQualifier")
             If Not String.IsNullOrEmpty(_objectQualifier) AndAlso _objectQualifier.EndsWith("_") = False Then
                 _objectQualifier += "_"
@@ -92,6 +86,11 @@ Namespace DotNetNuke.Data
             End If
             _coreConnectionString += "Application Name=DNNCore;"
 
+            If Not String.IsNullOrEmpty(Settings("upgradeConnectionString")) Then
+                _upgradeConnectionString = Settings("upgradeConnectionString")
+            Else
+                _upgradeConnectionString = _coreConnectionString
+            End If
         End Sub
 
 #End Region
