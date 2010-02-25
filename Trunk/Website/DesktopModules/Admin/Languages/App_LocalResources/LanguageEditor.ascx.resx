@@ -175,7 +175,7 @@
     <value>Portal</value>
   </data>
   <data name="plMode.Text" xml:space="preserve">
-    <value>Mode:</value>
+    <value>Select Mode:</value>
   </data>
   <data name="plMode.Help" xml:space="preserve">
     <value>Select System to edit the base file for a given language; Host will create a custom version of the localized file for this installation.</value>
@@ -213,34 +213,22 @@
   <data name="plResources.Text" xml:space="preserve">
     <value>Resources:</value>
   </data>
-  <data name="LanguageSettings.Action" xml:space="preserve">
-    <value>Language Settings</value>
-  </data>
-  <data name="ResourceVerifier.Action" xml:space="preserve">
-    <value>Resource Verifier</value>
-  </data>
-  <data name="TimeZone.Action" xml:space="preserve">
-    <value>Time Zone Editor</value>
-  </data>
-  <data name="CreateLanguage.Action" xml:space="preserve">
-    <value>Add New Language</value>
-  </data>
-  <data name="EditLanguage.Action" xml:space="preserve">
-    <value>Edit Language</value>
-  </data>
   <data name="cmdEdit.Text" xml:space="preserve">
     <value>Edit Language</value>
-  </data>
-  <data name="CreateLanguagePack.Action" xml:space="preserve">
-    <value>Create Language Pack</value>
-  </data>
-  <data name="LanguagePackInstall.Action" xml:space="preserve">
-    <value>Install Language Pack</value>
   </data>
   <data name="FileSaved.Text" xml:space="preserve">
     <value>Resource File updated successfully</value>
   </data>
   <data name="cmdView.Text" xml:space="preserve">
     <value>View Default Value</value>
+  </data>
+  <data name="plEditingLanguage.Help" xml:space="preserve">
+    <value>This is the selected language for which you are editing resource keys. To select a different language, click cancel at the bottom of the screen.</value>
+  </data>
+  <data name="plEditingLanguage.Text" xml:space="preserve">
+    <value>Selected Language:</value>
+  </data>
+  <data name="ControlTitle_editor.Text" xml:space="preserve">
+    <value>Language Editor</value>
   </data>
 </root>

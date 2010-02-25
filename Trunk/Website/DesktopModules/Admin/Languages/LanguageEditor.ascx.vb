@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -73,12 +73,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Get
                 Dim _Locale As String = Null.NullString
 
-                If cboLocales.SelectedIndex > -1 Then
-                    Dim language As Locale = Localization.GetLocaleByID(Int32.Parse(cboLocales.SelectedValue))
-                    If language IsNot Nothing Then
-                        _Locale = language.Code
-                    End If
+                If Request.QueryString("locale") <> "" Then
+                    _Locale = Request.QueryString("locale")
                 End If
+
                 Return _Locale
             End Get
         End Property
@@ -178,14 +176,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         End Sub
 
-        Private Sub BindLocales()
-            cboLocales.Items.Clear()
-            Dim enabledLanguages As Dictionary(Of String, Locale) = Localization.GetLocales(Null.NullInteger)
-            For Each language As Locale In Localization.GetLocales(Null.NullInteger).Values
-                Dim item As New ListItem(language.Text, language.LanguageID)
-                cboLocales.Items.Add(New ListItem(language.Text, language.LanguageID))
-            Next
-        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -569,15 +559,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     ' init tree
                     InitTree()
 
-                    'Bind Locales
-                    BindLocales()
+                    Dim language As Locale = Localization.GetLocale(Locale)
+                    lblEditingLanguage.Text = language.Text
 
-                    If Not String.IsNullOrEmpty(Request.QueryString("locale")) Then
-                        Dim language As Locale = Localization.GetLocale(Request.QueryString("locale"))
-                        If language IsNot Nothing Then
-                            cboLocales.Items.FindByValue(language.LanguageID.ToString()).Selected = True
-                        End If
-                    End If
 
                     If Me.UserInfo.IsSuperUser Then
                         Dim mode As String = Request.QueryString("mode")
@@ -591,9 +575,14 @@ Namespace DotNetNuke.Modules.Admin.Languages
                         rowMode.Visible = False
                     End If
 
+                    Dim PersonalHighlight As String = Convert.ToString(Personalization.Personalization.GetProfile("LanguageEditor", "HighLight" & PortalId.ToString))
                     Dim highlight As String = Request.QueryString("highlight")
                     If Not String.IsNullOrEmpty(highlight) AndAlso highlight.ToLower() = "true" Then
                         chkHighlight.Checked = True
+                    Else
+                        If PersonalHighlight <> "" Then
+                            chkHighlight.Checked = Convert.ToBoolean(PersonalHighlight)
+                        End If
                     End If
 
                     If Request.QueryString("resourcefile") <> "" Then
@@ -638,16 +627,13 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' -----------------------------------------------------------------------------
         Private Sub chkHighlight_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkHighlight.CheckedChanged
             Try
+                Personalization.Personalization.SetProfile("LanguageEditor", "HighLight" & PortalSettings.PortalId.ToString, chkHighlight.Checked.ToString)
                 BindGrid()
             Catch exc As Exception    'Module failed to load
                 UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End Try
         End Sub
 
-        Protected Sub cboLocales_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboLocales.SelectedIndexChanged
-            dgEditor.CurrentPageIndex = 0
-            BindGrid()
-        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -688,13 +674,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
             End Try
         End Sub
 
-        Protected Sub cmdEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdEdit.Click
-            Try
-                Response.Redirect(ModuleContext.EditUrl("Locale", Locale, "Edit"))
-            Catch exc As Exception           'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -911,10 +890,12 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' </remarks>
         ''' <history>
         ''' 	[vmasanas]	25/03/2006	Created
+        '''     [erikvb]    24/02/2010  added personalization
         ''' </history>
-        ''' -----------------------------------------------------------------------------
+        ''' -----------------------------------------------------------------------------   
         Private Sub rbMode_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbMode.SelectedIndexChanged
             Try
+                Personalization.Personalization.SetProfile("LanguageEditor", "Mode" & PortalSettings.PortalId.ToString, rbMode.SelectedValue)
                 dgEditor.CurrentPageIndex = 0
                 BindGrid()
             Catch
@@ -950,6 +931,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
 			End If
 		End Sub
 
+        Protected Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
+            Response.Redirect(NavigateURL())
+        End Sub
+
 #End Region
 
 #Region "Optional Interfaces"
@@ -958,22 +943,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Get
                 Dim Actions As New ModuleActionCollection
 
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("CreateLanguage.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", ModuleContext.EditUrl("Edit"), False, SecurityAccessLevel.Host, True, False)
-
-                '' install new LanguagePack
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("LanguagePackInstall.Action", LocalResourceFile), ModuleActionType.AddContent, "", "action_import.gif", Util.InstallURL(ModuleContext.TabId, ""), False, SecurityAccessLevel.Host, True, False)
-
-                '' Language Settings
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("LanguageSettings.Action", LocalResourceFile), ModuleActionType.AddContent, "", "settings.gif", ModuleContext.EditUrl("LanguageSettings"), False, SecurityAccessLevel.Edit, True, False)
-
-                '' Time Zone Editor
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("TimeZone.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_language_16px.gif", ModuleContext.EditUrl("TimeZone"), False, SecurityAccessLevel.Host, True, False)
-
-                '' Resource Verifier
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("ResourceVerifier.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_language_16px.gif", ModuleContext.EditUrl("Verify"), False, SecurityAccessLevel.Host, True, False)
-
-                '' Create new LanguagePack
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("CreateLanguagePack.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", ModuleContext.EditUrl("PackageWriter"), False, SecurityAccessLevel.Host, True, False)
+                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("Return.Action", LocalResourceFile), ModuleActionType.AddContent, "", "lt.gif", NavigateURL(), False, SecurityAccessLevel.Edit, True, False)
 
                 Return Actions
             End Get

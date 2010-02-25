@@ -35,7 +35,7 @@
                     <td colspan="3" height="5"></td>
                 </tr>
                 <tr>
-                    <td width="150" aliign="center">
+                    <td width="150" align="center">
                         <asp:ListBox ID="lstTemplate" runat="server" Width="150" Rows="8" AutoPostBack="True" />
                     </td>
                     <td colspan="2" valign="top" align="left" width="300">

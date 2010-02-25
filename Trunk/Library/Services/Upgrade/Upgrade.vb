@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -2514,6 +2514,13 @@ Namespace DotNetNuke.Services.Upgrade
                         'Add new Sitemap settings module
                         ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
+
+                        'update languages module
+                        ModuleDefID = GetModuleDefinition("Languages", "Languages")
+                        RemoveModuleControl(ModuleDefID, "")
+                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageEnabler.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0, "", True)
+                        AddModuleControl(ModuleDefID, "Editor", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
+                        'TODO: rename languages modelname on page (from language editor to languages) 
                 End Select
 
             Catch ex As Exception

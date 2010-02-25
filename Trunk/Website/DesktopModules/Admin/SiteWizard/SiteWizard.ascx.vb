@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,6 +24,7 @@ Imports System.XML
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.UI.UserControls
+Imports System.Collections.Generic
 
 
 Namespace DotNetNuke.Modules.Admin.Portals
@@ -344,7 +345,13 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     Else
                         lblTemplateMessage.Text = ""
                     End If
-                Catch    ' error
+                    'Check that all modules in template are isntalled
+                    ' parse portal desktop modules (version 5.0 templates)
+                    node = xmlDoc.SelectSingleNode("//portal/portalDesktopModules")
+                    If node IsNot Nothing Then
+                        lblTemplateMessage.Text = String.Format("This template has the following modules that are not installed.<br/>{0}", PortalController.CheckDesktopModulesInstalled(node.CreateNavigator()))
+                    End If
+                Catch ex As Exception    ' error
                     lblTemplateMessage.Text = "Error Loading Template description"
                 End Try
             Else

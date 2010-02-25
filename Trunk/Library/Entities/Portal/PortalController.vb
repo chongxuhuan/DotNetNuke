@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -40,6 +40,7 @@ Imports DotNetNuke.Services.EventQueue
 Imports ICSharpCode.SharpZipLib.Zip
 Imports System.Xml.XPath
 Imports System.Threading
+Imports System.Text
 
 Namespace DotNetNuke.Entities.Portals
 
@@ -258,7 +259,7 @@ Namespace DotNetNuke.Entities.Portals
             DataCache.ClearPortalCache(portalID, False)
         End Sub
 
-        
+
 
         Public Shared Sub DeletePortalSettings(ByVal portalID As Integer)
             DataProvider.Instance.DeletePortalSettings(portalID)
@@ -326,24 +327,43 @@ Namespace DotNetNuke.Entities.Portals
         End Sub
 
         Public Shared Sub UpdatePortalSetting(ByVal portalID As Integer, ByVal settingName As String, ByVal settingValue As String, ByVal clearCache As Boolean)
-			Dim culture As String = Thread.CurrentThread.CurrentCulture.ToString().ToLower()
-			If (String.IsNullOrEmpty(culture)) Then
-				culture = GetPortalSetting("DefaultLanguage", portalID, "").ToLower()
-			End If
+            Dim culture As String = Thread.CurrentThread.CurrentCulture.ToString().ToLower()
+            If (String.IsNullOrEmpty(culture)) Then
+                culture = GetPortalSetting("DefaultLanguage", portalID, "").ToLower()
+            End If
 
-			If (String.IsNullOrEmpty(culture)) Then
-				culture = Localization.SystemLocale.ToLower()
-			End If
+            If (String.IsNullOrEmpty(culture)) Then
+                culture = Localization.SystemLocale.ToLower()
+            End If
 
-			DataProvider.Instance.UpdatePortalSetting(portalID, settingName, settingValue, UserController.GetCurrentUserInfo.UserID, culture)
-			Dim objEventLog As New Services.Log.EventLog.EventLogController
-			objEventLog.AddLog(settingName.ToString, settingValue.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
+            DataProvider.Instance.UpdatePortalSetting(portalID, settingName, settingValue, UserController.GetCurrentUserInfo.UserID, culture)
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            objEventLog.AddLog(settingName.ToString, settingValue.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
 
-			If clearCache Then
-				DataCache.ClearPortalCache(portalID, False)
-			End If
-		End Sub
+            If clearCache Then
+                DataCache.ClearPortalCache(portalID, False)
+            End If
+        End Sub
 
+
+        Public Shared Function CheckDesktopModulesInstalled(ByVal nav As XPathNavigator) As String
+            Dim friendlyName As String = Null.NullString
+            Dim desktopModule As DesktopModuleInfo = Nothing
+            Dim modulesNotInstalled As New StringBuilder
+
+            For Each desktopModuleNav As XPathNavigator In nav.Select("portalDesktopModule")
+                friendlyName = XmlUtils.GetNodeValue(desktopModuleNav, "friendlyname")
+
+                If Not String.IsNullOrEmpty(friendlyName) Then
+                    desktopModule = DesktopModuleController.GetDesktopModuleByFriendlyName(friendlyName)
+                    If desktopModule Is Nothing Then
+                        modulesNotInstalled.Append(friendlyName)
+                        modulesNotInstalled.Append("<br/>")
+                    End If
+                End If
+            Next
+            Return modulesNotInstalled.ToString
+        End Function
 #End Region
 
 #Region "Private Methods"

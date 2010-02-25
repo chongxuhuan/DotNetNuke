@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1464,48 +1464,88 @@ Namespace DotNetNuke.Services.Localization
             Return timeZones
         End Function    'GetTimeZones
 
+
         ''' <summary>
         ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
-        ''' based on the languages defined in the supported locales file</para>
+        ''' based on the languages defined in the supported locales file, for the current portal</para>
         ''' </summary>
         ''' <param name="list">DropDownList to load</param>
         ''' <param name="displayType">Format of the culture to display. Must be one the CultureDropDownTypes values. 
         ''' <see cref="CultureDropDownTypes"/> for list of allowable values</param>
         ''' <param name="selectedValue">Name of the default culture to select</param>
         Public Shared Sub LoadCultureDropDownList(ByVal list As DropDownList, ByVal displayType As CultureDropDownTypes, ByVal selectedValue As String)
+            LoadCultureDropDownList(list, displayType, selectedValue, "", False)
+        End Sub
+
+        ''' <summary>
+        ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
+        ''' based on the languages defined in the supported locales file. </para>
+        ''' <para>This overload allows us to display all installed languages. To do so, pass the value True to the Host parameter</para>
+        ''' </summary>
+        ''' <param name="list">DropDownList to load</param>
+        ''' <param name="displayType">Format of the culture to display. Must be one the CultureDropDownTypes values. 
+        ''' <see cref="CultureDropDownTypes"/> for list of allowable values</param>
+        ''' <param name="selectedValue">Name of the default culture to select</param>
+        ''' <param name="Host">Boolean that defines wether or not to load host (ie. all available) locales</param>
+        Public Shared Sub LoadCultureDropDownList(ByVal list As DropDownList, ByVal displayType As CultureDropDownTypes, ByVal selectedValue As String, ByVal Host As Boolean)
+            LoadCultureDropDownList(list, displayType, selectedValue, "", Host)
+        End Sub
+
+        ''' <summary>
+        ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
+        ''' based on the languages defined in the supported locales file</para>
+        ''' <para>This overload allows us to filter a language from the dropdown. To do so pass a language code to the Filter parameter</para>
+        ''' <para>This overload allows us to display all installed languages. To do so, pass the value True to the Host parameter</para>
+        ''' </summary>
+        ''' <param name="list">DropDownList to load</param>
+        ''' <param name="displayType">Format of the culture to display. Must be one the CultureDropDownTypes values. 
+        ''' <see cref="CultureDropDownTypes"/> for list of allowable values</param>
+        ''' <param name="selectedValue">Name of the default culture to select</param>
+        ''' <param name="Filter">Stringvalue that allows for filtering out a specifiec language</param>
+        ''' <param name="Host">Boolean that defines wether or not to load host (ie. all available) locales</param>
+        Public Shared Sub LoadCultureDropDownList(ByVal list As DropDownList, ByVal displayType As CultureDropDownTypes, ByVal selectedValue As String, ByVal Filter As String, ByVal Host As Boolean)
             Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
-            Dim enabledLanguages As Dictionary(Of String, Locale) = GetLocales(objPortalSettings.PortalId)
+            Dim enabledLanguages As Dictionary(Of String, Locale)
+            If Host Then
+                enabledLanguages = Localization.GetLocales(Null.NullInteger)
+            Else
+                enabledLanguages = Localization.GetLocales(objPortalSettings.PortalId)
+            End If
+
             Dim _cultureListItems() As ListItem = New ListItem(enabledLanguages.Count - 1) {}
             Dim _cultureListItemsType As CultureDropDownTypes = displayType
             Dim intAdded As Integer = 0
 
             For Each kvp As KeyValuePair(Of String, Locale) In enabledLanguages
-                ' Create a CultureInfo class based on culture
-                Dim info As CultureInfo = CultureInfo.CreateSpecificCulture(kvp.Value.Code)
+                If kvp.Value.Code <> Filter Then
+                    'skip filtered locale
+                    ' Create a CultureInfo class based on culture
+                    Dim info As CultureInfo = CultureInfo.CreateSpecificCulture(kvp.Value.Code)
 
-                ' Create and initialize a new ListItem
-                Dim item As New ListItem
-                item.Value = kvp.Value.Code
+                    ' Create and initialize a new ListItem
+                    Dim item As New ListItem
+                    item.Value = kvp.Value.Code
 
-                ' Based on the display type desired by the user, select the correct property
-                Select Case displayType
-                    Case CultureDropDownTypes.EnglishName
-                        item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName)
-                    Case CultureDropDownTypes.Lcid
-                        item.Text = info.LCID.ToString()
-                    Case CultureDropDownTypes.Name
-                        item.Text = info.Name
-                    Case CultureDropDownTypes.NativeName
-                        item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName)
-                    Case CultureDropDownTypes.TwoLetterIsoCode
-                        item.Text = info.TwoLetterISOLanguageName
-                    Case CultureDropDownTypes.ThreeLetterIsoCode
-                        item.Text = info.ThreeLetterISOLanguageName
-                    Case Else
-                        item.Text = info.DisplayName
-                End Select
-                _cultureListItems(intAdded) = item
-                intAdded += 1
+                    ' Based on the display type desired by the user, select the correct property
+                    Select Case displayType
+                        Case CultureDropDownTypes.EnglishName
+                            item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName)
+                        Case CultureDropDownTypes.Lcid
+                            item.Text = info.LCID.ToString()
+                        Case CultureDropDownTypes.Name
+                            item.Text = info.Name
+                        Case CultureDropDownTypes.NativeName
+                            item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName)
+                        Case CultureDropDownTypes.TwoLetterIsoCode
+                            item.Text = info.TwoLetterISOLanguageName
+                        Case CultureDropDownTypes.ThreeLetterIsoCode
+                            item.Text = info.ThreeLetterISOLanguageName
+                        Case Else
+                            item.Text = info.DisplayName
+                    End Select
+                    _cultureListItems(intAdded) = item
+                    intAdded += 1
+                End If
             Next
 
             ' If the drop down list already has items, clear the list

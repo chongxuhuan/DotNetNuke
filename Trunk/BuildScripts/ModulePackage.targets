@@ -14,7 +14,7 @@
     <CreateItem Include="*.txt">
       <Output TaskParameter="Include" ItemName="PackageTextFiles" />
     </CreateItem>
-    <CreateItem Include="*.ascx;*.css">
+    <CreateItem Include="*.ascx;*.css;*.xsl">
       <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
     </CreateItem>
     <CreateItem Include="App_LocalResources\*.resx">

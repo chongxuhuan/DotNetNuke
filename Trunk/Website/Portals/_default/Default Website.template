@@ -1186,7 +1186,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <modules>
             <module>
               <moduleID>362</moduleID>
-              <title>Language Editor</title>
+              <title>Languages</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
               <header />
