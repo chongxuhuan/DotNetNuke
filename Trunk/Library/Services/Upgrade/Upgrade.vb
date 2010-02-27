@@ -2520,7 +2520,6 @@ Namespace DotNetNuke.Services.Upgrade
                         RemoveModuleControl(ModuleDefID, "")
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageEnabler.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0, "", True)
                         AddModuleControl(ModuleDefID, "Editor", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
-                        'TODO: rename languages modelname on page (from language editor to languages) 
                 End Select
 
             Catch ex As Exception
