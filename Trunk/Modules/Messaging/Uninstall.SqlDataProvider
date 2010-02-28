@@ -1,0 +1,44 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/** Drop FAQs Table **/
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Messaging] DROP CONSTRAINT [FK_{objectQualifier}Messaging_{objectQualifier}Modules]
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}PortalMessaging] DROP CONSTRAINT [PK_{objectQualifier}PortalMessaging]
+GO
+
+DROP INDEX {databaseOwner}[{objectQualifier}PortalMessaging].[IX_{objectQualifier}PortalMessaging]
+GO
+
+DROP TABLE {databaseOwner}[{objectQualifier}PortalMessaging]
+GO
+
+/** Drop Stored Procedures **/
+
+DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalMessagings]
+GO
+
+DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalMessaging]
+GO
+
+DROP PROCEDURE {databaseOwner}[{objectQualifier}AddPortalMessaging]
+GO
+
+DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalMessaging]
+GO
+
+DROP PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalMessaging]
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,60 @@
+/************************************************************/
+/*****              RegisterModule                      *****/
+/*****                                                  *****/
+/***** Use this script to register a module in the      *****/
+/***** database using Query Analyzer                    *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+exec {databaseOwner}[{objectQualifier}AddDesktopModule]
+  @ModuleName = N'Messaging', 
+  @FolderName = N'Messaging', 
+  @FriendlyName = N'Messaging', 
+  @Description = N'A Messaging module', 
+  @Version = N'01.00.00', 
+  @IsPremium = 0, 
+  @IsAdmin = 0, 
+  @BusinessController = N'DotNetNuke.Web.UI.Messaging.MessagingController', 
+  @SupportedFeatures = 3
+  @CompatibleVersions = ""
+  @Dependencies = ""
+  @Permissions = ""
+
+declare @DesktopModuleId int
+select @DesktopModuleId = DesktopModuleId 
+from {databaseOwner}[{objectQualifier}DesktopModules] 
+where ModuleName = 'Messaging'
+
+exec {databaseOwner}[{objectQualifier}AddModuleDefinition] @DesktopModuleId, 
+  @FriendlyName = N'Messaging', 
+  @DefaultCacheTime = 0
+
+declare @ModuleDefID int
+select @ModuleDefID = ModuleDefID 
+from {databaseOwner}[{objectQualifier}ModuleDefinitions] 
+where FriendlyName = 'Messaging'
+
+exec {databaseOwner}[{objectQualifier}AddModuleControl]
+  @ModuleDefID, 
+  @ControlKey = NULL, 
+  @ControlTitle = NULL, 
+  @ControlSrc = N'DesktopModules/Messaging/ViewMessaging.ascx', 
+  @IconFile = NULL, 
+  @ControlType = 0, 
+  @ViewOrder = NULL, 
+  @HelpUrl = NULL
+
+exec {databaseOwner}[{objectQualifier}AddModuleControl]
+  @ModuleDefID, 
+  @ControlKey = 'Settings', 
+  @ControlTitle = 'Messaging Settings', 
+  @ControlSrc = N'DesktopModules/Messaging/Settings.ascx', 
+  @IconFile = NULL, 
+  @ControlType = 1, 
+  @ViewOrder = NULL, 
+  @HelpUrl = NULL

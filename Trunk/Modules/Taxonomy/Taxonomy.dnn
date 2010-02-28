@@ -1,0 +1,113 @@
+﻿<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DotNetNuke.Taxonomy" type="Module" version="01.00.00">
+      <friendlyName>Taxonomy Manager</friendlyName>
+      <description>Administrators can manage the Taxonomy for their portal.</description>
+      <owner>
+        <name>DotNetNuke Corporation</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>http://www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <dependencies>
+        <dependency type="CoreVersion">05.03.00</dependency>
+      </dependencies>
+      <components>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>DotNetNuke.Taxonomy</moduleName>
+            <foldername>Admin/Taxonomy</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Taxonomy Manager</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/Admin/Taxonomy/VocabularyList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>CreateVocabulary</controlKey>
+                    <controlSrc>DesktopModules/Admin/Taxonomy/CreateVocabulary.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Create Vocabulary</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>EditVocabulary</controlKey>
+                    <controlSrc>DesktopModules/Admin/Taxonomy/EditVocabulary.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Edit Vocabulary</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <basePath>bin</basePath>
+            <assembly>
+              <name>DotNetNuke.Modules.Taxonomy.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>DesktopModules\Admin\Taxonomy</basePath>
+            <file>
+              <path>App_LocalResources</path>
+              <name>CreateVocabulary.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>EditVocabulary.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>SharedResources.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>VocabularyList.ascx.resx</name>
+            </file>
+            <file>
+              <path>Controls</path>
+              <name>EditTermControl.ascx</name>
+            </file>
+            <file>
+              <path>Controls</path>
+              <name>EditVocabularyControl.ascx</name>
+            </file>
+            <file>
+              <name>CreateVocabulary.ascx</name>
+            </file>
+            <file>
+              <name>EditVocabulary.ascx</name>
+            </file>
+            <file>
+              <name>VocabularyList.ascx</name>
+            </file>
+          </files>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

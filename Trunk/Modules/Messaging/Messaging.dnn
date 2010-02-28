@@ -1,0 +1,129 @@
+﻿<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="Admin.Messaging" type="Module" version="01.00.00">
+      <friendlyName>Messaging</friendlyName>
+      <description>The Messaging module allows users to send and receive private messages.</description>
+      <owner>
+        <name>DotNetNuke Corporation</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <dependencies>
+        <dependency type="CoreVersion">05.03.00</dependency>
+      </dependencies>
+      <components>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>Admin.Messaging</moduleName>
+            <foldername>Admin/Messaging</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Messaging</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/Admin/Messaging/MessagesList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>EditMessage</controlKey>
+                    <controlSrc>DesktopModules/Admin/Messaging/EditMessage.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Edit Message</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Settings</controlKey>
+                    <controlSrc>DesktopModules/Admin/Messaging/Settings.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>ViewMessage</controlKey>
+                    <controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>View Message</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <basePath>bin</basePath>
+            <assembly>
+              <name>DotNetNuke.Modules.Messaging.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>DesktopModules\Admin\Messaging</basePath>
+            <file>
+              <path>App_LocalResources</path>
+              <name>EditMessage.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>MessageCount.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>MessagesList.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>Settings.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>SharedResources.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>ViewMessage.ascx.resx</name>
+            </file>
+            <file>
+              <name>EditMessage.ascx</name>
+            </file>
+            <file>
+              <name>MessageCount.ascx</name>
+            </file>
+            <file>
+              <name>MessagesList.ascx</name>
+            </file>
+            <file>
+              <name>Settings.ascx</name>
+            </file>
+            <file>
+              <name>ViewMessage.ascx</name>
+            </file>
+          </files>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

@@ -1,0 +1,224 @@
+﻿--Region Messaging_MessageIndex
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_MessageIndex]') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		drop table [Messaging_MessageIndex]
+	END
+
+--if not exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_MessageIndex]') and OBJECTPROPERTY(id, N'IsTable') = 1)
+--	BEGIN
+		CREATE TABLE [Messaging_MessageIndex]
+		(
+			[IndexID] int NOT NULL IDENTITY(1, 1),
+			[MessageID] int NOT NULL,
+			[PortalID] int NOT NULL,
+			[FromUserID] int NOT NULL,
+			[ToUserID] int NOT NULL,
+			[PendingSend] bit NOT NULL DEFAULT 0,
+			[SendDate] datetime,			
+			[ReplyToIndexID] int,			
+			[Status] nvarchar(100),
+			[MessageDate] datetime NOT NULL DEFAULT GETDATE(),			
+			[MessagingGroup] uniqueidentifier,
+			[ExecutionCycleGuid] uniqueidentifier
+		)
+
+		ALTER TABLE [Messaging_MessageIndex] ADD CONSTRAINT [PK_Messaging_MessageIndex] PRIMARY KEY CLUSTERED  ([IndexID])
+		CREATE NONCLUSTERED INDEX [IX_Messaging_MessageIndex] ON [Messaging_MessageIndex] ([IndexID])
+--	END
+GO
+
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_MessageIndex_Save_MessageIndex]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure [Messaging_MessageIndex_Save_MessageIndex]
+GO
+
+
+/** Create Stored Procedures **/
+create procedure [Messaging_MessageIndex_Save_MessageIndex]
+			@MessageID int,
+			@PortalID int,
+			@FromUserID int,
+			@ToUserID int,
+			@PendingSend bit,
+			@SendDate datetime,	
+			@ReplyToIndexID int,
+			@Status nvarchar(100),
+			@MessageDate datetime,
+			@MessagingGroup uniqueidentifier,
+			@IndexID int OUTPUT
+
+as
+
+if(Exists(Select IndexID from [Messaging_MessageIndex] Where IndexID=@IndexID))
+	BEGIN
+		Update [Messaging_MessageIndex] set 	
+			[MessageID]=@MessageID,
+			[PortalID]=@PortalID,
+			[FromUserID]=@FromUserID,
+			[ToUserID]=@ToUserID,
+			[PendingSend]=@PendingSend,
+			[SendDate]=@SendDate,
+			[ReplyToIndexID]=@ReplyToIndexID,
+			[Status]=@Status,
+			[MessageDate]=@MessageDate,
+			[MessagingGroup]=@MessagingGroup
+			where IndexID = @IndexID			
+			select @IndexID as IndexID
+	END 
+ELSE
+	BEGIN
+		insert into [Messaging_MessageIndex] (
+			[MessageID],
+			[PortalID],
+			[FromUserID],
+			[ToUserID],
+			[PendingSend],
+			[SendDate],
+			[ReplyToIndexID],
+			[Status],
+			[MessageDate],
+			[MessagingGroup]
+			)
+			Values(
+			@MessageID,
+			@PortalID,
+			@FromUserID,
+			@ToUserID,
+			@PendingSend,
+			@SendDate,
+			@ReplyToIndexID,
+			@Status,
+			@MessageDate,
+			@MessagingGroup
+			)
+		Select @IndexID=SCOPE_IDENTITY()						
+		select @IndexID as IndexID1
+		
+	END
+
+GO
+
+--End Region Messaging_MessageIndex
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+--Region Messaging_MessageStore
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_MessageStore]') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		drop table [Messaging_MessageStore]
+	END
+	
+	
+--if not exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_MessageStore]') and OBJECTPROPERTY(id, N'IsTable') = 1)
+--	BEGIN
+		CREATE TABLE [Messaging_MessageStore]
+		(
+			[MessageID] int NOT NULL IDENTITY(1, 1),
+			[LongBody] ntext NOT NULL,
+			[Subject] nvarchar(100) NOT NULL,
+		)
+
+		ALTER TABLE [Messaging_MessageStore] ADD CONSTRAINT [PK_Messaging_MessageStore] PRIMARY KEY CLUSTERED  ([MessageID])
+		CREATE NONCLUSTERED INDEX [IX_Messaging_MessageStore] ON [Messaging_MessageStore] ([MessageID])
+--	END
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_Save_MessageStore]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure [Messaging_Save_MessageStore]
+GO
+
+
+/** Create Stored Procedures **/
+create procedure [Messaging_Save_MessageStore]
+			@LongBody ntext,
+			@Subject nvarchar(100),
+			@MessageID int OUTPUT		
+as
+if(Exists(Select MessageID from [Messaging_MessageStore] Where MessageID=@MessageID))
+	BEGIN
+		Update Messaging_MessageStore set 	
+			[LongBody]=@LongBody,
+			[Subject]=@Subject
+			where MessageID = @MessageID
+			
+			select @MessageID as MessageID
+	END 
+ELSE
+	BEGIN
+		insert into [Messaging_MessageStore] (
+			[LongBody],
+			[Subject]
+			)
+			Values(
+			@LongBody ,
+			@Subject
+			)
+			
+		Select @MessageID=SCOPE_IDENTITY()						
+		select @MessageID as MessageID
+		
+	END
+
+GO
+
+--End Region Messaging_MessageStore
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+--Region Additional
+
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[Messaging_Save_Message]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure [Messaging_Save_Message]
+GO
+
+
+/** Create Stored Procedures **/
+create procedure [Messaging_Save_Message]
+			@LongBody ntext,
+			@Subject nvarchar(100),
+			@PortalID int,
+			@FromUserID int,
+			@ToUserID int,
+			@PendingSend bit,
+			@SendDate datetime,				
+			@ReplyToIndexID int,
+			@Status nvarchar(100),
+			@MessageDate datetime,
+			@MessagingGroup uniqueidentifier,
+			@MessageID int OUTPUT,		
+			@IndexID int OUTPUT	
+as
+
+EXEC [Messaging_Save_MessageStore] 
+	@LongBody,
+	@Subject,
+	@MessageID OUTPUT
+	
+
+EXEC [Messaging_MessageIndex_Save_MessageIndex] 
+			@MessageID,
+			@PortalID,
+			@FromUserID,
+			@ToUserID,
+			@PendingSend,
+			@SendDate,				
+			@ReplyToIndexID,
+			@Status,
+			@MessageDate,
+			@MessagingGroup,
+			@IndexID OUTPUT
+
+exec [Messaging_Update_MessageStatus] @Status, @IndexID, @FromUserID
+
+select @MessageID as MessageID, @IndexID as IndexID
+
+GO
+
+--End Region Additional
