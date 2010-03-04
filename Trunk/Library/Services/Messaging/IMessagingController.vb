@@ -20,14 +20,19 @@
 
 Imports System
 Imports System.Collections.Generic
-Imports DotNetNuke.Services.Messaging.Providers
+Imports DotNetNuke.Services.Messaging.Data
+
 
 Namespace DotNetNuke.Services.Messaging
     Public Interface IMessagingController
-        Sub DeleteMessage(ByVal PortalID As Integer, ByVal IndexID As Integer)
-        Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal IndexID As Integer) As Message
-        Function GetMessagesForUser(ByVal PortalID As Integer, ByVal UserID As Integer) As List(Of Message)
-        Function GetMessagesPendingSend(ByVal ExecutionCycleGuid As Guid) As List(Of Message)
-        Sub SaveMessage(ByVal objMessaging As Message)
+        Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal MessageID As Integer) As Message
+        Function GetUserInbox(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal PageNumber As Integer, ByVal PageSize As Integer) As List(Of Message)
+        Function GetInboxCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer
+        Function GetNewMessageCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer
+        Function GetNextMessageForDispatch(ByVal SchedulerInstance As Guid) As Message
+        Sub SaveMessage(ByVal objMessage As Message)
+        Sub UpdateMessage(ByVal objMessage As Message)
+        Sub MarkMessageAsDispatched(ByVal MessageID As Integer)
+
     End Interface
 End Namespace

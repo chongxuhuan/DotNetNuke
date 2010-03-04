@@ -45,7 +45,7 @@ Namespace DotNetNuke.Modules.Html
 
         Private Sub DisplayHistory(ByVal objContent As HtmlTextInfo)
             Dim objLog As New HtmlTextLogController
-            lblVersion.Text = objContent.Version
+            lblVersion.Text = objContent.Version.ToString()
             lblWorkflow.Text = Localization.GetString(objContent.WorkflowName, Me.LocalResourceFile)
             lblState.Text = Localization.GetString(objContent.StateName, Me.LocalResourceFile)
             grdLog.DataSource = objLog.GetHtmlTextLog(objContent.ItemID)
@@ -101,7 +101,7 @@ Namespace DotNetNuke.Modules.Html
             Try
                 Dim objHTML As New HtmlTextController
 
-                WorkflowID = objHTML.GetWorkflowID(ModuleId, PortalId)
+                WorkflowID = objHTML.GetWorkflow(ModuleId, TabId, PortalId).Value
 
                 ' get content
                 Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)

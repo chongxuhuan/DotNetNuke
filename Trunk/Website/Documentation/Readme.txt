@@ -53,3 +53,5 @@ The following items have been deprecated and are no longer supported and will no
 - The XMLLoggingProvider (June 23, 2009)  was deprecated due to known performance problems. The recommended replacement is the DBLoggingProvider (which has been the default since 3.3)
 
 Note: SQL 2000/MSDE 2000 support was dropped with the release of 5.2 (November 2009)
+
+Marketshare and Adsense modules were deprecated and removed from new installs with the 5.3.0 release (Mar 17th 2010)

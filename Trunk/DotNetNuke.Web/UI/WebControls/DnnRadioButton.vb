@@ -18,48 +18,78 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Services.Localization
+
 Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnRadioButton
         Inherits System.Web.UI.WebControls.RadioButton
-        Implements DotNetNuke.Web.UI.ILocalize
+        Implements ILocalizable
 
-		Public Sub New()
-			CssClass = "SubHead dnnLabel"
-		End Sub
+#Region "Private Members"
+
+        Private _Localize As Boolean = True
+        Private _LocalResourceFile As String
+
+#End Region
+
+#Region "Constructors"
+
+        Public Sub New()
+            CssClass = "SubHead dnnLabel"
+        End Sub
+
+#End Region
+
+#Region "Protected Methods"
+
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
+            LocalResourceFile = Utilities.GetLocalResourceFile(Me)
+        End Sub
 
         Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
             LocalizeStrings()
             MyBase.Render(writer)
         End Sub
 
-#Region "Implements ILocalize"
+#End Region
 
-		Private _Localize As Boolean = True
-		Public Property Localize() As Boolean Implements ILocalize.Localize
-			Get
-				Return _Localize
-			End Get
-			Set(ByVal value As Boolean)
-				_Localize = value
-			End Set
-		End Property
+#Region "ILocalizable Implementation"
 
-		Protected Overridable Sub LocalizeStrings() Implements ILocalize.LocalizeStrings
-			If (Localize) Then
-				If (Not String.IsNullOrEmpty(ToolTip)) Then
-					ToolTip = Utilities.GetLocalizedStringFromParent(ToolTip, Me)
-				End If
+        Public Property Localize() As Boolean Implements ILocalizable.Localize
+            Get
+                Return _Localize
+            End Get
+            Set(ByVal value As Boolean)
+                _Localize = value
+            End Set
+        End Property
 
-				If (Not String.IsNullOrEmpty(Text)) Then
-					Text = Utilities.GetLocalizedStringFromParent(Text, Me)
+        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
+            Get
+                Return _LocalResourceFile
+            End Get
+            Set(ByVal value As String)
+                _LocalResourceFile = value
+            End Set
+        End Property
 
-					If (String.IsNullOrEmpty(ToolTip)) Then
-						ToolTip = Utilities.GetLocalizedStringFromParent(Text + ".ToolTip", Me)
-					End If
-				End If
-			End If
-		End Sub
+        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
+            If (Localize) Then
+                If (Not String.IsNullOrEmpty(ToolTip)) Then
+                    ToolTip = Localization.GetString(ToolTip, LocalResourceFile)
+                End If
+
+                If (Not String.IsNullOrEmpty(Text)) Then
+                    Text = Localization.GetString(Text, LocalResourceFile)
+
+                    If (String.IsNullOrEmpty(ToolTip)) Then
+                        ToolTip = Localization.GetString(Text + ".ToolTip", LocalResourceFile)
+                    End If
+                End If
+            End If
+        End Sub
 
 #End Region
 

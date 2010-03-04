@@ -132,7 +132,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                 Else
                     Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
                     If objUserInfo.UserID <> -1 Then
-                        Response.Redirect(ProfileURL(objUserInfo.UserID))
+                        Response.Redirect(UserProfileURL(objUserInfo.UserID))
                     End If
                 End If
             Catch exc As Exception    'Module failed to load

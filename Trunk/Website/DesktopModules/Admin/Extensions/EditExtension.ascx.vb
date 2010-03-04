@@ -179,7 +179,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
                 End If
 
                 If displayMessage Then
-                    Skin.AddModuleMessage(Me, Localization.GetString("PackageUpdated", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("PackageUpdated", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
                 End If
             End If
 

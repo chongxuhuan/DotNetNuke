@@ -23,8 +23,9 @@ Namespace DotNetNuke.Entities.Content
         Function AddContentItem(ByVal contentItem As ContentItem) As Integer
         Sub DeleteContentItem(ByVal contentItem As ContentItem)
         Function GetContentItem(ByVal contentItemId As Integer) As ContentItem
+        Function GetContentItemsByTerm(ByVal term As String) As IQueryable(Of ContentItem)
         Function GetMetadata(ByVal contentItemId As Integer) As Dictionary(Of String, String)
-        Function GetUnIndexedContentItems() As List(Of ContentItem)
+        Function GetUnIndexedContentItems() As IQueryable(Of ContentItem)
         Sub UpdateContentItem(ByVal contentItem As ContentItem)
     End Interface
 End Namespace

@@ -47,7 +47,7 @@ Namespace DotNetNuke.Modules.Dashboard.Controls
                 grdBackups.DataBind()
             Catch ex As Exception
                 grdBackups.Visible = False
-                Skin.AddModuleMessage(Me.Parent, Localization.GetString("Backup.Error.Text", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me.Parent, Localization.GetString("Backup.Error.Text", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning)
             End Try
 
             Localization.LocalizeGridView(grdFiles, Me.LocalResourceFile)

@@ -17,11 +17,9 @@
 ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ' DEALINGS IN THE SOFTWARE.
 '
-Imports System.Threading
 
-Imports DotNetNuke.Entities.Modules
+Imports DotNetNuke.Services.Messaging.Data
 Imports DotNetNuke.Security.Roles
-Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Services.Tokens
 Imports DotNetNuke.Entities.Host
 
@@ -252,6 +250,8 @@ Namespace DotNetNuke.Services.Mail
         Private _ReplyTo As UserInfo = Nothing
 
         Private _objTR As TokenReplace
+
+        Private Shared _messagingController As New Messaging.MessagingController()
 #End Region
 
 #Region " Private Methods "
@@ -309,7 +309,17 @@ Namespace DotNetNuke.Services.Mail
 
             Dim strSubject As String = String.Format(_strConfSubject, Subject)
             If Not _bolSuppressTR Then strSubject = _objTR.ReplaceEnvironmentTokens(strSubject)
-            Mail.SendMail(_sendingUser.Email, _sendingUser.Email, "", "", _priority, strSubject, _bodyFormat, System.Text.Encoding.UTF8, strbody, "", _strSMTPServer, _strSMTPAuthentication, _strSMTPUsername, _strSMTPPassword, _bolSMTPEnableSSL)
+            ''Mail.SendMail(_sendingUser.Email, _sendingUser.Email, "", "", _priority, strSubject, _bodyFormat, System.Text.Encoding.UTF8, strbody, "", _strSMTPServer, _strSMTPAuthentication, _strSMTPUsername, _strSMTPPassword, _bolSMTPEnableSSL)
+
+            Dim _message As New Message()
+            _message.FromUserID = _sendingUser.UserID
+            _message.ToUserID = _sendingUser.UserID
+            _message.Subject = strSubject
+            _message.Body = strbody
+            _message.Status = MessageStatusType.Unread
+
+            _messagingController.SaveMessage(_message)
+
         End Sub
 
         ''' <summary>check, if the user's language matches the current language filter</summary>
@@ -447,7 +457,7 @@ Namespace DotNetNuke.Services.Mail
                 Next
             Next
             For Each objUser As UserInfo In _addressedUsers
-                  conditionallyAddUser(objUser, objKeyList, objUserList)
+                conditionallyAddUser(objUser, objKeyList, objUserList)
             Next
             Return objUserList
         End Function

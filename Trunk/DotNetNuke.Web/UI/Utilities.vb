@@ -22,273 +22,252 @@ Imports System
 Imports System.Reflection
 Imports System.Web.UI
 Imports System.Web.UI.WebControls
+Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.UI.ControlPanels
 Imports DotNetNuke.Entities.Portals
+Imports DotNetNuke.Services.FileSystem
 
 Namespace DotNetNuke.Web.UI
 
-	Public Class MessageWindowParameters
-		
-		Public Sub New(ByVal message As String)
-			_Message = message
-		End Sub
+    Public Class Utilities
 
-		Public Sub New(ByVal message As String, ByVal title As String)
-			_Message = message
-			_Title = title
-		End Sub
+#Region "Private Methods"
 
-		Public Sub New(ByVal message As String, ByVal title As String, ByVal windowWidth As String, ByVal windowHeight As String)
-			_Message = message
-			_Title = title
-			_WindowWidth = windowWidth
-			_WindowHeight = windowHeight
-		End Sub
+        Private Shared Sub AddMessageWindow(ByRef ctrl As Control)
+            Dim msgCtrl As Control = ctrl.Page.FindControl("DnnWindowManager")
+            If (Not IsNothing(msgCtrl)) Then
+                ctrl.Page.ClientScript.RegisterClientScriptInclude("postBackConfirm", ctrl.ResolveUrl("~/js/dnn.postbackconfirm.js"))
+                msgCtrl.Visible = True
+            End If
+        End Sub
 
-		Private _Message As String = ""
-		Public Property Message() As String
-			Get
-				Return _Message
-			End Get
-			Set(ByVal value As String)
-				'todo: javascript encode for onclick events
-				_Message = value
-				_Message = _Message.Replace("'", "\'")
-				_Message = _Message.Replace("""", "\""")
-			End Set
-		End Property
+#End Region
 
-		Private _Title As String = ""
-		Public Property Title() As String
-			Get
-				Return _Title
-			End Get
-			Set(ByVal value As String)
-				'todo: javascript encode for onclick events
-				_Title = value
-				_Title = _Title.Replace("'", "\'")
-				_Title = _Title.Replace("""", "\""")
-			End Set
-		End Property
+#Region "Public Methods"
 
-		Private _WindowWidth As Unit = Unit.Pixel(350)
-		Public Property WindowWidth() As Unit
-			Get
-				Return _WindowWidth
-			End Get
-			Set(ByVal value As Unit)
-				_WindowWidth = value
-			End Set
-		End Property
+        Public Shared Sub ApplySkin(ByRef telerikControl As Control)
+            ApplySkin(telerikControl, "", "", "")
+        End Sub
 
-		Private _WindowHeight As Unit = Unit.Pixel(175)
-		Public Property WindowHeight() As Unit
-			Get
-				Return _WindowHeight
-			End Get
-			Set(ByVal value As Unit)
-				_WindowHeight = value
-			End Set
-		End Property
+        Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String)
+            ApplySkin(telerikControl, "", "", fallBackEmbeddedSkinName)
+        End Sub
 
-	End Class
+        Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String, ByVal controlName As String)
+            ApplySkin(telerikControl, "", controlName, fallBackEmbeddedSkinName)
+        End Sub
 
-	Public Class Utilities
+        'Use selected skin's webcontrol skin if one exists
+        'or use _default skin's webcontrol skin if one exists
+        'or use embedded skin
+        Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String, ByVal controlName As String, ByVal webControlSkinSubFolderName As String)
+            Dim skinProperty As PropertyInfo = Nothing
+            Dim enableEmbeddedSkinsProperty As PropertyInfo = Nothing
+            Dim skinApplied As Boolean = False
 
-		Public Shared Sub RegisterAlertOnPageLoad(ByRef ctrl As Control, ByVal message As String)
-			RegisterAlertOnPageLoad(ctrl, New MessageWindowParameters(message))
-		End Sub
+            Try
+                skinProperty = telerikControl.GetType().GetProperty("Skin")
+                enableEmbeddedSkinsProperty = telerikControl.GetType().GetProperty("EnableEmbeddedSkins")
 
-		Public Shared Sub RegisterAlertOnPageLoad(ByRef ctrl As Control, ByVal message As MessageWindowParameters)
-			AddMessageWindow(ctrl)
-			ctrl.Page.ClientScript.RegisterClientScriptBlock(ctrl.GetType(), ctrl.ID + "_AlertOnPageLoad", "function pageLoad() { " + GetClientAlert(ctrl, message) + " }", True)
-		End Sub
+                If (String.IsNullOrEmpty(controlName)) Then
+                    controlName = telerikControl.GetType().BaseType.Name
+                    If (controlName.StartsWith("Rad")) Then
+                        controlName = controlName.Substring(3)
+                    End If
+                End If
 
-		Public Shared Function GetClientAlert(ByRef ctrl As Control, ByVal message As String) As String
-			Return GetClientAlert(ctrl, New MessageWindowParameters(message))
-		End Function
+                Dim skinVirtualFolder As String = PortalSettings.Current.ActiveTab.SkinPath.Replace("\"c, "/"c).Replace("//", "/")
+                Dim skinName As String = ""
 
-		Public Shared Function GetClientAlert(ByRef ctrl As Control, ByVal message As MessageWindowParameters) As String
-			AddMessageWindow(ctrl)
-			'function(text, oWidth, oHeight, oTitle) 
-			Return String.Format("radalert('{0}', '{1}', '{2}', '{3}');" _
-			 , message.Message, message.WindowWidth, message.WindowHeight, message.Title)
-		End Function
+                If (skinVirtualFolder.EndsWith("/")) Then
+                    skinVirtualFolder = skinVirtualFolder.Substring(0, skinVirtualFolder.Length - 1)
+                End If
+                Dim lastIndex As Integer = skinVirtualFolder.LastIndexOf("/")
+                If (lastIndex > -1 AndAlso skinVirtualFolder.Length > lastIndex) Then
+                    skinName = skinVirtualFolder.Substring(skinVirtualFolder.LastIndexOf("/") + 1)
+                End If
 
-		Public Shared Function GetOnClientClickConfirm(ByRef ctrl As Control, ByVal message As String) As String
-			Return GetOnClientClickConfirm(ctrl, New MessageWindowParameters(message))
-		End Function
+                Dim systemWebControlSkin As String = String.Empty
+                If (Not String.IsNullOrEmpty(skinName) AndAlso Not String.IsNullOrEmpty(skinVirtualFolder)) Then
+                    systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder)
+                    systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, "WebControlSkin")
+                    systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, skinName)
+                    systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, webControlSkinSubFolderName)
+                    systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, String.Format("{0}.{1}.css", controlName, skinName))
 
-		Public Shared Function GetOnClientClickConfirm(ByRef ctrl As Control, ByVal message As MessageWindowParameters) As String
-			AddMessageWindow(ctrl)
-			'function(text, mozEvent, oWidth, oHeight, callerObj, oTitle) 
-			Return String.Format("return postBackConfirm('{0}', event, '{1}', '{2}', '', '{3}');" _
-			 , message.Message, message.WindowWidth, message.WindowHeight, message.Title)
-		End Function
+                    'Check if the selected skin has the webcontrol skin
+                    If (Not System.IO.File.Exists(systemWebControlSkin)) Then
+                        systemWebControlSkin = ""
+                    End If
 
-		Private Shared Sub AddMessageWindow(ByRef ctrl As Control)
-			Dim msgCtrl As Control = ctrl.Page.FindControl("DnnWindowManager")
-			If (Not IsNothing(msgCtrl)) Then
-				ctrl.Page.ClientScript.RegisterClientScriptInclude("postBackConfirm", ctrl.ResolveUrl("~/js/dnn.postbackconfirm.js"))
-				msgCtrl.Visible = True
-			End If
-		End Sub
+                    'No skin, try default folder
+                    If (systemWebControlSkin = "") Then
+                        skinVirtualFolder = telerikControl.ResolveUrl("~/Portals/_default/Skins/_default")
+                        skinName = "Default"
 
-		'todo
-		'Public Function GetPromptMessage() As String
-		'End Function
+                        If (skinVirtualFolder.EndsWith("/")) Then
+                            skinVirtualFolder = skinVirtualFolder.Substring(0, skinVirtualFolder.Length - 1)
+                        End If
 
-		Public Shared Sub ApplySkin(ByRef telerikControl As Control)
-			ApplySkin(telerikControl, "", "", "")
-		End Sub
+                        If (Not String.IsNullOrEmpty(skinName) AndAlso Not String.IsNullOrEmpty(skinVirtualFolder)) Then
+                            systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder)
+                            systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, "WebControlSkin")
+                            systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, skinName)
+                            systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, webControlSkinSubFolderName)
+                            systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, String.Format("{0}.{1}.css", controlName, skinName))
 
-		Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String)
-			ApplySkin(telerikControl, "", "", fallBackEmbeddedSkinName)
-		End Sub
+                            If (Not System.IO.File.Exists(systemWebControlSkin)) Then
+                                systemWebControlSkin = ""
+                            End If
+                        End If
+                    End If
+                End If
 
-		Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String, ByVal controlName As String)
-			ApplySkin(telerikControl, "", controlName, fallBackEmbeddedSkinName)
-		End Sub
+                If (systemWebControlSkin <> "") Then
+                    Dim cssLink As String = "<link href=""{0}"" rel=""stylesheet"" type=""text/css"" />"
+                    Dim cssVirtual As String = System.IO.Path.Combine(skinVirtualFolder, "WebControlSkin")
+                    cssVirtual = System.IO.Path.Combine(cssVirtual, skinName)
+                    cssVirtual = System.IO.Path.Combine(cssVirtual, webControlSkinSubFolderName)
+                    cssVirtual = System.IO.Path.Combine(cssVirtual, String.Format("{0}.{1}.css", controlName, skinName))
+                    cssLink = String.Format(cssLink, cssVirtual.Replace("\"c, "/"c).Replace("//", "/"))
 
-		'Use selected skin's webcontrol skin if one exists
-		'or use _default skin's webcontrol skin if one exists
-		'or use embedded skin
-		Public Shared Sub ApplySkin(ByRef telerikControl As Control, ByVal fallBackEmbeddedSkinName As String, ByVal controlName As String, ByVal webControlSkinSubFolderName As String)
-			Dim skinProperty As PropertyInfo = Nothing
-			Dim enableEmbeddedSkinsProperty As PropertyInfo = Nothing
-			Dim skinApplied As Boolean = False
+                    If (Not IsNothing(System.Web.HttpContext.Current)) Then
+                        If (Not System.Web.HttpContext.Current.Items.Contains(cssVirtual)) Then
+                            telerikControl.Page.Header.Controls.Add(New LiteralControl(cssLink))
+                            System.Web.HttpContext.Current.Items.Add(cssVirtual, "")
+                        End If
+                    End If
 
-			Try
-				skinProperty = telerikControl.GetType().GetProperty("Skin")
-				enableEmbeddedSkinsProperty = telerikControl.GetType().GetProperty("EnableEmbeddedSkins")
+                    If (Not IsNothing(skinProperty) AndAlso Not IsNothing(enableEmbeddedSkinsProperty)) Then
+                        skinApplied = True
+                        skinProperty.SetValue(telerikControl, skinName, Nothing)
+                        enableEmbeddedSkinsProperty.SetValue(telerikControl, False, Nothing)
+                    End If
+                End If
+            Catch ex As Exception
+                DotNetNuke.Services.Exceptions.LogException(ex)
+            End Try
 
-				If (String.IsNullOrEmpty(controlName)) Then
-					controlName = telerikControl.GetType().BaseType.Name
-					If (controlName.StartsWith("Rad")) Then
-						controlName = controlName.Substring(3)
-					End If
-				End If
+            If (Not IsNothing(skinProperty) AndAlso Not IsNothing(enableEmbeddedSkinsProperty) AndAlso Not (skinApplied)) Then
+                If (String.IsNullOrEmpty(fallBackEmbeddedSkinName)) Then
+                    fallBackEmbeddedSkinName = "Simple"
+                End If
 
-				Dim skinVirtualFolder As String = PortalSettings.Current.ActiveTab.SkinPath.Replace("\"c, "/"c).Replace("//", "/")
-				Dim skinName As String = ""
+                'Set fall back skin Embedded Skin
+                skinProperty.SetValue(telerikControl, fallBackEmbeddedSkinName, Nothing)
+                enableEmbeddedSkinsProperty.SetValue(telerikControl, True, Nothing)
+            End If
+        End Sub
 
-				If (skinVirtualFolder.EndsWith("/")) Then
-					skinVirtualFolder = skinVirtualFolder.Substring(0, skinVirtualFolder.Length - 1)
-				End If
-				Dim lastIndex As Integer = skinVirtualFolder.LastIndexOf("/")
-				If (lastIndex > -1 AndAlso skinVirtualFolder.Length > lastIndex) Then
-					skinName = skinVirtualFolder.Substring(skinVirtualFolder.LastIndexOf("/") + 1)
-				End If
+        Public Shared Sub CreateThumbnail(ByVal image As FileInfo, ByVal img As Image, ByVal maxWidth As Integer, ByVal maxHeight As Integer)
+            If image.Width > image.Height Then
+                ' Landscape
+                If image.Width > maxWidth Then
+                    img.Width = maxWidth
+                    img.Height = Convert.ToInt32(image.Height * maxWidth / image.Width)
+                Else
+                    img.Width = image.Width
+                    img.Height = image.Height
+                End If
+            Else
+                ' Portrait
+                If image.Height > maxHeight Then
+                    img.Width = Convert.ToInt32(image.Width * maxHeight / image.Height)
+                    img.Height = maxHeight
+                Else
+                    img.Width = image.Width
+                    img.Height = image.Height
+                End If
 
-				Dim systemWebControlSkin As String = String.Empty
-				If (Not String.IsNullOrEmpty(skinName) AndAlso Not String.IsNullOrEmpty(skinVirtualFolder)) Then
-					systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder)
-					systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, "WebControlSkin")
-					systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, skinName)
-					systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, webControlSkinSubFolderName)
-					systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, String.Format("{0}.{1}.css", controlName, skinName))
+            End If
+        End Sub
 
-					'Check if the selected skin has the webcontrol skin
-					If (Not System.IO.File.Exists(systemWebControlSkin)) Then
-						systemWebControlSkin = ""
-					End If
+        Public Shared Function GetClientAlert(ByRef ctrl As Control, ByVal message As String) As String
+            Return GetClientAlert(ctrl, New MessageWindowParameters(message))
+        End Function
 
-					'No skin, try default folder
-					If (systemWebControlSkin = "") Then
-						skinVirtualFolder = telerikControl.ResolveUrl("~/Portals/_default/Skins/_default")
-						skinName = "Default"
+        Public Shared Function GetClientAlert(ByRef ctrl As Control, ByVal message As MessageWindowParameters) As String
+            AddMessageWindow(ctrl)
+            'function(text, oWidth, oHeight, oTitle) 
+            Return String.Format("radalert('{0}', '{1}', '{2}', '{3}');" _
+             , message.Message, message.WindowWidth, message.WindowHeight, message.Title)
+        End Function
 
-						If (skinVirtualFolder.EndsWith("/")) Then
-							skinVirtualFolder = skinVirtualFolder.Substring(0, skinVirtualFolder.Length - 1)
-						End If
+        Public Shared Function GetLocalizedString(ByVal key As String) As String
+            Dim resourceFile As String = "/App_GlobalResources/WebControls.resx"
+            Return Localization.GetString(key, resourceFile)
+        End Function
 
-						If (Not String.IsNullOrEmpty(skinName) AndAlso Not String.IsNullOrEmpty(skinVirtualFolder)) Then
-							systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder)
-							systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, "WebControlSkin")
-							systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, skinName)
-							systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, webControlSkinSubFolderName)
-							systemWebControlSkin = System.IO.Path.Combine(systemWebControlSkin, String.Format("{0}.{1}.css", controlName, skinName))
+        Public Shared Function GetLocalResourceFile(ByVal ctrl As Control) As String
+            Dim resourceFileName As String = Null.NullString
 
-							If (Not System.IO.File.Exists(systemWebControlSkin)) Then
-								systemWebControlSkin = ""
-							End If
-						End If
-					End If
-				End If
+            While ctrl IsNot Nothing
+                If TypeOf ctrl Is UserControl Then
+                    resourceFileName = String.Format("{0}/{1}/{2}.ascx.resx", ctrl.TemplateSourceDirectory, Localization.LocalResourceDirectory, ctrl.GetType().BaseType().Name)
+                    If (System.IO.File.Exists(ctrl.Page.Server.MapPath(resourceFileName))) Then
+                        Exit While
+                    End If
+                End If
 
-				If (systemWebControlSkin <> "") Then
-					Dim cssLink As String = "<link href=""{0}"" rel=""stylesheet"" type=""text/css"" />"
-					Dim cssVirtual As String = System.IO.Path.Combine(skinVirtualFolder, "WebControlSkin")
-					cssVirtual = System.IO.Path.Combine(cssVirtual, skinName)
-					cssVirtual = System.IO.Path.Combine(cssVirtual, webControlSkinSubFolderName)
-					cssVirtual = System.IO.Path.Combine(cssVirtual, String.Format("{0}.{1}.css", controlName, skinName))
-					cssLink = String.Format(cssLink, cssVirtual.Replace("\"c, "/"c).Replace("//", "/"))
+                If TypeOf ctrl Is PortalModuleBase Then
+                    resourceFileName = DirectCast(ctrl, PortalModuleBase).LocalResourceFile
+                    Exit While
+                End If
 
-					If (Not IsNothing(System.Web.HttpContext.Current)) Then
-						If (Not System.Web.HttpContext.Current.Items.Contains(cssVirtual)) Then
-							telerikControl.Page.Header.Controls.Add(New LiteralControl(cssLink))
-							System.Web.HttpContext.Current.Items.Add(cssVirtual, "")
-						End If
-					End If
+                If TypeOf ctrl Is ControlPanelBase Then
+                    resourceFileName = DirectCast(ctrl, ControlPanelBase).LocalResourceFile
+                    Exit While
+                End If
 
-					If (Not IsNothing(skinProperty) AndAlso Not IsNothing(enableEmbeddedSkinsProperty)) Then
-						skinApplied = True
-						skinProperty.SetValue(telerikControl, skinName, Nothing)
-						enableEmbeddedSkinsProperty.SetValue(telerikControl, False, Nothing)
-					End If
-				End If
-			Catch ex As Exception
-				DotNetNuke.Services.Exceptions.LogException(ex)
-			End Try
+                ctrl = ctrl.Parent
+            End While
+            Return resourceFileName
+        End Function
 
-			If (Not IsNothing(skinProperty) AndAlso Not IsNothing(enableEmbeddedSkinsProperty) AndAlso Not (skinApplied)) Then
-				If (String.IsNullOrEmpty(fallBackEmbeddedSkinName)) Then
-					fallBackEmbeddedSkinName = "Simple"
-				End If
+        Public Shared Function GetLocalizedStringFromParent(ByVal key As String, ByVal control As Control) As String
+            Dim returnValue As String = key
+            Dim resourceFileName As String = GetLocalResourceFile(control.Parent)
 
-				'Set fall back skin Embedded Skin
-				skinProperty.SetValue(telerikControl, fallBackEmbeddedSkinName, Nothing)
-				enableEmbeddedSkinsProperty.SetValue(telerikControl, True, Nothing)
-			End If
-		End Sub
+            If Not String.IsNullOrEmpty(resourceFileName) Then
+                returnValue = Localization.GetString(key, resourceFileName)
+            End If
 
-		Public Shared Function GetLocalizedString(ByVal key As String) As String
-			Dim resourceFile As String = "/App_GlobalResources/WebControls.resx"
-			Return Localization.GetString(key, resourceFile)
-		End Function
+            Return returnValue
+        End Function
 
-		Public Shared Function GetLocalizedStringFromParent(ByVal key As String, ByVal control As Control) As String
-			Dim returnValue As String = key
-			Dim ctrl As Control = control.Parent
+        Public Shared Function GetOnClientClickConfirm(ByRef ctrl As Control, ByVal message As String) As String
+            Return GetOnClientClickConfirm(ctrl, New MessageWindowParameters(message))
+        End Function
 
-			While ctrl IsNot Nothing
-				If TypeOf ctrl Is UserControl Then
-					Dim resourceFileName As String = String.Format("{0}/{1}/{2}.ascx.resx", ctrl.TemplateSourceDirectory, Localization.LocalResourceDirectory, ctrl.GetType().BaseType().Name)
-					If (System.IO.File.Exists(ctrl.Page.Server.MapPath(resourceFileName))) Then
-						returnValue = Localization.GetString(key, resourceFileName)
-						Exit While
-					End If
-				End If
+        Public Shared Function GetOnClientClickConfirm(ByRef ctrl As Control, ByVal message As MessageWindowParameters) As String
+            AddMessageWindow(ctrl)
+            'function(text, mozEvent, oWidth, oHeight, callerObj, oTitle) 
+            Return String.Format("return postBackConfirm('{0}', event, '{1}', '{2}', '', '{3}');" _
+             , message.Message, message.WindowWidth, message.WindowHeight, message.Title)
+        End Function
 
-				If TypeOf ctrl Is PortalModuleBase Then
-					returnValue = Localization.GetString(key, DirectCast(ctrl, PortalModuleBase).LocalResourceFile)
-					Exit While
-				End If
+        Public Shared Function GetViewStateAsString(ByVal value As Object, ByVal defaultValue As String) As String
+            Dim _Value As String = defaultValue
+            If value IsNot Nothing Then
+                _Value = Convert.ToString(value)
+            End If
+            Return _Value
+        End Function
 
-				If TypeOf ctrl Is ControlPanelBase Then
-					returnValue = Localization.GetString(key, DirectCast(ctrl, ControlPanelBase).LocalResourceFile)
-					Exit While
-				End If
+        Public Shared Sub RegisterAlertOnPageLoad(ByRef ctrl As Control, ByVal message As String)
+            RegisterAlertOnPageLoad(ctrl, New MessageWindowParameters(message))
+        End Sub
 
-				ctrl = ctrl.Parent
-			End While
+        Public Shared Sub RegisterAlertOnPageLoad(ByRef ctrl As Control, ByVal message As MessageWindowParameters)
+            AddMessageWindow(ctrl)
+            ctrl.Page.ClientScript.RegisterClientScriptBlock(ctrl.GetType(), ctrl.ID + "_AlertOnPageLoad", "function pageLoad() { " + GetClientAlert(ctrl, message) + " }", True)
+        End Sub
 
-			Return returnValue
-		End Function
+#End Region
 
-	End Class
+    End Class
 
 End Namespace
 

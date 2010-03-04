@@ -18,10 +18,15 @@
             <br /><br /><asp:Label ID="lblDescription" runat="server" CssClass="Normal"  />
 		</td>
 	</tr>
-	<tr id="rowDefault" runat="server" visible="false">
-	    <td>&nbsp;</td>
-	    <td>
-            <asp:CheckBox ID="chkDefault" runat="server" CssClass="NormalBold" resourcekey="chkDefault" Text="Set As Default Settings For Site?" Checked="False" />
+	<tr id="rowApplyTo" runat="server" visible="false">
+	    <td class="SubHead" width="150" valign="top"><dnn:label id="plApplyTo" controlname="cboWorkflow" runat="server" Text="Apply" /></td>
+	    <td valign="top">
+	        <asp:RadioButtonList ID="rblApplyTo" runat="server" RepeatDirection="Horizontal" RepeatColumns="3">
+	            <asp:ListItem Value="Module" ResourceKey="Module" />
+	            <asp:ListItem Value="Page" ResourceKey="Page" />
+	            <asp:ListItem Value="Site" ResourceKey="Site" />
+	        </asp:RadioButtonList>
+            <asp:CheckBox ID="chkReplace" runat="server" CssClass="NormalBold" resourcekey="chkReplace" Text="Replace Existing Settings?" Checked="False" />
 	    </td>
 	</tr>
 </table>

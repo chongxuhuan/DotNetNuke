@@ -567,4 +567,10 @@
   <data name="plPayPalSandboxEnabled.Text" xml:space="preserve">
     <value>Use Sandbox:</value>
   </data>
+  <data name="plHideSystemFolders.Help" xml:space="preserve">
+    <value>Check to prevent adding hidden folders or folders that start with underscore when performing folder synchronization.</value>
+  </data>
+  <data name="plHideSystemFolders.Text" xml:space="preserve">
+    <value>Hide System Folders</value>
+  </data>
 </root>

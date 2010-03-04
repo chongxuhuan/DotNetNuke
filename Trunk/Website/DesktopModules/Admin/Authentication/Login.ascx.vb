@@ -19,6 +19,7 @@
 '
 Imports System.Collections.Generic
 Imports System.IO
+Imports DotNetNuke.Services.Messaging.Data
 
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Profile
@@ -51,7 +52,7 @@ Namespace DotNetNuke.Modules.Admin.Authentication
 #Region "Private Members"
 
         Private loginControls As New List(Of AuthenticationLoginBase)
-
+        Private Shared _messagingController As New Services.Messaging.MessagingController()
 #End Region
 
 #Region "Protected Properties"
@@ -906,10 +907,20 @@ Namespace DotNetNuke.Modules.Admin.Authentication
                     ' notify administrator about account lockout ( possible hack attempt )
                     Dim Custom As New ArrayList
                     Custom.Add(e.UserToken)
-                    Mail.SendMail(PortalSettings.Email, PortalSettings.Email, "", _
-                        Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_SUBJECT", Localization.GlobalResourceFile, Custom), _
-                        Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_BODY", Localization.GlobalResourceFile, Custom), _
-                        "", "", "", "", "", "")
+                    'Mail.SendMail(PortalSettings.Email, PortalSettings.Email, "", _
+                    '    Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_SUBJECT", Localization.GlobalResourceFile, Custom), _
+                    '    Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_BODY", Localization.GlobalResourceFile, Custom), _
+                    '    "", "", "", "", "", "")
+
+                    Dim _message As New Message()
+                    _message.FromUserID = PortalSettings.AdministratorId
+                    _message.ToUserID = PortalSettings.AdministratorId
+                    _message.Subject = Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_SUBJECT", Localization.GlobalResourceFile, Custom)
+                    _message.Body = Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_BODY", Localization.GlobalResourceFile, Custom)
+                    _message.Status = MessageStatusType.Unread
+                    _messagingController.SaveMessage(_message)
+
+
                 Case UserLoginStatus.LOGIN_FAILURE
                     'A Login Failure can mean one of two things:
                     '  1 - User was authenticated by the Authentication System but is not "affiliated" with a DNN Account

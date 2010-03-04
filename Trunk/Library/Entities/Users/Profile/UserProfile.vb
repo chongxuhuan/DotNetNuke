@@ -67,6 +67,7 @@ Namespace DotNetNuke.Entities.Users
         Private Const cIM As String = "IM"
 
         'Preferences
+        Private Const cPhoto As String = "Photo"
         Private Const cTimeZone As String = "TimeZone"
         Private Const cPreferredLocale As String = "PreferredLocale"
 
@@ -236,6 +237,15 @@ Namespace DotNetNuke.Entities.Users
             End Get
             Set(ByVal Value As String)
                 SetProfileProperty(cLastName, Value)
+            End Set
+        End Property
+
+        Public Property Photo() As String
+            Get
+                Return GetPropertyValue(cPhoto)
+            End Get
+            Set(ByVal Value As String)
+                SetProfileProperty(cPhoto, Value)
             End Set
         End Property
 

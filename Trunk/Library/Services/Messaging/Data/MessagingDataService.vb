@@ -1,5 +1,5 @@
-﻿'
-' DotNetNuke® - http://www.dotnetnuke.com
+'
+' DotNetNuke� - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
@@ -18,8 +18,6 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Services.Messaging
-Imports DotNetNuke.Services.Messaging.Providers
 
 Namespace DotNetNuke.Services.Messaging.Data
 
@@ -28,52 +26,53 @@ Namespace DotNetNuke.Services.Messaging.Data
 
         Private provider As DataProvider = DataProvider.Instance()
 
-        Public Sub DeleteMessage(ByVal PortalID As Integer, ByVal IndexID As Integer) Implements IMessagingDataService.DeleteMessage
-            Dim pm As New Message
-            pm.PortalID = PortalID
-            pm.IndexID = IndexID
-            pm.Status = "Deleted"
-            SaveMessage(pm)
+        Public Function GetMessageByID(ByVal messageId As Integer) As System.Data.IDataReader Implements IMessagingDataService.GetMessageByID
+            Return CType(provider.ExecuteReader("Messaging_GetMessage", messageId), IDataReader)
+
+        End Function
+
+        Public Function GetUserInbox(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal PageNumber As Integer, ByVal PageSize As Integer) As System.Data.IDataReader Implements IMessagingDataService.GetUserInbox
+            Return CType(provider.ExecuteReader("Messaging_GetInbox", PortalID, UserID, PageNumber, PageSize), IDataReader)
+
+        End Function
+
+        Public Function GetInboxCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer Implements IMessagingDataService.GetInboxCount
+            Return DirectCast(provider.ExecuteScalar("Messaging_GetInboxCount", PortalID, UserID), Integer)
+        End Function
+
+        Public Function SaveMessage(ByVal objMessaging As Message) As Long Implements IMessagingDataService.SaveMessage
+            Dim messageId As Object = provider.ExecuteScalar("Messaging_Save_Message", _
+                                        objMessaging.PortalID, _
+                                        objMessaging.FromUserID, _
+                                        objMessaging.ToUserID, _
+                                        objMessaging.ToRoleID, _
+                                        CType(objMessaging.Status, Integer), _
+                                        objMessaging.Subject, _
+                                        objMessaging.Body, _
+                                        objMessaging.MessageDate, _
+                                        objMessaging.Conversation, _
+                                        objMessaging.ReplyTo, _
+                                        objMessaging.AllowReply, _
+                                        objMessaging.SkipInbox)
+
+            Return CType(messageId, Long)
+        End Function
+
+        Public Function GetNewMessageCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer Implements IMessagingDataService.GetNewMessageCount
+            Return DirectCast(provider.ExecuteScalar("Messaging_GetNewMessasgeCount", PortalID, UserID), Integer)
+        End Function
+
+        Public Function GetNextMessageForDispatch(ByVal SchedulerInstance As Guid) As IDataReader Implements IMessagingDataService.GetNextMessageForDispatch
+            Return CType(provider.ExecuteReader("Messaging_GetNextMessageForDispatch", SchedulerInstance), IDataReader)
+
+        End Function
+
+        Public Sub MarkMessageAsDispatched(ByVal MessageID As Integer) Implements IMessagingDataService.MarkMessageAsDispatched
+            provider.ExecuteNonQuery("Messaging_MarkMessageAsDispatched", MessageID)
         End Sub
 
-        Public Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal IndexID As Integer) As System.Data.IDataReader Implements IMessagingDataService.GetMessageByID
-            Return CType(provider.ExecuteReader("Messaging_Get_Message_ByIndexID", PortalID, UserID, IndexID), IDataReader)
-
-        End Function
-
-        Public Function GetMessagesForUser(ByVal PortalID As Integer, ByVal UserID As Integer) As System.Data.IDataReader Implements IMessagingDataService.GetMessagesForUser
-            Return CType(provider.ExecuteReader("Messaging_Get_Messages_ByUser", PortalID, UserID), IDataReader)
-
-        End Function
-
-        Public Function GetMessagesPendingSend(ByVal ExecutionCycleGuid As System.Guid) As System.Data.IDataReader Implements IMessagingDataService.GetMessagesPendingSend
-            Return CType(provider.ExecuteReader("Messaging_Get_Messages_ForSend", ExecutionCycleGuid), IDataReader)
-
-        End Function
-
-        Public Sub SaveMessage(ByVal objMessaging As Providers.Message) Implements IMessagingDataService.SaveMessage
-            Dim rdr As IDataReader = provider.ExecuteReader("Messaging_Save_Message", _
-                                     objMessaging.LongBody, _
-                                     objMessaging.Subject, _
-                                     objMessaging.PortalID, _
-                                     objMessaging.FromUserID, _
-                                     objMessaging.ToUserID, _
-                                     objMessaging.PendingSend, _
-                                     (IIf(objMessaging.SendDate = DateTime.MinValue, Nothing, objMessaging.SendDate)), _
-                                     objMessaging.ReplyTo, _
-                                     objMessaging.Status, _
-                                     objMessaging.MessageDate, _
-                                     objMessaging.MessageGroup, _
-                                     objMessaging.MessageID, _
-                                     objMessaging.IndexID _
-                                     )
-            rdr.NextResult()
-            rdr.NextResult()
-            rdr.Read()
-            objMessaging.MessageID = DirectCast(rdr(0), Integer)
-            objMessaging.IndexID = DirectCast(rdr(1), Integer)
-
+        Public Sub UpdateMessage(ByVal message As Message) Implements IMessagingDataService.UpdateMessage
+            provider.ExecuteNonQuery("Messaging_UpdateMessage", message.MessageID, message.ToUserID, message.ToRoleID, CType(message.Status, Integer), message.Subject, message.Body, message.MessageDate, message.ReplyTo, message.AllowReply, message.SkipInbox)
         End Sub
-
     End Class
 End Namespace

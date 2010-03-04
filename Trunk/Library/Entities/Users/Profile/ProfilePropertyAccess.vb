@@ -83,6 +83,12 @@ Namespace DotNetNuke.Entities.Users
                                 result = String.Format("<a href='{0}'>{1}</a>", NavigateURL(tabid), Tab.LocalizedTabName)
                             End If
                         End If
+                    Case "image"
+                        'File is stored as a FileID
+                        Dim fileID As Integer
+                        If Integer.TryParse(prop.PropertyValue, fileID) Then
+                            result = LinkClick(String.Format("fileid={0}", fileID), Null.NullInteger, Null.NullInteger)
+                        End If
                     Case "richtext"
                         result = PropertyAccess.FormatString(HttpUtility.HtmlDecode(prop.PropertyValue), strFormat)
                     Case Else

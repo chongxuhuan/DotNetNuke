@@ -99,7 +99,7 @@ Namespace DotNetNuke.NavigationControl
 
         Public Overrides Property ForceDownLevel() As String
             Get
-                Return Menu.StaticDisplayLevels > 1
+                Return (Menu.StaticDisplayLevels > 1).ToString
             End Get
             Set(ByVal Value As String)
                 If CBool(Value) Then
@@ -136,7 +136,7 @@ Namespace DotNetNuke.NavigationControl
                 Return Menu.DisappearAfter
             End Get
             Set(ByVal Value As Decimal)
-                Menu.DisappearAfter = Value
+                Menu.DisappearAfter = Convert.ToInt32(Value)
             End Set
         End Property
 #End Region

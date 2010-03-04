@@ -14,7 +14,7 @@
             <h3><asp:Label ID="termsLabel" runat="server" resourceKey="Terms" /></h3>
             <dnn:TermsList id="termsList" runat="server" Height="200px" Width="200px" />
             <p>
-                <asp:Button ID="addTerm" runat="server" resourceKey="AddTerm" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <asp:Button ID="addTermButton" runat="server" resourceKey="AddTerm" />&nbsp;&nbsp;&nbsp;&nbsp;
             </p>
        </td>
         <td rowspan="2" style="width:40px"></td>
@@ -24,11 +24,11 @@
                 <dnn:EditTermControl ID="editTermControl" runat="server" />
                 <br />
                 <p>
-                    <asp:Button ID="saveTerm" runat="server" />&nbsp;&nbsp;&nbsp;&nbsp;
+                    <dnn:DnnButton ID="saveTermButton" runat="server" />&nbsp;&nbsp;&nbsp;&nbsp;
                     <asp:PlaceHolder ID="deleteTermPlaceHolder" runat="server">
-                        <asp:LinkButton ID="deleteTerm" runat="server" resourceKey="DeleteTerm" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
+                        <asp:LinkButton ID="deleteTermButton" runat="server" resourceKey="DeleteTerm" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
                     </asp:PlaceHolder>
-                    <asp:LinkButton ID="cancelTerm" runat="server" resourceKey="CancelTerm" CausesValidation="false" />
+                    <asp:LinkButton ID="cancelTermButton" runat="server" resourceKey="CancelTerm" CausesValidation="false" />
                 </p>
             </asp:PlaceHolder>
         </td>
@@ -38,7 +38,7 @@
             <dnn:EditVocabularyControl ID="editVocabularyControl" runat="server" IsAddMode="false" />
             <br />
             <p>
-                <asp:Button ID="saveVocabulary" runat="server" resourceKey="SaveVocabulary" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <dnn:DnnButton ID="saveVocabulary" runat="server" Text="SaveVocabulary" />&nbsp;&nbsp;&nbsp;&nbsp;
                 <asp:LinkButton ID="deleteVocabulary" runat="server" resourceKey="DeleteVocabulary" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
                 <asp:LinkButton ID="cancelEdit" runat="server" resourceKey="CancelEdit" CausesValidation="false" />
             </p>

@@ -1,6 +1,6 @@
 ﻿/*
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -87,9 +87,9 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
             return tempTable.CreateDataReader();
         }
 
-        public IDataReader GetContentItemsByModule(int moduleId)
+        public IDataReader GetContentItemsByTerm(string term)
         {
-            DataTable tempTable = ContentTestHelper.CopyContentItemRowsToNewTable(contentItemTable.Select("ModuleID = '" + moduleId + "'"));
+            DataTable tempTable = ContentTestHelper.CopyContentItemRowsToNewTable(contentItemTable.Select("Term = '" + term + "'"));
             return tempTable.CreateDataReader();
         }
 
@@ -299,7 +299,7 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         #region Public Methods
 
-        public void AddContentItemsToTable(int count, bool indexed, int startUserId)
+        public void AddContentItemsToTable(int count, bool indexed, int startUserId, Func<int, string> termFunction)
         {
             for (int i = Constants.CONTENT_ValidContentItemId;
                        i < Constants.CONTENT_ValidContentItemId + count;
@@ -309,7 +309,7 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
                 string contentKey = (count == 1) ? Constants.CONTENT_ValidContentKey : ContentTestHelper.GetContentKey(i);
                 int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
 
-                ContentTestHelper.AddContentItemToTable(contentItemTable, i, content, contentKey, indexed, startUserId);
+                ContentTestHelper.AddContentItemToTable(contentItemTable, i, content, contentKey, indexed, startUserId, termFunction(i));
             }
         }
 

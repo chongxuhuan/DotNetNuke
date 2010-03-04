@@ -1,6 +1,6 @@
 ﻿/*
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -57,6 +57,7 @@ namespace DotNetNuke.Tests.Utilities
         public const int CONTENT_InValidTabId = 99;
 
         public const int CONTENT_IndexedTrueItemCount = 2;
+        public const int CONTENT_TaggedItemCount = 4;
         public const int CONTENT_IndexedFalseItemCount = 3;
         public const bool CONTENT_IndexedFalse = false;
         public const bool CONTENT_IndexedTrue = true;
@@ -138,6 +139,7 @@ namespace DotNetNuke.Tests.Utilities
 
         public const string TERM_ValidName = "Term Name";
         public const string TERM_InValidName = "";
+        public const string TERM_UnusedName = "Unused";
         public const string TERM_UpdateName = "Update Name";
         public const string TERM_OriginalUpdateName = "LCD";
         public const int TERM_ValidVocabularyId = 2;

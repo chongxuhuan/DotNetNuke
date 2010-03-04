@@ -306,4 +306,13 @@
   <data name="ProfileProperties_Preferences.Header" xml:space="preserve">
     <value>Preferences</value>
   </data>
+  <data name="ProfileProperties_Photo.Help" xml:space="preserve">
+    <value>Select a photo or upload an image from your local file system.</value>
+  </data>
+  <data name="ProfileProperties_Photo.Required" xml:space="preserve">
+    <value>Photo is required</value>
+  </data>
+  <data name="ProfileProperties_Photo.Text" xml:space="preserve">
+    <value>Photo:</value>
+  </data>
 </root>

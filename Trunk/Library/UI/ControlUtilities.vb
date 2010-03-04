@@ -24,9 +24,20 @@ Namespace DotNetNuke.UI
 
     Public Class ControlUtilities
 
-        'Private Shared Function LoadControlCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
-
-        'End Function
+        Public Shared Function FindParentControl(Of T As Control)(ByVal control As Control) As T
+            Dim parent As T
+            If control.Parent Is Nothing Then
+                parent = Nothing
+            Else
+                Dim parentT As T = TryCast(control.Parent, T)
+                If parentT IsNot Nothing Then
+                    parent = parentT
+                Else
+                    parent = FindParentControl(Of T)(control.Parent)
+                End If
+            End If
+            Return parent
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -43,13 +54,6 @@ Namespace DotNetNuke.UI
         ''' -----------------------------------------------------------------------------
         Public Shared Function LoadControl(Of T As Control)(ByVal containerControl As TemplateControl, ByVal ControlSrc As String) As T
             Dim ctrl As T
-
-            'If TypeOf ctrl Is Containers.Container Then
-            '    'See if the ctrl is in the cache
-            '    ctrl = CBO.GetCachedObject(Of T)(New CacheItemArgs(ControlSrc, 20, Caching.CacheItemPriority.AboveNormal), AddressOf LoadControlCallback)
-            'ElseIf TypeOf ctrl Is Skins.Skin Then
-
-            'End If
 
             ' load the control dynamically
             If ControlSrc.ToLower.EndsWith(".ascx") Then

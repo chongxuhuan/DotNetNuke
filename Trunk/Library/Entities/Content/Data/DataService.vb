@@ -53,6 +53,10 @@ Namespace DotNetNuke.Entities.Content.Data
             Return provider.ExecuteReader("GetContentItem", contentItemId)
         End Function
 
+        Public Function GetContentItemsByTerm(ByVal term As String) As IDataReader Implements IDataService.GetContentItemsByTerm
+            Return provider.ExecuteReader("GetContentItemsByTerm", term)
+        End Function
+
         Public Function GetUnIndexedContentItems() As IDataReader Implements IDataService.GetUnIndexedContentItems
             Return provider.ExecuteReader("GetUnIndexedContentItems")
         End Function

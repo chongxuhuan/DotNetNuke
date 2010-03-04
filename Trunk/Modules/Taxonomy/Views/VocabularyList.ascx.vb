@@ -18,49 +18,33 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports WebFormsMvp
 Imports DotNetNuke.Modules.Taxonomy.Presenters
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Services.Localization
-Imports DotNetNuke.Entities.Content.Taxonomy
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
+    <PresenterBinding(GetType(VocabularyListPresenter))> _
     Partial Public Class VocabularyList
-        Inherits ViewBase(Of IVocabularyListView, VocabularyListPresenter, VocabularyListPresenterModel)
+        Inherits ModuleView(Of VocabularyListModel)
         Implements IVocabularyListView
 
-#Region "Protected Properties"
+#Region "IVocabularyListView Implementation"
 
-        Protected Overrides ReadOnly Property View() As IVocabularyListView
-            Get
-                Return Me
-            End Get
-        End Property
+        Public Event AddVocabulary(ByVal sender As Object, ByVal e As EventArgs) Implements IVocabularyListView.AddVocabulary
+        Public Event VocabularyDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Implements IVocabularyListView.VocabularyDataBound
 
 #End Region
 
-#Region "ViewBase Virtual/Abstract Method Overrides"
+#Region "Event Handlers"
 
-        Protected Overrides Sub ConnectEvents()
-            MyBase.ConnectEvents()
-
-            AddHandler addVocabularyButton.Click, AddressOf Presenter.AddVocabulary
-            AddHandler vocabulariesGrid.ItemDataBound, AddressOf Presenter.VocabularyDataBound
+        Private Sub VocabulariesGrid_ItemDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Handles vocabulariesGrid.ItemDataBound
+            RaiseEvent VocabularyDataBound(Me, e)
         End Sub
 
-        Protected Overrides Sub Localize()
-            If Not IsPostBack Then
-                Localization.LocalizeDataGrid(vocabulariesGrid, LocalResourceFile)
-            End If
-        End Sub
-
-#End Region
-
-#Region "IVocabulariesListView Implementation"
-
-        Public Sub ShowVocabularies(ByVal vocabularies As IEnumerable(Of Vocabulary)) Implements IVocabularyListView.ShowVocabularies
-            vocabulariesGrid.DataSource = vocabularies
-            vocabulariesGrid.DataBind()
+        Private Sub addVocabularyButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles addVocabularyButton.Click
+            RaiseEvent AddVocabulary(Me, e)
         End Sub
 
 #End Region

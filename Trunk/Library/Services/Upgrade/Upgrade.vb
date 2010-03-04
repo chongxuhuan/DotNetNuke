@@ -1752,7 +1752,7 @@ Namespace DotNetNuke.Services.Upgrade
             If writeFeedback Then
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 0, "Synchronizing Host Files:<br>")
             End If
-            FileSystemUtils.SynchronizeFolder(Null.NullInteger, Common.Globals.HostMapPath, "", True, False, True)
+            FileSystemUtils.SynchronizeFolder(Null.NullInteger, Common.Globals.HostMapPath, "", True, False, True, False)
 
         End Sub
 
@@ -2142,7 +2142,7 @@ Namespace DotNetNuke.Services.Upgrade
                                     File.Copy(strHostTemplateFile, strPortalTemplateFile)
 
                                     'Synchronize the Templates folder to ensure the templates are accessible
-                                    FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strPortalTemplateFolder, "Templates/", False, True, True)
+                                    FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strPortalTemplateFolder, "Templates/", False, True, True, False)
                                 End If
                             Next
                         End If

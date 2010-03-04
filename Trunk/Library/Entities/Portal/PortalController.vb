@@ -335,8 +335,11 @@ Namespace DotNetNuke.Entities.Portals
             If (String.IsNullOrEmpty(culture)) Then
                 culture = Localization.SystemLocale.ToLower()
             End If
+            UpdatePortalSetting(portalID, settingName, settingValue, clearCache, culture)
+        End Sub
 
-            DataProvider.Instance.UpdatePortalSetting(portalID, settingName, settingValue, UserController.GetCurrentUserInfo.UserID, culture)
+        Public Shared Sub UpdatePortalSetting(ByVal portalID As Integer, ByVal settingName As String, ByVal settingValue As String, ByVal clearCache As Boolean, ByVal culturecode As String)
+            DataProvider.Instance.UpdatePortalSetting(portalID, settingName, settingValue, UserController.GetCurrentUserInfo.UserID, culturecode)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(settingName.ToString, settingValue.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
 
@@ -1175,6 +1178,21 @@ Namespace DotNetNuke.Entities.Portals
             Return CreatePortal(PortalName, objAdminUser, Description, KeyWords, TemplatePath, TemplateFile, HomeDirectory, PortalAlias, ServerPath, ChildPath, IsChildPortal)
         End Function
 
+        Private Sub CopyPageTemplate(ByVal templateFile As String, ByVal MappedHomeDirectory As String)
+            Dim strHostTemplateFile As String = HostMapPath & "Templates\" & templateFile
+            If File.Exists(strHostTemplateFile) Then
+                Dim strPortalTemplateFolder As String = MappedHomeDirectory & "Templates\"
+                If Not Directory.Exists(strPortalTemplateFolder) Then
+                    'Create Portal Templates folder
+                    Directory.CreateDirectory(strPortalTemplateFolder)
+                End If
+                Dim strPortalTemplateFile As String = strPortalTemplateFolder + templateFile
+                If Not File.Exists(strPortalTemplateFile) Then
+                    File.Copy(strHostTemplateFile, strPortalTemplateFile)
+                End If
+            End If
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Creates a new portal.
@@ -1269,18 +1287,8 @@ Namespace DotNetNuke.Entities.Portals
                             System.IO.Directory.CreateDirectory(MappedHomeDirectory)
 
                             'copy the default page template
-                            Dim strHostTemplateFile As String = HostMapPath & "Templates\Default.page.template"
-                            If File.Exists(strHostTemplateFile) Then
-                                Dim strPortalTemplateFolder As String = MappedHomeDirectory & "Templates\"
-                                If Not Directory.Exists(strPortalTemplateFolder) Then
-                                    'Create Portal Templates folder
-                                    Directory.CreateDirectory(strPortalTemplateFolder)
-                                End If
-                                Dim strPortalTemplateFile As String = strPortalTemplateFolder + "Default.page.template"
-                                If Not File.Exists(strPortalTemplateFile) Then
-                                    File.Copy(strHostTemplateFile, strPortalTemplateFile)
-                                End If
-                            End If
+                            CopyPageTemplate("Default.page.template", MappedHomeDirectory)
+                            CopyPageTemplate("UserProfile.page.template", MappedHomeDirectory)
 
                             ' process zip resource file if present
                             ProcessResourceFile(MappedHomeDirectory, TemplatePath & TemplateFile)
@@ -1309,6 +1317,7 @@ Namespace DotNetNuke.Entities.Portals
                         ' update portal info
                         objportal.Description = Description
                         objportal.KeyWords = KeyWords
+                        objportal.UserTabId = TabController.GetTabByTabPath(objportal.PortalID, "//UserProfile")
                         UpdatePortalInfo(objportal.PortalID, objportal.PortalName, objportal.LogoFile, objportal.FooterText, _
                          objportal.ExpiryDate, objportal.UserRegistration, objportal.BannerAdvertising, objportal.Currency, objportal.AdministratorId, objportal.HostFee, _
                          objportal.HostSpace, objportal.PageQuota, objportal.UserQuota, objportal.PaymentProcessor, objportal.ProcessorUserId, objportal.ProcessorPassword, objportal.Description, _

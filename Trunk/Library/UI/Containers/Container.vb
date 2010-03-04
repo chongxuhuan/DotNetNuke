@@ -273,23 +273,31 @@ Namespace DotNetNuke.UI.Containers
             End If
 
             ' display visual indicator if module is only visible to administrators
-            If (ModuleConfiguration.StartDate >= Now OrElse ModuleConfiguration.EndDate <= Now) Then
-                Dim cssclass As String = ContentPane.Attributes("class")
-                If String.IsNullOrEmpty(cssclass) Then
-                    ContentPane.Attributes("class") = c_ContainerAdminBorder
-                Else
-                    ContentPane.Attributes("class") = cssclass.Replace(c_ContainerAdminBorder, "").Trim().Replace("  ", " ") & " " & c_ContainerAdminBorder
-                End If
-
-                If ModuleConfiguration.StartDate >= Now Then
-                    ContentPane.Controls.Add(New LiteralControl("<span class=""NormalRed""><center>" & String.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString()) & "</center></span>"))
-                End If
-                If ModuleConfiguration.EndDate <= Now Then
-                    ContentPane.Controls.Add(New LiteralControl("<span class=""NormalRed""><center>" & String.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate.ToShortDateString()) & "</center></span>"))
-                End If
+            Dim adminMessage As String
+            If ModuleConfiguration.AuthorizedViewRoles.Replace(";"c, String.Empty).Trim().ToLowerInvariant = PortalSettings.AdministratorRoleName.ToLowerInvariant AndAlso Not PortalSettings.ActiveTab.IsAdminTab Then
+                adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text")
+            End If
+            If ModuleConfiguration.StartDate >= Now Then
+                adminMessage = String.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString())
+            End If
+            If ModuleConfiguration.EndDate <= Now Then
+                adminMessage = String.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate.ToShortDateString())
+            End If
+            If Not String.IsNullOrEmpty(adminMessage) Then
+                AddAdministratorOnlyHighlighting(adminMessage)
             End If
         End Sub
 
+        Private Sub AddAdministratorOnlyHighlighting(ByVal message As String)
+            Dim cssclass As String = ContentPane.Attributes("class")
+            If String.IsNullOrEmpty(cssclass) Then
+                ContentPane.Attributes("class") = c_ContainerAdminBorder
+            Else
+                ContentPane.Attributes("class") = cssclass.Replace(c_ContainerAdminBorder, "").Trim().Replace("  ", " ") & " " & c_ContainerAdminBorder
+            End If
+
+            ContentPane.Controls.Add(New LiteralControl(String.Format("<div class=""NormalRed DNNAligncenter"">{0}</div>", message)))
+        End Sub
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' ProcessFooter adds an optional footer (and an End_Module comment)..

@@ -153,6 +153,60 @@ Namespace DotNetNuke.Common.Utilities
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Formats String as Html by replacing linefeeds by <br/>
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="strText">Text to format</param>
+        ''' <returns>The formatted html</returns>
+        ''' <history>
+        ''' 	[cnurse]	12/13/2004	Documented
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function ConvertToHtml(ByVal strText As String) As String
+
+            Dim strHtml As String = strText
+
+            If strHtml <> "" Then
+                strHtml = Replace(strHtml, Chr(13), "")
+                strHtml = Replace(strHtml, ControlChars.Lf, "<br />")
+            End If
+
+            Return strHtml
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Formats Html as text by removing <br/> tags and replacing by linefeeds
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="strHtml">Html to format</param>
+        ''' <returns>The formatted text</returns>
+        ''' <history>
+        ''' 	[cnurse]	12/13/2004	Documented and modified to use HtmlUtils methods
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function ConvertToText(ByVal strHtml As String) As String
+
+            Dim strText As String = strHtml
+
+            If strText <> "" Then
+                'First remove white space (html does not render white space anyway and it screws up the conversion to text)
+                'Replace it by a single space
+                strText = HtmlUtils.StripWhiteSpace(strText, True)
+
+                'Replace all variants of <br> by Linefeeds
+                strText = HtmlUtils.FormatText(strText, False)
+            End If
+
+
+
+            Return strText
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Format a domain name including link
         ''' </summary>
         ''' <param name="Website">The domain name to format</param>

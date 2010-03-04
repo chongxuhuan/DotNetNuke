@@ -18,15 +18,18 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Taxonomy
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface ICreateVocabularyView
-        Inherits IView
+        Inherits IView(Of CreateVocabularyModel)
 
         Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal showScope As Boolean)
+        Event Cancel As EventHandler
+        Event Save As EventHandler
 
     End Interface
 

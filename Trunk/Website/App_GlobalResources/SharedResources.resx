@@ -1353,6 +1353,9 @@
   <data name="ModuleEffective.Text" xml:space="preserve">
     <value>Module Effective - {0}</value>
   </data>
+  <data name="ModuleVisibleAdministrator.Text" xml:space="preserve">
+    <value>Visible By Administrators Only</value>
+  </data>  
   <data name="PortalRoot.Text" xml:space="preserve">
     <value>Portal Root</value>
   </data>
@@ -1367,5 +1370,8 @@
   </data>
   <data name="EXCEPTION_ModuleCacheMissing.Text" xml:space="preserve">
     <value>The ModuleCachingProvider is not properly configured.  Please verify that the moduleCaching provider configuration exists in the web.config and that a default provider is specified.</value>
+  </data>
+  <data name="File.Text" xml:space="preserve">
+    <value />
   </data>
 </root>

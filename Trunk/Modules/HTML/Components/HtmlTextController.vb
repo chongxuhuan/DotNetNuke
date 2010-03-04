@@ -32,7 +32,9 @@ Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Portals
+Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Security
+Imports DotNetNuke.Services.Messaging
 
 Namespace DotNetNuke.Modules.Html
 
@@ -57,7 +59,192 @@ Namespace DotNetNuke.Modules.Html
         Private Const MAX_DESCRIPTION_LENGTH As Integer = 100
         Private Const WORKFLOW_SETTING As String = "WorkflowID"
 
+        Private Shared _messagingController As New MessagingController()
+
 #Region "Public Methods"
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' CreateUserNotifications creates HtmlTextUser records and optionally sends email notifications to participants in a Workflow
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="objHtmlText">An HtmlTextInfo object</param>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub CreateUserNotifications(ByVal objHtmlText As HtmlTextInfo)
+            Dim objHTMLTextUsers As New HtmlTextUserController
+            Dim objHtmlTextUser As HtmlTextUserInfo
+            Dim objUser As UserInfo
+
+            ' clean up old user notification records
+            objHTMLTextUsers.DeleteHtmlTextUsers()
+
+            ' ensure we have latest htmltext object loaded
+            objHtmlText = GetHtmlText(objHtmlText.ModuleID, objHtmlText.ItemID)
+
+            ' build collection of users to notify
+            Dim objWorkflow As New WorkflowStateController
+            Dim arrUsers As New ArrayList
+
+            ' if not published
+            If objHtmlText.IsPublished = False Then
+                ' include content owner 
+                arrUsers.Add(objHtmlText.CreatedByUserID)
+            End If
+
+            ' if not draft and not published
+            If objHtmlText.StateID <> objWorkflow.GetFirstWorkflowStateID(objHtmlText.WorkflowID) And objHtmlText.IsPublished = False Then
+                ' get users from permissions for state
+                Dim objRoles As New RoleController
+                For Each objWorkFlowStatePermission As WorkflowStatePermissionInfo In WorkflowStatePermissionController.GetWorkflowStatePermissions(objHtmlText.StateID)
+                    If objWorkFlowStatePermission.AllowAccess Then
+                        If Null.IsNull(objWorkFlowStatePermission.UserID) Then
+                            Dim objRole As RoleInfo = New RoleController().GetRole(objWorkFlowStatePermission.RoleID, objHtmlText.PortalID)
+                            If Not objRole Is Nothing Then
+                                For Each objUserRole As UserRoleInfo In objRoles.GetUserRolesByRoleName(objHtmlText.PortalID, objRole.RoleName)
+                                    If Not arrUsers.Contains(objUserRole.UserID) Then
+                                        arrUsers.Add(objUserRole.UserID)
+                                    End If
+                                Next
+                            End If
+                        Else
+                            If Not arrUsers.Contains(objWorkFlowStatePermission.UserID) Then
+                                arrUsers.Add(objWorkFlowStatePermission.UserID)
+                            End If
+                        End If
+                    End If
+                Next
+            End If
+
+            ' process notifications
+            If arrUsers.Count > 0 Or (objHtmlText.IsPublished = True And objHtmlText.Notify = True) Then
+                ' get tabid from module 
+                Dim objModules As New ModuleController
+                Dim objModule As ModuleInfo = objModules.GetModule(objHtmlText.ModuleID)
+
+                Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+                Dim strResourceFile As String = Common.Globals.ApplicationPath & "/DesktopModules/" & objModule.DesktopModule.FolderName & "/" & Localization.LocalResourceDirectory & "/" & Localization.LocalSharedResourceFile
+                Dim strSubject As String = Localization.GetString("NotificationSubject", strResourceFile)
+                Dim strBody As String = Localization.GetString("NotificationBody", strResourceFile)
+                strBody = strBody.Replace("[URL]", NavigateURL(objModule.TabID))
+                strBody = strBody.Replace("[STATE]", objHtmlText.StateName)
+
+                ' process user notification collection
+                For Each intUserID As Integer In arrUsers
+
+                    ' create user notification record 
+                    objHtmlTextUser = New HtmlTextUserInfo
+                    objHtmlTextUser.ItemID = objHtmlText.ItemID
+                    objHtmlTextUser.StateID = objHtmlText.StateID
+                    objHtmlTextUser.ModuleID = objHtmlText.ModuleID
+                    objHtmlTextUser.TabID = objModule.TabID
+                    objHtmlTextUser.UserID = intUserID
+                    objHTMLTextUsers.AddHtmlTextUser(objHtmlTextUser)
+
+                    ' send an email notification to a user if the state indicates to do so
+                    If objHtmlText.Notify Then
+                        objUser = UserController.GetUserById(objHtmlText.PortalID, intUserID)
+                        If Not objUser Is Nothing Then
+                            Dim message As New Services.Messaging.Data.Message()
+                            message.FromUserID = objPortalSettings.AdministratorId
+                            message.ToUserID = objUser.UserID
+                            message.Subject = strSubject
+                            message.Body = strBody
+                            message.Status = Services.Messaging.Data.MessageStatusType.Unread
+                            _messagingController.SaveMessage(message)
+                        End If
+                    End If
+
+                Next
+
+                ' if published and the published state specifies to notify members of the workflow
+                If objHtmlText.IsPublished = True And objHtmlText.Notify = True Then
+                    ' send email notification to the author
+                    objUser = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
+                    If Not objUser Is Nothing Then
+                        Dim message As New Services.Messaging.Data.Message()
+                        message.FromUserID = objPortalSettings.AdministratorId
+                        message.ToUserID = objUser.UserID
+                        message.Subject = strSubject
+                        message.Body = strBody
+                        message.Status = Services.Messaging.Data.MessageStatusType.Unread
+                        _messagingController.SaveMessage(message)
+                    End If
+                End If
+            End If
+
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' DeleteHtmlText deletes an HtmlTextInfo object for the Module and Item
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="ModuleID">The ID of the Module</param>
+        ''' <param name="ItemID">The ID of the Item</param>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Sub DeleteHtmlText(ByVal ModuleID As Integer, ByVal ItemID As Integer)
+            DataProvider.Instance().DeleteHtmlText(ModuleID, ItemID)
+
+            ' refresh output cache
+            ModuleController.SynchronizeModule(ModuleID)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' FormatHtmlText formats HtmlText content for display in the browser
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="Content">The HtmlText Content</param>
+        ''' <param name="Settings">A Hashtable of Module Settings</param>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function FormatHtmlText(ByVal ModuleId As Integer, ByVal Content As String, ByVal Settings As Hashtable) As String
+            Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+            ' token replace
+            Dim blnReplaceTokens As Boolean = False
+            If CType(Settings("HtmlText_ReplaceTokens"), String) <> "" Then
+                blnReplaceTokens = CType(Settings("HtmlText_ReplaceTokens"), Boolean)
+            End If
+            If blnReplaceTokens Then
+                Dim tr As New DotNetNuke.Services.Tokens.TokenReplace()
+                tr.AccessingUser = UserController.GetCurrentUserInfo
+                tr.DebugMessages = Not (objPortalSettings.UserMode = PortalSettings.Mode.View)
+                tr.ModuleId = ModuleId
+                Content = tr.ReplaceEnvironmentTokens(Content)
+            End If
+
+            ' Html decode content
+            Content = HttpUtility.HtmlDecode(Content)
+
+            ' manage relative paths
+            Content = ManageRelativePaths(Content, objPortalSettings.HomeDirectory, "src", objPortalSettings.PortalId)
+            Content = ManageRelativePaths(Content, objPortalSettings.HomeDirectory, "background", objPortalSettings.PortalId)
+
+            Return Content
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetAllHtmlText gets a collection of HtmlTextInfo objects for the Module and Workflow
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="ModuleID">The ID of the Module</param>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetAllHtmlText(ByVal ModuleID As Integer) As List(Of HtmlTextInfo)
+            Return CBO.FillCollection(Of HtmlTextInfo)(DataProvider.Instance().GetAllHtmlText(ModuleID))
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -110,16 +297,103 @@ Namespace DotNetNuke.Modules.Html
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' GetAllHtmlText gets a collection of HtmlTextInfo objects for the Module and Workflow
+        ''' GetWorkFlow retrieves the currently active Workflow for the Portal
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
         ''' <param name="ModuleID">The ID of the Module</param>
+        ''' <param name="ModuleID">The ID of the Tab</param>
+        ''' <param name="PortalID">The ID of the Portal</param>
         ''' <history>
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Function GetAllHtmlText(ByVal ModuleID As Integer) As List(Of HtmlTextInfo)
-            Return CBO.FillCollection(Of HtmlTextInfo)(DataProvider.Instance().GetAllHtmlText(ModuleID))
+        Public Function GetWorkflow(ByVal ModuleId As Integer, ByVal TabId As Integer, ByVal PortalId As Integer) As KeyValuePair(Of String, Integer)
+            Dim workFlowId As Integer = Null.NullInteger
+            Dim workFlowType As String = Null.NullString
+
+            ' get from module settings
+            Dim moduleController As New ModuleController
+            Dim settings As Hashtable = moduleController.GetModuleSettings(ModuleId)
+            If Not settings("WorkflowID") Is Nothing Then
+                workFlowId = Convert.ToInt32(settings("WorkflowID"))
+                workFlowType = "Module"
+            End If
+            If workFlowId = Null.NullInteger Then
+                ' if undefined at module level, get from tab settings
+                settings = New TabController().GetTabSettings(TabId)
+                If Not settings("WorkflowID") Is Nothing Then
+                    workFlowId = Convert.ToInt32(settings("WorkflowID"))
+                    workFlowType = "Page"
+                End If
+            End If
+
+            If workFlowId = Null.NullInteger Then
+                ' if undefined at tab level, get from portal settings
+                workFlowId = Integer.Parse(PortalController.GetPortalSetting("WorkflowID", PortalId, "-1"))
+                workFlowType = "Site"
+            End If
+
+            ' if undefined at portal level, set portal default
+            If workFlowId = Null.NullInteger Then
+                Dim objWorkflow As New WorkflowStateController
+                Dim arrWorkflows As ArrayList = objWorkflow.GetWorkflows(PortalId)
+                For Each objState As WorkflowStateInfo In arrWorkflows
+                    ' use direct publish as default
+                    If Null.IsNull(objState.PortalID) And objState.WorkflowName = "Direct Publish" Then
+                        workFlowId = objState.WorkflowID
+                        workFlowType = "Module"
+                    End If
+                Next
+            End If
+
+            Return New KeyValuePair(Of String, Integer)(workFlowType, workFlowId)
+        End Function
+
+        Public Shared Function ManageRelativePaths(ByVal strHTML As String, ByVal strUploadDirectory As String, ByVal strToken As String, ByVal intPortalID As Integer) As String
+            Dim P As Integer
+            Dim R As Integer
+            Dim S As Integer = 0
+            Dim tLen As Integer
+            Dim strURL As String
+            Dim sbBuff As New StringBuilder("")
+
+            If strHTML <> "" Then
+                tLen = strToken.Length + 2
+                Dim _UploadDirectory As String = strUploadDirectory.ToLower
+
+                'find position of first occurrance:
+                P = strHTML.IndexOf(strToken & "=""", StringComparison.InvariantCultureIgnoreCase)
+                While P <> -1
+                    sbBuff.Append(strHTML.Substring(S, P - S + tLen)) 'keep charactes left of URL
+                    S = P + tLen 'save startpos of URL
+                    R = strHTML.IndexOf("""", S) 'end of URL
+                    If R >= 0 Then
+                        strURL = strHTML.Substring(S, R - S).ToLower
+                    Else
+                        strURL = strHTML.Substring(S).ToLower
+                    End If
+
+                    ' if we are linking internally
+                    If strURL.Contains("://") = False Then
+                        ' remove the leading portion of the path if the URL contains the upload directory structure
+                        Dim strDirectory As String = strUploadDirectory + "/"
+                        If strURL.IndexOf(strDirectory) <> -1 Then
+                            S = S + strURL.IndexOf(strDirectory) + strDirectory.Length
+                            strURL = strURL.Substring(strURL.IndexOf(strDirectory) + strDirectory.Length)
+                        End If
+                        ' add upload directory
+                        If strURL.StartsWith("/") = False Then
+                            sbBuff.Append(strUploadDirectory)
+                        End If
+                    End If
+                    'find position of next occurrance
+                    P = strHTML.IndexOf(strToken & "=""", S + Len(strURL) + 2, StringComparison.InvariantCultureIgnoreCase)
+                End While
+
+                If S > -1 Then sbBuff.Append(strHTML.Substring(S)) 'append characters of last URL and behind
+            End If
+
+            Return sbBuff.ToString
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -184,274 +458,50 @@ Namespace DotNetNuke.Modules.Html
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' DeleteHtmlText deletes an HtmlTextInfo object for the Module and Item
+        ''' UpdateWorkFlow updates the currently active Workflow
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
-        ''' <param name="ModuleID">The ID of the Module</param>
-        ''' <param name="ItemID">The ID of the Item</param>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Sub DeleteHtmlText(ByVal ModuleID As Integer, ByVal ItemID As Integer)
-            DataProvider.Instance().DeleteHtmlText(ModuleID, ItemID)
-
-            ' refresh output cache
-            ModuleController.SynchronizeModule(ModuleID)
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' CreateUserNotifications creates HtmlTextUser records and optionally sends email notifications to participants in a Workflow
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="objHtmlText">An HtmlTextInfo object</param>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub CreateUserNotifications(ByVal objHtmlText As HtmlTextInfo)
-            Dim objHTMLTextUsers As New HtmlTextUserController
-            Dim objHtmlTextUser As HtmlTextUserInfo
-            Dim objUser As UserInfo
-
-            ' clean up old user notification records
-            objHTMLTextUsers.DeleteHtmlTextUsers()
-
-            ' ensure we have latest htmltext object loaded
-            objHtmlText = GetHtmlText(objHtmlText.ModuleID, objHtmlText.ItemID)
-
-            ' build collection of users to notify
-            Dim objWorkflow As New WorkflowStateController
-            Dim arrUsers As New ArrayList
-
-            ' if not published
-            If objHtmlText.IsPublished = False Then
-                ' include content owner 
-                arrUsers.Add(objHtmlText.CreatedByUserID)
-            End If
-
-            ' if not draft and not published
-            If objHtmlText.StateID <> objWorkflow.GetFirstWorkflowStateID(objHtmlText.WorkflowID) And objHtmlText.IsPublished = False Then
-                ' get users from permissions for state
-                Dim objRoles As New RoleController
-                For Each objWorkFlowStatePermission As WorkflowStatePermissionInfo In WorkflowStatePermissionController.GetWorkflowStatePermissions(objHtmlText.StateID)
-                    If objWorkFlowStatePermission.AllowAccess Then
-                        If Null.IsNull(objWorkFlowStatePermission.UserID) Then
-                            Dim objRole As RoleInfo = New RoleController().GetRole(objWorkFlowStatePermission.RoleID, objHtmlText.PortalID)
-							If Not objRole Is Nothing Then
-								For Each objUserRole As UserRoleInfo In objRoles.GetUserRolesByRoleName(objHtmlText.PortalID, objRole.RoleName)
-									If Not arrUsers.Contains(objUserRole.UserID) Then
-										arrUsers.Add(objUserRole.UserID)
-									End If
-								Next
-							End If
-                        Else
-                            If Not arrUsers.Contains(objWorkFlowStatePermission.UserID) Then
-                                arrUsers.Add(objWorkFlowStatePermission.UserID)
-                            End If
-                        End If
-                    End If
-                Next
-            End If
-
-            ' process notifications
-            If arrUsers.Count > 0 Or ( objHtmlText.IsPublished = True And objHtmlText.Notify = True ) Then
-                ' get tabid from module 
-                Dim objModules As New ModuleController
-                Dim objModule As ModuleInfo = objModules.GetModule(objHtmlText.ModuleID)
-
-                Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-                Dim strResourceFile As String = Common.Globals.ApplicationPath & "/DesktopModules/" & objModule.DesktopModule.FolderName & "/" & Localization.LocalResourceDirectory & "/" & Localization.LocalSharedResourceFile
-                Dim strSubject As String = Localization.GetString("NotificationSubject", strResourceFile)
-                Dim strBody As String = Localization.GetString("NotificationBody", strResourceFile)
-                strBody = strBody.Replace("[URL]", NavigateURL(objModule.TabID))
-                strBody = strBody.Replace("[STATE]", objHtmlText.StateName)
-
-                ' process user notification collection
-                For Each intUserID As Integer In arrUsers
-
-                    ' create user notification record 
-                    objHtmlTextUser = New HtmlTextUserInfo
-                    objHtmlTextUser.ItemID = objHtmlText.ItemID
-                    objHtmlTextUser.StateID = objHtmlText.StateID
-                    objHtmlTextUser.ModuleID = objHtmlText.ModuleID
-                    objHtmlTextUser.TabID = objModule.TabID
-                    objHtmlTextUser.UserID = intUserID
-                    objHTMLTextUsers.AddHtmlTextUser(objHtmlTextUser)
-
-                    ' send an email notification to a user if the state indicates to do so
-                    If objHtmlText.Notify Then
-                        objUser = UserController.GetUserById(objHtmlText.PortalID, intUserID)
-                        If Not objUser Is Nothing Then
-                            Services.Mail.Mail.SendMail(objPortalSettings.Email, objUser.Email, "", strSubject, strBody, "", "", "", "", "", "")
-                        End If
-                    End If
-
-                Next
-
-                ' if published and the published state specifies to notify members of the workflow
-                If objHtmlText.IsPublished = True And objHtmlText.Notify = True Then
-                    ' send email notification to the author
-                    objUser = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
-                    If Not objUser Is Nothing Then
-                        Services.Mail.Mail.SendMail(objPortalSettings.Email, objUser.Email, "", strSubject, strBody, "", "", "", "", "", "")
-                    End If
-                End If
-            End If            
-
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' FormatHtmlText formats HtmlText content for display in the browser
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="Content">The HtmlText Content</param>
-        ''' <param name="Settings">A Hashtable of Module Settings</param>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function FormatHtmlText(ByVal ModuleId As Integer, ByVal Content As String, ByVal Settings As Hashtable) As String
-            Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-
-            ' token replace
-            Dim blnReplaceTokens As Boolean = False
-            If CType(Settings("HtmlText_ReplaceTokens"), String) <> "" Then
-                blnReplaceTokens = CType(Settings("HtmlText_ReplaceTokens"), Boolean)
-            End If
-            If blnReplaceTokens Then
-                Dim tr As New DotNetNuke.Services.Tokens.TokenReplace()
-                tr.AccessingUser = UserController.GetCurrentUserInfo
-                tr.DebugMessages = Not (objPortalSettings.UserMode = PortalSettings.Mode.View)
-                tr.ModuleId = ModuleId
-                Content = tr.ReplaceEnvironmentTokens(Content)
-            End If
-
-            ' Html decode content
-            Content = HttpUtility.HtmlDecode(Content)
-
-            ' manage relative paths
-            Content = ManageRelativePaths(Content, objPortalSettings.HomeDirectory, "src", objPortalSettings.PortalId)
-            Content = ManageRelativePaths(Content, objPortalSettings.HomeDirectory, "background", objPortalSettings.PortalId)
-
-            Return Content
-        End Function
-
-        Public Shared Function ManageRelativePaths(ByVal strHTML As String, ByVal strUploadDirectory As String, ByVal strToken As String, ByVal intPortalID As Integer) As String
-            Dim P As Integer
-            Dim R As Integer
-            Dim S As Integer = 0
-            Dim tLen As Integer
-            Dim strURL As String
-            Dim sbBuff As New StringBuilder("")
-
-            If strHTML <> "" Then
-                tLen = strToken.Length + 2
-                Dim _UploadDirectory As String = strUploadDirectory.ToLower
-
-                'find position of first occurrance:
-                P = strHTML.IndexOf(strToken & "=""", StringComparison.InvariantCultureIgnoreCase)
-                While P <> -1
-                    sbBuff.Append(strHTML.Substring(S, P - S + tLen)) 'keep charactes left of URL
-                    S = P + tLen 'save startpos of URL
-                    R = strHTML.IndexOf("""", S) 'end of URL
-                    If R >= 0 Then
-                        strURL = strHTML.Substring(S, R - S).ToLower
-                    Else
-                        strURL = strHTML.Substring(S).ToLower
-                    End If
-
-                    ' if we are linking internally
-                    If strURL.Contains("://") = False Then
-                        ' remove the leading portion of the path if the URL contains the upload directory structure
-                        Dim strDirectory As String = strUploadDirectory + "/"
-                        If strURL.IndexOf(strDirectory) <> -1 Then
-                            S = S + strURL.IndexOf(strDirectory) + strDirectory.Length
-                            strURL = strURL.Substring(strURL.IndexOf(strDirectory) + strDirectory.Length)
-                        End If
-                        ' add upload directory
-                        If strURL.StartsWith("/") = False Then
-                            sbBuff.Append(strUploadDirectory)
-                        End If
-                    End If
-                    'find position of next occurrance
-                    P = strHTML.IndexOf(strToken & "=""", S + Len(strURL) + 2, StringComparison.InvariantCultureIgnoreCase)
-                End While
-
-                If S > -1 Then sbBuff.Append(strHTML.Substring(S)) 'append characters of last URL and behind
-            End If
-
-            Return sbBuff.ToString
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' GetWorkFlowID retrieves the currently active WorkflowID for the Portal
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="ModuleID">The ID of the Module</param>
-        ''' <param name="PortalID">The ID of the Portal</param>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Function GetWorkflowID(ByVal ModuleID As Integer, ByVal PortalID As Integer) As Integer
-            Dim intWorkflowID As Integer = -1
-
-            ' get from module settings
-            Dim objModules As New ModuleController
-            Dim objSettings As Hashtable = objModules.GetModuleSettings(ModuleID)
-            If Not objSettings("WorkflowID") Is Nothing Then
-                intWorkflowID = Integer.Parse(objSettings("WorkflowID"))
-            End If
-
-            ' if undefined at module level, get from portal settings
-            If intWorkflowID = -1 Then
-                intWorkflowID = Integer.Parse(PortalController.GetPortalSetting("WorkflowID", PortalID, "-1"))
-            End If
-
-            ' if undefined at portal level, set portal default
-            If intWorkflowID = -1 Then
-                Dim objWorkflow As New WorkflowStateController
-                Dim arrWorkflows As ArrayList = objWorkflow.GetWorkflows(PortalID)
-                For Each objState As WorkflowStateInfo In arrWorkflows
-                    ' use direct publish as default
-                    If Null.IsNull(objState.PortalID) And objState.WorkflowName = "Direct Publish" Then
-                        intWorkflowID = objState.WorkflowID
-                    End If
-                Next
-            End If
-
-            Return intWorkflowID
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' UpdateWorkFlowID updates the currently active WorkflowID for the Portal
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="ModuleID">The ID of the Module</param>
-        ''' <param name="PortalID">The ID of the Portal</param>
         ''' <param name="WorkflowID">The ID of the Workflow</param>
         ''' <history>
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub UpdateWorkflowID(ByVal ModuleID As Integer, ByVal PortalID As Integer, ByVal WorkflowID As Integer)
+        Public Sub UpdateWorkflow(ByVal ObjectID As Integer, ByVal WorkFlowType As String, ByVal WorkflowID As Integer, ByVal ReplaceExistingSettings As Boolean)
+            Dim tabController As New TabController
+            Dim moduleController As New ModuleController
 
-            ' no moduleid indicates a portal level setting
-            If Null.IsNull(ModuleID) Then
-                Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-                If PortalSecurity.IsInRole(objPortalSettings.AdministratorRoleName) Then
-                    PortalController.UpdatePortalSetting(PortalID, "WorkflowID", WorkflowID.ToString)
-                End If
-            Else
-                Dim objModules As New DotNetNuke.Entities.Modules.ModuleController
-                objModules.UpdateModuleSetting(ModuleID, "WorkflowID", WorkflowID.ToString)
+            Select Case WorkFlowType
+                Case "Module"
+                    moduleController.UpdateModuleSetting(ObjectID, "WorkflowID", WorkflowID.ToString)
+                Case "Page"
+                    tabController.UpdateTabSetting(ObjectID, "WorkflowID", WorkflowID.ToString)
+                    If ReplaceExistingSettings Then
+                        'Get All Modules on the current Tab
+                        For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleController.GetTabModules(ObjectID)
+                            ClearModuleSettings(kvp.Value)
+                        Next
+                    End If
+                Case "Site"
+                    PortalController.UpdatePortalSetting(ObjectID, "WorkflowID", WorkflowID.ToString)
+                    If ReplaceExistingSettings Then
+                        'Get All Tabs aon the Site
+                        For Each kvp As KeyValuePair(Of Integer, TabInfo) In tabController.GetTabsByPortal(ObjectID)
+                            tabController.DeleteTabSetting(kvp.Value.TabID, "WorkFlowID")
+                        Next
+                        'Get All Modules in the current Site
+                        For Each objModule As ModuleInfo In moduleController.GetModules(ObjectID)
+                            ClearModuleSettings(objModule)
+                        Next
+                    End If
+            End Select
+
+        End Sub
+
+        Private Sub ClearModuleSettings(ByVal objModule As ModuleInfo)
+            Dim moduleController As New ModuleController
+            If objModule.ModuleDefinition.FriendlyName = "Text/HTML" Then
+                moduleController.DeleteModuleSetting(objModule.ModuleID, "WorkFlowID")
             End If
-
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -474,7 +524,7 @@ Namespace DotNetNuke.Modules.Html
             ' if undefined at portal level, set portal default
             If intMaximumVersionHistory = -1 Then
                 intMaximumVersionHistory = 5 ' default
-                PortalController.UpdatePortalSetting(PortalID, "MaximumVersionHistory", intMaximumVersionHistory)
+                PortalController.UpdatePortalSetting(PortalID, "MaximumVersionHistory", intMaximumVersionHistory.ToString())
             End If
 
             Return intMaximumVersionHistory
@@ -524,7 +574,7 @@ Namespace DotNetNuke.Modules.Html
         Public Function GetSearchItems(ByVal ModInfo As Entities.Modules.ModuleInfo) As Services.Search.SearchItemInfoCollection Implements Entities.Modules.ISearchable.GetSearchItems
 
             Dim objWorkflow As New WorkflowStateController
-            Dim WorkflowID As Integer = GetWorkflowID(ModInfo.ModuleID, ModInfo.PortalID)
+            Dim WorkflowID As Integer = GetWorkflow(ModInfo.ModuleID, ModInfo.TabID, ModInfo.PortalID).Value
             Dim SearchItemCollection As New SearchItemInfoCollection
             Dim objContent As HtmlTextInfo = GetTopHtmlText(ModInfo.ModuleID, True, WorkflowID)
 
@@ -560,7 +610,7 @@ Namespace DotNetNuke.Modules.Html
             Dim objModules As New ModuleController
             Dim objModule As ModuleInfo = objModules.GetModule(ModuleID)
             Dim objWorkflow As New WorkflowStateController
-            Dim WorkflowID As Integer = GetWorkflowID(ModuleID, objModule.PortalID)
+            Dim WorkflowID As Integer = GetWorkflow(ModuleID, objModule.TabID, objModule.PortalID).Value
 
             Dim objContent As HtmlTextInfo = GetTopHtmlText(ModuleID, True, WorkflowID)
             If Not objContent Is Nothing Then
@@ -591,7 +641,7 @@ Namespace DotNetNuke.Modules.Html
             Dim objModules As New ModuleController
             Dim objModule As ModuleInfo = objModules.GetModule(ModuleID)
             Dim objWorkflow As New WorkflowStateController
-            Dim intWorkflowID As Integer = GetWorkflowID(ModuleID, objModule.PortalID)
+            Dim intWorkflowID As Integer = GetWorkflow(ModuleID, objModule.TabID, objModule.PortalID).Value
             Dim xmlContent As XmlNode = GetContent(Content, "htmltext")
 
             Dim objContent As HtmlTextInfo = New HtmlTextInfo

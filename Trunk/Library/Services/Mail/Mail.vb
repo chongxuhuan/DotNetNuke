@@ -41,7 +41,7 @@ Namespace DotNetNuke.Services.Mail
         End Function
 
         Public Shared Function IsValidEmailAddress(ByVal Email As String, ByVal portalid As Integer) As Boolean
-            Dim pattern As String
+            Dim pattern As String = Null.NullString
             'During install Wizard we may not have a valid PortalID
             If portalid <> Null.NullInteger Then
                 pattern = CStr(Entities.Users.UserController.GetUserSettings(portalid)("Security_EmailValidation"))
@@ -66,7 +66,7 @@ Namespace DotNetNuke.Services.Mail
         ''' -----------------------------------------------------------------------------
         Public Shared Function SendMail(ByVal user As UserInfo, ByVal msgType As MessageType, ByVal settings As PortalSettings) As String
             'Send Notification to User
-            Dim userEmail As String = user.Email
+            Dim toUser As Integer = user.UserID
             Dim locale As String = user.Profile.PreferredLocale
             Dim subject As String = ""
             Dim body As String = ""
@@ -75,7 +75,7 @@ Namespace DotNetNuke.Services.Mail
                 Case MessageType.UserRegistrationAdmin
                     subject = "EMAIL_USER_REGISTRATION_ADMINISTRATOR_SUBJECT"
                     body = "EMAIL_USER_REGISTRATION_ADMINISTRATOR_BODY"
-                    userEmail = settings.Email
+                    toUser = settings.AdministratorId
                     Dim admin As UserInfo = DotNetNuke.Entities.Users.UserController.GetUserById(settings.PortalId, settings.AdministratorId)
                     locale = admin.Profile.PreferredLocale
                 Case MessageType.UserRegistrationPrivate
@@ -102,10 +102,21 @@ Namespace DotNetNuke.Services.Mail
                     body = "EMAIL_USER_UPDATED_OWN_PASSWORD_BODY"
             End Select
 
-            Return SendMail(settings.Email, userEmail, "", _
-                            Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
-                            Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
-                            "", "", "", "", "", "")
+            'SendMail(settings.Email, userEmail, "", _
+            '                Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
+            '                Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
+            '                "", "", "", "", "", "")
+
+            Dim messageController As New Messaging.MessagingController()
+            Dim message As New Messaging.Data.Message()
+            message.ToUserID = toUser
+            message.PortalID = settings.PortalId
+            message.FromUserID = settings.AdministratorId
+            message.Subject = Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
+            message.Body = Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
+            message.Status = Messaging.Data.MessageStatusType.Unread
+            messageController.SaveMessage(message)
+
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -129,6 +140,7 @@ Namespace DotNetNuke.Services.Mail
         '''     [cnurse]        09/29/2005  Moved to Mail class
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String, ByVal Attachment As String, ByVal BodyType As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
 
             ' here we check if we want to format the email as html or plain text.
@@ -171,12 +183,13 @@ Namespace DotNetNuke.Services.Mail
         '''     [cnurse]        09/29/2005  Moved to Mail class
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
-            ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
-            ByVal Subject As String, ByVal BodyFormat As MailFormat, _
-            ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, _
-            ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, _
-            ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
+Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
+    ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
+    ByVal Subject As String, ByVal BodyFormat As MailFormat, _
+    ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, _
+    ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, _
+    ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
 
             Dim SMTPEnableSSL As Boolean = Host.EnableSMTPSSL
 
@@ -185,6 +198,7 @@ Namespace DotNetNuke.Services.Mail
 
         End Function
 
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
             ByVal Subject As String, ByVal BodyFormat As MailFormat, _
@@ -196,6 +210,7 @@ Namespace DotNetNuke.Services.Mail
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _
@@ -207,6 +222,7 @@ Namespace DotNetNuke.Services.Mail
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal ReplyTo As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _
@@ -220,10 +236,11 @@ Namespace DotNetNuke.Services.Mail
                 If myAtt <> "" Then attachments.Add(New Attachment(myAtt))
             Next
 
-            Return SendMail(MailFrom, MailTo, Cc, Bcc, ReplyTo, Priority, Subject, BodyFormat, BodyEncoding, Body, attachments, _
+            Return SendMail(MailFrom, MailTo, Cc, Bcc, MailFrom, Priority, Subject, BodyFormat, BodyEncoding, Body, attachments, _
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
+        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal ReplyTo As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _
@@ -239,6 +256,14 @@ Namespace DotNetNuke.Services.Mail
                 LogException(ex)
                 Return ex.Message
             End If
+
+            ''Attempt to route the email through portal messaging
+            If (Attachments.Count = 0) Then
+                If (RouteToUserMessaging(MailFrom, MailTo, Cc, Bcc, Subject, Body, Attachments)) Then
+                    Return Nothing
+                End If
+            End If
+
 
             ' SMTP server configuration
             If String.IsNullOrEmpty(SMTPServer) AndAlso Not String.IsNullOrEmpty(Host.SMTPServer) Then
@@ -338,7 +363,7 @@ Namespace DotNetNuke.Services.Mail
                     smtpClient.Send(objMail)
                     SendMail = ""
                 Catch exc As SmtpFailedRecipientException
-                    SendMail = String.Format(Localize.GetString("FailedRecipient"), HttpContext.Current.Server.HtmlEncode(exc.FailedRecipient))
+                    SendMail = String.Format(Localize.GetString("FailedRecipient"), exc.FailedRecipient)
                     LogException(exc)
                 Catch exc As SmtpException
                     SendMail = Localize.GetString("SMTPConfigurationProblem")
@@ -356,6 +381,59 @@ Namespace DotNetNuke.Services.Mail
                     objMail.Dispose()
                 End Try
             End If
+
+        End Function
+
+        Friend Shared Function RouteToUserMessaging(ByVal MailFrom As String, ByVal MailTo As String, _
+            ByVal Cc As String, ByVal Bcc As String, ByVal Subject As String, _
+            ByVal Body As String, ByVal Attachments As List(Of Attachment)) As Boolean
+
+            Dim fromUsersList As ArrayList = UserController.GetUsersByEmail(PortalSettings.Current.PortalId, MailFrom, -1, -1, -1)
+            Dim fromUser As UserInfo
+            If (fromUsersList.Count <> 0) Then
+                fromUser = CType(fromUsersList(0), UserInfo)
+            Else
+                Return False
+            End If
+
+            Dim ToEmails As New List(Of String)
+            Dim ToUsers As New List(Of UserInfo)
+
+            If (Not String.IsNullOrEmpty(MailTo)) Then
+                ToEmails.AddRange(MailTo.Split(";"c, ","c))
+            End If
+
+            If (Not String.IsNullOrEmpty(Cc)) Then
+                ToEmails.AddRange(Cc.Split(";"c, ","c))
+            End If
+
+            If (Not String.IsNullOrEmpty(Bcc)) Then
+                ToEmails.AddRange(Bcc.Split(";"c, ","c))
+            End If
+
+            For Each email As String In ToEmails
+                If (Not String.IsNullOrEmpty(email)) Then
+                    Dim toUser As ArrayList = UserController.GetUsersByEmail(PortalSettings.Current.PortalId, email, -1, -1, -1)
+                    If (toUser.Count <> 0) Then
+                        ToUsers.Add(CType(fromUsersList(0), UserInfo))
+                    Else
+                        Return False
+                    End If
+                End If
+            Next
+
+            Dim messageController As New Messaging.MessagingController()
+
+            For Each recepient As UserInfo In ToUsers
+                Dim message As New Messaging.Data.Message()
+                message.FromUserID = fromUser.UserID
+                message.Subject = Subject
+                message.Body = Body
+                message.ToUserID = recepient.UserID
+                message.Status = Messaging.Data.MessageStatusType.Unread
+                messageController.SaveMessage(message)
+
+            Next
 
         End Function
 

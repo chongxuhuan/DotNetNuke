@@ -28,7 +28,7 @@
                 <moduleControls>
                   <moduleControl>
                     <controlKey />
-                    <controlSrc>DesktopModules/Admin/Messaging/MessagesList.ascx</controlSrc>
+                    <controlSrc>DesktopModules/Admin/Messaging/MessageList.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle />
                     <controlType>View</controlType>
@@ -92,7 +92,7 @@
             </file>
             <file>
               <path>App_LocalResources</path>
-              <name>MessagesList.ascx.resx</name>
+              <name>MessageList.ascx.resx</name>
             </file>
             <file>
               <path>App_LocalResources</path>
@@ -113,7 +113,7 @@
               <name>MessageCount.ascx</name>
             </file>
             <file>
-              <name>MessagesList.ascx</name>
+              <name>MessageList.ascx</name>
             </file>
             <file>
               <name>Settings.ascx</name>

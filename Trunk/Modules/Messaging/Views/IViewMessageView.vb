@@ -18,15 +18,20 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Services.Messaging.Providers
+Imports WebFormsMvp
+Imports DotNetNuke.Services.Messaging.Data
+Imports DotNetNuke.Modules.Messaging.Views.Models
 
 Namespace DotNetNuke.Modules.Messaging.Views
 
     Public Interface IViewMessageView
-        Inherits IView
+        Inherits IView(Of ViewMessageModel)
 
         Sub BindMessage(ByVal message As Message)
+
+        Event Cancel As EventHandler
+        Event Delete As EventHandler
+        Event Reply As EventHandler
 
     End Interface
 

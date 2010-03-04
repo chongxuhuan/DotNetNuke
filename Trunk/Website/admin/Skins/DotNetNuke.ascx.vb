@@ -23,7 +23,6 @@ Imports DotNetNuke.Application
 Namespace DotNetNuke.UI.Skins.Controls
     ''' -----------------------------------------------------------------------------
     ''' <summary></summary>
-    ''' <returns></returns>
     ''' <remarks></remarks>
     ''' <history>
     ''' 	[cniknet]	10/15/2004	Replaced public members with properties and removed
@@ -80,9 +79,7 @@ Namespace DotNetNuke.UI.Skins.Controls
             hypDotNetNuke.NavigateUrl = DotNetNukeContext.Current.Application.Url
 
             ' show copyright credits?
-            If GetHashValue(Common.Globals.HostSettings("Copyright"), "Y") <> "Y" Then
-                Me.Visible = False
-            End If
+            Me.Visible = Entities.Host.Host.DisplayCopyright
         End Sub
 
     End Class

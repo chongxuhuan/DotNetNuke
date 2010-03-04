@@ -28,6 +28,7 @@ Namespace DotNetNuke.Entities.Content.Data
         Function AddContentItem(ByVal contentItem As ContentItem, ByVal createdByUserId As Integer) As Integer
         Sub DeleteContentItem(ByVal contentItem As ContentItem)
         Function GetContentItem(ByVal contentItemId As Integer) As IDataReader
+        Function GetContentItemsByTerm(ByVal term As String) As IDataReader
         Function GetUnIndexedContentItems() As IDataReader
         Sub UpdateContentItem(ByVal contentItem As ContentItem, ByVal lastModifiedByUserId As Integer)
 

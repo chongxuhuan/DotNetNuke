@@ -77,7 +77,7 @@ Namespace DotNetNuke.Modules.Admin.Search
                     se.IndexContent(ModuleContext.PortalId)
                 End If
 
-                Skin.AddModuleMessage(Me, Localization.GetString("Indexed", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Indexed", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try

@@ -20,56 +20,53 @@
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Common.Utilities
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Modules.Messaging.Views
-Imports DotNetNuke.Services.Messaging.Providers
 Imports DotNetNuke.Services.Messaging
 Imports DotNetNuke.Services.Messaging.Data
-Imports DotNetNuke.Entities.Users
+Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Messaging.Views.Models
 
 Namespace DotNetNuke.Modules.Messaging.Presenters
 
     Public Class ViewMessagePresenter
-        Inherits Presenter(Of IViewMessageView, ViewMessagePresenterModel)
+        Inherits ModulePresenter(Of IViewMessageView)
 
 #Region "Private Members"
 
-        Private _Message As Message
         Private _MessagingController As IMessagingController
-
-#End Region
-
-#Region "Public Constants"
-
-        Public Const Name As String = "EditMessage"
 
 #End Region
 
 #Region "Constructors"
 
-        Public Sub New()
-            Me.New(New MessagingController(New MessagingDataService()))
+        Public Sub New(ByVal viewView As IViewMessageView)
+            Me.New(viewView, New MessagingController(New MessagingDataService()))
         End Sub
 
-        Public Sub New(ByVal messagingController As IMessagingController)
+        Public Sub New(ByVal viewView As IViewMessageView, ByVal messagingController As IMessagingController)
+            MyBase.New(viewView)
             Arg.NotNull("messagingController", messagingController)
 
             _MessagingController = messagingController
+
+            AddHandler View.Cancel, AddressOf Cancel
+            AddHandler View.Delete, AddressOf DeleteMessage
+            AddHandler View.Load, AddressOf Load
+            AddHandler View.Reply, AddressOf Reply
         End Sub
 
 #End Region
 
 #Region "Public Properties"
 
-        <ViewState()> _
-        Public Property Message() As Message
+        Public ReadOnly Property IndexId() As Integer
             Get
-                Return _Message
+                Dim _IndexId As Integer = Null.NullInteger
+                If Not String.IsNullOrEmpty(Request.Params("MessageId")) Then
+                    _IndexId = Int32.Parse(Request.Params("MessageId"))
+                End If
+                Return _IndexId
             End Get
-            Set(ByVal value As Message)
-                _Message = value
-            End Set
         End Property
 
 #End Region
@@ -77,31 +74,39 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 #Region "Public Methods"
 
         Public Function Cancel() As Boolean
-            Environment.RedirectToPresenter(New MessagesListPresenterModel())
+            Response.Redirect(NavigateURL(ModuleContext.TabId))
         End Function
 
-        Public Overrides Function Load() As Boolean
-            If Not Model.IsPostBack Then
-                Message = _MessagingController.GetMessageByID(Me.Model.PortalId, Me.Model.UserId, Me.Model.IndexId)
-                If Message Is Nothing Then
+        Public Sub DeleteMessage(ByVal sender As Object, ByVal e As EventArgs)
+            View.BindMessage(View.Model.Message)
+
+            View.Model.Message.Status = MessageStatusType.Deleted
+            _MessagingController.UpdateMessage(View.Model.Message)
+
+            'Redirect to List
+            Response.Redirect(NavigateURL(ModuleContext.TabId))
+        End Sub
+
+        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
+            If Not IsPostBack Then
+                View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, IndexId)
+                If View.Model.Message Is Nothing Then
                     'Redirect - message does not belong to user
-                    Me.Environment.RedirectToAccessDenied()
+                    Response.Redirect(AccessDeniedURL())
                 End If
-                If Message.Status = "Unread" Then
-                    Message.Status = "Read"
-                    _MessagingController.SaveMessage(Message)
+                If View.Model.Message.Status = MessageStatusType.Unread Then
+                    View.Model.Message.Status = MessageStatusType.Read
+                    _MessagingController.UpdateMessage(View.Model.Message)
                 End If
+                View.BindMessage(View.Model.Message)
             End If
 
-            View.BindMessage(Message)
-        End Function
+        End Sub
 
         Public Function Reply() As Boolean
-            Dim presenterModel As New EditMessagePresenterModel
-            presenterModel.OriginalIndexId = Me.Model.IndexId
-            presenterModel.IndexId = Null.NullInteger
-            Environment.RedirectToPresenter(presenterModel)
+            Response.Redirect(NavigateURL(TabId, "EditMessage", String.Format("mid={0}", ModuleId), String.Format("MessageId={0}", View.Model.Message.MessageID), "IsReply=true"))
         End Function
+
 
 #End Region
     End Class

@@ -18,15 +18,17 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Entities.Content.Taxonomy
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports Telerik.Web.UI
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface IVocabularyListView
-        Inherits IView
+        Inherits IView(Of VocabularyListModel)
 
-        Sub ShowVocabularies(ByVal vocabularies As IEnumerable(Of Vocabulary))
+        Event AddVocabulary As EventHandler
+        Event VocabularyDataBound As GridItemEventHandler
 
     End Interface
 

@@ -32,7 +32,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents vocabulariesGrid As Global.System.Web.UI.WebControls.DataGrid
+        Protected WithEvents vocabulariesGrid As Global.DotNetNuke.Web.UI.WebControls.DnnGrid
 
         '''<summary>
         '''addVocabularyButton control.
@@ -41,6 +41,6 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents addVocabularyButton As Global.System.Web.UI.WebControls.Button
+        Protected WithEvents addVocabularyButton As Global.DotNetNuke.Web.UI.WebControls.DnnButton
     End Class
 End Namespace

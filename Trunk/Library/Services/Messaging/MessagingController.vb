@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
+' Copyright (c) 2002-2009
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,12 +19,10 @@
 '
 
 Imports System
-Imports System.Data
 Imports System.Collections.Generic
 
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.ComponentModel
-Imports DotNetNuke.Services.Messaging.Providers
 Imports DotNetNuke.Services.Messaging.Data
 
 Namespace DotNetNuke.Services.Messaging
@@ -112,28 +110,47 @@ Namespace DotNetNuke.Services.Messaging
 
 #Region "Public Methods"
 
-        Public Sub DeleteMessage(ByVal PortalID As Integer, ByVal IndexID As Integer) Implements IMessagingController.DeleteMessage
-            _DataService.DeleteMessage(PortalID, IndexID)
-        End Sub
-
-        Public Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal IndexID As Integer) As Message Implements IMessagingController.GetMessageByID
-            Return CType(CBO.FillObject(_DataService.GetMessageByID(PortalID, UserID, IndexID), GetType(Message)), Message)
+        Public Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal messageId As Integer) As Message Implements IMessagingController.GetMessageByID
+            Return CType(CBO.FillObject(_DataService.GetMessageByID(messageId), GetType(Message)), Message)
         End Function
 
-        Public Function GetMessagesForUser(ByVal PortalID As Integer, ByVal UserID As Integer) As List(Of Message) Implements IMessagingController.GetMessagesForUser
-            Return CBO.FillCollection(Of Message)(_DataService.GetMessagesForUser(PortalID, UserID))
+        Public Function GetUserInbox(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal PageNumber As Integer, ByVal PageSize As Integer) As List(Of Message) Implements IMessagingController.GetUserInbox
+            Return CBO.FillCollection(Of Message)(_DataService.GetUserInbox(PortalID, UserID, PageNumber, PageSize))
         End Function
 
-        Public Function GetMessagesPendingSend(ByVal ExecutionCycleGuid As Guid) As List(Of Message) Implements IMessagingController.GetMessagesPendingSend
-            Return CBO.FillCollection(Of Message)(_DataService.GetMessagesPendingSend(ExecutionCycleGuid))
+        Public Function GetInboxCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer Implements IMessagingController.GetInboxCount
+            Return _DataService.GetInboxCount(PortalID, UserID)
+        End Function
+
+        Public Function GetNewMessageCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer Implements IMessagingController.GetNewMessageCount
+            Return _DataService.GetNewMessageCount(PortalID, UserID)
+        End Function
+
+        Public Function GetNextMessageForDispatch(ByVal SchedulerInstance As Guid) As Message Implements IMessagingController.GetNextMessageForDispatch
+            Return CType(CBO.FillObject(_DataService.GetNextMessageForDispatch(SchedulerInstance), GetType(Message)), Message)
         End Function
 
         Public Sub SaveMessage(ByVal message As Message) Implements IMessagingController.SaveMessage
-            Arg.PropertyNotNullOrEmpty("message", "LongBody", message.LongBody)
-            'Arg.PropertyNotEqualTo(Of Guid)("message", "MessageGroup", message.MessageGroup, Guid.Empty)
+
+            If (PortalSettings.Current IsNot Nothing) Then
+                message.PortalID = PortalSettings.Current.PortalId
+            End If
+
+            If (message.Conversation = Nothing Or message.Conversation = Guid.Empty) Then
+                message.Conversation = Guid.NewGuid()
+            End If
 
             _DataService.SaveMessage(message)
         End Sub
+
+        Public Sub UpdateMessage(ByVal message As Message) Implements IMessagingController.UpdateMessage
+            _DataService.UpdateMessage(message)
+        End Sub
+
+        Public Sub MarkMessageAsDispatched(ByVal MessageID As Integer) Implements IMessagingController.MarkMessageAsDispatched
+            _DataService.MarkMessageAsDispatched(MessageID)
+        End Sub
+
 
 #End Region
 

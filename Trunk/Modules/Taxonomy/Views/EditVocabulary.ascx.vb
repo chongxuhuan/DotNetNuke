@@ -18,55 +18,32 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Modules.Taxonomy.Presenters
-Imports DotNetNuke.Modules.Taxonomy.ViewModels
-Imports DotNetNuke.Modules.Taxonomy.WebControls
-Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Content.Taxonomy
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports DotNetNuke.Modules.Taxonomy.WebControls
+Imports DotNetNuke.Web.Mvp
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
+    <PresenterBinding(GetType(EditVocabularyPresenter))> _
     Partial Public Class EditVocabulary
-        Inherits ViewBase(Of IEditVocabularyView, EditVocabularyPresenter, EditVocabularyPresenterModel)
+        Inherits ModuleView(Of EditVocabularyModel)
         Implements IEditVocabularyView
 
-#Region "Protected Properties"
+#Region "IEditVocabularyView Implementation"
 
-        Protected Overrides ReadOnly Property View() As IEditVocabularyView
-            Get
-                Return Me
-            End Get
-        End Property
+        Public Event AddTerm(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.AddTerm
+        Public Event Cancel(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.Cancel
+        Public Event CancelTerm(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.CancelTerm
+        Public Event Delete(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.Delete
+        Public Event DeleteTerm(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.DeleteTerm
+        Public Event Save(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.Save
+        Public Event SaveTerm(ByVal sender As Object, ByVal e As EventArgs) Implements IEditVocabularyView.SaveTerm
+        Public Event SelectTerm(ByVal sender As Object, ByVal e As TermsEventArgs) Implements IEditVocabularyView.SelectTerm
 
-#End Region
-
-#Region "ViewBase Virtual/Abstract Method Overrides"
-
-        Protected Overrides Sub ConnectEvents()
-            MyBase.ConnectEvents()
-
-            AddHandler deleteVocabulary.Click, CreateSimpleHandler(Function(p) p.DeleteVocabulary())
-            AddHandler cancelEdit.Click, CreateSimpleHandler(Function(p) p.Cancel())
-            AddHandler saveVocabulary.Click, CreateSaveHandler(Function(p) p.SaveVocabulary())
-
-            AddHandler termsList.SelectedTermChanged, CreateSimpleHandler(Of TermsListEventArgs)( _
-                                                                Function(p, a) _
-                                                                    p.SelectTerm(a.SelectedTerm) _
-                                                                )
-            AddHandler addTerm.Click, CreateSimpleHandler(Function(p) p.AddTerm())
-            AddHandler deleteTerm.Click, CreateSimpleHandler(Function(p) p.DeleteTerm())
-            AddHandler cancelTerm.Click, CreateSimpleHandler(Function(p) p.CancelTerm())
-            AddHandler saveTerm.Click, CreateSaveHandler(Function(p) p.SaveTerm())
-        End Sub
-
-        Protected Overrides Sub Localize()
-        End Sub
-
-#End Region
-
-#Region "IEditVocabularyView Members"
 
         Public Sub BindTerm(ByVal term As Term, ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal loadFromControl As Boolean, ByVal editEnabled As Boolean) Implements IEditVocabularyView.BindTerm
             editTermControl.BindTerm(term, terms, isHeirarchical, loadFromControl, editEnabled)
@@ -78,13 +55,11 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
 
         Public Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean) Implements IEditVocabularyView.BindVocabulary
             editVocabularyControl.BindVocabulary(vocabulary, editEnabled, showScope)
-
             saveVocabulary.Enabled = editEnabled
             deleteVocabulary.Enabled = editEnabled
-            addTerm.Enabled = editEnabled
-            saveTerm.Enabled = editEnabled
-            deleteTerm.Enabled = editEnabled
-
+            addTermButton.Enabled = editEnabled
+            saveTermButton.Enabled = editEnabled
+            deleteTermButton.Enabled = editEnabled
         End Sub
 
         Public Sub ClearSelectedTerm() Implements IEditVocabularyView.ClearSelectedTerm
@@ -95,10 +70,10 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Public Sub SetTermEditorMode(ByVal isAddMode As Boolean, ByVal termId As Integer) Implements IEditVocabularyView.SetTermEditorMode
             If isAddMode Then
                 termLabel.Text = Localization.GetString("NewTerm", LocalResourceFile)
-                saveTerm.Text = Localization.GetString("CreateTerm", LocalResourceFile)
+                saveTermButton.Text = "CreateTerm"
             Else
                 termLabel.Text = Localization.GetString("CurrentTerm", LocalResourceFile)
-                saveTerm.Text = Localization.GetString("SaveTerm", LocalResourceFile)
+                saveTermButton.Text = "SaveTerm"
             End If
 
             deleteTermPlaceHolder.Visible = Not isAddMode
@@ -106,6 +81,42 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
 
         Public Sub ShowTermEditor(ByVal showEditor As Boolean) Implements IEditVocabularyView.ShowTermEditor
             termEditor.Visible = showEditor
+        End Sub
+
+#End Region
+
+#Region "Event Handlers"
+
+        Private Sub addTermButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles addTermButton.Click
+            RaiseEvent AddTerm(Me, e)
+        End Sub
+
+        Private Sub cancelEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelEdit.Click
+            RaiseEvent Cancel(Me, e)
+        End Sub
+
+        Private Sub cancelTermButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelTermButton.Click
+            RaiseEvent CancelTerm(Me, e)
+        End Sub
+
+        Private Sub deleteTermButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles deleteTermButton.Click
+            RaiseEvent DeleteTerm(Me, e)
+        End Sub
+
+        Private Sub deleteVocabulary_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles deleteVocabulary.Click
+            RaiseEvent Delete(Me, e)
+        End Sub
+
+        Private Sub saveTermButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles saveTermButton.Click
+            RaiseEvent SaveTerm(Me, e)
+        End Sub
+
+        Private Sub saveVocabulary_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles saveVocabulary.Click
+            RaiseEvent Save(Me, e)
+        End Sub
+
+        Private Sub termsList_SelectedTermChanged(ByVal sender As Object, ByVal e As WebControls.TermsEventArgs) Handles termsList.SelectedTermChanged
+            RaiseEvent SelectTerm(Me, e)
         End Sub
 
 #End Region

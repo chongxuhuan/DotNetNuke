@@ -1,11 +1,14 @@
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Portals.SiteSettings" Language="vb" AutoEventWireup="false" Explicit="True" EnableViewState="True" CodeFile="SiteSettings.ascx.vb" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
+<%@ Register TagPrefix="dnn" TagName="LocaleSelector" Src="~/controls/LocaleSelectorControl.ascx" %>
+<dnn:LocaleSelector id="plLocale" text="Locale:" runat="server" />
 <!-- Settings Tables -->
 <table class="Settings" cellspacing="2" cellpadding="2" width="760" summary="Site Settings Design Table" border="0">
     <tr>
@@ -90,11 +93,11 @@
                             <table id="tblAppearance" cellspacing="2" cellpadding="2" summary="Appearance Design Table" border="0" runat="server">
                                 <tr>
                                     <td class="SubHead" valign="top" style="width:250px"><dnn:Label ID="plLogo" runat="server" ControlName="ctlLogo" /></td>
-                                    <td style="width:450px"><dnn:URL ID="ctlLogo" runat="server" style="width:450px" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False" /></td>
+                                    <td style="width:450px"><dnn:DnnFilePicker ID="ctlLogo" runat="server" style="width:450px" Required="False" ShowSecure="True" ShowDatabase="False" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" valign="top" style="width:250px"><dnn:Label ID="plBackground" runat="server" Text="Body Background:" ControlName="cboBackground"/></td>
-                                    <td style="width:450px"><dnn:URL ID="ctlBackground" runat="server" style="width:450px" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False"/></td>
+                                    <td style="width:450px"><dnn:DnnFilePicker ID="ctlBackground" runat="server" style="width:450px" Required="False" ShowSecure="True" ShowDatabase="False"/></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plSkinWidgestEnabled" runat="server" ControlName="chkSkinWidgestEnabled" /></td>
@@ -210,6 +213,10 @@
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plInlineEditor" runat="server" ControlName="chkInlineEditor" /></td>
                                     <td class="NormalTextBox" valign="top" style="width:450px"><asp:CheckBox ID="chkInlineEditor" runat="server" CssClass="Normal" /></td>
+                                </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plHideSystemFolders" runat="server" ControlName="chkHideSystemFolders" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:CheckBox ID="chkHideSystemFolders" runat="server" CssClass="Normal" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plControlPanelMode" runat="server" ControlName="optControlPanelMode" /></td>

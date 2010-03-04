@@ -18,12 +18,6 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System.Web.Caching
-Imports DotNetNuke.Entities.Content.Common
-Imports DotNetNuke.Entities.Content.Data
-Imports DotNetNuke.Entities.Users
-Imports DotNetNuke.Common.Utilities
-
 Namespace DotNetNuke.Entities.Content.Taxonomy
     Public Interface ITermController
         Function AddTerm(ByVal term As Term) As Integer

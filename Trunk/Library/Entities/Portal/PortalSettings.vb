@@ -681,6 +681,22 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets whether folders which are hidden or whose name begins with underscore
+        ''' are included in folder synchronization.
+        ''' </summary>
+        ''' <remarks>Defaults to True</remarks>
+        ''' <history>
+        ''' 	[cnurse]	08/28/2008   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public ReadOnly Property HideFoldersEnabled() As Boolean
+            Get
+                Return PortalController.GetPortalSettingAsBoolean("HideFoldersEnabled", PortalId, True)
+            End Get
+        End Property
+
         Public Property PortalAlias() As PortalAliasInfo
             Get
                 Return _PortalAlias

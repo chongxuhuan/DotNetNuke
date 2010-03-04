@@ -60,9 +60,11 @@ Namespace DotNetNuke.Framework
         ''' -----------------------------------------------------------------------------
         Public Property PageScrollTop() As Integer
             Get
+                Dim _PageScrollTop As Integer = Null.NullInteger
                 If ScrollTop.Value.Length > 0 AndAlso IsNumeric(ScrollTop.Value) Then
-                    Return CInt(ScrollTop.Value)
+                    _PageScrollTop = CInt(ScrollTop.Value)
                 End If
+                Return _PageScrollTop
             End Get
             Set(ByVal Value As Integer)
                 ScrollTop.Value = Value.ToString
@@ -137,7 +139,7 @@ Namespace DotNetNuke.Framework
                 Comment += String.Concat(vbCrLf, _
                             "<!--**********************************************************************************-->", vbCrLf, _
                             "<!-- DotNetNuke® - http://www.dotnetnuke.com                                          -->", vbCrLf, _
-                            "<!-- Copyright (c) 2002-2009                                                          -->", vbCrLf, _
+                            "<!-- Copyright (c) 2002-2010                                                          -->", vbCrLf, _
                             "<!-- by DotNetNuke Corporation                                                        -->", vbCrLf, _
                             "<!--**********************************************************************************-->", vbCrLf)
             End If

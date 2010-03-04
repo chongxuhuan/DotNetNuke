@@ -380,6 +380,16 @@ Namespace DotNetNuke.UI.Modules
                 End If
             End If
 
+            'By now the control is in the Page's Controls Collection
+            Dim profileModule As IProfileModule = TryCast(_Control, IProfileModule)
+            If profileModule IsNot Nothing Then
+                'Find Container
+                Dim _Container As DotNetNuke.UI.Containers.Container = ControlUtilities.FindParentControl(Of DotNetNuke.UI.Containers.Container)(_Control)
+                If _Container IsNot Nothing Then
+                    _Container.Visible = profileModule.DisplayModule
+                End If
+            End If
+
         End Sub
 
         Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)

@@ -76,6 +76,11 @@ Namespace DotNetNuke.Security.Permissions
             Return provider.GetFolderPermissionsCollectionByFolder(PortalID, Folder)
         End Function
 
+        Public Shared Function HasFolderPermission(ByVal portalId As Integer, ByVal folderPath As String, ByVal permissionKey As String) As Boolean
+            Return HasFolderPermission(FolderPermissionController.GetFolderPermissionsCollectionByFolder(portalId, folderPath), _
+                                       permissionKey)
+        End Function
+
         Public Shared Function HasFolderPermission(ByVal objFolderPermissions As FolderPermissionCollection, ByVal PermissionKey As String) As Boolean
             Dim hasPermission As Boolean = provider.HasFolderPermission(objFolderPermissions, "WRITE")
             If Not hasPermission Then
@@ -167,11 +172,6 @@ Namespace DotNetNuke.Security.Permissions
         Public Function GetFolderPermissionsCollectionByFolderPath(ByVal arrFolderPermissions As ArrayList, ByVal FolderPath As String) As FolderPermissionCollection
             Dim objFolderPermissionCollection As New FolderPermissionCollection(arrFolderPermissions, FolderPath)
             Return objFolderPermissionCollection
-        End Function
-
-        <Obsolete("Deprecated in DNN 5.1.  Use HasFolderPermission(FolderPermissionsCollection, string)")> _
-        Public Shared Function HasFolderPermission(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal PermissionKey As String) As Boolean
-            Return HasFolderPermission(GetFolderPermissionsCollectionByFolder(PortalID, FolderPath), PermissionKey)
         End Function
 
         <Obsolete("Deprecated in DNN 5.1.")> _

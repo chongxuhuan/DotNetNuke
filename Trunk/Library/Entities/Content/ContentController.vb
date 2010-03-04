@@ -75,6 +75,13 @@ Namespace DotNetNuke.Entities.Content
             Return CBO.FillObject(Of ContentItem)(_DataService.GetContentItem(contentItemId))
         End Function
 
+        Public Function GetContentItemsByTerm(ByVal term As String) As IQueryable(Of ContentItem) Implements IContentController.GetContentItemsByTerm
+            'Argument Contract
+            Arg.NotNullOrEmpty("term", term)
+
+            Return CBO.FillQueryable(Of ContentItem)(_DataService.GetContentItemsByTerm(term))
+        End Function
+
         Public Function GetMetadata(ByVal contentItemId As Integer) As Dictionary(Of String, String) Implements IContentController.GetMetadata
             'Argument Contract
             Arg.NotNegative("contentItemId", contentItemId)
@@ -82,8 +89,8 @@ Namespace DotNetNuke.Entities.Content
             Throw New NotImplementedException()
         End Function
 
-        Public Function GetUnIndexedContentItems() As List(Of ContentItem) Implements IContentController.GetUnIndexedContentItems
-            Return CBO.FillCollection(Of ContentItem)(_DataService.GetUnIndexedContentItems())
+        Public Function GetUnIndexedContentItems() As IQueryable(Of ContentItem) Implements IContentController.GetUnIndexedContentItems
+            Return CBO.FillQueryable(Of ContentItem)(_DataService.GetUnIndexedContentItems())
         End Function
 
         Public Sub UpdateContentItem(ByVal contentItem As ContentItem) Implements IContentController.UpdateContentItem

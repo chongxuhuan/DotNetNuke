@@ -97,15 +97,19 @@ Namespace DotNetNuke.Modules.Html
                     Next
                     cboWorkflow.DataSource = arrWorkflows
                     cboWorkflow.DataBind()
-                    Dim intWorkflowID As Integer = objHtml.GetWorkflowID(ModuleId, PortalId)
-                    If Not cboWorkflow.Items.FindByValue(intWorkflowID.ToString) Is Nothing Then
-                        cboWorkflow.Items.FindByValue(intWorkflowID.ToString).Selected = True
+
+                    Dim workflow As KeyValuePair(Of String, Integer) = objHtml.GetWorkflow(ModuleId, TabId, PortalId)
+                    If Not cboWorkflow.Items.FindByValue(workflow.Value.ToString()) Is Nothing Then
+                        cboWorkflow.Items.FindByValue(workflow.Value.ToString()).Selected = True
                     End If
                     DisplayWorkflow()
 
                     ' expose default option if user is administrator
                     If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                        rowDefault.Visible = True
+                        rowApplyTo.Visible = True
+                        If Not rblApplyTo.Items.FindByValue(workflow.Key) Is Nothing Then
+                            rblApplyTo.Items.FindByValue(workflow.Key).Selected = True
+                        End If
                     End If
 
                 End If
@@ -143,13 +147,14 @@ Namespace DotNetNuke.Modules.Html
                 End If
 
                 ' update workflow/version settings
-                If chkDefault.Checked Then
-                    If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                        objHtml.UpdateWorkflowID(Null.NullInteger, PortalId, Integer.Parse(cboWorkflow.SelectedValue))
-                    End If
-                Else
-                    objHtml.UpdateWorkflowID(ModuleId, PortalId, Integer.Parse(cboWorkflow.SelectedValue))
-                End If
+                Select Case rblApplyTo.SelectedValue
+                    Case "Module"
+                        objHtml.UpdateWorkflow(ModuleId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                    Case "Page"
+                        objHtml.UpdateWorkflow(TabId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                    Case "Site"
+                        objHtml.UpdateWorkflow(PortalId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                End Select
 
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)

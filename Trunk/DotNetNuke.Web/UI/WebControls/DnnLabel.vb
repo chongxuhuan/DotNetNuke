@@ -1,4 +1,6 @@
-﻿'
+﻿Imports DotNetNuke.Services.Localization
+
+'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -22,20 +24,40 @@ Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnLabel
         Inherits System.Web.UI.WebControls.Label
-        Implements DotNetNuke.Web.UI.ILocalize
+        Implements ILocalizable
 
-		Public Sub New()
-			CssClass = "SubHead dnnLabel"
-		End Sub
+#Region "Private Members"
+
+        Private _Localize As Boolean = True
+        Private _LocalResourceFile As String
+
+#End Region
+
+#Region "Constructors"
+
+        Public Sub New()
+            CssClass = "SubHead dnnLabel"
+        End Sub
+
+#End Region
+
+#Region "Protected Methods"
+
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
+            LocalResourceFile = Utilities.GetLocalResourceFile(Me)
+        End Sub
 
         Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
             LocalizeStrings()
             MyBase.Render(writer)
         End Sub
 
-#Region "Implements ILocalize"
-        Private _Localize As Boolean = True
-        Public Property Localize() As Boolean Implements ILocalize.Localize
+#End Region
+
+#Region "ILocalizable Implementation"
+
+        Public Property Localize() As Boolean Implements ILocalizable.Localize
             Get
                 Return _Localize
             End Get
@@ -44,21 +66,31 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Protected Overridable Sub LocalizeStrings() Implements ILocalize.LocalizeStrings
+        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
+            Get
+                Return _LocalResourceFile
+            End Get
+            Set(ByVal value As String)
+                _LocalResourceFile = value
+            End Set
+        End Property
+
+        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
             If (Localize) Then
                 If (Not String.IsNullOrEmpty(ToolTip)) Then
-                    ToolTip = Utilities.GetLocalizedStringFromParent(ToolTip, Me)
+                    ToolTip = Localization.GetString(ToolTip, LocalResourceFile)
                 End If
 
                 If (Not String.IsNullOrEmpty(Text)) Then
-                    Text = Utilities.GetLocalizedStringFromParent(Text, Me)
+                    Text = Localization.GetString(Text, LocalResourceFile)
 
                     If (String.IsNullOrEmpty(ToolTip)) Then
-                        ToolTip = Utilities.GetLocalizedStringFromParent(Text + ".ToolTip", Me)
+                        ToolTip = Localization.GetString(String.Format("{0}.ToolTip", Text), LocalResourceFile)
                     End If
                 End If
             End If
         End Sub
+
 #End Region
 
     End Class

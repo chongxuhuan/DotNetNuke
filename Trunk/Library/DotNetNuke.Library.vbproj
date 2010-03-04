@@ -181,13 +181,11 @@
     <Compile Include="Entities\Content\Taxonomy\VocabularyType.vb" />
     <Compile Include="Entities\Tabs\TabExistsException.vb" />
     <Compile Include="Services\Messaging\Data\IMessagingDataService.vb" />
+    <Compile Include="Services\Messaging\Data\MessageStatusType.vb" />
     <Compile Include="Services\Messaging\Data\MessagingDataService.vb" />
     <Compile Include="Services\Messaging\IMessagingController.vb" />
     <Compile Include="Services\Messaging\MessagingController.vb" />
-    <Compile Include="Services\Messaging\Providers\EmailMessage.vb" />
-    <Compile Include="Services\Messaging\Providers\Factory.vb" />
-    <Compile Include="Services\Messaging\Providers\IMessageProvider.vb" />
-    <Compile Include="Services\Messaging\Providers\Message.vb" />
+    <Compile Include="Services\Messaging\Data\Message.vb" />
     <Compile Include="Services\Messaging\Scheduler\MessagingScheduler.vb" />
     <Compile Include="Services\ModuleCache\ModuleCachingProvider.vb" />
     <Compile Include="Services\ModuleCache\PurgeModuleCache.vb" />
@@ -315,12 +313,17 @@
     <Compile Include="Services\Sitemap\SitemapProvider.vb" />
     <Compile Include="Services\Sitemap\SitemapUrl.vb" />
     <Compile Include="Services\Tokens\PropertyAccess\EmptyPropertyAccess.vb" />
+    <Compile Include="Services\UserProfile\UserProfilePageHandler.vb" />
     <Compile Include="UI\Containers\EventListeners\ContainerEventArgs.vb" />
     <Compile Include="UI\Containers\EventListeners\ContainerEventHandler.vb" />
     <Compile Include="UI\Containers\EventListeners\ContainerEventListener.vb" />
     <Compile Include="UI\Containers\EventListeners\ContainerEventType.vb" />
     <Compile Include="UI\ControlUtilities.vb" />
+    <Compile Include="UI\Modules\IProfileModule.vb" />
     <Compile Include="UI\Modules\ISettingsControl.vb" />
+    <Compile Include="UI\Modules\ProfileModuleUserControlBase.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="UI\Skins\EventListeners\SkinEventType.vb" />
     <Compile Include="UI\Skins\EventListeners\SkinEventArgs.vb" />
     <Compile Include="UI\Skins\EventListeners\SkinEventHandler.vb" />
@@ -758,6 +761,9 @@
     <Compile Include="Common\Utilities\Calendar.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\UserControls\LocaleSelectorControl.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="UI\Utilities\ClientAPI.vb">
       <SubType>Code</SubType>
     </Compile>
@@ -769,9 +775,6 @@
     </Compile>
     <Compile Include="Services\Mail\Mail.vb" />
     <Compile Include="Common\Utilities\Null.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\Mail\SendBulkEmail.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Utilities\UrlUtils.vb" />
@@ -1076,7 +1079,7 @@
     <None Include="Entities\Content\Data\Scripts\ContentItems\AddContentItem.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\DeleteContentItem.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItem.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItemsByModule.sql" />
+    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItemsByTerm.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\GetUnIndexedContentItems.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\UpdateContentItem.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentType\AddContentType.sql" />

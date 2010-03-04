@@ -1,4 +1,4 @@
-﻿'
+'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -19,45 +19,52 @@
 '
 
 Imports DotNetNuke.Modules.Messaging.Presenters
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Services.Messaging.Providers
+Imports DotNetNuke.Services.Messaging.Data
+Imports DotNetNuke.Modules.Messaging.Views.Models
+Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Common.Utilities
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Messaging.Views
 
+    <PresenterBinding(GetType(ViewMessagePresenter))> _
     Partial Public Class ViewMessage
-        Inherits ViewBase(Of IViewMessageView, ViewMessagePresenter, ViewMessagePresenterModel)
+        Inherits ModuleView(Of ViewMessageModel)
         Implements IViewMessageView
 
-#Region "Protected Properties"
 
-        Protected Overrides ReadOnly Property View() As IViewMessageView
-            Get
-                Return Me
-            End Get
-        End Property
+#Region "IViewMessageView Implementation"
 
-#End Region
+        'Protected Overrides Sub ConnectEvents()
+        '    MyBase.ConnectEvents()
 
-#Region "ViewBase Virtual/Abstract Method Overrides"
+        '    AddHandler replyMessage.Click, CreateSimpleHandler(Function(p) p.Reply())
 
-        Protected Overrides Sub ConnectEvents()
-            MyBase.ConnectEvents()
+        'End Sub
 
-            AddHandler cancelView.Click, CreateSimpleHandler(Function(p) p.Cancel())
-            AddHandler replyMessage.Click, CreateSimpleHandler(Function(p) p.Reply())
-        End Sub
-
-        Protected Overrides Sub Localize()
-        End Sub
-
-#End Region
+        Public Event Cancel(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Cancel
+        Public Event Delete(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Delete
+        Public Event Reply(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Reply
 
         Public Sub BindMessage(ByVal message As Message) Implements IViewMessageView.BindMessage
-            fromLabel.Text = message.FromDisplayName
+            fromLabel.Text = message.FromUserName
             subjectLabel.Text = message.Subject
-            messageLabel.Text = message.LongBody
+            messageLabel.Text = HtmlUtils.ConvertToHtml(message.Body)
         End Sub
 
+#End Region
+
+        Private Sub cancelView_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelView.Click
+            RaiseEvent Cancel(Me, e)
+        End Sub
+
+        Private Sub deleteMessage_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles deleteMessage.Click
+            RaiseEvent Delete(Me, e)
+        End Sub
+
+        Private Sub ReplyMessage_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles replyMessage.Click
+            RaiseEvent Reply(Me, e)
+        End Sub
     End Class
 
 End Namespace

@@ -18,11 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System.IO
-Imports System.Web
-Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Common
-Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.UI.Utilities.Animation
 
@@ -33,22 +29,13 @@ Namespace DotNetNuke.NavigationControl
         Private m_strControlID As String
         Private m_strCSSBreak As String
         Private m_strCSSBreadCrumbSub As String
-        Private m_strIndicateChildImageBreadCrumbSub As String
-        Private m_strIndicateChildImageBreadCrumbRoot As String
         Private m_strCSSBreadCrumbRoot As String
 
-        Private m_strCSSLeftSeparator As String
-        Private m_strCSSLeftSeparatorBreadCrumb As String
-        Private m_strCSSLeftSeparatorSelection As String
-        Private m_strCSSRightSeparator As String
-        Private m_strCSSRightSeparatorBreadCrumb As String
-        Private m_strCSSRightSeparatorSelection As String
         Private m_strNodeSelectedSub As String
         Private m_strNodeSelectedRoot As String
         Private m_strCSSNodeRoot As String
         Private m_strCSSNodeHoverSub As String
         Private m_strCSSNodeHoverRoot As String
-        Private m_strCSSSeparator As String
         Private m_strNodeLeftHTMLSub As String = ""
         Private m_strNodeLeftHTMLBreadCrumbSub As String = ""
         Private m_strNodeLeftHTMLBreadCrumbRoot As String = ""
@@ -67,13 +54,6 @@ Namespace DotNetNuke.NavigationControl
         Private m_blnIndicateChildren As Boolean
         Private m_strPathImage As String
         Private m_objCustomAttributes As Generic.List(Of UI.Skins.CustomAttribute) = New Generic.List(Of UI.Skins.CustomAttribute) 'JH - 2/5/07 - support for custom attributes
-
-
-        'Private PreviousRootBreadcrumbFlag As Boolean
-        'Private PreviousRootActiveFlag As Boolean
-        'Private NextRootBreadcrumbFlag As Boolean
-        'Private NextRootActiveFlag As Boolean
-
 
         Public ReadOnly Property Menu() As DNNMenu
             Get

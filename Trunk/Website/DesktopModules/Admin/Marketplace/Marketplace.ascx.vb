@@ -18,6 +18,7 @@
 '' DEALINGS IN THE SOFTWARE. 
 ' 
 Imports System.Xml
+Imports System.Xml.XPath
 Imports System.IO
 Imports System.Net
 
@@ -78,7 +79,7 @@ Namespace DotNetNuke.Modules.Admin.Marketplace
             Dim oResponse As WebResponse
             Dim oStream As Stream
             Dim oReader As XmlTextReader
-            Dim oXMLDocument As XmlDocument
+            Dim oXMLDocument As XPathDocument
 
             Dim sFeedType As String
             Dim sCategoryID As String
@@ -103,13 +104,14 @@ Namespace DotNetNuke.Modules.Admin.Marketplace
                 ' load XML document
                 oReader = New XmlTextReader(oStream)
                 oReader.XmlResolver = Nothing
-                oXMLDocument = New XmlDocument
-                oXMLDocument.Load(oReader)
-                xmlRSS.Document = oXMLDocument
+                oXMLDocument = New XPathDocument(oReader)
+                Dim nav As XPathNavigator = oXMLDocument.CreateNavigator()
+                xmlRSS.XPathNavigator = nav
+                'xmlRSS.Document = oXMLDocument
                 xmlRSS.TransformSource = XSL_PATH  'apply transformation to render output
 
-                'display message if no vulnerabilities found
-                If oXMLDocument.SelectNodes(PRODUCT_XMLNODE_PATH).Count = 0 Then
+                'display message if no products found
+                If nav.Select(PRODUCT_XMLNODE_PATH).Count = 0 Then
                     lblMessage.Text = Localization.GetString("NoProductsFound.Text", Me.LocalResourceFile)
                 End If
 

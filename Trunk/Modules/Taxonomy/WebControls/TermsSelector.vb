@@ -153,7 +153,7 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
 
                 If node.Checked Then
                     'Add Term
-                    For Each term In Terms
+                    For Each term As Term In Terms
                         If term.TermId = termId Then
                             SelectedTerms.Add(term)
                             Exit For
@@ -161,7 +161,7 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
                     Next
                 Else
                     'Remove Term
-                    For Each term In SelectedTerms
+                    For Each term As Term In SelectedTerms
                         If term.TermId = termId Then
                             SelectedTerms.Remove(term)
                             Exit For
@@ -181,7 +181,7 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
                 If term.TermId < 0 Then
                     node.Checkable = False
                 End If
-                For Each tag In SelectedTerms
+                For Each tag As Term In SelectedTerms
                     If tag.TermId = term.TermId Then
                         node.Checked = True
                         Exit For

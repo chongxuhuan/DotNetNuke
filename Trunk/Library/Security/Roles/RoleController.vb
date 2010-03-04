@@ -20,6 +20,7 @@
 
 Imports System
 Imports System.Collections
+Imports DotNetNuke.Services.Messaging.Data
 Imports Microsoft.VisualBasic
 
 Imports DotNetNuke.Common.Utilities
@@ -55,6 +56,8 @@ Namespace DotNetNuke.Security.Roles
 
         Private Shared UserRoleActionsCaption() As String = {"ASSIGNMENT", "UPDATE", "UNASSIGNMENT"}
         Private Shared provider As DotNetNuke.Security.Roles.RoleProvider = DotNetNuke.Security.Roles.RoleProvider.Instance()
+        Private Shared _messagingController As New Services.Messaging.MessagingController()
+
 
 #End Region
 
@@ -621,10 +624,20 @@ Namespace DotNetNuke.Security.Roles
                 Case UserRoleActions.delete
                     Custom.Add("")
             End Select
-            Mail.SendMail(PortalSettings.Email, objUser.Email, "", _
-                Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_SUBJECT", objUser), _
-                Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom), _
-                "", "", "", "", "", "")
+            'Mail.SendMail(PortalSettings.Email, objUser.Email, "", _
+            '    Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_SUBJECT", objUser), _
+            '    Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom), _
+            '    "", "", "", "", "", "")
+
+            Dim _message As New Message()
+            _message.FromUserID = PortalSettings.AdministratorId
+            _message.ToUserID = PortalSettings.AdministratorId
+            _message.Subject = Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_SUBJECT", objUser)
+            _message.Body = Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom)
+            _message.Status = MessageStatusType.Unread
+
+            _messagingController.SaveMessage(_message)
+
 
         End Sub
 

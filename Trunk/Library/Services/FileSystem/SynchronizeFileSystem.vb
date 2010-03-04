@@ -65,13 +65,13 @@ Namespace DotNetNuke.Services.FileSystem
             Dim objPortal As PortalInfo
 
             'Sync Host
-            FileSystemUtils.Synchronize(Null.NullInteger, Null.NullInteger, Common.Globals.HostMapPath)
+            FileSystemUtils.Synchronize(Null.NullInteger, Null.NullInteger, Common.Globals.HostMapPath, False)
 
             'Sync Portals
             Dim intIndex As Integer
             For intIndex = 0 To arrPortals.Count - 1
 				objPortal = CType(arrPortals(intIndex), PortalInfo)
-				FileSystemUtils.Synchronize(objPortal.PortalID, objPortal.AdministratorRoleId, objPortal.HomeDirectoryMapPath)
+				FileSystemUtils.Synchronize(objPortal.PortalID, objPortal.AdministratorRoleId, objPortal.HomeDirectoryMapPath, false)
             Next
 
         End Sub

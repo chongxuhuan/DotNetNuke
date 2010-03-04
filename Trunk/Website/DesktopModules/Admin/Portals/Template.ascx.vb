@@ -109,7 +109,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' -----------------------------------------------------------------------------
         Private Sub SerializeFolders(ByVal writer As XmlWriter, ByVal objportal As PortalInfo, ByRef zipFile As ZipOutputStream)
             ' Sync db and filesystem before exporting so all required files are found
-            FileSystemUtils.Synchronize(objportal.PortalID, objportal.AdministratorRoleId, objportal.HomeDirectoryMapPath)
+            FileSystemUtils.Synchronize(objportal.PortalID, objportal.AdministratorRoleId, objportal.HomeDirectoryMapPath, PortalSettings.HideFoldersEnabled)
 
             writer.WriteStartElement("folders")
 

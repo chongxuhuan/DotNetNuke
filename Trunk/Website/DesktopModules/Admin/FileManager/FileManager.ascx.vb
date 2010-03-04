@@ -928,9 +928,9 @@ Namespace DotNetNuke.Modules.Admin.FileManager
         ''' -----------------------------------------------------------------------------
         Private Sub Synchronize()
             If IsHostMenu Then
-                FileSystemUtils.Synchronize(Null.NullInteger, Null.NullInteger, Common.Globals.HostMapPath)
+                FileSystemUtils.Synchronize(Null.NullInteger, Null.NullInteger, Common.Globals.HostMapPath, False)
             Else
-                FileSystemUtils.Synchronize(PortalId, PortalSettings.AdministratorRoleId, PortalSettings.HomeDirectoryMapPath)
+                FileSystemUtils.Synchronize(PortalId, PortalSettings.AdministratorRoleId, PortalSettings.HomeDirectoryMapPath, PortalSettings.HideFoldersEnabled)
             End If
         End Sub
 
@@ -1947,7 +1947,7 @@ Namespace DotNetNuke.Modules.Admin.FileManager
             Dim isRecursive As Boolean = chkRecursive.Checked
             Dim relPath As String = syncFolderPath.Replace(RootFolderPath, "").Replace("\", "/")
 
-            FileSystemUtils.SynchronizeFolder(FolderPortalID, syncFolderPath, relPath, isRecursive)
+            FileSystemUtils.SynchronizeFolder(FolderPortalID, syncFolderPath, relPath, isRecursive, PortalSettings.HideFoldersEnabled)
 
             BindFolderTree()
             BindFileList()

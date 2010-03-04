@@ -2031,20 +2031,22 @@ Namespace DotNetNuke.Common
             Dim strURL As String = ""
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
 
+            returnURL = String.Format("returnurl={0}", returnURL)
+
             If _portalSettings.LoginTabId <> -1 AndAlso Not override Then
                 If ValidateLoginTabID(_portalSettings.LoginTabId) Then
                     If String.IsNullOrEmpty(returnURL) Then
                         strURL = NavigateURL(_portalSettings.LoginTabId, "")
                     Else
-                        strURL = NavigateURL(_portalSettings.LoginTabId, "", "returnurl=" & returnURL)
+                        strURL = NavigateURL(_portalSettings.LoginTabId, "", returnURL)
                     End If
                 Else
-                    Dim strMessage As String = Localization.GetString("NoLoginControl", Localization.GlobalResourceFile)
+                    Dim strMessage As String = String.Format("error={0}", Localization.GetString("NoLoginControl", Localization.GlobalResourceFile))
                     'No account module so use portal tab
                     If String.IsNullOrEmpty(returnURL) Then
-                        strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", "error=" & strMessage)
+                        strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", strMessage)
                     Else
-                        strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", "returnurl=" & returnURL, "error=" & strMessage)
+                        strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", returnURL, strMessage)
                     End If
                 End If
             Else
@@ -2052,9 +2054,18 @@ Namespace DotNetNuke.Common
                 If String.IsNullOrEmpty(returnURL) Then
                     strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login")
                 Else
-                    strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", "returnurl=" & returnURL)
+                    strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Login", returnURL)
                 End If
             End If
+
+            Return strURL
+        End Function
+
+        Public Function UserProfileURL(ByVal userId As Integer) As String
+            Dim strURL As String = ""
+            Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+            strURL = NavigateURL(_portalSettings.UserTabId, "", String.Format("userId={0}", userId))
 
             Return strURL
         End Function
@@ -2200,19 +2211,6 @@ Namespace DotNetNuke.Common
 
 #End Region
 
-        Public Function ProfileURL(ByVal userID As Integer) As String
-            Dim strURL As String = ""
-            Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-
-            If _portalSettings.UserTabId <> -1 Then
-                strURL = NavigateURL(_portalSettings.UserTabId)
-            Else
-                strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Profile", "UserID=" + userID.ToString())
-            End If
-
-            Return strURL
-        End Function
-
         Public Function QueryStringEncode(ByVal QueryString As String) As String
             QueryString = HttpUtility.UrlEncode(QueryString)
             Return QueryString
@@ -2243,13 +2241,7 @@ Namespace DotNetNuke.Common
                 extraParams += String.Concat("&orignalurl=", originalURL)
             End If
 
-            If _portalSettings.UserTabId <> -1 Then
-                ' user defined tab
-                strURL = NavigateURL(_portalSettings.UserTabId, "", extraParams)
-            Else
-                ' portal tab
-                strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Register", extraParams)
-            End If
+            strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Register", extraParams)
 
             Return strURL
         End Function
@@ -2977,6 +2969,20 @@ Namespace DotNetNuke.Common
             Return (New PortalSecurity).InputFilter(strSQL, PortalSecurity.FilterFlag.NoSQL)
         End Function
 
+        <Obsolete("Deprecated in DNN 5.3.  Replaced by UserProfileURL")> _
+        Public Function ProfileURL(ByVal userID As Integer) As String
+            Dim strURL As String = ""
+            Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+            If _portalSettings.UserTabId <> -1 Then
+                strURL = NavigateURL(_portalSettings.UserTabId)
+            Else
+                strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Profile", "UserID=" + userID.ToString())
+            End If
+
+            Return strURL
+        End Function
+
         <Obsolete("This method has been deprecated. Replaced by same method in FileSystemUtils class.")> _
         Public Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, Optional ByVal Unzip As Boolean = False) As String
             Return FileSystemUtils.UploadFile(RootPath, objHtmlInputFile, Unzip)
@@ -3000,55 +3006,6 @@ Namespace DotNetNuke.Common
         <Obsolete("This function has been replaced by DotNetNuke.Common.Utilities.HtmlUtils.FormatWebsite")> _
         Public Function FormatWebsite(ByVal Website As Object) As String
             Return HtmlUtils.FormatWebsite(Website)
-        End Function
-
-#End Region
-
-#Region "Mail functions moved to Mail.vb"
-
-        'These functions have been replaced by the Mail class in
-        'DotNetNuke.Services.Mail.  They have been retained here
-        'for backwards compatabily, but flagged as obsolete to
-        'discourage use
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendNotification(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String) As String
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Bcc, Subject, Body, _
-                "", "", "", "", "", "")
-        End Function
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendNotification(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String, ByVal Attachment As String) As String
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Bcc, Subject, Body, _
-                Attachment, "", "", "", "", "")
-        End Function
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendNotification(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String, ByVal Attachment As String, ByVal BodyType As String) As String
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Bcc, Subject, Body, _
-                Attachment, BodyType, "", "", "", "")
-        End Function
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendNotification(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String, ByVal Attachment As String, ByVal BodyType As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Bcc, Subject, Body, _
-                Attachment, BodyType, SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword)
-        End Function
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendNotification(ByVal MailFrom As String, ByVal MailTo As String, ByVal Cc As String, ByVal Bcc As String, ByVal Priority As DotNetNuke.Services.Mail.MailPriority, ByVal Subject As String, ByVal BodyFormat As DotNetNuke.Services.Mail.MailFormat, ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Cc, Bcc, Priority, Subject, _
-              BodyFormat, BodyEncoding, Body, Attachment, SMTPServer, SMTPAuthentication, _
-              SMTPUsername, SMTPPassword)
-        End Function
-
-        <Obsolete("This function has been replaced by DotNetNuke.Services.Mail.Mail.SendMail")> _
-        Public Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, ByVal Cc As String, ByVal Bcc As String, ByVal Priority As DotNetNuke.Services.Mail.MailPriority, ByVal Subject As String, ByVal BodyFormat As DotNetNuke.Services.Mail.MailFormat, ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
-
-            Return DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, MailTo, Cc, Bcc, Priority, Subject, _
-              BodyFormat, BodyEncoding, Body, Attachment, SMTPServer, SMTPAuthentication, _
-              SMTPUsername, SMTPPassword)
-
         End Function
 
 #End Region

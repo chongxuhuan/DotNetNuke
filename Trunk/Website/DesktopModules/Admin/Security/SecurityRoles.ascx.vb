@@ -224,7 +224,7 @@ Namespace DotNetNuke.Modules.Admin.Security
             If UserId = -1 Then
                 'Make sure user has enough permissions
                 If Role.RoleName = PortalSettings.AdministratorRoleName AndAlso Not PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                    Skin.AddModuleMessage(Me, Localization.GetString("NotAuthorized", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning)
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("NotAuthorized", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning)
                     pnlRoles.Visible = False
                     pnlUserRoles.Visible = False
                     chkNotify.Visible = False

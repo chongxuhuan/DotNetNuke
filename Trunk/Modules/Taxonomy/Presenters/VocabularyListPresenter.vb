@@ -21,82 +21,66 @@
 Imports DotNetNuke.Common
 Imports DotNetNuke.Modules.Taxonomy.Views
 Imports DotNetNuke.Entities.Content.Taxonomy
-Imports DotNetNuke.Web.Mvp.Framework
+Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Entities.Content.Data
+Imports Telerik.Web.UI
+Imports WebFormsMvp
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class VocabularyListPresenter
-        Inherits Presenter(Of IVocabularyListView, VocabularyListPresenterModel)
+        Inherits ModulePresenter(Of IVocabularyListView)
 
 #Region "Private Members"
 
-        Private _Vocabularies As List(Of Vocabulary)
         Private _VocabularyController As IVocabularyController
-
-#End Region
-
-#Region "Public Constants"
-
-        Public Const Name As String = ""
 
 #End Region
 
 #Region "Constructors"
 
-        Public Sub New()
-            Me.New(New VocabularyController(New DataService()))
+        Public Sub New(ByVal view As IVocabularyListView)
+            Me.New(view, New VocabularyController(New DataService()))
         End Sub
 
-        Public Sub New(ByVal vocabularyController As IVocabularyController)
+        Public Sub New(ByVal listView As IVocabularyListView, ByVal vocabularyController As IVocabularyController)
+            MyBase.New(listView)
             Arg.NotNull("vocabularyController", vocabularyController)
 
             _VocabularyController = vocabularyController
+
+            AddHandler View.AddVocabulary, AddressOf AddVocabulary
+            AddHandler View.VocabularyDataBound, AddressOf VocabularyDataBound
+            View.Model.Vocabularies = _VocabularyController.GetVocabularies().ToList()
         End Sub
-
-#End Region
-
-#Region "Public Properties"
-
-        Public Property Vocabularies() As List(Of Vocabulary)
-            Get
-                Return _Vocabularies
-            End Get
-            Set(ByVal value As List(Of Vocabulary))
-                _Vocabularies = value
-            End Set
-        End Property
 
 #End Region
 
 #Region "Public Methods"
 
         Public Sub AddVocabulary(ByVal sender As Object, ByVal e As EventArgs)
-            Environment.RedirectToPresenter(New CreateVocabularyPresenterModel())
+            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+                                          "CreateVocabulary", _
+                                          String.Format("mid={0}", ModuleContext.ModuleId)))
         End Sub
 
-        Public Overrides Function Load() As Boolean
-            Vocabularies = _VocabularyController.GetVocabularies().ToList()
-            View.ShowVocabularies(Vocabularies)
-        End Function
+        Public Function VocabularyDataBound(ByVal sender As Object, ByVal e As GridItemEventArgs) As Boolean
+            Dim item As GridItem = e.Item
 
-        Public Function VocabularyDataBound(ByVal sender As Object, ByVal e As DataGridItemEventArgs) As Boolean
-            Dim item As DataGridItem = e.Item
-
-            If item.ItemType = ListItemType.Item Or _
-                    item.ItemType = ListItemType.AlternatingItem Or _
-                    item.ItemType = ListItemType.SelectedItem Then
+            If item.ItemType = GridItemType.Item Or _
+                    item.ItemType = GridItemType.AlternatingItem Or _
+                    item.ItemType = GridItemType.SelectedItem Then
 
                 Dim vocabulary As Vocabulary = TryCast(item.DataItem, Vocabulary)
 
-                Dim hyperLinkColumn As HyperLink = TryCast(item.Controls(0).Controls(0), HyperLink)
+                Dim hyperLinkColumn As HyperLink = TryCast(item.Controls(2).Controls(0), HyperLink)
 
                 If hyperLinkColumn IsNot Nothing Then
-                    hyperLinkColumn.NavigateUrl = NavigateURL(Me.Model.TabId, _
+                    hyperLinkColumn.NavigateUrl = NavigateURL(ModuleContext.TabId, _
                                                                 "EditVocabulary", _
-                                                                "mid=" + Me.Model.ModuleId.ToString(), _
-                                                                "VocabularyId=" + vocabulary.VocabularyId.ToString())
-                    hyperLinkColumn.Text = "Edit"
+                                                                String.Format("mid={0}", ModuleContext.ModuleId), _
+                                                                String.Format("VocabularyId={0}", vocabulary.VocabularyId))
                 End If
 
             End If

@@ -1,4 +1,4 @@
-﻿'
+'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -20,7 +20,7 @@
 
 Imports DotNetNuke.Services.Messaging
 Imports DotNetNuke.Services.Localization
-Imports DotNetNuke.Services.Messaging.Providers
+
 
 Namespace DotNetNuke.Modules.Messaging
 
@@ -60,7 +60,7 @@ Namespace DotNetNuke.Modules.Messaging
 
         Public Function FormatFormatString(ByVal Count As Integer) As String
             Dim result As String = FormatString
-            result = result.Replace("[COUNT]", Count)
+            result = result.Replace("[COUNT]", Count.ToString())
 
             Dim pattern As String = "\[RES:[a-zA-Z]*\]"
 
@@ -77,11 +77,7 @@ Namespace DotNetNuke.Modules.Messaging
         Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
             Dim pmc As New MessagingController
 
-            Dim count As Integer = (From m As Message _
-                                        In pmc.GetMessagesForUser(PortalSettings.PortalId, PortalSettings.UserId) _
-                                    Where m.ToUserID = PortalSettings.UserId _
-                                        AndAlso m.Status = "Unread" _
-                                    Select m).Count
+            Dim count = pmc.GetNewMessageCount(PortalSettings.PortalId, PortalSettings.UserId)
 
             Dim name As String = "Messaging"
             Dim nav As String = MessagingController.DefaultMessagingURL(name)

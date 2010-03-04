@@ -1,6 +1,6 @@
 ﻿/*
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -28,6 +28,7 @@ using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 using Moq;
 using MbUnit.Framework;
+using System.Linq;
 
 namespace DotNetNuke.Tests.Content
 {
@@ -119,7 +120,7 @@ namespace DotNetNuke.Tests.Content
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
                                         Constants.CONTENT_IndexedTrue,
-                                        Null.NullInteger);
+                                        Null.NullInteger, i => "");
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             content.ContentItemId = Constants.CONTENT_DeleteContentItemId;
@@ -149,7 +150,7 @@ namespace DotNetNuke.Tests.Content
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
                                         Constants.CONTENT_IndexedTrue,
-                                        Null.NullInteger);
+                                        Null.NullInteger, i => "");
 
             //Act
             ContentItem content = contentController.GetContentItem(contentItemId);
@@ -166,7 +167,7 @@ namespace DotNetNuke.Tests.Content
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
                                         Constants.CONTENT_IndexedTrue,
-                                        Constants.USER_ValidId);
+                                        Constants.USER_ValidId, i => "");
 
             //Act
             ContentItem content = contentController.GetContentItem(contentItemId);
@@ -179,38 +180,83 @@ namespace DotNetNuke.Tests.Content
 
         #endregion
 
+        #region GetContentItemsByTerm Tests
+
+        [Test]
+        public void ContentController_GetContentItemsByTerm_Throws_On_Null_Term()
+       {
+           ExceptionAssert.Throws<ArgumentException>(() => contentController.GetContentItemsByTerm(Null.NullString));
+       }
+
+        [Test]
+        public void ContentController_GetContentItemsByTerm_Returns_Empty_List_If_Term_Not_Used()
+        {
+            //Arrange
+            dataService.SetUpContentItemTable();
+            dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
+                                       Constants.CONTENT_IndexedFalse,
+                                       Null.NullInteger, i => (i < Constants.CONTENT_TaggedItemCount) ? Constants.TERM_ValidName : "");
+
+            //Act
+            IQueryable<ContentItem> contentItems = contentController.GetContentItemsByTerm(Constants.TERM_UnusedName);
+
+            //Assert
+            Assert.AreEqual<int>(0, contentItems.Count());
+        }
+
+        [Test]
+        public void ContentController_GetContentItemsByTerm_Returns_List_Of_ContentItems()
+        {
+           //Arrange
+           dataService.SetUpContentItemTable();
+           dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
+                                      Constants.CONTENT_IndexedFalse,
+                                       Null.NullInteger, i => (i <= Constants.CONTENT_TaggedItemCount) ? Constants.TERM_ValidName : "");
+
+           //Act
+           IQueryable<ContentItem> contentItems = contentController.GetContentItemsByTerm(Constants.TERM_ValidName);
+
+           //Assert
+           Assert.AreEqual<int>(Constants.CONTENT_TaggedItemCount, contentItems.Count());
+        }
+
+        #endregion
+       
         #region GetUnIndexedContentItems Tests
 
-       [Test]
+        [Test]
         public void ContentController_GetUnIndexedContentItems_Returns_EmptyList_If_No_UnIndexed_Items()
         {
             //Arrange
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_IndexedTrueItemCount,
                                        Constants.CONTENT_IndexedTrue,
-                                       Null.NullInteger);
+                                       Null.NullInteger, i => "");
             
-            List<ContentItem> contentItems = contentController.GetUnIndexedContentItems();
+            //Act
+            IQueryable<ContentItem> contentItems = contentController.GetUnIndexedContentItems();
 
-            Assert.AreEqual<int>(0, contentItems.Count);
+            //Assert
+            Assert.AreEqual<int>(0, contentItems.Count());
         }
 
-       [Test]
+        [Test]
         public void ContentController_GetUnIndexedContentItems_Returns_List_Of_UnIndexedContentItems()
         {
             //Arrange
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_IndexedFalseItemCount,
                                        Constants.CONTENT_IndexedFalse,
-                                       Null.NullInteger);
+                                       Null.NullInteger, i => "");
 
-            List<ContentItem> contentItems = contentController.GetUnIndexedContentItems();
+            //Act
+            IQueryable<ContentItem> contentItems = contentController.GetUnIndexedContentItems();
 
-            Assert.AreEqual<int>(Constants.CONTENT_IndexedFalseItemCount, contentItems.Count);
-            for (int i = 0; i < Constants.CONTENT_IndexedFalseItemCount; i++)
+            //Assert
+            Assert.AreEqual<int>(Constants.CONTENT_IndexedFalseItemCount, contentItems.Count());
+
+            foreach (ContentItem content in contentItems)
             {
-                ContentItem content = contentItems[i];
-                Assert.IsInstanceOfType(typeof(ContentItem), content);
                 Assert.IsFalse(content.Indexed);
             }
         }
@@ -241,7 +287,7 @@ namespace DotNetNuke.Tests.Content
             dataService.SetUpContentItemTable();
             dataService.AddContentItemsToTable(Constants.CONTENT_ValidContentItemCount,
                                         Constants.CONTENT_IndexedTrue,
-                                        Null.NullInteger);
+                                        Null.NullInteger, i => "");
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;

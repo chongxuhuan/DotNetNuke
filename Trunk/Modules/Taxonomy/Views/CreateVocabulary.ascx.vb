@@ -20,42 +20,36 @@
 
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Modules.Taxonomy.Presenters
-Imports DotNetNuke.Web.Mvp.Framework
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports DotNetNuke.Web.Mvp
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
+    <PresenterBinding(GetType(CreateVocabularyPresenter))> _
     Partial Public Class CreateVocabulary
-        Inherits ViewBase(Of ICreateVocabularyView, CreateVocabularyPresenter, CreateVocabularyPresenterModel)
+        Inherits ModuleView(Of CreateVocabularyModel)
         Implements ICreateVocabularyView
 
-#Region "Protected Properties"
-
-        Protected Overrides ReadOnly Property View() As ICreateVocabularyView
-            Get
-                Return Me
-            End Get
-        End Property
-
-#End Region
-
-#Region "ViewBase Virtual/Abstract Method Overrides"
-
-        Protected Overrides Sub ConnectEvents()
-            MyBase.ConnectEvents()
-
-            AddHandler cancelCreate.Click, CreateSimpleHandler(Function(p) p.Cancel())
-            AddHandler saveVocabulary.Click, CreateSaveHandler(Function(p) p.SaveVocabulary())
-        End Sub
-
-        Protected Overrides Sub Localize()
-        End Sub
-
-#End Region
-
-#Region "ICreateVocabularyView Members"
+#Region "ICreateVocabularyView Implementation"
 
         Public Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal showScope As Boolean) Implements ICreateVocabularyView.BindVocabulary
             editVocabularyControl.BindVocabulary(vocabulary, True, showScope)
+        End Sub
+
+        Public Event Cancel(ByVal sender As Object, ByVal e As EventArgs) Implements ICreateVocabularyView.Cancel
+        Public Event Save(ByVal sender As Object, ByVal e As EventArgs) Implements ICreateVocabularyView.Save
+
+#End Region
+
+#Region "Event Handlers"
+
+        Private Sub cancelCreate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelCreate.Click
+            RaiseEvent Cancel(Me, e)
+        End Sub
+
+        Private Sub saveVocabulary_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles saveVocabulary.Click
+            RaiseEvent Save(Me, e)
         End Sub
 
 #End Region

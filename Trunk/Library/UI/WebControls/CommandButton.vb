@@ -48,6 +48,7 @@ Namespace DotNetNuke.UI.WebControls
     <ToolboxData("<{0}:CommandButton runat=server></{0}:CommandButton>")> _
     Public Class CommandButton
         Inherits WebControl
+        Implements INamingContainer
 
 #Region "Controls"
 
@@ -404,6 +405,11 @@ Namespace DotNetNuke.UI.WebControls
         End Sub
 
 #End Region
+
+        Public Sub RegisterForPostback()
+            AJAX.RegisterPostBackControl(link)
+            AJAX.RegisterPostBackControl(icon)
+        End Sub
 
 #Region "Event Handlers"
 

@@ -1,4 +1,6 @@
-﻿'
+﻿Imports Telerik.Web.UI
+
+'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -23,11 +25,29 @@ Namespace DotNetNuke.Web.UI.WebControls
     Public Class DnnGrid
         Inherits Telerik.Web.UI.RadGrid
 
+#Region "Private Members"
+
+        Private _Localize As Boolean = True
+
+#End Region
+
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             Utilities.ApplySkin(Me)
             MyBase.OnInit(e)
         End Sub
 
+        Protected Overrides Sub OnDataBinding(ByVal e As System.EventArgs)
+            MyBase.OnDataBinding(e)
+            For Each col As GridColumn In Me.Columns
+                Dim localizableColumn As ILocalizable = TryCast(col, ILocalizable)
+                If localizableColumn IsNot Nothing Then
+                    localizableColumn.LocalResourceFile = Utilities.GetLocalResourceFile(Me.Parent)
+                    If Not Page.IsPostBack Then
+                        localizableColumn.LocalizeStrings()
+                    End If
+                End If
+            Next
+        End Sub
     End Class
 
 End Namespace

@@ -1,6 +1,6 @@
 ﻿/*
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -41,6 +41,7 @@ namespace DotNetNuke.Tests.Content.Data
         private static string contentItemsTableName = "ContentItems";
         private static string deleteContentItem = "DeleteContentItem";
         private static string getContentItem = "GetContentItem";
+        private static string getContentItemsByTermName = "GetContentItemsByTerm";
         private static string getUnIndexedContentItemsName = "GetUnIndexedContentItems";
         private static string keyField = "ContentItemId";
         private static string upateContentItem = "UpdateContentItem";
@@ -75,7 +76,7 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region AddContentItem Tests
 
-       [Test]
+        [Test]
         public void DataService_AddContentItem_Adds_Record_On_Valid_Content()
         {
             //Arrange
@@ -95,7 +96,7 @@ namespace DotNetNuke.Tests.Content.Data
             DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentItemsTableName, rowCount + 1);
         }
 
-       [Test]
+        [Test]
         public void DataService_AddContentItem_Returns_Correct_Id_On_Valid_Content()
         {
             //Arrange
@@ -119,7 +120,7 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region DeleteContentItem Tests
 
-       [Test]
+        [Test]
         public void DataService_DeleteContentItem_Should_Do_Nothing_On_InValid_Content()
         {
             //Arrange
@@ -140,7 +141,7 @@ namespace DotNetNuke.Tests.Content.Data
             DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentItemsTableName, rowCount);
         }
 
-       [Test]
+        [Test]
         public void DataService_DeleteContentItem_Delete_Record_On_Valid_Content()
         {
             //Arrange
@@ -166,7 +167,7 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region GetContentItem Tests
 
-       [Test]
+        [Test]
         public void DataService_GetContentItem_Returns_Empty_Reader_On_InValid_Id()
         {
             //Arrange
@@ -184,7 +185,7 @@ namespace DotNetNuke.Tests.Content.Data
             dataReader.Close();
         }
 
-       [Test]
+        [Test]
         public void DataService_GetContentItem_Returns_Reader_Of_The_ContentItem_On_Valid_Id()
         {
             //Arrange
@@ -211,9 +212,35 @@ namespace DotNetNuke.Tests.Content.Data
 
         #endregion
 
+        #region GetContentItemsByTerm Tests
+
+        [Test]
+        [Row("Black", 0)]           //No items tagged as black
+        [Row("Blue", 2)]            //Both items tagged as blue      
+        [Row("LCD", 1)]             //ContentItem 2 tagged as LCD    
+        [Row("MP3 PLayers", 1)]     //ContentItem 1 tagged as MP3 PLayers    
+        [Row("Televisions", 1)]     //ContentItem 2 tagged as LCD (child of Televisions)
+        [Row("Portable Electronics", 1)]     //ContentItem 1 tagged as MP3 (child of Portable Electronics)
+        [Row("Electronics", 2)]     //Both MP3 and LCD are children of Electronics
+        public void DataService_GetContentItemsByTerm_Returns_Reader_Of_ContentItems(string term, int count)
+        {
+            //Arrange
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, getContentItemsByTermName);
+
+            DataService ds = new DataService();
+
+            //Act
+            IDataReader dataReader = ds.GetContentItemsByTerm(term);
+
+            //Assert that the count is correct
+            DatabaseAssert.ReaderRowCountIsEqual(dataReader, count);
+        }
+
+        #endregion
+
         #region GetUnIndexedContent Tests
 
-       [Test]
+        [Test]
         public void DataService_GetUnIndexedContent_Returns_Reader_Of_UnIndexed_ContentItems()
         {
             //Arrange
@@ -232,7 +259,7 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region UpdateContentItem Tests
 
-       [Test]
+        [Test]
         public void DataService_UpdateContentItem_Does_Nothing_On_InValid_Content()
         {
             //Arrange
@@ -267,7 +294,7 @@ namespace DotNetNuke.Tests.Content.Data
             }
         }
 
-       [Test]
+        [Test]
         public void DataService_UpdateContentItem_Updates_Record_On_Valid_Content()
         {
             //Arrange
@@ -302,7 +329,7 @@ namespace DotNetNuke.Tests.Content.Data
             }
         }
 
-       [Test]
+        [Test]
         public void DataService_UpdateContentItem_Updates_TabId_On_Valid_Content()
         {
             //Arrange

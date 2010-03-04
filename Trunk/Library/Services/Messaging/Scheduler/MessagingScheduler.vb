@@ -1,5 +1,5 @@
-﻿'
-' DotNetNuke® - http://www.dotnetnuke.com
+'
+' DotNetNuke� - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
@@ -19,14 +19,12 @@
 '
 
 Imports System
-Imports DotNetNuke
-Imports System.Net
+Imports DotNetNuke.Services.Messaging.Data
 Imports System.Net.Mail
-Imports System.Net.Mime
 Imports System.Threading
 Imports System.ComponentModel
-Imports DotNetNuke.Services.Messaging.Providers
-Imports DotNetNuke.Services.Messaging
+Imports DotNetNuke.Entities.Host
+
 
 Namespace DotNetNuke.Services.Messaging.Scheduler
 
@@ -35,6 +33,10 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
 
         Dim asyncCompletedEventArgs As AsyncCompletedEventArgs
         Dim waitHandle As AutoResetEvent
+        Dim _pController As New PortalController()
+        Dim _mController As New MessagingController()
+        Dim _uController As New UserController()
+
 
         Public Sub New(ByVal objScheduleHistoryItem As DotNetNuke.Services.Scheduling.ScheduleHistoryItem)
             MyBase.New()
@@ -45,37 +47,41 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
         Public Overrides Sub DoWork()
             Try
 
-                Dim ExecutionCycleGuid As Guid = Guid.NewGuid()
-                Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Starting")
+                Dim _schedulerInstance As Guid = Guid.NewGuid()
+                Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Starting " + _schedulerInstance.ToString())
 
-                Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Querying Database for list of pending messages that need to be sent")
-                Dim c As New MessagingController
+                If (String.IsNullOrEmpty(Host.SMTPServer)) Then
+                    Me.ScheduleHistoryItem.AddLogNote("No SMTP Servers have been configured for this host. Terminating task.")
+                    Me.ScheduleHistoryItem.Succeeded = True
+                    ''Return
+                Else
+                    Dim settings As Hashtable = Me.ScheduleHistoryItem.GetSettings()
 
-                Dim settings As Hashtable = Me.ScheduleHistoryItem.GetSettings()
+                    Dim _messageLeft As Boolean = True
+                    Dim _messagesSent As Integer = 0
 
-                Dim newStatus As String = "Sent"
-                If (Not (settings Is Nothing) And settings.ContainsKey("NewStatus")) Then
-                    newStatus = settings("NewStatus").ToString()
+                    While _messageLeft
+
+                        Dim currentMessage As Message = _mController.GetNextMessageForDispatch(_schedulerInstance)
+
+                        If (currentMessage IsNot Nothing) Then
+                            Try
+                                SendMessage(currentMessage)
+                                _messagesSent = _messagesSent + 1
+                            Catch e As Exception
+                                Me.Errored(e)
+                            End Try
+                        Else
+                            _messageLeft = False
+                        End If
+
+                    End While
+
+                    Me.ScheduleHistoryItem.AddLogNote(String.Format("Message Scheduler '{0}' sent a total of {1} message(s)", _schedulerInstance, _messagesSent))
+                    Me.ScheduleHistoryItem.Succeeded = True
+
                 End If
 
-                Dim sendList As List(Of Message) = c.GetMessagesPendingSend(ExecutionCycleGuid)
-                Me.ScheduleHistoryItem.AddLogNote(String.Format("MessagingScheduler DoWork Found:{0} records", sendList.Count))
-                For Each msg As Message In sendList
-                    Dim mail As New System.Net.Mail.MailMessage(New System.Net.Mail.MailAddress(msg.FromEmail, msg.FromDisplayName), New System.Net.Mail.MailAddress(msg.ToEmail, msg.ToUsername))
-                    mail.Subject = msg.Subject
-                    mail.Body = msg.LongBody
-                    mail.IsBodyHtml = True
-                    Dim client As New System.Net.Mail.SmtpClient()
-                    Dim userToken As Object() = New Object() {c, msg, newStatus, Me}
-
-                    AddHandler client.SendCompleted, AddressOf SendCompletedCallback
-
-                    client.SendAsync(mail, userToken)
-                    waitHandle.WaitOne()
-                Next
-
-                Me.ScheduleHistoryItem.Succeeded = True
-                Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Succeeded")
             Catch ex As Exception
                 Me.ScheduleHistoryItem.Succeeded = False
                 Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler Failed: " & ex.ToString)
@@ -83,29 +89,23 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
             End Try
         End Sub
 
-        Private Sub SendCompletedCallback(ByVal sender As Object, ByVal e As AsyncCompletedEventArgs)
-            asyncCompletedEventArgs = e
+        Private Sub SendMessage(ByVal objMessage As Message)
+            Dim ToEmailAddress As String = UserController.GetUserById(objMessage.PortalID, objMessage.ToUserID).Email
 
-            Dim smtpClient As System.Net.Mail.SmtpClient = TryCast(sender, SmtpClient)
+            Dim emailMessage As New MailMessage(_uController.GetUser(objMessage.PortalID, objMessage.ToUserID).Email, _pController.GetPortal(objMessage.PortalID).Email)
+            emailMessage.Body = objMessage.Body
+            emailMessage.Subject = objMessage.Subject
+            emailMessage.Sender = New MailAddress(UserController.GetUserById(objMessage.PortalID, objMessage.FromUserID).Email)
 
-            Dim userToken As Object() = DirectCast(e.UserState, Object())
-            Dim c As MessagingController = TryCast(userToken(0), MessagingController)
-            Dim msg As Message = TryCast(userToken(1), Message)
-            Dim newStatus As String = TryCast(userToken(2), String)
-            Dim client As MessagingScheduler = TryCast(userToken(3), MessagingScheduler)
+            Dim smtpClient As New SmtpClient(Host.SMTPServer)
 
-            If (e.Cancelled) Then
-                client.ScheduleHistoryItem.AddLogNote("Cancelled")
-            ElseIf Not (e.Error Is Nothing) Then
-                client.ScheduleHistoryItem.AddLogNote("Errored:" & e.Error.ToString)
-            Else
-                msg.PendingSend = False
-                msg.SendDate = DateTime.Now
-                msg.Status = newStatus
-                c.SaveMessage(msg)
-            End If
-            waitHandle.Set()
+            smtpClient.Send(emailMessage)
+
+            _mController.MarkMessageAsDispatched(objMessage.MessageID)
+
         End Sub
-
     End Class
+
+
+
 End Namespace

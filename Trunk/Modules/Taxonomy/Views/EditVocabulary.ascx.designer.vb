@@ -44,13 +44,13 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Protected WithEvents termsList As Global.DotNetNuke.Modules.Taxonomy.WebControls.TermsList
 
         '''<summary>
-        '''addTerm control.
+        '''addTermButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents addTerm As Global.System.Web.UI.WebControls.Button
+        Protected WithEvents addTermButton As Global.System.Web.UI.WebControls.Button
 
         '''<summary>
         '''termEditor control.
@@ -80,13 +80,13 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Protected WithEvents editTermControl As Global.DotNetNuke.Modules.Taxonomy.Views.Controls.EditTermControl
 
         '''<summary>
-        '''saveTerm control.
+        '''saveTermButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents saveTerm As Global.System.Web.UI.WebControls.Button
+        Protected WithEvents saveTermButton As Global.DotNetNuke.Web.UI.WebControls.DnnButton
 
         '''<summary>
         '''deleteTermPlaceHolder control.
@@ -98,22 +98,22 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Protected WithEvents deleteTermPlaceHolder As Global.System.Web.UI.WebControls.PlaceHolder
 
         '''<summary>
-        '''deleteTerm control.
+        '''deleteTermButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents deleteTerm As Global.System.Web.UI.WebControls.LinkButton
+        Protected WithEvents deleteTermButton As Global.System.Web.UI.WebControls.LinkButton
 
         '''<summary>
-        '''cancelTerm control.
+        '''cancelTermButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents cancelTerm As Global.System.Web.UI.WebControls.LinkButton
+        Protected WithEvents cancelTermButton As Global.System.Web.UI.WebControls.LinkButton
 
         '''<summary>
         '''editVocabularyControl control.
@@ -131,7 +131,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents saveVocabulary As Global.System.Web.UI.WebControls.Button
+        Protected WithEvents saveVocabulary As Global.DotNetNuke.Web.UI.WebControls.DnnButton
 
         '''<summary>
         '''deleteVocabulary control.

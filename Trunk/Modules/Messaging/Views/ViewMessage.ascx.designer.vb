@@ -53,15 +53,6 @@ Namespace DotNetNuke.Modules.Messaging.Views
         Protected WithEvents subjectLabel As Global.System.Web.UI.WebControls.Label
 
         '''<summary>
-        '''messageFieldLabel control.
-        '''</summary>
-        '''<remarks>
-        '''Auto-generated field.
-        '''To modify move field declaration from designer file to code-behind file.
-        '''</remarks>
-        Protected WithEvents messageFieldLabel As Global.DotNetNuke.Web.UI.WebControls.DnnFieldLabel
-
-        '''<summary>
         '''messageLabel control.
         '''</summary>
         '''<remarks>
@@ -78,6 +69,15 @@ Namespace DotNetNuke.Modules.Messaging.Views
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
         Protected WithEvents replyMessage As Global.System.Web.UI.WebControls.Button
+
+        '''<summary>
+        '''deleteMessage control.
+        '''</summary>
+        '''<remarks>
+        '''Auto-generated field.
+        '''To modify move field declaration from designer file to code-behind file.
+        '''</remarks>
+        Protected WithEvents deleteMessage As Global.System.Web.UI.WebControls.LinkButton
 
         '''<summary>
         '''cancelView control.

@@ -60,8 +60,7 @@ Namespace DotNetNuke.Modules.Html
         ''' -----------------------------------------------------------------------------
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
             Try
-                Dim objHtml As New HtmlTextController
-                WorkflowID = objHtml.GetWorkflowID(ModuleId, PortalId)
+                WorkflowID = New HtmlTextController().GetWorkflow(ModuleId, TabId, PortalId).Value
 
                 'Add an Action Event Handler to the Skin
                 AddActionHandler(AddressOf ModuleAction_Click)
@@ -237,7 +236,7 @@ Namespace DotNetNuke.Modules.Html
                 ' get the content
                 Dim objHTML As New HtmlTextController
                 Dim objWorkflow As New WorkflowStateController
-                WorkflowID = objHTML.GetWorkflowID(ModuleId, PortalId)
+                WorkflowID = objHTML.GetWorkflow(ModuleId, TabId, PortalId).Value
 
                 Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
                 If Not objContent Is Nothing Then

@@ -66,6 +66,7 @@
     <Compile Include="Data\SimpleTermDataServiceTests.cs" />
     <Compile Include="Data\VocabularyDataServiceTests.cs" />
     <Compile Include="Fakes\Data\FakeDataService.cs" />
+    <Compile Include="Fakes\Views\FakeVocabularyListView.cs" />
     <Compile Include="Presenters\CreateVocabularyPresenterTests.cs" />
     <Compile Include="Presenters\EditVocabularyPresenterTests.cs" />
     <Compile Include="Mocks\MockHelper.cs" />

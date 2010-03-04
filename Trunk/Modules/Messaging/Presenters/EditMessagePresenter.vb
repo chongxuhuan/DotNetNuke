@@ -20,135 +20,150 @@
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Common.Utilities
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Modules.Messaging.Views
-Imports DotNetNuke.Services.Messaging.Providers
 Imports DotNetNuke.Services.Messaging
 Imports DotNetNuke.Services.Messaging.Data
 Imports DotNetNuke.Entities.Users
+Imports DotNetNuke.Web.Mvp
 
 Namespace DotNetNuke.Modules.Messaging.Presenters
 
     Public Class EditMessagePresenter
-        Inherits Presenter(Of IEditMessageView, EditMessagePresenterModel)
+        Inherits ModulePresenter(Of IEditMessageView)
 
 #Region "Private Members"
 
-        Private _Message As Message
         Private _MessagingController As IMessagingController
-
-#End Region
-
-#Region "Public Constants"
-
-        Public Const Name As String = "EditMessage"
 
 #End Region
 
 #Region "Constructors"
 
-        Public Sub New()
-            Me.New(New MessagingController(New MessagingDataService()))
+        Public Sub New(ByVal editView As IEditMessageView)
+            Me.New(editView, New MessagingController(New MessagingDataService()))
         End Sub
 
-        Public Sub New(ByVal messagingController As IMessagingController)
+        Public Sub New(ByVal editView As IEditMessageView, ByVal messagingController As IMessagingController)
+            MyBase.New(editView)
             Arg.NotNull("messagingController", messagingController)
 
             _MessagingController = messagingController
+
+            AddHandler View.Cancel, AddressOf Cancel
+            AddHandler View.Delete, AddressOf DeleteMessage
+            AddHandler View.Load, AddressOf Load
+            AddHandler View.SaveDraft, AddressOf SaveDraft
+            AddHandler View.SendMessage, AddressOf SendMessage
+            AddHandler View.ValidateUser, AddressOf ValidateUser
         End Sub
 
 #End Region
 
 #Region "Public Properties"
 
-        Public ReadOnly Property IsAddMode() As Boolean
+        Public ReadOnly Property MessageId() As Long
             Get
-                Return (Me.Model.IndexId = Null.NullInteger)
+                Dim _IndexId As Long = Null.NullInteger
+                If Not String.IsNullOrEmpty(Request.Params("MessageId")) Then
+                    _IndexId = Int32.Parse(Request.Params("MessageId"))
+                End If
+                Return _IndexId
             End Get
         End Property
+
 
         Public ReadOnly Property IsReplyMode() As Boolean
             Get
-                Return (Me.Model.OriginalIndexId > Null.NullInteger)
+                Dim _isReply As Boolean
+                If Not String.IsNullOrEmpty(Request.Params("IsReply")) Then
+                    Boolean.TryParse(Request.Params("IsReply"), _isReply)
+                End If
+                Return _isReply
             End Get
-        End Property
-
-        <ViewState()> _
-        Public Property Message() As Message
-            Get
-                Return _Message
-            End Get
-            Set(ByVal value As Message)
-                _Message = value
-            End Set
         End Property
 
 #End Region
 
 #Region "Public Methods"
 
-        Public Function Cancel() As Boolean
-            Environment.RedirectToPresenter(New MessagesListPresenterModel())
-        End Function
+        Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
+            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+                                          "", _
+                                          String.Format("userId={0}", UserId)))
+        End Sub
 
-        Public Function DeleteMessage() As Boolean
-            'Delete(Message)
-            _MessagingController.DeleteMessage(Me.Model.PortalId, Me.Model.IndexId)
+        Public Sub DeleteMessage(ByVal sender As Object, ByVal e As EventArgs)
+            View.BindMessage(View.Model.Message)
+
+            View.Model.Message.Status = MessageStatusType.Deleted
+            _MessagingController.UpdateMessage(View.Model.Message)
 
             'Redirect to List
-            Environment.RedirectToPresenter(New MessagesListPresenterModel())
-        End Function
+            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+                                          "", _
+                                          String.Format("userId={0}", UserId)))
+        End Sub
 
-        Public Overrides Function Load() As Boolean
-            If Not Model.IsPostBack Then
-                If IsAddMode Then
+        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
+            If Not IsPostBack Then
+
+                If (MessageId > 0) Then
+
                     If IsReplyMode Then
-                        'Get the original message
-                        Message = _MessagingController.GetMessageByID(Me.Model.PortalId, Me.Model.UserId, Me.Model.OriginalIndexId)
-
-                        'Convert to Reply
-                        Message.ConvertToNewReply()
+                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, MessageId).GetReplyMessage()
+                        View.HideDeleteButton()
                     Else
-                        Message = New Message()
+                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, MessageId)
                     End If
-                    View.HideDeleteButton()
                 Else
-                    Message = _MessagingController.GetMessageByID(Me.Model.PortalId, Me.Model.UserId, Me.Model.IndexId)
+                    View.Model.Message = New Message()
                 End If
-            End If
 
-            View.BindMessage(Message)
+                View.BindMessage(View.Model.Message)
+            End If
+        End Sub
+
+        Public Sub SaveDraft(ByVal sender As Object, ByVal e As EventArgs)
+            SubmitMessage(MessageStatusType.Draft)
+        End Sub
+
+        Public Function SendMessage(ByVal sender As Object, ByVal e As EventArgs) As Boolean
+            SubmitMessage(MessageStatusType.Unread)
         End Function
 
-        Public Function SaveMessage(ByVal userName As String, ByVal isDraft As Boolean) As Boolean
-            'Rebind message to load values from controls
-            View.BindMessage(Message)
+        Private Sub SubmitMessage(ByVal status As MessageStatusType)
 
-            Message.ToUserID = ValidateUserName(userName)
+            View.BindMessage(View.Model.Message)
 
-            If Message.ToUserID > Null.NullInteger Then
-                Message.FromUserID = Me.Model.UserId
-                Message.PendingSend = Not isDraft
-                If isDraft Then
-                    Message.Status = "Draft"
-                Else
-                    Message.Status = "Unread"
-                End If
+            View.Model.Message.ToUserID = ValidateUserName(View.Model.UserName)
+
+            If View.Model.Message.ToUserID > Null.NullInteger Then
+
+                View.Model.Message.FromUserID = UserId
+                View.Model.Message.MessageDate = DateTime.Now
+
+
+                View.Model.Message.Status = status
 
                 'Save Message
-                _MessagingController.SaveMessage(Message)
+                If (View.Model.Message.MessageID = 0) Then
+                    _MessagingController.SaveMessage(View.Model.Message)
+                Else
+                    _MessagingController.UpdateMessage(View.Model.Message)
+                End If
 
                 'Redirect to Message List
-                Environment.RedirectToPresenter(New MessagesListPresenterModel())
+                Response.Redirect(NavigateURL(ModuleContext.TabId, _
+                                              "", _
+                                              String.Format("userId={0}", UserId)))
             Else
-                View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
-        End Function
+        End Sub
 
-        Public Function ValidateUser(ByVal userName As String) As Boolean
+        Public Function ValidateUser(ByVal sender As Object, ByVal e As EventArgs) As Boolean
             ' validate username
-            If ValidateUserName(userName) < 0 Then
+            If ValidateUserName(View.Model.UserName) < 0 Then
                 View.ClearToField()
             End If
         End Function
@@ -159,7 +174,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             Dim userId As Integer = Null.NullInteger
             If Not String.IsNullOrEmpty(userName) Then
                 ' validate username
-                Dim objUser As UserInfo = UserController.GetUserByName(Me.Model.PortalId, userName)
+                Dim objUser As UserInfo = UserController.GetUserByName(PortalId, userName)
                 If objUser IsNot Nothing Then
                     userId = objUser.UserID
                 End If

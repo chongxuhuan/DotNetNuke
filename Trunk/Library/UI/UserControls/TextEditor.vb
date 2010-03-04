@@ -183,7 +183,7 @@ Namespace DotNetNuke.UI.UserControls
                 If optView.SelectedItem.Value = "BASIC" Then
                     Select Case optRender.SelectedItem.Value
                         Case "T"
-                            Text = Encode(FormatHtml(txtDesktopHTML.Text))
+                            Text = Encode(HtmlUtils.ConvertToHtml(txtDesktopHTML.Text))
                         Case "R"
                             Text = txtDesktopHTML.Text
                         Case Else
@@ -195,7 +195,7 @@ Namespace DotNetNuke.UI.UserControls
             End Get
             Set(ByVal Value As String)
                 If Value <> "" Then
-                    txtDesktopHTML.Text = Decode(FormatText(Value))
+                    txtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(Value))
                     RichTextEditor.Text = Decode(Value)
                 End If
             End Set
@@ -282,66 +282,6 @@ Namespace DotNetNuke.UI.UserControls
             Else
                 Encode = strHtml
             End If
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Formats String as Html by replacing linefeeds by <br/>
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="strText">Text to format</param>
-        ''' <returns>The formatted html</returns>
-        ''' <history>
-        ''' 	[cnurse]	12/13/2004	Documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function FormatHtml(ByVal strText As String) As String
-
-            Dim strHtml As String = strText
-            Try
-                If strHtml <> "" Then
-                    strHtml = Replace(strHtml, Chr(13), "")
-                    strHtml = Replace(strHtml, ControlChars.Lf, "<br />")
-                End If
-
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-
-            Return strHtml
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Formats Html as text by removing <br/> tags and replacing by linefeeds
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="strHtml">Html to format</param>
-        ''' <returns>The formatted text</returns>
-        ''' <history>
-        ''' 	[cnurse]	12/13/2004	Documented and modified to use HtmlUtils methods
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function FormatText(ByVal strHtml As String) As String
-
-            Dim strText As String = strHtml
-            Try
-                If strText <> "" Then
-                    'First remove white space (html does not render white space anyway and it screws up the conversion to text)
-                    'Replace it by a single space
-                    strText = HtmlUtils.StripWhiteSpace(strText, True)
-
-                    'Replace all variants of <br> by Linefeeds
-                    strText = HtmlUtils.FormatText(strText, False)
-                End If
-
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-
-            Return strText
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -477,9 +417,9 @@ Namespace DotNetNuke.UI.UserControls
 
             If Mode = "BASIC" Then
                 If TextRenderMode = "H" Then
-                    txtDesktopHTML.Text = FormatHtml(txtDesktopHTML.Text)
+                    txtDesktopHTML.Text = HtmlUtils.ConvertToHtml(txtDesktopHTML.Text)
                 Else
-                    txtDesktopHTML.Text = FormatText(txtDesktopHTML.Text)
+                    txtDesktopHTML.Text = HtmlUtils.ConvertToText(txtDesktopHTML.Text)
                 End If
             End If
             SetPanels()
@@ -503,13 +443,13 @@ Namespace DotNetNuke.UI.UserControls
 
             If Mode = "BASIC" Then
                 If TextRenderMode = "T" Then
-                    txtDesktopHTML.Text = FormatText(RichTextEditor.Text)
+                    txtDesktopHTML.Text = HtmlUtils.ConvertToText(RichTextEditor.Text)
                 Else
                     txtDesktopHTML.Text = RichTextEditor.Text
                 End If
             Else
                 If TextRenderMode = "T" Then
-                    RichTextEditor.Text = FormatHtml(txtDesktopHTML.Text)
+                    RichTextEditor.Text = HtmlUtils.ConvertToHtml(txtDesktopHTML.Text)
                 Else
                     RichTextEditor.Text = txtDesktopHTML.Text
                 End If

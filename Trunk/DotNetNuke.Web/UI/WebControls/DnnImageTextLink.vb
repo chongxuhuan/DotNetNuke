@@ -21,12 +21,22 @@
 Imports System
 Imports System.ComponentModel
 Imports System.Web.UI.WebControls
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnImageTextLink
         Inherits System.Web.UI.WebControls.WebControl
-        Implements DotNetNuke.Web.UI.ILocalize
+        Implements DotNetNuke.Web.UI.ILocalizable
+
+#Region "Private Members"
+
+        Private _ImageHyperlinkControl As HyperLink = Nothing
+        Private _Localize As Boolean = True
+        Private _LocalResourceFile As String
+        Private _TextHyperlinkControl As HyperLink = Nothing
+
+#End Region
 
         Public Sub New()
             MyBase.New("span")
@@ -134,7 +144,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Private _ImageHyperlinkControl As HyperLink = Nothing
         Private ReadOnly Property ImageHyperlinkControl() As HyperLink
             Get
                 If _ImageHyperlinkControl Is Nothing Then
@@ -144,7 +153,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Get
         End Property
 
-        Private _TextHyperlinkControl As HyperLink = Nothing
         Private ReadOnly Property TextHyperlinkControl() As HyperLink
             Get
                 If _TextHyperlinkControl Is Nothing Then
@@ -153,25 +161,6 @@ Namespace DotNetNuke.Web.UI.WebControls
                 Return _TextHyperlinkControl
             End Get
         End Property
-
-        Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
-            LocalizeStrings()
-
-            If (Not Enabled) Then
-                If (Not String.IsNullOrEmpty(DisabledCssClass)) Then
-                    CssClass = DisabledCssClass
-                End If
-                ImageUrl = GetImageUrl(Enabled)
-                NavigateUrl = "javascript:void(0);"
-            End If
-
-            ImageHyperlinkControl.ToolTip = ToolTip
-            ImageHyperlinkControl.Attributes.Add("alt", Text)
-
-            MyBase.RenderBeginTag(writer)
-            MyBase.RenderChildren(writer)
-            MyBase.RenderEndTag(writer)
-        End Sub
 
         Private Function GetImageUrl(ByVal enabled As Boolean) As String
             If (Not enabled AndAlso Not String.IsNullOrEmpty(Me.DisabledImageUrl)) Then
@@ -196,9 +185,37 @@ Namespace DotNetNuke.Web.UI.WebControls
             Return ImageUrl
         End Function
 
-#Region "Implements ILocalize"
-        Private _Localize As Boolean = True
-        Public Property Localize() As Boolean Implements ILocalize.Localize
+#Region "Protected Methods"
+
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
+            LocalResourceFile = Utilities.GetLocalResourceFile(Me)
+        End Sub
+
+        Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
+            LocalizeStrings()
+
+            If (Not Enabled) Then
+                If (Not String.IsNullOrEmpty(DisabledCssClass)) Then
+                    CssClass = DisabledCssClass
+                End If
+                ImageUrl = GetImageUrl(Enabled)
+                NavigateUrl = "javascript:void(0);"
+            End If
+
+            ImageHyperlinkControl.ToolTip = ToolTip
+            ImageHyperlinkControl.Attributes.Add("alt", Text)
+
+            MyBase.RenderBeginTag(writer)
+            MyBase.RenderChildren(writer)
+            MyBase.RenderEndTag(writer)
+        End Sub
+
+#End Region
+
+#Region "ILocalizable Implementation"
+
+        Public Property Localize() As Boolean Implements ILocalizable.Localize
             Get
                 Return _Localize
             End Get
@@ -207,17 +224,26 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Protected Overridable Sub LocalizeStrings() Implements ILocalize.LocalizeStrings
+        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
+            Get
+                Return _LocalResourceFile
+            End Get
+            Set(ByVal value As String)
+                _LocalResourceFile = value
+            End Set
+        End Property
+
+        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
             If (Localize) Then
                 If (Not String.IsNullOrEmpty(ToolTip)) Then
-                    ToolTip = Utilities.GetLocalizedStringFromParent(ToolTip, Me)
+                    ToolTip = Localization.GetString(ToolTip, LocalResourceFile)
                 End If
 
                 If (Not String.IsNullOrEmpty(Text)) Then
-                    Text = Utilities.GetLocalizedStringFromParent(Text, Me)
+                    Text = Localization.GetString(Text, LocalResourceFile)
 
                     If (String.IsNullOrEmpty(ToolTip)) Then
-                        ToolTip = Utilities.GetLocalizedStringFromParent(Text + ".ToolTip", Me)
+                        ToolTip = Localization.GetString(String.Format("{0}.ToolTip", Text), LocalResourceFile)
                     End If
 
                     If (String.IsNullOrEmpty(ToolTip)) Then
@@ -226,6 +252,7 @@ Namespace DotNetNuke.Web.UI.WebControls
                 End If
             End If
         End Sub
+
 #End Region
 
     End Class

@@ -634,7 +634,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 End Select
 
                 If moduleDefinition Is Nothing Then
-                    Skin.AddModuleMessage(Me, strMessage, Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, strMessage, Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Else
                     If Not String.IsNullOrEmpty(cboCreate.SelectedValue) AndAlso chkAddPage.Checked Then
                         Dim tabName As String = "Test " + txtName.Text + " Page"

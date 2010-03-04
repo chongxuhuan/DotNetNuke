@@ -698,7 +698,7 @@ Namespace DotNetNuke.Security.Membership
                     End If
                 Else
                     ' the user does not exist
-                    createStatus = UserRegistrationStatus.AddUser
+                    createStatus = UserCreateStatus.AddUser
                 End If
 
                 'If new user - add to aspnet membership
@@ -1077,7 +1077,7 @@ Namespace DotNetNuke.Security.Membership
             If objUsersOnline.IsEnabled Then
                 'First try the Cache
                 Dim userList As Hashtable = objUsersOnline.GetUserList()
-                Dim onlineUser As OnlineUserInfo = userList(user.UserID.ToString())
+                Dim onlineUser As OnlineUserInfo = TryCast(userList(user.UserID.ToString()), OnlineUserInfo)
 
                 If Not onlineUser Is Nothing Then
                     isOnline = True

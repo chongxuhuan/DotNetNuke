@@ -28,7 +28,8 @@
         <asp:PlaceHolder ID="SkinPlaceHolder" runat="server" />
         <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />
         <input id="__dnnVariable" runat="server" name="__dnnVariable" type="hidden" />
-        <dnnui:DnnWindowManager ID="DnnWindowManager" runat="server" Visible="False"></dnnui:DnnWindowManager>
+        <dnnui:DnnWindowManager ID="DnnWindowManager" runat="server" Visible="False">
+        </dnnui:DnnWindowManager>
     </dnn:Form>
 </body>
 </html>

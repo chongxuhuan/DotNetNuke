@@ -118,10 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CancelView.Text" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Back To Inbox</value>
   </data>
   <data name="ControlTitle_viewmessage.Text" xml:space="preserve">
     <value>View Message</value>
+  </data>
+  <data name="DeleteMessage.Text" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="EmailFrom.Text" xml:space="preserve">
     <value>From</value>

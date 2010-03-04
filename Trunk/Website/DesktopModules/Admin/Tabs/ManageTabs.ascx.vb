@@ -550,7 +550,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
             'Check for invalid 
             If Regex.IsMatch(Tab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase) Then
-                Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabName", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabName", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Return Null.NullInteger
             End If
 
@@ -561,9 +561,9 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 If tabID <> Null.NullInteger Then
                     Dim existingTab As TabInfo = objTabs.GetTab(tabID, PortalId, False)
                     If existingTab IsNot Nothing AndAlso existingTab.IsDeleted Then
-                        Skin.AddModuleMessage(Me, Localization.GetString("TabRecycled", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("TabRecycled", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
                     Else
-                        Skin.AddModuleMessage(Me, Localization.GetString("TabExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("TabExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                     End If
                     Return Null.NullInteger
                 End If
@@ -582,7 +582,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             End If
             If Tab.StartDate > Null.NullDate AndAlso Tab.EndDate > Null.NullDate _
                             AndAlso Tab.StartDate.AddDays(1) >= Tab.EndDate Then
-                Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabDates", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("InvalidTabDates", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Return Null.NullInteger
             End If
             If txtRefreshInterval.Text.Length > 0 AndAlso IsNumeric(txtRefreshInterval.Text) Then
@@ -684,7 +684,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         Catch ex As Exception
                             LogException(ex)
 
-                            Skin.AddModuleMessage(Me, Localization.GetString("BadTemplate", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("BadTemplate", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                             Return Null.NullInteger
                         End Try
                         TabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), Tab.PortalID, Tab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)

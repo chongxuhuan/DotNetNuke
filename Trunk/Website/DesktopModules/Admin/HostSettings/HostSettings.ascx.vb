@@ -83,7 +83,7 @@ Namespace DotNetNuke.Modules.Admin.Host
             lblFramework.Text = Common.Globals.NETFrameworkVersion.ToString(2)
 
             If Not Upgrade.Upgrade.IsNETFrameworkCurrent Then
-                Skin.AddModuleMessage(Me, Localization.GetString("FrameworkDownLevel", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("FrameworkDownLevel", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End If
 
             lblIdentity.Text = System.Security.Principal.WindowsIdentity.GetCurrent.Name
@@ -323,11 +323,11 @@ Namespace DotNetNuke.Modules.Admin.Host
         End Sub
 
         Private Sub BindPageCacheProviderList()
-            cboPageCacheProvider.DataSource = GetFilteredProviders(OutputCache.OutputCachingProvider.GetProviderList(), "OutputCachingProvider")
+            cboPageCacheProvider.DataSource = GetFilteredProviders(DotNetNuke.Services.OutputCache.OutputCachingProvider.GetProviderList(), "OutputCachingProvider")
             cboPageCacheProvider.DataBind()
 
-            Dim defaultPageCache As OutputCache.OutputCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of OutputCache.OutputCachingProvider)()
-            Dim providerKey As String = (From provider In OutputCache.OutputCachingProvider.GetProviderList() _
+            Dim defaultPageCache As DotNetNuke.Services.OutputCache.OutputCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of DotNetNuke.Services.OutputCache.OutputCachingProvider)()
+            Dim providerKey As String = (From provider In DotNetNuke.Services.OutputCache.OutputCachingProvider.GetProviderList() _
                                          Where provider.Value.Equals(defaultPageCache) _
                                          Select provider.Key).SingleOrDefault
 

@@ -24,6 +24,7 @@ Imports DotNetNuke.Security
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.UI.Modules
+Imports System.Diagnostics.CodeAnalysis
 
 Namespace DotNetNuke.UI.Containers
 
@@ -119,7 +120,7 @@ Namespace DotNetNuke.UI.Containers
                 Dim _settings As PortalSettings = ModuleControl.ModuleContext.PortalSettings
                 'following If clase left to preserve backwards compatibility
                 'liable to be removed if related obsolete variable gets removed
-                If Not _settings.ActiveTab.IsAdminTab Then
+                If Not _settings.ActiveTab.IsSuperTab Then
                     m_tabPreview = (_settings.UserMode = PortalSettings.Mode.View)
                 End If
                 Return _settings

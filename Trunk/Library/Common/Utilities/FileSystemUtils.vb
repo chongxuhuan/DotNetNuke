@@ -34,6 +34,13 @@ Namespace DotNetNuke.Common.Utilities
 
     Public Class FileSystemUtils
 
+#Region "Enums"
+        Private Enum EnumUserFolderElement
+            Root = 0
+            SubFolder = 1
+        End Enum
+#End Region
+
 #Region "Private Methods"
 
         Private Shared Function AddFile(ByVal PortalId As Integer, ByVal inStream As Stream, ByVal fileName As String, ByVal contentType As String, ByVal length As Long, ByVal folderName As String, ByVal closeInputStream As Boolean, ByVal clearCache As Boolean) As String
@@ -157,6 +164,52 @@ Namespace DotNetNuke.Common.Utilities
             Return retValue
         End Function
 
+        Private Shared Function CreateFile(ByVal RootPath As String, ByVal FileName As String, ByVal ContentLength As Long, ByVal ContentType As String, ByVal InputStream As Stream, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
+            ' Obtain PortalSettings from Current Context
+            Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
+            Dim PortalId As Integer = GetFolderPortalId(settings)
+            Dim isHost As Boolean = CType(IIf(settings.ActiveTab.ParentId = settings.SuperTabId, True, False), Boolean)
+
+            Dim objPortalController As New PortalController
+            Dim strMessage As String = ""
+            Dim strFileName As String = FileName
+            If NewFileName <> Null.NullString Then strFileName = NewFileName
+            strFileName = RootPath & Path.GetFileName(strFileName)
+            Dim strExtension As String = Replace(Path.GetExtension(strFileName), ".", "")
+            Dim strFolderpath As String = GetSubFolderPath(strFileName, PortalId)
+
+            Dim objFolders As New FolderController
+            Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, strFolderpath, False)
+
+            If FolderPermissionController.CanAdminFolder(objFolder) Then
+                If objPortalController.HasSpaceAvailable(PortalId, ContentLength) Then
+                    If InStr(1, "," & Host.FileExtensions.ToUpper, "," & strExtension.ToUpper) <> 0 Or isHost Then
+                        'Save Uploaded file to server
+                        Try
+                            strMessage += AddFile(PortalId, InputStream, strFileName, ContentType, ContentLength, strFolderpath, True, True)
+
+                            'Optionally Unzip File?
+                            If Path.GetExtension(strFileName).ToLower = ".zip" And Unzip = True Then
+                                strMessage += UnzipFile(strFileName, RootPath, settings)
+                            End If
+                        Catch Exc As Exception
+                            ' save error - can happen if the security settings are incorrect on the disk
+                            strMessage += "<br>" & String.Format(Localization.GetString("SaveFileError"), strFileName)
+                        End Try
+                    Else
+                        ' restricted file type
+                        strMessage += "<br>" & String.Format(Localization.GetString("RestrictedFileType"), strFileName, Replace(Host.FileExtensions, ",", ", *."))
+                    End If
+                Else    ' file too large
+                    strMessage += "<br>" & String.Format(Localization.GetString("DiskSpaceExceeded"), strFileName)
+                End If
+            Else ' insufficient folder permission in the application
+                strMessage += "<br>" & String.Format(Localization.GetString("InsufficientFolderPermission"), strFolderpath)
+            End If
+
+            Return strMessage
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets the filename for a file path
@@ -198,6 +251,17 @@ Namespace DotNetNuke.Common.Utilities
                 End If
             End If
         End Sub
+
+        Private Shared Function ShouldSyncFolder(ByVal hideSystemFolders As Boolean, ByVal dirinfo As DirectoryInfo) As Boolean
+            If hideSystemFolders AndAlso _
+                (((dirinfo.Attributes And FileAttributes.Hidden) = FileAttributes.Hidden) OrElse _
+                dirinfo.Name.StartsWith("_", StringComparison.CurrentCultureIgnoreCase)) Then
+
+                Return False
+            End If
+
+            Return True
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -670,6 +734,124 @@ Namespace DotNetNuke.Common.Utilities
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Creates a User Folder
+        ''' </summary>
+        ''' <param name="_PortalSettings">Portal Settings for the Portal</param>
+        ''' <param name="parentFolder">The Parent Folder Name</param>
+        ''' <param name="UserID">The UserID, in order to generate the path/foldername</param>
+        ''' <param name="StorageLocation">The Storage Location</param>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[jlucarino]	02/26/2010	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function AddUserFolder(ByVal _PortalSettings As PortalSettings, ByVal parentFolder As String, ByVal StorageLocation As Integer, ByVal UserID As Integer) As Integer
+            Dim PortalId As Integer
+            Dim ParentFolderName As String
+            Dim dinfoNew As System.IO.DirectoryInfo
+            Dim RootFolder As String = ""
+            Dim SubFolder As String = ""
+
+            PortalId = _PortalSettings.PortalId
+            ParentFolderName = _PortalSettings.HomeDirectoryMapPath
+
+            RootFolder = GetUserFolderPathElement(UserID, EnumUserFolderElement.Root)
+            SubFolder = GetUserFolderPathElement(UserID, EnumUserFolderElement.SubFolder)
+
+            'create root folder
+            Dim folderPath As String = ""
+            folderPath = System.IO.Path.Combine(Path.Combine(ParentFolderName, "Users"), RootFolder)
+            dinfoNew = New System.IO.DirectoryInfo(folderPath)
+            If Not dinfoNew.Exists Then
+                dinfoNew.Create()
+                AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+            End If
+
+            'create two-digit subfolder
+            folderPath = System.IO.Path.Combine(folderPath, SubFolder)
+            dinfoNew = New System.IO.DirectoryInfo(folderPath)
+            If Not dinfoNew.Exists Then
+                dinfoNew.Create()
+                AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+            End If
+
+            'create folder from UserID
+            folderPath = System.IO.Path.Combine(folderPath, UserID.ToString)
+            dinfoNew = New System.IO.DirectoryInfo(folderPath)
+            If Not dinfoNew.Exists Then
+                dinfoNew.Create()
+                Dim folderID As Integer = AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+
+                'Give user Read Access to this folder
+                Dim folder As FolderInfo = New FolderController().GetFolderInfo(PortalId, folderID)
+                For Each permission As PermissionInfo In PermissionController.GetPermissionsByFolder()
+                    If permission.PermissionKey.ToUpper = "READ" OrElse permission.PermissionKey.ToUpper = "WRITE" Then
+                        Dim folderPermission As New FolderPermissionInfo(permission)
+                        folderPermission.FolderID = folder.FolderID
+                        folderPermission.UserID = UserID
+                        folderPermission.RoleID = Null.NullInteger
+
+                        folder.FolderPermissions.Add(folderPermission)
+                    End If
+                Next
+                FolderPermissionController.SaveFolderPermissions(folder)
+
+            End If
+
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Returns path to a User Folder 
+        ''' </summary>
+        ''' <history>
+        ''' 	[jlucarino]	03/01/2010	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUserFolderPath(ByVal UserID As Integer) As String
+            Dim RootFolder As String
+            Dim SubFolder As String
+            Dim FullPath As String
+
+            RootFolder = GetUserFolderPathElement(UserID, EnumUserFolderElement.Root)
+            SubFolder = GetUserFolderPathElement(UserID, EnumUserFolderElement.SubFolder)
+
+            FullPath = System.IO.Path.Combine(RootFolder, SubFolder)
+            FullPath = System.IO.Path.Combine(FullPath, UserID.ToString)
+
+            Return FullPath
+
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Returns Root and SubFolder elements of User Folder path
+        ''' </summary>
+        ''' <history>
+        ''' 	[jlucarino]	03/01/2010	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Shared Function GetUserFolderPathElement(ByVal UserID As Integer, ByVal Mode As EnumUserFolderElement) As String
+            Const SUBFOLDER_SEED_LENGTH As Integer = 2
+            Const BYTE_OFFSET As Integer = 255
+            Dim Element As String = ""
+
+            Select Case Mode
+                Case EnumUserFolderElement.Root
+                    Element = (Convert.ToInt16(UserID) And BYTE_OFFSET).ToString("000")
+
+                Case EnumUserFolderElement.SubFolder
+                    Element = UserID.ToString("00").Substring(UserID.ToString("00").Length - SUBFOLDER_SEED_LENGTH, SUBFOLDER_SEED_LENGTH)
+
+            End Select
+
+            Return Element
+
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Adds a File to a Zip File
         ''' </summary>
         ''' <history>
@@ -742,6 +924,50 @@ Namespace DotNetNuke.Common.Utilities
         ''' -----------------------------------------------------------------------------
         Public Shared Function CopyFile(ByVal strSourceFile As String, ByVal strDestFile As String, ByVal settings As PortalSettings) As String
             Return UpdateFile(strSourceFile, strDestFile, GetFolderPortalId(settings), True, False, True)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' UploadFile pocesses a single file 
+        ''' </summary>
+        ''' <param name="RootPath">The folder where the file will be put</param>
+        ''' <param name="FileName">The file name</param>
+        ''' <param name="FileData">Content of the file</param>
+        ''' <param name="ContentType">Type of content, ie: text/html</param>
+        ''' <param name="NewFileName"></param>
+        ''' <param name="Unzip"></param> 
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        '''     [cnurse]        16/9/2004   Updated for localization, Help and 508
+        '''     [Philip Beadle] 10/06/2004  Moved to Globals from WebUpload.ascx.vb so can be accessed by URLControl.ascx
+        '''     [cnurse]        04/26/2006  Updated for Secure Storage
+        '''     [sleupold]      08/14/2007  Added NewFileName
+        '''     [sdarkis]       10/19/2009  Creates a file from a string
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function CreateFileFromString(ByVal RootPath As String, ByVal FileName As String, ByVal FileData As String, ByVal ContentType As String, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
+            Dim returnValue As String = String.Empty
+            Dim memStream As MemoryStream = Nothing
+
+            Try
+                memStream = New MemoryStream()
+                Dim fileDataBytes As Byte() = System.Text.Encoding.ASCII.GetBytes(FileData)
+                memStream.Write(fileDataBytes, 0, fileDataBytes.Length)
+                memStream.Flush()
+                memStream.Position = 0
+
+                returnValue = CreateFile(RootPath, FileName, memStream.Length, ContentType, memStream, NewFileName, Unzip)
+            Catch ex As Exception
+                returnValue = ex.Message
+            Finally
+                If (Not memStream Is Nothing) Then
+                    memStream.Close()
+                    memStream.Dispose()
+                End If
+            End Try
+
+            Return returnValue
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1179,7 +1405,7 @@ Namespace DotNetNuke.Common.Utilities
             If Host.EnableFileAutoSync Then
                 ' synchronize files in folder
                 If Not objFolder Is Nothing Then
-                    SynchronizeFolder(objFolder.PortalID, objFolder.PhysicalPath, objFolder.FolderPath, False, True, False)
+                    SynchronizeFolder(objFolder.PortalID, objFolder.PhysicalPath, objFolder.FolderPath, False, True, False, False)
                 End If
             End If
             Return objFolder
@@ -1441,22 +1667,22 @@ Namespace DotNetNuke.Common.Utilities
             FolderPermissionController.SaveFolderPermissions(folder)
         End Sub
 
-        Public Shared Sub Synchronize(ByVal PortalId As Integer, ByVal AdministratorRoleId As Integer, ByVal HomeDirectory As String)
+        Public Shared Sub Synchronize(ByVal PortalId As Integer, ByVal AdministratorRoleId As Integer, ByVal HomeDirectory As String, ByVal hideSystemFolders As Boolean)
             Dim PhysicalRoot As String = HomeDirectory
             Dim VirtualRoot As String = ""
 
             'Call Synchronize Folder that recursively parses the subfolders
-            SynchronizeFolder(PortalId, PhysicalRoot, VirtualRoot, True)
+            SynchronizeFolder(PortalId, PhysicalRoot, VirtualRoot, True, True, True, hideSystemFolders)
 
             'Invalidate Cache
             DataCache.ClearFolderCache(PortalId)
         End Sub
 
-        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean)
-            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, True, True)
+        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean, ByVal hideSystemFolders As Boolean)
+            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, True, True, hideSystemFolders)
         End Sub
 
-        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean, ByVal syncFiles As Boolean, ByVal forceFolderSync As Boolean)
+        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean, ByVal syncFiles As Boolean, ByVal forceFolderSync As Boolean, ByVal hideSystemFolders As Boolean)
             Dim objFolderController As New FolderController()
             Dim FolderId As Integer
             Dim isInSync As Boolean = True
@@ -1473,10 +1699,15 @@ Namespace DotNetNuke.Common.Utilities
             If dirInfo.Exists Then
                 ' check to see if the folder exists in the db
                 If folder Is Nothing Then
-                    'Add Folder to database
-                    FolderId = AddFolder(PortalId, relativePath, FolderController.StorageLocationTypes.InsecureFileSystem)
-                    folder = objFolderController.GetFolder(PortalId, relativePath, True)
-                    isInSync = False
+                    If ShouldSyncFolder(hideSystemFolders, dirInfo) Then
+                        'Add Folder to database
+                        FolderId = AddFolder(PortalId, relativePath, FolderController.StorageLocationTypes.InsecureFileSystem)
+                        folder = objFolderController.GetFolder(PortalId, relativePath, True)
+                        isInSync = False
+                    Else
+                        'Prevent further processing of this folder
+                        Exit Sub
+                    End If
                 Else
                     'Check whether existing folder is in sync by comparing LastWriteTime of the physical folder with the LastUpdated value in the database
                     '*NOTE: dirInfo.LastWriteTime is updated when files are added to or deleted from a directory - but NOT when existing files are overwritten ( this is a known Windows Operating System issue )
@@ -1515,7 +1746,7 @@ Namespace DotNetNuke.Common.Utilities
                                 End If
                                 relPath = relPath & dir.Name & "/"
                             End If
-                            SynchronizeFolder(PortalId, strFolder, relPath, True, syncFiles, forceFolderSync)
+                            SynchronizeFolder(PortalId, strFolder, relPath, True, syncFiles, forceFolderSync, hideSystemFolders)
                         Next
                     End If
                 End If
@@ -1744,96 +1975,6 @@ Namespace DotNetNuke.Common.Utilities
 			Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, Unzip)
         End Function
 
-		''' -----------------------------------------------------------------------------
-		''' <summary>
-		''' UploadFile pocesses a single file 
-		''' </summary>
-		''' <param name="RootPath">The folder where the file will be put</param>
-		''' <param name="FileName">The file name</param>
-		''' <param name="FileData">Content of the file</param>
-		''' <param name="ContentType">Type of content, ie: text/html</param>
-		''' <param name="NewFileName"></param>
-		''' <param name="Unzip"></param> 
-		''' <remarks>
-		''' </remarks>
-		''' <history>
-		'''     [cnurse]        16/9/2004   Updated for localization, Help and 508
-		'''     [Philip Beadle] 10/06/2004  Moved to Globals from WebUpload.ascx.vb so can be accessed by URLControl.ascx
-		'''     [cnurse]        04/26/2006  Updated for Secure Storage
-		'''     [sleupold]      08/14/2007  Added NewFileName
-		'''     [sdarkis]       10/19/2009  Creates a file from a string
-		''' </history>
-		''' -----------------------------------------------------------------------------
-		Public Shared Function CreateFileFromString(ByVal RootPath As String, ByVal FileName As String, ByVal FileData As String, ByVal ContentType As String, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
-			Dim returnValue As String = String.Empty
-			Dim memStream As MemoryStream = Nothing
-
-			Try
-				memStream = New MemoryStream()
-				Dim fileDataBytes As Byte() = System.Text.Encoding.ASCII.GetBytes(FileData)
-				memStream.Write(fileDataBytes, 0, fileDataBytes.Length)
-				memStream.Flush()
-				memStream.Position = 0
-
-				returnValue = CreateFile(RootPath, FileName, memStream.Length, ContentType, memStream, NewFileName, Unzip)
-			Catch ex As Exception
-				returnValue = ex.Message
-			Finally
-				If (Not memStream Is Nothing) Then
-					memStream.Close()
-					memStream.Dispose()
-				End If
-			End Try
-
-			Return returnValue
-		End Function
-
-		Private Shared Function CreateFile(ByVal RootPath As String, ByVal FileName As String, ByVal ContentLength As Long, ByVal ContentType As String, ByVal InputStream As Stream, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
-			' Obtain PortalSettings from Current Context
-			Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
-			Dim PortalId As Integer = GetFolderPortalId(settings)
-			Dim isHost As Boolean = CType(IIf(settings.ActiveTab.ParentId = settings.SuperTabId, True, False), Boolean)
-
-			Dim objPortalController As New PortalController
-			Dim strMessage As String = ""
-			Dim strFileName As String = FileName
-			If NewFileName <> Null.NullString Then strFileName = NewFileName
-			strFileName = RootPath & Path.GetFileName(strFileName)
-			Dim strExtension As String = Replace(Path.GetExtension(strFileName), ".", "")
-			Dim strFolderpath As String = GetSubFolderPath(strFileName, PortalId)
-
-			Dim objFolders As New FolderController
-			Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, strFolderpath, False)
-
-			If FolderPermissionController.CanAdminFolder(objFolder) Then
-				If objPortalController.HasSpaceAvailable(PortalId, ContentLength) Then
-					If InStr(1, "," & Host.FileExtensions.ToUpper, "," & strExtension.ToUpper) <> 0 Or isHost Then
-						'Save Uploaded file to server
-						Try
-							strMessage += AddFile(PortalId, InputStream, strFileName, ContentType, ContentLength, strFolderpath, True, True)
-
-							'Optionally Unzip File?
-							If Path.GetExtension(strFileName).ToLower = ".zip" And Unzip = True Then
-								strMessage += UnzipFile(strFileName, RootPath, settings)
-							End If
-						Catch Exc As Exception
-							' save error - can happen if the security settings are incorrect on the disk
-							strMessage += "<br>" & String.Format(Localization.GetString("SaveFileError"), strFileName)
-						End Try
-					Else
-						' restricted file type
-						strMessage += "<br>" & String.Format(Localization.GetString("RestrictedFileType"), strFileName, Replace(Host.FileExtensions, ",", ", *."))
-					End If
-				Else	' file too large
-					strMessage += "<br>" & String.Format(Localization.GetString("DiskSpaceExceeded"), strFileName)
-				End If
-			Else ' insufficient folder permission in the application
-				strMessage += "<br>" & String.Format(Localization.GetString("InsufficientFolderPermission"), strFolderpath)
-			End If
-
-			Return strMessage
-		End Function
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Writes file to response stream.  Workaround offered by MS for large files
@@ -1977,7 +2118,7 @@ Namespace DotNetNuke.Common.Utilities
 
         <Obsolete("This function has been replaced by SynchronizeFolder(Integer, Integer, String, String, Boolean)")> _
         Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal AdministratorRoleId As Integer, ByVal HomeDirectory As String, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean)
-            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive)
+            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, True, True, False)
         End Sub
 
 #End Region

@@ -18,13 +18,15 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Taxonomy
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
+Imports DotNetNuke.Modules.Taxonomy.WebControls
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface IEditVocabularyView
-        Inherits IView
+        Inherits IView(Of EditVocabularyModel)
 
         Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean)
         Sub BindTerms(ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal dataBind As Boolean)
@@ -32,6 +34,15 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Sub ClearSelectedTerm()
         Sub SetTermEditorMode(ByVal isAddMode As Boolean, ByVal termId As Integer)
         Sub ShowTermEditor(ByVal showEditor As Boolean)
+
+        Event AddTerm As EventHandler
+        Event Cancel As EventHandler
+        Event CancelTerm As EventHandler
+        Event Delete As EventHandler
+        Event DeleteTerm As EventHandler
+        Event Save As EventHandler
+        Event SaveTerm As EventHandler
+        Event SelectTerm As EventHandler(Of TermsEventArgs)
 
     End Interface
 

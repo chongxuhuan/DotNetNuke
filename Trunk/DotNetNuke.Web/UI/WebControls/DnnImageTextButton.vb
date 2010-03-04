@@ -21,54 +21,43 @@
 Imports System
 Imports System.ComponentModel
 Imports System.Web.UI.WebControls
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnImageTextButton
         Inherits System.Web.UI.WebControls.ImageButton
-        Implements DotNetNuke.Web.UI.ILocalize
+        Implements DotNetNuke.Web.UI.ILocalizable
+
+#Region "Private Members"
+
+        Private _Localize As Boolean = True
+        Private _LocalResourceFile As String
+        Private _TextLinkControl As HyperLink = Nothing
+
+#End Region
+
+#Region "Constructors"
 
         Public Sub New()
             CssClass = "dnnImageTextButton"
             DisabledCssClass = "dnnImageTextButton disabled"
         End Sub
 
-		<Bindable(True)> _
-		<Category("Appearance")> _
-		<DefaultValue("")> _
-		<Localizable(True)> _
-		Public Shadows Property ConfirmMessage() As String
-			Get
-				Return If(ViewState("ConfirmMessage") Is Nothing, String.Empty, DirectCast(ViewState("ConfirmMessage"), String))
-			End Get
-			Set(ByVal value As String)
-				ViewState("ConfirmMessage") = value
-			End Set
-		End Property
+#End Region
+
+#Region "Public Properties"
 
         <Bindable(True)> _
         <Category("Appearance")> _
         <DefaultValue("")> _
         <Localizable(True)> _
-        Public Shadows Property Text() As String
+        Public Shadows Property ConfirmMessage() As String
             Get
-                Return If(ViewState("Text") Is Nothing, String.Empty, DirectCast(ViewState("Text"), String))
+                Return If(ViewState("ConfirmMessage") Is Nothing, String.Empty, DirectCast(ViewState("ConfirmMessage"), String))
             End Get
             Set(ByVal value As String)
-                ViewState("Text") = value
-            End Set
-        End Property
-
-        <Bindable(True)> _
-        <Category("Behavior")> _
-        <DefaultValue("")> _
-        <Localizable(True)> _
-        Public Property DisabledImageUrl() As String
-            Get
-                Return If(ViewState("DisabledImageUrl") Is Nothing, String.Empty, DirectCast(ViewState("DisabledImageUrl"), String))
-            End Get
-            Set(ByVal value As String)
-                ViewState("DisabledImageUrl") = value
+                ViewState("ConfirmMessage") = value
             End Set
         End Property
 
@@ -98,14 +87,17 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Private _TextLinkControl As HyperLink = Nothing
-        Private ReadOnly Property TextLinkControl() As HyperLink
+        <Bindable(True)> _
+        <Category("Behavior")> _
+        <DefaultValue("")> _
+        <Localizable(True)> _
+        Public Property DisabledImageUrl() As String
             Get
-                If _TextLinkControl Is Nothing Then
-                    _TextLinkControl = New HyperLink()
-                End If
-                Return _TextLinkControl
+                Return If(ViewState("DisabledImageUrl") Is Nothing, String.Empty, DirectCast(ViewState("DisabledImageUrl"), String))
             End Get
+            Set(ByVal value As String)
+                ViewState("DisabledImageUrl") = value
+            End Set
         End Property
 
         Public Overrides Property ImageUrl() As String
@@ -115,46 +107,73 @@ Namespace DotNetNuke.Web.UI.WebControls
             Set(ByVal value As String)
                 MyBase.ImageUrl = value
             End Set
-		End Property
+        End Property
 
-		Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
-			MyBase.OnPreRender(e)
+        <Bindable(True)> _
+                <Category("Appearance")> _
+                <DefaultValue("")> _
+                <Localizable(True)> _
+                Public Shadows Property Text() As String
+            Get
+                Return If(ViewState("Text") Is Nothing, String.Empty, DirectCast(ViewState("Text"), String))
+            End Get
+            Set(ByVal value As String)
+                ViewState("Text") = value
+            End Set
+        End Property
 
-			If (Not String.IsNullOrEmpty(ConfirmMessage)) Then
-				Dim msg As String = ConfirmMessage
-				If (Localize) Then
-					msg = Utilities.GetLocalizedStringFromParent(ConfirmMessage, Me)
-				End If
-				'must be done before render
-				OnClientClick = Utilities.GetOnClientClickConfirm(Me, msg)
-			End If
-		End Sub
+#End Region
 
-		Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
-			LocalizeStrings()
 
-			Dim textLink As New HyperLink()
-			textLink.Text = Text
-			textLink.ToolTip = ToolTip
+        Private ReadOnly Property TextLinkControl() As HyperLink
+            Get
+                If _TextLinkControl Is Nothing Then
+                    _TextLinkControl = New HyperLink()
+                End If
+                Return _TextLinkControl
+            End Get
+        End Property
 
-			If (Not Enabled) Then
-				If (Not String.IsNullOrEmpty(DisabledCssClass)) Then
-					CssClass = DisabledCssClass
-				End If
-				ImageUrl = GetImageUrl(Enabled)
-				textLink.NavigateUrl = "javascript:void(0);"
-			Else
-				textLink.NavigateUrl = "javascript:document.getElementById('" + ClientID + "').click();"
-			End If
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
 
-			writer.AddAttribute("class", CssClass)
-			writer.RenderBeginTag("span")
+            LocalResourceFile = Utilities.GetLocalResourceFile(Me)
 
-			MyBase.Render(writer)
-			textLink.RenderControl(writer)
+            If (Not String.IsNullOrEmpty(ConfirmMessage)) Then
+                Dim msg As String = ConfirmMessage
+                If (Localize) Then
+                    msg = Localization.GetString(ConfirmMessage, LocalResourceFile)
+                End If
+                'must be done before render
+                OnClientClick = Utilities.GetOnClientClickConfirm(Me, msg)
+            End If
+        End Sub
 
-			writer.RenderEndTag()
-		End Sub
+        Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)
+            LocalizeStrings()
+
+            Dim textLink As New HyperLink()
+            textLink.Text = Text
+            textLink.ToolTip = ToolTip
+
+            If (Not Enabled) Then
+                If (Not String.IsNullOrEmpty(DisabledCssClass)) Then
+                    CssClass = DisabledCssClass
+                End If
+                ImageUrl = GetImageUrl(Enabled)
+                textLink.NavigateUrl = "javascript:void(0);"
+            Else
+                textLink.NavigateUrl = "javascript:document.getElementById('" + ClientID + "').click();"
+            End If
+
+            writer.AddAttribute("class", CssClass)
+            writer.RenderBeginTag("span")
+
+            MyBase.Render(writer)
+            textLink.RenderControl(writer)
+
+            writer.RenderEndTag()
+        End Sub
 
         Private Function GetImageUrl(ByVal enabled As Boolean) As String
             If (Not enabled AndAlso Not String.IsNullOrEmpty(Me.DisabledImageUrl)) Then
@@ -179,9 +198,9 @@ Namespace DotNetNuke.Web.UI.WebControls
             Return ImageUrl
         End Function
 
-#Region "Implements ILocalize"
-        Private _Localize As Boolean = True
-        Public Property Localize() As Boolean Implements ILocalize.Localize
+#Region "ILocalizable Implementation"
+
+        Public Property Localize() As Boolean Implements ILocalizable.Localize
             Get
                 Return _Localize
             End Get
@@ -190,25 +209,35 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Protected Overridable Sub LocalizeStrings() Implements ILocalize.LocalizeStrings
-			If (Localize) Then
-				If (Not String.IsNullOrEmpty(ToolTip)) Then
-					ToolTip = Utilities.GetLocalizedStringFromParent(ToolTip, Me)
-				End If
+        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
+            Get
+                Return _LocalResourceFile
+            End Get
+            Set(ByVal value As String)
+                _LocalResourceFile = value
+            End Set
+        End Property
 
-				If (Not String.IsNullOrEmpty(Text)) Then
-					Text = Utilities.GetLocalizedStringFromParent(Text, Me)
+        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
+            If (Localize) Then
+                If (Not String.IsNullOrEmpty(ToolTip)) Then
+                    ToolTip = Localization.GetString(ToolTip, LocalResourceFile)
+                End If
 
-					If (String.IsNullOrEmpty(ToolTip)) Then
-						ToolTip = Utilities.GetLocalizedStringFromParent(Text + ".ToolTip", Me)
-					End If
+                If (Not String.IsNullOrEmpty(Text)) Then
+                    Text = Localization.GetString(Text, LocalResourceFile)
 
-					If (String.IsNullOrEmpty(ToolTip)) Then
-						ToolTip = Text
-					End If
-				End If
-			End If
+                    If (String.IsNullOrEmpty(ToolTip)) Then
+                        ToolTip = Localization.GetString(String.Format("{0}.ToolTip", Text), LocalResourceFile)
+                    End If
+
+                    If (String.IsNullOrEmpty(ToolTip)) Then
+                        ToolTip = Text
+                    End If
+                End If
+            End If
         End Sub
+
 #End Region
 
     End Class

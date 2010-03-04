@@ -183,6 +183,7 @@ Namespace DotNetNuke.Common.Utilities
             End If
             Return retValue
         End Function
+
         Public Shared Function SetNullString(ByVal objValue As Object) As String
             Dim retValue As String = Null.NullString
             If Not IsDBNull(objValue) Then
@@ -191,6 +192,13 @@ Namespace DotNetNuke.Common.Utilities
             Return retValue
         End Function
 
+        Public Shared Function SetNullGuid(ByVal objValue As Object) As Guid
+            Dim retValue As Guid = Guid.Empty
+            If (Not IsDBNull(objValue)) And Not String.IsNullOrEmpty(objValue.ToString()) Then
+                retValue = New Guid(objValue.ToString())
+            End If
+            Return retValue
+        End Function
 
         ' convert an application encoded null value to a database null value ( used in DAL )
         Public Shared Function GetNull(ByVal objField As Object, ByVal objDBNull As Object) As Object

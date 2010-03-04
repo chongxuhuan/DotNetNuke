@@ -1,6 +1,6 @@
 ﻿/*
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -36,9 +36,10 @@ namespace DotNetNuke.Tests.Content
             table.Columns.Add("LastModifiedOnDate", typeof(DateTime));
         }
 
-        public static void AddContentItemToTable(DataTable table, int id, string content, string contentKey, bool indexed, int userId)
+        public static void AddContentItemToTable(DataTable table, int id, string content, string contentKey, bool indexed, int userId, string term)
         {
-            table.Rows.Add(new object[] { id, content, Null.NullInteger, Null.NullInteger, Null.NullInteger, contentKey, indexed, userId });
+            table.Rows.Add(new object[] { id, content, Null.NullInteger, Null.NullInteger, Null.NullInteger, 
+                                            contentKey, indexed, userId, term });
         }
 
         public static void AddContentTypeToTable(DataTable table, int id, string contentType)
@@ -72,7 +73,8 @@ namespace DotNetNuke.Tests.Content
                                         (string)rows[i]["Content"],
                                         (string)rows[i]["ContentKey"],
                                         (bool)rows[i]["Indexed"],
-                                        (int)rows[i]["UserID"]
+                                        (int)rows[i]["UserID"],
+                                        (string)rows[i]["Term"]
                 );
             }
 
@@ -148,6 +150,7 @@ namespace DotNetNuke.Tests.Content
             table.Columns.Add("ContentKey", typeof(string));
             table.Columns.Add("Indexed", typeof(bool));
             table.Columns.Add("UserID", typeof(int));
+            table.Columns.Add("Term", typeof(string));
             AddBaseEntityColumns(table);
 
             // Set the ID column as the primary key column.

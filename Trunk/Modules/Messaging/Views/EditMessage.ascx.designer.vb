@@ -44,13 +44,13 @@ Namespace DotNetNuke.Modules.Messaging.Views
         Protected WithEvents toTextBox As Global.DotNetNuke.Web.UI.WebControls.DnnTextBox
 
         '''<summary>
-        '''validateUser control.
+        '''validateUserButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents validateUser As Global.System.Web.UI.WebControls.LinkButton
+        Protected WithEvents validateUserButton As Global.System.Web.UI.WebControls.LinkButton
 
         '''<summary>
         '''toValidator control.
@@ -107,22 +107,22 @@ Namespace DotNetNuke.Modules.Messaging.Views
         Protected WithEvents messageEditor As Global.DotNetNuke.UI.UserControls.TextEditor
 
         '''<summary>
-        '''saveDraft control.
+        '''sendMessageButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents saveDraft As Global.System.Web.UI.WebControls.Button
+        Protected WithEvents sendMessageButton As Global.System.Web.UI.WebControls.Button
 
         '''<summary>
-        '''sendMessage control.
+        '''saveDraftButton control.
         '''</summary>
         '''<remarks>
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents sendMessage As Global.System.Web.UI.WebControls.LinkButton
+        Protected WithEvents saveDraftButton As Global.System.Web.UI.WebControls.LinkButton
 
         '''<summary>
         '''deleteHolder control.

@@ -26,53 +26,43 @@ Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
+Imports DotNetNuke.Web.Mvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class CreateVocabularyPresenter
-        Inherits Presenter(Of ICreateVocabularyView, CreateVocabularyPresenterModel)
+        Inherits ModulePresenter(Of ICreateVocabularyView)
 
 #Region "Private Members"
 
-        Private _Vocabulary As Vocabulary
         Private _VocabularyController As IVocabularyController
         Private _ScopeTypeController As IScopeTypeController
 
 #End Region
 
-#Region "Public Constants"
-
-        Public Const Name As String = "CreateVocabulary"
-
-#End Region
-
 #Region "Constructors"
 
-        Public Sub New()
-            Me.New(New VocabularyController(New DataService()), New ScopeTypeController(New DataService()))
+        Public Sub New(ByVal createView As ICreateVocabularyView)
+            Me.New(createView, New VocabularyController(New DataService()), New ScopeTypeController(New DataService()))
         End Sub
 
-        Public Sub New(ByVal vocabularyController As IVocabularyController, ByVal scopeTypeController As IScopeTypeController)
+        Public Sub New(ByVal createView As ICreateVocabularyView, ByVal vocabularyController As IVocabularyController, ByVal scopeTypeController As IScopeTypeController)
+            MyBase.New(createView)
             Arg.NotNull("vocabularyController", vocabularyController)
             Arg.NotNull("scopeTypeController", scopeTypeController)
 
             _VocabularyController = vocabularyController
             _ScopeTypeController = scopeTypeController
+
+            AddHandler View.Cancel, AddressOf Cancel
+            AddHandler View.Load, AddressOf Load
+            AddHandler View.Save, AddressOf Save
+            View.Model.Vocabulary = GetVocabulary()
         End Sub
 
 #End Region
 
 #Region "Public Properties"
-
-        <ViewState()> _
-        Public Property Vocabulary() As Vocabulary
-            Get
-                Return _Vocabulary
-            End Get
-            Set(ByVal value As Vocabulary)
-                _Vocabulary = value
-            End Set
-        End Property
 
         Public ReadOnly Property VocabularyController() As IVocabularyController
             Get
@@ -82,49 +72,57 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #End Region
 
+        Private Function GetVocabulary() As Vocabulary
+            Dim vocabulary As New Vocabulary()
+            Dim scopeType As ScopeType
+            If IsSuperUser Then
+                scopeType = _ScopeTypeController.GetScopeTypes() _
+                                                    .Where(Function(s) s.ScopeType = "Application") _
+                                                    .SingleOrDefault
+            Else
+                scopeType = _ScopeTypeController.GetScopeTypes() _
+                                                    .Where(Function(s) s.ScopeType = "Portal") _
+                                                    .SingleOrDefault
+            End If
+
+            If scopeType IsNot Nothing Then
+                vocabulary.ScopeTypeId = scopeType.ScopeTypeId
+                If scopeType.ScopeType = "Portal" Then
+                    vocabulary.ScopeId = PortalId
+                End If
+            End If
+            vocabulary.Type = VocabularyType.Simple
+
+            Return vocabulary
+        End Function
+
 #Region "Public Methods"
 
-        Public Function Cancel() As Boolean
-            Environment.RedirectToPresenter(New VocabularyListPresenterModel())
-        End Function
+        Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
+            Response.Redirect(NavigateURL(ModuleContext.TabId))
+        End Sub
 
-        Public Overrides Function Load() As Boolean
-            If Not Model.IsPostBack Then
-                Vocabulary = New Vocabulary()
-                Dim scopeType As ScopeType
-                If Me.Model.IsSuperUser Then
-                    scopeType = _ScopeTypeController.GetScopeTypes() _
-                                                        .Where(Function(s) s.ScopeType = "Application") _
-                                                        .SingleOrDefault
-                Else
-                    scopeType = _ScopeTypeController.GetScopeTypes() _
-                                                        .Where(Function(s) s.ScopeType = "Portal") _
-                                                        .SingleOrDefault
-                End If
+        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
+            View.BindVocabulary(View.Model.Vocabulary, IsSuperUser)
+        End Sub
 
-                If scopeType IsNot Nothing Then
-                    Vocabulary.ScopeTypeId = scopeType.ScopeTypeId
-                End If
-                Vocabulary.Type = VocabularyType.Simple
-            End If
+        Public Sub Save(ByVal sender As Object, ByVal e As EventArgs)
+            'Bind Model
+            View.BindVocabulary(View.Model.Vocabulary, IsSuperUser)
 
-            View.BindVocabulary(Vocabulary, Me.Model.IsSuperUser)
-        End Function
+            'Validate Model
+            Dim result As ValidationResult = Validator.ValidateObject(View.Model.Vocabulary)
 
-        Public Function SaveVocabulary() As Boolean
-            Validator.Validators.Add(New DataAnnotationsObjectValidator())
-            Dim result As ValidationResult = Validator.ValidateObject(Vocabulary)
             If result.IsValid Then
                 'Save Vocabulary
-                VocabularyController.AddVocabulary(Vocabulary)
+                VocabularyController.AddVocabulary(View.Model.Vocabulary)
 
                 'Redirect to Vocabulary List
-                Environment.RedirectToPresenter(New VocabularyListPresenterModel())
+                Response.Redirect(NavigateURL(ModuleContext.TabId))
             Else
-                View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
-
-        End Function
+        End Sub
 
 #End Region
 

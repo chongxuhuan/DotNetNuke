@@ -19,7 +19,6 @@
 '
 
 Imports DotNetNuke.Web.UI.WebControls
-Imports DotNetNuke.Modules.Taxonomy.ViewModels
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Content.Taxonomy
 
@@ -39,7 +38,7 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
 
 #Region "Events"
 
-        Public Event SelectedTermChanged As EventHandler(Of TermsListEventArgs)
+        Public Event SelectedTermChanged As EventHandler(Of TermsEventArgs)
 
 #End Region
 
@@ -135,7 +134,7 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
             MyBase.OnPreRender(e)
         End Sub
 
-        Protected Overridable Sub OnSelectedTermChanged(ByVal e As TermsListEventArgs)
+        Protected Overridable Sub OnSelectedTermChanged(ByVal e As TermsEventArgs)
             'Raise the SelectedTermChanged Event
             RaiseEvent SelectedTermChanged(Me, e)
         End Sub
@@ -146,12 +145,12 @@ Namespace DotNetNuke.Modules.Taxonomy.WebControls
 
         Private Sub ListBoxSelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
             'Raise the SelectedTermChanged Event
-            OnSelectedTermChanged(New TermsListEventArgs(SelectedTerm))
+            OnSelectedTermChanged(New TermsEventArgs(SelectedTerm))
         End Sub
 
         Private Sub TreeViewNodeClick(ByVal sender As Object, ByVal e As Telerik.Web.UI.RadTreeNodeEventArgs)
             'Raise the SelectedTermChanged Event
-            OnSelectedTermChanged(New TermsListEventArgs(SelectedTerm))
+            OnSelectedTermChanged(New TermsEventArgs(SelectedTerm))
         End Sub
 
 #End Region

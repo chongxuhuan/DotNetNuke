@@ -9,7 +9,7 @@
         <td class="NormalTextBox">
             <asp:Label ID="toLabel" runat="server" />
             <dnn:DnnTextBox ID="toTextBox" runat="server" width="350px" />
-			<asp:LinkButton ID="validateUser" Runat="server" CssClass="CommandButton" resourceKey="Validate" CausesValidation="false"/>
+			<asp:LinkButton ID="validateUserButton" Runat="server" CssClass="CommandButton" resourceKey="Validate" CausesValidation="false"/>
             <asp:RequiredFieldValidator ID="toValidator" ControlToValidate="toTextBox" runat="server" ResourceKey="EmailTo.Required" Display="Dynamic" />
         </td>
     </tr>
@@ -34,8 +34,8 @@
 </table>
 <br />
 <p>
-    <asp:Button ID="saveDraft" runat="server" resourceKey="SaveDraft"/>&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:LinkButton ID="sendMessage" runat="server" resourceKey="SendMessage"/>&nbsp;&nbsp;&nbsp;&nbsp;
+    <asp:Button ID="sendMessageButton" runat="server" resourceKey="SendMessage"/>&nbsp;&nbsp;&nbsp;&nbsp;
+    <asp:LinkButton ID="saveDraftButton" runat="server" resourceKey="SaveDraft"/>&nbsp;&nbsp;&nbsp;&nbsp;
     <asp:PlaceHolder ID="deleteHolder" runat="server">
         <asp:LinkButton ID="deleteMessage" runat="server" resourceKey="DeleteMessage" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
     </asp:PlaceHolder>

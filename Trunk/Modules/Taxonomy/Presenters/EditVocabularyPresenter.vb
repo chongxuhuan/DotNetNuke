@@ -26,42 +26,49 @@ Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Entities.Users
+Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Taxonomy.WebControls
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class EditVocabularyPresenter
-        Inherits Presenter(Of IEditVocabularyView, EditVocabularyPresenterModel)
+        Inherits ModulePresenter(Of IEditVocabularyView)
 
 #Region "Private Members"
 
         Private _TermController As ITermController
-        Private _Term As Term
-        Private _Terms As List(Of Term)
-        Private _Vocabulary As Vocabulary
         Private _VocabularyController As IVocabularyController
-
-#End Region
-
-#Region "Public Constants"
-
-        Public Const Name As String = "EditVocabulary"
 
 #End Region
 
 #Region "Constructors"
 
-        Public Sub New()
-            Me.New(New VocabularyController(New DataService()), _
+        Public Sub New(ByVal editView As IEditVocabularyView)
+            Me.New(editView, _
+                   New VocabularyController(New DataService()), _
                    New TermController(New DataService()))
         End Sub
 
-        Public Sub New(ByVal vocabularyController As IVocabularyController, _
+        Public Sub New(ByVal editView As IEditVocabularyView, _
+                       ByVal vocabularyController As IVocabularyController, _
                        ByVal termController As ITermController)
+            MyBase.New(editView)
             Arg.NotNull("vocabularyController", vocabularyController)
             Arg.NotNull("termController", termController)
 
             _VocabularyController = vocabularyController
             _TermController = termController
+
+            AddHandler View.AddTerm, AddressOf AddTerm
+            AddHandler View.Cancel, AddressOf Cancel
+            AddHandler View.CancelTerm, AddressOf CancelTerm
+            AddHandler View.Delete, AddressOf DeleteVocabulary
+            AddHandler View.DeleteTerm, AddressOf DeleteTerm
+            AddHandler View.Load, AddressOf Load
+            AddHandler View.Save, AddressOf SaveVocabulary
+            AddHandler View.SaveTerm, AddressOf SaveTerm
+            AddHandler View.SelectTerm, AddressOf SelectTerm
+
         End Sub
 
 #End Region
@@ -71,15 +78,15 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
         Public ReadOnly Property IsEditEnabled() As Boolean
             Get
                 Dim user As UserInfo = UserController.GetCurrentUserInfo()
-                Return Vocabulary.ScopeType.ScopeType = "Portal" OrElse (user IsNot Nothing AndAlso user.IsSuperUser)
+                Return String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", False) = 0 OrElse (user IsNot Nothing AndAlso user.IsSuperUser)
             End Get
         End Property
 
         Public ReadOnly Property IsHeirarchical() As Boolean
             Get
                 Dim _IsHeirarchical As Boolean = Null.NullBoolean
-                If Vocabulary IsNot Nothing Then
-                    _IsHeirarchical = (Vocabulary.Type = VocabularyType.Hierarchy)
+                If View.Model.Vocabulary IsNot Nothing Then
+                    _IsHeirarchical = (View.Model.Vocabulary.Type = VocabularyType.Hierarchy)
                 End If
                 Return _IsHeirarchical
             End Get
@@ -91,39 +98,19 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             End Get
         End Property
 
-        <ViewState()> _
-        Public Property Term() As Term
-            Get
-                Return _Term
-            End Get
-            Set(ByVal value As Term)
-                _Term = value
-            End Set
-        End Property
-
-        <ViewState()> _
-        Public Property Terms() As List(Of Term)
-            Get
-                Return _Terms
-            End Get
-            Set(ByVal value As List(Of Term))
-                _Terms = value
-            End Set
-        End Property
-
-        <ViewState()> _
-        Public Property Vocabulary() As Vocabulary
-            Get
-                Return _Vocabulary
-            End Get
-            Set(ByVal value As Vocabulary)
-                _Vocabulary = value
-            End Set
-        End Property
-
         Public ReadOnly Property VocabularyController() As IVocabularyController
             Get
                 Return _VocabularyController
+            End Get
+        End Property
+
+        Public ReadOnly Property VocabularyId() As Integer
+            Get
+                Dim _VocabularyId As Integer = Null.NullInteger
+                If Not String.IsNullOrEmpty(Request.Params("VocabularyId")) Then
+                    _VocabularyId = Int32.Parse(Request.Params("VocabularyId"))
+                End If
+                Return _VocabularyId
             End Get
         End Property
 
@@ -133,11 +120,11 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         Private Sub RefreshTerms()
             'Refresh Terms
-            Terms = TermController.GetTermsByVocabulary(Model.VocabularyId).ToList()
-            View.BindTerms(Terms, IsHeirarchical, True)
+            View.Model.Terms = TermController.GetTermsByVocabulary(VocabularyId).ToList()
+            View.BindTerms(View.Model.Terms, IsHeirarchical, True)
 
             'Clear Selected Term
-            Term = Nothing
+            View.Model.Term = Nothing
             View.ClearSelectedTerm()
 
             'Hide Term Editor
@@ -146,118 +133,128 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #End Region
 
+#Region "Protected Methods"
+
+        Protected Overrides Sub Initialize()
+            MyBase.Initialize()
+
+            If View.Model.Vocabulary Is Nothing Then
+                View.Model.Vocabulary = VocabularyController.GetVocabularies() _
+                                        .Where(Function(v) v.VocabularyId = VocabularyId) _
+                                        .SingleOrDefault
+                View.Model.Terms = TermController.GetTermsByVocabulary(VocabularyId).ToList()
+            End If
+        End Sub
+
+#End Region
+
 #Region "Public Methods"
 
-        Public Function AddTerm() As Boolean
+        Public Sub AddTerm(ByVal sender As Object, ByVal e As EventArgs)
             'Set term to be a new term
-            Term = New Term(Vocabulary.VocabularyId)
+            View.Model.Term = New Term(View.Model.Vocabulary.VocabularyId)
 
             'Bind Term
-            View.BindTerm(Term, Terms, IsHeirarchical, False, IsEditEnabled)
+            View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, False, IsEditEnabled)
 
             'Display Term Editor
             View.ShowTermEditor(True)
 
             'Set Term Editor's mode
             View.SetTermEditorMode(True, Null.NullInteger)
-        End Function
+        End Sub
 
-        Public Function Cancel() As Boolean
-            Environment.RedirectToPresenter(New VocabularyListPresenterModel())
-        End Function
+        Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
+            Response.Redirect(NavigateURL(ModuleContext.TabId))
+        End Sub
 
-        Public Function CancelTerm() As Boolean
+        Public Sub CancelTerm(ByVal sender As Object, ByVal e As EventArgs)
             'Clear Selected Term
-            Term = Nothing
+            View.Model.Term = Nothing
             View.ClearSelectedTerm()
 
             'Hide Term Editor
             View.ShowTermEditor(False)
-        End Function
+        End Sub
 
-        Public Function DeleteTerm() As Boolean
+        Public Sub DeleteTerm(ByVal sender As Object, ByVal e As EventArgs)
             'Delete Term
-            TermController.DeleteTerm(Term)
+            TermController.DeleteTerm(View.Model.Term)
 
             'Refresh Terms
             RefreshTerms()
-        End Function
+        End Sub
 
-        Public Function DeleteVocabulary() As Boolean
+        Public Sub DeleteVocabulary(ByVal sender As Object, ByVal e As EventArgs)
             'Delete Vocabulary
-            VocabularyController.DeleteVocabulary(Vocabulary)
+            VocabularyController.DeleteVocabulary(View.Model.Vocabulary)
 
             'Redirect to List
-            Environment.RedirectToPresenter(New VocabularyListPresenterModel())
-        End Function
+            Response.Redirect(NavigateURL(ModuleContext.TabId))
+        End Sub
 
-        Public Overrides Function Load() As Boolean
-            If Not Model.IsPostBack Then
-                'Get Vocabulary
-                Vocabulary = VocabularyController.GetVocabularies() _
-                                                .Where(Function(v) v.VocabularyId = Model.VocabularyId) _
-                                                .SingleOrDefault
-            End If
-
+        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
             Dim user As UserInfo = UserController.GetCurrentUserInfo()
 
             'Bind Vocabulary to View
-            View.BindVocabulary(Vocabulary, IsEditEnabled, Me.Model.IsSuperUser)
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
 
-            'Get Terms for this Vocabulary and bind to terms list
-            Terms = TermController.GetTermsByVocabulary(Model.VocabularyId).ToList()
-            View.BindTerms(Terms, IsHeirarchical, Not Model.IsPostBack)
-        End Function
+            'Bind Terms to View
+            View.BindTerms(View.Model.Terms, IsHeirarchical, Not IsPostBack)
+        End Sub
 
-        Public Function SaveTerm() As Boolean
+        Public Sub SaveTerm(ByVal sender As Object, ByVal e As EventArgs)
             'First Bind the term so we can get the current values from the View
-            View.BindTerm(Term, Terms, IsHeirarchical, True, IsEditEnabled)
+            View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, True, IsEditEnabled)
 
-            Dim result As ValidationResult = Validator.ValidateObject(Term)
+            Dim result As ValidationResult = Validator.ValidateObject(View.Model.Term)
             If result.IsValid Then
                 'Save Term
-                If Term.TermId = Null.NullInteger Then
+                If View.Model.Term.TermId = Null.NullInteger Then
                     'Add
-                    TermController.AddTerm(Term)
+                    TermController.AddTerm(View.Model.Term)
                 Else
                     'Update
-                    TermController.UpdateTerm(Term)
+                    TermController.UpdateTerm(View.Model.Term)
                 End If
 
                 'Refresh Terms
                 RefreshTerms()
             Else
-                View.ShowMessage("TermValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                'View.ShowMessage("TermValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
 
-        End Function
+        End Sub
 
-        Public Function SaveVocabulary() As Boolean
-            Dim result As ValidationResult = Validator.ValidateObject(Vocabulary)
+        Public Sub SaveVocabulary(ByVal sender As Object, ByVal e As EventArgs)
+            'Bind Vocabulary to View
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
+
+            Dim result As ValidationResult = Validator.ValidateObject(View.Model.Vocabulary)
             If result.IsValid Then
                 'Save Vocabulary
-                VocabularyController.UpdateVocabulary(Vocabulary)
+                VocabularyController.UpdateVocabulary(View.Model.Vocabulary)
 
                 'Redirect to Vocabulary List
-                Environment.RedirectToPresenter(New VocabularyListPresenterModel())
+                Response.Redirect(NavigateURL(ModuleContext.TabId))
             Else
-                View.ShowMessage("VocabularyValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                'View.ShowMessage("VocabularyValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
 
-        End Function
+        End Sub
 
-        Public Function SelectTerm(ByVal term As Term) As Boolean
-            Me.Term = term
+        Public Sub SelectTerm(ByVal sender As Object, ByVal e As TermsEventArgs)
+            View.Model.Term = e.SelectedTerm
 
             'Bind Term
-            View.BindTerm(term, Terms, IsHeirarchical, False, IsEditEnabled)
+            View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, False, IsEditEnabled)
 
             'Display Term Editor
             View.ShowTermEditor(True)
 
             'Set Term Editor's mode
-            View.SetTermEditorMode(False, term.TermId)
-        End Function
+            View.SetTermEditorMode(False, View.Model.Term.TermId)
+        End Sub
 
 #End Region
 

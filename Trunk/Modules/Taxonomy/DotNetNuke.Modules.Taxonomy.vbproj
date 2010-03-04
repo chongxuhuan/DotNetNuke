@@ -49,6 +49,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -58,6 +61,12 @@
     <Reference Include="Telerik.Web.UI, Version=2009.3.1104.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WebFormsMvp, Version=0.9.7.2, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -85,13 +94,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="Components\TaxonomyController.vb" />
-    <Compile Include="Presenters\EditVocabularyPresenterModel.vb" />
     <Compile Include="Presenters\EditVocabularyPresenter.vb" />
     <Compile Include="Presenters\CreateVocabularyPresenter.vb" />
-    <Compile Include="Presenters\CreateVocabularyPresenterModel.vb" />
     <Compile Include="Presenters\VocabularyListPresenter.vb" />
-    <Compile Include="Presenters\VocabularyListPresenterModel.vb" />
-    <Compile Include="Presenters\VocabularyPresenterModelBase.vb" />
     <Compile Include="Views\Controls\EditTermControl.ascx.designer.vb">
       <DependentUpon>EditTermControl.ascx</DependentUpon>
     </Compile>
@@ -123,6 +128,9 @@
     </Compile>
     <Compile Include="Views\ICreateVocabularyView.vb" />
     <Compile Include="Views\IVocabularyListView.vb" />
+    <Compile Include="Views\Models\EditVocabularyModel.vb" />
+    <Compile Include="Views\Models\CreateVocabularyModel.vb" />
+    <Compile Include="Views\Models\VocabularyListModel.vb" />
     <Compile Include="Views\VocabularyList.ascx.designer.vb">
       <DependentUpon>VocabularyList.ascx</DependentUpon>
     </Compile>
@@ -130,8 +138,8 @@
       <DependentUpon>VocabularyList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="WebControls\TermsEventArgs.vb" />
     <Compile Include="WebControls\TermsList.vb" />
-    <Compile Include="WebControls\TermsListEventArgs.vb" />
     <Compile Include="WebControls\TermsSelector.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -181,7 +189,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4000</DevelopmentServerPort>
+          <DevelopmentServerPort>2402</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost/DotNetNuke.Modules.Taxonomy</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>

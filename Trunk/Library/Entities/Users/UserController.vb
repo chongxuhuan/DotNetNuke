@@ -25,6 +25,7 @@ Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports System.Web
 Imports System.Web.Security
+Imports DotNetNuke.Services.Messaging.Data
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Entities.Modules
@@ -34,7 +35,6 @@ Imports DotNetNuke.Security
 Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Services.Localization
-Imports DotNetNuke.UI.WebControls
 Imports System.Collections.Generic
 Imports DotNetNuke.Security.Permissions
 
@@ -60,8 +60,10 @@ Namespace DotNetNuke.Entities.Users
 #Region "Private Shared Members"
 
         Private Shared memberProvider As DotNetNuke.Security.Membership.MembershipProvider = DotNetNuke.Security.Membership.MembershipProvider.Instance()
+        Private Shared _messagingController As New Services.Messaging.MessagingController()
 
 #End Region
+
 
 #Region "Private Shared/Static Methods"
 
@@ -183,7 +185,7 @@ Namespace DotNetNuke.Entities.Users
                 settings("Security_RequireValidProfileAtLogin") = True
             End If
             If settings("Security_UsersControl") Is Nothing Then
-                If ((Not _portalSettings Is Nothing) AndAlso (_portalSettings.Users > 1000)) Then
+                If ((Not _portalSettings Is Nothing) AndAlso (UserController.GetUserCountByPortal(_portalSettings.PortalId) > 1000)) Then
                     settings("Security_UsersControl") = UsersControl.TextBox
                 Else
                     settings("Security_UsersControl") = UsersControl.Combo
@@ -225,7 +227,7 @@ Namespace DotNetNuke.Entities.Users
             'Validate the new Password
             If ValidatePassword(newPassword) Then
                 retValue = memberProvider.ChangePassword(user, oldPassword, newPassword)
-                
+
                 'Update User
                 user.Membership.UpdatePassword = False
                 UpdateUser(user.PortalID, user)
@@ -365,10 +367,16 @@ Namespace DotNetNuke.Entities.Users
 
                     If notify AndAlso Not objUser.IsSuperUser Then
                         ' send email notification to portal administrator that the user was removed from the portal
-                        DotNetNuke.Services.Mail.Mail.SendMail(_portalSettings.Email, _portalSettings.Email, "", _
-                            Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_SUBJECT", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId), _
-                            Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_BODY", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId), _
-                            "", "", "", "", "", "")
+
+                        Dim _message As New Message()
+                        _message.FromUserID = _portalSettings.AdministratorId
+                        _message.ToUserID = _portalSettings.AdministratorId
+                        _message.Subject = Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_SUBJECT", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId)
+                        _message.Body = Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_BODY", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId)
+                        _message.Status = MessageStatusType.Unread
+                        _messagingController.SaveMessage(_message)
+
+
                     End If
                     DataCache.ClearPortalCache(objUser.PortalID, False)
                     DataCache.ClearUserCache(objUser.PortalID, objUser.Username)

@@ -1,4 +1,4 @@
-﻿'
+'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -19,52 +19,36 @@
 '
 
 Imports DotNetNuke.Modules.Messaging.Presenters
-Imports DotNetNuke.Web.Mvp.Framework
-Imports DotNetNuke.Services.Messaging.Providers
-Imports DotNetNuke.UI.UserControls
+Imports DotNetNuke.Services.Messaging.Data
+Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Messaging.Views.Models
+Imports WebFormsMvp
 
 Namespace DotNetNuke.Modules.Messaging.Views
 
+    <PresenterBinding(GetType(EditMessagePresenter))> _
     Partial Public Class EditMessage
-        Inherits ViewBase(Of IEditMessageView, EditMessagePresenter, EditMessagePresenterModel)
+        Inherits ModuleView(Of EditMessageModel)
         Implements IEditMessageView
 
-#Region "Protected Properties"
 
-        Protected Overrides ReadOnly Property View() As IEditMessageView
-            Get
-                Return Me
-            End Get
-        End Property
+#Region "IEditMessageView Implementation"
 
-#End Region
-
-#Region "ViewBase Virtual/Abstract Method Overrides"
-
-        Protected Overrides Sub ConnectEvents()
-            MyBase.ConnectEvents()
-
-            AddHandler cancelEdit.Click, CreateSimpleHandler(Function(p) p.Cancel())
-            AddHandler deleteMessage.Click, CreateSimpleHandler(Function(p) p.DeleteMessage())
-            AddHandler sendMessage.Click, CreateSaveHandler(Function(p) p.SaveMessage(toTextBox.Text, False))
-            AddHandler saveDraft.Click, CreateSaveHandler(Function(p) p.SaveMessage(toTextBox.Text, True))
-            AddHandler validateUser.Click, CreateSimpleHandler(Function(p) p.ValidateUser(toTextBox.Text))
-        End Sub
-
-        Protected Overrides Sub Localize()
-        End Sub
-
-#End Region
+        Public Event Cancel(ByVal sender As Object, ByVal e As EventArgs) Implements IEditMessageView.Cancel
+        Public Event Delete(ByVal sender As Object, ByVal e As EventArgs) Implements IEditMessageView.Delete
+        Public Event SaveDraft(ByVal sender As Object, ByVal e As EventArgs) Implements IEditMessageView.SaveDraft
+        Public Event SendMessage(ByVal sender As Object, ByVal e As EventArgs) Implements IEditMessageView.SendMessage
+        Public Event ValidateUser(ByVal sender As Object, ByVal e As EventArgs) Implements IEditMessageView.ValidateUser
 
         Public Sub BindMessage(ByVal message As Message) Implements IEditMessageView.BindMessage
             If Me.IsPostBack Then
                 message.Subject = subjectTextBox.Text
-                message.LongBody = messageEditor.Text
+                message.Body = messageEditor.Text
             Else
-                toTextBox.Text = message.ToUsername
-                toTextBox.ToolTip = message.ToDisplayName
+                toTextBox.Text = message.ToUserName
+                toTextBox.ToolTip = message.ToUserName
                 subjectTextBox.Text = message.Subject
-                messageEditor.Text = message.LongBody
+                messageEditor.Text = message.Body
             End If
         End Sub
 
@@ -76,6 +60,30 @@ Namespace DotNetNuke.Modules.Messaging.Views
             deleteHolder.Visible = False
         End Sub
 
+#End Region
+
+        Private Sub cancelEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelEdit.Click
+            RaiseEvent Cancel(Me, e)
+        End Sub
+
+        Private Sub deleteMessage_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles deleteMessage.Click
+            RaiseEvent Delete(Me, e)
+        End Sub
+
+        Private Sub saveDraftButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles saveDraftButton.Click
+            Model.UserName = toTextBox.Text
+            RaiseEvent SaveDraft(Me, e)
+        End Sub
+
+        Private Sub sendMessageButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles sendMessageButton.Click
+            Model.UserName = toTextBox.Text
+            RaiseEvent SendMessage(Me, e)
+        End Sub
+
+        Private Sub validateUserButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles validateUserButton.Click
+            Model.UserName = toTextBox.Text
+            RaiseEvent ValidateUser(Me, e)
+        End Sub
     End Class
 
 End Namespace

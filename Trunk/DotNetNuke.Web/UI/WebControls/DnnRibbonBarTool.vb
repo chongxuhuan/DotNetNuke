@@ -35,55 +35,76 @@ Namespace DotNetNuke.Web.UI.WebControls
 
 #Region "Properties"
 
-		Private _ToolName As String = String.Empty
+		Private _ToolInfo As RibbonBarToolInfo = New RibbonBarToolInfo()
+		Public Overridable Property ToolInfo() As RibbonBarToolInfo
+			Get
+				If (ViewState("ToolInfo") Is Nothing) Then
+					ViewState.Add("ToolInfo", New RibbonBarToolInfo())
+				End If
+				Return DirectCast(ViewState("ToolInfo"), RibbonBarToolInfo)
+			End Get
+			Set(ByVal value As RibbonBarToolInfo)
+				ViewState("ToolInfo") = value
+			End Set
+		End Property
+
 		Public Overridable Property ToolName() As String Implements IDnnRibbonBarTool.ToolName
 			Get
-				Return _ToolName
+				Return ToolInfo.ToolName
 			End Get
 			Set(ByVal value As String)
-				_ToolName = value
+				If (AllTools.ContainsKey(value)) Then
+					ToolInfo = AllTools(value)
+				Else
+					Throw New NotSupportedException("Tool not found [" + value + "]")
+				End If
 			End Set
 		End Property
 
-		Private _ToolCssClass As String = "rgIconLeft"
-		Public Overridable Property ToolCssClass() As String
+		Public Overridable Property NavigateUrl() As String
 			Get
-				Return _ToolCssClass
-			End Get
+                Return Utilities.GetViewStateAsString(ViewState("NavigateUrl"), Null.NullString)
+            End Get
 			Set(ByVal value As String)
-				_ToolCssClass = value
+				ViewState("NavigateUrl") = value
 			End Set
 		End Property
 
-		Private _ImageUrl As String = ""
+		Public Overridable Property ToolCssClass() As String
+            Get
+                Return Utilities.GetViewStateAsString(ViewState("ToolCssClass"), Null.NullString)
+            End Get
+			Set(ByVal value As String)
+				ViewState("ToolCssClass") = value
+			End Set
+		End Property
+
 		Public Overridable Property ImageUrl() As String
 			Get
-				Return _ImageUrl
-			End Get
+                Return Utilities.GetViewStateAsString(ViewState("ImageUrl"), Null.NullString)
+            End Get
 			Set(ByVal value As String)
-				_ImageUrl = value
+				ViewState("ImageUrl") = value
 			End Set
 		End Property
 
-		Private _Text As String = ""
 		Public Overridable Property Text() As String
 			Get
-				Return _Text
-			End Get
+                Return Utilities.GetViewStateAsString(ViewState("Text"), Null.NullString)
+            End Get
 			Set(ByVal value As String)
-				_Text = value
+				ViewState("Text") = value
 			End Set
 		End Property
 
-		Private _ToolTip As String = ""
-		Public Overridable Property ToolTip() As String
-			Get
-				Return _ToolTip
-			End Get
-			Set(ByVal value As String)
-				_ToolTip = value
-			End Set
-		End Property
+        Public Overridable Property ToolTip() As String
+            Get
+                Return Utilities.GetViewStateAsString(ViewState("ToolTip"), Null.NullString)
+            End Get
+            Set(ByVal value As String)
+                ViewState("ToolTip") = value
+            End Set
+        End Property
 
 		Private _DnnLinkButton As DnnImageTextButton = Nothing
 		Protected Overridable ReadOnly Property DnnLinkButton() As DnnImageTextButton
@@ -186,13 +207,13 @@ Namespace DotNetNuke.Web.UI.WebControls
 		End Sub
 
 		Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
-			ProcessTool(ToolName)
+			ProcessTool()
 			Visible = (DnnLink.Visible = True OrElse DnnLinkButton.Visible = True)
 			MyBase.OnPreRender(e)
 		End Sub
 
 		Public Overridable Sub ControlPanelTool_OnClick(ByVal sender As Object, ByVal e As EventArgs)
-			Select Case ToolName
+			Select Case ToolInfo.ToolName
 				Case "DeletePage"
 					If (HasToolPermissions("DeletePage")) Then
 						Dim url As String = DotNetNuke.Common.Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Tab", "action=delete")
@@ -215,31 +236,31 @@ Namespace DotNetNuke.Web.UI.WebControls
 
 #Region "Methods"
 
-		Protected Overridable Sub ProcessTool(ByVal toolName As String)
+		Protected Overridable Sub ProcessTool()
 			DnnLink.Visible = False
 			DnnLinkButton.Visible = False
 
-			If (AllTools.ContainsKey(toolName)) Then
-				If (AllTools(toolName).UseButton) Then
-					DnnLinkButton.Visible = HasToolPermissions(toolName)
-					DnnLinkButton.Enabled = EnableTool(toolName)
+			If (Not String.IsNullOrEmpty(ToolInfo.ToolName)) Then
+				If (ToolInfo.UseButton) Then
+					DnnLinkButton.Visible = HasToolPermissions(ToolInfo.ToolName)
+					DnnLinkButton.Enabled = EnableTool()
 					DnnLinkButton.Localize = False
 
-					DnnLinkButton.ImageUrl = GetImageUrl(toolName)
+					DnnLinkButton.ImageUrl = GetImageUrl()
 					DnnLinkButton.CssClass = ToolCssClass
 					DnnLinkButton.DisabledCssClass = ToolCssClass + " rgIconDisabled"
 
-					DnnLinkButton.Text = GetText(toolName)
-					DnnLinkButton.ToolTip = GetToolTip(toolName)
+					DnnLinkButton.Text = GetText()
+					DnnLinkButton.ToolTip = GetToolTip()
 
 					DnnLinkButton.ConfirmMessage = GetButtonConfirmMessage()
 				Else
-					DnnLink.Visible = HasToolPermissions(toolName)
-					DnnLink.Enabled = EnableTool(toolName)
+					DnnLink.Visible = HasToolPermissions(ToolInfo.ToolName)
+					DnnLink.Enabled = EnableTool()
 					DnnLink.Localize = False
 
 					If (DnnLink.Enabled) Then
-						DnnLink.NavigateUrl = BuildToolUrl(toolName)
+						DnnLink.NavigateUrl = BuildToolUrl()
 
 						'can't find the page, disable it?
 						If (DnnLink.NavigateUrl = "") Then
@@ -247,28 +268,28 @@ Namespace DotNetNuke.Web.UI.WebControls
 						End If
 					End If
 
-					DnnLink.ImageUrl = GetImageUrl(toolName)
+					DnnLink.ImageUrl = GetImageUrl()
 					DnnLink.CssClass = ToolCssClass
 					DnnLink.DisabledCssClass = ToolCssClass + " rgIconDisabled"
 
-					DnnLink.Text = GetText(toolName)
-					DnnLink.ToolTip = GetToolTip(toolName)
-					DnnLink.Target = GetLinkTarget(toolName)
+					DnnLink.Text = GetText()
+					DnnLink.ToolTip = GetToolTip()
+					DnnLink.Target = ToolInfo.LinkWindowTarget
 				End If
 			End If
 		End Sub
 
-		Protected Overridable Function EnableTool(ByVal toolName As String) As Boolean
+		Protected Overridable Function EnableTool() As Boolean
 			Dim returnValue As Boolean = True
 
-			Select Case toolName
+			Select Case ToolInfo.ToolName
 				Case "DeletePage"
 					If (TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings)) Then
 						returnValue = False
 					End If
 				Case "CopyDesignToChildren", "CopyPermissionsToChildren"
 					returnValue = ActiveTabHasChildren()
-					If (returnValue = True AndAlso toolName = "CopyPermissionsToChildren") Then
+					If (returnValue = True AndAlso ToolInfo.ToolName = "CopyPermissionsToChildren") Then
 						If (PortalSettings.ActiveTab.IsSuperTab) Then
 							returnValue = False
 						End If
@@ -300,11 +321,18 @@ Namespace DotNetNuke.Web.UI.WebControls
 		End Function
 
 		Protected Overridable Function HasToolPermissions(ByVal toolName As String) As Boolean
-			If (IsHostTool(toolName) AndAlso Not DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo().IsSuperUser) Then
+			Dim isHostTool As Boolean = False
+			If (ToolInfo.ToolName = toolName) Then
+				isHostTool = ToolInfo.IsHostTool
+			ElseIf (AllTools.ContainsKey(toolName)) Then
+				isHostTool = AllTools(toolName).IsHostTool
+			End If
+
+			If (isHostTool AndAlso Not DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo().IsSuperUser) Then
 				Return False
 			End If
 
-			Dim returnValue As Boolean = False
+			Dim returnValue As Boolean = True
 			Select Case toolName
 				Case "PageSettings", "CopyDesignToChildren", "CopyPermissionsToChildren"
 					returnValue = TabPermissionController.CanManagePage
@@ -329,27 +357,31 @@ Namespace DotNetNuke.Web.UI.WebControls
 				Case Else
 					'if it has a module definition, look it up and check permissions
 					'if it doesn't exist, assume no permission
-					If (AllTools.ContainsKey(toolName)) Then
-						Dim friendlyName As String = AllTools(toolName).ModuleFriendlyName
+					Dim friendlyName As String = ""
+					If (ToolInfo.ToolName = toolName) Then
+						friendlyName = ToolInfo.ModuleFriendlyName
+					ElseIf (AllTools.ContainsKey(toolName)) Then
+						friendlyName = AllTools(toolName).ModuleFriendlyName
+					End If
 
-						If (Not String.IsNullOrEmpty(friendlyName)) Then
-							Dim moduleInfo As DotNetNuke.Entities.Modules.ModuleInfo = Nothing
+					If (Not String.IsNullOrEmpty(friendlyName)) Then
+						returnValue = False
+						Dim moduleInfo As DotNetNuke.Entities.Modules.ModuleInfo = Nothing
 
-							If (IsHostTool(toolName)) Then
-								moduleInfo = GetInstalledModule(Null.NullInteger, friendlyName)
-							Else
-								moduleInfo = GetInstalledModule(PortalSettings.PortalId, friendlyName)
-							End If
+						If (isHostTool) Then
+							moduleInfo = GetInstalledModule(Null.NullInteger, friendlyName)
+						Else
+							moduleInfo = GetInstalledModule(PortalSettings.PortalId, friendlyName)
+						End If
 
-							If Not moduleInfo Is Nothing Then
-								returnValue = ModulePermissionController.CanViewModule(moduleInfo)
+						If Not moduleInfo Is Nothing Then
+							returnValue = ModulePermissionController.CanViewModule(moduleInfo)
 
-								'If (toolName = "UploadFile") Then
-								'	If (Not DotNetNuke.Security.PortalSecurity.IsInRole("Administrators")) Then
-								'		returnValue = False
-								'	End If
-								'End If
-							End If
+							'If (toolName = "UploadFile") Then
+							'	If (Not DotNetNuke.Security.PortalSecurity.IsInRole("Administrators")) Then
+							'		returnValue = False
+							'	End If
+							'End If
 						End If
 					End If
 			End Select
@@ -357,13 +389,17 @@ Namespace DotNetNuke.Web.UI.WebControls
 			Return returnValue
 		End Function
 
-		Protected Overridable Function BuildToolUrl(ByVal toolName As String) As String
-			If (IsHostTool(toolName) AndAlso Not DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo().IsSuperUser) Then
+		Protected Overridable Function BuildToolUrl() As String
+			If (ToolInfo.IsHostTool AndAlso Not DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo().IsSuperUser) Then
 				Return "javascript:void(0);"
 			End If
 
+			If (Not String.IsNullOrEmpty(NavigateUrl)) Then
+				Return NavigateUrl
+			End If
+
 			Dim returnValue As String = "javascript:void(0);"
-			Select Case toolName
+			Select Case ToolInfo.ToolName
 				Case "PageSettings"
 					returnValue = DotNetNuke.Common.Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Tab", "action=edit")
 					Exit Select
@@ -389,22 +425,20 @@ Namespace DotNetNuke.Web.UI.WebControls
 					Exit Select
 				Case Else
 					'if it has a module definition, look it up and check permissions
-					If (AllTools.ContainsKey(toolName)) Then
-						Dim friendlyName As String = AllTools(toolName).ModuleFriendlyName
-						Dim controlKey As String = AllTools(toolName).ControlKey
+					Dim friendlyName As String = ToolInfo.ModuleFriendlyName
+					Dim controlKey As String = ToolInfo.ControlKey
 
-						If (Not String.IsNullOrEmpty(friendlyName)) Then
-							Dim additionalParams As List(Of String) = New List(Of String)()
-							If (toolName = "UploadFile" Or toolName = "HostUploadFile") Then
-								additionalParams.Add("ftype=File")
-								additionalParams.Add("rtab=" + PortalSettings.ActiveTab.TabID.ToString())
-							End If
+					If (Not String.IsNullOrEmpty(friendlyName)) Then
+						Dim additionalParams As List(Of String) = New List(Of String)()
+						If (ToolInfo.ToolName = "UploadFile" Or ToolInfo.ToolName = "HostUploadFile") Then
+							additionalParams.Add("ftype=File")
+							additionalParams.Add("rtab=" + PortalSettings.ActiveTab.TabID.ToString())
+						End If
 
-							If (IsHostTool(toolName)) Then
-								returnValue = GetTabURL(Null.NullInteger, friendlyName, controlKey, additionalParams)
-							Else
-								returnValue = GetTabURL(PortalSettings.PortalId, friendlyName, controlKey, additionalParams)
-							End If
+						If (ToolInfo.IsHostTool) Then
+							returnValue = GetTabURL(Null.NullInteger, friendlyName, controlKey, additionalParams)
+						Else
+							returnValue = GetTabURL(PortalSettings.PortalId, friendlyName, controlKey, additionalParams)
 						End If
 					End If
 					Exit Select
@@ -413,25 +447,25 @@ Namespace DotNetNuke.Web.UI.WebControls
 			Return returnValue
 		End Function
 
-		Protected Overridable Function GetText(ByVal toolName As String) As String
+		Protected Overridable Function GetText() As String
 			If (String.IsNullOrEmpty(Text)) Then
-				Return GetString(String.Format("Tool.{0}.Text", toolName))
+				Return GetString(String.Format("Tool.{0}.Text", ToolInfo.ToolName))
 			Else
 				Return Text
 			End If
 		End Function
 
-		Protected Overridable Function GetToolTip(ByVal toolName As String) As String
-			If (toolName = "DeletePage") Then
+		Protected Overridable Function GetToolTip() As String
+			If (ToolInfo.ToolName = "DeletePage") Then
 				If (TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings)) Then
 					Return GetString("Tool.DeletePage.Special.ToolTip")
 				End If
 			End If
 
 			If (String.IsNullOrEmpty(Text)) Then
-				Dim tip As String = GetString(String.Format("Tool.{0}.ToolTip", toolName))
+				Dim tip As String = GetString(String.Format("Tool.{0}.ToolTip", ToolInfo.ToolName))
 				If (String.IsNullOrEmpty(tip)) Then
-					tip = GetString(String.Format("Tool.{0}.Text", toolName))
+					tip = GetString(String.Format("Tool.{0}.Text", ToolInfo.ToolName))
 				End If
 				Return tip
 			Else
@@ -439,20 +473,12 @@ Namespace DotNetNuke.Web.UI.WebControls
 			End If
 		End Function
 
-		Protected Overridable Function GetImageUrl(ByVal toolName As String) As String
+		Protected Overridable Function GetImageUrl() As String
 			If (Not String.IsNullOrEmpty(ImageUrl)) Then
 				Return ImageUrl
 			End If
 
-			Return Page.ResolveUrl(String.Format("~/admin/controlpanel/ribbonimages/{0}.gif", toolName))
-		End Function
-
-		Protected Overridable Function GetLinkTarget(ByVal toolName As String) As String
-			If (AllTools.ContainsKey(toolName)) Then
-				Return AllTools(toolName).LinkWindowTarget
-			End If
-
-			Return String.Empty
+			Return Page.ResolveUrl(String.Format("~/admin/controlpanel/ribbonimages/{0}.gif", ToolInfo.ToolName))
 		End Function
 
 		Protected Overridable Function GetTabURL(ByVal portalID As Integer, ByVal friendlyName As String, ByVal controlKey As String, ByVal additionalParams As List(Of String)) As String
@@ -471,7 +497,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 					additionalParams.Insert(0, "mid=" + moduleInfo.ModuleID.ToString())
 				End If
 
-				strURL = NavigateURL(moduleInfo.TabID, isHostPage, PortalSettings, controlKey, additionalParams.ToArray())
+				strURL = DotNetNuke.Common.Globals.NavigateURL(moduleInfo.TabID, isHostPage, PortalSettings, controlKey, additionalParams.ToArray())
 				'If (portalID = Null.NullInteger) Then
 				'	If (String.IsNullOrEmpty(controlKey)) Then
 				'		strURL = NavigateURL(moduleInfo.TabID, True, PortalSettings, "", additionalParams.ToArray())
@@ -492,16 +518,6 @@ Namespace DotNetNuke.Web.UI.WebControls
 			Return strURL
 		End Function
 
-		Protected Overridable Function IsHostTool(ByVal toolName As String) As Boolean
-			Dim returnValue As Boolean = False
-
-			If (AllTools.ContainsKey(toolName)) Then
-				returnValue = AllTools(toolName).IsHostTool
-			End If
-
-			Return returnValue
-		End Function
-
 		Protected Overridable Function ActiveTabHasChildren() As Boolean
 			Dim children As List(Of TabInfo) = DotNetNuke.Entities.Tabs.TabController.GetTabsByParent(PortalSettings.ActiveTab.TabID, PortalSettings.ActiveTab.PortalID)
 
@@ -513,15 +529,15 @@ Namespace DotNetNuke.Web.UI.WebControls
 		End Function
 
 		Protected Overridable Function GetButtonConfirmMessage() As String
-			If (ToolName = "DeletePage") Then
+			If (ToolInfo.ToolName = "DeletePage") Then
 				Return GetString("Tool.DeletePage.Confirm")
-			ElseIf (ToolName = "CopyPermissionsToChildren") Then
+			ElseIf (ToolInfo.ToolName = "CopyPermissionsToChildren") Then
 				If (DotNetNuke.Security.PortalSecurity.IsInRole("Administrators")) Then
 					Return GetString("Tool.CopyPermissionsToChildren.Confirm")
 				Else
 					Return GetString("Tool.CopyPermissionsToChildrenPageEditor.Confirm")
 				End If
-			ElseIf (ToolName = "CopyDesignToChildren") Then
+			ElseIf (ToolInfo.ToolName = "CopyDesignToChildren") Then
 				If (DotNetNuke.Security.PortalSecurity.IsInRole("Administrators")) Then
 					Return GetString("Tool.CopyDesignToChildren.Confirm")
 				Else

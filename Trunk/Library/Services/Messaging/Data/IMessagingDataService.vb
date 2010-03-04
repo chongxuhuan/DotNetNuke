@@ -18,15 +18,16 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Services.Messaging
-Imports DotNetNuke.Services.Messaging.Providers
 
 Namespace DotNetNuke.Services.Messaging.Data
     Public Interface IMessagingDataService
-        Function GetMessageByID(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal IndexID As Integer) As IDataReader
-        Function GetMessagesForUser(ByVal PortalID As Integer, ByVal UserID As Integer) As IDataReader
-        Function GetMessagesPendingSend(ByVal ExecutionCycleGuid As Guid) As IDataReader
-        Sub SaveMessage(ByVal objMessaging As Message)
-        Sub DeleteMessage(ByVal PortalID As Integer, ByVal IndexID As Integer)
+        Function GetMessageByID(ByVal MessageID As Integer) As IDataReader
+        Function GetUserInbox(ByVal PortalID As Integer, ByVal UserID As Integer, ByVal PageNumber As Integer, ByVal PageSize As Integer) As IDataReader
+        Function GetInboxCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer
+        Function SaveMessage(ByVal objMessaging As Message) As Long
+        Function GetNewMessageCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer
+        Function GetNextMessageForDispatch(ByVal SchedulerInstance As Guid) As IDataReader
+        Sub MarkMessageAsDispatched(ByVal MessageID As Integer)
+        Sub UpdateMessage(ByVal message As Message)
     End Interface
 End Namespace

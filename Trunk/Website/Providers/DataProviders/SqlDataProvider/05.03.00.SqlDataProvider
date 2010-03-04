@@ -657,6 +657,48 @@ AS
 	WHERE ContentItemId = @ContentItemId
 GO
 
+/* Add GetContentItemsByTerm Procedure */
+/*****************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetContentItemsByTerm]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetContentItemsByTerm
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetContentItemsByTerm] 
+	@Term	nvarchar(250)
+AS
+	DECLARE @TermID			int
+	DECLARE @TermLeft		int
+	DECLARE @TermRight		int
+	DECLARE @VocabularyID	int
+	
+	SET @TermID = (SELECT TermID FROM {databaseOwner}{objectQualifier}Taxonomy_Terms WHERE Name = @Term)
+	SET @TermLeft = (SELECT TermLeft FROM {databaseOwner}{objectQualifier}Taxonomy_Terms WHERE Name = @Term)
+	SET @TermRight = (SELECT TermRight FROM {databaseOwner}{objectQualifier}Taxonomy_Terms WHERE Name = @Term)
+	SET @VocabularyID = (SELECT VocabularyID FROM {databaseOwner}{objectQualifier}Taxonomy_Terms WHERE Name = @Term)
+	
+	IF @TermLeft = 0 AND @TermRight = 0
+		-- Simple Term
+		BEGIN
+			SELECT c.*
+			FROM {databaseOwner}{objectQualifier}ContentItems As c
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags ct ON ct.ContentItemID = c.ContentItemID
+				INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms t ON t.TermID = ct.TermID
+			WHERE t.TermID = @TermID
+		END
+	ELSE
+		BEGIN
+		-- Hierarchical Term
+			SELECT c.*
+			FROM {databaseOwner}{objectQualifier}ContentItems As c
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags ct ON ct.ContentItemID = c.ContentItemID
+				INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms t ON t.TermID = ct.TermID
+			WHERE t.TermLeft >= @TermLeft
+				AND t.TermRight <= @TermRight
+				AND t.VocabularyID = @VocabularyID
+		END
+GO
+
 /* Add GetUnIndexedContentItems Procedure */
 /**************************************/
 
@@ -1389,309 +1431,6 @@ INSERT INTO {databaseOwner}{objectQualifier}Taxonomy_VocabularyTypes ([Vocabular
 INSERT INTO {databaseOwner}{objectQualifier}Taxonomy_VocabularyTypes ([VocabularyTypeID], [VocabularyType]) VALUES (2, 'Heirarchy')
 SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}Taxonomy_VocabularyTypes OFF
 
-/* Add MessageIndex Table */
-/**************************/
-
-IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_MessageIndex]') AND OBJECTPROPERTY(id, N'IsTable') = 1)
-	BEGIN
-		CREATE TABLE {databaseOwner}[{objectQualifier}Messaging_MessageIndex]
-		(
-			[IndexID] int NOT NULL IDENTITY(1, 1),
-			[MessageID] int NOT NULL,
-			[PortalID] int NOT NULL,
-			[FromUserID] int NOT NULL,
-			[ToUserID] int NOT NULL,
-			[PendingSend] bit NOT NULL DEFAULT 0,
-			[SendDate] datetime,			
-			[ReplyToIndexID] int,			
-			[Status] nvarchar(100),
-			[MessageDate] datetime NOT NULL DEFAULT GETDATE(),			
-			[MessagingGroup] uniqueidentifier,
-			[ExecutionCycleGuid] uniqueidentifier
-		)
-
-		ALTER TABLE {databaseOwner}[{objectQualifier}Messaging_MessageIndex] ADD CONSTRAINT [PK_{objectQualifier}Messaging_MessageIndex] PRIMARY KEY CLUSTERED  ([IndexID])
-		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Messaging_MessageIndex] ON {databaseOwner}[{objectQualifier}Messaging_MessageIndex] ([IndexID])
-	END
-GO
-
-/* Add Save_MessageIndex Procedure */
-/***********************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_MessageIndex_Save_MessageIndex]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_MessageIndex_Save_MessageIndex
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_MessageIndex_Save_MessageIndex] 
-	@MessageID int,
-	@PortalID int,
-	@FromUserID int,
-	@ToUserID int,
-	@PendingSend bit,
-	@SendDate datetime,	
-	@ReplyToIndexID int,
-	@Status nvarchar(100),
-	@MessageDate datetime,
-	@MessagingGroup uniqueidentifier,
-	@IndexID int OUTPUT
-
-AS
-	IF (EXISTS (SELECT IndexID FROM {databaseOwner}[{objectQualifier}Messaging_MessageIndex] WHERE IndexID=@IndexID))
-		BEGIN
-			UPDATE {databaseOwner}[{objectQualifier}Messaging_MessageIndex] 
-				SET 	
-					[MessageID]		=	@MessageID,
-					[PortalID]		=	@PortalID,
-					[FromUserID]	=	@FromUserID,
-					[ToUserID]		=	@ToUserID,
-					[PendingSend]	=	@PendingSend,
-					[SendDate]		=	@SendDate,
-					[ReplyToIndexID]=	@ReplyToIndexID,
-					[Status]		=	@Status,
-					[MessageDate]	=	@MessageDate,
-					[MessagingGroup]=	@MessagingGroup
-				WHERE IndexID = @IndexID			
-				SELECT @IndexID AS IndexID
-		END 
-	ELSE
-		BEGIN
-			INSERT INTO {databaseOwner}[{objectQualifier}Messaging_MessageIndex] 
-				(
-					[MessageID],
-					[PortalID],
-					[FromUserID],
-					[ToUserID],
-					[PendingSend],
-					[SendDate],
-					[ReplyToIndexID],
-					[Status],
-					[MessageDate],
-					[MessagingGroup]
-				)
-				Values
-					(
-						@MessageID,
-						@PortalID,
-						@FromUserID,
-						@ToUserID,
-						@PendingSend,
-						@SendDate,
-						@ReplyToIndexID,
-						@Status,
-						@MessageDate,
-						@MessagingGroup
-					)
-			SELECT @IndexID=SCOPE_IDENTITY()						
-			SELECT @IndexID AS IndexID1
-		END
-GO
-
-/* Add MessageStore Table */
-/**************************/
-
-IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_MessageStore]') AND OBJECTPROPERTY(id, N'IsTable') = 1)
-	BEGIN
-		CREATE TABLE {databaseOwner}[{objectQualifier}Messaging_MessageStore]
-		(
-			[MessageID] int NOT NULL IDENTITY(1, 1),
-			[LongBody] ntext NOT NULL,
-			[Subject] nvarchar(100) NOT NULL,
-		)
-
-		ALTER TABLE {databaseOwner}[{objectQualifier}Messaging_MessageStore] ADD CONSTRAINT [PK_{objectQualifier}Messaging_MessageStore] PRIMARY KEY CLUSTERED  ([MessageID])
-		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Messaging_MessageStore] ON {databaseOwner}[{objectQualifier}Messaging_MessageStore] ([MessageID])
-	END
-GO
-
-/* Add Save_MessageStore Procedure */
-/***********************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Save_MessageStore]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Save_MessageStore
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Save_MessageStore] 
-	@LongBody ntext,
-	@Subject nvarchar(100),
-	@MessageID int OUTPUT		
-AS
-
-	IF ( EXISTS ( SELECT MessageID FROM {databaseOwner}[{objectQualifier}Messaging_MessageStore]  WHERE MessageID=@MessageID))
-		BEGIN
-			UPDATE {databaseOwner}[{objectQualifier}Messaging_MessageStore]  
-				SET 	
-					[LongBody]=@LongBody,
-					[Subject]=@Subject
-				WHERE MessageID = @MessageID
-				
-				SELECT @MessageID as MessageID
-		END 
-	ELSE
-		BEGIN
-			INSERT INTO {databaseOwner}[{objectQualifier}Messaging_MessageStore]  
-				(
-					[LongBody],
-					[Subject]
-				)
-				VALUES
-					(
-						@LongBody ,
-						@Subject
-					)
-				
-			SELECT @MessageID=SCOPE_IDENTITY()						
-			SELECT @MessageID AS MessageID
-		END
-GO
-
-/* Add Save_MessageStore Procedure */
-/***********************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Save_Message]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Save_Message
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Save_Message] 
-	@LongBody ntext,
-	@Subject nvarchar(100),
-	@PortalID int,
-	@FromUserID int,
-	@ToUserID int,
-	@PendingSend bit,
-	@SendDate datetime,				
-	@ReplyToIndexID int,
-	@Status nvarchar(100),
-	@MessageDate datetime,
-	@MessagingGroup uniqueidentifier,
-	@MessageID int OUTPUT,		
-	@IndexID int OUTPUT	
-
-AS
-	EXEC [{objectQualifier}Messaging_Save_MessageStore] 
-		@LongBody,
-		@Subject,
-		@MessageID OUTPUT
-
-	EXEC [{objectQualifier}Messaging_MessageIndex_Save_MessageIndex] 
-		@MessageID,
-		@PortalID,
-		@FromUserID,
-		@ToUserID,
-		@PendingSend,
-		@SendDate,				
-		@ReplyToIndexID,
-		@Status,
-		@MessageDate,
-		@MessagingGroup,
-		@IndexID OUTPUT
-
-	SELECT @MessageID AS MessageID, @IndexID AS IndexID
-
-GO
-
-/* Add Get_MessagesStatus_ByUser Procedure */
-/*******************************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Get_MessagesStatus_ByUser]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Get_MessagesStatus_ByUser
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Get_MessagesStatus_ByUser] 
-	@PortalID int,
-	@UserID int
-
-AS
-	SELECT DISTINCT Status
-	FROM [{objectQualifier}Messaging_MessageIndex] as I
-	WHERE I.PortalID=@PortalID and
-		(I.FromUserID=@UserID or I.ToUserID=@UserID)
-GO
-
-/* Add Get_Messages_ByUser Procedure */
-/*************************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Get_Messages_ByUser]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Get_Messages_ByUser
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Get_Messages_ByUser] 
-	@PortalID int,
-	@UserID int
-AS
-
-	SELECT 
-		i.IndexID, 
-		i.MessageID, 
-		i.PortalID, 
-		i.FromUserID, 
-		i.ToUserID, 
-		i.PendingSend, 
-		i.SendDate, 
-		i.ReplyToIndexID, 
-		i.Status, 
-		i.MessageDate, 
-		i.MessagingGroup, 
-		i.ExecutionCycleGuid,
-		s.LongBody, 
-		s.Subject, 
-		uFrom.DisplayName as FromDisplayName, 
-		uTo.DisplayName as ToDisplayName, 
-		uTo.Username as TouserName, 
-		uTo.Email as ToEmail, 
-		uFrom.Email as FromEmail
-	FROM [{objectQualifier}Messaging_MessageIndex] as i 
-		LEFT JOIN [{objectQualifier}Messaging_MessageStore] as s on i.MessageID =  s.MessageID
-		LEFT JOIN [{objectQualifier}Users] as uFrom on uFrom.UserID = i.FromUserID 
-		LEFT JOIN [{objectQualifier}Users] as uTo on uTo.UserID = i.ToUserID
-	WHERE i.PortalID = @PortalID and 
-		(i.FromUserID = @UserID or i.ToUserID = @UserID) and
-		(uFrom.UserID = i.FromUserID or uTo.UserID = i.ToUserID)
-GO
-
-/* Add Get_Message_ByIndexID Procedure */
-/*******************************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Get_Message_ByIndexID]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Get_Message_ByIndexID
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Get_Message_ByIndexID] 
-	@PortalID int,
-	@UserID int,
-	@IndexID int
-
-AS
-	SELECT 
-		i.IndexID, 
-		i.MessageID, 
-		i.PortalID, 
-		i.FromUserID, 
-		i.ToUserID, 
-		i.PendingSend, 
-		i.SendDate, 
-		i.ReplyToIndexID, 
-		i.Status, 
-		i.MessageDate, 
-		i.MessagingGroup, 
-		i.ExecutionCycleGuid,
-		s.LongBody, 
-		s.Subject, 
-		uFrom.DisplayName as FromDisplayName, 
-		uTo.DisplayName as ToDisplayName, 
-		uTo.Username as TouserName, 
-		uTo.Email as ToEmail, 
-		uFrom.Email as FromEmail
-	FROM [{objectQualifier}Messaging_MessageIndex] as i 
-		LEFT JOIN [{objectQualifier}Messaging_MessageStore] as s on i.MessageID =  s.MessageID
-		LEFT JOIN [{objectQualifier}Users] as uFrom on uFrom.UserID = i.FromUserID 
-		LEFT JOIN [{objectQualifier}Users] as uTo on uTo.UserID = i.ToUserID
-	WHERE i.PortalID = @PortalID and 
-		(i.FromUserID = @UserID or i.ToUserID = @UserID) and
-		(uFrom.UserID = i.FromUserID or uTo.UserID = i.ToUserID) and 
-		i.IndexID = @IndexID
-	
-GO
-
 /* Add AddContentType Procedure */
 /********************************/
 
@@ -1759,6 +1498,250 @@ AS
 		
 GO
 
+/* Add Messages Table */
+/**********************/
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Messages]') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Messaging_Messages]
+		(
+			[MessageID] [bigint] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[FromUserID] [int] NOT NULL,
+			[ToUserName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+			[FromUserName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+			[ToUserID] [int] NULL,
+			[ToRoleID] [int] NULL,
+			[Status] [tinyint] NOT NULL,
+			[Subject] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+			[Body] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+			[Date] [datetime] NOT NULL,
+			[Conversation] [uniqueidentifier] NOT NULL,
+			[ReplyTo] [bigint] NULL,
+			[AllowReply] [bit] NOT NULL,
+			[SkipPortal] [bit] NOT NULL,
+			[EmailSent] [bit] NOT NULL,
+			[EmailSentDate] [datetime] NULL,
+			[EmailSchedulerInstance] [uniqueidentifier] NULL,
+			CONSTRAINT [PK_{objectQualifier}Messaging_Messages] PRIMARY KEY CLUSTERED ( [MessageID] ASC )	
+		)
+	END
+GO
+
+
+
+/* Add GetInbox Procedure */
+/**************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_GetInbox]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_GetInbox
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_GetInbox] 
+	@PortalID int,
+	@UserID int,
+	@PageNumber int,
+	@PageSize int
+AS
+
+DECLARE	
+	@FirstRow INT,
+	@LastRow INT
+
+SELECT	
+	@FirstRow = (@PageNumber - 1) * @PageSize + 1,
+	@LastRow = (@PageNumber - 1) * @PageSize + @PageSize ;
+
+WITH UserInbox  AS
+(
+	SELECT	
+		* ,
+		ROW_NUMBER() OVER (ORDER BY Date DESC) AS RowNumber
+	FROM {databaseOwner}{objectQualifier}Messaging_Messages 
+	WHERE (ToUserID= @UserID AND Status IN (1,2) AND SkipPortal = '0') 
+		OR (FromUserID = @UserID AND Status = 0)
+)
+
+SELECT *  
+	FROM UserInbox
+	WHERE RowNumber BETWEEN @FirstRow AND @LastRow
+	ORDER BY date desc
+		
+GO
+
+/* Add GetInboxCount Procedure */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_GetInboxCount]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_GetInboxCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_GetInboxCount] 
+	@PortalID int,
+	@UserID int
+AS
+
+	SELECT COUNT (*)[Body]
+	FROM {databaseOwner}{objectQualifier}Messaging_Messages
+	WHERE (ToUserID= @UserID AND Status in (1,2) AND SkipPortal = '0') 
+		OR (FromUserID = @UserID AND Status = 0)
+GO
+
+/* Add GetMessage Procedure */
+/****************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_GetMessage]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_GetMessage
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_GetMessage] 
+	@MessageID bigint
+AS
+	SELECT * FROM {objectQualifier}Messaging_Messages WHERE MessageID = @MessageID
+GO
+
+/* Add GetNewMessageCount Procedure */
+/************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_GetNewMessageCount]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_GetNewMessageCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_GetNewMessageCount] 
+	@PortalID int,
+	@UserID int
+AS
+	SELECT count(*) FROM {objectQualifier}Messaging_Messages WHERE ToUserID = @UserID AND Status = 1
+GO
+
+
+/*Add Messaging_GetNextMessageForDispatch */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_GetNextMessageForDispatch]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_GetNextMessageForDispatch
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_GetNextMessageForDispatch] 
+	@SchedulerInstance uniqueidentifier
+AS
+	Declare  @target_messageID int
+
+	SELECT @target_messageID =  MessageID FROM {objectQualifier}Messaging_Messages WHERE EmailSent = 0  AND  
+	(EmailSchedulerInstance is NULL or EmailSchedulerInstance= '00000000-0000-0000-0000-000000000000') 
+	AND status not in  (0,3) ORDER BY Date DESC
+
+Update {objectQualifier}Messaging_Messages set EmailSchedulerInstance = @SchedulerInstance  where MessageID = @target_messageID
+select * from {objectQualifier}Messaging_Messages where MessageID = @target_messageID 
+
+
+/* Add Messaging_MarkMessageAsDispatched */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_MarkMessageAsDispatched]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_MarkMessageAsDispatched
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_MarkMessageAsDispatched]
+	@MessageId int
+AS
+BEGIN
+	Update {objectQualifier}Messaging_Messages set EmailSent = 1, EmailSentDate =GETDATE()   where MessageID =@MessageId
+END
+
+
+/* Add Save_Message Procedure */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_Save_Message]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_Save_Message
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_Save_Message] 
+   @PortalID int,
+   @FromUserID int,
+   @ToUserID int,
+   @ToRoleID int,
+   @Status int,
+   @Subject nvarchar(max),
+   @Body nvarchar(max),
+   @Date datetime,
+   @Conversation uniqueidentifier,
+   @ReplyTo bigint,
+   @AllowReply bit,
+   @SkipPortal bit
+
+AS
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Messaging_Messages
+       ([PortalID]
+       ,[FromUserID]
+	   ,[FromUserName]
+       ,[ToUserID]
+       ,[ToRoleID]
+	   ,[ToUserName]
+       ,[Status]
+       ,[Subject]
+       ,[Body]
+       ,[Date]
+       ,[Conversation]
+       ,[ReplyTo]
+       ,[AllowReply]
+       ,[SkipPortal]
+		,[EmailSent])
+ SELECT
+       @PortalID,
+       @FromUserID,
+	   (SELECT UserName FROM {objectQualifier}Users WHERE UserID = @FromUserID) as FromUserName,
+       @ToUserID,
+       @ToRoleID,
+	   (SELECT UserName FROM {objectQualifier}Users WHERE UserID = @ToUserID) as ToUserName, 
+       @Status,
+       @Subject, 
+       @Body,
+       @Date, 
+       @Conversation,
+       @ReplyTo,
+       @AllowReply, 
+       @SkipPortal,
+	   '0'
+			
+		SELECT SCOPE_IDENTITY()						
+	END
+GO
+
+/* Add UpdateMessage Procedure */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Messaging_UpdateMessage]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Messaging_UpdateMessage
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Messaging_UpdateMessage] 
+   @MessageID bigint,
+   @ToUserID int,
+   @ToRoleID int,
+   @Status int,
+   @Subject nvarchar(max),
+   @Body nvarchar(max),
+   @Date datetime,
+   @ReplyTo bigint,
+   @AllowReply bit,
+   @SkipPortal bit
+AS
+	UPDATE {databaseOwner}{objectQualifier}Messaging_Messages
+	SET ToUserID=@ToUserID, 
+		ToRoleID=@ToRoleID, 
+		Status=@Status, 
+		Subject=@Subject, 
+		Body=@Body, 
+		Date= @Date,
+		ReplyTo= @ReplyTo,
+		AllowReply = @AllowReply,
+		SkipPortal = @SkipPortal
+	WHERE MessageID=@MessageID
+GO
+
 /* Change module title of Language Editor module in 'Languages'*/
 
 DECLARE @LangDesktopModuleId INT
@@ -1770,6 +1753,273 @@ UPDATE {databaseOwner}[{objectQualifier}Modules] SET ModuleTitle = 'Languages' W
 GO
 
 
+/* localisation changes */
+
+/* update UpdatePortalSetting */
+/******************************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalSetting]
+	@PortalID       int,
+	@SettingName    nvarchar(50),
+	@SettingValue   nvarchar(2000),
+	@UserID			int,
+	@CultureCode    nvarchar(50)
+
+AS
+	IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}PortalSettings WHERE PortalID = @PortalID AND SettingName = @SettingName) > 0
+		--Update
+		UPDATE  {databaseOwner}{objectQualifier}PortalSettings
+			SET SettingValue = @SettingValue,
+				[LastModifiedByUserID]=@UserID,
+				[LastModifiedOnDate]=getdate()
+		WHERE PortalID = @PortalID
+			AND SettingName = @SettingName
+			AND CultureCode = @CultureCode
+			
+	ELSE
+		--Add
+		INSERT INTO {databaseOwner}{objectQualifier}PortalSettings ( PortalID, SettingName, SettingValue, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate,CultureCode ) 
+			VALUES ( @PortalID, @SettingName, @SettingValue ,@UserID ,getdate() ,@UserID ,getdate(),@CultureCode)
+GO
+
+/* update GetPortalSettings */
+/*************************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSetting]
+	@PortalID int,
+	@SettingName	nvarchar(50),
+	@CultureCode	nvarchar(50)
+AS
+	SELECT 
+		CASE WHEN LEFT(LOWER({databaseOwner}{objectQualifier}PortalSettings.SettingValue), 6) = 'fileid' 
+			THEN
+				(SELECT Folder + FileName  
+					FROM {databaseOwner}{objectQualifier}Files 
+					WHERE 'fileid=' + convert(varchar,{databaseOwner}{objectQualifier}Files.FileID) = {databaseOwner}{objectQualifier}PortalSettings.SettingValue
+				) 
+			ELSE 
+				{databaseOwner}{objectQualifier}PortalSettings.SettingValue  
+			END 
+		AS SettingValue
+	FROM {databaseOwner}{objectQualifier}PortalSettings 
+	WHERE  PortalID = @PortalID
+		AND	CultureCode	= @CultureCode
+		AND SettingName = @SettingName
+GO
+
+/* update DeletePortalSetting */
+/***************************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalSetting]
+	@PortalID      int,
+	@SettingName   nvarchar(50),
+	@CultureCode   nvarchar(50)
+
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}PortalSettings 
+	WHERE PortalID = @PortalID
+		AND SettingName = @SettingName
+		AND CultureCode= @CultureCode
+		
+GO
+
+/* update GetPortalSettings */
+/*************************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortalSettings]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSettings]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSettings]
+	@PortalID int,
+	@CultureCode   nvarchar(50)
+AS
+	SELECT 
+		SettingName,
+		CASE WHEN LEFT(LOWER({databaseOwner}{objectQualifier}PortalSettings.SettingValue), 6) = 'fileid' 
+			THEN
+				(SELECT Folder + FileName  
+					FROM {databaseOwner}{objectQualifier}Files 
+					WHERE 'fileid=' + convert(varchar,{databaseOwner}{objectQualifier}Files.FileID) = {databaseOwner}{objectQualifier}PortalSettings.SettingValue
+				) 
+			ELSE 
+				{databaseOwner}{objectQualifier}PortalSettings.SettingValue  
+			END 
+		AS SettingValue,
+		{databaseOwner}{objectQualifier}PortalSettings.CreatedByUserID,
+		{databaseOwner}{objectQualifier}PortalSettings.CreatedOnDate,
+		{databaseOwner}{objectQualifier}PortalSettings.LastModifiedByUserID,
+		{databaseOwner}{objectQualifier}PortalSettings.LastModifiedOnDate,
+		{databaseOwner}{objectQualifier}PortalSettings.CultureCode
+	FROM {databaseOwner}{objectQualifier}PortalSettings 
+	WHERE	PortalID = @PortalID
+	AND		CultureCode	= @CultureCode
+	
+GO
+
+/* Update GetPortals */
+/*********************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortals]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+@CultureCode	nvarchar(50)
+
+AS
+SELECT *
+FROM {databaseOwner}{objectQualifier}vw_Portals
+where CultureCode=@CultureCode
+ORDER BY PortalName
+GO
+
+
+/* Update GetPortal */
+/********************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortal]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
+
+	@PortalId  int,
+	@CultureCode	nvarchar(50)
+
+AS
+SELECT *
+FROM {databaseOwner}{objectQualifier}vw_Portals
+WHERE PortalId = @PortalId
+AND	CultureCode= @CultureCode
+GO
+
+/* portals */
+/* Update UpdatePortalInfo Stored Procedure */
+/****************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+	@PortalID           int,
+	@PortalName         nvarchar(128),
+	@LogoFile           nvarchar(50),
+	@FooterText         nvarchar(100),
+	@ExpiryDate         datetime,
+	@UserRegistration   int,
+	@BannerAdvertising  int,
+	@Currency           char(3),
+	@AdministratorId    int,
+	@HostFee            money,
+	@HostSpace          int,
+	@PageQuota          int,
+	@UserQuota          int,
+	@PaymentProcessor   nvarchar(50),
+	@ProcessorUserId    nvarchar(50),
+	@ProcessorPassword  nvarchar(50),
+	@Description        nvarchar(500),
+	@KeyWords           nvarchar(500),
+	@BackgroundFile     nvarchar(50),
+	@SiteLogHistory     int,
+	@SplashTabId          int,
+	@HomeTabId          int,
+	@LoginTabId         int,
+	@UserTabId          int,
+	@DefaultLanguage    nvarchar(10),
+	@TimeZoneOffset	    int,
+	@HomeDirectory		varchar(100),
+	@LastModifiedByUserID	int,
+	@CultureCode   nvarchar(50)
+AS
+
+update {databaseOwner}{objectQualifier}Portals
+set    
+       ExpiryDate = @ExpiryDate,
+       UserRegistration = @UserRegistration,
+       BannerAdvertising = @BannerAdvertising,
+       Currency = @Currency,
+       AdministratorId = @AdministratorId,
+       HostFee = @HostFee,
+       HostSpace = @HostSpace,
+       PageQuota = @PageQuota,
+       UserQuota = @UserQuota,
+       PaymentProcessor = @PaymentProcessor,
+       ProcessorUserId = @ProcessorUserId,
+       ProcessorPassword = @ProcessorPassword,
+       SiteLogHistory = @SiteLogHistory,
+       DefaultLanguage = @DefaultLanguage,
+       TimeZoneOffset = @TimeZoneOffset,
+       HomeDirectory = @HomeDirectory,
+	   LastModifiedByUserID = @LastModifiedByUserID,
+	   LastModifiedOnDate = getdate()
+where  PortalId = @PortalID
+
+UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+SET
+        PortalName = @PortalName,
+        LogoFile = @LogoFile,
+        FooterText = @FooterText,
+        Description = @Description,
+        KeyWords = @KeyWords,
+        BackgroundFile = @BackgroundFile,
+        HomeTabId = @HomeTabId,
+        LoginTabId = @LoginTabId,
+        UserTabId = @UserTabId,
+		SplashTabId = @SplashTabId,
+		LastModifiedByUserID = @LastModifiedByUserID,
+		LastModifiedOnDate = getdate()
+WHERE	PortalId = @PortalID and CultureCode=@CultureCode
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalSetup]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalSetup
+GO
+
+create procedure {databaseOwner}{objectQualifier}UpdatePortalSetup
+
+@PortalId            int,
+@AdministratorId     int,
+@AdministratorRoleId int,
+@RegisteredRoleId    int,
+@SplashTabId         int,
+@HomeTabId           int,
+@LoginTabId          int,
+@UserTabId           int,
+@AdminTabId          int,
+@CultureCode   nvarchar(50)
+as
+
+update {objectQualifier}Portals
+set    AdministratorId = @AdministratorId, 
+       AdministratorRoleId = @AdministratorRoleId, 
+       RegisteredRoleId = @RegisteredRoleId
+where  PortalId = @PortalId
+
+
+UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+           SET [HomeTabId]=@HomeTabId
+           ,[LoginTabId]=@LoginTabId
+           ,[UserTabId]=@UserTabId
+           ,[AdminTabId]=@AdminTabId
+           ,[SplashTabId]=@SplashTabId
+          Where portalID=@PortalID
+          and CultureCode=@CultureCode
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -47,10 +47,6 @@ Namespace DotNetNuke.Modules.Html
         Private _Notify As Boolean = False
         Private _IsActive As Boolean = True
 
-        ' initialization
-        Public Sub New()
-        End Sub
-
         ' public properties
         Public Property PortalID() As Integer
             Get

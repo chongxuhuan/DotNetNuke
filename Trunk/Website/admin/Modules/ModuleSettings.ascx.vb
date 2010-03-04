@@ -18,7 +18,6 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Modules.Definitions
 Imports DotNetNuke.Entities.Tabs
@@ -143,7 +142,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                 End If
 
                 ctlModuleContainer.Width = "250px"
-                ctlModuleContainer.SkinRoot = SkinController.RootContainer
+                ctlModuleContainer.SkinRoot = DotNetNuke.UI.Skins.SkinController.RootContainer
                 ctlModuleContainer.SkinSrc = [Module].ContainerSrc
 
                 chkDisplayTitle.Checked = [Module].DisplayTitle
@@ -633,7 +632,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                                 objModules.MoveModule(ModuleId, TabId, newTabId, "")
                             Else
                                 'Warn user
-                                Skin.AddModuleMessage(Me, Localization.GetString("ModuleExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("ModuleExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                                 Exit Sub
                             End If
                         End If

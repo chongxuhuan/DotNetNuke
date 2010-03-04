@@ -17,12 +17,12 @@
 <asp:panel id="pnlAddUser" runat="server" visible="False">
 	<table id="tblAddUser" runat="server" width="350px">
 		<tr height="25">
-			<td style=""width:175px" class="SubHead"><dnn:label id="plAuthorize" runat="server" controlname="chkAuthorize" /></td>
-			<td style=""width:175px" class="normalTextBox"><asp:checkbox id="chkAuthorize" runat="server" checked="True" /></td>
+			<td style="width:175px" class="SubHead"><dnn:label id="plAuthorize" runat="server" controlname="chkAuthorize" /></td>
+			<td style="width:175px" class="normalTextBox"><asp:checkbox id="chkAuthorize" runat="server" checked="True" /></td>
 		</tr>
 		<tr height="25">
-			<td style=""width:175px" class="SubHead"><dnn:label id="plNotify" runat="server" controlname="chkNotify" /></td>
-			<td style=""width:175px" class="normalTextBox"><asp:checkbox id="chkNotify" runat="server" checked="True" /></td>
+			<td style="width:175px" class="SubHead"><dnn:label id="plNotify" runat="server" controlname="chkNotify" /></td>
+			<td style="width:175px" class="normalTextBox"><asp:checkbox id="chkNotify" runat="server" checked="True" /></td>
 		</tr>
 	</table>
 	<br/>
@@ -30,33 +30,33 @@
 		<tr><td colspan="2" valign="bottom"><asp:label id="lblPasswordHelp" cssclass="SubHead" runat="server" /></td></tr>
 		<tr><td colspan="2" height="10"></td></tr>
 		<tr id="trRandom" runat="server">
-			<td style=""width:175px" class="SubHead"><dnn:label id="plRandom" runat="server" controlname="chkRandom" /></td>
-			<td style=""width:175px" class="normalTextBox"><asp:checkbox id="chkRandom" runat="server" checked="True" /></td>
+			<td style="width:175px" class="SubHead"><dnn:label id="plRandom" runat="server" controlname="chkRandom" /></td>
+			<td style="width:175px" class="normalTextBox"><asp:checkbox id="chkRandom" runat="server" checked="True" /></td>
 		</tr>
 		<tr height="25">
-			<td class="SubHead" style=""width:175px"><dnn:label id="plPassword" runat="server" controlname="txtPassword" text="Password:"></dnn:label></td>
-			<td style=""width:175px">
+			<td class="SubHead" style="width:175px"><dnn:label id="plPassword" runat="server" controlname="txtPassword" text="Password:"></dnn:label></td>
+			<td style="width:175px">
 			    <asp:textbox id="txtPassword" runat="server" cssclass="NormalTextBox" textmode="Password" size="12" maxlength="20" />
 			    <asp:Image ImageUrl="~/images/required.gif" BorderStyle="None" runat="server"/>
 			</td>
 		</tr>
 		<tr height="25">
-			<td class="SubHead" style=""width:175px" valign="top"><dnn:label id="plConfirm" runat="server" controlname="txtConfirm" text="Confirm Password:"></dnn:label></td>
-			<td style=""width:175px">
+			<td class="SubHead" style="width:175px" valign="top"><dnn:label id="plConfirm" runat="server" controlname="txtConfirm" text="Confirm Password:"></dnn:label></td>
+			<td style="width:175px">
 			    <asp:textbox id="txtConfirm" runat="server" cssclass="NormalTextBox" textmode="Password" size="12" maxlength="20" />
 			    <asp:Image  ImageUrl="~/images/required.gif" BorderStyle="None" runat="server"/>
 			</td>
 		</tr>
 		<tr id="trQuestion" runat="server" height="25" visible="false">
-			<td class="SubHead" style=""width:175px"><dnn:label id="plQuestion" runat="server" controlname="lblQuestion" text="Password Question:"></dnn:label></td>
-			<td style=""width:175px">
+			<td class="SubHead" style="width:175px"><dnn:label id="plQuestion" runat="server" controlname="lblQuestion" text="Password Question:"></dnn:label></td>
+			<td style="width:175px">
 			    <asp:textbox id="txtQuestion" runat="server" cssclass="NormalTextBox" size="25" maxlength="256" />
 			    <asp:Image ImageUrl="~/images/required.gif" BorderStyle="None" runat="server"/>
 			</td>
 		</tr>
 		<tr id="trAnswer" runat="server" height="25" visible="false">
-			<td class="SubHead" style=""width:175px"><dnn:label id="plAnswer" runat="server" controlname="txtAnswer" text="Password Answer:"></dnn:label></td>
-			<td style=""width:175px">
+			<td class="SubHead" style="width:175px"><dnn:label id="plAnswer" runat="server" controlname="txtAnswer" text="Password Answer:"></dnn:label></td>
+			<td style="width:175px">
 			    <asp:textbox id="txtAnswer" runat="server" cssclass="NormalTextBox" size="25" maxlength="128" />
 			    <asp:Image ImageUrl="~/images/required.gif" BorderStyle="None" runat="server"/>
 			</td>
