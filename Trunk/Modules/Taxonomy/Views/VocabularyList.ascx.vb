@@ -22,6 +22,8 @@ Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
 Imports WebFormsMvp
 Imports DotNetNuke.Modules.Taxonomy.Presenters
+Imports Telerik.Web.UI
+Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
@@ -33,18 +35,26 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
 #Region "IVocabularyListView Implementation"
 
         Public Event AddVocabulary(ByVal sender As Object, ByVal e As EventArgs) Implements IVocabularyListView.AddVocabulary
-        Public Event VocabularyDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Implements IVocabularyListView.VocabularyDataBound
+
+        Public Sub ShowAddButton(ByVal showButton As Boolean) Implements IVocabularyListView.ShowAddButton
+            addVocabularyButton.Visible = showButton
+        End Sub
 
 #End Region
 
 #Region "Event Handlers"
 
-        Private Sub VocabulariesGrid_ItemDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Handles vocabulariesGrid.ItemDataBound
-            RaiseEvent VocabularyDataBound(Me, e)
-        End Sub
-
         Private Sub addVocabularyButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles addVocabularyButton.Click
             RaiseEvent AddVocabulary(Me, e)
+        End Sub
+
+        Private Sub vocabulariesGrid_PreRender(ByVal sender As Object, ByVal e As System.EventArgs) Handles vocabulariesGrid.PreRender
+            Dim hyperlinkColumn As DnnGridHyperlinkColumn = TryCast(vocabulariesGrid.Columns(0), DnnGridHyperlinkColumn)
+            If hyperlinkColumn IsNot Nothing Then
+                hyperlinkColumn.Visible = Model.IsEditable
+                hyperlinkColumn.DataNavigateUrlFormatString = Model.NavigateUrlFormatString
+            End If
+
         End Sub
 
 #End Region

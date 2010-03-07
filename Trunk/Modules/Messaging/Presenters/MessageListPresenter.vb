@@ -60,16 +60,16 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
 #End Region
 
-        Protected Overrides Sub Initialize()
-            MyBase.Initialize()
+        Protected Overrides Sub OnInit()
+            MyBase.OnInit()
 
             View.Model.Messages = _MessagingController.GetUserInbox(PortalId, UserId, 1, 999)
         End Sub
 
         Public Sub AddMessage(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+            Response.Redirect(NavigateURL(TabId, _
                                           "EditMessage", _
-                                          String.Format("mid={0}", ModuleContext.ModuleId)))
+                                          String.Format("mid={0}", ModuleId)))
         End Sub
 
         Public Sub DeleteSelectedMessages(ByVal sender As Object, ByVal e As DnnGridItemSelectedEventArgs)

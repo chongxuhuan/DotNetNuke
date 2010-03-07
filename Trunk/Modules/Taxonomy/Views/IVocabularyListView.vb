@@ -28,8 +28,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         Inherits IView(Of VocabularyListModel)
 
         Event AddVocabulary As EventHandler
-        Event VocabularyDataBound As GridItemEventHandler
 
+        Sub ShowAddButton(ByVal showButton As Boolean)
     End Interface
 
 End Namespace

@@ -635,6 +635,10 @@ Namespace DotNetNuke.Entities.Modules
                             BusinessControllerClass = reader.ReadElementContentAsString()
                         Case "codeSubDirectory"
                             CodeSubDirectory = reader.ReadElementContentAsString()
+                        Case "isAdmin"
+                            Boolean.TryParse(reader.ReadElementContentAsString(), IsAdmin)
+                        Case "isPremium"
+                            Boolean.TryParse(reader.ReadElementContentAsString(), IsPremium)
                     End Select
                 End If
             End While

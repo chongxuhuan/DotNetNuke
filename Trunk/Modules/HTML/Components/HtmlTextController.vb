@@ -125,27 +125,45 @@ Namespace DotNetNuke.Modules.Html
                 Dim objModule As ModuleInfo = objModules.GetModule(objHtmlText.ModuleID)
 
                 Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-                Dim strResourceFile As String = Common.Globals.ApplicationPath & "/DesktopModules/" & objModule.DesktopModule.FolderName & "/" & Localization.LocalResourceDirectory & "/" & Localization.LocalSharedResourceFile
-                Dim strSubject As String = Localization.GetString("NotificationSubject", strResourceFile)
-                Dim strBody As String = Localization.GetString("NotificationBody", strResourceFile)
-                strBody = strBody.Replace("[URL]", NavigateURL(objModule.TabID))
-                strBody = strBody.Replace("[STATE]", objHtmlText.StateName)
+                If objPortalSettings IsNot Nothing Then
+                    Dim strResourceFile As String = String.Format("{0}/DesktopModules/{1}/{2}/{3}", Common.Globals.ApplicationPath, objModule.DesktopModule.FolderName, Localization.LocalResourceDirectory, Localization.LocalSharedResourceFile)
+                    Dim strSubject As String = Localization.GetString("NotificationSubject", strResourceFile)
+                    Dim strBody As String = Localization.GetString("NotificationBody", strResourceFile)
+                    strBody = strBody.Replace("[URL]", NavigateURL(objModule.TabID))
+                    strBody = strBody.Replace("[STATE]", objHtmlText.StateName)
 
-                ' process user notification collection
-                For Each intUserID As Integer In arrUsers
+                    ' process user notification collection
+                    For Each intUserID As Integer In arrUsers
 
-                    ' create user notification record 
-                    objHtmlTextUser = New HtmlTextUserInfo
-                    objHtmlTextUser.ItemID = objHtmlText.ItemID
-                    objHtmlTextUser.StateID = objHtmlText.StateID
-                    objHtmlTextUser.ModuleID = objHtmlText.ModuleID
-                    objHtmlTextUser.TabID = objModule.TabID
-                    objHtmlTextUser.UserID = intUserID
-                    objHTMLTextUsers.AddHtmlTextUser(objHtmlTextUser)
+                        ' create user notification record 
+                        objHtmlTextUser = New HtmlTextUserInfo
+                        objHtmlTextUser.ItemID = objHtmlText.ItemID
+                        objHtmlTextUser.StateID = objHtmlText.StateID
+                        objHtmlTextUser.ModuleID = objHtmlText.ModuleID
+                        objHtmlTextUser.TabID = objModule.TabID
+                        objHtmlTextUser.UserID = intUserID
+                        objHTMLTextUsers.AddHtmlTextUser(objHtmlTextUser)
 
-                    ' send an email notification to a user if the state indicates to do so
-                    If objHtmlText.Notify Then
-                        objUser = UserController.GetUserById(objHtmlText.PortalID, intUserID)
+                        ' send an email notification to a user if the state indicates to do so
+                        If objHtmlText.Notify Then
+                            objUser = UserController.GetUserById(objHtmlText.PortalID, intUserID)
+                            If Not objUser Is Nothing Then
+                                Dim message As New Services.Messaging.Data.Message()
+                                message.FromUserID = objPortalSettings.AdministratorId
+                                message.ToUserID = objUser.UserID
+                                message.Subject = strSubject
+                                message.Body = strBody
+                                message.Status = Services.Messaging.Data.MessageStatusType.Unread
+                                _messagingController.SaveMessage(message)
+                            End If
+                        End If
+
+                    Next
+
+                    ' if published and the published state specifies to notify members of the workflow
+                    If objHtmlText.IsPublished = True And objHtmlText.Notify = True Then
+                        ' send email notification to the author
+                        objUser = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
                         If Not objUser Is Nothing Then
                             Dim message As New Services.Messaging.Data.Message()
                             message.FromUserID = objPortalSettings.AdministratorId
@@ -155,22 +173,6 @@ Namespace DotNetNuke.Modules.Html
                             message.Status = Services.Messaging.Data.MessageStatusType.Unread
                             _messagingController.SaveMessage(message)
                         End If
-                    End If
-
-                Next
-
-                ' if published and the published state specifies to notify members of the workflow
-                If objHtmlText.IsPublished = True And objHtmlText.Notify = True Then
-                    ' send email notification to the author
-                    objUser = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
-                    If Not objUser Is Nothing Then
-                        Dim message As New Services.Messaging.Data.Message()
-                        message.FromUserID = objPortalSettings.AdministratorId
-                        message.ToUserID = objUser.UserID
-                        message.Subject = strSubject
-                        message.Body = strBody
-                        message.Status = Services.Messaging.Data.MessageStatusType.Unread
-                        _messagingController.SaveMessage(message)
                     End If
                 End If
             End If

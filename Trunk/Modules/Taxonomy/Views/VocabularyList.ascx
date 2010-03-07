@@ -5,7 +5,7 @@
 <dnn:DnnGrid id = "vocabulariesGrid" runat="server" DataSource="<%# Model.Vocabularies %>"  AutoGenerateColumns="false">
     <MasterTableView>
         <Columns>
-            <dnn:DnnGridHyperlinkColumn Text="Edit" />
+            <dnn:DnnGridHyperlinkColumn Text="Edit" DataNavigateUrlFields="VocabularyId" />
             <dnn:DnnGridBoundColumn DataField="Name" HeaderText="Name" />
             <dnn:DnnGridBoundColumn DataField="Description" HeaderText="Description" />
             <dnn:DnnGridBoundColumn DataField="Type" HeaderText="Type" />

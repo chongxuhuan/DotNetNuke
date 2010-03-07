@@ -18,16 +18,16 @@
 ' DEALINGS IN THE SOFTWARE.
 */
 
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using DotNetNuke.Common;
+using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views;
-using DotNetNuke.Entities.Content.Taxonomy;
-using DotNetNuke.Tests.UI.Mvp;
+using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Tests.Utilities;
-using Moq;
 using MbUnit.Framework;
-using DotNetNuke.Tests.Content.Mocks;
+using Moq;
+using System.Web;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -35,118 +35,89 @@ namespace DotNetNuke.Tests.Content.Presenters
     /// Summary description for VocabulariesListPresenter Tests
     /// </summary>
     [TestFixture]
-    public class VocabularyListPresenterTests : PresenterTestBase<VocabularyListPresenter, IVocabularyListView, VocabularyListPresenterModel>
+    public class VocabularyListPresenterTests
     {
         #region Initialization Tests
 
-       [Test]
+        [Test]
         public void VocabularyListPresenter_Constructor_Requires_Non_Null_VocabularyController()
         {
-            AutoTester.ArgumentNull<IVocabularyController>(m => new VocabularyListPresenter(m));
+            //Arrange
+            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+
+            //Act, Assert
+            AutoTester.ArgumentNull<IVocabularyController>(m => new VocabularyListPresenter(view.Object, m));
         }
 
-
-       [Test]
-        public void VocabularyListPresenter_Initialize_Requires_Non_Null_View()
+        [Test]
+        public void VocabularyListPresenter_Constructor_Calls_Controller_GetVocabularies()
         {
-            RunInitializeWithNullViewTest();
-        }
+            // Arrange
+            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
+            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-       [Test]
-        public void VocabularyListPresenter_Initialize_Requires_Non_Null_Model()
-        {
-            RunInitializeWithNullModelTest();
-        }
+            // Act
+            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object);
 
-       [Test]
-        public void VocabularyListPresenter_Initialize_Requires_Non_Null_Environment()
-        {
-            RunInitializeWithNullEnvironmentTest();
+            // Assert
+            mockController.Verify(c => c.GetVocabularies());
         }
 
         #endregion
 
         #region View Load Tests
 
-       [Test]
-        public void VocabularyListPresenter_Does_Nothing_On_View_Load_If_CurrentUser_Does_Not_Have_Permissions()
+        [Test]
+        [Row(true)]
+        [Row(false)]
+        public void VocabularyListPresenter_Load_Calls_View_ShowAddButton(bool isEditable)
         {
             // Arrange
-            VocabularyListPresenter presenter = CreatePresenter();
-            presenter.Model.HasPermission = false;
+            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
+            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            Mock.Get(presenter.View)
-                .Setup(v => v.ShowVocabularies(It.IsAny<IEnumerable<Vocabulary>>()))
-                .Never();
+            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object);
+            presenter.IsEditable = isEditable;
 
-            // Act
-            presenter.LoadInternal();
-
-            // Assert (done by the call to Never() above)
-        }
-
-       [Test]
-        public void VocabularyListPresenter_Redirects_To_AccessDenied_If_CurrentUser_Does_Not_Have_Permissions()
-        {
-            // Arrange
-            VocabularyListPresenter presenter = CreatePresenter();
-            presenter.Model.HasPermission = false;
-
-            Mock.Get(presenter.View)
-                .Setup(v => v.ShowVocabularies(It.IsAny<IEnumerable<Vocabulary>>()))
-                .Never();
-
-            // Act
-            presenter.LoadInternal();
+            // Act (Raise the Load Event)
+            view.Raise(v => v.Load += null, EventArgs.Empty);
 
             // Assert
-            Mock.Get(presenter.Environment)
-                .Verify(c => c.RedirectToAccessDenied());
-        }
-
-       [Test]
-        public void VocabularyListPresenter_Retrieves_All_Vocabularies_And_Passes_Them_To_View()
-        {
-            // Arrange
-            VocabularyListPresenter presenter = CreatePresenter();
-
-            // Act
-            presenter.Load();
-
-            // Assert
-            Assert.AreEqual(MockHelper.TestVocabularies.ToList().Count, presenter.Vocabularies.Count);
-            Mock.Get(presenter.View)
-                .Verify(v => v.ShowVocabularies(It.IsAny<IEnumerable<Vocabulary>>()));
+            view.Verify(v => v.ShowAddButton(isEditable));
         }
 
         #endregion
 
         #region AddVocabulary Tests
 
-       [Test]
-        public void VocabularyListPresenter_On_Add_Redirects_To_CreateVocabulary_Presenter_With_No_QueryString()
+        [Test]
+        public void VocabularyListPresenter_On_Add_Redirects_To_CreateVocabulary()
         {
             // Arrange
-            VocabularyListPresenter presenter = CreatePresenter();
-            Mock.Get(presenter.View)
-                .Setup(v => v.ShowVocabularies(It.IsAny<IEnumerable<Vocabulary>>()))
-                .Never();
+            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
+            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            // Act
-            presenter.AddVocabulary(new object(), new System.EventArgs());
+            Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
+            Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
+            httpContext.Setup(h => h.Response).Returns(httpResponse.Object);
+
+            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object)
+            {
+                HttpContext = httpContext.Object,
+                ModuleId = Constants.MODULE_ValidId,
+                TabId = Constants.TAB_ValidId
+            };
+
+            // Act (Raise the AddVocabulary Event)
+            view.Raise(v => v.AddVocabulary += null, EventArgs.Empty);
 
             // Assert
-            Mock.Get(presenter.Environment)
-                .Verify(c => c.RedirectToPresenter(It.IsAny<CreateVocabularyPresenterModel>()));
-        }
-
-        #endregion
-
-        #region Helpers
-
-        protected override VocabularyListPresenter ConstructPresenter()
-        {
-            return new VocabularyListPresenter(MockHelper.CreateMockVocabularyController().Object);
+            httpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId,
+                                                "CreateVocabulary",
+                                                String.Format("mid={0}", Constants.MODULE_ValidId))));
         }
 
         #endregion

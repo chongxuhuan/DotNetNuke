@@ -391,7 +391,7 @@ Namespace DotNetNuke.UI.Skins
 
             ' get ModuleId
             If Not IsNothing(Request.QueryString("mid")) Then
-                moduleId = Int32.Parse(Request.QueryString("mid"))
+                Integer.TryParse(Request.QueryString("mid"), moduleId)
             End If
 
             ' get ControlKey
@@ -401,7 +401,7 @@ Namespace DotNetNuke.UI.Skins
 
             ' initialize moduleid for modulesettings
             If Not IsNothing(Request.QueryString("moduleid")) And (key.ToLower = "module" Or key.ToLower = "help") Then
-                moduleId = Int32.Parse(Request.QueryString("moduleid"))
+                Integer.TryParse(Request.QueryString("moduleid"), moduleId)
             End If
 
             If moduleId <> -1 Then

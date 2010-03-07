@@ -18,7 +18,6 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports DotNetNuke.Common.Utilities
 Imports WebFormsMvp.Web
 Imports DotNetNuke.UI.Modules
 Imports System.Globalization
@@ -95,7 +94,7 @@ Namespace DotNetNuke.Web.Mvp
 
 #Region "IView Implementation"
 
-        Public Shadows Event Load(ByVal sender As Object, ByVal e As System.EventArgs) Implements WebFormsMVP.IView.Load
+        Public Shadows Event Load(ByVal sender As Object, ByVal e As System.EventArgs) Implements IView.Load
 
 #End Region
 
@@ -117,7 +116,6 @@ Namespace DotNetNuke.Web.Mvp
         End Sub
 
 #End Region
-
 
     End Class
 End Namespace

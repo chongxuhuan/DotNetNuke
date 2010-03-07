@@ -252,9 +252,23 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     If cboParentTab.SelectedItem IsNot Nothing Then
                         objTab.ParentId = Int32.Parse(cboParentTab.SelectedItem.Value)
                     End If
+
+                    Dim tabID As Integer = TabController.GetTabByTabPath(Tab.PortalID, Tab.TabPath)
+                    Dim objTabs As New TabController
+
+                    'Check if tab exists
+                    If tabID <> Null.NullInteger Then
+                        Dim existingTab As TabInfo = objTabs.GetTab(tabID, PortalId, False)
+                        If existingTab IsNot Nothing AndAlso existingTab.IsDeleted Then
+                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("TabRecycled", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                        Else
+                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("TabExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                        End If
+                        Exit Sub
+                    End If
+
                     Dim positionTabID As Integer = Int32.Parse(cboPositionTab.SelectedItem.Value)
 
-                    Dim objTabs As New TabController
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     If rbInsertPosition.SelectedValue = "After" And positionTabID > Null.NullInteger Then
                         objTab.TabID = objTabs.AddTabAfter(objTab, positionTabID)

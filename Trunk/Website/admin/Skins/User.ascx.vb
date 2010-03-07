@@ -109,7 +109,11 @@ Namespace DotNetNuke.UI.Skins.Controls
                 Else
                     Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
                     If objUserInfo.UserID <> -1 Then
-                        cmdRegister.Text = objUserInfo.DisplayName
+                        Dim messagingController As New Services.Messaging.MessagingController()
+
+                        Dim newMessageString As String = String.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(Me, MyFileName)), messagingController.GetNewMessageCount(PortalSettings.PortalId, objUserInfo.UserID))
+
+                        cmdRegister.Text = objUserInfo.DisplayName & " " & newMessageString
                         cmdRegister.ToolTip = Localization.GetString("ToolTip", Localization.GetResourceFile(Me, MyFileName))
                     End If
                 End If

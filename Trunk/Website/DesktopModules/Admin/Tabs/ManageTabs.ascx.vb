@@ -567,7 +567,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     End If
                     Return Null.NullInteger
                 End If
-
             End If
 
             If txtStartDate.Text <> "" Then
@@ -738,18 +737,9 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             End If
 
             If Tab.ContentItemId = Null.NullInteger AndAlso Tab.TabID <> Null.NullInteger Then
-                'This tab does not have a valid ContentItem
-                'create ContentItem
-                Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
-                If String.IsNullOrEmpty(Tab.Title) Then
-                    Tab.Content = Tab.TabName
-                Else
-                    Tab.Content = Tab.Title
-                End If
-                Tab.Indexed = False
-                Tab.ContentItemId = contentController.AddContentItem(Tab)
-
                 Dim tabCtl As New TabController
+                'This tab does not have a valid ContentItem
+                tabCtl.CreateContentItem(Tab)
                 tabCtl.UpdateTab(Tab)
             End If
 

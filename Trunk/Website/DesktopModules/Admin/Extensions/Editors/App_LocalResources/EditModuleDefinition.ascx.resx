@@ -142,7 +142,7 @@
     <value>Add Test Page?</value>
   </data>
   <data name="plCreate.Help" xml:space="preserve">
-    <value>You can create a new from many sources.  Select which method to use.  New - creates a new module control, Control - creates a module from an existing control,  Manifest - creates a module from an manifest.</value>
+    <value>You can create a new module in three ways.  Select which method to use.  New - creates a new module control, Control - creates a module from an existing control,  Manifest - creates a module from an existing manifest.</value>
   </data>
   <data name="plCreate.Text" xml:space="preserve">
     <value>Create Module From:</value>

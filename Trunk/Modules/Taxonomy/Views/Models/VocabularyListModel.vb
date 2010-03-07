@@ -24,7 +24,27 @@ Namespace DotNetNuke.Modules.Taxonomy.Views.Models
 
     Public Class VocabularyListModel
 
+        Private _IsEditable As Boolean
+        Private _NavigateUrlFormatString As String
         Private _Vocabularies As IList(Of Vocabulary)
+
+        Public Property IsEditable() As Boolean
+            Get
+                Return _IsEditable
+            End Get
+            Set(ByVal value As Boolean)
+                _IsEditable = value
+            End Set
+        End Property
+
+        Public Property NavigateUrlFormatString() As String
+            Get
+                Return _NavigateUrlFormatString
+            End Get
+            Set(ByVal value As String)
+                _NavigateUrlFormatString = value
+            End Set
+        End Property
 
         Public Property Vocabularies() As IList(Of Vocabulary)
             Get

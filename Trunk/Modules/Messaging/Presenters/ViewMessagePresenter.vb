@@ -74,7 +74,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 #Region "Public Methods"
 
         Public Function Cancel() As Boolean
-            Response.Redirect(NavigateURL(ModuleContext.TabId))
+            Response.Redirect(NavigateURL(TabId))
         End Function
 
         Public Sub DeleteMessage(ByVal sender As Object, ByVal e As EventArgs)
@@ -84,7 +84,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             _MessagingController.UpdateMessage(View.Model.Message)
 
             'Redirect to List
-            Response.Redirect(NavigateURL(ModuleContext.TabId))
+            Response.Redirect(NavigateURL(TabId))
         End Sub
 
         Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)

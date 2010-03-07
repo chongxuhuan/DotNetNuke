@@ -384,6 +384,43 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
         End Function
 
+        Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
+
+            If (String.IsNullOrEmpty(Host.SMTPServer)) Then
+                Throw New InvalidOperationException("SMTP Server not configured")
+            End If
+
+
+            Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
+
+            Dim smtpClient As New System.Net.Mail.SmtpClient(Host.SMTPServer)
+
+            Dim smtpHostParts As String() = Host.SMTPServer.Split(":"c)
+            If smtpHostParts.Length > 1 Then
+                smtpClient.Host = smtpHostParts(0)
+                smtpClient.Port = Convert.ToInt32(smtpHostParts(1))
+            End If
+
+
+            Select Case Host.SMTPAuthentication
+                Case "", "0" ' anonymous
+                Case "1" ' basic
+                    If Host.SMTPUsername <> "" And Host.SMTPPassword <> "" Then
+                        smtpClient.UseDefaultCredentials = False
+                        smtpClient.Credentials = New System.Net.NetworkCredential(Host.SMTPUsername, Host.SMTPPassword)
+                    End If
+                Case "2" ' NTLM
+                    smtpClient.UseDefaultCredentials = True
+            End Select
+
+            smtpClient.EnableSsl = Host.EnableSMTPSSL
+
+            smtpClient.Send(emailMessage)
+
+
+        End Sub
+
+
         Friend Shared Function RouteToUserMessaging(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal Subject As String, _
             ByVal Body As String, ByVal Attachments As List(Of Attachment)) As Boolean

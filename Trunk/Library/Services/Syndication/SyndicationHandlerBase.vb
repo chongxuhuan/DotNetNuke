@@ -15,7 +15,9 @@ Namespace DotNetNuke.Services.Syndication
         Public ReadOnly Property TabId() As Integer
             Get
                 If _tabId = Null.NullInteger AndAlso Not Request.QueryString("tabid") Is Nothing Then
-                    _tabId = CType(Request.QueryString("tabid"), Integer)
+                    If Not Integer.TryParse(Request.QueryString("tabid"), _tabId) Then
+                        _tabId = Null.NullInteger
+                    End If
                 End If
                 Return _tabId
             End Get
@@ -25,7 +27,9 @@ Namespace DotNetNuke.Services.Syndication
         Public ReadOnly Property ModuleId() As Integer
             Get
                 If _moduleId = Null.NullInteger AndAlso Not Request.QueryString("moduleid") Is Nothing Then
-                    _moduleId = CType(Request.QueryString("moduleid"), Integer)
+                    If Not Integer.TryParse(Request.QueryString("moduleid"), _moduleId) Then
+                        _moduleId = Null.NullInteger
+                    End If
                 End If
                 Return _moduleId
             End Get

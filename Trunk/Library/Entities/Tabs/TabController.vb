@@ -735,6 +735,27 @@ Namespace DotNetNuke.Entities.Tabs
             Next
         End Sub
 
+        Public Sub CreateContentItem(ByVal updatedTab As TabInfo)
+            Dim typeController As IContentTypeController = New ContentTypeController
+            Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
+                                             Where t.ContentType = "Tab" _
+                                             Select t) _
+                                             .SingleOrDefault
+
+            'This tab does not have a valid ContentItem
+            'create ContentItem
+            Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+            If String.IsNullOrEmpty(updatedTab.Title) Then
+                updatedTab.Content = updatedTab.TabName
+            Else
+                updatedTab.Content = updatedTab.Title
+            End If
+            updatedTab.ContentTypeId = contentType.ContentTypeId
+            updatedTab.Indexed = False
+            updatedTab.ContentItemId = contentController.AddContentItem(updatedTab)
+        End Sub
+
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Deletes a tab premanently from the database
@@ -937,6 +958,11 @@ Namespace DotNetNuke.Entities.Tabs
             Dim updateOrder As Boolean = (originalTab.ParentId <> updatedTab.ParentId)
             Dim levelDelta As Integer = (updatedTab.Level - originalTab.Level)
             Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
+
+            'Update ContentItem If neccessary
+            If updatedTab.ContentItemId = Null.NullInteger AndAlso updatedTab.TabID <> Null.NullInteger Then
+                CreateContentItem(updatedTab)
+            End If
 
             'Update Tab to DataStore
             provider.UpdateTab(updatedTab.TabID, updatedTab.ContentItemId, updatedTab.PortalID, updatedTab.TabName, updatedTab.IsVisible, updatedTab.DisableLink, _

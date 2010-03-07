@@ -94,7 +94,7 @@ Namespace DotNetNuke.UI.UserControls
                 ModuleID = _ModuleID
                 If ModuleID = -2 Then
                     If Not Request.QueryString("mid") Is Nothing Then
-                        ModuleID = Int32.Parse(Request.QueryString("mid"))
+                        Integer.TryParse(Request.QueryString("mid"), ModuleID)
                     End If
                 End If
             End Get

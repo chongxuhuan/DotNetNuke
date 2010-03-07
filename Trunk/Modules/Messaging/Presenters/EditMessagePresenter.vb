@@ -87,7 +87,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 #Region "Public Methods"
 
         Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+            Response.Redirect(NavigateURL(TabId, _
                                           "", _
                                           String.Format("userId={0}", UserId)))
         End Sub
@@ -99,7 +99,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             _MessagingController.UpdateMessage(View.Model.Message)
 
             'Redirect to List
-            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+            Response.Redirect(NavigateURL(TabId, _
                                           "", _
                                           String.Format("userId={0}", UserId)))
         End Sub
@@ -153,7 +153,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
                 End If
 
                 'Redirect to Message List
-                Response.Redirect(NavigateURL(ModuleContext.TabId, _
+                Response.Redirect(NavigateURL(TabId, _
                                               "", _
                                               String.Format("userId={0}", UserId)))
             Else

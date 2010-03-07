@@ -180,7 +180,7 @@ Namespace DotNetNuke.Modules.Admin.Authentication
                 End If
 
                 'replace language parameter in querystring, to make sure that user will see page in correct language
-                If UserId <> -1 Then
+                If UserId <> -1 AndAlso User IsNot Nothing Then
                     If User.Profile.PreferredLocale <> CultureInfo.CurrentCulture.Name Then
                         _RedirectURL = UrlUtils.ReplaceQSParam(_RedirectURL, "language", User.Profile.PreferredLocale)
                     End If

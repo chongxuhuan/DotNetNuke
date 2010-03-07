@@ -18,6 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Common
 Imports DotNetNuke.Services.Localization
 Imports Telerik.Web.UI
 
@@ -25,7 +26,6 @@ Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnGridHyperlinkColumn
         Inherits Telerik.Web.UI.GridHyperLinkColumn
-
         Implements ILocalizable
 
 #Region "Private Members"

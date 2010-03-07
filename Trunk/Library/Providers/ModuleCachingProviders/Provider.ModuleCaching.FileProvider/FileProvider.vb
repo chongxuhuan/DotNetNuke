@@ -66,7 +66,7 @@ Namespace DotNetNuke.Services.ModuleCache
         End Function
 
         Private Shared Function GetCachedItemCount(ByVal tabModuleId As Integer) As Integer
-            Return Directory.GetFiles(GetCacheFolder(), "*" + FileProvider.DataFileExtension).Length
+            Return Directory.GetFiles(GetCacheFolder(), String.Format("*{0}", FileProvider.DataFileExtension)).Length
         End Function
 
         Private Shared Function GetCachedOutputFileName(ByVal tabModuleId As Integer, ByVal cacheKey As String) As String
@@ -111,13 +111,13 @@ Namespace DotNetNuke.Services.ModuleCache
             Dim i As Integer = 0
             For Each File As String In Directory.GetFiles(folder, "*.resources")
                 If Not DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(File, 100, 200) Then
-                    filesNotDeleted.Append(File + ";")
+                    filesNotDeleted.Append(String.Format("{0};", File))
                 Else
                     i += 1
                 End If
             Next
             If filesNotDeleted.Length > 0 Then
-                Throw New IOException("Deleted " + i.ToString + " files, however, some files are locked.  Could not delete the following files: " + filesNotDeleted.ToString())
+                Throw New IOException(String.Format("Deleted {0} files, however, some files are locked.  Could not delete the following files: {1}", i, filesNotDeleted))
             End If
         End Sub
 
@@ -172,18 +172,22 @@ Namespace DotNetNuke.Services.ModuleCache
             Dim filesNotDeleted As New System.Text.StringBuilder()
             Dim i As Integer = 0
 
-            For Each File As String In Directory.GetFiles(GetCacheFolder(portalId), "*" + FileProvider.AttribFileExtension)
-                If IsFileExpired(File) Then
-                    Dim fileToDelete As String = File.Replace(FileProvider.AttribFileExtension, FileProvider.DataFileExtension)
-                    If Not DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(fileToDelete, 100, 200) Then
-                        filesNotDeleted.Append(fileToDelete + ";")
-                    Else
-                        i += 1
+            Dim cacheFolder As String = GetCacheFolder(portalId)
+
+            If Directory.Exists(cacheFolder) Then
+                For Each File As String In Directory.GetFiles(cacheFolder, String.Format("*{0}", FileProvider.AttribFileExtension))
+                    If IsFileExpired(File) Then
+                        Dim fileToDelete As String = File.Replace(FileProvider.AttribFileExtension, FileProvider.DataFileExtension)
+                        If Not DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(fileToDelete, 100, 200) Then
+                            filesNotDeleted.Append(String.Format("{0};", fileToDelete))
+                        Else
+                            i += 1
+                        End If
                     End If
-                End If
-            Next
+                Next
+            End If
             If filesNotDeleted.Length > 0 Then
-                Throw New IOException("Deleted " + i.ToString + " files, however, some files are locked.  Could not delete the following files: " + filesNotDeleted.ToString())
+                Throw New IOException(String.Format("Deleted {0} files, however, some files are locked.  Could not delete the following files: {1}", i, filesNotDeleted))
             End If
         End Sub
 

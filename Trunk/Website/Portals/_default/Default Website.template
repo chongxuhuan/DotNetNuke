@@ -513,7 +513,7 @@
               <KeyID>354</KeyID>
               <title>DotNetNuke® Community Edition</title>
               <alltabs>false</alltabs>
-              <inheritviewpermissions>false</inheritviewpermissions>
+              <inheritviewpermissions>true</inheritviewpermissions>
               <header />
               <footer />
               <startdate>0001-01-01T00:00:00</startdate>
@@ -536,12 +536,6 @@
                 <permission>
                   <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
                   <permissionkey>EDIT</permissionkey>
-                  <allowaccess>true</allowaccess>
-                  <rolename>Administrators</rolename>
-                </permission>
-                <permission>
-                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
-                  <permissionkey>VIEW</permissionkey>
                   <allowaccess>true</allowaccess>
                   <rolename>Administrators</rolename>
                 </permission>

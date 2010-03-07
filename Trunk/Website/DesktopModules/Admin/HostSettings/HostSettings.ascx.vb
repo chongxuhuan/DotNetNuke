@@ -35,6 +35,8 @@ Imports System.Collections.Generic
 Imports DotNetNuke.Application
 Imports DotNetNuke.Services.Cache
 Imports System.Linq
+Imports DotNetNuke.Services.ModuleCache
+Imports DotNetNuke.Services.OutputCache
 
 Namespace DotNetNuke.Modules.Admin.Host
 
@@ -302,51 +304,55 @@ Namespace DotNetNuke.Modules.Admin.Host
         End Sub
 
         Private Sub BindModuleCacheProviderList()
-            cboModuleCacheProvider.DataSource = GetFilteredProviders(ModuleCache.ModuleCachingProvider.GetProviderList(), "ModuleCachingProvider")
+            cboModuleCacheProvider.DataSource = GetFilteredProviders(ModuleCachingProvider.GetProviderList(), "ModuleCachingProvider")
             cboModuleCacheProvider.DataBind()
 
-            Dim defaultModuleCache As ModuleCache.ModuleCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of ModuleCache.ModuleCachingProvider)()
-            Dim providerKey As String = (From provider In ModuleCache.ModuleCachingProvider.GetProviderList() _
-                                        Where provider.Value.Equals(defaultModuleCache) _
-                                        Select provider.Key).SingleOrDefault
+            If cboModuleCacheProvider.Items.Count > 0 Then
+                Dim defaultModuleCache As ModuleCache.ModuleCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of ModuleCache.ModuleCachingProvider)()
+                Dim providerKey As String = (From provider In ModuleCachingProvider.GetProviderList() _
+                                            Where provider.Value.Equals(defaultModuleCache) _
+                                            Select provider.Key).SingleOrDefault
 
-            If Not String.IsNullOrEmpty(Entities.Host.Host.ModuleCachingMethod) Then
-                If cboModuleCacheProvider.Items.FindByValue(Entities.Host.Host.ModuleCachingMethod) IsNot Nothing Then
-                    cboModuleCacheProvider.Items.FindByValue(Entities.Host.Host.ModuleCachingMethod).Selected = True
+                If Not String.IsNullOrEmpty(Entities.Host.Host.ModuleCachingMethod) Then
+                    If cboModuleCacheProvider.Items.FindByValue(Entities.Host.Host.ModuleCachingMethod) IsNot Nothing Then
+                        cboModuleCacheProvider.Items.FindByValue(Entities.Host.Host.ModuleCachingMethod).Selected = True
+                    Else
+                        'maybe the specified output cache provider has been removed
+                        cboModuleCacheProvider.Items.FindByValue(providerKey).Selected = True
+                    End If
                 Else
-                    'maybe the specified output cache provider has been removed
                     cboModuleCacheProvider.Items.FindByValue(providerKey).Selected = True
                 End If
-            Else
-                cboModuleCacheProvider.Items.FindByValue(providerKey).Selected = True
             End If
         End Sub
 
         Private Sub BindPageCacheProviderList()
-            cboPageCacheProvider.DataSource = GetFilteredProviders(DotNetNuke.Services.OutputCache.OutputCachingProvider.GetProviderList(), "OutputCachingProvider")
+            cboPageCacheProvider.DataSource = GetFilteredProviders(OutputCachingProvider.GetProviderList(), "OutputCachingProvider")
             cboPageCacheProvider.DataBind()
 
-            Dim defaultPageCache As DotNetNuke.Services.OutputCache.OutputCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of DotNetNuke.Services.OutputCache.OutputCachingProvider)()
-            Dim providerKey As String = (From provider In DotNetNuke.Services.OutputCache.OutputCachingProvider.GetProviderList() _
-                                         Where provider.Value.Equals(defaultPageCache) _
-                                         Select provider.Key).SingleOrDefault
+            If cboPageCacheProvider.Items.Count > 0 Then
+                Dim defaultPageCache As DotNetNuke.Services.OutputCache.OutputCachingProvider = DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of DotNetNuke.Services.OutputCache.OutputCachingProvider)()
+                Dim providerKey As String = (From provider In OutputCachingProvider.GetProviderList() _
+                                             Where provider.Value.Equals(defaultPageCache) _
+                                             Select provider.Key).SingleOrDefault
 
 
-            If defaultPageCache IsNot Nothing Then
-                PageCacheRow.Visible = True
+                If defaultPageCache IsNot Nothing Then
+                    PageCacheRow.Visible = True
 
-                If Not String.IsNullOrEmpty(Entities.Host.Host.PageCachingMethod) Then
-                    If cboPageCacheProvider.Items.FindByValue(Entities.Host.Host.PageCachingMethod) IsNot Nothing Then
-                        cboPageCacheProvider.Items.FindByValue(Entities.Host.Host.PageCachingMethod).Selected = True
+                    If Not String.IsNullOrEmpty(Entities.Host.Host.PageCachingMethod) Then
+                        If cboPageCacheProvider.Items.FindByValue(Entities.Host.Host.PageCachingMethod) IsNot Nothing Then
+                            cboPageCacheProvider.Items.FindByValue(Entities.Host.Host.PageCachingMethod).Selected = True
+                        Else
+                            'maybe the specified output cache provider has been removed
+                            cboPageCacheProvider.Items.FindByValue(providerKey).Selected = True
+                        End If
                     Else
-                        'maybe the specified output cache provider has been removed
                         cboPageCacheProvider.Items.FindByValue(providerKey).Selected = True
                     End If
                 Else
-                    cboPageCacheProvider.Items.FindByValue(providerKey).Selected = True
+                    PageCacheRow.Visible = False
                 End If
-            Else
-                PageCacheRow.Visible = False
             End If
         End Sub
 
@@ -445,6 +451,7 @@ Namespace DotNetNuke.Modules.Admin.Host
         '''                       and localisation
         ''' </history>
         ''' -----------------------------------------------------------------------------
+
         Private Sub cmdEmail_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdEmail.Click
             Try
                 If txtHostEmail.Text <> "" Then
@@ -779,13 +786,13 @@ Namespace DotNetNuke.Modules.Admin.Host
         End Sub
 
         ''' <summary>
-        ''' GetFilteredProviders takes a Dictionary and a regular expression and returns an IEnumerable list
+        ''' GetFilteredProviders takes a Dictionary and a regular expression and returns an IEnumerable
         ''' where the key is modified by the regular expression.
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
         ''' <param name="providerList">A dictionary object containing the list of objects</param>
         ''' <param name="keyFilter">A regular expression used for filtering the key name</param>
-        ''' <returns>An enumeration with the modified keys and the associated values.</returns>
+        ''' <returns>An IEnumerable with the modified keys and the associated values.</returns>
         ''' <remarks></remarks>
         ''' <history>
         '''     [jbrinkman]    11/17/2009  Initial release
@@ -795,7 +802,7 @@ Namespace DotNetNuke.Modules.Admin.Host
                             Let filteredkey = provider.Key.Replace(keyFilter, String.Empty) _
                             Select filteredkey, provider.Key
 
-            Return Providers
+            Return providers
         End Function
 #End Region
 

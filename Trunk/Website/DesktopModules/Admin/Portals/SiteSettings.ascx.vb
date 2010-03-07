@@ -824,9 +824,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     ' write SiteMap verification file
                     Dim objStream As StreamWriter
                     objStream = File.CreateText(ApplicationMapPath & "\" & txtVerification.Text)
-                    objStream.WriteLine("Google SiteMap Verification File")
-                    objStream.WriteLine(" - " & txtSiteMap.Text)
-                    objStream.WriteLine(" - " & UserInfo.DisplayName)
+                    objStream.WriteLine("google-site-verification: " & txtVerification.Text)
                     objStream.Close()
                 End If
             End If

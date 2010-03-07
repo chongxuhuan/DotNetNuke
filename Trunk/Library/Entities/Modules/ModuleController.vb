@@ -674,6 +674,21 @@ Namespace DotNetNuke.Entities.Modules
 
         End Sub
 
+        Public Sub CreateContentItem(ByVal updatedModule As ModuleInfo)
+            Dim typeController As IContentTypeController = New ContentTypeController
+            Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
+                                             Where t.ContentType = "Module" _
+                                             Select t) _
+                                             .SingleOrDefault
+            'This module does not have a valid ContentItem
+            'create ContentItem
+            Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
+            updatedModule.Content = updatedModule.ModuleTitle
+            updatedModule.Indexed = False
+            updatedModule.ContentTypeId = contentType.ContentTypeId
+            updatedModule.ContentItemId = contentController.AddContentItem(updatedModule)
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' DeleteAllModules deletes all instances of a Module (from a collection).  This overload
@@ -1048,6 +1063,11 @@ Namespace DotNetNuke.Entities.Modules
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateModule(ByVal objModule As ModuleInfo)
+            'Update ContentItem If neccessary
+            If objModule.ContentItemId = Null.NullInteger AndAlso objModule.ModuleID <> Null.NullInteger Then
+                CreateContentItem(objModule)
+            End If
+
             ' update module
             dataProvider.UpdateModule(objModule.ModuleID, objModule.ContentItemId, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
 

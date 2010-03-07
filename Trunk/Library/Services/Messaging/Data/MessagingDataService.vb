@@ -59,7 +59,7 @@ Namespace DotNetNuke.Services.Messaging.Data
         End Function
 
         Public Function GetNewMessageCount(ByVal PortalID As Integer, ByVal UserID As Integer) As Integer Implements IMessagingDataService.GetNewMessageCount
-            Return DirectCast(provider.ExecuteScalar("Messaging_GetNewMessasgeCount", PortalID, UserID), Integer)
+            Return DirectCast(provider.ExecuteScalar("Messaging_GetNewMessageCount", PortalID, UserID), Integer)
         End Function
 
         Public Function GetNextMessageForDispatch(ByVal SchedulerInstance As Guid) As IDataReader Implements IMessagingDataService.GetNextMessageForDispatch

@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Mvp\PresenterTestBase.cs" />
     <Compile Include="Validation\DataAnnotationsObjectValidatorTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
   </ItemGroup>
@@ -74,6 +73,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Mvp\" />
     <Folder Include="Properties\" />
     <Folder Include="TestFiles\Databases\" />
   </ItemGroup>

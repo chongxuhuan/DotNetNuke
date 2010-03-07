@@ -56,12 +56,12 @@ Namespace DotNetNuke.Services.FileSystem
             Try
                 ' get TabId
                 If Not IsNothing(context.Request.QueryString("tabid")) Then
-                    TabId = Int32.Parse(context.Request.QueryString("tabid"))
+                    Integer.TryParse(context.Request.QueryString("tabid"), TabId)
                 End If
 
                 ' get ModuleId
                 If Not IsNothing(context.Request.QueryString("mid")) Then
-                    ModuleId = Int32.Parse(context.Request.QueryString("mid"))
+                    Integer.TryParse(context.Request.QueryString("mid"), ModuleId)
                 End If
             Catch ex As Exception
                 'The TabId or ModuleId are incorrectly formatted (potential DOS)

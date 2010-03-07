@@ -23,7 +23,6 @@ Imports System.Linq
 Imports DotNetNuke.Common
 Imports DotNetNuke.Modules.Taxonomy.Views
 Imports DotNetNuke.Entities.Content.Taxonomy
-Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Web.Mvp
@@ -99,7 +98,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 #Region "Public Methods"
 
         Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(ModuleContext.TabId))
+            Response.Redirect(NavigateURL(TabId))
         End Sub
 
         Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
@@ -118,7 +117,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                 VocabularyController.AddVocabulary(View.Model.Vocabulary)
 
                 'Redirect to Vocabulary List
-                Response.Redirect(NavigateURL(ModuleContext.TabId))
+                Response.Redirect(NavigateURL(TabId))
             Else
                 'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If

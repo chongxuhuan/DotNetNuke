@@ -102,20 +102,6 @@
     <Compile Include="Presenters\MessageListPresenter.vb" />
     <Compile Include="Presenters\ViewMessagePresenter.vb" />
     <Compile Include="Presenters\EditMessagePresenter.vb" />
-    <Compile Include="MessageCount.ascx.designer.vb">
-      <DependentUpon>MessageCount.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="MessageCount.ascx.vb">
-      <DependentUpon>MessageCount.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Settings.ascx.designer.vb">
-      <DependentUpon>Settings.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.ascx.vb">
-      <DependentUpon>Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Views\IMessageListView.vb" />
     <Compile Include="Views\MessageList.ascx.designer.vb">
       <DependentUpon>MessageList.ascx</DependentUpon>
@@ -145,23 +131,13 @@
     <Compile Include="Views\IEditMessageView.vb" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_LocalResources\Settings.ascx.resx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\MessageCount.ascx.resx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="App_LocalResources\EditMessage.ascx.resx" />
     <Content Include="App_LocalResources\SharedResources.resx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_LocalResources\ViewMessage.ascx.resx" />
     <Content Include="license.txt" />
-    <Content Include="MessageCount.ascx" />
     <Content Include="releaseNotes.txt" />
-    <Content Include="Settings.ascx" />
     <Content Include="Views\MessageList.ascx" />
     <Content Include="Views\ViewMessage.ascx" />
     <Content Include="Views\EditMessage.ascx" />

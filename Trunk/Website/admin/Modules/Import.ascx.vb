@@ -66,7 +66,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
 
         Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
             If Not Request.QueryString("moduleid") Is Nothing Then
-                ModuleId = Int32.Parse(Request.QueryString("moduleid"))
+                Integer.TryParse(Request.QueryString("moduleid"), ModuleId)
             End If
 
             ' Verify that the current user has access to edit this module

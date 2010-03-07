@@ -35,7 +35,8 @@
             </td>
         </tr>
         <tr>
-            <td style="text-align:center">
+            <td style="text-align:left">
+                <dnn:Label ID="plPremium" runat="server" cssClass="SubHead" ControlName="ctlPortals" /><br />
                 <dnn:DualListBox id="ctlPortals" runat="server" DataValueField="PortalID" DataTextField="PortalName" 
                     AddKey="AddPortal" RemoveKey="RemovePortal" AddAllKey="AddAllPortals" RemoveAllKey="RemoveAllPortals"
                     AddImageURL="~/images/rt.gif" AddAllImageURL="~/images/ffwd.gif" RemoveImageURL="~/images/lt.gif" 

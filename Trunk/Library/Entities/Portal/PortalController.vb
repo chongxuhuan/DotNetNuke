@@ -1178,10 +1178,10 @@ Namespace DotNetNuke.Entities.Portals
             Return CreatePortal(PortalName, objAdminUser, Description, KeyWords, TemplatePath, TemplateFile, HomeDirectory, PortalAlias, ServerPath, ChildPath, IsChildPortal)
         End Function
 
-        Private Sub CopyPageTemplate(ByVal templateFile As String, ByVal MappedHomeDirectory As String)
-            Dim strHostTemplateFile As String = HostMapPath & "Templates\" & templateFile
+        Public Sub CopyPageTemplate(ByVal templateFile As String, ByVal MappedHomeDirectory As String)
+            Dim strHostTemplateFile As String = String.Format("{0}Templates\{1}", HostMapPath, templateFile)
             If File.Exists(strHostTemplateFile) Then
-                Dim strPortalTemplateFolder As String = MappedHomeDirectory & "Templates\"
+                Dim strPortalTemplateFolder As String = String.Format("{0}Templates\", MappedHomeDirectory)
                 If Not Directory.Exists(strPortalTemplateFolder) Then
                     'Create Portal Templates folder
                     Directory.CreateDirectory(strPortalTemplateFolder)

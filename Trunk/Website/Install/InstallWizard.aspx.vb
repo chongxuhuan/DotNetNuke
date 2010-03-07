@@ -29,6 +29,7 @@ Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Services.Mail
+Imports DotNetNuke.Entities.Host
 
 Namespace DotNetNuke.Services.Install
 
@@ -1256,22 +1257,52 @@ Namespace DotNetNuke.Services.Install
         End Function
 
         Private Function TestSMTPSettings() As Boolean
-            If Not String.IsNullOrEmpty(usrHost.Email) Then
-                Dim strMessage As String = DotNetNuke.Services.Mail.Mail.SendMail(usrHost.Email, usrHost.Email, "", "", MailPriority.Normal, _
-                    LocalizeString("EmailTestMessageSubject"), MailFormat.Text, System.Text.Encoding.UTF8, "", "", txtSMTPServer.Text, _
-                    optSMTPAuthentication.SelectedItem.Value, txtSMTPUsername.Text, txtSMTPPassword.Text, chkSMTPEnableSSL.Checked)
 
-                If strMessage <> "" Then
-                    lblHostUserError.Text = String.Format(LocalizeString("SMTPError"), String.Format(LocalizeString("EmailErrorMessage"), strMessage))
-                    Return False
-                Else
+            If Not String.IsNullOrEmpty(usrHost.Email) Then
+
+                Try
+                    Dim emailMessage As New System.Net.Mail.MailMessage(usrHost.Email, usrHost.Email, LocalizeString("EmailTestMessageSubject"), String.Empty)
+
+                    Dim smtpClient As New System.Net.Mail.SmtpClient(txtSMTPServer.Text)
+
+                    Dim smtpHostParts As String() = txtSMTPServer.Text.Split(":"c)
+                    If smtpHostParts.Length > 1 Then
+                        smtpClient.Host = smtpHostParts(0)
+                        smtpClient.Port = Convert.ToInt32(smtpHostParts(1))
+                    End If
+
+
+                    Select Case optSMTPAuthentication.SelectedItem.Value
+                        Case "", "0" ' anonymous
+                        Case "1" ' basic
+                            If txtSMTPUsername.Text <> "" And txtSMTPPassword.Text <> "" Then
+                                smtpClient.UseDefaultCredentials = False
+                                smtpClient.Credentials = New System.Net.NetworkCredential(txtSMTPUsername.Text, txtSMTPPassword.Text)
+                            End If
+                        Case "2" ' NTLM
+                            smtpClient.UseDefaultCredentials = True
+                    End Select
+
+                    smtpClient.EnableSsl = chkSMTPEnableSSL.Checked
+
+                    smtpClient.Send(emailMessage)
+
                     lblHostUserError.Text = String.Format(LocalizeString("SMTPSuccess"), LocalizeString("EmailSentMessage"))
                     Return True
-                End If
+
+                Catch ex As Exception
+                    lblHostUserError.Text = String.Format(LocalizeString("SMTPError"), String.Format(LocalizeString("EmailErrorMessage"), ex.Message))
+                    Return False
+
+                End Try
             Else
                 lblHostUserError.Text = String.Format(LocalizeString("SMTPError"), LocalizeString("SpecifyHostEmailMessage"))
                 Return False
             End If
+
+
+
+
         End Function
 
         Private Sub UpdateMachineKey()

@@ -22,7 +22,6 @@ Imports DotNetNuke.Common
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Modules.Taxonomy.Views
 Imports DotNetNuke.Entities.Content.Taxonomy
-Imports DotNetNuke.Web.Mvp.Framework
 Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Entities.Users
@@ -135,8 +134,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #Region "Protected Methods"
 
-        Protected Overrides Sub Initialize()
-            MyBase.Initialize()
+        Protected Overrides Sub OnInit()
+            MyBase.OnInit()
 
             If View.Model.Vocabulary Is Nothing Then
                 View.Model.Vocabulary = VocabularyController.GetVocabularies() _
@@ -165,7 +164,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
         End Sub
 
         Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(ModuleContext.TabId))
+            Response.Redirect(NavigateURL(TabId))
         End Sub
 
         Public Sub CancelTerm(ByVal sender As Object, ByVal e As EventArgs)
@@ -190,7 +189,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             VocabularyController.DeleteVocabulary(View.Model.Vocabulary)
 
             'Redirect to List
-            Response.Redirect(NavigateURL(ModuleContext.TabId))
+            Response.Redirect(NavigateURL(TabId))
         End Sub
 
         Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
@@ -236,7 +235,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                 VocabularyController.UpdateVocabulary(View.Model.Vocabulary)
 
                 'Redirect to Vocabulary List
-                Response.Redirect(NavigateURL(ModuleContext.TabId))
+                Response.Redirect(NavigateURL(TabId))
             Else
                 'View.ShowMessage("VocabularyValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If

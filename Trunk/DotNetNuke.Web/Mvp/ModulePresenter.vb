@@ -18,10 +18,13 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Common
+Imports DotNetNuke.Common.Utilities
 Imports System.Web.UI
 Imports WebFormsMvp
 Imports DotNetNuke.UI.Modules
 Imports DotNetNuke.Web.Validators
+Imports DotNetNuke.Security.Permissions
 
 Namespace DotNetNuke.Web.Mvp
 
@@ -30,8 +33,14 @@ Namespace DotNetNuke.Web.Mvp
 
 #Region "Private Members"
 
+        Private _IsEditable As Boolean
         Private _IsPostBack As Boolean
+        Private _IsSuperUser As Boolean
         Private _ModuleContext As ModuleInstanceContext
+        Private _ModuleId As Integer
+        Private _PortalId As Integer
+        Private _TabId As Integer
+        Private _UserId As Integer
         Private _Validator As Validator
 
 #End Region
@@ -51,6 +60,7 @@ Namespace DotNetNuke.Web.Mvp
             Dim moduleControl As IModuleControl = TryCast(view, IModuleControl)
             If moduleControl IsNot Nothing Then
                 _ModuleContext = moduleControl.ModuleContext
+                LoadFromContext()
             End If
             _Validator = New Validator(New DataAnnotationsObjectValidator())
 
@@ -60,62 +70,99 @@ Namespace DotNetNuke.Web.Mvp
                 AddHandler initializeView.Initialize, AddressOf InitializeInternal
             End If
 
+            AddHandler view.Load, AddressOf LoadInternal
         End Sub
+
+#End Region
+
+#Region "Protected Properties"
+
+        Protected Friend Overridable ReadOnly Property AllowAnonymousAccess() As Boolean
+            Get
+                Return True
+            End Get
+        End Property
+
+        Protected Friend Overridable ReadOnly Property IsUserAuthorized() As Boolean
+            Get
+                Return True
+            End Get
+        End Property
 
 #End Region
 
 #Region "Public Properties"
 
-        Public ReadOnly Property IsPostBack() As Boolean
+        Public Property IsEditable() As Boolean
+            Get
+                Return _IsEditable
+            End Get
+            Set(ByVal value As Boolean)
+                _IsEditable = value
+            End Set
+        End Property
+
+        Public Property IsPostBack() As Boolean
             Get
                 Return _IsPostBack
             End Get
+            Set(ByVal value As Boolean)
+                _IsPostBack = value
+            End Set
         End Property
 
-        Public ReadOnly Property IsSuperUser() As Boolean
+        Public Property IsSuperUser() As Boolean
             Get
-                If ModuleContext IsNot Nothing Then
-                    Return ModuleContext.PortalSettings.UserInfo.IsSuperUser
-                End If
+                Return _IsSuperUser
             End Get
+            Set(ByVal value As Boolean)
+                _IsSuperUser = value
+            End Set
         End Property
 
-        Public ReadOnly Property ModuleContext() As ModuleInstanceContext
+        Public Property ModuleContext() As ModuleInstanceContext
             Get
                 Return _ModuleContext
             End Get
+            Set(ByVal value As ModuleInstanceContext)
+                _ModuleContext = value
+            End Set
         End Property
 
-        Public ReadOnly Property ModuleId() As Integer
+        Public Property ModuleId() As Integer
             Get
-                If ModuleContext IsNot Nothing Then
-                    Return ModuleContext.ModuleId
-                End If
+                Return _ModuleId
             End Get
+            Set(ByVal value As Integer)
+                _ModuleId = value
+            End Set
         End Property
 
-        Public ReadOnly Property PortalId() As Integer
+        Public Property PortalId() As Integer
             Get
-                If ModuleContext IsNot Nothing Then
-                    Return ModuleContext.PortalSettings.PortalId
-                End If
+                Return _PortalId
             End Get
+            Set(ByVal value As Integer)
+                _PortalId = value
+            End Set
         End Property
 
-        Public ReadOnly Property TabId() As Integer
+        Public Property TabId() As Integer
             Get
-                If ModuleContext IsNot Nothing Then
-                    Return ModuleContext.TabId
-                End If
+                Return _TabId
             End Get
+            Set(ByVal value As Integer)
+                _TabId = value
+            End Set
         End Property
 
-        Public ReadOnly Property UserId() As Integer
+        Public Property UserId() As Integer
             Get
-                If ModuleContext IsNot Nothing Then
-                    Return ModuleContext.PortalSettings.UserId
-                End If
+                Return _UserId
             End Get
+            Set(ByVal value As Integer)
+                _UserId = value
+            End Set
         End Property
 
         Public Property Validator() As Validator
@@ -132,24 +179,35 @@ Namespace DotNetNuke.Web.Mvp
 #Region "Event Handlers"
 
         Private Sub InitializeInternal(ByVal sender As Object, ByVal e As EventArgs)
-            Initialize()
+            OnInit()
+        End Sub
+
+        Private Sub LoadInternal(ByVal sender As Object, ByVal e As EventArgs)
+            If CheckAuthPolicy() Then
+                OnLoad()
+            End If
         End Sub
 
 #End Region
 
 #Region "Protected Methods"
 
-        Protected Friend Overridable ReadOnly Property AllowAnonymousAccess() As Boolean
-            Get
-                Return True
-            End Get
-        End Property
+        Protected Overridable Sub LoadFromContext()
+            If ModuleContext IsNot Nothing Then
+                IsEditable = ModuleContext.IsEditable
+                IsSuperUser = ModuleContext.PortalSettings.UserInfo.IsSuperUser
+                ModuleId = ModuleContext.ModuleId
+                PortalId = ModuleContext.ModuleId
+                TabId = ModuleContext.TabId
+                UserId = ModuleContext.PortalSettings.UserInfo.UserID
+            End If
+        End Sub
 
-        Protected Friend Overridable Function CheckUserAuthorized() As Boolean
-            Return True
-        End Function
+        Protected Overridable Sub OnInit()
 
-        Protected Overridable Sub Initialize()
+        End Sub
+
+        Protected Overridable Sub OnLoad()
 
         End Sub
 
@@ -170,40 +228,53 @@ Namespace DotNetNuke.Web.Mvp
 
 #End Region
 
-        'Protected Friend Overridable Sub OnNoCurrentUser()
-        '    'Environment.RedirectToLogin()
-        'End Sub
+        Protected Friend Overridable Function CheckAuthPolicy() As Boolean
+            If (UserId = Null.NullInteger AndAlso Not AllowAnonymousAccess) Then
+                OnNoCurrentUser()
+                Exit Function
+            End If
 
-        'Protected Friend Overridable Sub OnUnauthorizedUser()
-        '    'Environment.RedirectToAccessDenied()
-        'End Sub
+            If (Not IsUserAuthorized) Then
+                OnUnauthorizedUser()
+                Exit Function
+            End If
 
-        'Protected Friend Overridable Function RunWithAuthPolicy(ByVal func As Func(Of Presenter, Boolean)) As Boolean
-        '    'If (Model.UserId = Null.NullInteger AndAlso Not AllowAnonymousAccess) Then
-        '    '    OnNoCurrentUser()
-        '    '    Exit Function
-        '    'End If
+            Return True
+        End Function
 
-        '    'If (Not CheckUserAuthorized()) Then
-        '    '    OnUnauthorizedUser()
-        '    'Else
-        '    '    Return func.Invoke(Me)
-        '    'End If
+        Protected Overridable Sub OnNoCurrentUser()
+            RedirectToLogin()
+        End Sub
 
-        '    'Return Nothing
-        'End Function
+        Protected Overridable Sub OnUnauthorizedUser()
+            RedirectToAccessDenied()
+        End Sub
 
-        'Private Function RunIfValid(ByVal func As Func(Of Boolean), ByVal validationGroup As String) As Boolean
-        '    'If (String.IsNullOrEmpty(validationGroup)) Then
-        '    '    Page.Validate()
-        '    'Else
-        '    '    Page.Validate(validationGroup)
-        '    'End If
-        '    'If (Page.IsValid) Then
-        '    '    Return func.Invoke(Presenter)
-        '    'Else
-        '    '    Return Nothing
-        '    'End If
+        Protected Sub RedirectToAccessDenied()
+            Response.Redirect(AccessDeniedURL, True)
+        End Sub
+
+        Protected Sub RedirectToLogin()
+            Response.Redirect(LoginURL(Request.RawUrl, False), True)
+        End Sub
+
+
+        'Protected Function RunIfValid(ByVal func As Func(Of Boolean), ByVal validationGroup As String) As Boolean
+        '    'Try and cast view to Control
+        '    Dim control As Control = TryCast(View, Control)
+        '    If control IsNot Nothing AndAlso control.Page IsNot Nothing Then
+        '        If (String.IsNullOrEmpty(validationGroup)) Then
+        '            control.Page.Validate()
+        '        Else
+        '            control.Page.Validate(validationGroup)
+        '        End If
+        '        If (control.Page.IsValid) Then
+        '            Return func.Invoke(Presenter)
+        '        Else
+        '            Return Nothing
+        '        End If
+        '    End If
+
         'End Function
 
         'Protected Overridable Function CreateSaveHandler(ByVal presenterFunction As Action(Of Object, Boolean)) As EventHandler
@@ -218,8 +289,8 @@ Namespace DotNetNuke.Web.Mvp
         '    'Return Function(sender, args) presenterFunction(Presenter)
         'End Function
 
-        'Protected Overridable Function CreateSimpleHandler(Of TEventArgs As EventArgs)(ByVal presenterFunction As Func(Of TPresenter, TEventArgs, Boolean)) As EventHandler(Of TEventArgs)
-        '    'Return Function(sender, args) presenterFunction(Presenter, args)
+        'Protected Overridable Function CreateSimpleHandler(Of TEventArgs As EventArgs)(ByVal presenterFunction As EventHandler(Of TEventArgs)) As EventHandler(Of TEventArgs)
+        '    Return Function(sender, args) presenterFunction(sender, args)
         'End Function
 
     End Class

@@ -47,7 +47,6 @@ Namespace DotNetNuke.Modules.Admin.Sales
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
                 Dim strName As String
-                Dim objStream As StreamWriter
                 Dim blnValid As Boolean = True
                 Dim strTransactionID As String
                 Dim strTransactionType As String
@@ -59,7 +58,7 @@ Namespace DotNetNuke.Modules.Admin.Sales
                 Dim strEmail As String
                 Dim blnCancel As Boolean = False
                 Dim strPayPalID As String = Null.NullString
-
+                Dim strResponse As String = ""
                 Dim objRoles As New RoleController
                 Dim objPortalController As New PortalController
 
@@ -116,15 +115,15 @@ Namespace DotNetNuke.Modules.Admin.Sales
                     objRequest.ContentLength = strPost.Length
                     objRequest.ContentType = "application/x-www-form-urlencoded"
 
-                    objStream = New StreamWriter(objRequest.GetRequestStream())
-                    objStream.Write(strPost)
-                    objStream.Close()
+                    Using objStream As StreamWriter = New StreamWriter(objRequest.GetRequestStream())
+                        objStream.Write(strPost)
+                    End Using
 
-                    Dim objResponse As HttpWebResponse = CType(objRequest.GetResponse(), HttpWebResponse)
-                    Dim sr As StreamReader
-                    sr = New StreamReader(objResponse.GetResponseStream())
-                    Dim strResponse As String = sr.ReadToEnd()
-                    sr.Close()
+                    Using objResponse As HttpWebResponse = CType(objRequest.GetResponse(), HttpWebResponse)
+                        Using sr As StreamReader = New StreamReader(objResponse.GetResponseStream())
+                            strResponse = sr.ReadToEnd()
+                        End Using
+                    End Using
 
                     Select Case strResponse
                         Case "VERIFIED"

@@ -178,8 +178,8 @@ Namespace DotNetNuke.Services.Installer.Installers
             DesktopModule.FriendlyName = Package.FriendlyName
             DesktopModule.Description = Package.Description
             DesktopModule.Version = FormatVersion(Package.Version)
-            DesktopModule.IsPremium = False
-            DesktopModule.IsAdmin = False
+            'DesktopModule.IsPremium = False
+            'DesktopModule.IsAdmin = False
             DesktopModule.CompatibleVersions = Null.NullString
             DesktopModule.Dependencies = Null.NullString
             DesktopModule.Permissions = Null.NullString

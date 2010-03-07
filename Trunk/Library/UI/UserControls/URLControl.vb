@@ -157,7 +157,7 @@ Namespace DotNetNuke.UI.UserControls
                 If Not ViewState("ModuleId") Is Nothing Then
                     myMid = Convert.ToInt32(ViewState("ModuleId"))
                 ElseIf Not Request.QueryString("mid") Is Nothing Then
-                    myMid = Int32.Parse(Request.QueryString("mid"))
+                    Integer.TryParse(Request.QueryString("mid"), myMid)
                 End If
                 Return myMid
             End Get

@@ -18,15 +18,9 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System.IO
-Imports System.Collections.Generic
-Imports ICSharpCode.SharpZipLib.Zip
 
-Imports DotNetNuke.Entities.Modules
-Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Services.Installer
-Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.UI.Modules
 Imports DotNetNuke.Services.Installer.Packages
 Imports DotNetNuke.UI.Utilities
@@ -157,6 +151,10 @@ Namespace DotNetNuke.Modules.Admin.Extensions
             Else
                 PackageID = Null.NullInteger
             End If
+
+            cmdReturn1.NavigateUrl = ReturnURL
+            cmdReturn2.NavigateUrl = ReturnURL
+
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -233,22 +231,6 @@ Namespace DotNetNuke.Modules.Admin.Extensions
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' The cmdReturn_Click runs when the Return Button is clicked
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        '''   [cnurse] 16/9/2004  Updated for localization, Help and 508
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdReturn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdReturn1.Click, cmdReturn2.Click
-            Response.Redirect(ReturnURL(), True)
         End Sub
 
 #End Region

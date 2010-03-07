@@ -474,7 +474,7 @@ Namespace DotNetNuke.Services.Mail
                 ' send to recipients
                 Dim strBody As String = _strBody
                 If _bodyFormat = MailFormat.Html Then ' Add Base Href for any images inserted in to the email.
-                    strBody = "<Base Href='" & _PortalAlias & "'>" & strBody
+                    strBody = "<base href='" & AddHTTP(_PortalAlias) & "' />" & strBody
                 End If
                 Dim strSubject As String = _strSubject
                 Dim myUser As UserInfo = Nothing

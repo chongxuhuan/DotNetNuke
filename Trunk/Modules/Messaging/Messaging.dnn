@@ -47,16 +47,6 @@
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
-                    <controlKey>Settings</controlKey>
-                    <controlSrc>DesktopModules/Admin/Messaging/Settings.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle />
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
                     <controlKey>ViewMessage</controlKey>
                     <controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
@@ -88,15 +78,7 @@
             </file>
             <file>
               <path>App_LocalResources</path>
-              <name>MessageCount.ascx.resx</name>
-            </file>
-            <file>
-              <path>App_LocalResources</path>
               <name>MessageList.ascx.resx</name>
-            </file>
-            <file>
-              <path>App_LocalResources</path>
-              <name>Settings.ascx.resx</name>
             </file>
             <file>
               <path>App_LocalResources</path>
@@ -110,13 +92,7 @@
               <name>EditMessage.ascx</name>
             </file>
             <file>
-              <name>MessageCount.ascx</name>
-            </file>
-            <file>
               <name>MessageList.ascx</name>
-            </file>
-            <file>
-              <name>Settings.ascx</name>
             </file>
             <file>
               <name>ViewMessage.ascx</name>

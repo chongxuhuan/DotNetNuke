@@ -298,14 +298,9 @@ Namespace DotNetNuke.Modules.Admin.Modules
                 ModuleId = Int32.Parse(Request.QueryString("ModuleId"))
             End If
 
-            If [Module].ContentItemId = Null.NullInteger AndAlso [Module].TabID <> Null.NullInteger Then
-                'This tab does not have a valid ContentItem
-                'create ContentItem
-                Dim contentController As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
-                [Module].Content = [Module].ModuleTitle
-                [Module].Indexed = False
-                [Module].ContentItemId = contentController.AddContentItem([Module])
-
+            If [Module].ContentItemId = Null.NullInteger AndAlso [Module].ModuleID <> Null.NullInteger Then
+                'This module does not have a valid ContentItem
+                objModules.CreateContentItem([Module])
                 objModules.UpdateModule([Module])
             End If
 

@@ -441,7 +441,7 @@ Namespace DotNetNuke.Entities.Portals
         <XmlIgnore()> Public ReadOnly Property HomeDirectoryMapPath() As String
             Get
                 Dim objFolderController As New Services.FileSystem.FolderController
-                Return objFolderController.GetMappedDirectory(Common.Globals.ApplicationPath + "/" + HomeDirectory + "/")
+                Return objFolderController.GetMappedDirectory(String.Format("{0}/{1}/", Common.Globals.ApplicationPath, HomeDirectory))
             End Get
 
         End Property

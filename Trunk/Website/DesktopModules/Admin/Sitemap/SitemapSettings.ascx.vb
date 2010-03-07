@@ -148,7 +148,7 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             If Single.Parse(txtMinPagePriority.Text) < 0 Then
                 txtMinPagePriority.Text = "0"
             End If
-            PortalController.UpdatePortalSetting(PortalId, "SitemapMinPriority", txtMinPagePriority.Text)
+            PortalController.UpdatePortalSetting(PortalId, "SitemapMinPriority", Single.Parse(txtMinPagePriority.Text))
 
         End Sub
 

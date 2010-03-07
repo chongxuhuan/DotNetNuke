@@ -318,4 +318,19 @@
   <data name="Title.Header" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="plPremium.Text" xml:space="preserve">
+    <value>Assigned Premium Modules</value>
+  </data>
+  <data name="DesktopModuleInfo_Dependencies.Help" xml:space="preserve">
+    <value>You can list any dependencies that the module has here.</value>
+  </data>
+  <data name="DesktopModuleInfo_Dependencies.Text" xml:space="preserve">
+    <value>Dependencies:</value>
+  </data>
+  <data name="DesktopModuleInfo_Permissions.Help" xml:space="preserve">
+    <value>You can list any Code Access Security Permissions your module requires here.</value>
+  </data>
+  <data name="DesktopModuleInfo_Permissions.Text" xml:space="preserve">
+    <value>Permissions:</value>
+  </data>
 </root>

@@ -51,41 +51,30 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             _VocabularyController = vocabularyController
 
             AddHandler View.AddVocabulary, AddressOf AddVocabulary
-            AddHandler View.VocabularyDataBound, AddressOf VocabularyDataBound
+
             View.Model.Vocabularies = _VocabularyController.GetVocabularies().ToList()
+            View.Model.IsEditable = IsEditable
+            View.Model.NavigateUrlFormatString = NavigateURL(TabId, _
+                                                                "EditVocabulary", _
+                                                                String.Format("mid={0}", ModuleId), _
+                                                                "VocabularyId={0}")
         End Sub
 
 #End Region
 
+        Protected Overrides Sub OnLoad()
+            MyBase.OnLoad()
+
+            View.ShowAddButton(IsEditable)
+        End Sub
+
 #Region "Public Methods"
 
         Public Sub AddVocabulary(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(ModuleContext.TabId, _
+            Response.Redirect(NavigateURL(TabId, _
                                           "CreateVocabulary", _
-                                          String.Format("mid={0}", ModuleContext.ModuleId)))
+                                          String.Format("mid={0}", ModuleId)))
         End Sub
-
-        Public Function VocabularyDataBound(ByVal sender As Object, ByVal e As GridItemEventArgs) As Boolean
-            Dim item As GridItem = e.Item
-
-            If item.ItemType = GridItemType.Item Or _
-                    item.ItemType = GridItemType.AlternatingItem Or _
-                    item.ItemType = GridItemType.SelectedItem Then
-
-                Dim vocabulary As Vocabulary = TryCast(item.DataItem, Vocabulary)
-
-                Dim hyperLinkColumn As HyperLink = TryCast(item.Controls(2).Controls(0), HyperLink)
-
-                If hyperLinkColumn IsNot Nothing Then
-                    hyperLinkColumn.NavigateUrl = NavigateURL(ModuleContext.TabId, _
-                                                                "EditVocabulary", _
-                                                                String.Format("mid={0}", ModuleContext.ModuleId), _
-                                                                String.Format("VocabularyId={0}", vocabulary.VocabularyId))
-                End If
-
-            End If
-
-        End Function
 
 #End Region
 

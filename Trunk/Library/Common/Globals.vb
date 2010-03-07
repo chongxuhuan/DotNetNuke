@@ -1223,7 +1223,7 @@ Namespace DotNetNuke.Common
 
                 Dim ModuleID As Integer = -1
                 If Not HttpContext.Current.Request.QueryString("mid") Is Nothing Then
-                    ModuleID = Integer.Parse(HttpContext.Current.Request.QueryString("mid"))
+                    Integer.TryParse(HttpContext.Current.Request.QueryString("mid"), ModuleID)
                 End If
 
                 _IsAdminSkin = (ControlKey <> "" And ControlKey <> "view" And ModuleID <> -1) OrElse (ControlKey <> "" And AdminKeys.IndexOf(ControlKey) <> -1 And ModuleID = -1)
@@ -2928,7 +2928,7 @@ Namespace DotNetNuke.Common
 
             Dim ModuleID As Integer = -1
             If Not HttpContext.Current.Request.QueryString("mid") Is Nothing Then
-                ModuleID = Integer.Parse(HttpContext.Current.Request.QueryString("mid"))
+                Integer.TryParse(HttpContext.Current.Request.QueryString("mid"), ModuleID)
             End If
 
             Return IsAdminTab OrElse (ControlKey <> "" And ControlKey <> "view" And ModuleID <> -1) OrElse (ControlKey <> "" And AdminKeys.IndexOf(ControlKey) <> -1 And ModuleID = -1)

@@ -211,7 +211,7 @@ Namespace DotNetNuke.UI.Skins
             ' container preview
             Dim PreviewModuleId As Integer = -1
             If Not Request.QueryString("ModuleId") Is Nothing Then
-                PreviewModuleId = Integer.Parse(Request.QueryString("ModuleId"))
+                Integer.TryParse(Request.QueryString("ModuleId"), PreviewModuleId)
             End If
             If (Not Request.QueryString("ContainerSrc") Is Nothing) And (objModule.ModuleID = PreviewModuleId Or PreviewModuleId = -1) Then
                 containerSrc = SkinController.FormatSkinSrc(QueryStringDecode(Request.QueryString("ContainerSrc")) & ".ascx", PortalSettings)
