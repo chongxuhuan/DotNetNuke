@@ -138,4 +138,7 @@
   <data name="plFile.Text" xml:space="preserve">
     <value>Select File:</value>
   </data>
+  <data name="NoFileTypeSelected.Text" xml:space="preserve">
+    <value>You must select a File Type to Edit before clicking the Update button.</value>
+  </data>
 </root>

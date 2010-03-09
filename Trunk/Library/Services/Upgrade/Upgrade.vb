@@ -2527,6 +2527,12 @@ Namespace DotNetNuke.Services.Upgrade
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/ViewProfile/ViewProfile.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.View, 0)
                         AddModuleControl(ModuleDefID, "Settings", "Settings", "DesktopModules/Admin/ViewProfile/Settings.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.Edit, 0)
 
+                        'Add new Messaging module
+                        ModuleDefID = AddModuleDefinition("Messaging", "", "Messaging", False, False)
+                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Messaging/MessageList.ascx", "", SecurityAccessLevel.Edit, 0)
+                        AddModuleControl(ModuleDefID, "ViewMessage", "View Message", "DesktopModules/Admin/Messaging/ViewMessage.ascx", "", SecurityAccessLevel.Edit, 0)
+                        AddModuleControl(ModuleDefID, "EditMessage", "EditMessage", "DesktopModules/Admin/Messaging/EditMessage.ascx", "", SecurityAccessLevel.Edit, 0)
+
                         Dim strHostTemplateFile As String = HostMapPath & "Templates\UserProfile.page.template"
                         If File.Exists(strHostTemplateFile) Then
                             Dim objPortals As New PortalController
@@ -2549,6 +2555,7 @@ Namespace DotNetNuke.Services.Upgrade
                                 Dim newTab As New TabInfo()
                                 newTab.PortalID = objPortal.PortalID
                                 newTab.ParentId = Null.NullInteger
+                                newTab.TabName = "User Profile"
                                 newTab.TabID = tabController.AddTabBefore(newTab, objPortal.AdminTabId)
 
                                 Dim xmlDoc As New XmlDocument
@@ -2565,7 +2572,7 @@ Namespace DotNetNuke.Services.Upgrade
                                 objPortals.UpdatePortalInfo(objPortal)
 
                                 'Add Users folder to every portal
-                                Dim strUsersFolder As String = objPortal.HomeDirectoryMapPath & "Users\"
+                                Dim strUsersFolder As String = String.Format("{0}Users\", objPortal.HomeDirectoryMapPath)
 
                                 If Not Directory.Exists(strUsersFolder) Then
                                     'Create Users folder
@@ -2587,10 +2594,23 @@ Namespace DotNetNuke.Services.Upgrade
                                                         .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
                                                 }
                         listController.AddListEntry(imagedatatype)
+
+                        'Add new EventQueue Event
+                        Dim config As DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration = DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.GetConfig()
+                        If config IsNot Nothing Then
+                            If Not config.PublishedEvents.ContainsKey("Application_Start_FirstRequest") Then
+                                For Each subscriber As DotNetNuke.Services.EventQueue.Config.SubscriberInfo In config.EventQueueSubscribers.Values
+                                    DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.RegisterEventSubscription(config, "Application_Start_FirstRequest", subscriber)
+                                Next
+
+                                DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.SaveConfig(config, String.Format("{0}EventQueue\EventQueue.config", HostMapPath))
+                            End If
+                        End If
+
                 End Select
 
             Catch ex As Exception
-                strExceptions += "Error: " & ex.Message & vbCrLf
+                strExceptions += String.Format("Error: {0}{1}", ex.Message, vbCrLf)
                 Try
                     LogException(ex)
                 Catch

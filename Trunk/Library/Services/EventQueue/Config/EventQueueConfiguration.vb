@@ -94,7 +94,7 @@ Namespace DotNetNuke.Services.EventQueue.Config
 
         End Sub
 
-        Private Shared Sub RegisterEventSubscription(ByVal config As EventQueueConfiguration, ByVal eventname As String, ByVal subscriber As SubscriberInfo)
+        Public Shared Sub RegisterEventSubscription(ByVal config As EventQueueConfiguration, ByVal eventname As String, ByVal subscriber As SubscriberInfo)
             Dim e As New PublishedEvent
             e.EventName = eventname
             e.Subscribers = subscriber.ID
@@ -163,6 +163,9 @@ Namespace DotNetNuke.Services.EventQueue.Config
                     config = New EventQueueConfiguration
                     ' Deserialize into EventQueueConfiguration
                     config.Deserialize(FileSystemUtils.ReadFile(filePath))
+
+                    ' Set back into Cache
+                    DataCache.SetCache("EventQueueConfig", config, New DNNCacheDependency(filePath))
                 Else
                     'make a default config file
                     config = New EventQueueConfiguration
@@ -174,21 +177,22 @@ Namespace DotNetNuke.Services.EventQueue.Config
                     RegisterEventSubscription(config, "Application_Start", subscriber)
                     RegisterEventSubscription(config, "Application_Start_FirstRequest", subscriber)
 
-                    Dim oStream As StreamWriter = File.CreateText(filePath)
-                    oStream.WriteLine(config.Serialize())
-                    oStream.Close()
-
+                    SaveConfig(config, filePath)
                 End If
-                If File.Exists(filePath) Then
-                    ' Set back into Cache
-                    DataCache.SetCache("EventQueueConfig", config, New DNNCacheDependency(filePath))
-                End If
-
             End If
 
             Return config
 
         End Function
+
+        Friend Shared Sub SaveConfig(ByVal config As EventQueueConfiguration, ByVal filePath As String)
+            Dim oStream As StreamWriter = File.CreateText(filePath)
+            oStream.WriteLine(config.Serialize())
+            oStream.Close()
+
+            ' Set back into Cache
+            DataCache.SetCache("EventQueueConfig", config, New DNNCacheDependency(filePath))
+        End Sub
 
     End Class
 

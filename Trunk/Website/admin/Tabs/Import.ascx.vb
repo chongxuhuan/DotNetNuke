@@ -253,6 +253,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         objTab.ParentId = Int32.Parse(cboParentTab.SelectedItem.Value)
                     End If
 
+                    Tab.TabPath = GenerateTabPath(Tab.ParentId, Tab.TabName)
                     Dim tabID As Integer = TabController.GetTabByTabPath(Tab.PortalID, Tab.TabPath)
                     Dim objTabs As New TabController
 

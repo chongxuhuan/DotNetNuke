@@ -126,7 +126,9 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             ' core settings
             chkLevelPriority.Checked = _
                 Boolean.Parse(PortalController.GetPortalSetting("SitemapLevelMode", PortalId, "False"))
-            txtMinPagePriority.Text = PortalController.GetPortalSetting("SitemapMinPriority", PortalId, "0.1")
+            Dim minPriority As Single
+            minPriority = Single.Parse(PortalController.GetPortalSetting("SitemapMinPriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo())
+            txtMinPagePriority.Text = minPriority.ToString()
             chkIncludeHidden.Checked = _
                 Boolean.Parse(PortalController.GetPortalSetting("SitemapIncludeHidden", PortalId, "False"))
 
@@ -148,7 +150,8 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             If Single.Parse(txtMinPagePriority.Text) < 0 Then
                 txtMinPagePriority.Text = "0"
             End If
-            PortalController.UpdatePortalSetting(PortalId, "SitemapMinPriority", Single.Parse(txtMinPagePriority.Text))
+            Dim minPriority As Single = Single.Parse(txtMinPagePriority.Text)
+            PortalController.UpdatePortalSetting(PortalId, "SitemapMinPriority", minPriority.ToString(NumberFormatInfo.InvariantInfo))
 
         End Sub
 

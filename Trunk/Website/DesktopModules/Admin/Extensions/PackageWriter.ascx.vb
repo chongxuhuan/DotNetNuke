@@ -298,6 +298,10 @@ Namespace DotNetNuke.Modules.Admin.Extensions
                             Next
                         End If
                     End If
+
+                    If cboManifests.Items.Count > 0 Then
+                        trUseManifest.Visible = True
+                    End If
                 End If
 
             Catch exc As Exception    'Module failed to load
@@ -306,7 +310,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         End Sub
 
         Protected Sub chkUseManifest_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkUseManifest.CheckedChanged
-            trManifests.Visible = chkUseManifest.Checked
+            trManifestList.Visible = chkUseManifest.Checked
         End Sub
 
         Protected Sub cmdGetFiles_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdGetFiles.Click

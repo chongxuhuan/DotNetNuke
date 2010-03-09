@@ -145,6 +145,27 @@
               <xs:element name="tab" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:all>
+                    <xs:element name="Terms" maxOccurs="1" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Term" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:all>
+                                <xs:element name="ChildTerms " type="xs:string" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Description" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="ParentTermId" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+                                <xs:element name="TermId" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Weight" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="KeyID" type="xs:string" minOccurs="1" maxOccurs="1" />
+                              </xs:all>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="moduleID" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="KeyID" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="tabtype" type="tabType" minOccurs="0" maxOccurs="1" />
                     <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1" />
@@ -217,6 +238,26 @@
                                         <xs:complexType>
                                           <xs:all>
                                             <xs:element name="moduleID" type="xs:integer" minOccurs="0" maxOccurs="1" />
+                                            <xs:element name="Terms" maxOccurs="1" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="Term" minOccurs="0" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                      <xs:all>
+                                                        <xs:element name="ChildTerms " type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                        <xs:element name="Description" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                        <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                        <xs:element name="ParentTermId" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+                                                        <xs:element name="TermId" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                        <xs:element name="Weight" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                        <xs:element name="KeyID" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                      </xs:all>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="KeyID" type="xs:string" minOccurs="0" maxOccurs="1" />
                                             <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1" />
                                             <xs:element name="alignment" type="alignmentEnum" minOccurs="0" maxOccurs="1" />
                                             <xs:element name="showtitle" type="xs:boolean" minOccurs="0" maxOccurs="1" />

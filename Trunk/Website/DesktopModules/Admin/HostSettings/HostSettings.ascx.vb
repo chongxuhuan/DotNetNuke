@@ -350,10 +350,11 @@ Namespace DotNetNuke.Modules.Admin.Host
                     Else
                         cboPageCacheProvider.Items.FindByValue(providerKey).Selected = True
                     End If
-                Else
-                    PageCacheRow.Visible = False
                 End If
+            Else
+                PageCacheRow.Visible = False
             End If
+
         End Sub
 
         Private Function SkinChanged(ByVal SkinRoot As String, ByVal PortalId As Integer, ByVal SkinType As DotNetNuke.UI.Skins.SkinType, ByVal PostedSkinSrc As String) As Boolean

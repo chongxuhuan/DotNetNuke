@@ -166,25 +166,30 @@ Namespace DotNetNuke.Modules.Admin.Modules
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
             Try
-                Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControl(ModuleControlId)
-                If Not objModuleControl Is Nothing Then
-                    Dim srcVirtualPath As String = objModuleControl.ControlSrc
-                    Dim srcPhysicalPath As String = GetSourceFileName(srcVirtualPath)
+                If cboFile.SelectedValue = "None" Then
+                    'No file type selected
+                    Skin.AddModuleMessage(Me, Localization.GetString("NoFileTypeSelected", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                Else
+                    Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControl(ModuleControlId)
+                    If Not objModuleControl Is Nothing Then
+                        Dim srcVirtualPath As String = objModuleControl.ControlSrc
+                        Dim srcPhysicalPath As String = GetSourceFileName(srcVirtualPath)
 
-                    ' reset attributes
-                    If File.Exists(srcPhysicalPath) Then
-                        File.SetAttributes(srcPhysicalPath, FileAttributes.Normal)
+                        ' reset attributes
+                        If File.Exists(srcPhysicalPath) Then
+                            File.SetAttributes(srcPhysicalPath, FileAttributes.Normal)
 
-                        ' write file
-                        Dim objStream As StreamWriter
-                        objStream = File.CreateText(srcPhysicalPath)
-                        objStream.WriteLine(txtSource.Text)
-                        objStream.Close()
+                            ' write file
+                            Dim objStream As StreamWriter
+                            objStream = File.CreateText(srcPhysicalPath)
+                            objStream.WriteLine(txtSource.Text)
+                            objStream.Close()
+                        End If
+
                     End If
 
+                    Response.Redirect(NavigateURL(), True)
                 End If
-
-                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try

@@ -39,10 +39,13 @@ Namespace DotNetNuke.Modules.Admin.Dashboard
         End Sub
 
         Protected Sub cmdSave_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdSave.Click
-            DashboardController.Export(txtFileName.Text)
+            Try
+                DashboardController.Export(txtFileName.Text)
 
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), True)
-
+                Skin.AddModuleMessage(Me, String.Format(Localization.GetString("Success", Me.LocalResourceFile), txtFileName.Text), UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
+            Catch ex As Exception
+                ProcessModuleLoadException(Me, ex)
+            End Try
         End Sub
     End Class
 

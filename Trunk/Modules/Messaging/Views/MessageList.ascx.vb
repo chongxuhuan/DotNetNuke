@@ -35,6 +35,10 @@ Namespace DotNetNuke.Modules.Messaging.Views
         Implements IMessageListView
         Implements IProfileModule
 
+        Sub New()
+            AutoDataBind = False
+        End Sub
+
 #Region "IProfileModule Implementation"
 
         Public ReadOnly Property DisplayModule() As Boolean Implements IProfileModule.DisplayModule

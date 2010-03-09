@@ -43,7 +43,7 @@
         </td>
         <td>
             <dnn:DnnTextBox ID="txtMinPagePriority" runat="server" CssClass="NormalTextBox" MaxLength="10"
-                Width="50" Text="0.1">
+                Width="50" >
             </dnn:DnnTextBox>
             <asp:CompareValidator ID="val1" runat="server" ControlToValidate="txtMinPagePriority"
                 Display="Dynamic" CssClass="NormalRed" resourcekey="valPriority" Operator="DataTypeCheck"

@@ -132,4 +132,7 @@
   <data name="plFileName.Text" xml:space="preserve">
     <value>File Name:</value>
   </data>
+  <data name="Success.Text" xml:space="preserve">
+    <value>Dashboard exported as xml Successfully.  The file - {0} - can be found in the Host Root Folder in the File Manager</value>
+  </data>
 </root>

@@ -487,16 +487,17 @@ Namespace DotNetNuke.Entities.Modules
             For Each objModule As ModuleInfo In arrModules
                 tabSettings = tabController.GetTabSettings(objModule.TabID)
                 If tabSettings("CacheProvider") IsNot Nothing AndAlso tabSettings("CacheProvider").ToString().Length > 0 Then
-                    OutputCache.OutputCachingProvider.Instance(tabSettings("CacheProvider").ToString()).Remove(objModule.TabID)
+                    Dim provider As OutputCache.OutputCachingProvider = OutputCache.OutputCachingProvider.Instance(tabSettings("CacheProvider").ToString())
+                    If provider IsNot Nothing Then
+                        provider.Remove(objModule.TabID)
+                    End If
                 End If
 
-                ''Make sure Modulecache has a value
-                'If String.IsNullOrEmpty(objModule.CacheMethod) Then
-                '    objModule.CacheMethod = Host.Host.ModuleCachingMethod
-                'End If
-
                 If HttpContext.Current IsNot Nothing Then
-                    ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod).Remove(objModule.TabModuleID)
+                    Dim provider As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod)
+                    If provider IsNot Nothing Then
+                        provider.Remove(objModule.TabModuleID)
+                    End If
                 End If
             Next
         End Sub

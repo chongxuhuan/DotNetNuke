@@ -84,13 +84,21 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
 #End Region
 
+
+#Region "Private Methods"
+
+        Private Function GetInboxUrl() As String
+            Return NavigateURL(TabId, "", String.Format("userId={0}", UserId))
+        End Function
+
+#End Region
+
 #Region "Public Methods"
 
         Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
-            Response.Redirect(NavigateURL(TabId, _
-                                          "", _
-                                          String.Format("userId={0}", UserId)))
+            Response.Redirect(GetInboxUrl())
         End Sub
+
 
         Public Sub DeleteMessage(ByVal sender As Object, ByVal e As EventArgs)
             View.BindMessage(View.Model.Message)
@@ -99,9 +107,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             _MessagingController.UpdateMessage(View.Model.Message)
 
             'Redirect to List
-            Response.Redirect(NavigateURL(TabId, _
-                                          "", _
-                                          String.Format("userId={0}", UserId)))
+            Response.Redirect(GetInboxUrl())
         End Sub
 
         Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
@@ -153,9 +159,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
                 End If
 
                 'Redirect to Message List
-                Response.Redirect(NavigateURL(TabId, _
-                                              "", _
-                                              String.Format("userId={0}", UserId)))
+                Response.Redirect(GetInboxUrl())
             Else
                 'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If

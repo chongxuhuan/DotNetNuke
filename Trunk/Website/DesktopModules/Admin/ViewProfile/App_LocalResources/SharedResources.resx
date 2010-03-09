@@ -126,9 +126,7 @@
             &lt;/td&gt;
             &lt;td valign="top" width="100%"&gt;
             	&lt;p&gt;[USER:DISPLAYNAME]&lt;/p&gt;
-            	&lt;p&gt;	[PROFILE:TITLE]&lt;br /&gt;
-            		[PROFILE:COMPANY]&lt;br /&gt;
-            		[PROFILE:STREET]&lt;br /&gt;
+            	&lt;p&gt;	[PROFILE:STREET]&lt;br /&gt;
             		[PROFILE:CITY]&lt;br /&gt;
             		[PROFILE:REGION]&lt;br /&gt;
             		[PROFILE:COUNTRY]&lt;br /&gt;

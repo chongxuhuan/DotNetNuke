@@ -222,8 +222,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             Dim locales As Dictionary(Of String, Locale) = Localization.GetLocales(Me.PortalId)
             If locales.Count < 2 Then
                 plLocale.Visible = False
-            Else
-                plLocale.BindDefaultLanguageSelector()
             End If
             Try
 

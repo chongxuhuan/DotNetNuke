@@ -39,7 +39,7 @@
                     <td colspan="2"><asp:Label ID="lblManifestHelp" CssClass="WizardText" runat="server" resourcekey="ManifestHelp"/></td>
                 </tr>
                 <tr style="height:15px"><td>&nbsp;</td></tr>
-                <tr>
+                <tr id="trUseManifest" runat="server" visible="false">
                     <td style="width:200px">
                         <dnn:Label ID="plUseManifest" runat="server" CssClass="SubHead" ControlName="chkUseManifest" />
                     </td>
@@ -47,7 +47,7 @@
                         <asp:CheckBox ID="chkUseManifest" runat="server" CssClass="SubHead" AutoPostBack="true" />
                     </td>
                 </tr>
-                <tr id="trManifests" runat="server" visible="false">
+                <tr id="trManifestList" runat="server" visible="false">
                     <td style="width:200px">
                         <dnn:Label ID="plChooseManifest" runat="server" CssClass="SubHead" ControlName="cboManifests" />
                     </td>
