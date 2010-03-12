@@ -116,7 +116,7 @@ Namespace DotNetNuke.HttpModules.Membership
                         ' update LastActivityDate and IP Address for user
                         objUser.Membership.LastActivityDate = Now
                         objUser.LastIPAddress = Request.UserHostAddress
-                        UserController.UpdateUser(_portalSettings.PortalId, objUser)
+                        UserController.UpdateUser(_portalSettings.PortalId, objUser, False)
                     End If
 
                     ' refreshroles is set when a role is added to a user by an administrator
@@ -193,7 +193,7 @@ Namespace DotNetNuke.HttpModules.Membership
                             'Clear RefreshRoles flag
                             If objUser.RefreshRoles Then
                                 objUser.RefreshRoles = False
-                                UserController.UpdateUser(_portalSettings.PortalId, objUser)
+                                UserController.UpdateUser(_portalSettings.PortalId, objUser, False)
                             End If
                         End If
 

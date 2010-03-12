@@ -52,7 +52,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
             Dim fileName As String = Path.Combine(BasePath, "ResourcePack." & Package.Name)
 
-            Dim authSystem As Authentication.AuthenticationInfo = Authentication.AuthenticationController.GetAuthenticationServiceByPackageID(authPackage.PackageID)
+            Dim authSystem As DotNetNuke.Services.Authentication.AuthenticationInfo = DotNetNuke.Services.Authentication.AuthenticationController.GetAuthenticationServiceByPackageID(authPackage.PackageID)
             Dim authPath As String = authSystem.LoginControlSrc.Substring(0, authSystem.LoginControlSrc.LastIndexOf("/"))
             CreatePackage(Package, authPackage.PackageID, authPath.Replace("/", "\"), fileName, createZip)
         End Sub

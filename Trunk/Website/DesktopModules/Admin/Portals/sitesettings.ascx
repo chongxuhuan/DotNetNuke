@@ -7,8 +7,6 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="LocaleSelector" Src="~/controls/LocaleSelectorControl.ascx" %>
-<dnn:LocaleSelector id="plLocale" text="Locale:" runat="server" />
 <!-- Settings Tables -->
 <table class="Settings" cellspacing="2" cellpadding="2" width="760" summary="Site Settings Design Table" border="0">
     <tr>
@@ -105,19 +103,19 @@
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plPortalSkin" runat="server" Text="Portal Skin:" ControlName="ctlPortalSkin" /></td>
-                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlPortalSkin" runat="server" Width="450px" DefaultKey="Application" /></td>
+                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlPortalSkin" runat="server" DefaultKey="Application" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plPortalContainer" runat="server" Text="Portal Container:" ControlName="ctlPortalContainer" /></td>
-                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlPortalContainer" runat="server" Width="450px" DefaultKey="Application" /></td>
+                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlPortalContainer" runat="server" DefaultKey="Application" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plAdminSkin" runat="server" Text="Admin Skin:" ControlName="ctlAdminSkin"/></td>
-                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlAdminSkin" runat="server" Width="450px" DefaultKey="Application" /></td>
+                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlAdminSkin" runat="server" DefaultKey="Application" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plAdminContainer" runat="server" Text="Admin Container:" ControlName="ctlAdminContainer"/></td>
-                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlAdminContainer" runat="server" Width="450px" DefaultKey="Application" /></td>
+                                    <td valign="top" style="width:450px"><dnn:Skin ID="ctlAdminContainer" runat="server" DefaultKey="Application" /></td>
                                 </tr>
                             </table>
                         </td>

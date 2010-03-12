@@ -190,7 +190,7 @@
                                             ControlName="ctlSkin"></dnn:Label>
                                     </td>
                                     <td valign="top" width="525">
-                                        <dnn:Skin ID="ctlSkin" runat="server" Width="450px" DefaultKey="Portal" />
+                                        <dnn:Skin ID="ctlSkin" runat="server" DefaultKey="Portal" />
                                     </td>
                                 </tr>
                                 <tr>

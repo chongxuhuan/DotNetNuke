@@ -257,4 +257,7 @@
   <data name="MissingManifest.Text" xml:space="preserve">
     <value>You must provide a mainfest file (.dnn or .dnn5 file)</value>
   </data>
+  <data name="NoControl.Text" xml:space="preserve">
+    <value>You must select a Control from the List of "Resources"</value>
+  </data>
 </root>

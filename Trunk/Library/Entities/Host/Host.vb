@@ -411,37 +411,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ContentLocale() As String
             Get
-                Dim currentLocale As String = "en-us"
-                If HttpContext.Current Is Nothing Then
-                    Return "en-us"
-                End If
-
-                Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-               
-                If GetHostSettingAsBoolean("ContentLocalization", False) = True Then
-                    Return Thread.CurrentThread.CurrentCulture.Name()
-                Else
-                    If Not IsNothing(_portalSettings) Then
-                        'Dim objPortalController As New PortalController
-                        'Dim objPortal As PortalInfo = objPortalController.GetPortal(_portalSettings.PortalId)
-                        'currentLocale = objPortal.DefaultLanguage
-
-                    End If
-                    Return currentLocale
-                End If
-                'Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-                'Dim currentLocale As String
-                'If Not IsNothing(_portalSettings) Then
-                '    currentLocale = PortalController.GetPortalSetting("DefaultLanguage", _portalSettings.PortalId, "en-us").ToLower()
-                'Else
-                '    currentLocale = "en-us"
-                'End If
-                'If GetHostSettingAsBoolean("ContentLocalization", False) = False Then
-                '    Return currentLocale
-                'Else
-                '    'automatic language switching disabled for initial 5.2 version
-                '    Return currentLocale
-                'End If
+                Return "en-us"
 
             End Get
 

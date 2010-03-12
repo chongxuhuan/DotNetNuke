@@ -1248,3 +1248,8 @@ div.SearchIcon img
 {
 	border: 2px red solid;
 }
+
+.ProfilePhoto
+{
+    background-image: url('../../images/no_avatar.gif');
+}

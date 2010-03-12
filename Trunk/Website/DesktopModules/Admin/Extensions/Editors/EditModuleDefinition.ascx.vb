@@ -622,7 +622,11 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                             moduleDefinition = ImportControl(controlSrc)
                         End If
                     Case "Control"
-                        moduleDefinition = ImportControl(cboFile.SelectedValue)
+                        If Not String.IsNullOrEmpty(cboFile.SelectedValue) Then
+                            moduleDefinition = ImportControl(cboFile.SelectedValue)
+                        Else
+                            strMessage = Localization.GetString("NoControl", Me.LocalResourceFile)
+                        End If
                     Case "Template"
                     Case "Manifest"
                         If String.IsNullOrEmpty(cboFile.SelectedValue) Then
@@ -634,7 +638,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 End Select
 
                 If moduleDefinition Is Nothing Then
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, strMessage, Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, strMessage, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Else
                     If Not String.IsNullOrEmpty(cboCreate.SelectedValue) AndAlso chkAddPage.Checked Then
                         Dim tabName As String = "Test " + txtName.Text + " Page"
@@ -666,7 +670,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
 
                             Response.Redirect(NavigateURL(newTab.TabID), True)
                         Else
-                            Skin.AddModuleMessage(Me, Localization.GetString("TabExists", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                            Skin.AddModuleMessage(Me, Localization.GetString("TabExists", Me.LocalResourceFile), DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                         End If
 
                     Else

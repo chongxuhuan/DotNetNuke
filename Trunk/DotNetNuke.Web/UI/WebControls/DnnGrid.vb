@@ -25,14 +25,9 @@ Namespace DotNetNuke.Web.UI.WebControls
     Public Class DnnGrid
         Inherits Telerik.Web.UI.RadGrid
 
-#Region "Private Members"
-
-        Private _Localize As Boolean = True
-
-#End Region
-
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             Utilities.ApplySkin(Me)
+            PagerStyle.Mode = GridPagerMode.NumericPages
             MyBase.OnInit(e)
         End Sub
 

@@ -25,21 +25,22 @@ Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.UI.WebControls
+Imports DotNetNuke.Common.Lists
 
 Namespace DotNetNuke.Modules.Admin.Users
 
-	''' -----------------------------------------------------------------------------
-	''' <summary>
-	''' The Users PortalModuleBase is used to manage the Registered Users of a portal
-	''' </summary>
-	''' <remarks>
-	''' </remarks>
-	''' <history>
-	''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+    ''' -----------------------------------------------------------------------------
+    ''' <summary>
+    ''' The Users PortalModuleBase is used to manage the Registered Users of a portal
+    ''' </summary>
+    ''' <remarks>
+    ''' </remarks>
+    ''' <history>
+    ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
     '''                       and localisation
     '''     [cnurse]    02/16/2006  Updated to reflect custom profile definitions
-	''' </history>
-	''' -----------------------------------------------------------------------------
+    ''' </history>
+    ''' -----------------------------------------------------------------------------
     Partial Class UserAccounts
         Inherits Entities.Modules.PortalModuleBase
         Implements Entities.Modules.IActionable
@@ -181,8 +182,8 @@ Namespace DotNetNuke.Modules.Admin.Users
                     filterString += filterPropertyString + "&"
                 End If
 
-                If Not String.IsNullOrEmpty(Page) Then
-                    filterString += Page
+                If Not String.IsNullOrEmpty(page) Then
+                    filterString += page
                 End If
 
                 Return filterString
@@ -579,6 +580,11 @@ Namespace DotNetNuke.Modules.Admin.Users
                     ddlSearchType.Items.Add(AddSearchItem("Email"))
                     Dim profileProperties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(PortalId, False)
                     For Each definition As ProfilePropertyDefinition In profileProperties
+                        Dim controller As New ListController
+                        Dim imageDataType As ListEntryInfo = controller.GetListEntryInfo("DataType", "Image")
+                        If imageDataType Is Nothing OrElse definition.DataType = imageDataType.EntryID Then
+                            Exit For
+                        End If
                         ddlSearchType.Items.Add(AddSearchItem(definition.PropertyName))
                     Next
 
@@ -629,8 +635,8 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub btnSearch_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnSearch.Click
-			CurrentPage = 1
-			txtSearch.Text = txtSearch.Text.Trim
+            CurrentPage = 1
+            txtSearch.Text = txtSearch.Text.Trim
             Response.Redirect(NavigateURL(TabId, "", UserFilter(True)))
         End Sub
 
@@ -648,7 +654,7 @@ Namespace DotNetNuke.Modules.Admin.Users
             Try
                 Dim userId As Integer = Int32.Parse(e.CommandArgument.ToString)
 
-				Dim user As UserInfo = UserController.GetUserById(UsersPortalId, userId)
+                Dim user As UserInfo = UserController.GetUserById(UsersPortalId, userId)
 
                 If Not user Is Nothing Then
                     If UserController.DeleteUser(user, True, False) Then

@@ -119,19 +119,15 @@ Namespace DotNetNuke.Modules.Admin.Host
 
             Dim objSkins As New UI.Skins.SkinController
 
-            ctlHostSkin.Width = "252px"
             ctlHostSkin.SkinRoot = SkinController.RootSkin
             ctlHostSkin.SkinSrc = Entities.Host.Host.DefaultPortalSkin
 
-            ctlHostContainer.Width = "252px"
             ctlHostContainer.SkinRoot = SkinController.RootContainer
             ctlHostContainer.SkinSrc = Entities.Host.Host.DefaultPortalContainer
 
-            ctlAdminSkin.Width = "252px"
             ctlAdminSkin.SkinRoot = SkinController.RootSkin
             ctlAdminSkin.SkinSrc = Entities.Host.Host.DefaultAdminSkin
 
-            ctlAdminContainer.Width = "252px"
             ctlAdminContainer.SkinRoot = SkinController.RootContainer
             ctlAdminContainer.SkinSrc = Entities.Host.Host.DefaultAdminContainer
 

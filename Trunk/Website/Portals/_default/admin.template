@@ -74,61 +74,113 @@
     </tab>
     <tab>
       <name>Site Settings</name>
-      <title>Site Settings</title>
-      <description>Manage configuration settings for the portal.</description>
-      <keywords></keywords>
       <visible>true</visible>
-      <disabled>false</disabled>
       <iconfile>~/images/icon_sitesettings_16px.gif</iconfile>
       <iconfilelarge>~/images/icon_sitesettings_32px.gif</iconfilelarge>
-      <parent>Admin</parent>
+      <disabled>false</disabled>
+      <title>Site Settings</title>
+      <description>Manage configuration settings for the portal.</description>
+      <keywords />
+      <url type="Normal" />
+      <skinsrc />
+      <containersrc />
+      <startdate>0001-01-01T00:00:00</startdate>
+      <enddate>0001-01-01T00:00:00</enddate>
+      <refreshinterval>-1</refreshinterval>
+      <pageheadtext />
+      <issecure>false</issecure>
+      <permanentredirect>false</permanentredirect>
+      <sitemappriority>0.5</sitemappriority>
       <tabpermissions>
         <permission>
           <permissioncode>SYSTEM_TAB</permissioncode>
           <permissionkey>VIEW</permissionkey>
-          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
+          <rolename>Administrators</rolename>
         </permission>
         <permission>
           <permissioncode>SYSTEM_TAB</permissioncode>
           <permissionkey>EDIT</permissionkey>
-          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
+          <rolename>Administrators</rolename>
         </permission>
       </tabpermissions>
+      <tabsettings />
+      <parent>Admin</parent>
       <panes>
         <pane>
           <name>ContentPane</name>
           <modules>
             <module>
+              <moduleID>359</moduleID>
               <title>Site Settings</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>0</cachetime>
+              <cachemethod />
+              <alignment />
+              <color />
+              <border />
+              <iconfile>~/images/icon_sitesettings_32px.gif</iconfile>
+              <visibility>Maximized</visibility>
+              <containersrc />
+              <displaytitle>true</displaytitle>
+              <displayprint>true</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+              </modulepermissions>
+              <modulesettings />
+              <tabmodulesettings />
               <definition>Portals</definition>
               <moduledefinition>Site Settings</moduledefinition>
-              <iconfile>~/images/icon_sitesettings_32px.gif</iconfile>
-              <inheritviewpermissions>true</inheritviewpermissions>
-              <modulepermissions>
-                <permission>
-                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
-                  <permissionkey>EDIT</permissionkey>
-                  <rolename>Administrators</rolename>
-                  <allowaccess>true</allowaccess>
-                </permission>
-              </modulepermissions>
             </module>
             <module>
-              <title>Portal Aliases</title>
-              <definition>PortalAliases</definition>
-              <moduledefinition>Portal Aliases</moduledefinition>
+              <title>SiteMap Settings</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>0</cachetime>
+              <cachemethod />
+              <alignment />
+              <color />
+              <border />
               <iconfile>~/images/icon_sitesettings_32px.gif</iconfile>
-              <inheritviewpermissions>false</inheritviewpermissions>
+              <visibility>Maximized</visibility>
+              <containersrc />
+              <displaytitle>true</displaytitle>
+              <displayprint>true</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
               <modulepermissions>
                 <permission>
                   <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
                   <permissionkey>EDIT</permissionkey>
-                  <rolename>Administrators</rolename>
                   <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>Sitemap</definition>
+              <moduledefinition>Sitemap</moduledefinition>
             </module>
           </modules>
         </pane>

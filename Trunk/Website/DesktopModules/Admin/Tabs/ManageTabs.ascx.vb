@@ -799,9 +799,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         cboParentTab.Enabled = False
                     End If
 
-                    ctlSkin.Width = "275px"
                     ctlSkin.SkinRoot = SkinController.RootSkin
-                    ctlContainer.Width = "275px"
                     ctlContainer.SkinRoot = SkinController.RootContainer
 
                     ctlURL.Width = "275px"

@@ -197,7 +197,7 @@ Namespace DotNetNuke.Web.Mvp
                 IsEditable = ModuleContext.IsEditable
                 IsSuperUser = ModuleContext.PortalSettings.UserInfo.IsSuperUser
                 ModuleId = ModuleContext.ModuleId
-                PortalId = ModuleContext.ModuleId
+                PortalId = ModuleContext.PortalId
                 TabId = ModuleContext.TabId
                 UserId = ModuleContext.PortalSettings.UserInfo.UserID
             End If

@@ -31,7 +31,6 @@ Namespace DotNetNuke.Services.Sitemap
         '
         '        End Sub
 
-
         Private _name As String
         Public Property Name() As String
             Get
@@ -52,7 +51,6 @@ Namespace DotNetNuke.Services.Sitemap
             End Set
         End Property
 
-
         Public Property Enabled() As Boolean
             Get
                 Return Boolean.Parse(PortalController.GetPortalSetting(Name + "Enabled", PortalController.GetCurrentPortalSettings.PortalId, "True"))
@@ -61,8 +59,6 @@ Namespace DotNetNuke.Services.Sitemap
                 PortalController.UpdatePortalSetting(PortalController.GetCurrentPortalSettings.PortalId, Name + "Enabled", value.ToString())
             End Set
         End Property
-
-
 
         Public Property OverridePriority() As Boolean
             Get
@@ -77,18 +73,16 @@ Namespace DotNetNuke.Services.Sitemap
             Get
                 Dim value As Single = 0
                 If (OverridePriority) Then
-                    ' stored as an integer (pr * 100) to prevent from translating errors with the decimal point
-                    value = Single.Parse(PortalController.GetPortalSetting(Name + "Value", PortalController.GetCurrentPortalSettings.PortalId, "50")) / 100
+                    value = Single.Parse(PortalController.GetPortalSetting(Name + "Value", PortalController.GetCurrentPortalSettings.PortalId, "0.5"), NumberFormatInfo.InvariantInfo())
                 End If
                 Return value
             End Get
 
             Set(ByVal value As Single)
-                PortalController.UpdatePortalSetting(PortalController.GetCurrentPortalSettings.PortalId, Name + "Value", (value * 100).ToString())
+                PortalController.UpdatePortalSetting(PortalController.GetCurrentPortalSettings.PortalId, Name + "Value", value.ToString(NumberFormatInfo.InvariantInfo))
             End Set
 
         End Property
-
 
         Public MustOverride Function GetUrls(ByVal portalId As Integer, ByVal ps As PortalSettings, ByVal version As String) As List(Of Sitemap.SitemapUrl)
 

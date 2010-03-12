@@ -28,6 +28,7 @@ Imports DotNetNuke.UI.Containers
 Imports DotNetNuke.Entities.Host
 Imports DotNetNuke.UI.Containers.EventListeners
 Imports DotNetNuke.UI.Skins
+Imports DotNetNuke.Security.Permissions
 
 'Legacy Support
 Namespace DotNetNuke
@@ -257,24 +258,39 @@ Namespace DotNetNuke.UI.Containers
         Private Sub ProcessContentPane()
             If ModuleConfiguration.Alignment <> "" Then
                 If Not ContentPane.Attributes.Item("class") Is Nothing Then
-                    ContentPane.Attributes.Item("class") = ContentPane.Attributes.Item("class") + " DNNAlign" + ModuleConfiguration.Alignment.ToLower()
+                    ContentPane.Attributes.Item("class") = String.Format("{0} DNNAlign{1}", ContentPane.Attributes.Item("class"), ModuleConfiguration.Alignment.ToLower())
                 Else
-                    ContentPane.Attributes.Item("class") = "DNNAlign" + ModuleConfiguration.Alignment.ToLower()
+                    ContentPane.Attributes.Item("class") = String.Format("DNNAlign{0}", ModuleConfiguration.Alignment.ToLower())
                 End If
             End If
             If ModuleConfiguration.Color <> "" Then
                 ContentPane.Style("background-color") = ModuleConfiguration.Color
             End If
             If ModuleConfiguration.Border <> "" Then
-                ContentPane.Style("border-top") = ModuleConfiguration.Border & "px #000000 solid"
-                ContentPane.Style("border-bottom") = ModuleConfiguration.Border & "px #000000 solid"
-                ContentPane.Style("border-right") = ModuleConfiguration.Border & "px #000000 solid"
-                ContentPane.Style("border-left") = ModuleConfiguration.Border & "px #000000 solid"
+                ContentPane.Style("border-top") = String.Format("{0}px #000000 solid", ModuleConfiguration.Border)
+                ContentPane.Style("border-bottom") = String.Format("{0}px #000000 solid", ModuleConfiguration.Border)
+                ContentPane.Style("border-right") = String.Format("{0}px #000000 solid", ModuleConfiguration.Border)
+                ContentPane.Style("border-left") = String.Format("{0}px #000000 solid", ModuleConfiguration.Border)
             End If
 
             ' display visual indicator if module is only visible to administrators
-            Dim adminMessage As String
-            If ModuleConfiguration.AuthorizedViewRoles.Replace(";"c, String.Empty).Trim().ToLowerInvariant = PortalSettings.AdministratorRoleName.ToLowerInvariant AndAlso Not PortalSettings.ActiveTab.IsAdminTab Then
+            Dim adminMessage As String = Null.NullString
+            Dim viewRoles As String = Null.NullString
+            If ModuleConfiguration.InheritViewPermissions Then
+                viewRoles = TabPermissionController.GetTabPermissions(ModuleConfiguration.TabID, ModuleConfiguration.PortalID).ToString("VIEW")
+            Else
+                viewRoles = ModuleConfiguration.ModulePermissions.ToString("VIEW")
+            End If
+            viewRoles = viewRoles.Replace(";"c, String.Empty).Trim().ToLowerInvariant
+
+            Dim isAdminTab As Boolean = False
+            If PortalSettings.ActiveTab.IsSuperTab OrElse _
+                    PortalSettings.ActiveTab.TabID = PortalSettings.AdminTabId OrElse _
+                    PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId Then
+                isAdminTab = True
+            End If
+
+            If viewRoles = PortalSettings.AdministratorRoleName.ToLowerInvariant AndAlso Not isAdminTab Then
                 adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text")
             End If
             If ModuleConfiguration.StartDate >= Now Then
@@ -293,7 +309,7 @@ Namespace DotNetNuke.UI.Containers
             If String.IsNullOrEmpty(cssclass) Then
                 ContentPane.Attributes("class") = c_ContainerAdminBorder
             Else
-                ContentPane.Attributes("class") = cssclass.Replace(c_ContainerAdminBorder, "").Trim().Replace("  ", " ") & " " & c_ContainerAdminBorder
+                ContentPane.Attributes("class") = String.Format("{0} {1}", cssclass.Replace(c_ContainerAdminBorder, "").Trim().Replace("  ", " "), c_ContainerAdminBorder)
             End If
 
             ContentPane.Controls.Add(New LiteralControl(String.Format("<div class=""NormalRed DNNAligncenter"">{0}</div>", message)))
@@ -403,10 +419,10 @@ Namespace DotNetNuke.UI.Containers
             End If
 
             ' container package style sheet
-            ID = CreateValidID(containerPath)
+            ID = CreateValidID(ContainerPath)
             If objCSSCache.ContainsKey(ID) = False Then
-                If File.Exists(Server.MapPath(containerPath) & "container.css") Then
-                    objCSSCache(ID) = containerPath & "container.css"
+                If File.Exists(Server.MapPath(ContainerPath) & "container.css") Then
+                    objCSSCache(ID) = ContainerPath & "container.css"
                 Else
                     objCSSCache(ID) = ""
                 End If
@@ -417,10 +433,10 @@ Namespace DotNetNuke.UI.Containers
             End If
 
             ' container file style sheet
-            ID = CreateValidID(containerSrc.Replace(".ascx", ".css"))
+            ID = CreateValidID(ContainerSrc.Replace(".ascx", ".css"))
             If objCSSCache.ContainsKey(ID) = False Then
-                If File.Exists(Server.MapPath(Replace(containerSrc, ".ascx", ".css"))) Then
-                    objCSSCache(ID) = Replace(containerSrc, ".ascx", ".css")
+                If File.Exists(Server.MapPath(Replace(ContainerSrc, ".ascx", ".css"))) Then
+                    objCSSCache(ID) = Replace(ContainerSrc, ".ascx", ".css")
                 Else
                     objCSSCache(ID) = ""
                 End If

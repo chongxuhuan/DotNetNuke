@@ -31,7 +31,7 @@ Namespace DotNetNuke.UI.Skins.Controls
     '''                             brackets from property names
     ''' </history>
     ''' -----------------------------------------------------------------------------
-    Partial  Class User
+    Partial Class User
         Inherits UI.Skins.SkinObjectBase
 
 #Region "Constants"
@@ -45,6 +45,7 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _text As String
         Private _cssClass As String
         Private _url As String
+        Private _showUnreadMessages As Boolean = True
 
 #End Region
 
@@ -76,6 +77,17 @@ Namespace DotNetNuke.UI.Skins.Controls
                 _url = Value
             End Set
         End Property
+
+
+        Public Property ShowUnreadMessages() As Boolean
+            Get
+                Return _showUnreadMessages
+            End Get
+            Set(ByVal value As Boolean)
+                _showUnreadMessages = value
+            End Set
+        End Property
+
 
 #End Region
 
@@ -111,10 +123,15 @@ Namespace DotNetNuke.UI.Skins.Controls
                     If objUserInfo.UserID <> -1 Then
                         Dim messagingController As New Services.Messaging.MessagingController()
 
-                        Dim newMessageString As String = String.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(Me, MyFileName)), messagingController.GetNewMessageCount(PortalSettings.PortalId, objUserInfo.UserID))
+                        Dim messageCount As Integer = messagingController.GetNewMessageCount(PortalSettings.PortalId, objUserInfo.UserID)
 
-                        cmdRegister.Text = objUserInfo.DisplayName & " " & newMessageString
-                        cmdRegister.ToolTip = Localization.GetString("ToolTip", Localization.GetResourceFile(Me, MyFileName))
+                        cmdRegister.Text = objUserInfo.DisplayName
+
+                        If (ShowUnreadMessages) Then
+                            cmdRegister.Text = cmdRegister.Text & String.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(Me, MyFileName)), messageCount)
+                        End If
+
+                        cmdRegister.ToolTip = String.Format(Localization.GetString("ToolTip", Localization.GetResourceFile(Me, MyFileName)), messageCount)
                     End If
                 End If
 

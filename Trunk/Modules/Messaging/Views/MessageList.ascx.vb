@@ -72,23 +72,27 @@ Namespace DotNetNuke.Modules.Messaging.Views
 
 #Region "Event Handlers"
 
+        Private Sub RefreshInbox()
+            Response.Redirect(Request.RawUrl)
+        End Sub
+
         Private Sub addMessageButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles addMessageButton.Click
             RaiseEvent AddMessage(Me, e)
         End Sub
 
         Private Sub delete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles delete.Click
             RaiseEvent DeleteSelectedMessages(Me, New DnnGridItemSelectedEventArgs(messagesGrid.SelectedItems))
-            messagesGrid.Rebind()
+            RefreshInbox()
         End Sub
 
         Private Sub markAsRead_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles markAsRead.Click
             RaiseEvent MarkSelectedMessagesRead(Me, New DnnGridItemSelectedEventArgs(messagesGrid.SelectedItems))
-            messagesGrid.Rebind()
+            RefreshInbox()
         End Sub
 
         Private Sub markAsUnread_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles markAsUnread.Click
             RaiseEvent MarkSelectedMessagesUnread(Me, New DnnGridItemSelectedEventArgs(messagesGrid.SelectedItems))
-            messagesGrid.Rebind()
+            RefreshInbox()
         End Sub
 
         Private Sub messagesGrid_ItemDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Handles messagesGrid.ItemDataBound

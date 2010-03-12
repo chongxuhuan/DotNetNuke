@@ -893,11 +893,13 @@ Namespace DotNetNuke.Services.Upgrade
         End Function
 
         Private Shared Sub RemoveModuleFromPortals(ByVal friendlyName As String)
-            'Module was incorrectly assigned as "IsPremium=False"
             Dim objDesktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByFriendlyName(friendlyName)
             If objDesktopModule IsNot Nothing Then
-                objDesktopModule.IsPremium = True
-                DesktopModuleController.SaveDesktopModule(objDesktopModule, False, True)
+                'Module was incorrectly assigned as "IsPremium=False"
+                If objDesktopModule.PackageID > Null.NullInteger Then
+                    objDesktopModule.IsPremium = True
+                    DesktopModuleController.SaveDesktopModule(objDesktopModule, False, True)
+                End If
 
                 'Remove the module from Portals
                 DesktopModuleController.RemoveDesktopModuleFromPortals(objDesktopModule.DesktopModuleID)
@@ -2293,6 +2295,10 @@ Namespace DotNetNuke.Services.Upgrade
                         Else
                             'Module was incorrectly assigned as "IsPremium=False"
                             RemoveModuleFromPortals("Dashboard")
+                            'fix path for dashboarcontrols
+                            ModuleDefID = GetModuleDefinition("Dashboard", "Dashboard")
+                            RemoveModuleControl(ModuleDefID, "DashboardControls")
+                            AddModuleControl(ModuleDefID, "DashboardControls", "", "DesktopModules/Admin/Dashboard/DashboardControls.ascx", "", SecurityAccessLevel.Host, 0)
                         End If
 
                         'Add the Extensions Module
@@ -2512,10 +2518,6 @@ Namespace DotNetNuke.Services.Upgrade
                     Case "5.3.0"
                         Dim ModuleDefID As Integer
 
-                        'Add new Sitemap settings module
-                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
-
                         'update languages module
                         ModuleDefID = GetModuleDefinition("Languages", "Languages")
                         RemoveModuleControl(ModuleDefID, "")
@@ -2527,17 +2529,22 @@ Namespace DotNetNuke.Services.Upgrade
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/ViewProfile/ViewProfile.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.View, 0)
                         AddModuleControl(ModuleDefID, "Settings", "Settings", "DesktopModules/Admin/ViewProfile/Settings.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.Edit, 0)
 
-                        'Add new Messaging module
-                        ModuleDefID = AddModuleDefinition("Messaging", "", "Messaging", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Messaging/MessageList.ascx", "", SecurityAccessLevel.Edit, 0)
-                        AddModuleControl(ModuleDefID, "ViewMessage", "View Message", "DesktopModules/Admin/Messaging/ViewMessage.ascx", "", SecurityAccessLevel.Edit, 0)
-                        AddModuleControl(ModuleDefID, "EditMessage", "EditMessage", "DesktopModules/Admin/Messaging/EditMessage.ascx", "", SecurityAccessLevel.Edit, 0)
+                        'Add new Sitemap settings module
+                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
+                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
 
-                        Dim strHostTemplateFile As String = HostMapPath & "Templates\UserProfile.page.template"
+                        Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
                         If File.Exists(strHostTemplateFile) Then
+                            Dim tabController As New TabController()
                             Dim objPortals As New PortalController
                             Dim arrPortals As ArrayList = objPortals.GetPortals
                             For Each objPortal As PortalInfo In arrPortals
+
+                                Dim tabId As Integer = tabController.GetTabByTabPath(objPortal.PortalID, "//Admin//SiteSettings")
+                                Dim siteSettingsPage As TabInfo = tabController.GetTab(tabId, objPortal.PortalID, False)
+                                ModuleDefID = GetModuleDefinition("Sitemap", "Sitemap")
+                                AddModuleToPage(siteSettingsPage, ModuleDefID, "Sitemap", "~/images/icon_skins_32px.gif")
+
                                 'Rename old Default Page template
                                 File.Move(String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath), String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
 
@@ -2551,7 +2558,6 @@ Namespace DotNetNuke.Services.Upgrade
                                 FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
 
                                 'Add new User profile page to every portal (based on User Profile Template)
-                                Dim tabController As New TabController()
                                 Dim newTab As New TabInfo()
                                 newTab.PortalID = objPortal.PortalID
                                 newTab.ParentId = Null.NullInteger
@@ -2606,6 +2612,10 @@ Namespace DotNetNuke.Services.Upgrade
                                 DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.SaveConfig(config, String.Format("{0}EventQueue\EventQueue.config", HostMapPath))
                             End If
                         End If
+                        'Change Key for Module Defintions
+                        ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
+                        RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
+                        AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
 
                 End Select
 

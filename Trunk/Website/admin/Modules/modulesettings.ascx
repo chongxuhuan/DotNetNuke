@@ -197,7 +197,7 @@
 							</tr>
 							<tr>
 								<td class="SubHead" style="width:200px"><dnn:label id="plModuleContainer" runat="server" controlname="ctlModuleContainer"/></td>
-								<td valign="top"><dnn:skin id="ctlModuleContainer" runat="server" Width="450px" DefaultKey="Page" /></td>
+								<td valign="top"><dnn:skin id="ctlModuleContainer" runat="server" DefaultKey="Page" /></td>
 							</tr>
 						</table>
 						<br/>

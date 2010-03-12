@@ -122,7 +122,7 @@
     &lt;tbody&gt;
         &lt;tr&gt;
             &lt;td valign="middle" width="160" align="center"&gt;
-            	&lt;p&gt;&lt;img alt="" width="120" height="120" src="[PROFILE:PHOTO]" /&gt;&lt;/p&gt;
+            	&lt;p&gt;&lt;img alt="" class="ProfilePhoto" width="120" height="120" src="[PROFILE:PHOTO]" /&gt;&lt;/p&gt;
             &lt;/td&gt;
             &lt;td valign="top" width="100%"&gt;
             	&lt;p&gt;[USER:DISPLAYNAME]&lt;/p&gt;

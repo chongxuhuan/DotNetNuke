@@ -100,6 +100,7 @@
     <Compile Include="UI\MessageWindowParameters.vb" />
     <Compile Include="UI\RibbonBarManager.vb" />
     <Compile Include="UI\Utilities.vb" />
+    <Compile Include="UI\WebControls\DnnGridCheckBoxColumn.vb" />
     <Compile Include="UI\WebControls\DnnImageEditControl.vb" />
     <Compile Include="UI\WebControls\DnnFileEditControl.vb" />
     <Compile Include="UI\WebControls\DnnGridItemSelectedEventHandler.vb" />

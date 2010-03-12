@@ -18,7 +18,18 @@
     </tr>
 </table>
 <br />
-<dnn:DnnGrid ID="grdProviders" runat="Server" Width="100%" AutoGenerateColumns="false" AllowSorting="true" />
+<dnn:DnnGrid ID="grdProviders" runat="Server" Width="100%" AutoGenerateColumns="false" AllowSorting="true">
+    <MasterTableView EditMode="InPlace">
+        <Columns>
+            <dnn:DnnGridEditColumn HeaderStyle-Width="0" />
+            <dnn:DnnGridBoundColumn DataField="Name" HeaderText="Name" ReadOnly="true" />
+            <dnn:DnnGridBoundColumn DataField="Description" HeaderText="Description" ReadOnly="true"  />
+            <dnn:DnnGridCheckBoxColumn DataField="OverridePriority" HeaderText="OverridePriority" HeaderStyle-Width="0"/>
+            <dnn:DnnGridBoundColumn DataField="Priority" HeaderText="Priority" HeaderStyle-Width="0" />
+            <dnn:DnnGridCheckBoxColumn DataField="Enabled" HeaderText="Enabled" HeaderStyle-Width="0" />
+        </Columns>
+    </MasterTableView>
+</dnn:DnnGrid>
 <br />
 <dnn:SectionHead ID="secCore" CssClass="Head" runat="server" Section="tblCore" ResourceKey="SectionCoreSettings" IncludeRule="True" IsExpanded="true" />
 <table id="tblCore" runat="server" cellspacing="2" cellpadding="2" style="width: 100%">
@@ -140,7 +151,7 @@
                 </Items>
             </dnn:DnnComboBox>
             
-            <asp:HyperLink ID="cmdSubmitSitemap" Text="Submit" runat="server" Width="100" Target="_blank" CssClass="CommandButton" ResourceKey="submit" />&nbsp;
+            <asp:HyperLink ID="cmdSubmitSitemap" Text="Submit" runat="server" Width="100" Target="_blank" CssClass="CommandButton" ResourceKey="cmdSubmitToSearch" />&nbsp;
 
         </td>
     </tr>

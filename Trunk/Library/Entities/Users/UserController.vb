@@ -1059,11 +1059,24 @@ Namespace DotNetNuke.Entities.Users
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Sub UpdateUser(ByVal portalId As Integer, ByVal objUser As UserInfo)
+            'Update the User - default to making logging call
+            UpdateUser(portalId, objUser, True)
+        End Sub
+
+        ''' <summary>
+        ''' updates a user
+        ''' </summary>
+        ''' <param name="portalId">the portalid of the user</param>
+        ''' <param name="objUser">the user object</param>
+        ''' <param name="loggedAction">whether or not the update calls the eventlog - the eventlogtype must still be enabled for logging to occur</param>
+        ''' <remarks></remarks>
+        Public Shared Sub UpdateUser(ByVal portalId As Integer, ByVal objUser As UserInfo, ByVal loggedAction As Boolean)
             'Update the User
             memberProvider.UpdateUser(objUser)
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            objEventLog.AddLog(objUser, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.USER_UPDATED)
-
+            If loggedAction = True Then
+                Dim objEventLog As New Services.Log.EventLog.EventLogController
+                objEventLog.AddLog(objUser, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.USER_UPDATED)
+            End If
             'Remove the UserInfo from the Cache, as it has been modified
             DataCache.ClearUserCache(portalId, objUser.Username)
         End Sub

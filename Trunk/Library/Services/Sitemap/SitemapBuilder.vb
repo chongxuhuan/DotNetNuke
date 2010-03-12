@@ -46,7 +46,8 @@ Namespace DotNetNuke.Services.Sitemap
         ''' <remarks></remarks>
         Public Sub BuildSiteMap(ByVal output As TextWriter)
 
-            Dim cached As Boolean = Boolean.Parse(PortalController.GetPortalSetting("SitemapCached", PortalSettings.PortalId, "False"))
+            Dim cacheDays As Integer = Integer.Parse(PortalController.GetPortalSetting("SitemapCacheDays", PortalSettings.PortalId, "1"))
+            Dim cached As Boolean = cacheDays > 0
 
             If cached AndAlso CacheIsValid() Then
                 WriteSitemapFileToOutput("sitemap.xml", output)
@@ -94,7 +95,6 @@ Namespace DotNetNuke.Services.Sitemap
                 ' enabled cache if it's not already
                 If Not cached Then
                     cached = True
-                    PortalController.UpdatePortalSetting(PortalSettings.PortalId, "SitemapCached", "True")
                     PortalController.UpdatePortalSetting(PortalSettings.PortalId, "SitemapCacheDays", "1")
                 End If
 

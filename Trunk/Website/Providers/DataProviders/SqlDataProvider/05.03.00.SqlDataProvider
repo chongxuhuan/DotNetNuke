@@ -1634,6 +1634,7 @@ AS
 Update {objectQualifier}Messaging_Messages set EmailSchedulerInstance = @SchedulerInstance  where MessageID = @target_messageID
 select * from {objectQualifier}Messaging_Messages where MessageID = @target_messageID 
 
+GO
 
 /* Add Messaging_MarkMessageAsDispatched */
 /*******************************/
@@ -1649,6 +1650,7 @@ BEGIN
 	Update {objectQualifier}Messaging_Messages set EmailSent = 1, EmailSentDate =GETDATE()   where MessageID =@MessageId
 END
 
+GO
 
 /* Add Save_Message Procedure */
 /*******************************/
@@ -1753,273 +1755,47 @@ UPDATE {databaseOwner}[{objectQualifier}Modules] SET ModuleTitle = 'Languages' W
 GO
 
 
-/* localisation changes */
+/* Add Messaging Dispatch Schedule Job */
+/*************************************/
 
-/* update UpdatePortalSetting */
-/******************************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalSetting]
+INSERT INTO {databaseOwner}{objectQualifier}Schedule
+		   ([TypeFullName]
+		   ,[TimeLapse]
+		   ,[TimeLapseMeasurement]
+		   ,[RetryTimeLapse]
+		   ,[RetryTimeLapseMeasurement]
+		   ,[RetainHistoryNum]
+		   ,[AttachToEvent]
+		   ,[CatchUpEnabled]
+		   ,[Enabled]
+		   ,[ObjectDependencies]
+		   ,[Servers]
+		   ,[CreatedByUserID]
+		   ,[CreatedOnDate]
+		   ,[LastModifiedByUserID]
+		   ,[LastModifiedOnDate]
+		   ,[FriendlyName])
+	 VALUES
+		   ('DotNetNuke.Services.Messaging.Scheduler.MessagingScheduler, DotNetNuke'
+		   ,1
+		   ,'m'
+		   ,30
+		   ,'s'
+		   ,10
+		   ,''
+		   ,0
+		   ,1
+		   ,'Messaging'
+		   ,NULL
+		   ,NULL
+		   ,NULL
+		   ,NULL
+		   ,NULL
+		   ,'Messaging Dispatch')
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalSetting]
-	@PortalID       int,
-	@SettingName    nvarchar(50),
-	@SettingValue   nvarchar(2000),
-	@UserID			int,
-	@CultureCode    nvarchar(50)
-
-AS
-	IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}PortalSettings WHERE PortalID = @PortalID AND SettingName = @SettingName) > 0
-		--Update
-		UPDATE  {databaseOwner}{objectQualifier}PortalSettings
-			SET SettingValue = @SettingValue,
-				[LastModifiedByUserID]=@UserID,
-				[LastModifiedOnDate]=getdate()
-		WHERE PortalID = @PortalID
-			AND SettingName = @SettingName
-			AND CultureCode = @CultureCode
-			
-	ELSE
-		--Add
-		INSERT INTO {databaseOwner}{objectQualifier}PortalSettings ( PortalID, SettingName, SettingValue, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate,CultureCode ) 
-			VALUES ( @PortalID, @SettingName, @SettingValue ,@UserID ,getdate() ,@UserID ,getdate(),@CultureCode)
-GO
-
-/* update GetPortalSettings */
-/*************************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSetting]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSetting]
-	@PortalID int,
-	@SettingName	nvarchar(50),
-	@CultureCode	nvarchar(50)
-AS
-	SELECT 
-		CASE WHEN LEFT(LOWER({databaseOwner}{objectQualifier}PortalSettings.SettingValue), 6) = 'fileid' 
-			THEN
-				(SELECT Folder + FileName  
-					FROM {databaseOwner}{objectQualifier}Files 
-					WHERE 'fileid=' + convert(varchar,{databaseOwner}{objectQualifier}Files.FileID) = {databaseOwner}{objectQualifier}PortalSettings.SettingValue
-				) 
-			ELSE 
-				{databaseOwner}{objectQualifier}PortalSettings.SettingValue  
-			END 
-		AS SettingValue
-	FROM {databaseOwner}{objectQualifier}PortalSettings 
-	WHERE  PortalID = @PortalID
-		AND	CultureCode	= @CultureCode
-		AND SettingName = @SettingName
-GO
-
-/* update DeletePortalSetting */
-/***************************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalSetting]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalSetting]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalSetting]
-	@PortalID      int,
-	@SettingName   nvarchar(50),
-	@CultureCode   nvarchar(50)
-
-AS
-	DELETE FROM {databaseOwner}{objectQualifier}PortalSettings 
-	WHERE PortalID = @PortalID
-		AND SettingName = @SettingName
-		AND CultureCode= @CultureCode
-		
-GO
-
-/* update GetPortalSettings */
-/*************************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortalSettings]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSettings]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalSettings]
-	@PortalID int,
-	@CultureCode   nvarchar(50)
-AS
-	SELECT 
-		SettingName,
-		CASE WHEN LEFT(LOWER({databaseOwner}{objectQualifier}PortalSettings.SettingValue), 6) = 'fileid' 
-			THEN
-				(SELECT Folder + FileName  
-					FROM {databaseOwner}{objectQualifier}Files 
-					WHERE 'fileid=' + convert(varchar,{databaseOwner}{objectQualifier}Files.FileID) = {databaseOwner}{objectQualifier}PortalSettings.SettingValue
-				) 
-			ELSE 
-				{databaseOwner}{objectQualifier}PortalSettings.SettingValue  
-			END 
-		AS SettingValue,
-		{databaseOwner}{objectQualifier}PortalSettings.CreatedByUserID,
-		{databaseOwner}{objectQualifier}PortalSettings.CreatedOnDate,
-		{databaseOwner}{objectQualifier}PortalSettings.LastModifiedByUserID,
-		{databaseOwner}{objectQualifier}PortalSettings.LastModifiedOnDate,
-		{databaseOwner}{objectQualifier}PortalSettings.CultureCode
-	FROM {databaseOwner}{objectQualifier}PortalSettings 
-	WHERE	PortalID = @PortalID
-	AND		CultureCode	= @CultureCode
-	
-GO
-
-/* Update GetPortals */
-/*********************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortals]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
-@CultureCode	nvarchar(50)
-
-AS
-SELECT *
-FROM {databaseOwner}{objectQualifier}vw_Portals
-where CultureCode=@CultureCode
-ORDER BY PortalName
-GO
-
-
-/* Update GetPortal */
-/********************/
-
-if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortal]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
-
-	@PortalId  int,
-	@CultureCode	nvarchar(50)
-
-AS
-SELECT *
-FROM {databaseOwner}{objectQualifier}vw_Portals
-WHERE PortalId = @PortalId
-AND	CultureCode= @CultureCode
-GO
-
-/* portals */
-/* Update UpdatePortalInfo Stored Procedure */
-/****************************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
-	@PortalID           int,
-	@PortalName         nvarchar(128),
-	@LogoFile           nvarchar(50),
-	@FooterText         nvarchar(100),
-	@ExpiryDate         datetime,
-	@UserRegistration   int,
-	@BannerAdvertising  int,
-	@Currency           char(3),
-	@AdministratorId    int,
-	@HostFee            money,
-	@HostSpace          int,
-	@PageQuota          int,
-	@UserQuota          int,
-	@PaymentProcessor   nvarchar(50),
-	@ProcessorUserId    nvarchar(50),
-	@ProcessorPassword  nvarchar(50),
-	@Description        nvarchar(500),
-	@KeyWords           nvarchar(500),
-	@BackgroundFile     nvarchar(50),
-	@SiteLogHistory     int,
-	@SplashTabId          int,
-	@HomeTabId          int,
-	@LoginTabId         int,
-	@UserTabId          int,
-	@DefaultLanguage    nvarchar(10),
-	@TimeZoneOffset	    int,
-	@HomeDirectory		varchar(100),
-	@LastModifiedByUserID	int,
-	@CultureCode   nvarchar(50)
-AS
-
-update {databaseOwner}{objectQualifier}Portals
-set    
-       ExpiryDate = @ExpiryDate,
-       UserRegistration = @UserRegistration,
-       BannerAdvertising = @BannerAdvertising,
-       Currency = @Currency,
-       AdministratorId = @AdministratorId,
-       HostFee = @HostFee,
-       HostSpace = @HostSpace,
-       PageQuota = @PageQuota,
-       UserQuota = @UserQuota,
-       PaymentProcessor = @PaymentProcessor,
-       ProcessorUserId = @ProcessorUserId,
-       ProcessorPassword = @ProcessorPassword,
-       SiteLogHistory = @SiteLogHistory,
-       DefaultLanguage = @DefaultLanguage,
-       TimeZoneOffset = @TimeZoneOffset,
-       HomeDirectory = @HomeDirectory,
-	   LastModifiedByUserID = @LastModifiedByUserID,
-	   LastModifiedOnDate = getdate()
-where  PortalId = @PortalID
-
-UPDATE {databaseOwner}{objectQualifier}PortalLocalization
-SET
-        PortalName = @PortalName,
-        LogoFile = @LogoFile,
-        FooterText = @FooterText,
-        Description = @Description,
-        KeyWords = @KeyWords,
-        BackgroundFile = @BackgroundFile,
-        HomeTabId = @HomeTabId,
-        LoginTabId = @LoginTabId,
-        UserTabId = @UserTabId,
-		SplashTabId = @SplashTabId,
-		LastModifiedByUserID = @LastModifiedByUserID,
-		LastModifiedOnDate = getdate()
-WHERE	PortalId = @PortalID and CultureCode=@CultureCode
-GO
-
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalSetup]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalSetup
-GO
-
-create procedure {databaseOwner}{objectQualifier}UpdatePortalSetup
-
-@PortalId            int,
-@AdministratorId     int,
-@AdministratorRoleId int,
-@RegisteredRoleId    int,
-@SplashTabId         int,
-@HomeTabId           int,
-@LoginTabId          int,
-@UserTabId           int,
-@AdminTabId          int,
-@CultureCode   nvarchar(50)
-as
-
-update {objectQualifier}Portals
-set    AdministratorId = @AdministratorId, 
-       AdministratorRoleId = @AdministratorRoleId, 
-       RegisteredRoleId = @RegisteredRoleId
-where  PortalId = @PortalId
-
-
-UPDATE {databaseOwner}{objectQualifier}PortalLocalization
-           SET [HomeTabId]=@HomeTabId
-           ,[LoginTabId]=@LoginTabId
-           ,[UserTabId]=@UserTabId
-           ,[AdminTabId]=@AdminTabId
-           ,[SplashTabId]=@SplashTabId
-          Where portalID=@PortalID
-          and CultureCode=@CultureCode
-GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
+
+

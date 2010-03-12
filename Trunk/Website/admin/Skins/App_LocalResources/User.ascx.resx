@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NewMessages.Text" xml:space="preserve">
-    <value>({0} New Messages)</value>
+    <value> ({0})</value>
   </data>
   <data name="Register.Text" xml:space="preserve">
     <value>Register</value>
   </data>
   <data name="ToolTip.Text" xml:space="preserve">
-    <value>Click Here To Edit Your Account Profile</value>
+    <value>You have {0} New message(s). Click Here To Go Your Profile Page.</value>
   </data>
 </root>

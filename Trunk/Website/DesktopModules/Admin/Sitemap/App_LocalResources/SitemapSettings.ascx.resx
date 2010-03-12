@@ -237,7 +237,7 @@
   <data name="Name.Header" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="submit.Text" xml:space="preserve">
+  <data name="cmdSubmitToSearch.Text" xml:space="preserve">
     <value>Submit</value>
   </data>
   <data name="SectionCoreSettingsLbl.Text" xml:space="preserve">
@@ -248,5 +248,23 @@
   </data>
   <data name="SectionSubmissionSettingsLbl.Text" xml:space="preserve">
     <value>In this section you can submit your site to different search engines.</value>
+  </data>
+  <data name="cmdSubmitToSearch.ToolTip" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Edit.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Edit.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Edit.Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Enabled.Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="OverridePriority.Header" xml:space="preserve">
+    <value>Override Priority</value>
   </data>
 </root>

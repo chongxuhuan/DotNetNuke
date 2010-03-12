@@ -221,9 +221,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
   </Target>
-  <Target Name="DebugProvider">
+  <Target Name="DeployModule">
     <CreateItem Include="*.ascx">
       <Output TaskParameter="Include" ItemName="MySourceFiles" />
     </CreateItem>

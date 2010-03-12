@@ -24,6 +24,8 @@ Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.Services.Installer
 Imports DotNetNuke.Services.Installer.Packages
 Imports DotNetNuke.UI.Skins
+Imports DotNetNuke.Services.Installer.Writers
+Imports System.IO
 
 Namespace DotNetNuke.Modules.Admin.Extensions
 
@@ -163,6 +165,10 @@ Namespace DotNetNuke.Modules.Admin.Extensions
                 If Mode <> "All" Then
                     fldPackageType.Visible = False
                 End If
+
+                'Determine if Package is ready for packaging
+                Dim Writer As PackageWriterBase = PackageWriterFactory.GetWriter(Package)
+                cmdPackage.Visible = File.Exists(Path.Combine(ApplicationMapPath, Writer.BasePath))
 
                 cmdDelete.Visible = IsSuperTab AndAlso (Not Package.IsSystemPackage) AndAlso _
                                         (PackageController.CanDeletePackage(Package, ModuleContext.PortalSettings))

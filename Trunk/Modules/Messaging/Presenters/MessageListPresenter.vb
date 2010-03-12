@@ -102,8 +102,6 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
                     message.Status = MessageStatusType.Unread
                     _MessagingController.UpdateMessage(message)
                 End If
-                message.Status = MessageStatusType.Unread
-                _MessagingController.UpdateMessage(message)
             Next
         End Sub
 

@@ -46,7 +46,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
 #Region "Private Members"
 
         Dim intPortalId As Integer = -1
-        Dim currentCulture As String = "en-us"
 
 #End Region
 
@@ -219,10 +218,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-            Dim locales As Dictionary(Of String, Locale) = Localization.GetLocales(Me.PortalId)
-            If locales.Count < 2 Then
-                plLocale.Visible = False
-            End If
             Try
 
                 If Not (Request.QueryString("pid") Is Nothing) AndAlso (PortalSettings.ActiveTab.ParentId = PortalSettings.SuperTabId Or UserInfo.IsSuperUser) Then
@@ -410,16 +405,12 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
                     chkSkinWidgestEnabled.Checked = PortalSettings.EnableSkinWidgets
 
-                    ctlPortalSkin.Width = "400px"
                     ctlPortalSkin.SkinRoot = SkinController.RootSkin
                     ctlPortalSkin.SkinSrc = PortalSettings.DefaultPortalSkin
-                    ctlPortalContainer.Width = "400px"
                     ctlPortalContainer.SkinRoot = SkinController.RootContainer
                     ctlPortalContainer.SkinSrc = PortalSettings.DefaultPortalContainer
-                    ctlAdminSkin.Width = "400px"
                     ctlAdminSkin.SkinRoot = SkinController.RootSkin
                     ctlAdminSkin.SkinSrc = PortalSettings.DefaultAdminSkin
-                    ctlAdminContainer.Width = "400px"
                     ctlAdminContainer.SkinRoot = SkinController.RootContainer
                     ctlAdminContainer.SkinSrc = PortalSettings.DefaultAdminContainer
 
@@ -722,33 +713,33 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, _
                         intUserTabId, cboDefaultLanguage.SelectedValue, Convert.ToInt32(cboTimeZone.SelectedValue), _
-                        lblHomeDirectory.Text, currentCulture)
+                        lblHomeDirectory.Text)
 
                     If Not refreshPage Then
                         refreshPage = (PortalSettings.DefaultAdminSkin = ctlAdminSkin.SkinSrc) OrElse (PortalSettings.DefaultAdminContainer = ctlAdminContainer.SkinSrc)
                     End If
 
-                    PortalController.UpdatePortalSetting(intPortalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminSkin", ctlAdminSkin.SkinSrc, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalSkin", ctlPortalSkin.SkinSrc, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminContainer", ctlAdminContainer.SkinSrc, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalContainer", ctlPortalContainer.SkinSrc, False, currentCulture)
+                    PortalController.UpdatePortalSetting(intPortalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminSkin", ctlAdminSkin.SkinSrc, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalSkin", ctlPortalSkin.SkinSrc, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminContainer", ctlAdminContainer.SkinSrc, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalContainer", ctlPortalContainer.SkinSrc, False)
 
-                    PortalController.UpdatePortalSetting(intPortalId, "InlineEditorEnabled", chkInlineEditor.Checked.ToString, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "HideFoldersEnabled", chkHideSystemFolders.Checked.ToString, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelMode", optControlPanelMode.SelectedItem.Value, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelVisibility", optControlPanelVisibility.SelectedItem.Value, False, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelSecurity", optControlPanelSecurity.SelectedItem.Value, False, currentCulture)
+                    PortalController.UpdatePortalSetting(intPortalId, "InlineEditorEnabled", chkInlineEditor.Checked.ToString, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "HideFoldersEnabled", chkHideSystemFolders.Checked.ToString, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelMode", optControlPanelMode.SelectedItem.Value, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelVisibility", optControlPanelVisibility.SelectedItem.Value, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "ControlPanelSecurity", optControlPanelSecurity.SelectedItem.Value, False)
 
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString, True, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, True, currentCulture)
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, True, currentCulture)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString, True)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, True)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, True)
 
                     If IsSuperUser() Then
-                        PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False, currentCulture)
-                        PortalController.UpdatePortalSetting(intPortalId, "SSLEnforced", chkSSLEnforced.Checked.ToString, False, currentCulture)
-                        PortalController.UpdatePortalSetting(intPortalId, "SSLURL", AddPortalAlias(txtSSLURL.Text, intPortalId), False, currentCulture)
-                        PortalController.UpdatePortalSetting(intPortalId, "STDURL", AddPortalAlias(txtSTDURL.Text, intPortalId), False, currentCulture)
+                        PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False)
+                        PortalController.UpdatePortalSetting(intPortalId, "SSLEnforced", chkSSLEnforced.Checked.ToString, False)
+                        PortalController.UpdatePortalSetting(intPortalId, "SSLURL", AddPortalAlias(txtSSLURL.Text, intPortalId), False)
+                        PortalController.UpdatePortalSetting(intPortalId, "STDURL", AddPortalAlias(txtSTDURL.Text, intPortalId), False)
                     End If
 
                     ' Redirect to this site to refresh only if admin skin changed or either of the images have changed

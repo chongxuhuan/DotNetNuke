@@ -14,11 +14,14 @@
     <CreateItem Include="*.txt">
       <Output TaskParameter="Include" ItemName="PackageTextFiles" />
     </CreateItem>
-    <CreateItem Include="*.ascx;*.css;*.xsl">
+    <CreateItem Include="*.asmx;*.ascx;*.css;*.xsl">
       <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
     </CreateItem>
     <CreateItem Include="App_LocalResources\*.resx">
       <Output TaskParameter="Include" ItemName="PackageLocalResourceFiles" />
+    </CreateItem>
+    <CreateItem Include="Documentation\*.txt">
+      <Output TaskParameter="Include" ItemName="PackageDocumentationFiles" />
     </CreateItem>
     <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
       <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
@@ -47,6 +50,7 @@
     <Copy SourceFiles="@(PackageSqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Providers\DataProviders\SqlDataProvider" />
     <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageTextFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageDocumentationFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Documentation" />
     <Copy SourceFiles="@(MyImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package\images" />
     <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\js" />
     <Copy SourceFiles="@(MyKeys)" DestinationFolder="$(MSBuildProjectDirectory)\Package\keys" />

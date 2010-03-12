@@ -10,6 +10,7 @@ Imports System.IO
 Imports System.Collections.Generic
 Imports DotNetNuke.Services.Sitemap
 Imports Telerik.Web.UI
+Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Admin.Sitemap
     Partial Public Class SitemapSettings
@@ -38,48 +39,51 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
 
                     lnkSiteMapUrl.NavigateUrl = lnkSiteMapUrl.Text
 
-                    Dim ProviderEditCol = New GridEditCommandColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderEditCol)
+                    'Dim ProviderEditCol = New DnnGridEditColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderEditCol)
 
-                    Dim ProviderNameCol = New GridBoundColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderNameCol)
+                    'Dim ProviderNameCol = New DnnGridBoundColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderNameCol)
 
-                    Dim ProviderDescriptionCol = New GridBoundColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderDescriptionCol)
+                    'Dim ProviderDescriptionCol = New DnnGridBoundColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderDescriptionCol)
 
-                    Dim ProviderPriorityOverrideCol = New GridCheckBoxColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderPriorityOverrideCol)
+                    'Dim ProviderPriorityOverrideCol = New GridCheckBoxColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderPriorityOverrideCol)
 
-                    Dim ProviderPriorityCol = New GridBoundColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderPriorityCol)
+                    'Dim ProviderPriorityCol = New DnnGridBoundColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderPriorityCol)
 
-                    Dim ProviderEnabledCol = New GridCheckBoxColumn()
-                    grdProviders.MasterTableView.Columns.Add(ProviderEnabledCol)
+                    'Dim ProviderEnabledCol = New GridCheckBoxColumn()
+                    'grdProviders.MasterTableView.Columns.Add(ProviderEnabledCol)
 
-                    grdProviders.MasterTableView.EditMode = GridEditMode.InPlace
+                    'grdProviders.MasterTableView.EditMode = GridEditMode.InPlace
 
-                    ProviderEditCol.HeaderText = String.Empty
-                    ProviderEditCol.HeaderStyle.Width = 0
+                    'ProviderEditCol.HeaderText = String.Empty
+                    'ProviderEditCol.HeaderStyle.Width = 0
+                    'ProviderEditCol.EditText = "Edit"
+                    'ProviderEditCol.CancelText = "Cancel"
+                    'ProviderEditCol.UpdateText = "Update"
 
-                    ProviderNameCol.DataField = "Name"
-                    ProviderNameCol.ReadOnly = True
-                    ProviderNameCol.HeaderText = Localization.GetString("Name.Header", Me.LocalResourceFile)
+                    'ProviderNameCol.DataField = "Name"
+                    'ProviderNameCol.ReadOnly = True
+                    'ProviderNameCol.HeaderText = "Name"
 
-                    ProviderDescriptionCol.DataField = "Description"
-                    ProviderDescriptionCol.ReadOnly = True
-                    ProviderDescriptionCol.HeaderText = Localization.GetString("Description.Header", Me.LocalResourceFile)
+                    'ProviderDescriptionCol.DataField = "Description"
+                    'ProviderDescriptionCol.ReadOnly = True
+                    'ProviderDescriptionCol.HeaderText = "Description"
 
-                    ProviderPriorityCol.DataField = "Priority"
-                    ProviderPriorityCol.HeaderStyle.Width = 0
-                    ProviderPriorityCol.HeaderText = Localization.GetString("Priority.Header", Me.LocalResourceFile)
+                    'ProviderPriorityCol.DataField = "Priority"
+                    'ProviderPriorityCol.HeaderStyle.Width = 0
+                    'ProviderPriorityCol.HeaderText = "Priority"
 
-                    ProviderPriorityOverrideCol.DataField = "OverridePriority"
-                    ProviderPriorityOverrideCol.HeaderStyle.Width = 0
-                    ProviderPriorityOverrideCol.HeaderText = Localization.GetString("ProviderOverride.Header", Me.LocalResourceFile)
+                    'ProviderPriorityOverrideCol.DataField = "OverridePriority"
+                    'ProviderPriorityOverrideCol.HeaderStyle.Width = 0
+                    'ProviderPriorityOverrideCol.HeaderText = "OverridePriority"
 
-                    ProviderEnabledCol.DataField = "Enabled"
-                    ProviderEnabledCol.HeaderStyle.Width = 0
-                    ProviderEnabledCol.HeaderText = Localization.GetString("ProviderEnabled.Header", Me.LocalResourceFile)
+                    'ProviderEnabledCol.DataField = "Enabled"
+                    'ProviderEnabledCol.HeaderStyle.Width = 0
+                    'ProviderEnabledCol.HeaderText = "Enabled"
 
                     BindProviders()
                     SetSearchEngineSubmissionURL()
@@ -104,13 +108,12 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             SavePrioritySettings()
 
             PortalController.UpdatePortalSetting(PortalId, "SitemapIncludeHidden", chkIncludeHidden.Checked.ToString())
-            PortalController.UpdatePortalSetting(PortalId, "SitemapExcludePriority", txtExcludePriority.Text)
+
+            Dim excludePriority As Single = Single.Parse(txtExcludePriority.Text)
+            PortalController.UpdatePortalSetting(PortalId, "SitemapExcludePriority", excludePriority.ToString(NumberFormatInfo.InvariantInfo))
 
             If (cmbDaysToCache.SelectedIndex = 0) Then
-                PortalController.UpdatePortalSetting(PortalId, "SitemapCached", Boolean.FalseString)
                 ResetCache()
-            Else
-                PortalController.UpdatePortalSetting(PortalId, "SitemapCached", Boolean.TrueString)
             End If
 
             PortalController.UpdatePortalSetting(PortalId, "SitemapCacheDays", cmbDaysToCache.SelectedIndex)
@@ -126,22 +129,20 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             ' core settings
             chkLevelPriority.Checked = _
                 Boolean.Parse(PortalController.GetPortalSetting("SitemapLevelMode", PortalId, "False"))
+
             Dim minPriority As Single
             minPriority = Single.Parse(PortalController.GetPortalSetting("SitemapMinPriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo())
             txtMinPagePriority.Text = minPriority.ToString()
+
             chkIncludeHidden.Checked = _
                 Boolean.Parse(PortalController.GetPortalSetting("SitemapIncludeHidden", PortalId, "False"))
 
             ' General settings
-            txtExcludePriority.Text = PortalController.GetPortalSetting("SitemapExcludePriority", PortalId, "0")
+            Dim excludePriority As Single
+            excludePriority = Single.Parse(PortalController.GetPortalSetting("SitemapExcludePriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo())
+            txtExcludePriority.Text = excludePriority.ToString()
 
-            ' If chkCache.Checked Then
-            ' txtCacheDays.Text = PortalController.GetPortalSetting("SitemapCacheDays", PortalId, "1")
-
-            Dim cahceEnabled = Boolean.Parse(PortalController.GetPortalSetting("SitemapCached", PortalId, "False"))
             cmbDaysToCache.SelectedIndex = PortalController.GetPortalSetting("SitemapCacheDays", PortalId, "1")
-            ' End If
-            'lnkResetCache.Visible = chkCache.Checked
         End Sub
 
         Private Sub SavePrioritySettings()
@@ -156,7 +157,6 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
         End Sub
 
 #End Region
-
 
         Private Sub ResetCache()
 
@@ -193,7 +193,6 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             Return isChild
         End Function
 
-
         Private Sub BindProviders()
 
             Dim builder As New SitemapBuilder(PortalSettings)
@@ -212,7 +211,7 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
         Protected Sub grdProvider_UpdateCommand(ByVal source As Object, ByVal e As Telerik.Web.UI.GridCommandEventArgs) _
             Handles grdProviders.UpdateCommand
 
-            grdProviders.Rebind()
+            'grdProviders.Rebind()
 
             Dim editedItem As GridEditableItem = CType(e.Item, GridEditableItem)
             Dim editMan As GridEditManager = editedItem.EditManager
@@ -286,14 +285,11 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
 
         End Sub
 
-
         Private Sub grdProviders_needDataSorce()
             BindProviders()
         End Sub
 
-
-        Protected Sub lnkResetCache_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
-    Handles lnkResetCache.Click
+        Protected Sub lnkResetCache_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkResetCache.Click
             ResetCache()
         End Sub
 
@@ -356,5 +352,6 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
         End Sub
 
 #End Region
+
     End Class
 End Namespace

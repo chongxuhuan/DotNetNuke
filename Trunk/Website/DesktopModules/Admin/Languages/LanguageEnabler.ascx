@@ -23,7 +23,12 @@
 </div>
 <br />
 <br />
-<asp:DataGrid ID="dgLanguages" runat="server" AutoGenerateColumns="false" GridLines="None">
+<asp:DataGrid ID="dgLanguages" runat="server" AutoGenerateColumns="false" GridLines="None" BorderStyle="None" BorderWidth="0" CellPadding="10">
+ <headerstyle cssclass="DataGrid_Header" verticalalign="Top" horizontalalign="Center"/>
+	<itemstyle CssClass="DataGrid_Item" horizontalalign="Center" />
+	<alternatingitemstyle cssclass="DataGrid_AlternatingItem" />
+	<footerstyle cssclass="DataGrid_Footer" />
+	<pagerstyle cssclass="DataGrid_Pager" />
     <Columns>
         <asp:TemplateColumn Visible="false">
             <ItemTemplate>
@@ -83,9 +88,10 @@
             </Columns>
 </asp:DataGrid>
 <asp:Literal ID="litStatus" runat="server" />
-<div style="text-align: center">
+<div>
+<br />
     <dnn:CommandButton ID="cmdUpdate" runat="server" ImageUrl="~/images/save.gif" ResourceKey="cmdUpdate" CssClass="CommandButton" />
-    &nbsp;&nbsp;<dnn:CommandButton ID="cmdCancel" runat="server" ImageUrl="~/images/deny.gif"
+    &nbsp;&nbsp;<dnn:CommandButton ID="cmdCancel" runat="server" ImageUrl="~/images/lt.gif"
         ResourceKey="cmdCancel" CssClass="CommandButton" CausesValidation="false"  />
 </div>
 <br />

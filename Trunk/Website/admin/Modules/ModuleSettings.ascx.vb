@@ -141,7 +141,6 @@ Namespace DotNetNuke.Modules.Admin.Modules
                     txtEndDate.Text = [Module].EndDate.ToShortDateString
                 End If
 
-                ctlModuleContainer.Width = "250px"
                 ctlModuleContainer.SkinRoot = DotNetNuke.UI.Skins.SkinController.RootContainer
                 ctlModuleContainer.SkinSrc = [Module].ContainerSrc
 

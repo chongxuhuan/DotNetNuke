@@ -41,6 +41,7 @@
         </permission>
       </tabpermissions>
       <tabsettings />
+      <tabtype>usertab</tabtype>
       <panes>
         <pane>
           <name>ContentPane</name>
@@ -133,10 +134,16 @@
                   <allowaccess>true</allowaccess>
                   <rolename>Administrators</rolename>
                 </permission>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Registered Users</rolename>
+                </permission>
               </modulepermissions>
               <modulesettings />
               <tabmodulesettings />
-              <definition>Admin.Messaging</definition>
+              <definition>DotNetNuke.Messaging</definition>
               <moduledefinition>Messaging</moduledefinition>
             </module>
           </modules>

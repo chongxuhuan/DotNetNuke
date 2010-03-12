@@ -117,10 +117,28 @@ Namespace DotNetNuke.Services.Installer.Installers
                 DotNetNuke.Common.Utilities.Config.AddCodeSubDirectory(DesktopModule.CodeSubDirectory)
             End If
 
+            If DesktopModule.SupportedFeatures = Null.NullInteger Then
+                'Set an Event Message so the features are loaded by reflection on restart
+                Dim oAppStartMessage As New EventQueue.EventMessage
+                oAppStartMessage.Priority = MessagePriority.High
+                oAppStartMessage.ExpirationDate = Now.AddYears(-1)
+                oAppStartMessage.SentDate = System.DateTime.Now
+                oAppStartMessage.Body = ""
+                oAppStartMessage.ProcessorType = "DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke"
+                oAppStartMessage.ProcessorCommand = "UpdateSupportedFeatures"
+
+                'Add custom Attributes for this message
+                oAppStartMessage.Attributes.Add("BusinessControllerClass", DesktopModule.BusinessControllerClass)
+                oAppStartMessage.Attributes.Add("desktopModuleID", DesktopModule.DesktopModuleID.ToString())
+
+                'send it to occur on next App_Start Event
+                EventQueueController.SendMessage(oAppStartMessage, "Application_Start_FirstRequest")
+            End If
+
             'Add Event Message
             If EventMessage IsNot Nothing Then
                 EventMessage.Attributes.Set("desktopModuleID", DesktopModule.DesktopModuleID.ToString())
-                EventQueueController.SendMessage(EventMessage, "Application_Start")
+                EventQueueController.SendMessage(EventMessage, "Application_Start_FirstRequest")
             End If
 
             'Add DesktopModule to all portals

@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Admin.Messaging" type="Module" version="01.00.00" isSystemPackage="true">
+    <package name="Admin.Messaging" type="Module" version="01.00.00" isSystem="true">
       <friendlyName>Messaging</friendlyName>
       <description>The Messaging module allows users to send and receive private messages.</description>
       <owner>
@@ -17,12 +17,12 @@
       <components>
         <component type="Module">
           <desktopModule>
-            <moduleName>Admin.Messaging</moduleName>
+            <moduleName>DotNetNuke.Messaging</moduleName>
             <foldername>Admin/Messaging</foldername>
-            <businessControllerClass />
+            <businessControllerClass>DotNetNuke.Modules.Messaging.MessagingBusinessController, DotNetNuke.Modules.Messaging</businessControllerClass>
             <supportedFeatures />
-			<isPremium>true</isPremium>
-			<isAdmin>true</isAdmin>
+            <isPremium>true</isPremium>
+            <isAdmin>true</isAdmin>
             <moduleDefinitions>
               <moduleDefinition>
                 <friendlyName>Messaging</friendlyName>
@@ -62,6 +62,15 @@
               </moduleDefinition>
             </moduleDefinitions>
           </desktopModule>
+          <eventMessage>
+            <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+            <processorCommand>UpgradeModule</processorCommand>
+            <attributes>
+              <businessControllerClass>DotNetNuke.Modules.Messaging.MessagingBusinessController, DotNetNuke.Modules.Messaging</businessControllerClass>
+              <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+              <upgradeVersionsList>01.00.00</upgradeVersionsList>
+            </attributes>
+          </eventMessage>
         </component>
         <component type="Assembly">
           <assemblies>

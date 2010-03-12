@@ -86,8 +86,10 @@ Namespace DotNetNuke.Entities.Users
                     Case "image"
                         'File is stored as a FileID
                         Dim fileID As Integer
-                        If Integer.TryParse(prop.PropertyValue, fileID) Then
+                        If Integer.TryParse(prop.PropertyValue, fileID) AndAlso fileID > 0 Then
                             result = LinkClick(String.Format("fileid={0}", fileID), Null.NullInteger, Null.NullInteger)
+                        Else
+                            result = DotNetNuke.Common.Globals.ResolveUrl("~/images/spacer.gif")
                         End If
                     Case "richtext"
                         result = PropertyAccess.FormatString(HttpUtility.HtmlDecode(prop.PropertyValue), strFormat)
