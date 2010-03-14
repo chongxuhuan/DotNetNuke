@@ -52,8 +52,19 @@ Namespace DotNetNuke.Modules.Messaging.Views
             End If
         End Sub
 
-        Public Sub ClearToField() Implements IEditMessageView.ClearToField
-            toTextBox.Text = ""
+        Public Sub ShowInvalidUserError() Implements IEditMessageView.ShowInvalidUserError
+            ''toTextBox.Text = ""
+            Dim toError As String = String.Format(Services.Localization.Localization.GetString("Validation.Error.Message", LocalResourceFile), toTextBox.Text)
+
+            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, toError, UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+
+            ''Services.Localization.Localization.GetString("Validation.Error.Message", Me)
+        End Sub
+
+        Public Sub ShowValidUserMessage() Implements IEditMessageView.ShowValidUserMessage
+            Dim toValid As String = String.Format(Services.Localization.Localization.GetString("Validation.Success.Message", LocalResourceFile), toTextBox.Text)
+
+            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, toValid, UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
         End Sub
 
         Public Sub HideDeleteButton() Implements IEditMessageView.HideDeleteButton

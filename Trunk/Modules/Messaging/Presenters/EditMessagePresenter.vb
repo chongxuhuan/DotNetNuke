@@ -160,15 +160,13 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
                 'Redirect to Message List
                 Response.Redirect(GetInboxUrl())
-            Else
-                'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
         End Sub
 
         Public Function ValidateUser(ByVal sender As Object, ByVal e As EventArgs) As Boolean
             ' validate username
-            If ValidateUserName(View.Model.UserName) < 0 Then
-                View.ClearToField()
+            If (ValidateUserName(View.Model.UserName) > 0) Then
+                View.ShowValidUserMessage()
             End If
         End Function
 
@@ -183,6 +181,11 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
                     userId = objUser.UserID
                 End If
             End If
+
+            If (userId = Null.NullInteger) Then
+                View.ShowInvalidUserError()
+            End If
+
             Return userId
         End Function
 

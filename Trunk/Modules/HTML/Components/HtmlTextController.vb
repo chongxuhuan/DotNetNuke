@@ -304,7 +304,6 @@ Namespace DotNetNuke.Modules.Html
         ''' <remarks>
         ''' </remarks>
         ''' <param name="ModuleID">The ID of the Module</param>
-        ''' <param name="ModuleID">The ID of the Tab</param>
         ''' <param name="PortalID">The ID of the Portal</param>
         ''' <history>
         ''' </history>

@@ -135,6 +135,9 @@
     <Compile Include="UI\WebControls\IDnnRibbonBarTool.vb" />
     <Compile Include="UI\WebControls\RibbonBarToolInfo.vb" />
     <Compile Include="UI\WebControls\DnnGridItemSelectedEventArgs.vb" />
+    <Compile Include="UI\WebControls\TermsEventArgs.vb" />
+    <Compile Include="UI\WebControls\TermsList.vb" />
+    <Compile Include="UI\WebControls\TermsSelector.vb" />
     <Compile Include="Validators\AttributeBasedObjectValidator.vb" />
     <Compile Include="Validators\DataAnnotationsObjectValidator.vb" />
     <Compile Include="Validators\ObjectValidator.vb" />

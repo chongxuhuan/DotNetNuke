@@ -19,31 +19,35 @@
 '
 
 Imports DotNetNuke.Entities.Content.Taxonomy
-Imports DotNetNuke.Modules.Taxonomy.Views.Models
-Imports DotNetNuke.Web.UI.WebControls
-Imports WebFormsMvp
 
-Namespace DotNetNuke.Modules.Taxonomy.Views
+Namespace DotNetNuke.Web.UI.WebControls
+    Public Class TermsEventArgs
+        Inherits System.EventArgs
 
-    Public Interface IEditVocabularyView
-        Inherits IView(Of EditVocabularyModel)
+#Region "Private Members"
 
-        Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean)
-        Sub BindTerms(ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal dataBind As Boolean)
-        Sub BindTerm(ByVal term As Term, ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal loadFromControl As Boolean, ByVal editEnabled As Boolean)
-        Sub ClearSelectedTerm()
-        Sub SetTermEditorMode(ByVal isAddMode As Boolean, ByVal termId As Integer)
-        Sub ShowTermEditor(ByVal showEditor As Boolean)
+        Private _SelectedTerm As Term
 
-        Event AddTerm As EventHandler
-        Event Cancel As EventHandler
-        Event CancelTerm As EventHandler
-        Event Delete As EventHandler
-        Event DeleteTerm As EventHandler
-        Event Save As EventHandler
-        Event SaveTerm As EventHandler
-        Event SelectTerm As EventHandler(Of TermsEventArgs)
+#End Region
 
-    End Interface
+#Region "Constructors"
 
+        Public Sub New(ByVal selectedTerm As Term)
+            _SelectedTerm = selectedTerm
+        End Sub
+
+#End Region
+
+#Region "Public Properties"
+
+        Public ReadOnly Property SelectedTerm() As Term
+            Get
+                Return _SelectedTerm
+            End Get
+        End Property
+
+#End Region
+
+    End Class
 End Namespace
+

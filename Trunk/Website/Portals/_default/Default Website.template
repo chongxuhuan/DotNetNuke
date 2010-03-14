@@ -1138,41 +1138,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <definition>Portals</definition>
               <moduledefinition>Site Settings</moduledefinition>
             </module>
-            <module>
-              <title>SiteMap Settings</title>
-              <alltabs>false</alltabs>
-              <inheritviewpermissions>true</inheritviewpermissions>
-              <header />
-              <footer />
-              <startdate>0001-01-01T00:00:00</startdate>
-              <enddate>0001-01-01T00:00:00</enddate>
-              <cachetime>0</cachetime>
-              <cachemethod />
-              <alignment />
-              <color />
-              <border />
-              <iconfile>~/images/icon_sitesettings_32px.gif</iconfile>
-              <visibility>Maximized</visibility>
-              <containersrc />
-              <displaytitle>true</displaytitle>
-              <displayprint>true</displayprint>
-              <displaysyndicate>false</displaysyndicate>
-              <iswebslice>false</iswebslice>
-              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
-              <webslicettl>0</webslicettl>
-              <modulepermissions>
-                <permission>
-                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
-                  <permissionkey>EDIT</permissionkey>
-                  <allowaccess>true</allowaccess>
-                  <rolename>Administrators</rolename>
-                </permission>
-              </modulepermissions>
-              <modulesettings />
-              <tabmodulesettings />
-              <definition>Sitemap</definition>
-              <moduledefinition>Sitemap</moduledefinition>
-            </module>
           </modules>
         </pane>
       </panes>
@@ -2397,6 +2362,84 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
         </pane>
       </panes>
     </tab>
+    <tab>
+      <name>Search Engine SiteMap</name>
+      <visible>true</visible>
+      <iconfile>~/images/icon_analytics_16px.gif</iconfile>
+      <iconfilelarge>~/images/icon_analytics_32px.gif</iconfilelarge>
+      <disabled>false</disabled>
+      <title>Site Settings</title>
+      <description>Configure the sitemap for submission to common search engines.</description>
+      <keywords />
+      <url type="Normal" />
+      <skinsrc />
+      <containersrc />
+      <startdate>0001-01-01T00:00:00</startdate>
+      <enddate>0001-01-01T00:00:00</enddate>
+      <refreshinterval>-1</refreshinterval>
+      <pageheadtext />
+      <issecure>false</issecure>
+      <permanentredirect>false</permanentredirect>
+      <sitemappriority>0.5</sitemappriority>
+      <tabpermissions>
+        <permission>
+          <permissioncode>SYSTEM_TAB</permissioncode>
+          <permissionkey>VIEW</permissionkey>
+          <allowaccess>true</allowaccess>
+          <rolename>Administrators</rolename>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_TAB</permissioncode>
+          <permissionkey>EDIT</permissionkey>
+          <allowaccess>true</allowaccess>
+          <rolename>Administrators</rolename>
+        </permission>
+      </tabpermissions>
+      <tabsettings />
+      <parent>Admin</parent>
+      <panes>
+        <pane>
+          <name>ContentPane</name>
+          <modules>
+            <module>
+              <title>Search Engine SiteMap</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>0</cachetime>
+              <cachemethod />
+              <alignment />
+              <color />
+              <border />
+              <iconfile>~/images/icon_analytics_32px.gif</iconfile>
+              <visibility>Maximized</visibility>
+              <containersrc />
+              <displaytitle>true</displaytitle>
+              <displayprint>true</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+              </modulepermissions>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>Sitemap</definition>
+              <moduledefinition>Sitemap</moduledefinition>
+            </module>
+          </modules>
+        </pane>
+      </panes>
+    </tab>
   </tabs>
   <folders>
     <folder>
@@ -2673,7 +2716,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
           <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
+          <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
@@ -2685,7 +2728,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>WRITE</permissionkey>
           <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
+          <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
       <files>
@@ -2698,6 +2741,30 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <width>-1</width>
         </file>
       </files>
+    </folder>
+    <folder>
+      <folderpath>Users/</folderpath>
+      <storagelocation>0</storagelocation>
+      <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>false</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+      </folderpermissions>
     </folder>
   </folders>
 </portal>

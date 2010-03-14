@@ -138,9 +138,6 @@
       <DependentUpon>VocabularyList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebControls\TermsEventArgs.vb" />
-    <Compile Include="WebControls\TermsList.vb" />
-    <Compile Include="WebControls\TermsSelector.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.vbproj">

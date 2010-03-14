@@ -791,6 +791,7 @@ Namespace DotNetNuke.Common.Utilities
                         folderPermission.FolderID = folder.FolderID
                         folderPermission.UserID = UserID
                         folderPermission.RoleID = Null.NullInteger
+                        folderPermission.AllowAccess = True
 
                         folder.FolderPermissions.Add(folderPermission)
                     End If

@@ -386,12 +386,19 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
         Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
 
+            SendEmail(fromAddress, String.Empty, toAddress, subject, body)
+
+        End Sub
+
+        Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal senderAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
+
             If (String.IsNullOrEmpty(Host.SMTPServer)) Then
                 Throw New InvalidOperationException("SMTP Server not configured")
             End If
 
 
             Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
+            emailMessage.Sender = New MailAddress(senderAddress)
 
             Dim smtpClient As New System.Net.Mail.SmtpClient(Host.SMTPServer)
 

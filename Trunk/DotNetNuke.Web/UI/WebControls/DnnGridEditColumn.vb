@@ -63,6 +63,12 @@ Namespace DotNetNuke.Web.UI.WebControls
                 If (Not String.IsNullOrEmpty(EditText)) Then
                     EditText = Localization.GetString(EditText, LocalResourceFile)
                 End If
+                If (Not String.IsNullOrEmpty(CancelText)) Then
+                    CancelText = Localization.GetString(CancelText, LocalResourceFile)
+                End If
+                If (Not String.IsNullOrEmpty(UpdateText)) Then
+                    UpdateText = Localization.GetString(UpdateText, LocalResourceFile)
+                End If
             End If
         End Sub
 

@@ -53,6 +53,12 @@ Namespace DotNetNuke.Entities.Profile
 
 #Region "Private Shared Methods"
 
+        Private Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal types As ListEntryInfoCollection)
+
+            _orderCounter += 2
+
+            AddDefaultDefinition(PortalId, category, name, strType, length, _orderCounter, types)
+        End Sub
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Adds a single default property definition
@@ -64,8 +70,7 @@ Namespace DotNetNuke.Entities.Profile
         '''     [cnurse]	02/22/2006	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal types As ListEntryInfoCollection)
-
+        Friend Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal viewOrder As Integer, ByVal types As ListEntryInfoCollection)
             Dim typeInfo As ListEntryInfo = types.Item("DataType:" + strType)
             If typeInfo Is Nothing Then
                 typeInfo = types.Item("DataType:Unknown")
@@ -81,9 +86,7 @@ Namespace DotNetNuke.Entities.Profile
             propertyDefinition.Visible = True
             propertyDefinition.Length = length
 
-            _orderCounter += 2
-
-            propertyDefinition.ViewOrder = _orderCounter
+            propertyDefinition.ViewOrder = viewOrder
 
             AddPropertyDefinition(propertyDefinition)
 
@@ -352,6 +355,7 @@ Namespace DotNetNuke.Entities.Profile
             AddDefaultDefinition(PortalId, "Contact Info", "Fax", "Text", 50, dataTypes)
             AddDefaultDefinition(PortalId, "Contact Info", "Website", "Text", 50, dataTypes)
             AddDefaultDefinition(PortalId, "Contact Info", "IM", "Text", 50, dataTypes)
+            AddDefaultDefinition(PortalId, "Preferences", "Photo", "Image", 0, dataTypes)
             AddDefaultDefinition(PortalId, "Preferences", "Biography", "RichText", 0, dataTypes)
             AddDefaultDefinition(PortalId, "Preferences", "TimeZone", "TimeZone", 0, dataTypes)
             AddDefaultDefinition(PortalId, "Preferences", "PreferredLocale", "Locale", 0, dataTypes)

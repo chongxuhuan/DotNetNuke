@@ -22,7 +22,7 @@ Imports DotNetNuke.Modules.Taxonomy.Presenters
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
-Imports DotNetNuke.Modules.Taxonomy.WebControls
+Imports DotNetNuke.Web.UI.WebControls
 Imports DotNetNuke.Web.Mvp
 Imports WebFormsMvp
 
@@ -115,7 +115,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
             RaiseEvent Save(Me, e)
         End Sub
 
-        Private Sub termsList_SelectedTermChanged(ByVal sender As Object, ByVal e As WebControls.TermsEventArgs) Handles termsList.SelectedTermChanged
+        Private Sub termsList_SelectedTermChanged(ByVal sender As Object, ByVal e As TermsEventArgs) Handles termsList.SelectedTermChanged
             RaiseEvent SelectTerm(Me, e)
         End Sub
 

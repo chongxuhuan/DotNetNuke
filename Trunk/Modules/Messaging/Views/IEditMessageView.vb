@@ -28,7 +28,8 @@ Namespace DotNetNuke.Modules.Messaging.Views
         Inherits IView(Of EditMessageModel)
 
         Sub BindMessage(ByVal message As Message)
-        Sub ClearToField()
+        Sub ShowInvalidUserError()
+        Sub ShowValidUserMessage()
         Sub HideDeleteButton()
 
         Event Cancel As EventHandler

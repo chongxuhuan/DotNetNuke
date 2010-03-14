@@ -168,6 +168,7 @@ Namespace DotNetNuke.Entities.Modules
             For Each kvp As KeyValuePair(Of Integer, ModuleControlInfo) In GetModuleControls()
                 If kvp.Value.ModuleDefID = moduleDefId AndAlso kvp.Value.ControlKey.ToLowerInvariant() = controlKey.ToLowerInvariant() Then
                     moduleControl = kvp.Value
+                    Exit For
                 End If
             Next
 

@@ -258,41 +258,6 @@ Namespace DotNetNuke.Web.Mvp
             Response.Redirect(LoginURL(Request.RawUrl, False), True)
         End Sub
 
-
-        'Protected Function RunIfValid(ByVal func As Func(Of Boolean), ByVal validationGroup As String) As Boolean
-        '    'Try and cast view to Control
-        '    Dim control As Control = TryCast(View, Control)
-        '    If control IsNot Nothing AndAlso control.Page IsNot Nothing Then
-        '        If (String.IsNullOrEmpty(validationGroup)) Then
-        '            control.Page.Validate()
-        '        Else
-        '            control.Page.Validate(validationGroup)
-        '        End If
-        '        If (control.Page.IsValid) Then
-        '            Return func.Invoke(Presenter)
-        '        Else
-        '            Return Nothing
-        '        End If
-        '    End If
-
-        'End Function
-
-        'Protected Overridable Function CreateSaveHandler(ByVal presenterFunction As Action(Of Object, Boolean)) As EventHandler
-        '    Return CreateSaveHandler(presenterFunction, Nothing)
-        'End Function
-
-        'Protected Overridable Function CreateSaveHandler(ByVal presenterFunction As Func(Of Boolean), ByVal validationGroup As String) As EventHandler
-        '    'Return Function(sender, args) Presenter.RunWithAuthPolicy(Function(func1) RunIfValid(Function(func2) presenterFunction(Presenter), validationGroup))
-        'End Function
-
-        'Protected Overridable Function CreateSimpleHandler(ByVal presenterFunction As Func(Of Boolean)) As EventHandler
-        '    'Return Function(sender, args) presenterFunction(Presenter)
-        'End Function
-
-        'Protected Overridable Function CreateSimpleHandler(Of TEventArgs As EventArgs)(ByVal presenterFunction As EventHandler(Of TEventArgs)) As EventHandler(Of TEventArgs)
-        '    Return Function(sender, args) presenterFunction(sender, args)
-        'End Function
-
     End Class
 
 End Namespace

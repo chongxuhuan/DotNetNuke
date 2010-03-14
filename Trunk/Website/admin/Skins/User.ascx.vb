@@ -127,7 +127,7 @@ Namespace DotNetNuke.UI.Skins.Controls
 
                         cmdRegister.Text = objUserInfo.DisplayName
 
-                        If (ShowUnreadMessages) Then
+                        If (ShowUnreadMessages AndAlso messageCount > 0) Then
                             cmdRegister.Text = cmdRegister.Text & String.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(Me, MyFileName)), messageCount)
                         End If
 

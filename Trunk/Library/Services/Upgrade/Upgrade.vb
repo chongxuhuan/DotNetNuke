@@ -38,6 +38,7 @@ Imports DotNetNuke.Services.Installer.Packages
 Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Application
 Imports DotNetNuke.Common.Lists
+Imports DotNetNuke.Entities.Profile
 
 Namespace DotNetNuke.Services.Upgrade
 
@@ -873,20 +874,22 @@ Namespace DotNetNuke.Services.Upgrade
             Dim intCount As Integer = 0
 
             'Get the Modules on the Tab
-            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In objModules.GetTabModules(objTab.TabID)
-                Dim objModule As ModuleInfo = kvp.Value
-                If objModule.DesktopModule.FriendlyName = DesktopModuleName Then
-                    'Delete the Module from the Modules list
-                    objModules.DeleteTabModule(objModule.TabID, objModule.ModuleID, False)
-                    intModuleDefId = objModule.ModuleDefID
-                Else
-                    intCount += 1
-                End If
-            Next
+            If objTab IsNot Nothing Then
+                For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In objModules.GetTabModules(objTab.TabID)
+                    Dim objModule As ModuleInfo = kvp.Value
+                    If objModule.DesktopModule.FriendlyName = DesktopModuleName Then
+                        'Delete the Module from the Modules list
+                        objModules.DeleteTabModule(objModule.TabID, objModule.ModuleID, False)
+                        intModuleDefId = objModule.ModuleDefID
+                    Else
+                        intCount += 1
+                    End If
+                Next
 
-            'If Tab has no modules optionally remove tab
-            If intCount = 0 And TabRemove Then
-                objTabs.DeleteTab(objTab.TabID, objTab.PortalID)
+                'If Tab has no modules optionally remove tab
+                If intCount = 0 And TabRemove Then
+                    objTabs.DeleteTab(objTab.TabID, objTab.PortalID)
+                End If
             End If
 
             Return intModuleDefId
@@ -2533,17 +2536,39 @@ Namespace DotNetNuke.Services.Upgrade
                         ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
 
+                        'Add new Sitemap settings module
+                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
+                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_analytics_32px.gif", SecurityAccessLevel.View, 0)
+                        AddAdminPages("Search Engine Sitemap", "Configure the sitemap for submission to common search engines.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Search Engine Sitemap", "~/images/icon_analytics_32px.gif")
+
+                        'Add new Image Data Type
+                        Dim listController As New ListController
+                        Dim imagedatatype As New ListEntryInfo() _
+                                                With { _
+                                                        .DefinitionID = Null.NullInteger, _
+                                                        .ListName = "DataType", _
+                                                        .Value = "Image", _
+                                                        .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
+                                                }
+                        listController.AddListEntry(imagedatatype)
+
+                        'Add new Photo Profile field to Host
+                        Dim objListController As New ListController
+                        Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
+
+                        Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
+                        ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
+
                         Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
                         If File.Exists(strHostTemplateFile) Then
                             Dim tabController As New TabController()
                             Dim objPortals As New PortalController
                             Dim arrPortals As ArrayList = objPortals.GetPortals
                             For Each objPortal As PortalInfo In arrPortals
+                                properties = ProfileController.GetPropertyDefinitionsByPortal(objPortal.PortalID)
 
-                                Dim tabId As Integer = tabController.GetTabByTabPath(objPortal.PortalID, "//Admin//SiteSettings")
-                                Dim siteSettingsPage As TabInfo = tabController.GetTab(tabId, objPortal.PortalID, False)
-                                ModuleDefID = GetModuleDefinition("Sitemap", "Sitemap")
-                                AddModuleToPage(siteSettingsPage, ModuleDefID, "Sitemap", "~/images/icon_skins_32px.gif")
+                                'Add new Photo Profile field to Portal
+                                ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
 
                                 'Rename old Default Page template
                                 File.Move(String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath), String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
@@ -2558,11 +2583,11 @@ Namespace DotNetNuke.Services.Upgrade
                                 FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
 
                                 'Add new User profile page to every portal (based on User Profile Template)
-                                Dim newTab As New TabInfo()
-                                newTab.PortalID = objPortal.PortalID
-                                newTab.ParentId = Null.NullInteger
-                                newTab.TabName = "User Profile"
-                                newTab.TabID = tabController.AddTabBefore(newTab, objPortal.AdminTabId)
+                                'Dim newTab As New TabInfo()
+                                'newTab.PortalID = objPortal.PortalID
+                                'newTab.ParentId = Null.NullInteger
+                                'newTab.TabName = "User Profile"
+                                'newTab.TabID = tabController.AddTabBefore(newTab, objPortal.AdminTabId)
 
                                 Dim xmlDoc As New XmlDocument
                                 Try
@@ -2571,6 +2596,10 @@ Namespace DotNetNuke.Services.Upgrade
                                 Catch ex As Exception
                                     LogException(ex)
                                 End Try
+
+                                Dim newTab As New TabInfo()
+                                newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
+                                ''tabController.AddTabBefore(newTab, objPortal.AdminTabId)
                                 tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
 
                                 'Update SiteSettings to point to the new page
@@ -2589,17 +2618,6 @@ Namespace DotNetNuke.Services.Upgrade
                                 End If
                             Next
                         End If
-
-                        'Add new Image Data Type
-                        Dim listController As New ListController
-                        Dim imagedatatype As New ListEntryInfo() _
-                                                With { _
-                                                        .DefinitionID = Null.NullInteger, _
-                                                        .ListName = "DataType", _
-                                                        .Value = "Image", _
-                                                        .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
-                                                }
-                        listController.AddListEntry(imagedatatype)
 
                         'Add new EventQueue Event
                         Dim config As DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration = DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.GetConfig()

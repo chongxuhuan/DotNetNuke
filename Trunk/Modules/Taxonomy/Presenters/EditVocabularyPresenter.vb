@@ -27,6 +27,7 @@ Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Modules.Taxonomy.WebControls
+Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 

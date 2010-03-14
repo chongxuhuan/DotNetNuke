@@ -28,6 +28,14 @@ Namespace DotNetNuke.Web.UI.WebControls
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             Utilities.ApplySkin(Me)
             PagerStyle.Mode = GridPagerMode.NumericPages
+
+            For Each col As GridColumn In Me.Columns
+                Dim localizableColumn As ILocalizable = TryCast(col, ILocalizable)
+                If localizableColumn IsNot Nothing Then
+                    localizableColumn.LocalResourceFile = Utilities.GetLocalResourceFile(Me.Parent)
+                End If
+            Next
+
             MyBase.OnInit(e)
         End Sub
 
@@ -36,7 +44,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             For Each col As GridColumn In Me.Columns
                 Dim localizableColumn As ILocalizable = TryCast(col, ILocalizable)
                 If localizableColumn IsNot Nothing Then
-                    localizableColumn.LocalResourceFile = Utilities.GetLocalResourceFile(Me.Parent)
                     If Not Page.IsPostBack Then
                         localizableColumn.LocalizeStrings()
                     End If

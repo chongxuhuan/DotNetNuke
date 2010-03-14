@@ -41,7 +41,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
         '''Auto-generated field.
         '''To modify move field declaration from designer file to code-behind file.
         '''</remarks>
-        Protected WithEvents termsList As Global.DotNetNuke.Modules.Taxonomy.WebControls.TermsList
+        Protected WithEvents termsList As Global.DotNetNuke.Web.UI.WebControls.TermsList
 
         '''<summary>
         '''addTermButton control.
