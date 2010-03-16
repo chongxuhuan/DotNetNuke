@@ -52,7 +52,12 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             AddHandler View.AddVocabulary, AddressOf AddVocabulary
 
-            View.Model.Vocabularies = _VocabularyController.GetVocabularies().ToList()
+            View.Model.Vocabularies = (From v In _VocabularyController.GetVocabularies() _
+                                      Where v.ScopeType.ScopeType = "Application" _
+                                      OrElse v.ScopeType.ScopeType = "Portal" AndAlso v.ScopeId = PortalId _
+                                      Select v) _
+                                      .ToList()
+
             View.Model.IsEditable = IsEditable
             View.Model.NavigateUrlFormatString = NavigateURL(TabId, _
                                                                 "EditVocabulary", _

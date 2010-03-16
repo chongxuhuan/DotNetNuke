@@ -136,17 +136,6 @@
   </profiledefinitions>
   <portalDesktopModules>
     <portalDesktopModule>
-      <friendlyname>Users And Roles</friendlyname>
-      <portalDesktopModulePermissions>
-        <portalDesktopModulePermission>
-          <permissioncode>SYSTEM_DESKTOPMODULE</permissioncode>
-          <permissionkey>DEPLOY</permissionkey>
-          <allowaccess>true</allowaccess>
-          <rolename>Administrators</rolename>
-        </portalDesktopModulePermission>
-      </portalDesktopModulePermissions>
-    </portalDesktopModule>
-    <portalDesktopModule>
       <friendlyname>Tabs</friendlyname>
       <portalDesktopModulePermissions>
         <portalDesktopModulePermission>

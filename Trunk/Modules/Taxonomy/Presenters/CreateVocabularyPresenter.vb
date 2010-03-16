@@ -86,9 +86,6 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             If scopeType IsNot Nothing Then
                 vocabulary.ScopeTypeId = scopeType.ScopeTypeId
-                If scopeType.ScopeType = "Portal" Then
-                    vocabulary.ScopeId = PortalId
-                End If
             End If
             vocabulary.Type = VocabularyType.Simple
 
@@ -108,6 +105,9 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
         Public Sub Save(ByVal sender As Object, ByVal e As EventArgs)
             'Bind Model
             View.BindVocabulary(View.Model.Vocabulary, IsSuperUser)
+            If View.Model.Vocabulary.ScopeType.ScopeType = "Portal" Then
+                View.Model.Vocabulary.ScopeId = PortalId
+            End If
 
             'Validate Model
             Dim result As ValidationResult = Validator.ValidateObject(View.Model.Vocabulary)

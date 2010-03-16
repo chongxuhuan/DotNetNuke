@@ -64,7 +64,7 @@ Namespace DotNetNuke.Entities.Users
 
         Public Shared Function GetRichValue(ByVal prop As ProfilePropertyDefinition, ByVal strFormat As String, ByVal formatProvider As System.Globalization.CultureInfo) As String
             Dim result As String = ""
-            If Not prop.PropertyValue = String.Empty Then
+            If Not String.IsNullOrEmpty(prop.PropertyValue) OrElse DisplayDataType(prop).ToLower = "image" Then
                 Select Case DisplayDataType(prop).ToLower
                     Case "truefalse"
                         result = PropertyAccess.Boolean2LocalizedYesNo(CBool(prop.PropertyValue), formatProvider)

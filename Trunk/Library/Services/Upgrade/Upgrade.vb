@@ -2534,10 +2534,6 @@ Namespace DotNetNuke.Services.Upgrade
 
                         'Add new Sitemap settings module
                         ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
-
-                        'Add new Sitemap settings module
-                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
                         AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_analytics_32px.gif", SecurityAccessLevel.View, 0)
                         AddAdminPages("Search Engine Sitemap", "Configure the sitemap for submission to common search engines.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Search Engine Sitemap", "~/images/icon_analytics_32px.gif")
 
@@ -2582,13 +2578,6 @@ Namespace DotNetNuke.Services.Upgrade
                                 'Synchronize the Templates folder to ensure the templates are accessible
                                 FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
 
-                                'Add new User profile page to every portal (based on User Profile Template)
-                                'Dim newTab As New TabInfo()
-                                'newTab.PortalID = objPortal.PortalID
-                                'newTab.ParentId = Null.NullInteger
-                                'newTab.TabName = "User Profile"
-                                'newTab.TabID = tabController.AddTabBefore(newTab, objPortal.AdminTabId)
-
                                 Dim xmlDoc As New XmlDocument
                                 Try
                                     ' open the XML file
@@ -2599,7 +2588,6 @@ Namespace DotNetNuke.Services.Upgrade
 
                                 Dim newTab As New TabInfo()
                                 newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
-                                ''tabController.AddTabBefore(newTab, objPortal.AdminTabId)
                                 tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
 
                                 'Update SiteSettings to point to the new page
@@ -2635,6 +2623,8 @@ Namespace DotNetNuke.Services.Upgrade
                         RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
                         AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
 
+                        'Module was incorrectly assigned as "IsPremium=False"
+                        RemoveModuleFromPortals("Users And Roles")
                 End Select
 
             Catch ex As Exception

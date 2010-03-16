@@ -1286,6 +1286,18 @@ Namespace DotNetNuke.Entities.Portals
                             ' create the upload directory for the new portal
                             System.IO.Directory.CreateDirectory(MappedHomeDirectory)
 
+                            'ensure that the Templates folder exists
+                            Dim templateFolder As String = String.Format("{0}Templates", MappedHomeDirectory)
+                            If Not Directory.Exists(templateFolder) Then
+                                System.IO.Directory.CreateDirectory(templateFolder)
+                            End If
+
+                            'ensure that the Users folder exists
+                            Dim usersFolder As String = String.Format("{0}Users", MappedHomeDirectory)
+                            If Not Directory.Exists(usersFolder) Then
+                                System.IO.Directory.CreateDirectory(usersFolder)
+                            End If
+
                             'copy the default page template
                             CopyPageTemplate("Default.page.template", MappedHomeDirectory)
                             CopyPageTemplate("UserProfile.page.template", MappedHomeDirectory)
@@ -1591,6 +1603,12 @@ Namespace DotNetNuke.Entities.Portals
             ' force creation of templates folder if not present on template
             If objController.GetFolder(PortalId, "Templates/", False) Is Nothing Then
                 Dim folderid As Integer = objController.AddFolder(PortalId, "Templates/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False)
+                AddFolderPermissions(PortalId, folderid)
+            End If
+
+            ' force creation of templates folder if not present on template
+            If objController.GetFolder(PortalId, "Users/", False) Is Nothing Then
+                Dim folderid As Integer = objController.AddFolder(PortalId, "Users/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False)
                 AddFolderPermissions(PortalId, folderid)
             End If
 
