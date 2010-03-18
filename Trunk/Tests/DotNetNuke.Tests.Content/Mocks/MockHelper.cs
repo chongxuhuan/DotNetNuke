@@ -27,6 +27,7 @@ using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Web.Validators;
 using Moq;
 using DotNetNuke.ComponentModel;
+using System.Web;
 
 namespace DotNetNuke.Tests.Content.Mocks
 {
@@ -52,6 +53,16 @@ namespace DotNetNuke.Tests.Content.Mocks
             }
             return getMock;
         }
+
+        internal static Mock<HttpContextBase> CreateMockHttpContext()
+        {
+            Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
+            Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
+            httpContext.Setup(h => h.Response).Returns(httpResponse.Object);
+
+            return httpContext;
+        }
+
         internal static Mock<IScopeTypeController> CreateMockScopeTypeController()
         {
             // Create the mock
@@ -85,28 +96,21 @@ namespace DotNetNuke.Tests.Content.Mocks
             return RegisterMockController<IVocabularyController>(mockVocabularies);
         }
 
-        public static IQueryable< ScopeType> TestScopeTypes
+        internal static IQueryable<ScopeType> TestScopeTypes
         {
             get
             {
-                List<ScopeType> scopeTypes = new List<ScopeType>();
-
-                for (int i = Constants.SCOPETYPE_ValidScopeTypeId;
-                           i < Constants.SCOPETYPE_ValidScopeTypeId + Constants.SCOPETYPE_ValidScopeTypeCount;
-                           i++)
-                {
-                    ScopeType scopeType = new ScopeType();
-                    scopeType.ScopeTypeId = i;
-                    scopeType.ScopeType = ContentTestHelper.GetScopeType(i);
-
-                    scopeTypes.Add(scopeType);
-                }
+                List<ScopeType> scopeTypes = new List<ScopeType>()
+                    {
+                        new ScopeType() { ScopeTypeId = 1, ScopeType = "Application" },
+                        new ScopeType() { ScopeTypeId = 2, ScopeType = "Portal" }
+                    };
 
                 return scopeTypes.AsQueryable();
             }
         }
 
-        public static IQueryable<Term> TestTerms
+        internal static IQueryable<Term> TestTerms
         {
             get
             {
@@ -129,7 +133,7 @@ namespace DotNetNuke.Tests.Content.Mocks
             }
         }
         
-        public static IQueryable<Vocabulary> TestVocabularies
+        internal static IQueryable<Vocabulary> TestVocabularies
         {
             get
             {

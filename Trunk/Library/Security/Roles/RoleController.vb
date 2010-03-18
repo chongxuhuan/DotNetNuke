@@ -631,7 +631,7 @@ Namespace DotNetNuke.Security.Roles
 
             Dim _message As New Message()
             _message.FromUserID = PortalSettings.AdministratorId
-            _message.ToUserID = PortalSettings.AdministratorId
+            _message.ToUserID = objUser.UserID
             _message.Subject = Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_SUBJECT", objUser)
             _message.Body = Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom)
             _message.Status = MessageStatusType.Unread

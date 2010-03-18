@@ -24,7 +24,7 @@ Imports System.Web.UI
 Imports WebFormsMvp
 Imports DotNetNuke.UI.Modules
 Imports DotNetNuke.Web.Validators
-Imports DotNetNuke.Security.Permissions
+Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 
 Namespace DotNetNuke.Web.Mvp
 
@@ -192,6 +192,20 @@ Namespace DotNetNuke.Web.Mvp
 
 #Region "Protected Methods"
 
+        Protected Friend Overridable Function CheckAuthPolicy() As Boolean
+            If (UserId = Null.NullInteger AndAlso Not AllowAnonymousAccess) Then
+                OnNoCurrentUser()
+                Exit Function
+            End If
+
+            If (Not IsUserAuthorized) Then
+                OnUnauthorizedUser()
+                Exit Function
+            End If
+
+            Return True
+        End Function
+
         Protected Overridable Sub LoadFromContext()
             If ModuleContext IsNot Nothing Then
                 IsEditable = ModuleContext.IsEditable
@@ -204,11 +218,32 @@ Namespace DotNetNuke.Web.Mvp
         End Sub
 
         Protected Overridable Sub OnInit()
-
         End Sub
 
         Protected Overridable Sub OnLoad()
+        End Sub
 
+        Protected Overridable Sub OnNoCurrentUser()
+            RedirectToLogin()
+        End Sub
+
+        Protected Overridable Sub OnUnauthorizedUser()
+            RedirectToAccessDenied()
+        End Sub
+
+        Protected Sub RedirectToAccessDenied()
+            Response.Redirect(AccessDeniedURL, True)
+        End Sub
+
+        Protected Sub RedirectToLogin()
+            Response.Redirect(LoginURL(Request.RawUrl, False), True)
+        End Sub
+
+        Protected Sub ShowMessage(ByVal messageKey As String, ByVal messageType As ModuleMessageType)
+            Dim showMessageView As IShowMessage = TryCast(View, IShowMessage)
+            If showMessageView IsNot Nothing Then
+                showMessageView.ShowMessage(messageKey, messageType)
+            End If
         End Sub
 
 #End Region
@@ -227,36 +262,6 @@ Namespace DotNetNuke.Web.Mvp
         End Sub
 
 #End Region
-
-        Protected Friend Overridable Function CheckAuthPolicy() As Boolean
-            If (UserId = Null.NullInteger AndAlso Not AllowAnonymousAccess) Then
-                OnNoCurrentUser()
-                Exit Function
-            End If
-
-            If (Not IsUserAuthorized) Then
-                OnUnauthorizedUser()
-                Exit Function
-            End If
-
-            Return True
-        End Function
-
-        Protected Overridable Sub OnNoCurrentUser()
-            RedirectToLogin()
-        End Sub
-
-        Protected Overridable Sub OnUnauthorizedUser()
-            RedirectToAccessDenied()
-        End Sub
-
-        Protected Sub RedirectToAccessDenied()
-            Response.Redirect(AccessDeniedURL, True)
-        End Sub
-
-        Protected Sub RedirectToLogin()
-            Response.Redirect(LoginURL(Request.RawUrl, False), True)
-        End Sub
 
     End Class
 

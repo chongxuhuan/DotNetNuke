@@ -90,11 +90,10 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
         End Sub
 
         Private Sub SendMessage(ByVal objMessage As Message)
-            Dim ToEmailAddress As String = UserController.GetUserById(objMessage.PortalID, objMessage.ToUserID).Email
-
-            Dim fromAddress As String = _uController.GetUser(objMessage.PortalID, objMessage.ToUserID).Email
-            Dim toAddress As String = _pController.GetPortal(objMessage.PortalID).Email
+           
             Dim senderAddress As String = UserController.GetUserById(objMessage.PortalID, objMessage.FromUserID).Email
+            Dim fromAddress As String = _pController.GetPortal(objMessage.PortalID).Email
+            Dim toAddress As String = _uController.GetUser(objMessage.PortalID, objMessage.ToUserID).Email
 
             Mail.Mail.SendEmail(fromAddress, senderAddress, toAddress, objMessage.Subject, objMessage.Body)
 

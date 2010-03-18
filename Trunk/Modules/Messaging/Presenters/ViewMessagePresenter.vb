@@ -71,8 +71,6 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
 #End Region
 
-
-
 #Region "Private Methods"
 
         Private Function GetInboxUrl() As String
@@ -117,8 +115,8 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             Response.Redirect(NavigateURL(TabId, "EditMessage", String.Format("mid={0}", ModuleId), String.Format("MessageId={0}", View.Model.Message.MessageID), "IsReply=true"))
         End Function
 
-
 #End Region
+
     End Class
 
 End Namespace

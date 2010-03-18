@@ -26,7 +26,6 @@ Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Web.Mvp
-Imports DotNetNuke.Modules.Taxonomy.WebControls
 Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
@@ -221,7 +220,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                 'Refresh Terms
                 RefreshTerms()
             Else
-                'View.ShowMessage("TermValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                ShowMessage("TermValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
 
         End Sub
@@ -238,7 +237,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                 'Redirect to Vocabulary List
                 Response.Redirect(NavigateURL(TabId))
             Else
-                'View.ShowMessage("VocabularyValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                ShowMessage("VocabularyValidationError", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
 
         End Sub

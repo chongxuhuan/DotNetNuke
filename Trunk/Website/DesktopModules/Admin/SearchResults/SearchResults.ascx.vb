@@ -275,7 +275,7 @@ Namespace DotNetNuke.Modules.SearchResults
         Private Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Dim objSecurity As New PortalSecurity
             If Not Request.Params("Search") Is Nothing Then
-                _SearchQuery = objSecurity.InputFilter(Request.Params("Search").ToString, PortalSecurity.FilterFlag.NoScripting Or PortalSecurity.FilterFlag.NoMarkup)
+                _SearchQuery = HttpContext.Current.Server.HtmlEncode(objSecurity.InputFilter(Request.Params("Search").ToString, PortalSecurity.FilterFlag.NoScripting Or PortalSecurity.FilterFlag.NoMarkup))
             Else
                 _SearchQuery = ""
             End If

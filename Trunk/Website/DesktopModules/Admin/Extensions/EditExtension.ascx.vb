@@ -168,7 +168,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
 
                 'Determine if Package is ready for packaging
                 Dim Writer As PackageWriterBase = PackageWriterFactory.GetWriter(Package)
-                cmdPackage.Visible = File.Exists(Path.Combine(ApplicationMapPath, Writer.BasePath))
+                cmdPackage.Visible = Directory.Exists(Path.Combine(ApplicationMapPath, Writer.BasePath))
 
                 cmdDelete.Visible = IsSuperTab AndAlso (Not Package.IsSystemPackage) AndAlso _
                                         (PackageController.CanDeletePackage(Package, ModuleContext.PortalSettings))

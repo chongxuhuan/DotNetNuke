@@ -80,6 +80,7 @@ Namespace DotNetNuke.Security
             Dim TempInput As String = strInput
             Dim listStrings As New List(Of String)
             listStrings.Add("<script[^>]*>.*?</script[^><]*>")
+            listStrings.Add("<script")
             listStrings.Add("<input[^>]*>.*?</input[^><]*>")
             listStrings.Add("<object[^>]*>.*?</object[^><]*>")
             listStrings.Add("<embed[^>]*>.*?</embed[^><]*>")

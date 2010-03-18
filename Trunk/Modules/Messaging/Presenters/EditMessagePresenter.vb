@@ -84,7 +84,6 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
 #End Region
 
-
 #Region "Private Methods"
 
         Private Function GetInboxUrl() As String

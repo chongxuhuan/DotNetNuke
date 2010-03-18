@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -885,6 +885,76 @@ corrected with each release. &lt;/p&gt;
 &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
 &lt;ul&gt;
 	&lt;li&gt;Events Module 05.00.03&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.03.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;New Features&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;&lt;strong&gt;Templated User Profiles&lt;/strong&gt; - User profile pages are now publicly viewable&lt;/li&gt;
+	&lt;li&gt;&lt;strong&gt;Photo field in User Profile &lt;/strong&gt;- Users can upload a photo to their profile&lt;/li&gt;
+	&lt;li&gt;&lt;strong&gt;User Messaging&lt;/strong&gt; - Users can send direct messages to other system users&lt;/li&gt;
+	&lt;li&gt;&lt;strong&gt;Search Engine Sitemap Provider&lt;/strong&gt; - The sitemap now allows module admins to plugin sitemap logic for individual modules.&lt;/li&gt;
+	&lt;li&gt;&lt;strong&gt;Taxonomy Manager&lt;/strong&gt; - Administrators can create heirarchical category lists that can be shared and used across modules&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue with the Create New Module form not showing on upgrades.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the Create New Module wizard allowed the user to select 
+	an invalid &amp;#39;Owner&amp;#39; folder.&lt;/li&gt;
+	&lt;li&gt;Fixed the issue where adding query strings such as Mid=Crash showed an error 
+	screen.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the dashboard controls failed to load if upgrading from 
+	a version prior to 5.1.0 to a later one.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where create new module from manifest was not working&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the red border around Administrator only content was not 
+	displayed after upgrading from 4.x&lt;/li&gt;
+	&lt;li&gt;Fixed the issue with the Market Place in the Solutions Explorer&lt;/li&gt;
+	&lt;li&gt;Fixed issue where GrantStoredProceduresPermission and GrantUserDefinedFunctionsPermission 
+	ran on every install/upgrade&lt;/li&gt;
+	&lt;li&gt;Fixed issue where logging in as Registered User throws PageLoadException 
+	in Event Viewer.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with creating new language packs.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with emails not having http in urls to external resources.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with caching providers not being defined in web.config in some 
+	instances.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the User Image showed in the search drop down box in Manage 
+	Users.&lt;/li&gt;
+	&lt;li&gt;Updated the portaltemplate.xsd to cater for new fields.&lt;/li&gt;
+	&lt;li&gt;Update the Google Verification file content to match the new Google protocol.&lt;/li&gt;
+	&lt;li&gt;Updated the Installation Wizard&amp;#39;s Finished button text to &amp;quot;Start building 
+	your new site!&amp;quot;&lt;/li&gt;
+	&lt;li&gt;Updated the default menu provider to use the DNNMenuNavigationProvider.&lt;/li&gt;
+	&lt;li&gt;Create Package button is now disabled until a package folder has been created.&lt;/li&gt;
+	&lt;li&gt;Reduced the number of user events that are logged.&lt;/li&gt;
+	&lt;li&gt;Optimized retrieving a module by its control key.&lt;/li&gt;
+	&lt;li&gt;Added code to store the site map priority as a number, which allows any 
+	valid localised single e.g. 0.5 or 0,6&lt;/li&gt;
+	&lt;li&gt;Added new logic to only allow cancelling a module installation if the Core 
+	Version is not sufficient for the module to be installed.&lt;/li&gt;
+	&lt;li&gt;Added extra checks to the upgrade application logic when removing core modules.&lt;/li&gt;
+	&lt;li&gt;Added a success message when exporting the Dashboard as xml.&lt;/li&gt;
+	&lt;li&gt;Added more validation around editing a module control definition&lt;/li&gt;
+	&lt;li&gt;Added the ability to disable portal folder synchronization on &amp;quot;hidden&amp;quot; folders.&lt;/li&gt;
+	&lt;li&gt;Added a new check to test if all extensions are installed that are present 
+	in a site template.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;
+	None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.3.0 packages. 
+Please see the specific project pages for notes on what bugs or enhancements were 
+corrected with each release. &lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;None&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
 &lt;ul&gt;

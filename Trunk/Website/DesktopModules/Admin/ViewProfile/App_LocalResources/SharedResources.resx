@@ -118,30 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultTemplate.Text" xml:space="preserve">
-    <value>&lt;table border="0" cellspacing="4" cellpadding="4" width="100%"&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td valign="middle" width="160" align="center"&gt;
-            	&lt;p&gt;&lt;img alt="" class="ProfilePhoto" width="120" height="120" src="[PROFILE:PHOTO]" /&gt;&lt;/p&gt;
-            &lt;/td&gt;
-            &lt;td valign="top" width="100%"&gt;
-            	&lt;p&gt;[USER:DISPLAYNAME]&lt;/p&gt;
-            	&lt;p&gt;	[PROFILE:STREET]&lt;br /&gt;
-            		[PROFILE:CITY]&lt;br /&gt;
-            		[PROFILE:REGION]&lt;br /&gt;
-            		[PROFILE:COUNTRY]&lt;br /&gt;
-            		[PROFILE:POSTALCODE]
-	&lt;/p&gt;
-            	&lt;p&gt;	[PROFILE:TELEPHONE]&lt;br /&gt;
-            		[PROFILE:WEBSITE]&lt;br /&gt;
-            		[PROFILE:IM]
-	&lt;/p&gt;
-            &lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td valign="top" colspan="2"&gt;[PROFILE:BIOGRAPHY]&lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;</value>
+    <value>&lt;div id="UserProfile"&gt;
+	&lt;img alt="Profile Avatar" class="ProfilePhoto" width="120" height="120" src="[PROFILE:PHOTO]" /&gt;
+	&lt;div class="ProfileAddress"&gt;
+		&lt;div class="ProfileName"&gt;[USER:DISPLAYNAME]&lt;/div&gt;
+		&lt;div&gt;[PROFILE:STREET]&lt;/div&gt;
+		&lt;div&gt;[PROFILE:CITY], [PROFILE:REGION]  [PROFILE:POSTALCODE]&lt;/div&gt;
+		&lt;div&gt;[PROFILE:COUNTRY]&lt;/div&gt;
+	&lt;/div&gt;
+	&lt;div class="ProfileContact"&gt;[PROFILE:TELEPHONE] [PROFILE:WEBSITE] [PROFILE:IM]&lt;/div&gt;&lt;div style="clear:both;"&gt;&lt;/div&gt;
+	&lt;div class="ProfileBio"&gt;[PROFILE:BIOGRAPHY]&lt;/div&gt;
+&lt;/div&gt;</value>
   </data>
 </root>

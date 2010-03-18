@@ -1249,7 +1249,33 @@ div.SearchIcon img
 	border: 2px red solid;
 }
 
-.ProfilePhoto
-{
-    background-image: url('../../images/no_avatar.gif');
+#UserProfile {
+	border: 1px silver solid;
+	padding: 10px;
+	margin-bottom: 10px;
+	width: 500px;
+}
+#UserProfile .ProfileName {	
+	font-weight:bold;
+	color: #cb2027;
+	margin-bottom: 5px;
+}
+#UserProfile .ProfilePhoto {
+    background-image: url('../../images/no_avatar.gif');	
+	float: left;
+}
+#UserProfile .ProfileAddress {
+	margin: 0 0 10px 130px;
+}
+#UserProfile .ProfileContact {
+	margin: 0 0 10px 130px;
+	color: gray;
+	font-size: 0.9em;
+}
+#UserProfile .ProfileBio {
+	clear: both;
+	margin: 10px 0px 10px 0;
+	padding: 10px;
+	border: 1px #eee solid;	
+	background-color: #f5f9fc;	
 }

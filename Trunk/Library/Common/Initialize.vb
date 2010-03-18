@@ -201,20 +201,22 @@ Namespace DotNetNuke.Common
         Private Shared Function GetNETFrameworkVersion() As System.Version
             Dim version As String = System.Environment.Version.ToString(2)
 
-            'Try and load a 3.0 Assembly
-            Dim assembly As System.Reflection.Assembly
-            Try
-                assembly = AppDomain.CurrentDomain.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089")
-                version = "3.0"
-            Catch ex As Exception
-            End Try
+            If version = "2.0" Then
+                'Try and load a 3.0 Assembly
+                Dim assembly As System.Reflection.Assembly
+                Try
+                    assembly = AppDomain.CurrentDomain.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089")
+                    version = "3.0"
+                Catch ex As Exception
+                End Try
 
-            'Try and load a 3.5 Assembly
-            Try
-                assembly = AppDomain.CurrentDomain.Load("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089")
-                version = "3.5"
-            Catch ex As Exception
-            End Try
+                'Try and load a 3.5 Assembly
+                Try
+                    assembly = AppDomain.CurrentDomain.Load("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089")
+                    version = "3.5"
+                Catch ex As Exception
+                End Try
+            End If
 
             Return New System.Version(version)
         End Function

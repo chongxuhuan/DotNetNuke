@@ -26,6 +26,13 @@ using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Modules.Taxonomy.Presenters;
+using DotNetNuke.Modules.Taxonomy.Views.Models;
+using System;
+using DotNetNuke.Common.Utilities;
+using System.Web;
+using DotNetNuke.Common;
+using DotNetNuke.Web.Validators;
+using DotNetNuke.Tests.Content.Mocks;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -35,8 +42,13 @@ namespace DotNetNuke.Tests.Content.Presenters
     [TestFixture]
     public class CreateVocabularyPresenterTests
     {
+        #region Private Members
 
         private Mock<CachingProvider> mockCache;
+
+        #endregion
+
+        #region SetUp and TearDown
 
         [SetUp()]
         public void SetUp()
@@ -44,6 +56,8 @@ namespace DotNetNuke.Tests.Content.Presenters
             //Register MockCachingProvider
             mockCache = MockCachingProvider.CreateMockProvider();
         }
+
+        #endregion
 
         #region Initialization Tests
 
@@ -71,169 +85,118 @@ namespace DotNetNuke.Tests.Content.Presenters
 
         #endregion
 
-       // #region View Load Tests
+        #region View Load Tests
 
-       //[Test]
-       // public void CreateVocabularyPresenter_Does_Nothing_On_View_Load_If_CurrentUser_Does_Not_Have_Permissions()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.HasPermission = false;
+        [Test]
+        [Row(true)]
+        [Row(false)]
+        public void CreateVocabularyPresenter_Load_Calls_View_BindVocabulary(bool isSuperUser)
+        {
+            // Arrange
+            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-       //     Mock.Get(presenter.View)
-       //         .Setup(v => v.BindVocabulary(It.IsAny<Vocabulary>(), false))
-       //         .Never();
+            CreateVocabularyPresenter presenter = CreatePresenter(mockView);
+            presenter.IsSuperUser = isSuperUser;
 
-       //     // Act
-       //     presenter.LoadInternal();
+            // Act (Raise the Load Event)
+            mockView.Raise(v => v.Load += null, EventArgs.Empty);
 
-       //     // Assert (done by the call to Never() above)
-       // }
+            // Assert
+            mockView.Verify(v => v.BindVocabulary(It.Is<Vocabulary>(vm => vm.VocabularyId == Null.NullInteger),
+                                                                            isSuperUser));
+        }
 
-       //[Test]
-       // public void CreateVocabularyPresenter_Loads_New_Vocabulary_On_View_Load()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.TabId = Constants.TAB_ValidId;
-       //     presenter.Model.ModuleId = Constants.MODULE_ValidId;
-       //     presenter.Model.HasPermission = true;
+        #endregion
 
-       //     // Act
-       //     presenter.LoadInternal();
+        #region Cancel Tests
 
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindVocabulary(It.Is<Vocabulary>(vm => vm.VocabularyId == Null.NullInteger), 
-       //                                                                     presenter.Model.IsSuperUser));
-       // }
+        [Test]
+        public void CreateVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
+        {
+            // Arrange
+            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-       //[Test]
-       // public void CreateVocabularyPresenter_Redirects_To_AccessDenied_If_CurrentUser_Does_Not_Have_Permissions()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.HasPermission = false;
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
 
-       //     Mock.Get(presenter.View)
-       //         .Setup(v => v.BindVocabulary(It.IsAny<Vocabulary>(),
-       //                                             presenter.Model.IsSuperUser))
-       //         .Never();
+            CreateVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse);
+            presenter.ModuleId = Constants.MODULE_ValidId;
+            presenter.TabId = Constants.TAB_ValidId;
 
-       //     // Act
-       //     presenter.LoadInternal();
+            // Act (Raise the Cancel Event)
+            mockView.Raise(v => v.Cancel += null, EventArgs.Empty);
 
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToAccessDenied());
-       // }
+            // Assert
+            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        }
 
-       // #endregion
+        #endregion
 
-       // #region Cancel Tests
+        #region SaveVocabulary Tests
 
-       //[Test]
-       // public void CreateVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
+        [Test]
+        public void CreateVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
+        {
+            // Arrange
+            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-       //     // Act
-       //     presenter.Cancel();
+            CreateVocabularyPresenter presenter = CreatePresenter(mockView);
 
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToPresenter(It.IsAny<VocabularyListPresenterModel>()));
-       // }
+            // Act (Raise the Save Event)
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
 
-       // #endregion
+            // Assert
+            Mock.Get(presenter.VocabularyController)
+                .Verify(c => c.AddVocabulary(mockView.Object.Model.Vocabulary));
+        }
 
-       // #region SaveVocabulary Tests
+        [Test]
+        public void CreateVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
+        {
+            // Arrange
+            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-       //[Test]
-       // public void CreateVocabularyPresenter_SaveVocabulary_Validates_Vocabulary()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     Vocabulary newVocabulary = ContentTestHelper.CreateValidVocabulary();
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
 
-       //     var mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator, newVocabulary);
+            CreateVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse);
+            presenter.TabId = Constants.TAB_ValidId;
 
-       //     presenter.Vocabulary = newVocabulary;
+            // Act (Raise the Cancel Event)
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
 
-       //     // Act
-       //     presenter.SaveVocabulary();
+            // Assert
+            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        }
 
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(newVocabulary));
-       // }
+        #endregion
 
-       //[Test]
-       // public void CreateVocabularyPresenter_SaveVocabulary_Does_Not_Save_If_Vocabulary_Invalid()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     Vocabulary newVocabulary = ContentTestHelper.CreateValidVocabulary();
+        #region Helpers
 
-       //     Mock.Get(presenter.VocabularyController)
-       //         .Setup(r => r.AddVocabulary(newVocabulary))
-       //         .Never();
+        protected CreateVocabularyPresenter CreatePresenter(Mock<ICreateVocabularyView> mockView)
+        {
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
 
-       //     var mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator, newVocabulary);
+            return CreatePresenter(mockView, mockHttpResponse);
 
-       //     presenter.Vocabulary = newVocabulary;
+        }
 
-       //     // Act
-       //     presenter.SaveVocabulary();
+        protected  CreateVocabularyPresenter CreatePresenter(Mock<ICreateVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse)
+        {
+            Mock<HttpContextBase> mockHttpContext = new Mock<HttpContextBase>();
+            mockHttpContext.Setup(h => h.Response).Returns(mockHttpResponse.Object);
 
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(newVocabulary));
-       // }
+            CreateVocabularyPresenter presenter = new CreateVocabularyPresenter(mockView.Object, MockHelper.CreateMockVocabularyController().Object,
+                                                    MockHelper.CreateMockScopeTypeController().Object)
+            {
+                HttpContext = mockHttpContext.Object
+            };
 
-       //[Test]
-       // public void CreateVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     Vocabulary newVocabulary = ContentTestHelper.CreateValidVocabulary();
+            return presenter;
+        }
 
-       //     presenter.Vocabulary = newVocabulary;
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.VocabularyController)
-       //         .Verify(r => r.AddVocabulary(It.Is<Vocabulary>(v => v.VocabularyId == newVocabulary.VocabularyId)));
-       // }
-
-       //[Test]
-       // public void CreateVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
-       // {
-       //     // Arrange
-       //     CreateVocabularyPresenter presenter = CreatePresenter();
-       //     Vocabulary newVocabulary = ContentTestHelper.CreateValidVocabulary();
-
-       //     presenter.Vocabulary = newVocabulary;
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToPresenter(It.IsAny<VocabularyListPresenterModel>()));
-       // }
-
-       // #endregion
-
-       // #region Helpers
-
-       // protected override CreateVocabularyPresenter ConstructPresenter()
-       // {
-       //     return new CreateVocabularyPresenter(MockHelper.CreateMockVocabularyController().Object, 
-       //                                             MockHelper.CreateMockScopeTypeController().Object);
-       // }
-
-       // #endregion
+        #endregion
     }
 }

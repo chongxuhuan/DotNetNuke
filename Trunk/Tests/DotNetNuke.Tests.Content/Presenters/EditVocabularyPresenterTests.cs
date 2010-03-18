@@ -24,6 +24,12 @@ using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using Moq;
 using DotNetNuke.Modules.Taxonomy.Views;
+using System.Web;
+using DotNetNuke.Tests.Content.Mocks;
+using DotNetNuke.Web.Mvp;
+using DotNetNuke.Modules.Taxonomy.Views.Models;
+using System;
+using System.Collections.Specialized;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -65,27 +71,31 @@ namespace DotNetNuke.Tests.Content.Presenters
             AutoTester.ArgumentNull<ITermController>(t => new EditVocabularyPresenter(view.Object, vocabularyController.Object, t));
         }
 
+        //[Test]
+        //public void EditVocabularyPresenter_OnInit_Calls_Controller_Gets_Vocabulary_With_Correct_Id()
+        //{
+        //    // Arrange
+        //    Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+        //    Mock<IInitializeView> initializeView = mockView.As<IInitializeView>();
+        //    mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+        //    Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
+        //    NameValueCollection requestParams = new NameValueCollection();
+        //    requestParams.Add("VocabularyId", Constants.VOCABULARY_ValidVocabularyId.ToString());
+        //    mockHttpRequest.Setup(r => r.Params).Returns(requestParams);
+
+        //    EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpRequest);
+
+        //    // Act (Raise the Initialize Event)
+        //    initializeView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+        //    // Assert
+        //    Assert.AreEqual<int>(Constants.VOCABULARY_ValidVocabularyId, mockView.Object.Model.Vocabulary.VocabularyId);
+        //}
+
         #endregion
 
        // #region View Load Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_Does_Nothing_On_View_Load_If_CurrentUser_Does_Not_Have_Permissions()
-       // {
-       //     // Arrange
-       //     EditVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.HasPermission = false;
-
-       //     Mock.Get(presenter.View)
-       //         .Setup(v => v.BindVocabulary(It.IsAny<Vocabulary>(), false,
-       //                                         presenter.Model.IsSuperUser))
-       //         .Never();
-
-       //     // Act
-       //     presenter.LoadInternal();
-
-       //     // Assert (done by the call to Never() above)
-       // }
 
        //[Test]
        // public void EditVocabularyPresenter_Loads_Vocabulary_With_Id_Specified_In_Context_If_NotNull_And_Not_PostBack()
@@ -585,30 +595,44 @@ namespace DotNetNuke.Tests.Content.Presenters
 
        // #endregion
 
-       // #region Helpers
+        #region Helpers
 
-       // protected override EditVocabularyPresenter ConstructPresenter()
-       // {
-       //     return new EditVocabularyPresenter(MockHelper.CreateMockVocabularyController().Object,
-       //                                         MockHelper.CreateMockTermController().Object);
-       // }
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView)
+        {
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
 
-       // private void SetUpPresenter()
-       // {
-       //     SetUpPresenter(Null.NullInteger);
-       // }
+            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
 
-       // private void SetUpPresenter(int termId)
-       // {
-       //     presenter = CreatePresenter();
-       //     vocabulary = ContentTestHelper.CreateValidVocabulary();
-       //     term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
-       //     term.TermId = termId;
+        }
 
-       //     presenter.Vocabulary = vocabulary;
-       //     presenter.Term = term;
-       // }
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse)
+        {
+            Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
+            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
+        }
 
-       // #endregion
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpRequestBase> mockHttpRequest)
+        {
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
+        }
+
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse, Mock<HttpRequestBase> mockHttpRequest)
+        {
+            Mock<HttpContextBase> mockHttpContext = new Mock<HttpContextBase>();
+            mockHttpContext.Setup(h => h.Response).Returns(mockHttpResponse.Object);
+            mockHttpContext.Setup(h => h.Request).Returns(mockHttpRequest.Object);
+
+            EditVocabularyPresenter presenter = new EditVocabularyPresenter(mockView.Object, MockHelper.CreateMockVocabularyController().Object,
+                                                    MockHelper.CreateMockTermController().Object)
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
+            return presenter;
+        }
+
+        #endregion
     }
 }

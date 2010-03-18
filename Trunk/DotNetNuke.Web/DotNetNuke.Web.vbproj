@@ -88,6 +88,7 @@
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="Mvp\IInitializeView.vb" />
     <Compile Include="Mvp\AttributeBasedViewStateSerializer.vb" />
+    <Compile Include="Mvp\IShowMessage.vb" />
     <Compile Include="Mvp\ModulePresenter.vb" />
     <Compile Include="Mvp\ModuleView.vb">
       <SubType>ASPXCodeBehind</SubType>

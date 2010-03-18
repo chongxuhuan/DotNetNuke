@@ -22,12 +22,16 @@ Imports WebFormsMvp.Web
 Imports DotNetNuke.UI.Modules
 Imports System.Globalization
 Imports WebFormsMvp
+Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.Web.Mvp
     Public MustInherit Class ModuleView
         Inherits ModuleUserControlBase
         Implements IView
         Implements IInitializeView
+        Implements IShowMessage
+
 
 #Region "Private Members"
 
@@ -89,6 +93,18 @@ Namespace DotNetNuke.Web.Mvp
 #Region "IInitializeView Implementation"
 
         Public Event Initialize As EventHandler Implements IInitializeView.Initialize
+
+#End Region
+
+#Region "IShowMessage Implementation"
+
+        Public Sub ShowMessage(ByVal messageKey As String, ByVal messageType As ModuleMessageType) Implements IShowMessage.ShowMessage
+            If Not String.IsNullOrEmpty(messageKey) Then
+                Dim message As String = Localization.GetString(messageKey, Me.LocalResourceFile)
+
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, message, messageType)
+            End If
+        End Sub
 
 #End Region
 

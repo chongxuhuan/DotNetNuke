@@ -422,8 +422,18 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
             smtpClient.EnableSsl = Host.EnableSMTPSSL
 
-            smtpClient.Send(emailMessage)
-
+            ''Retry up to 5 times to send the message
+            For index As Integer = 1 To 5
+                Try
+                    smtpClient.Send(emailMessage)
+                    Return
+                Catch ex As Exception
+                    If (index = 5) Then
+                        Throw
+                    End If
+                    Threading.Thread.Sleep(1000)
+                End Try
+            Next
 
         End Sub
 

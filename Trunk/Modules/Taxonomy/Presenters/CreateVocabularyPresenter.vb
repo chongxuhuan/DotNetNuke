@@ -71,6 +71,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #End Region
 
+#Region "Private Methods"
+
         Private Function GetVocabulary() As Vocabulary
             Dim vocabulary As New Vocabulary()
             Dim scopeType As ScopeType
@@ -91,6 +93,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             Return vocabulary
         End Function
+
+#End Region
 
 #Region "Public Methods"
 
@@ -119,7 +123,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                 'Redirect to Vocabulary List
                 Response.Redirect(NavigateURL(TabId))
             Else
-                'View.ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                ShowMessage("Validation.Error", UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
             End If
         End Sub
 
