@@ -400,6 +400,11 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
             Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
             emailMessage.Sender = New MailAddress(senderAddress)
 
+            If (Not String.IsNullOrEmpty(body) And body.StartsWith("<p>") And body.EndsWith("</p>")) Then
+                emailMessage.IsBodyHtml = True
+            End If
+
+
             Dim smtpClient As New System.Net.Mail.SmtpClient(Host.SMTPServer)
 
             Dim smtpHostParts As String() = Host.SMTPServer.Split(":"c)

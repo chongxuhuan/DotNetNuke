@@ -2087,6 +2087,24 @@ Namespace DotNetNuke.Common.Utilities
 
 #Region "Obsoleted Methods, retained for Binary Compatability"
 
+        'Overload to preserve backwards compatability
+        <Obsolete("This function has been replaced by Synchronize(PortalId, AdministratorRoleId, HomeDirectory, hideSystemFolders). Deprecated in DotNetNuke 5.3.0")> _
+        Public Shared Sub Synchronize(ByVal PortalId As Integer, ByVal AdministratorRoleId As Integer, ByVal HomeDirectory As String)
+            Synchronize(PortalId, AdministratorRoleId, HomeDirectory, False)
+        End Sub
+
+        'Overload to preserve backwards compatability
+        <Obsolete("This function has been replaced by SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, hideSystemFolders).  Deprecated in DotNetNuke 5.3.0")> _
+        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean)
+            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, False)
+        End Sub
+
+        'Overload to preserve backwards compatability
+        <Obsolete("This function has been replaced by SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, syncFiles, forceFolderSync, hideSystemFolders).  Deprecated in DotNetNuke 5.3.0")> _
+        Public Shared Sub SynchronizeFolder(ByVal PortalId As Integer, ByVal physicalPath As String, ByVal relativePath As String, ByVal isRecursive As Boolean, ByVal syncFiles As Boolean, ByVal forceFolderSync As Boolean)
+            SynchronizeFolder(PortalId, physicalPath, relativePath, isRecursive, syncFiles, forceFolderSync, False)
+        End Sub
+
         <Obsolete("This function has been replaced by GetFileContent(FileInfo)")> _
         Public Shared Function GetFileContent(ByVal objFile As DotNetNuke.Services.FileSystem.FileInfo, ByVal PortalId As Integer, ByVal HomeDirectory As String) As Byte()
             Return GetFileContent(objFile)
