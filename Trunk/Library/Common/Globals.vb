@@ -1591,7 +1591,7 @@ Namespace DotNetNuke.Common
             If strRoot <> "" Then
                 Dim strFolder As String
                 If Directory.Exists(strRoot) Then
-                    For Each strFolder In Directory.GetDirectories(strRoot)
+                    For Each strFolder In directory.GetDirectories(strRoot)
                         Dim directory As New DirectoryInfo(strFolder)
                         If (directory.Attributes And FileAttributes.Hidden) = 0 AndAlso _
                                 (directory.Attributes And FileAttributes.System) = 0 Then
@@ -1737,7 +1737,7 @@ Namespace DotNetNuke.Common
         Public Function AddHTTP(ByVal strURL As String) As String
             If strURL <> "" Then
                 If InStr(1, strURL, "mailto:") = 0 And InStr(1, strURL, "://") = 0 And InStr(1, strURL, "~") = 0 And InStr(1, strURL, "\\") = 0 Then
-                    If HttpContext.Current.Request.IsSecureConnection Then
+                    If HttpContext.Current IsNot Nothing AndAlso HttpContext.Current.Request.IsSecureConnection Then
                         strURL = "https://" & strURL
                     Else
                         strURL = "http://" & strURL

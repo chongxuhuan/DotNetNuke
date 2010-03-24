@@ -258,7 +258,7 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
             End If
 
             ''Attempt to route the email through portal messaging
-            If (Attachments.Count = 0) Then
+            If (Attachments.Count = 0 AndAlso HttpContext.Current IsNot Nothing) Then
                 If (RouteToUserMessaging(MailFrom, MailTo, Cc, Bcc, Subject, Body, Attachments)) Then
                     Return Nothing
                 End If
