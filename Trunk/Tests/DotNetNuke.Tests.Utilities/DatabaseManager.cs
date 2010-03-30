@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using Microsoft.SqlServer.Management.Smo;
 using System.Collections.Specialized;
 using System.Threading;
+using Gallio.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {
@@ -76,7 +76,7 @@ namespace DotNetNuke.Tests.Utilities
             string targetDatabasePath = EnsureDatabaseExists(databaseName);
 
             // Create the test database directory if it does not exist
-            string testDatabaseDirectory = Path.GetFullPath(String.Format(@"Databases\TestDatabases\{0}", context.TestName));
+            string testDatabaseDirectory = Path.GetFullPath(String.Format(@"Databases\TestDatabases\{0}", context.Test.FullName));
             if (!Directory.Exists(testDatabaseDirectory))
             {
                 Directory.CreateDirectory(testDatabaseDirectory);

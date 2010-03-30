@@ -39,6 +39,7 @@ Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Application
 Imports DotNetNuke.Common.Lists
 Imports DotNetNuke.Entities.Profile
+Imports System.Xml.XPath
 
 Namespace DotNetNuke.Services.Upgrade
 
@@ -101,41 +102,197 @@ Namespace DotNetNuke.Services.Upgrade
             AddAdminPages(TabName, Description, TabIconFile, TabIconFileLarge, IsVisible, ModuleDefId, ModuleTitle, ModuleIconFile, True)
         End Sub
 
+        Private Shared Sub AddAdminRoleToPage(ByVal tabPath As String)
+            Dim portalCtrl As New PortalController
+            Dim tabCtrl As New TabController
+            Dim tabID As Integer
+            Dim tab As TabInfo
+
+            For Each portal As PortalInfo In portalCtrl.GetPortals()
+                tabID = TabController.GetTabByTabPath(portal.PortalID, tabPath)
+                If (tabID <> Null.NullInteger) Then
+                    tab = tabCtrl.GetTab(tabID, portal.PortalID, True)
+
+                    If (tab.TabPermissions.Count = 0) Then
+                        AddPagePermission(tab.TabPermissions, "View", Convert.ToInt32(portal.AdministratorRoleId))
+                        AddPagePermission(tab.TabPermissions, "Edit", Convert.ToInt32(portal.AdministratorRoleId))
+                        TabPermissionController.SaveTabPermissions(tab)
+                    End If
+                End If
+            Next
+        End Sub
+
+        Private Shared Sub AddConsoleModuleSettings(ByVal tabID As Integer, ByVal moduleID As Integer)
+            Dim modCtrl As ModuleController = New ModuleController()
+
+            modCtrl.UpdateModuleSetting(moduleID, "DefaultSize", "IconFileLarge")
+            modCtrl.UpdateModuleSetting(moduleID, "AllowSizeChange", "False")
+            modCtrl.UpdateModuleSetting(moduleID, "DefaultView", "Hide")
+            modCtrl.UpdateModuleSetting(moduleID, "AllowViewChange", "False")
+            modCtrl.UpdateModuleSetting(moduleID, "ShowTooltip", "True")
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' AddSearchResults adds a top level Hidden Search Results Page
+        ''' AddModuleControl adds a new Module Control to the system
         ''' </summary>
-        '''	<param name="ModuleDefId">The Module Deinition Id for the Search Results Module</param>
+        ''' <remarks>
+        ''' </remarks>
+        '''	<param name="ModuleDefId">The Module Definition Id</param>
+        '''	<param name="ControlKey">The key for this control in the Definition</param>
+        '''	<param name="ControlTitle">The title of this control</param>
+        '''	<param name="ControlSrc">Te source of ths control</param>
+        '''	<param name="IconFile">The icon file</param>
+        '''	<param name="ControlType">The type of control</param>
+        '''	<param name="ViewOrder">The vieworder for this module</param>
+        '''	<param name="HelpURL">The Help Url</param>
         ''' <history>
-        ''' 	[cnurse]	11/11/2004	created 
+        ''' 	[cnurse]	11/08/2004	documented
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Shared Sub AddSearchResults(ByVal ModuleDefId As Integer)
+        Private Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer, ByVal HelpURL As String)
 
-            Dim objPortals As New PortalController
-            Dim objPortal As PortalInfo
-            Dim arrPortals As ArrayList = objPortals.GetPortals
-            Dim intPortal As Integer
-            Dim newPage As TabInfo
+            ' check if module control exists
+            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
+            If objModuleControl Is Nothing Then
+                objModuleControl = New ModuleControlInfo
 
-            'Add Page to Admin Menu of all configured Portals
-            For intPortal = 0 To arrPortals.Count - 1
-                Dim objTabPermissions As New Security.Permissions.TabPermissionCollection
+                objModuleControl.ModuleControlID = Null.NullInteger
+                objModuleControl.ModuleDefID = ModuleDefId
+                objModuleControl.ControlKey = ControlKey
+                objModuleControl.ControlTitle = ControlTitle
+                objModuleControl.ControlSrc = ControlSrc
+                objModuleControl.ControlType = ControlType
+                objModuleControl.ViewOrder = ViewOrder
+                objModuleControl.IconFile = IconFile
+                objModuleControl.HelpURL = HelpURL
 
-                objPortal = CType(arrPortals(intPortal), PortalInfo)
-
-                AddPagePermission(objTabPermissions, "View", Convert.ToInt32(Common.Globals.glbRoleAllUsers))
-                AddPagePermission(objTabPermissions, "View", Convert.ToInt32(objPortal.AdministratorRoleId))
-                AddPagePermission(objTabPermissions, "Edit", Convert.ToInt32(objPortal.AdministratorRoleId))
-
-                'Create New Page (or get existing one)
-                newPage = AddPage(objPortal.PortalID, Null.NullInteger, "Search Results", "", "", "", False, objTabPermissions, False)
-
-                'Add Module To Page
-                AddModuleToPage(newPage, ModuleDefId, "Search Results", "")
-            Next
-
+                ModuleControlController.AddModuleControl(objModuleControl)
+            End If
         End Sub
+
+        Private Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer, ByVal HelpURL As String, ByVal SupportsPartialRendering As Boolean)
+
+            ' check if module control exists
+            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
+            If objModuleControl Is Nothing Then
+                objModuleControl = New ModuleControlInfo
+
+                objModuleControl.ModuleControlID = Null.NullInteger
+                objModuleControl.ModuleDefID = ModuleDefId
+                objModuleControl.ControlKey = ControlKey
+                objModuleControl.ControlTitle = ControlTitle
+                objModuleControl.ControlSrc = ControlSrc
+                objModuleControl.ControlType = ControlType
+                objModuleControl.ViewOrder = ViewOrder
+                objModuleControl.IconFile = IconFile
+                objModuleControl.SupportsPartialRendering = SupportsPartialRendering
+
+                ModuleControlController.AddModuleControl(objModuleControl)
+            End If
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' AddModuleDefinition adds a new Core Module Definition to the system
+        ''' </summary>
+        ''' <remarks>
+        '''	This overload allows the caller to determine whether the module has a controller
+        ''' class
+        ''' </remarks>
+        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
+        '''	<param name="Description">Description of the Module</param>
+        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
+        '''	<param name="Premium">A flag representing whether the module is a Premium module</param>
+        '''	<param name="Admin">A flag representing whether the module is an Admin module</param>
+        '''	<returns>The Module Definition Id of the new Module</returns>
+        ''' <history>
+        ''' 	[cnurse]	10/14/2004	documented
+        '''     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String, ByVal Premium As Boolean, ByVal Admin As Boolean) As Integer
+            Return AddModuleDefinition(DesktopModuleName, Description, ModuleDefinitionName, "", False, Premium, Admin)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' AddModuleDefinition adds a new Core Module Definition to the system
+        ''' </summary>
+        ''' <remarks>
+        '''	This overload allows the caller to determine whether the module has a controller
+        ''' class
+        ''' </remarks>
+        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
+        '''	<param name="Description">Description of the Module</param>
+        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
+        '''	<param name="Premium">A flag representing whether the module is a Premium module</param>
+        '''	<param name="Admin">A flag representing whether the module is an Admin module</param>
+        '''	<returns>The Module Definition Id of the new Module</returns>
+        ''' <history>
+        ''' 	[cnurse]	10/14/2004	documented
+        '''     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String, ByVal BusinessControllerClass As String, ByVal IsPortable As Boolean, ByVal Premium As Boolean, ByVal Admin As Boolean) As Integer
+            ' check if desktop module exists
+            Dim objDesktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName(DesktopModuleName, Null.NullInteger)
+            If objDesktopModule Is Nothing Then
+                Dim package As New PackageInfo
+                package.Description = Description
+                package.FriendlyName = DesktopModuleName
+                package.Name = String.Concat("DotNetNuke.", DesktopModuleName)
+                package.PackageType = "Module"
+                package.Owner = "DotNetNuke"
+                package.Organization = "DotNetNuke Corporation"
+                package.Url = "www.dotnetnuke.com"
+                package.Email = "support@dotnetnuke.com"
+                If DesktopModuleName = "Extensions" OrElse DesktopModuleName = "Skin Designer" OrElse DesktopModuleName = "Dashboard" Then
+                    package.IsSystemPackage = True
+                End If
+                package.Version = New System.Version(1, 0, 0)
+
+                package.PackageID = PackageController.AddPackage(package, False)
+
+                Dim moduleName As String = DesktopModuleName.Replace(" ", "")
+                objDesktopModule = New DesktopModuleInfo
+                objDesktopModule.DesktopModuleID = Null.NullInteger
+                objDesktopModule.PackageID = package.PackageID
+                objDesktopModule.FriendlyName = DesktopModuleName
+                objDesktopModule.FolderName = "Admin/" + moduleName
+                objDesktopModule.ModuleName = moduleName
+                objDesktopModule.Description = Description
+                objDesktopModule.Version = "01.00.00"
+                objDesktopModule.BusinessControllerClass = BusinessControllerClass
+                objDesktopModule.IsPortable = IsPortable
+                objDesktopModule.SupportedFeatures = 0
+                If (IsPortable) Then
+                    objDesktopModule.SupportedFeatures = 1
+                End If
+                objDesktopModule.IsPremium = Premium
+                objDesktopModule.IsAdmin = Admin
+
+                objDesktopModule.DesktopModuleID = DesktopModuleController.SaveDesktopModule(objDesktopModule, False, False)
+
+                If Not Premium Then
+                    DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID)
+                End If
+            End If
+
+            ' check if module definition exists
+            Dim objModuleDefinition As ModuleDefinitionInfo = ModuleDefinitionController.GetModuleDefinitionByFriendlyName(ModuleDefinitionName, objDesktopModule.DesktopModuleID)
+            If objModuleDefinition Is Nothing Then
+                objModuleDefinition = New ModuleDefinitionInfo
+
+                objModuleDefinition.ModuleDefID = Null.NullInteger
+                objModuleDefinition.DesktopModuleID = objDesktopModule.DesktopModuleID
+                objModuleDefinition.FriendlyName = ModuleDefinitionName
+
+                objModuleDefinition.ModuleDefID = ModuleDefinitionController.SaveModuleDefinition(objModuleDefinition, False, False)
+            End If
+
+            Return objModuleDefinition.ModuleDefID
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -264,207 +421,38 @@ Namespace DotNetNuke.Services.Upgrade
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' AddModuleDefinition adds a new Core Module Definition to the system
+        ''' AddSearchResults adds a top level Hidden Search Results Page
         ''' </summary>
-        ''' <remarks>
-        '''	This overload asumes the module is an Admin module and not a Premium Module
-        ''' </remarks>
-        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
-        '''	<param name="Description">Description of the Module</param>
-        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
-        '''	<returns>The Module Definition Id of the new Module</returns>
+        '''	<param name="ModuleDefId">The Module Deinition Id for the Search Results Module</param>
         ''' <history>
-        ''' 	[cnurse]	10/14/2004	documented
+        ''' 	[cnurse]	11/11/2004	created 
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String) As Integer
-            'Call overload with Premium=False and Admin=True
-            Return AddModuleDefinition(DesktopModuleName, Description, ModuleDefinitionName, False, True)
-        End Function
+        Private Shared Sub AddSearchResults(ByVal ModuleDefId As Integer)
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' AddModuleDefinition adds a new Core Module Definition to the system
-        ''' </summary>
-        ''' <remarks>
-        '''	This overload allows the caller to determine whether the module has a controller
-        ''' class
-        ''' </remarks>
-        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
-        '''	<param name="Description">Description of the Module</param>
-        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
-        '''	<param name="Premium">A flag representing whether the module is a Premium module</param>
-        '''	<param name="Admin">A flag representing whether the module is an Admin module</param>
-        '''	<returns>The Module Definition Id of the new Module</returns>
-        ''' <history>
-        ''' 	[cnurse]	10/14/2004	documented
-        '''     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String, ByVal Premium As Boolean, ByVal Admin As Boolean) As Integer
-            Return AddModuleDefinition(DesktopModuleName, Description, ModuleDefinitionName, "", False, Premium, Admin)
-        End Function
+            Dim objPortals As New PortalController
+            Dim objPortal As PortalInfo
+            Dim arrPortals As ArrayList = objPortals.GetPortals
+            Dim intPortal As Integer
+            Dim newPage As TabInfo
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' AddModuleDefinition adds a new Core Module Definition to the system
-        ''' </summary>
-        ''' <remarks>
-        '''	This overload allows the caller to determine whether the module has a controller
-        ''' class
-        ''' </remarks>
-        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
-        '''	<param name="Description">Description of the Module</param>
-        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
-        '''	<param name="Premium">A flag representing whether the module is a Premium module</param>
-        '''	<param name="Admin">A flag representing whether the module is an Admin module</param>
-        '''	<returns>The Module Definition Id of the new Module</returns>
-        ''' <history>
-        ''' 	[cnurse]	10/14/2004	documented
-        '''     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String, ByVal BusinessControllerClass As String, ByVal IsPortable As Boolean, ByVal Premium As Boolean, ByVal Admin As Boolean) As Integer
-            ' check if desktop module exists
-            Dim objDesktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName(DesktopModuleName, Null.NullInteger)
-            If objDesktopModule Is Nothing Then
-                Dim package As New PackageInfo
-                package.Description = Description
-                package.FriendlyName = DesktopModuleName
-                package.Name = String.Concat("DotNetNuke.", DesktopModuleName)
-                package.PackageType = "Module"
-                package.Owner = "DotNetNuke"
-                package.Organization = "DotNetNuke Corporation"
-                package.Url = "www.dotnetnuke.com"
-                package.Email = "support@dotnetnuke.com"
-                If DesktopModuleName = "Extensions" OrElse DesktopModuleName = "Skin Designer" OrElse DesktopModuleName = "Dashboard" Then
-                    package.IsSystemPackage = True
-                End If
-                package.Version = New System.Version(1, 0, 0)
+            'Add Page to Admin Menu of all configured Portals
+            For intPortal = 0 To arrPortals.Count - 1
+                Dim objTabPermissions As New Security.Permissions.TabPermissionCollection
 
-                package.PackageID = PackageController.AddPackage(package, False)
+                objPortal = CType(arrPortals(intPortal), PortalInfo)
 
-                Dim moduleName As String = DesktopModuleName.Replace(" ", "")
-                objDesktopModule = New DesktopModuleInfo
-                objDesktopModule.DesktopModuleID = Null.NullInteger
-                objDesktopModule.PackageID = package.PackageID
-                objDesktopModule.FriendlyName = DesktopModuleName
-                objDesktopModule.FolderName = "Admin/" + moduleName
-                objDesktopModule.ModuleName = moduleName
-                objDesktopModule.Description = Description
-                objDesktopModule.Version = "01.00.00"
-                objDesktopModule.BusinessControllerClass = BusinessControllerClass
-                objDesktopModule.IsPortable = IsPortable
-                objDesktopModule.SupportedFeatures = 0
-                If (IsPortable) Then
-                    objDesktopModule.SupportedFeatures = 1
-                End If
-                objDesktopModule.IsPremium = Premium
-                objDesktopModule.IsAdmin = Admin
+                AddPagePermission(objTabPermissions, "View", Convert.ToInt32(Common.Globals.glbRoleAllUsers))
+                AddPagePermission(objTabPermissions, "View", Convert.ToInt32(objPortal.AdministratorRoleId))
+                AddPagePermission(objTabPermissions, "Edit", Convert.ToInt32(objPortal.AdministratorRoleId))
 
-                objDesktopModule.DesktopModuleID = DesktopModuleController.SaveDesktopModule(objDesktopModule, False, False)
+                'Create New Page (or get existing one)
+                newPage = AddPage(objPortal.PortalID, Null.NullInteger, "Search Results", "", "", "", False, objTabPermissions, False)
 
-                If Not Premium Then
-                    DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID)
-                End If
-            End If
+                'Add Module To Page
+                AddModuleToPage(newPage, ModuleDefId, "Search Results", "")
+            Next
 
-            ' check if module definition exists
-            Dim objModuleDefinition As ModuleDefinitionInfo = ModuleDefinitionController.GetModuleDefinitionByFriendlyName(ModuleDefinitionName, objDesktopModule.DesktopModuleID)
-            If objModuleDefinition Is Nothing Then
-                objModuleDefinition = New ModuleDefinitionInfo
-
-                objModuleDefinition.ModuleDefID = Null.NullInteger
-                objModuleDefinition.DesktopModuleID = objDesktopModule.DesktopModuleID
-                objModuleDefinition.FriendlyName = ModuleDefinitionName
-
-                objModuleDefinition.ModuleDefID = ModuleDefinitionController.SaveModuleDefinition(objModuleDefinition, False, False)
-            End If
-
-            Return objModuleDefinition.ModuleDefID
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' AddModuleControl adds a new Module Control to the system
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        '''	<param name="ModuleDefId">The Module Definition Id</param>
-        '''	<param name="ControlKey">The key for this control in the Definition</param>
-        '''	<param name="ControlTitle">The title of this control</param>
-        '''	<param name="ControlSrc">Te source of ths control</param>
-        '''	<param name="IconFile">The icon file</param>
-        '''	<param name="ControlType">The type of control</param>
-        '''	<param name="ViewOrder">The vieworder for this module</param>
-        ''' <history>
-        ''' 	[cnurse]	11/08/2004	documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer)
-
-            'Call Overload with HelpUrl = Null.NullString
-            AddModuleControl(ModuleDefId, ControlKey, ControlTitle, ControlSrc, IconFile, ControlType, ViewOrder, Null.NullString)
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' AddModuleControl adds a new Module Control to the system
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        '''	<param name="ModuleDefId">The Module Definition Id</param>
-        '''	<param name="ControlKey">The key for this control in the Definition</param>
-        '''	<param name="ControlTitle">The title of this control</param>
-        '''	<param name="ControlSrc">Te source of ths control</param>
-        '''	<param name="IconFile">The icon file</param>
-        '''	<param name="ControlType">The type of control</param>
-        '''	<param name="ViewOrder">The vieworder for this module</param>
-        '''	<param name="HelpURL">The Help Url</param>
-        ''' <history>
-        ''' 	[cnurse]	11/08/2004	documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer, ByVal HelpURL As String)
-
-            ' check if module control exists
-            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
-            If objModuleControl Is Nothing Then
-                objModuleControl = New ModuleControlInfo
-
-                objModuleControl.ModuleControlID = Null.NullInteger
-                objModuleControl.ModuleDefID = ModuleDefId
-                objModuleControl.ControlKey = ControlKey
-                objModuleControl.ControlTitle = ControlTitle
-                objModuleControl.ControlSrc = ControlSrc
-                objModuleControl.ControlType = ControlType
-                objModuleControl.ViewOrder = ViewOrder
-                objModuleControl.IconFile = IconFile
-                objModuleControl.HelpURL = HelpURL
-
-                ModuleControlController.AddModuleControl(objModuleControl)
-            End If
-        End Sub
-
-        Private Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer, ByVal HelpURL As String, ByVal SupportsPartialRendering As Boolean)
-
-            ' check if module control exists
-            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
-            If objModuleControl Is Nothing Then
-                objModuleControl = New ModuleControlInfo
-
-                objModuleControl.ModuleControlID = Null.NullInteger
-                objModuleControl.ModuleDefID = ModuleDefId
-                objModuleControl.ControlKey = ControlKey
-                objModuleControl.ControlTitle = ControlTitle
-                objModuleControl.ControlSrc = ControlSrc
-                objModuleControl.ControlType = ControlType
-                objModuleControl.ViewOrder = ViewOrder
-                objModuleControl.IconFile = IconFile
-                objModuleControl.SupportsPartialRendering = SupportsPartialRendering
-
-                ModuleControlController.AddModuleControl(objModuleControl)
-            End If
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -521,74 +509,6 @@ Namespace DotNetNuke.Services.Upgrade
             Dim objDesktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName(DesktopModuleName, Null.NullInteger)
 
             Return (Not objDesktopModule Is Nothing)
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' DeleteFiles - clean up deprecated files and folders
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="version">The Version being Upgraded</param>
-        ''' <history>
-        ''' 	[swalker]	11/09/2004	created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function DeleteFiles(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
-            Dim strExceptions As String = ""
-            If writeFeedback Then
-                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Cleaning Up Files: " + FormatVersion(version))
-            End If
-
-            Try
-                Dim strListFile As String = DotNetNuke.Common.InstallMapPath & "Cleanup\" & GetStringVersion(version) & ".txt"
-
-                If File.Exists(strListFile) Then
-                    strExceptions = FileSystemUtils.DeleteFiles(FileSystemUtils.ReadFile(strListFile).Split(ControlChars.CrLf.ToCharArray()))
-                End If
-            Catch ex As Exception
-                strExceptions += "Error: " & ex.Message & vbCrLf
-            End Try
-
-            If writeFeedback Then
-                HtmlUtils.WriteSuccessError(HttpContext.Current.Response, (strExceptions = ""))
-            End If
-
-            Return strExceptions
-        End Function
-
-        Public Shared Function UpdateConfig(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
-            If writeFeedback Then
-                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Updating Config Files: " + FormatVersion(version))
-            End If
-            Dim strExceptions As String = UpdateConfig(DotNetNuke.Common.InstallMapPath & "Config\" & GetStringVersion(version) & ".config", version, "Core Upgrade")
-
-            If writeFeedback Then
-                HtmlUtils.WriteSuccessError(HttpContext.Current.Response, (strExceptions = ""))
-            End If
-
-            Return strExceptions
-        End Function
-
-        Public Shared Function UpdateConfig(ByVal strConfigFile As String, ByVal version As System.Version, ByVal strReason As String) As String
-            Dim strExceptions As String = ""
-            If File.Exists(strConfigFile) Then
-                'Create XmlMerge instance from config file source
-                Dim stream As StreamReader = File.OpenText(strConfigFile)
-                Try
-                    Dim merge As XmlMerge = New XmlMerge(stream, version.ToString(3), strReason)
-
-                    'Process merge
-                    merge.UpdateConfigs()
-                Catch ex As Exception
-                    strExceptions += "Error: " & ex.Message & vbCrLf
-                Finally
-                    'Close stream
-                    stream.Close()
-                End Try
-
-            End If
-            Return strExceptions
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -895,6 +815,14 @@ Namespace DotNetNuke.Services.Upgrade
             Return intModuleDefId
         End Function
 
+        Private Overloads Shared Sub RemoveModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String)
+            ' get Module Control
+            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
+            If objModuleControl IsNot Nothing Then
+                ModuleControlController.DeleteModuleControl(objModuleControl.ModuleControlID)
+            End If
+        End Sub
+
         Private Shared Sub RemoveModuleFromPortals(ByVal friendlyName As String)
             Dim objDesktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByFriendlyName(friendlyName)
             If objDesktopModule IsNot Nothing Then
@@ -906,14 +834,6 @@ Namespace DotNetNuke.Services.Upgrade
 
                 'Remove the module from Portals
                 DesktopModuleController.RemoveDesktopModuleFromPortals(objDesktopModule.DesktopModuleID)
-            End If
-        End Sub
-
-        Private Overloads Shared Sub RemoveModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String)
-            ' get Module Control
-            Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControlByControlKey(ControlKey, ModuleDefId)
-            If objModuleControl IsNot Nothing Then
-                ModuleControlController.DeleteModuleControl(objModuleControl.ModuleControlID)
             End If
         End Sub
 
@@ -931,14 +851,566 @@ Namespace DotNetNuke.Services.Upgrade
             Return blnExists
         End Function
 
-        Private Shared Sub AddConsoleModuleSettings(ByVal tabID As Integer, ByVal moduleID As Integer)
-            Dim modCtrl As ModuleController = New ModuleController()
+        Private Shared Sub UpgradeToVersion_323()
+            'add new SecurityException
+            Dim objLogController As New Log.EventLog.LogController
+            Dim xmlConfigFile As String = Common.Globals.HostMapPath + "Logs\LogConfig\SecurityExceptionTemplate.xml.resources"
+            objLogController.AddLogType(xmlConfigFile, Null.NullString)
+        End Sub
 
-            modCtrl.UpdateModuleSetting(moduleID, "DefaultSize", "IconFileLarge")
-            modCtrl.UpdateModuleSetting(moduleID, "AllowSizeChange", "False")
-            modCtrl.UpdateModuleSetting(moduleID, "DefaultView", "Hide")
-            modCtrl.UpdateModuleSetting(moduleID, "AllowViewChange", "False")
-            modCtrl.UpdateModuleSetting(moduleID, "ShowTooltip", "True")
+        Private Shared Sub UpgradeToVersion_440()
+            ' remove module cache files with *.htm extension ( they are now securely named *.resources )
+            Dim objPortals As New PortalController
+            Dim arrPortals As ArrayList = objPortals.GetPortals
+            For Each objPortal As PortalInfo In arrPortals
+                If Directory.Exists(ApplicationMapPath & "\Portals\" & objPortal.PortalID.ToString & "\Cache\") Then
+                    Dim arrFiles As String() = Directory.GetFiles(ApplicationMapPath & "\Portals\" & objPortal.PortalID.ToString & "\Cache\", "*.htm")
+                    For Each strFile As String In arrFiles
+                        File.Delete(strFile)
+                    Next
+                End If
+            Next
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_470()
+            Dim strHostTemplateFile As String = HostMapPath & "Templates\Default.page.template"
+            If File.Exists(strHostTemplateFile) Then
+                Dim objPortals As New PortalController
+                Dim arrPortals As ArrayList = objPortals.GetPortals
+                For Each objPortal As PortalInfo In arrPortals
+                    Dim strPortalTemplateFolder As String = objPortal.HomeDirectoryMapPath & "Templates\"
+
+                    If Not Directory.Exists(strPortalTemplateFolder) Then
+                        'Create Portal Templates folder
+                        Directory.CreateDirectory(strPortalTemplateFolder)
+                    End If
+                    Dim strPortalTemplateFile As String = strPortalTemplateFolder + "Default.page.template"
+                    If Not File.Exists(strPortalTemplateFile) Then
+                        File.Copy(strHostTemplateFile, strPortalTemplateFile)
+
+                        'Synchronize the Templates folder to ensure the templates are accessible
+                        FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strPortalTemplateFolder, "Templates/", False, True, True, False)
+                    End If
+                Next
+            End If
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_482()
+            'checks for the very rare case where the default validationkey prior to 4.08.02
+            'is still being used and updates it
+            Config.UpdateValidationKey()
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_500()
+            Dim objPortals As New PortalController
+            Dim arrPortals As ArrayList = objPortals.GetPortals
+            Dim controller As New TabController()
+
+            'Add Edit Permissions for Admin Tabs to legacy portals
+            Dim permissionControler As New PermissionController
+            Dim tabPermissionControler As New TabPermissionController
+            Dim permissions As ArrayList = permissionControler.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
+            Dim permissionID As Integer = Null.NullInteger
+            If permissions.Count = 1 Then
+                Dim permission As PermissionInfo = TryCast(permissions(0), PermissionInfo)
+                permissionID = permission.PermissionID
+
+                For Each portal As PortalInfo In arrPortals
+                    Dim adminTab As TabInfo = controller.GetTab(portal.AdminTabId, portal.PortalID, True)
+                    If adminTab IsNot Nothing Then
+                        Dim tabPermission As New TabPermissionInfo
+                        tabPermission.TabID = adminTab.TabID
+                        tabPermission.PermissionID = permissionID
+                        tabPermission.AllowAccess = True
+                        tabPermission.RoleID = portal.AdministratorRoleId
+                        If Not TabPermissionExists(tabPermission, portal.PortalID) Then
+                            adminTab.TabPermissions.Add(tabPermission)
+                        End If
+
+                        'Save Tab Permissions to Data Base
+                        TabPermissionController.SaveTabPermissions(adminTab)
+
+                        For Each childTab As TabInfo In TabController.GetTabsByParent(portal.AdminTabId, portal.PortalID)
+                            tabPermission = New TabPermissionInfo()
+                            tabPermission.TabID = childTab.TabID
+                            tabPermission.PermissionID = permissionID
+                            tabPermission.AllowAccess = True
+                            tabPermission.RoleID = portal.AdministratorRoleId
+                            If Not TabPermissionExists(tabPermission, portal.PortalID) Then
+                                childTab.TabPermissions.Add(tabPermission)
+                            End If
+                            'Save Tab Permissions to Data Base
+                            TabPermissionController.SaveTabPermissions(childTab)
+                        Next
+                    End If
+                Next
+            End If
+
+            'Update Host/Admin modules Visibility setting
+            Dim superTabProcessed As Boolean = Null.NullBoolean
+            Dim moduleController As New ModuleController
+            For Each portal As PortalInfo In arrPortals
+                If Not superTabProcessed Then
+                    'Process Host Tabs
+                    For Each childTab As TabInfo In TabController.GetTabsByParent(portal.SuperTabId, Null.NullInteger)
+                        For Each tabModule As ModuleInfo In moduleController.GetTabModules(childTab.TabID).Values
+                            tabModule.Visibility = VisibilityState.None
+                            moduleController.UpdateModule(tabModule)
+                        Next
+                    Next
+                End If
+
+                'Process Portal Tabs
+                For Each childTab As TabInfo In TabController.GetTabsByParent(portal.AdminTabId, portal.PortalID)
+                    For Each tabModule As ModuleInfo In moduleController.GetTabModules(childTab.TabID).Values
+                        tabModule.Visibility = VisibilityState.None
+                        moduleController.UpdateModule(tabModule)
+                    Next
+                Next
+            Next
+
+            'Upgrade PortalDesktopModules to support new "model"
+            permissions = permissionControler.GetPermissionByCodeAndKey("SYSTEM_DESKTOPMODULE", "DEPLOY")
+            If permissions.Count = 1 Then
+                Dim permission As PermissionInfo = TryCast(permissions(0), PermissionInfo)
+                permissionID = permission.PermissionID
+                For Each portal As PortalInfo In arrPortals
+                    For Each desktopModule As DesktopModuleInfo In DesktopModuleController.GetDesktopModules(Null.NullInteger).Values
+                        If Not desktopModule.IsPremium Then
+                            'Parse the permissions
+                            Dim deployPermissions As New DesktopModulePermissionCollection()
+                            Dim deployPermission As DesktopModulePermissionInfo
+
+                            ' if Not IsAdmin add Registered Users
+                            If Not desktopModule.IsAdmin Then
+                                deployPermission = New DesktopModulePermissionInfo
+                                deployPermission.PermissionID = permissionID
+                                deployPermission.AllowAccess = True
+                                deployPermission.RoleID = portal.RegisteredRoleId
+                                deployPermissions.Add(deployPermission)
+                            End If
+
+                            ' if Not a Host Module add Administrators
+                            Dim hostModules As String = "Portals, SQL, HostSettings, Scheduler, SearchAdmin, Lists, SkinDesigner, Extensions"
+                            If Not hostModules.Contains(desktopModule.ModuleName) Then
+                                deployPermission = New DesktopModulePermissionInfo
+                                deployPermission.PermissionID = permissionID
+                                deployPermission.AllowAccess = True
+                                deployPermission.RoleID = portal.AdministratorRoleId
+                                deployPermissions.Add(deployPermission)
+                            End If
+
+                            'Add Portal/Module to PortalDesktopModules
+                            DesktopModuleController.AddDesktopModuleToPortal(portal.PortalID, desktopModule, deployPermissions, False)
+                        End If
+                    Next
+
+                    DataCache.ClearPortalCache(portal.PortalID, True)
+                Next
+            End If
+
+            LegacyUtil.ProcessLegacyModules()
+            LegacyUtil.ProcessLegacyLanguages()
+            LegacyUtil.ProcessLegacySkins()
+            LegacyUtil.ProcessLegacySkinControls()
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_501()
+            'add new Cache Error Event Type
+            Dim objLogController As New Log.EventLog.LogController
+            Dim xmlConfigFile As String = String.Format("{0}Logs\LogConfig\CacheErrorTemplate.xml.resources", Common.Globals.HostMapPath)
+            objLogController.AddLogType(xmlConfigFile, Null.NullString)
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_510()
+            'Upgrade to .NET 3.5
+            TryUpgradeNETFramework()
+
+            Dim objPortalController As New PortalController
+            Dim objTabController As New TabController
+            Dim objModuleController As New ModuleController
+            Dim ModuleDefID As Integer
+            Dim ModuleID As Integer
+
+            'add Dashboard module and tab
+            If HostTabExists("Dashboard") = False Then
+                ModuleDefID = AddModuleDefinition("Dashboard", "Provides a snapshot of your DotNetNuke Application.", "Dashboard", True, True)
+                AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Dashboard/Dashboard.ascx", "icon_dashboard_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "Export", "", "DesktopModules/Admin/Dashboard/Export.ascx", "", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "DashboardControls", "", "DesktopModules/Admin/Dashboard/DashboardControls.ascx", "", SecurityAccessLevel.Host, 0)
+
+                'Create New Host Page (or get existing one)
+                Dim dashboardPage As TabInfo = AddHostPage("Dashboard", "Summary view of application and site settings.", "~/images/icon_dashboard_16px.gif", "~/images/icon_dashboard_32px.gif", True)
+
+                'Add Module To Page
+                AddModuleToPage(dashboardPage, ModuleDefID, "Dashboard", "~/images/icon_dashboard_32px.gif")
+            Else
+                'Module was incorrectly assigned as "IsPremium=False"
+                RemoveModuleFromPortals("Dashboard")
+                'fix path for dashboarcontrols
+                ModuleDefID = GetModuleDefinition("Dashboard", "Dashboard")
+                RemoveModuleControl(ModuleDefID, "DashboardControls")
+                AddModuleControl(ModuleDefID, "DashboardControls", "", "DesktopModules/Admin/Dashboard/DashboardControls.ascx", "", SecurityAccessLevel.Host, 0)
+            End If
+
+            'Add the Extensions Module
+            If CoreModuleExists("Extensions") = False Then
+                ModuleDefID = AddModuleDefinition("Extensions", "", "Extensions")
+                AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Extensions/Extensions.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.View, 0)
+                AddModuleControl(ModuleDefID, "Edit", "Edit Feature", "DesktopModules/Admin/Extensions/EditExtension.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Edit, 0)
+                AddModuleControl(ModuleDefID, "PackageWriter", "Package Writer", "DesktopModules/Admin/Extensions/PackageWriter.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "EditControl", "Edit Control", "DesktopModules/Admin/Extensions/Editors/EditModuleControl.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "ImportModuleDefinition", "Import Module Definition", "DesktopModules/Admin/Extensions/Editors/ImportModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "BatchInstall", "Batch Install", "DesktopModules/Admin/Extensions/BatchInstall.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "NewExtension", "New Extension Wizard", "DesktopModules/Admin/Extensions/ExtensionWizard.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+                AddModuleControl(ModuleDefID, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", True)
+            Else
+                ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
+                RemoveModuleControl(ModuleDefID, "EditLanguage")
+                RemoveModuleControl(ModuleDefID, "TimeZone")
+                RemoveModuleControl(ModuleDefID, "Verify")
+                RemoveModuleControl(ModuleDefID, "LanguageSettings")
+                RemoveModuleControl(ModuleDefID, "EditResourceKey")
+                RemoveModuleControl(ModuleDefID, "EditSkins")
+                AddModuleControl(ModuleDefID, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", True)
+
+                'Module was incorrectly assigned as "IsPremium=False"
+                RemoveModuleFromPortals("Extensions")
+            End If
+
+            'Remove Module Definitions Module from Host Page (if present)
+            RemoveCoreModule("Module Definitions", "Host", "Module Definitions", False)
+
+            'Remove old Module Definition Validator module
+            DesktopModuleController.DeleteDesktopModule("Module Definition Validator")
+
+            'Get Module Definitions
+            Dim definitionsPage As TabInfo = objTabController.GetTabByName("Module Definitions", Null.NullInteger)
+
+            'Add Module To Page if not present
+            ModuleID = AddModuleToPage(definitionsPage, ModuleDefID, "Module Definitions", "~/images/icon_moduledefinitions_32px.gif")
+            objModuleController.UpdateModuleSetting(ModuleID, "Extensions_Mode", "Module")
+
+            'Add Extensions Host Page
+            Dim extensionsPage As TabInfo = AddHostPage("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", True)
+
+            ModuleID = AddModuleToPage(extensionsPage, ModuleDefID, "Extensions", "~/images/icon_extensions_32px.gif")
+            objModuleController.UpdateModuleSetting(ModuleID, "Extensions_Mode", "All")
+
+            'Add Extensions Module to Admin Page for all Portals
+            AddAdminPages("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", True, ModuleDefID, "Extensions", "~/images/icon_extensions_32px.gif")
+
+            'Remove Host Languages Page
+            RemoveHostPage("Languages")
+
+            'Remove Admin > Authentication Pages
+            RemoveAdminPages("//Admin//Authentication")
+
+            'Remove old Languages module
+            DesktopModuleController.DeleteDesktopModule("Languages")
+
+            'Add new Languages module
+            ModuleDefID = AddModuleDefinition("Languages", "", "Languages", False, False)
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
+            AddModuleControl(ModuleDefID, "Edit", "Edit Language", "DesktopModules/Admin/Languages/EditLanguage.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0)
+            AddModuleControl(ModuleDefID, "EditResourceKey", "Full Language Editor", "DesktopModules/Admin/Languages/languageeditorext.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0)
+            AddModuleControl(ModuleDefID, "LanguageSettings", "Language Settings", "DesktopModules/Admin/Languages/LanguageSettings.ascx", "", SecurityAccessLevel.Edit, 0)
+            AddModuleControl(ModuleDefID, "TimeZone", "TimeZone Editor", "DesktopModules/Admin/Languages/timezoneeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Host, 0)
+            AddModuleControl(ModuleDefID, "Verify", "Resource File Verifier", "DesktopModules/Admin/Languages/resourceverifier.ascx", "", SecurityAccessLevel.Host, 0)
+            AddModuleControl(ModuleDefID, "PackageWriter", "Language Pack Writer", "DesktopModules/Admin/Languages/LanguagePackWriter.ascx", "", SecurityAccessLevel.Host, 0)
+
+            'Add Module to Admin Page for all Portals
+            AddAdminPages("Languages", "Manage Language Resources.", "~/images/icon_language_16px.gif", "~/images/icon_language_32px.gif", True, ModuleDefID, "Language Editor", "~/images/icon_language_32px.gif")
+
+            'Remove Host Skins Page
+            RemoveHostPage("Skins")
+
+            'Remove old Skins module
+            DesktopModuleController.DeleteDesktopModule("Skins")
+
+            'Add new Skins module
+            ModuleDefID = AddModuleDefinition("Skins", "", "Skins", False, False)
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Skins/editskins.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
+
+            'Add Module to Admin Page for all Portals
+            AddAdminPages("Skins", "Manage Skin Resources.", "~/images/icon_skins_16px.gif", "~/images/icon_skins_32px.gif", True, ModuleDefID, "Skin Editor", "~/images/icon_skins_32px.gif")
+
+            'Remove old Skin Designer module
+            DesktopModuleController.DeleteDesktopModule("Skin Designer")
+            DesktopModuleController.DeleteDesktopModule("SkinDesigner")
+
+            'Add new Skin Designer module
+            ModuleDefID = AddModuleDefinition("Skin Designer", "Allows you to modify skin attributes.", "Skin Designer", True, True)
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/SkinDesigner/Attributes.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.Host, 0)
+
+            'Add new Skin Designer to every Admin Skins Tab
+            AddModuleToPages("//Admin//Skins", ModuleDefID, "Skin Designer", "~/images/icon_skins_32px.gif", True)
+
+            'Remove Admin Whats New Page
+            RemoveAdminPages("//Admin//WhatsNew")
+
+            'WhatsNew needs to be set to IsPremium and removed from all portals
+            RemoveModuleFromPortals("WhatsNew")
+
+            'Create New WhatsNew Host Page (or get existing one)
+            Dim newPage As TabInfo = AddHostPage("What's New", "Provides a summary of the major features for each release.", "~/images/icon_whatsnew_16px.gif", "~/images/icon_whatsnew_32px.gif", True)
+
+            'Add WhatsNew Module To Page
+            ModuleDefID = GetModuleDefinition("WhatsNew", "WhatsNew")
+            AddModuleToPage(newPage, ModuleDefID, "What's New", "~/images/icon_whatsnew_32px.gif")
+
+            'add console module
+            ModuleDefID = AddModuleDefinition("Console", "Display children pages as icon links for navigation.", "Console", "DotNetNuke.Modules.Console.Components.ConsoleController", True, False, False)
+            AddModuleControl(ModuleDefID, "", "Console", "DesktopModules/Admin/Console/ViewConsole.ascx", "", SecurityAccessLevel.Anonymous, 0)
+            AddModuleControl(ModuleDefID, "Settings", "Console Settings", "DesktopModules/Admin/Console/Settings.ascx", "", SecurityAccessLevel.Admin, 0)
+
+            'add console module to host page
+            ModuleID = AddModuleToPage("//Host", Null.NullInteger, ModuleDefID, "Basic Features", "", True)
+            Dim tabID As Integer = TabController.GetTabByTabPath(Null.NullInteger, "//Host")
+            Dim tab As TabInfo = Nothing
+
+            'add console settings for host page
+            If (tabID <> Null.NullInteger) Then
+                tab = objTabController.GetTab(tabID, Null.NullInteger, True)
+                If (Not tab Is Nothing) Then
+                    AddConsoleModuleSettings(tabID, ModuleID)
+                End If
+            End If
+
+            'add module to all admin pages
+            For Each portal As PortalInfo In objPortalController.GetPortals()
+                tabID = TabController.GetTabByTabPath(portal.PortalID, "//Admin")
+                If (tabID <> Null.NullInteger) Then
+                    tab = objTabController.GetTab(tabID, portal.PortalID, True)
+                    If (Not tab Is Nothing) Then
+                        ModuleID = AddModuleToPage(tab, ModuleDefID, "Basic Features", "", True)
+                        AddConsoleModuleSettings(tabID, ModuleID)
+                    End If
+                End If
+            Next
+
+            'Add Google Analytics module
+            ModuleDefID = AddModuleDefinition("Google Analytics", "Configure portal Google Analytics settings.", "GoogleAnalytics", False, False)
+            AddModuleControl(ModuleDefID, "", "Google Analytics", "DesktopModules/Admin/Analytics/GoogleAnalyticsSettings.ascx", "", SecurityAccessLevel.Admin, 0)
+            AddAdminPages("Google Analytics", "Configure portal Google Analytics settings.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Google Analytics", "~/images/icon_analytics_32px.gif")
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_511()
+            'New Admin pages may not have administrator permission
+            'Add Admin role if it does not exist for google analytics or extensions
+            AddAdminRoleToPage("//Admin//Extensions")
+            AddAdminRoleToPage("//Admin//GoogleAnalytics")
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_513()
+            'Ensure that default language is present (not neccessarily enabled)
+            Dim defaultLanguage As Locale = Localization.Localization.GetLocale("en-US")
+            If defaultLanguage Is Nothing Then
+                defaultLanguage = New Locale
+            End If
+            defaultLanguage.Code = "en-US"
+            defaultLanguage.Text = "English (United States)"
+            Localization.Localization.SaveLanguage(defaultLanguage)
+
+            'Ensure that there is a Default Authorization System
+            Dim package As PackageInfo = PackageController.GetPackageByName("DefaultAuthentication")
+            If package Is Nothing Then
+                package = New PackageInfo()
+                package.Name = "DefaultAuthentication"
+                package.FriendlyName = "Default Authentication"
+                package.Description = "The Default UserName/Password Authentication System for DotNetNuke."
+                package.PackageType = "Auth_System"
+                package.Version = New Version(1, 0, 0)
+                package.Owner = "DotNetNuke"
+                package.License = Localization.Localization.GetString("License", Localization.Localization.GlobalResourceFile)
+                package.Organization = "DotNetNuke Corporation"
+                package.Url = "www.dotnetnuke.com"
+                package.Email = "support@dotnetnuke.com"
+                package.ReleaseNotes = "There are no release notes for this version."
+                package.IsSystemPackage = True
+                PackageController.SavePackage(package)
+
+                'Add Authentication System
+                Dim authSystem As Authentication.AuthenticationInfo = Authentication.AuthenticationController.GetAuthenticationServiceByType("DNN")
+                If authSystem Is Nothing Then
+                    authSystem = New Authentication.AuthenticationInfo
+                End If
+                authSystem.PackageID = package.PackageID
+                authSystem.AuthenticationType = "DNN"
+                authSystem.SettingsControlSrc = "DesktopModules/AuthenticationServices/DNN/Settings.ascx"
+                authSystem.LoginControlSrc = "DesktopModules/AuthenticationServices/DNN/Login.ascx"
+                authSystem.IsEnabled = True
+
+                If authSystem.AuthenticationID = Null.NullInteger Then
+                    Authentication.AuthenticationController.AddAuthentication(authSystem)
+                Else
+                    Authentication.AuthenticationController.UpdateAuthentication(authSystem)
+                End If
+            End If
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_520()
+            Dim ModuleDefID As Integer
+
+            'Add new ViewSource control
+            AddModuleControl(Null.NullInteger, "ViewSource", "View Module Source", "Admin/Modules/ViewSource.ascx", "~/images/icon_source_32px.gif", SecurityAccessLevel.Host, 0, "", True)
+
+            'Add Marketplace module definition
+            ModuleDefID = AddModuleDefinition("Marketplace", "Search for DotNetNuke modules, extension and skins.", "Marketplace")
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Marketplace/Marketplace.ascx", "~/images/icon_marketplace_32px.gif", SecurityAccessLevel.Host, 0)
+
+            'Add marketplace Module To Page
+            Dim newPage As TabInfo = AddHostPage("Marketplace", "Search for DotNetNuke modules, extension and skins.", "~/images/icon_marketplace_16px.gif", "~/images/icon_marketplace_32px.gif", True)
+            ModuleDefID = GetModuleDefinition("Marketplace", "Marketplace")
+            AddModuleToPage(newPage, ModuleDefID, "Marketplace", "~/images/icon_marketplace_32px.gif")
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_521()
+            ' UpgradeDefaultLanguages is a temporary procedure containing code that
+            ' needed to execute after the 5.1.3 application upgrade code above
+            DataProvider.Instance.ExecuteNonQuery("UpgradeDefaultLanguages")
+
+            ' This procedure is not intended to be part of the database schema
+            ' and is therefore dropped once it has been executed.
+            DataProvider.Instance.ExecuteSQL("DROP PROCEDURE {databaseOwner}{objectQualifier}UpgradeDefaultLanguages")
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_530()
+            Dim ModuleDefID As Integer
+
+            'update languages module
+            ModuleDefID = GetModuleDefinition("Languages", "Languages")
+            RemoveModuleControl(ModuleDefID, "")
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageEnabler.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0, "", True)
+            AddModuleControl(ModuleDefID, "Editor", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
+
+            'Add new View Profile module
+            ModuleDefID = AddModuleDefinition("ViewProfile", "", "ViewProfile", False, False)
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/ViewProfile/ViewProfile.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.View, 0)
+            AddModuleControl(ModuleDefID, "Settings", "Settings", "DesktopModules/Admin/ViewProfile/Settings.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.Edit, 0)
+
+            'Add new Sitemap settings module
+            ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
+            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_analytics_32px.gif", SecurityAccessLevel.View, 0)
+            AddAdminPages("Search Engine Sitemap", "Configure the sitemap for submission to common search engines.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Search Engine Sitemap", "~/images/icon_analytics_32px.gif")
+
+            'Add new Image Data Type
+            Dim listController As New ListController
+            Dim imagedatatype As New ListEntryInfo() _
+                                    With { _
+                                            .DefinitionID = Null.NullInteger, _
+                                            .ListName = "DataType", _
+                                            .Value = "Image", _
+                                            .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
+                                    }
+            listController.AddListEntry(imagedatatype)
+
+            'Add new Photo Profile field to Host
+            Dim objListController As New ListController
+            Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
+
+            Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
+            ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
+
+            Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
+            If File.Exists(strHostTemplateFile) Then
+                Dim tabController As New TabController()
+                Dim objPortals As New PortalController
+                Dim arrPortals As ArrayList = objPortals.GetPortals
+                For Each objPortal As PortalInfo In arrPortals
+                    properties = ProfileController.GetPropertyDefinitionsByPortal(objPortal.PortalID)
+
+                    'Add new Photo Profile field to Portal
+                    ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
+
+                    'Rename old Default Page template
+                    File.Move(String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath), String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
+
+                    'Update Default profile template in every portal
+                    objPortals.CopyPageTemplate("Default.page.template", objPortal.HomeDirectoryMapPath)
+
+                    'Add User profile template to every portal
+                    objPortals.CopyPageTemplate("UserProfile.page.template", objPortal.HomeDirectoryMapPath)
+
+                    'Synchronize the Templates folder to ensure the templates are accessible
+                    FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
+
+                    Dim xmlDoc As New XmlDocument
+                    Try
+                        ' open the XML file
+                        xmlDoc.Load(String.Format("{0}Templates\UserProfile.page.template", objPortal.HomeDirectoryMapPath))
+                    Catch ex As Exception
+                        LogException(ex)
+                    End Try
+
+                    Dim newTab As New TabInfo()
+                    newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
+                    tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
+
+                    'Update SiteSettings to point to the new page
+                    objPortal.RegisterTabId = objPortal.UserTabId
+                    objPortal.UserTabId = newTab.TabID
+                    objPortals.UpdatePortalInfo(objPortal)
+
+                    'Add Users folder to every portal
+                    Dim strUsersFolder As String = String.Format("{0}Users\", objPortal.HomeDirectoryMapPath)
+
+                    If Not Directory.Exists(strUsersFolder) Then
+                        'Create Users folder
+                        Directory.CreateDirectory(strUsersFolder)
+
+                        'Synchronize the Users folder to ensure the user folder is accessible
+                        FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strUsersFolder, "Users/", False, True, True, False)
+                    End If
+                Next
+            End If
+
+            'Add new EventQueue Event
+            Dim config As DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration = DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.GetConfig()
+            If config IsNot Nothing Then
+                If Not config.PublishedEvents.ContainsKey("Application_Start_FirstRequest") Then
+                    For Each subscriber As DotNetNuke.Services.EventQueue.Config.SubscriberInfo In config.EventQueueSubscribers.Values
+                        DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.RegisterEventSubscription(config, "Application_Start_FirstRequest", subscriber)
+                    Next
+
+                    DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.SaveConfig(config, String.Format("{0}EventQueue\EventQueue.config", HostMapPath))
+                End If
+            End If
+            'Change Key for Module Defintions
+            ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
+            RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
+            AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+
+            'Module was incorrectly assigned as "IsPremium=False"
+            RemoveModuleFromPortals("Users And Roles")
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_540()
+            Dim configDoc As XmlDocument = Config.Load()
+            Dim configNavigator As XPathNavigator = configDoc.CreateNavigator().SelectSingleNode("/configuration/system.web.extensions")
+            If configNavigator Is Nothing Then
+                'attempt to remove "System.Web.Extensions" configuration section
+                Dim upgradeFile As String = String.Format("{0}\Config\SystemWebExtensions.config", DotNetNuke.Common.InstallMapPath)
+                Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, "Remove System Web Extensions")
+                If String.IsNullOrEmpty(strMessage) Then
+                    'Log Upgrade
+                    Dim objEventLog As New Services.Log.EventLog.EventLogController
+                    objEventLog.AddLog("UpgradeConfig", "Remove System Web Extensions", PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                Else
+                    'Log Failed Upgrade
+                    Dim objEventLog As New Services.Log.EventLog.EventLogController
+                    objEventLog.AddLog("UpgradeConfig", String.Format("Remove System Web Extensions failed. Error reported during attempt to update:{0}", strMessage), PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                End If
+            End If
+
+            'Update registration page
+            Dim objPortals As New PortalController
+            Dim arrPortals As ArrayList = objPortals.GetPortals
+            For Each objPortal As PortalInfo In arrPortals
+                objPortal.RegisterTabId = objPortal.UserTabId
+                objPortals.UpdatePortalInfo(objPortal)
+
+            Next
         End Sub
 
 #End Region
@@ -1032,6 +1504,49 @@ Namespace DotNetNuke.Services.Upgrade
             Else
                 Return Nothing
             End If
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' AddModuleControl adds a new Module Control to the system
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        '''	<param name="ModuleDefId">The Module Definition Id</param>
+        '''	<param name="ControlKey">The key for this control in the Definition</param>
+        '''	<param name="ControlTitle">The title of this control</param>
+        '''	<param name="ControlSrc">Te source of ths control</param>
+        '''	<param name="IconFile">The icon file</param>
+        '''	<param name="ControlType">The type of control</param>
+        '''	<param name="ViewOrder">The vieworder for this module</param>
+        ''' <history>
+        ''' 	[cnurse]	11/08/2004	documented
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overloads Shared Sub AddModuleControl(ByVal ModuleDefId As Integer, ByVal ControlKey As String, ByVal ControlTitle As String, ByVal ControlSrc As String, ByVal IconFile As String, ByVal ControlType As SecurityAccessLevel, ByVal ViewOrder As Integer)
+
+            'Call Overload with HelpUrl = Null.NullString
+            AddModuleControl(ModuleDefId, ControlKey, ControlTitle, ControlSrc, IconFile, ControlType, ViewOrder, Null.NullString)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' AddModuleDefinition adds a new Core Module Definition to the system
+        ''' </summary>
+        ''' <remarks>
+        '''	This overload asumes the module is an Admin module and not a Premium Module
+        ''' </remarks>
+        '''	<param name="DesktopModuleName">The Friendly Name of the Module to Add</param>
+        '''	<param name="Description">Description of the Module</param>
+        '''	<param name="ModuleDefinitionName">The Module Definition Name</param>
+        '''	<returns>The Module Definition Id of the new Module</returns>
+        ''' <history>
+        ''' 	[cnurse]	10/14/2004	documented
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overloads Shared Function AddModuleDefinition(ByVal DesktopModuleName As String, ByVal Description As String, ByVal ModuleDefinitionName As String) As Integer
+            'Call overload with Premium=False and Admin=True
+            Return AddModuleDefinition(DesktopModuleName, Description, ModuleDefinitionName, False, True)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1293,6 +1808,41 @@ Namespace DotNetNuke.Services.Upgrade
 
             Return strWarnings
 
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' DeleteFiles - clean up deprecated files and folders
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="version">The Version being Upgraded</param>
+        ''' <history>
+        ''' 	[swalker]	11/09/2004	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function DeleteFiles(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
+            Dim strExceptions As String = ""
+            If writeFeedback Then
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Cleaning Up Files: " + FormatVersion(version))
+            End If
+
+            Try
+                Dim strListFile As String = DotNetNuke.Common.InstallMapPath & "Cleanup\" & GetStringVersion(version) & ".txt"
+
+                If File.Exists(strListFile) Then
+                    strExceptions = FileSystemUtils.DeleteFiles(FileSystemUtils.ReadFile(strListFile).Split(ControlChars.CrLf.ToCharArray()))
+                End If
+            Catch ex As Exception
+                LogException(ex)
+                strExceptions += "Error: " & ex.Message & vbCrLf
+            End Try
+
+            If writeFeedback Then
+                HtmlUtils.WriteSuccessError(HttpContext.Current.Response, (strExceptions = ""))
+            End If
+
+            Return strExceptions
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1831,6 +2381,26 @@ Namespace DotNetNuke.Services.Upgrade
             End If
         End Sub
 
+        Public Shared Function IsNETFrameworkCurrent(ByVal version As String) As Boolean
+            Dim isCurrent As Boolean = Null.NullBoolean
+            Select Case version
+                Case "3.5"
+                    'Try and instantiate a 3.5 Class
+                    If Framework.Reflection.CreateType("System.Data.Linq.DataContext", True) IsNot Nothing Then
+                        isCurrent = True
+                    End If
+                Case "4.0"
+                    'Look for requestValidationMode attribute
+                    Dim configFile As XmlDocument = Config.Load()
+                    Dim configNavigator As XPathNavigator = configFile.CreateNavigator().SelectSingleNode("//configuration/system.web/httpRuntime")
+                    If configNavigator IsNot Nothing AndAlso _
+                            Not String.IsNullOrEmpty(configNavigator.GetAttribute("requestValidationMode", "")) Then
+                        isCurrent = True
+                    End If
+            End Select
+            Return isCurrent
+        End Function
+
         Public Shared Sub RemoveAdminPages(ByVal tabPath As String)
             Dim objPortalController As New PortalController
             Dim objTabController As New TabController
@@ -1859,34 +2429,43 @@ Namespace DotNetNuke.Services.Upgrade
 
         End Sub
 
-        Public Shared Function IsNETFrameworkCurrent() As Boolean
-            'Try and instantiate a 3.5 Class
-            Dim isCurrent As Boolean = Null.NullBoolean
-            If Framework.Reflection.CreateType("System.Data.Linq.DataContext", True) IsNot Nothing Then
-                isCurrent = True
-            End If
-            Return isCurrent
-        End Function
-
         Public Shared Sub TryUpgradeNETFramework()
-            If Common.Globals.NETFrameworkVersion.ToString(2) = "3.5" AndAlso Not IsNETFrameworkCurrent() Then
-                'Upgrade to .NET 3.5
-                Dim upgradeFile As String = DotNetNuke.Common.InstallMapPath & "\Config\Net35.config"
-                Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, ".NET 3.5 Upgrade")
-                If String.IsNullOrEmpty(strMessage) Then
-                    'Remove old AJAX file
-                    FileSystemUtils.DeleteFile(Path.Combine(ApplicationMapPath, "bin\System.Web.Extensions.dll"))
+            Select Case Common.Globals.NETFrameworkVersion.ToString(2)
+                Case "3.5"
+                    If Not IsNETFrameworkCurrent("3.5") Then
+                        'Upgrade to .NET 3.5
+                        Dim upgradeFile As String = String.Format("{0}\Config\Net35.config", DotNetNuke.Common.InstallMapPath)
+                        Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, ".NET 3.5 Upgrade")
+                        If String.IsNullOrEmpty(strMessage) Then
+                            'Remove old AJAX file
+                            FileSystemUtils.DeleteFile(Path.Combine(ApplicationMapPath, "bin\System.Web.Extensions.dll"))
 
-                    'Log Upgrade
-                    Dim objEventLog As New Services.Log.EventLog.EventLogController
-                    objEventLog.AddLog("UpgradeNet", "Upgraded Site to .NET 3.5", PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                            'Log Upgrade
+                            Dim objEventLog As New Services.Log.EventLog.EventLogController
+                            objEventLog.AddLog("UpgradeNet", "Upgraded Site to .NET 3.5", PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
 
-                Else
-                    'Log Failed Upgrade
-                    Dim objEventLog As New Services.Log.EventLog.EventLogController
-                    objEventLog.AddLog("UpgradeNet", "Upgrade to .NET 3.5 failed. Error reported during attempt to update:" & strMessage.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
-                End If
-            End If
+                        Else
+                            'Log Failed Upgrade
+                            Dim objEventLog As New Services.Log.EventLog.EventLogController
+                            objEventLog.AddLog("UpgradeNet", String.Format("Upgrade to .NET 3.5 failed. Error reported during attempt to update:{0}", strMessage), PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                        End If
+                    End If
+                Case "4.0"
+                    If Not IsNETFrameworkCurrent("4.0") Then
+                        'Upgrade to .NET 4.0
+                        Dim upgradeFile As String = String.Format("{0}\Config\Net40.config", DotNetNuke.Common.InstallMapPath)
+                        Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, ".NET 4.0 Upgrade")
+                        If String.IsNullOrEmpty(strMessage) Then
+                            'Log Upgrade
+                            Dim objEventLog As New Services.Log.EventLog.EventLogController
+                            objEventLog.AddLog("UpgradeNet", "Upgraded Site to .NET 4.0", PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                        Else
+                            'Log Failed Upgrade
+                            Dim objEventLog As New Services.Log.EventLog.EventLogController
+                            objEventLog.AddLog("UpgradeNet", String.Format("Upgrade to .NET 4.0 failed. Error reported during attempt to update:{0}", strMessage), PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_ALERT)
+                        End If
+                    End If
+            End Select
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -2115,516 +2694,31 @@ Namespace DotNetNuke.Services.Upgrade
             Try
                 Select Case version.ToString(3)
                     Case "3.2.3"
-                        'add new SecurityException
-                        Dim objLogController As New Log.EventLog.LogController
-                        Dim xmlConfigFile As String = Common.Globals.HostMapPath + "Logs\LogConfig\SecurityExceptionTemplate.xml.resources"
-                        objLogController.AddLogType(xmlConfigFile, Null.NullString)
+                        UpgradeToVersion_323()
                     Case "4.4.0"
-                        ' remove module cache files with *.htm extension ( they are now securely named *.resources )
-                        Dim objPortals As New PortalController
-                        Dim arrPortals As ArrayList = objPortals.GetPortals
-                        For Each objPortal As PortalInfo In arrPortals
-                            If Directory.Exists(ApplicationMapPath & "\Portals\" & objPortal.PortalID.ToString & "\Cache\") Then
-                                Dim arrFiles As String() = Directory.GetFiles(ApplicationMapPath & "\Portals\" & objPortal.PortalID.ToString & "\Cache\", "*.htm")
-                                For Each strFile As String In arrFiles
-                                    File.Delete(strFile)
-                                Next
-                            End If
-                        Next
+                        UpgradeToVersion_440()
                     Case "4.7.0"
-                        Dim strHostTemplateFile As String = HostMapPath & "Templates\Default.page.template"
-                        If File.Exists(strHostTemplateFile) Then
-                            Dim objPortals As New PortalController
-                            Dim arrPortals As ArrayList = objPortals.GetPortals
-                            For Each objPortal As PortalInfo In arrPortals
-                                Dim strPortalTemplateFolder As String = objPortal.HomeDirectoryMapPath & "Templates\"
-
-                                If Not Directory.Exists(strPortalTemplateFolder) Then
-                                    'Create Portal Templates folder
-                                    Directory.CreateDirectory(strPortalTemplateFolder)
-                                End If
-                                Dim strPortalTemplateFile As String = strPortalTemplateFolder + "Default.page.template"
-                                If Not File.Exists(strPortalTemplateFile) Then
-                                    File.Copy(strHostTemplateFile, strPortalTemplateFile)
-
-                                    'Synchronize the Templates folder to ensure the templates are accessible
-                                    FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strPortalTemplateFolder, "Templates/", False, True, True, False)
-                                End If
-                            Next
-                        End If
+                        UpgradeToVersion_470()
                     Case "4.8.2"
-                        'checks for the very rare case where the default validationkey prior to 4.08.02
-                        'is still being used and updates it
-                        Config.UpdateValidationKey()
+                        UpgradeToVersion_482()
                     Case "5.0.0"
-                        Dim objPortals As New PortalController
-                        Dim arrPortals As ArrayList = objPortals.GetPortals
-                        Dim controller As New TabController()
-
-                        'Add Edit Permissions for Admin Tabs to legacy portals
-                        Dim permissionControler As New PermissionController
-                        Dim tabPermissionControler As New TabPermissionController
-                        Dim permissions As ArrayList = permissionControler.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
-                        Dim permissionID As Integer = Null.NullInteger
-                        If permissions.Count = 1 Then
-                            Dim permission As PermissionInfo = TryCast(permissions(0), PermissionInfo)
-                            permissionID = permission.PermissionID
-
-                            For Each portal As PortalInfo In arrPortals
-                                Dim adminTab As TabInfo = controller.GetTab(portal.AdminTabId, portal.PortalID, True)
-                                If adminTab IsNot Nothing Then
-                                    Dim tabPermission As New TabPermissionInfo
-                                    tabPermission.TabID = adminTab.TabID
-                                    tabPermission.PermissionID = permissionID
-                                    tabPermission.AllowAccess = True
-                                    tabPermission.RoleID = portal.AdministratorRoleId
-                                    If Not TabPermissionExists(tabPermission, portal.PortalID) Then
-                                        adminTab.TabPermissions.Add(tabPermission)
-                                    End If
-
-                                    'Save Tab Permissions to Data Base
-                                    TabPermissionController.SaveTabPermissions(adminTab)
-
-                                    For Each childTab As TabInfo In TabController.GetTabsByParent(portal.AdminTabId, portal.PortalID)
-                                        tabPermission = New TabPermissionInfo()
-                                        tabPermission.TabID = childTab.TabID
-                                        tabPermission.PermissionID = permissionID
-                                        tabPermission.AllowAccess = True
-                                        tabPermission.RoleID = portal.AdministratorRoleId
-                                        If Not TabPermissionExists(tabPermission, portal.PortalID) Then
-                                            childTab.TabPermissions.Add(tabPermission)
-                                        End If
-                                        'Save Tab Permissions to Data Base
-                                        TabPermissionController.SaveTabPermissions(childTab)
-                                    Next
-                                End If
-                            Next
-                        End If
-
-                        'Update Host/Admin modules Visibility setting
-                        Dim superTabProcessed As Boolean = Null.NullBoolean
-                        Dim moduleController As New ModuleController
-                        For Each portal As PortalInfo In arrPortals
-                            If Not superTabProcessed Then
-                                'Process Host Tabs
-                                For Each childTab As TabInfo In TabController.GetTabsByParent(portal.SuperTabId, Null.NullInteger)
-                                    For Each tabModule As ModuleInfo In moduleController.GetTabModules(childTab.TabID).Values
-                                        tabModule.Visibility = VisibilityState.None
-                                        moduleController.UpdateModule(tabModule)
-                                    Next
-                                Next
-                            End If
-
-                            'Process Portal Tabs
-                            For Each childTab As TabInfo In TabController.GetTabsByParent(portal.AdminTabId, portal.PortalID)
-                                For Each tabModule As ModuleInfo In moduleController.GetTabModules(childTab.TabID).Values
-                                    tabModule.Visibility = VisibilityState.None
-                                    moduleController.UpdateModule(tabModule)
-                                Next
-                            Next
-                        Next
-
-                        'Upgrade PortalDesktopModules to support new "model"
-                        permissions = permissionControler.GetPermissionByCodeAndKey("SYSTEM_DESKTOPMODULE", "DEPLOY")
-                        If permissions.Count = 1 Then
-                            Dim permission As PermissionInfo = TryCast(permissions(0), PermissionInfo)
-                            permissionID = permission.PermissionID
-                            For Each portal As PortalInfo In arrPortals
-                                For Each desktopModule As DesktopModuleInfo In DesktopModuleController.GetDesktopModules(Null.NullInteger).Values
-                                    If Not desktopModule.IsPremium Then
-                                        'Parse the permissions
-                                        Dim deployPermissions As New DesktopModulePermissionCollection()
-                                        Dim deployPermission As DesktopModulePermissionInfo
-
-                                        ' if Not IsAdmin add Registered Users
-                                        If Not desktopModule.IsAdmin Then
-                                            deployPermission = New DesktopModulePermissionInfo
-                                            deployPermission.PermissionID = permissionID
-                                            deployPermission.AllowAccess = True
-                                            deployPermission.RoleID = portal.RegisteredRoleId
-                                            deployPermissions.Add(deployPermission)
-                                        End If
-
-                                        ' if Not a Host Module add Administrators
-                                        Dim hostModules As String = "Portals, SQL, HostSettings, Scheduler, SearchAdmin, Lists, SkinDesigner, Extensions"
-                                        If Not hostModules.Contains(desktopModule.ModuleName) Then
-                                            deployPermission = New DesktopModulePermissionInfo
-                                            deployPermission.PermissionID = permissionID
-                                            deployPermission.AllowAccess = True
-                                            deployPermission.RoleID = portal.AdministratorRoleId
-                                            deployPermissions.Add(deployPermission)
-                                        End If
-
-                                        'Add Portal/Module to PortalDesktopModules
-                                        DesktopModuleController.AddDesktopModuleToPortal(portal.PortalID, desktopModule, deployPermissions, False)
-                                    End If
-                                Next
-
-                                DataCache.ClearPortalCache(portal.PortalID, True)
-                            Next
-                        End If
-
-                        LegacyUtil.ProcessLegacyModules()
-                        LegacyUtil.ProcessLegacyLanguages()
-                        LegacyUtil.ProcessLegacySkins()
-                        LegacyUtil.ProcessLegacySkinControls()
+                        UpgradeToVersion_500()
                     Case "5.0.1"
-                        'add new Cache Error Event Type
-                        Dim objLogController As New Log.EventLog.LogController
-                        Dim xmlConfigFile As String = Common.Globals.HostMapPath + "Logs\LogConfig\CacheErrorTemplate.xml.resources"
-                        objLogController.AddLogType(xmlConfigFile, Null.NullString)
+                        UpgradeToVersion_501()
                     Case "5.1.0"
-                        'Upgrade to .NET 3.5
-                        TryUpgradeNETFramework()
-
-                        Dim objPortalController As New PortalController
-                        Dim objTabController As New TabController
-                        Dim objModuleController As New ModuleController
-                        Dim ModuleDefID As Integer
-                        Dim ModuleID As Integer
-
-                        'add Dashboard module and tab
-                        If HostTabExists("Dashboard") = False Then
-                            ModuleDefID = AddModuleDefinition("Dashboard", "Provides a snapshot of your DotNetNuke Application.", "Dashboard", True, True)
-                            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Dashboard/Dashboard.ascx", "icon_dashboard_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "Export", "", "DesktopModules/Admin/Dashboard/Export.ascx", "", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "DashboardControls", "", "DesktopModules/Admin/Dashboard/DashboardControls.ascx", "", SecurityAccessLevel.Host, 0)
-
-                            'Create New Host Page (or get existing one)
-                            Dim dashboardPage As TabInfo = AddHostPage("Dashboard", "Summary view of application and site settings.", "~/images/icon_dashboard_16px.gif", "~/images/icon_dashboard_32px.gif", True)
-
-                            'Add Module To Page
-                            AddModuleToPage(dashboardPage, ModuleDefID, "Dashboard", "~/images/icon_dashboard_32px.gif")
-                        Else
-                            'Module was incorrectly assigned as "IsPremium=False"
-                            RemoveModuleFromPortals("Dashboard")
-                            'fix path for dashboarcontrols
-                            ModuleDefID = GetModuleDefinition("Dashboard", "Dashboard")
-                            RemoveModuleControl(ModuleDefID, "DashboardControls")
-                            AddModuleControl(ModuleDefID, "DashboardControls", "", "DesktopModules/Admin/Dashboard/DashboardControls.ascx", "", SecurityAccessLevel.Host, 0)
-                        End If
-
-                        'Add the Extensions Module
-                        If CoreModuleExists("Extensions") = False Then
-                            ModuleDefID = AddModuleDefinition("Extensions", "", "Extensions")
-                            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Extensions/Extensions.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.View, 0)
-                            AddModuleControl(ModuleDefID, "Edit", "Edit Feature", "DesktopModules/Admin/Extensions/EditExtension.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Edit, 0)
-                            AddModuleControl(ModuleDefID, "PackageWriter", "Package Writer", "DesktopModules/Admin/Extensions/PackageWriter.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "EditControl", "Edit Control", "DesktopModules/Admin/Extensions/Editors/EditModuleControl.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "ImportModuleDefinition", "Import Module Definition", "DesktopModules/Admin/Extensions/Editors/ImportModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "BatchInstall", "Batch Install", "DesktopModules/Admin/Extensions/BatchInstall.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "NewExtension", "New Extension Wizard", "DesktopModules/Admin/Extensions/ExtensionWizard.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-                            AddModuleControl(ModuleDefID, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", True)
-                        Else
-                            ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
-                            RemoveModuleControl(ModuleDefID, "EditLanguage")
-                            RemoveModuleControl(ModuleDefID, "TimeZone")
-                            RemoveModuleControl(ModuleDefID, "Verify")
-                            RemoveModuleControl(ModuleDefID, "LanguageSettings")
-                            RemoveModuleControl(ModuleDefID, "EditResourceKey")
-                            RemoveModuleControl(ModuleDefID, "EditSkins")
-                            AddModuleControl(ModuleDefID, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", True)
-
-                            'Module was incorrectly assigned as "IsPremium=False"
-                            RemoveModuleFromPortals("Extensions")
-                        End If
-
-                        'Remove Module Definitions Module from Host Page (if present)
-                        RemoveCoreModule("Module Definitions", "Host", "Module Definitions", False)
-
-                        'Remove old Module Definition Validator module
-                        DesktopModuleController.DeleteDesktopModule("Module Definition Validator")
-
-                        'Get Module Definitions
-                        Dim definitionsPage As TabInfo = objTabController.GetTabByName("Module Definitions", Null.NullInteger)
-
-                        'Add Module To Page if not present
-                        ModuleID = AddModuleToPage(definitionsPage, ModuleDefID, "Module Definitions", "~/images/icon_moduledefinitions_32px.gif")
-                        objModuleController.UpdateModuleSetting(ModuleID, "Extensions_Mode", "Module")
-
-                        'Add Extensions Host Page
-                        Dim extensionsPage As TabInfo = AddHostPage("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", True)
-
-                        ModuleID = AddModuleToPage(extensionsPage, ModuleDefID, "Extensions", "~/images/icon_extensions_32px.gif")
-                        objModuleController.UpdateModuleSetting(ModuleID, "Extensions_Mode", "All")
-
-                        'Add Extensions Module to Admin Page for all Portals
-                        AddAdminPages("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", True, ModuleDefID, "Extensions", "~/images/icon_extensions_32px.gif")
-
-                        'Remove Host Languages Page
-                        RemoveHostPage("Languages")
-
-                        'Remove Admin > Authentication Pages
-                        RemoveAdminPages("//Admin//Authentication")
-
-                        'Remove old Languages module
-                        DesktopModuleController.DeleteDesktopModule("Languages")
-
-                        'Add new Languages module
-                        ModuleDefID = AddModuleDefinition("Languages", "", "Languages", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
-                        AddModuleControl(ModuleDefID, "Edit", "Edit Language", "DesktopModules/Admin/Languages/EditLanguage.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0)
-                        AddModuleControl(ModuleDefID, "EditResourceKey", "Full Language Editor", "DesktopModules/Admin/Languages/languageeditorext.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0)
-                        AddModuleControl(ModuleDefID, "LanguageSettings", "Language Settings", "DesktopModules/Admin/Languages/LanguageSettings.ascx", "", SecurityAccessLevel.Edit, 0)
-                        AddModuleControl(ModuleDefID, "TimeZone", "TimeZone Editor", "DesktopModules/Admin/Languages/timezoneeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Host, 0)
-                        AddModuleControl(ModuleDefID, "Verify", "Resource File Verifier", "DesktopModules/Admin/Languages/resourceverifier.ascx", "", SecurityAccessLevel.Host, 0)
-                        AddModuleControl(ModuleDefID, "PackageWriter", "Language Pack Writer", "DesktopModules/Admin/Languages/LanguagePackWriter.ascx", "", SecurityAccessLevel.Host, 0)
-
-                        'Add Module to Admin Page for all Portals
-                        AddAdminPages("Languages", "Manage Language Resources.", "~/images/icon_language_16px.gif", "~/images/icon_language_32px.gif", True, ModuleDefID, "Language Editor", "~/images/icon_language_32px.gif")
-
-                        'Remove Host Skins Page
-                        RemoveHostPage("Skins")
-
-                        'Remove old Skins module
-                        DesktopModuleController.DeleteDesktopModule("Skins")
-
-                        'Add new Skins module
-                        ModuleDefID = AddModuleDefinition("Skins", "", "Skins", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Skins/editskins.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.View, 0)
-
-                        'Add Module to Admin Page for all Portals
-                        AddAdminPages("Skins", "Manage Skin Resources.", "~/images/icon_skins_16px.gif", "~/images/icon_skins_32px.gif", True, ModuleDefID, "Skin Editor", "~/images/icon_skins_32px.gif")
-
-                        'Remove old Skin Designer module
-                        DesktopModuleController.DeleteDesktopModule("Skin Designer")
-                        DesktopModuleController.DeleteDesktopModule("SkinDesigner")
-
-                        'Add new Skin Designer module
-                        ModuleDefID = AddModuleDefinition("Skin Designer", "Allows you to modify skin attributes.", "Skin Designer", True, True)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/SkinDesigner/Attributes.ascx", "~/images/icon_skins_32px.gif", SecurityAccessLevel.Host, 0)
-
-                        'Add new Skin Designer to every Admin Skins Tab
-                        AddModuleToPages("//Admin//Skins", ModuleDefID, "Skin Designer", "~/images/icon_skins_32px.gif", True)
-
-                        'Remove Admin Whats New Page
-                        RemoveAdminPages("//Admin//WhatsNew")
-
-                        'WhatsNew needs to be set to IsPremium and removed from all portals
-                        RemoveModuleFromPortals("WhatsNew")
-
-                        'Create New WhatsNew Host Page (or get existing one)
-                        Dim newPage As TabInfo = AddHostPage("What's New", "Provides a summary of the major features for each release.", "~/images/icon_whatsnew_16px.gif", "~/images/icon_whatsnew_32px.gif", True)
-
-                        'Add WhatsNew Module To Page
-                        ModuleDefID = GetModuleDefinition("WhatsNew", "WhatsNew")
-                        AddModuleToPage(newPage, ModuleDefID, "What's New", "~/images/icon_whatsnew_32px.gif")
-
-                        'add console module
-                        ModuleDefID = AddModuleDefinition("Console", "Display children pages as icon links for navigation.", "Console", "DotNetNuke.Modules.Console.Components.ConsoleController", True, False, False)
-                        AddModuleControl(ModuleDefID, "", "Console", "DesktopModules/Admin/Console/ViewConsole.ascx", "", SecurityAccessLevel.Anonymous, 0)
-                        AddModuleControl(ModuleDefID, "Settings", "Console Settings", "DesktopModules/Admin/Console/Settings.ascx", "", SecurityAccessLevel.Admin, 0)
-
-                        'add console module to host page
-                        ModuleID = AddModuleToPage("//Host", Null.NullInteger, ModuleDefID, "Basic Features", "", True)
-                        Dim tabID As Integer = TabController.GetTabByTabPath(Null.NullInteger, "//Host")
-                        Dim tab As TabInfo = Nothing
-
-                        'add console settings for host page
-                        If (tabID <> Null.NullInteger) Then
-                            tab = objTabController.GetTab(tabID, Null.NullInteger, True)
-                            If (Not tab Is Nothing) Then
-                                AddConsoleModuleSettings(tabID, ModuleID)
-                            End If
-                        End If
-
-                        'add module to all admin pages
-                        For Each portal As PortalInfo In objPortalController.GetPortals()
-                            tabID = TabController.GetTabByTabPath(portal.PortalID, "//Admin")
-                            If (tabID <> Null.NullInteger) Then
-                                tab = objTabController.GetTab(tabID, portal.PortalID, True)
-                                If (Not tab Is Nothing) Then
-                                    ModuleID = AddModuleToPage(tab, ModuleDefID, "Basic Features", "", True)
-                                    AddConsoleModuleSettings(tabID, ModuleID)
-                                End If
-                            End If
-                        Next
-
-                        'Add Google Analytics module
-                        ModuleDefID = AddModuleDefinition("Google Analytics", "Configure portal Google Analytics settings.", "GoogleAnalytics", False, False)
-                        AddModuleControl(ModuleDefID, "", "Google Analytics", "DesktopModules/Admin/Analytics/GoogleAnalyticsSettings.ascx", "", SecurityAccessLevel.Admin, 0)
-                        AddAdminPages("Google Analytics", "Configure portal Google Analytics settings.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Google Analytics", "~/images/icon_analytics_32px.gif")
+                        UpgradeToVersion_510()
                     Case "5.1.1"
-                        'New Admin pages may not have administrator permission
-                        'Add Admin role if it does not exist for google analytics or extensions
-                        AddAdminRoleToPage("//Admin//Extensions")
-                        AddAdminRoleToPage("//Admin//GoogleAnalytics")
+                        UpgradeToVersion_511()
                     Case "5.1.3"
-                        'Ensure that default language is present (not neccessarily enabled)
-                        Dim defaultLanguage As Locale = Localization.Localization.GetLocale("en-US")
-                        If defaultLanguage Is Nothing Then
-                            defaultLanguage = New Locale
-                        End If
-                        defaultLanguage.Code = "en-US"
-                        defaultLanguage.Text = "English (United States)"
-                        Localization.Localization.SaveLanguage(defaultLanguage)
-
-                        'Ensure that there is a Default Authorization System
-                        Dim package As PackageInfo = PackageController.GetPackageByName("DefaultAuthentication")
-                        If package Is Nothing Then
-                            package = New PackageInfo()
-                            package.Name = "DefaultAuthentication"
-                            package.FriendlyName = "Default Authentication"
-                            package.Description = "The Default UserName/Password Authentication System for DotNetNuke."
-                            package.PackageType = "Auth_System"
-                            package.Version = New Version(1, 0, 0)
-                            package.Owner = "DotNetNuke"
-                            package.License = Localization.Localization.GetString("License", Localization.Localization.GlobalResourceFile)
-                            package.Organization = "DotNetNuke Corporation"
-                            package.Url = "www.dotnetnuke.com"
-                            package.Email = "support@dotnetnuke.com"
-                            package.ReleaseNotes = "There are no release notes for this version."
-                            package.IsSystemPackage = True
-                            PackageController.SavePackage(package)
-
-                            'Add Authentication System
-                            Dim authSystem As Authentication.AuthenticationInfo = Authentication.AuthenticationController.GetAuthenticationServiceByType("DNN")
-                            If authSystem Is Nothing Then
-                                authSystem = New Authentication.AuthenticationInfo
-                            End If
-                            authSystem.PackageID = package.PackageID
-                            authSystem.AuthenticationType = "DNN"
-                            authSystem.SettingsControlSrc = "DesktopModules/AuthenticationServices/DNN/Settings.ascx"
-                            authSystem.LoginControlSrc = "DesktopModules/AuthenticationServices/DNN/Login.ascx"
-                            authSystem.IsEnabled = True
-
-                            If authSystem.AuthenticationID = Null.NullInteger Then
-                                Authentication.AuthenticationController.AddAuthentication(authSystem)
-                            Else
-                                Authentication.AuthenticationController.UpdateAuthentication(authSystem)
-                            End If
-                        End If
-
+                        UpgradeToVersion_513()
                     Case "5.2.0"
-                        Dim ModuleDefID As Integer
-
-                        'Add new ViewSource control
-                        AddModuleControl(Null.NullInteger, "ViewSource", "View Module Source", "Admin/Modules/ViewSource.ascx", "~/images/icon_source_32px.gif", SecurityAccessLevel.Host, 0, "", True)
-
-                        'Add Marketplace module definition
-                        ModuleDefID = AddModuleDefinition("Marketplace", "Search for DotNetNuke modules, extension and skins.", "Marketplace")
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Marketplace/Marketplace.ascx", "~/images/icon_marketplace_32px.gif", SecurityAccessLevel.Host, 0)
-
-                        'Add marketplace Module To Page
-                        Dim newPage As TabInfo = AddHostPage("Marketplace", "Search for DotNetNuke modules, extension and skins.", "~/images/icon_marketplace_16px.gif", "~/images/icon_marketplace_32px.gif", True)
-                        ModuleDefID = GetModuleDefinition("Marketplace", "Marketplace")
-                        AddModuleToPage(newPage, ModuleDefID, "Marketplace", "~/images/icon_marketplace_32px.gif")
-
+                        UpgradeToVersion_520()
                     Case "5.2.1"
-                        ' UpgradeDefaultLanguages is a temporary procedure containing code that
-                        ' needed to execute after the 5.1.3 application upgrade code above
-                        DataProvider.Instance.ExecuteNonQuery("UpgradeDefaultLanguages")
-
-                        ' This procedure is not intended to be part of the database schema
-                        ' and is therefore dropped once it has been executed.
-                        DataProvider.Instance.ExecuteSQL("DROP PROCEDURE {databaseOwner}{objectQualifier}UpgradeDefaultLanguages")
+                        UpgradeToVersion_521()
                     Case "5.3.0"
-                        Dim ModuleDefID As Integer
-
-                        'update languages module
-                        ModuleDefID = GetModuleDefinition("Languages", "Languages")
-                        RemoveModuleControl(ModuleDefID, "")
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Languages/languageEnabler.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0, "", True)
-                        AddModuleControl(ModuleDefID, "Editor", "", "DesktopModules/Admin/Languages/languageeditor.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.View, 0)
-
-                        'Add new View Profile module
-                        ModuleDefID = AddModuleDefinition("ViewProfile", "", "ViewProfile", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/ViewProfile/ViewProfile.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.View, 0)
-                        AddModuleControl(ModuleDefID, "Settings", "Settings", "DesktopModules/Admin/ViewProfile/Settings.ascx", "~/images/icon_profile_32px.gif", SecurityAccessLevel.Edit, 0)
-
-                        'Add new Sitemap settings module
-                        ModuleDefID = AddModuleDefinition("Sitemap", "", "Sitemap", False, False)
-                        AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_analytics_32px.gif", SecurityAccessLevel.View, 0)
-                        AddAdminPages("Search Engine Sitemap", "Configure the sitemap for submission to common search engines.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Search Engine Sitemap", "~/images/icon_analytics_32px.gif")
-
-                        'Add new Image Data Type
-                        Dim listController As New ListController
-                        Dim imagedatatype As New ListEntryInfo() _
-                                                With { _
-                                                        .DefinitionID = Null.NullInteger, _
-                                                        .ListName = "DataType", _
-                                                        .Value = "Image", _
-                                                        .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
-                                                }
-                        listController.AddListEntry(imagedatatype)
-
-                        'Add new Photo Profile field to Host
-                        Dim objListController As New ListController
-                        Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
-
-                        Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
-                        ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
-
-                        Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
-                        If File.Exists(strHostTemplateFile) Then
-                            Dim tabController As New TabController()
-                            Dim objPortals As New PortalController
-                            Dim arrPortals As ArrayList = objPortals.GetPortals
-                            For Each objPortal As PortalInfo In arrPortals
-                                properties = ProfileController.GetPropertyDefinitionsByPortal(objPortal.PortalID)
-
-                                'Add new Photo Profile field to Portal
-                                ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
-
-                                'Rename old Default Page template
-                                File.Move(String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath), String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
-
-                                'Update Default profile template in every portal
-                                objPortals.CopyPageTemplate("Default.page.template", objPortal.HomeDirectoryMapPath)
-
-                                'Add User profile template to every portal
-                                objPortals.CopyPageTemplate("UserProfile.page.template", objPortal.HomeDirectoryMapPath)
-
-                                'Synchronize the Templates folder to ensure the templates are accessible
-                                FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
-
-                                Dim xmlDoc As New XmlDocument
-                                Try
-                                    ' open the XML file
-                                    xmlDoc.Load(String.Format("{0}Templates\UserProfile.page.template", objPortal.HomeDirectoryMapPath))
-                                Catch ex As Exception
-                                    LogException(ex)
-                                End Try
-
-                                Dim newTab As New TabInfo()
-                                newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
-                                tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
-
-                                'Update SiteSettings to point to the new page
-                                objPortal.UserTabId = newTab.TabID
-                                objPortals.UpdatePortalInfo(objPortal)
-
-                                'Add Users folder to every portal
-                                Dim strUsersFolder As String = String.Format("{0}Users\", objPortal.HomeDirectoryMapPath)
-
-                                If Not Directory.Exists(strUsersFolder) Then
-                                    'Create Users folder
-                                    Directory.CreateDirectory(strUsersFolder)
-
-                                    'Synchronize the Users folder to ensure the user folder is accessible
-                                    FileSystemUtils.SynchronizeFolder(objPortal.PortalID, strUsersFolder, "Users/", False, True, True, False)
-                                End If
-                            Next
-                        End If
-
-                        'Add new EventQueue Event
-                        Dim config As DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration = DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.GetConfig()
-                        If config IsNot Nothing Then
-                            If Not config.PublishedEvents.ContainsKey("Application_Start_FirstRequest") Then
-                                For Each subscriber As DotNetNuke.Services.EventQueue.Config.SubscriberInfo In config.EventQueueSubscribers.Values
-                                    DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.RegisterEventSubscription(config, "Application_Start_FirstRequest", subscriber)
-                                Next
-
-                                DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.SaveConfig(config, String.Format("{0}EventQueue\EventQueue.config", HostMapPath))
-                            End If
-                        End If
-                        'Change Key for Module Defintions
-                        ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
-                        RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
-                        AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-
-                        'Module was incorrectly assigned as "IsPremium=False"
-                        RemoveModuleFromPortals("Users And Roles")
+                        UpgradeToVersion_530()
+                    Case "5.4.0"
+                        UpgradeToVersion_540()
                 End Select
 
             Catch ex As Exception
@@ -2643,25 +2737,39 @@ Namespace DotNetNuke.Services.Upgrade
             Return strExceptions
         End Function
 
-        Private Shared Sub AddAdminRoleToPage(ByVal tabPath As String)
-            Dim portalCtrl As New PortalController
-            Dim tabCtrl As New TabController
-            Dim tabID As Integer
-            Dim tab As TabInfo
+        Public Shared Function UpdateConfig(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
+            If writeFeedback Then
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, String.Format("Updating Config Files: {0}", FormatVersion(version)))
+            End If
+            Dim strExceptions As String = UpdateConfig(DotNetNuke.Common.InstallMapPath & "Config\" & GetStringVersion(version) & ".config", version, "Core Upgrade")
 
-            For Each portal As PortalInfo In portalCtrl.GetPortals()
-                tabID = TabController.GetTabByTabPath(portal.PortalID, tabPath)
-                If (tabID <> Null.NullInteger) Then
-                    tab = tabCtrl.GetTab(tabID, portal.PortalID, True)
+            If writeFeedback Then
+                HtmlUtils.WriteSuccessError(HttpContext.Current.Response, (strExceptions = ""))
+            End If
 
-                    If (tab.TabPermissions.Count = 0) Then
-                        AddPagePermission(tab.TabPermissions, "View", Convert.ToInt32(portal.AdministratorRoleId))
-                        AddPagePermission(tab.TabPermissions, "Edit", Convert.ToInt32(portal.AdministratorRoleId))
-                        TabPermissionController.SaveTabPermissions(tab)
-                    End If
-                End If
-            Next
-        End Sub
+            Return strExceptions
+        End Function
+
+        Public Shared Function UpdateConfig(ByVal strConfigFile As String, ByVal version As System.Version, ByVal strReason As String) As String
+            Dim strExceptions As String = ""
+            If File.Exists(strConfigFile) Then
+                'Create XmlMerge instance from config file source
+                Dim stream As StreamReader = File.OpenText(strConfigFile)
+                Try
+                    Dim merge As XmlMerge = New XmlMerge(stream, version.ToString(3), strReason)
+
+                    'Process merge
+                    merge.UpdateConfigs()
+                Catch ex As Exception
+                    LogException(ex)
+                    strExceptions += "Error: " & ex.Message & vbCrLf
+                Finally
+                    'Close stream
+                    stream.Close()
+                End Try
+            End If
+            Return strExceptions
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

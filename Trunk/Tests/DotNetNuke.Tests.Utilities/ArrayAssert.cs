@@ -19,7 +19,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {

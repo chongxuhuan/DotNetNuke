@@ -30,7 +30,7 @@
                 </tr>
                 <tr id="trLanguagePackType" runat="server">
                     <td style="width:20px"></td>
-                    <td class="SubHead" style="width:200px"><dnn:Label ID="plPackageType" runat="server" ControlName="rbPackageType /></td>
+                    <td class="SubHead" style="width:200px"><dnn:Label ID="plPackageType" runat="server" ControlName="rbPackageType" /></td>
                     <td class="NormalTextBox" style="width:325px">
                         <asp:RadioButtonList ID="rbPackageType" runat="server" RepeatDirection="Horizontal">
                             <asp:ListItem Value="Core" resourcekey="Core" />

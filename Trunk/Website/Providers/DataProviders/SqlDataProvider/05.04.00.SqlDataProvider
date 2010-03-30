@@ -8,6 +8,313 @@
 /*****                                                  *****/
 /************************************************************/
 
+/* Add RegisterTabId to PortalLocalization Table */
+/*************************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}PortalLocalization' AND COLUMN_NAME='RegisterTabId')
+	BEGIN
+		-- Add new RegisterTabId Column
+		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization
+			ADD RegisterTabId int NULL
+	END
+GO
+
+/* Update vw_Portals View */
+/**************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}vw_Portals]') AND OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Portals]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Portals]  
+AS  
+    SELECT DISTINCT    
+        P.PortalID,   
+        pl.PortalName as PortalName, 
+        CASE WHEN LEFT(LOWER(pl.LogoFile), 7) = 'fileid=' THEN  
+                      (SELECT Folder + FileName  
+                        FROM  {databaseOwner}{objectQualifier}Files  
+                        WHERE fileid = CAST((RIGHT(LOWER(pl.LogoFile), Len(pl.LogoFile) - 7)) AS int)) ELSE pl.LogoFile END AS LogoFile,       
+        pl.FooterText as FooterText,   
+        P.ExpiryDate,   
+        P.UserRegistration,   
+        P.BannerAdvertising,   
+        P.AdministratorId,   
+        P.Currency,   
+        P.HostFee,   
+        P.HostSpace,   
+        P.PageQuota,   
+        P.UserQuota,   
+        P.AdministratorRoleId,   
+        P.RegisteredRoleId,   
+        pl.Description as Description,   
+        pl.KeyWords as KeyWords,   
+         CASE WHEN LEFT(LOWER(pl.BackgroundFile), 7) = 'fileid=' THEN  
+                          (SELECT Folder + FileName  
+                            FROM {databaseOwner}{objectQualifier}Files  
+                            WHERE fileid = CAST((RIGHT(LOWER(pl.BackgroundFile), Len(pl.BackgroundFile) - 7)) AS int)) ELSE pl.BackgroundFile END AS BackgroundFile,   
+        P.GUID,   
+        P.PaymentProcessor,   
+        P.ProcessorUserId,   
+        P.ProcessorPassword,   
+        P.SiteLogHistory,   
+        U.Email,   
+        P.DefaultLanguage,   
+        P.TimezoneOffset,   
+        pl.AdminTabId as AdminTabId,   
+        P.HomeDirectory,   
+        pl.SplashTabId as SplashTabId,   
+        pl.HomeTabId as HomeTabId,   
+        pl.LoginTabId as LoginTabId,   
+        pl.RegisterTabId as RegisterTabId,   
+        pl.UserTabId as UserTabId,  
+        (SELECT TOP 1 TabID FROM {databaseOwner}{objectQualifier}Tabs WHERE (PortalID IS NULL) AND (ParentId IS NULL)) AS SuperTabId,
+        P.CreatedByUserID, 
+        P.CreatedOnDate, 
+        P.LastModifiedByUserID, 
+        P.LastModifiedOnDate,
+        PL.CultureCode
+   FROM  {databaseOwner}{objectQualifier}Portals AS P INNER JOIN
+		{databaseOwner}{objectQualifier}PortalLocalization AS PL ON P.PortalID = PL.PortalID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+
+GO
+
+/* Update UpdatePortalInfo Stored Procedure */
+/********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+	@PortalID           int,
+	@PortalName         nvarchar(128),
+	@LogoFile           nvarchar(50),
+	@FooterText         nvarchar(100),
+	@ExpiryDate         datetime,
+	@UserRegistration   int,
+	@BannerAdvertising  int,
+	@Currency           char(3),
+	@AdministratorId    int,
+	@HostFee            money,
+	@HostSpace          int,
+	@PageQuota          int,
+	@UserQuota          int,
+	@PaymentProcessor   nvarchar(50),
+	@ProcessorUserId    nvarchar(50),
+	@ProcessorPassword  nvarchar(50),
+	@Description        nvarchar(500),
+	@KeyWords           nvarchar(500),
+	@BackgroundFile     nvarchar(50),
+	@SiteLogHistory     int,
+	@SplashTabId        int,
+	@HomeTabId          int,
+	@LoginTabId         int,
+	@RegisterTabId      int,
+	@UserTabId          int,
+	@DefaultLanguage    nvarchar(10),
+	@TimeZoneOffset	    int,
+	@HomeDirectory		varchar(100),
+	@LastModifiedByUserID	int,
+	@CultureCode   nvarchar(50)
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}Portals
+		SET    
+			   ExpiryDate = @ExpiryDate,
+			   UserRegistration = @UserRegistration,
+			   BannerAdvertising = @BannerAdvertising,
+			   Currency = @Currency,
+			   AdministratorId = @AdministratorId,
+			   HostFee = @HostFee,
+			   HostSpace = @HostSpace,
+			   PageQuota = @PageQuota,
+			   UserQuota = @UserQuota,
+			   PaymentProcessor = @PaymentProcessor,
+			   ProcessorUserId = @ProcessorUserId,
+			   ProcessorPassword = @ProcessorPassword,
+			   SiteLogHistory = @SiteLogHistory,
+			   DefaultLanguage = @DefaultLanguage,
+			   TimeZoneOffset = @TimeZoneOffset,
+			   HomeDirectory = @HomeDirectory,
+			   LastModifiedByUserID = @LastModifiedByUserID,
+			   LastModifiedOnDate = getdate()
+	WHERE  PortalId = @PortalID
+
+	UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+		SET
+				PortalName = @PortalName,
+				LogoFile = @LogoFile,
+				FooterText = @FooterText,
+				Description = @Description,
+				KeyWords = @KeyWords,
+				BackgroundFile = @BackgroundFile,
+				HomeTabId = @HomeTabId,
+				LoginTabId = @LoginTabId,
+				RegisterTabId = @RegisterTabId,
+				UserTabId = @UserTabId,
+				SplashTabId = @SplashTabId,
+				LastModifiedByUserID = @LastModifiedByUserID,
+				LastModifiedOnDate = getdate()
+	WHERE	PortalId = @PortalID AND CultureCode = @CultureCode
+GO
+
+/* Update UpdatePortalSetup Stored Procedure */
+/********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalSetup]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalSetup
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalSetup
+	@PortalId				int,
+	@AdministratorId		int,
+	@AdministratorRoleId	int,
+	@RegisteredRoleId		int,
+	@SplashTabId			int,
+	@HomeTabId				int,
+	@LoginTabId				int,
+	@RegisterTabId			int,
+	@UserTabId				int,
+	@AdminTabId				int,
+	@CultureCode			nvarchar(50)
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}Portals
+		SET    
+			AdministratorId = @AdministratorId, 
+			AdministratorRoleId = @AdministratorRoleId, 
+			RegisteredRoleId = @RegisteredRoleId
+	WHERE  PortalId = @PortalId
+
+	UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+		SET 
+			HomeTabId = @HomeTabId,
+			LoginTabId = @LoginTabId,
+			UserTabId = @UserTabId,
+			RegisterTabId = @RegisterTabId,
+			AdminTabId = @AdminTabId,
+			SplashTabId = @SplashTabId
+      WHERE portalID = @PortalID
+GO
+
+/* Add Missing Foreign Keys For ContentItems_Tags */
+/**************************************************/
+
+ALTER TABLE {databaseOwner}[{objectQualifier}ContentItems_Tags]  WITH CHECK 
+	ADD  CONSTRAINT [FK_{objectQualifier}ContentItems_Tags_{objectQualifier}ContentItems] FOREIGN KEY([ContentItemID]) REFERENCES {databaseOwner}[{objectQualifier}ContentItems] ([ContentItemID]) ON UPDATE CASCADE ON DELETE CASCADE
+	
+ALTER TABLE {databaseOwner}[{objectQualifier}ContentItems_Tags]  WITH CHECK 
+	ADD  CONSTRAINT [FK_{objectQualifier}ContentItems_Tags_{objectQualifier}Taxonomy_Terms] FOREIGN KEY([TermID]) REFERENCES {databaseOwner}[{objectQualifier}Taxonomy_Terms] ([TermID]) ON UPDATE CASCADE ON DELETE CASCADE
+GO
+
+/* Add MetaData Table */
+/**********************/
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}MetaData]') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}MetaData]
+		(
+			[MetaDataID] [int] IDENTITY(1,1) NOT NULL,
+			[MetaDataName] [nvarchar](100) NOT NULL,
+			[MetaDataDescription] [nvarchar](2500) NULL,
+			CONSTRAINT [PK_{objectQualifier}MetaData] PRIMARY KEY CLUSTERED ( [MetaDataID] ASC )
+		)
+	END
+GO
+
+/* Add ContentItems_MetaData Table */
+/***********************************/
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}ContentItems_MetaData]') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}ContentItems_MetaData]
+		(
+				[ContentItemMetaDataID] [int] IDENTITY(1,1) NOT NULL,
+				[ContentItemID] [int] NOT NULL,
+				[MetaDataID] [int] NOT NULL,
+				[MetaDataValue] [nvarchar](max) NULL,
+				CONSTRAINT [PK_{objectQualifier}Content_MetaData] PRIMARY KEY CLUSTERED ( [ContentItemMetaDataID] ASC )
+		)
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}ContentItems_MetaData]  WITH CHECK 
+			ADD  CONSTRAINT [FK_{objectQualifier}ContentItems_MetaData_{objectQualifier}ContentItems] FOREIGN KEY([ContentItemID]) REFERENCES {databaseOwner}[{objectQualifier}ContentItems] ([ContentItemID]) ON UPDATE CASCADE ON DELETE CASCADE
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}ContentItems_MetaData]  WITH CHECK 
+			ADD  CONSTRAINT [FK_{objectQualifier}ContentItems_MetaData{objectQualifier}MetaData] FOREIGN KEY([MetaDataID]) REFERENCES {databaseOwner}[{objectQualifier}MetaData] ([MetaDataID]) ON UPDATE CASCADE ON DELETE CASCADE
+	END
+GO
+
+/* Add AddMetaData Procedure */
+/******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddMetaData]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}AddMetaData
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddMetaData] 
+	@ContentItemID		int,
+	@Name				nvarchar(100),
+	@Value				nvarchar(MAX)
+AS
+	DECLARE @MetaDataID	int
+	SET @MetaDataID = (SELECT MetaDataID FROM {objectQualifier}MetaData WHERE MetaDataName = @Name)
+	
+	IF @MetaDataID IS NULL
+		BEGIN
+			--Insert new item into MetaData table
+			INSERT INTO {databaseOwner}{objectQualifier}MetaData ( MetaDataName ) VALUES ( @Name )
+
+			SET @MetaDataID = (SELECT SCOPE_IDENTITY() )
+		END
+		
+	INSERT INTO {databaseOwner}{objectQualifier}ContentItems_MetaData (
+		ContentItemID,
+		MetaDataID,
+		MetaDataValue
+	)
+	VALUES (
+		@ContentItemID,
+		@MetaDataID,
+		@Value
+	)
+		
+GO
+
+/* Add DeleteMetaData Procedure */
+/***********************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteMetaData]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteMetaData
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteMetaData] 
+	@ContentItemId		int,
+	@Name				nvarchar(100),
+	@Value				nvarchar(MAX)
+	
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}ContentItems_MetaData
+	FROM {databaseOwner}{objectQualifier}ContentItems_MetaData AS cm
+		INNER JOIN {databaseOwner}{objectQualifier}MetaData AS m ON cm.MetaDataID = m.MetaDataID
+	WHERE cm.ContentItemId = @ContentItemId AND m.MetaDataName = @Name AND cm.MetaDataValue = @Value
+GO
+
+/* Add GetMetaData Procedure */
+/*****************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetMetaData]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetMetaData
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMetaData] 
+	@ContentItemId			int
+AS
+	SELECT *
+	FROM {databaseOwner}{objectQualifier}ContentItems_MetaData
+	WHERE ContentItemId = @ContentItemId
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

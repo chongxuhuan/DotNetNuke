@@ -961,4 +961,30 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
+  <data name="WhatsNew.05.03.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Issue fixed where Newsletter module only sent SMTP test email.&lt;/li&gt;
+	&lt;li&gt;Issue fixed with signature change to Synchronize Folders methods.&lt;/li&gt;
+	&lt;li&gt;Fixed the issue with the email notifications where the From and To addresses were swapped.&lt;/li&gt;
+	&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;None&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;
+      The following modules and providers have been updated in the 5.2.0 packages. 
+      Please see the specific project pages for notes on what bugs or enhancements
+      were corrected with each release.
+&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;XML Module 04.03.05&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
 </root>

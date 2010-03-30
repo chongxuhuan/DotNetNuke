@@ -26,10 +26,14 @@ using Moq;
 using DotNetNuke.Modules.Taxonomy.Views;
 using System.Web;
 using DotNetNuke.Tests.Content.Mocks;
-using DotNetNuke.Web.Mvp;
-using DotNetNuke.Modules.Taxonomy.Views.Models;
 using System;
 using System.Collections.Specialized;
+using DotNetNuke.Modules.Taxonomy.Views.Models;
+using DotNetNuke.Common.Utilities;
+using System.Collections.Generic;
+using DotNetNuke.Common;
+using DotNetNuke.Web.Validators;
+using DotNetNuke.Web.UI.WebControls;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -39,15 +43,7 @@ namespace DotNetNuke.Tests.Content.Presenters
     [TestFixture]
     public class EditVocabularyPresenterTests
     {
-       // #region Private Members
-
-       // private EditVocabularyPresenter presenter;
-       // private Term term;
-       // private Vocabulary vocabulary;
-
-       // #endregion
-
-        #region Initialization Tests
+        #region Constructor Tests
 
         [Test]
         public void EditVocabularyPresenter_Constructor_Requires_Non_Null_VocabularyController()
@@ -61,7 +57,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         }
 
         [Test]
-        public void EditVocabularyPresenter_Constructor_Requires_Non_TermController()
+        public void EditVocabularyPresenter_Constructor_Requires_Non_Null_TermController()
         {
             //Arrange
             Mock<IEditVocabularyView> view = new Mock<IEditVocabularyView>();
@@ -71,555 +67,717 @@ namespace DotNetNuke.Tests.Content.Presenters
             AutoTester.ArgumentNull<ITermController>(t => new EditVocabularyPresenter(view.Object, vocabularyController.Object, t));
         }
 
-        //[Test]
-        //public void EditVocabularyPresenter_OnInit_Calls_Controller_Gets_Vocabulary_With_Correct_Id()
-        //{
-        //    // Arrange
-        //    Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-        //    Mock<IInitializeView> initializeView = mockView.As<IInitializeView>();
-        //    mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+        #endregion
 
-        //    Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
-        //    NameValueCollection requestParams = new NameValueCollection();
-        //    requestParams.Add("VocabularyId", Constants.VOCABULARY_ValidVocabularyId.ToString());
-        //    mockHttpRequest.Setup(r => r.Params).Returns(requestParams);
+        #region Initialization Tests
 
-        //    EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpRequest);
+        [Test]
+        public void EditVocabularyPresenter_OnInit_Calls_VocabularyController_GetVocabularies()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
-        //    // Act (Raise the Initialize Event)
-        //    initializeView.Raise(v => v.Initialize += null, EventArgs.Empty);
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
 
-        //    // Assert
-        //    Assert.AreEqual<int>(Constants.VOCABULARY_ValidVocabularyId, mockView.Object.Model.Vocabulary.VocabularyId);
-        //}
+            // Act (Raise the Initialize Event)
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.VocabularyController)
+                .Verify(c => c.GetVocabularies());
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_OnInit_Calls_Controller_Gets_Vocabulary_With_Correct_Id()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
+
+            // Act (Raise the Initialize Event)
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Assert
+            Assert.AreEqual<int>(Constants.VOCABULARY_ValidVocabularyId, mockView.Object.Model.Vocabulary.VocabularyId);
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_OnInit_Calls_TermController_GetTermsByVocabulary_With_Correct_Id()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
+
+            // Act (Raise the Initialize Event)
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.TermController)
+                .Verify(c => c.GetTermsByVocabulary(Constants.VOCABULARY_ValidVocabularyId));
+        }
 
         #endregion
 
-       // #region View Load Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_Loads_Vocabulary_With_Id_Specified_In_Context_If_NotNull_And_Not_PostBack()
-       // {
-       //     // Arrange
-       //     EditVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.TabId = Constants.TAB_ValidId;
-       //     presenter.Model.ModuleId = Constants.MODULE_ValidId;
-       //     presenter.Model.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
-       //     presenter.Model.HasPermission = true;
-
-       //     // Act
-       //     presenter.LoadInternal();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindVocabulary(It.IsAny<Vocabulary>(), false,
-       //                                             presenter.Model.IsSuperUser));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_Retrieves_All_Terms_For_Vocabulary_And_Passes_Them_To_View()
-       // {
-       //     // Arrange
-       //     EditVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.TabId = Constants.TAB_ValidId;
-       //     presenter.Model.ModuleId = Constants.MODULE_ValidId;
-       //     presenter.Model.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
-       //     presenter.Model.HasPermission = true;
-
-       //     // Act
-       //     presenter.LoadInternal();
-
-       //     // Assert
-       //     Assert.AreEqual(MockHelper.TestTerms.ToList().Count, presenter.Terms.Count);
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindTerms(It.IsAny<IEnumerable<Term>>(), 
-       //                                     false,
-       //                                     true));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_Redirects_To_AccessDenied_If_CurrentUser_Does_Not_Have_Permissions()
-       // {
-       //     // Arrange
-       //     EditVocabularyPresenter presenter = CreatePresenter();
-       //     presenter.Model.HasPermission = false;
-
-       //     Mock.Get(presenter.View)
-       //         .Setup(v => v.BindVocabulary(It.IsAny<Vocabulary>(), false,
-       //                                        presenter.Model.IsSuperUser))
-       //         .Never();
-
-       //     // Act
-       //     presenter.LoadInternal();
-
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToAccessDenied());
-       // }
-
-       // #endregion
-
-       // #region AddTerm Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_AddTerm_Loads_New_Term()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.AddTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindTerm(It.Is<Term>(t => t.TermId == Null.NullInteger),
-       //                                 It.IsAny<IEnumerable<Term>>(),
-       //                                 presenter.IsHeirarchical,
-       //                                 false,
-       //                                 false));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_AddTerm_Displays_Term_Editor()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.AddTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ShowTermEditor(true));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_AddTerm_Correctly_Sets_TermEditor_Mode()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
+        #region View Load Tests
+
+        [Test]
+        [Row(true)]
+        [Row(false)]
+        public void EditVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser)
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Vocabulary = new Vocabulary()
+                {
+                    VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
+                    ScopeTypeId = 1
+                }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
+            presenter.IsSuperUser = isSuperUser;
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Act (Raise the Load Event)
+            mockView.Raise(v => v.Load += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.BindVocabulary(It.Is<Vocabulary>(vm => vm.VocabularyId == Constants.VOCABULARY_UpdateVocabularyId),
+                                                                            presenter.IsEditEnabled,
+                                                                            isSuperUser));
+        }
+
+        [Test]
+        [Row(true)]
+        [Row(false)]
+        public void EditVocabularyPresenter_OnLoad_Calls_View_BindTerms(bool isPostBack)
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
+            presenter.IsPostBack = isPostBack;
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Act (Raise the Load Event)
+            mockView.Raise(v => v.Load += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.BindTerms(It.IsAny<List<Term>>(), presenter.IsHeirarchical, !isPostBack));
+        }
+
+        #endregion
+
+        #region AddTerm Tests
+
+        [Test]
+        public void EditVocabularyPresenter_AddTerm_Loads_New_Term()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.AddTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.BindTerm(It.Is<Term>(t => t.TermId == Null.NullInteger),
+                                        It.IsAny<IEnumerable<Term>>(),
+                                        presenter.IsHeirarchical,
+                                        false,
+                                        false));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_AddTerm_Displays_Term_Editor()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.AddTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ShowTermEditor(true));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_AddTerm_Correctly_Sets_TermEditor_Mode()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.AddTerm += null, EventArgs.Empty);
 
-       //     // Act
-       //     presenter.AddTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.SetTermEditorMode(true, Null.NullInteger));
-       // }
-
-       // #endregion
-
-       // #region Cancel Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
-       // {
-       //     // Arrange
-       //     EditVocabularyPresenter presenter = CreatePresenter();
-
-       //     // Act
-       //     presenter.Cancel();
-
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToPresenter(It.IsAny<VocabularyListPresenterModel>()));
-       // }
-
-       // #endregion
-
-       // #region CancelTerm Tests
-
-       //[Test]
-       //public void EditVocabularyPresenter_CancelTerm_Hides_Term_Editor()
-       //{
-       //    // Arrange
-       //    SetUpPresenter();
-
-       //    // Act
-       //    presenter.CancelTerm();
-
-       //    // Assert
-       //    Mock.Get(presenter.View)
-       //        .Verify(v => v.ShowTermEditor(false));
-       //}
-
-       //[Test]
-       //public void EditVocabularyPresenter_CancelTerm_Clears_SelectedTerm()
-       //{
-       //    // Arrange
-       //    SetUpPresenter();
-
-       //    // Act
-       //    presenter.CancelTerm();
-
-       //    // Assert
-       //    Mock.Get(presenter.View)
-       //        .Verify(v => v.ClearSelectedTerm());
-       //}
-
-       //#endregion
-
-       // #region DeleteTerm Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteTerm_Deletes_Term()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
+            // Assert
+            mockView.Verify(v => v.SetTermEditorMode(true, Null.NullInteger));
+        }
 
-       //     // Act
-       //     presenter.DeleteTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.TermController)
-       //         .Verify(r => r.DeleteTerm(It.Is<Term>(t => t.TermId == term.TermId)));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteTerm_Clears_SelectedTerm()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.DeleteTerm();
+        #endregion
 
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ClearSelectedTerm());
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteTerm_Refreshes_Terms()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.DeleteTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindTerms(It.IsAny<IEnumerable<Term>>(),
-       //                                     vocabulary.Type == VocabularyType.Hierarchy,
-       //                                     true));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteTerm_Hides_Term_Editor()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.DeleteTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ShowTermEditor(false));
-       // }
-
-       // #endregion
-
-       // #region DeleteVocabulary Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteVocabulary_Redirects_To_Vocabulary_List_View()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.DeleteVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToPresenter(It.IsAny<VocabularyListPresenterModel>()));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_DeleteVocabulary_Deletes_Vocabulary()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.DeleteVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.VocabularyController)
-       //         .Verify(r => r.DeleteVocabulary(It.Is<Vocabulary>(v => v.VocabularyId == vocabulary.VocabularyId)));
-       // }
-
-       // #endregion
-
-       // #region SaveTerm Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Validates_Term()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     var mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator, term);
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(term));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Does_Not_Save_If_Term_Invalid()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     Mock.Get(presenter.TermController)
-       //         .Setup(r => r.UpdateTerm(term))
-       //         .Never();
-
-       //     var mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator, term);
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(term));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Adds_New_Term_If_Term_Valid_And_TermId_Negative_1()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     presenter.Vocabulary = vocabulary;
-       //     presenter.Term = term;            
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.TermController)
-       //         .Verify(r => r.AddTerm(It.Is<Term>(t => t.TermId == term.TermId)));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Updates_Term_If_Term_Valid()
-       // {
-       //     // Arrange
-       //     SetUpPresenter(Constants.TERM_ValidTermId);
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.TermController)
-       //         .Verify(r => r.UpdateTerm(It.Is<Term>(t => t.TermId == term.TermId)));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Sets_CurrentTerm_To_Null_With_No_Errors()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Assert.IsNull(presenter.Term);
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Clears_SelectedTerm_With_No_Errors()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ClearSelectedTerm());
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Refreshes_Terms_With_No_Errors()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindTerms(It.IsAny<IEnumerable<Term>>(),
-       //                                     vocabulary.Type == VocabularyType.Hierarchy,
-       //                                     true));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveTerm_Hides_Term_Editor()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveTerm();
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ShowTermEditor(false));
-       // }
-
-       // #endregion
-
-       // #region SaveVocabulary Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveVocabulary_Validates_Vocabulary()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     var mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator, vocabulary);
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(vocabulary));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveVocabulary_Does_Not_Save_If_Vocabulary_Invalid()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     Mock.Get(presenter.VocabularyController)
-       //         .Setup(r => r.UpdateVocabulary(vocabulary))
-       //         .Never();
-
-       //     var mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator, vocabulary);
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     mockValidator.Verify(v => v.ValidateObject(vocabulary));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.VocabularyController)
-       //         .Verify(r => r.UpdateVocabulary(It.Is<Vocabulary>(v => v.VocabularyId == vocabulary.VocabularyId)));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SaveVocabulary();
-
-       //     // Assert
-       //     Mock.Get(presenter.Environment)
-       //         .Verify(c => c.RedirectToPresenter(It.IsAny<VocabularyListPresenterModel>()));
-       // }
-
-       // #endregion
-
-       // #region SelectedTerm Tests
-
-       //[Test]
-       // public void EditVocabularyPresenter_Loads_SelectedTerm_When_Term_Is_Selected()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SelectTerm(term);
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.BindTerm(term,
-       //                                 It.IsAny<IEnumerable<Term>>(),
-       //                                 presenter.IsHeirarchical,
-       //                                 false,
-       //                                 false));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_Displays_Term_Editor_When_Term_Is_Selected()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SelectTerm(term);
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.ShowTermEditor(true));
-       // }
-
-       //[Test]
-       // public void EditVocabularyPresenter_Correctly_Sets_TermEditor_Mode_When_Term_Is_Selected()
-       // {
-       //     // Arrange
-       //     SetUpPresenter();
-
-       //     // Act
-       //     presenter.SelectTerm(term);
-
-       //     // Assert
-       //     Mock.Get(presenter.View)
-       //         .Verify(v => v.SetTermEditorMode(false, term.TermId));
-       // }
-
-       // #endregion
+        #region Cancel Tests
+
+        [Test]
+        public void EditVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, true);
+            presenter.TabId = Constants.TAB_ValidId;
+
+            // Act
+            mockView.Raise(v => v.Cancel += null, EventArgs.Empty);
+
+            // Assert
+            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        }
+
+        #endregion
+
+        #region CancelTerm Tests
+
+        [Test]
+        public void EditVocabularyPresenter_CancelTerm_Hides_Term_Editor()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.CancelTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ShowTermEditor(false));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_CancelTerm_Clears_SelectedTerm()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.CancelTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ClearSelectedTerm());
+        }
+
+        #endregion
+
+        #region DeleteTerm Tests
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteTerm_Calls_TermController_DeleteTerm()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel 
+                { 
+                    Term = new Term { TermId = Constants.TERM_DeleteTermId } 
+                };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.DeleteTerm += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.TermController)
+                .Verify(r => r.DeleteTerm(It.Is<Term>(t => t.TermId == Constants.TERM_DeleteTermId)));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteTerm_Clears_SelectedTerm()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.DeleteTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ClearSelectedTerm());
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteTerm_Refreshes_Terms()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.DeleteTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.BindTerms(It.IsAny<IEnumerable<Term>>(),
+                                            presenter.IsHeirarchical,
+                                            true));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteTerm_Hides_Term_Editor()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.DeleteTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ShowTermEditor(false));
+        }
+
+        #endregion
+
+        #region DeleteVocabulary Tests
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteVocabulary_Deletes_Vocabulary()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, Constants.VOCABULARY_DeleteVocabularyId, true);
+
+            // Act
+            mockView.Raise(v => v.Delete += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.VocabularyController)
+                .Verify(r => r.DeleteVocabulary(It.Is<Vocabulary>(v => v.VocabularyId == Constants.VOCABULARY_DeleteVocabularyId)));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_DeleteVocabulary_Redirects_To_Vocabulary_List_View()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, Constants.VOCABULARY_DeleteVocabularyId, true);
+            presenter.TabId = Constants.TAB_ValidId;
+
+            // Act
+            mockView.Raise(v => v.Delete += null, EventArgs.Empty);
+
+            // Assert
+            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        }
+
+
+        #endregion
+
+        #region SaveTerm Tests
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Validates_Term()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            Mock<ObjectValidator> mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator, editModel.Term);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockValidator.Verify(v => v.ValidateObject(It.IsAny<Term>()));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Does_Not_Save_If_Term_Invalid()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            Mock<ObjectValidator> mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator, editModel.Term);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.TermController)
+                .Verify(r => r.UpdateTerm(It.IsAny<Term>()), Times.Never());
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Adds_New_Term_If_TermId_Negative_1()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term()
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.TermController)
+                .Verify(r => r.AddTerm(It.Is<Term>(t => t.TermId == Null.NullInteger)));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Updates_Term_If_Term_Valid()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.TermController)
+                .Verify(r => r.UpdateTerm(It.Is<Term>(t => t.TermId == Constants.TERM_UpdateTermId)));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Clears_SelectedTerm()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ClearSelectedTerm());
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Refreshes_Terms_List()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.BindTerms(It.IsAny<IEnumerable<Term>>(),
+                                            presenter.IsHeirarchical,
+                                            true));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveTerm_Hides_Term_Editor()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_UpdateTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SaveTerm += null, EventArgs.Empty);
+
+            // Assert
+            mockView.Verify(v => v.ShowTermEditor(false));
+        }
+
+        #endregion
+
+        #region SaveVocabulary Tests
+
+        [Test]
+        public void EditVocabularyPresenter_SaveVocabulary_Validates_Vocabulary()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Vocabulary = new Vocabulary() 
+                { 
+                    VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
+                    ScopeTypeId = 1
+                }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, Constants.VOCABULARY_UpdateVocabularyId, true);
+
+            Mock<ObjectValidator> mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator, editModel.Vocabulary);
+
+            // Act
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
+
+            // Assert
+            mockValidator.Verify(v => v.ValidateObject(editModel.Vocabulary));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveVocabulary_Does_Not_Save_If_Vocabulary_Invalid()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Vocabulary = new Vocabulary()
+                {
+                    VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
+                    ScopeTypeId = 1
+                }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, Constants.VOCABULARY_UpdateVocabularyId, true);
+
+            Mock<ObjectValidator> mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator, editModel.Vocabulary);
+
+            // Act
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.VocabularyController)
+                .Verify(r => r.UpdateVocabulary(editModel.Vocabulary), Times.Never());
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Vocabulary = new Vocabulary()
+                {
+                    VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
+                    ScopeTypeId = 1
+                }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, Constants.VOCABULARY_UpdateVocabularyId, true);
+
+            // Act
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
+
+            // Assert
+            Mock.Get(presenter.VocabularyController)
+                .Verify(r => r.UpdateVocabulary(It.Is<Vocabulary>(v => v.VocabularyId == Constants.VOCABULARY_UpdateVocabularyId)));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Vocabulary = new Vocabulary()
+                {
+                    VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
+                    ScopeTypeId = 1
+                }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, Constants.VOCABULARY_UpdateVocabularyId, true);
+            presenter.TabId = Constants.TAB_ValidId;
+
+            // Act
+            mockView.Raise(v => v.Save += null, EventArgs.Empty);
+
+            // Assert
+            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        }
+
+        #endregion
+
+        #region SelectedTerm Tests
+
+        [Test]
+        public void EditVocabularyPresenter_Loads_SelectedTerm_When_Term_Is_Selected()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_ValidTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SelectTerm += null, new TermsEventArgs(editModel.Term));
+
+            // Assert
+            Mock.Get(presenter.View)
+                .Verify(v => v.BindTerm(editModel.Term,
+                                        It.IsAny<IEnumerable<Term>>(),
+                                        presenter.IsHeirarchical,
+                                        false,
+                                        false));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_Displays_Term_Editor_When_Term_Is_Selected()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_ValidTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SelectTerm += null, new TermsEventArgs(editModel.Term));
+
+            // Assert
+            mockView.Verify(v => v.ShowTermEditor(true));
+        }
+
+        [Test]
+        public void EditVocabularyPresenter_Correctly_Sets_TermEditor_Mode_When_Term_Is_Selected()
+        {
+            // Arrange
+            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+
+            EditVocabularyModel editModel = new EditVocabularyModel
+            {
+                Term = new Term() { TermId = Constants.TERM_ValidTermId }
+            };
+            mockView.Setup(v => v.Model).Returns(editModel);
+
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
+
+            // Act
+            mockView.Raise(v => v.SelectTerm += null, new TermsEventArgs(editModel.Term));
+
+            // Assert
+            mockView.Verify(v => v.SetTermEditorMode(false, Constants.TERM_ValidTermId));
+        }
+
+        #endregion
 
         #region Helpers
 
-        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView)
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, bool initialize)
         {
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            return CreatePresenter(mockView, new Mock<HttpResponseBase>(), Constants.VOCABULARY_ValidVocabularyId, initialize);
+        }
+
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, int vocabularyId, bool initialize)
+        {
+            return CreatePresenter(mockView, new Mock<HttpResponseBase>(), vocabularyId, initialize);
+        }
+
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse, bool initialize)
+        {
+            return CreatePresenter(mockView, mockHttpResponse, Constants.VOCABULARY_ValidVocabularyId, initialize);
+        }
+
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse, int vocabularyId, bool initialize)
+        {
             Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
+            NameValueCollection requestParams = new NameValueCollection();
+            requestParams.Add("VocabularyId", vocabularyId.ToString());
+            mockHttpRequest.Setup(r => r.Params).Returns(requestParams);
 
-            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
-
+            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest, initialize);
         }
 
-        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse)
+        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse, Mock<HttpRequestBase> mockHttpRequest, bool initialize)
         {
-            Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
-            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
-        }
+            MockHelper.CreateMockScopeTypeController();
 
-        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpRequestBase> mockHttpRequest)
-        {
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
-            return CreatePresenter(mockView, mockHttpResponse, mockHttpRequest);
-        }
-
-        protected EditVocabularyPresenter CreatePresenter(Mock<IEditVocabularyView> mockView, Mock<HttpResponseBase> mockHttpResponse, Mock<HttpRequestBase> mockHttpRequest)
-        {
             Mock<HttpContextBase> mockHttpContext = new Mock<HttpContextBase>();
             mockHttpContext.Setup(h => h.Response).Returns(mockHttpResponse.Object);
             mockHttpContext.Setup(h => h.Request).Returns(mockHttpRequest.Object);
@@ -629,6 +787,12 @@ namespace DotNetNuke.Tests.Content.Presenters
             {
                 HttpContext = mockHttpContext.Object
             };
+
+            if (initialize)
+            {
+                mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+                mockView.Raise(v => v.Load += null, EventArgs.Empty);
+            }
 
             return presenter;
         }

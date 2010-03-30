@@ -86,14 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb" />
-    <Compile Include="Mvp\IInitializeView.vb" />
     <Compile Include="Mvp\AttributeBasedViewStateSerializer.vb" />
-    <Compile Include="Mvp\IShowMessage.vb" />
+    <Compile Include="Mvp\IModuleView.vb" />
     <Compile Include="Mvp\ModulePresenter.vb" />
     <Compile Include="Mvp\ModuleView.vb">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Mvp\ModuleView`T.vb">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Mvp\ViewStateAttribute.vb" />
@@ -136,6 +132,7 @@
     <Compile Include="UI\WebControls\IDnnRibbonBarTool.vb" />
     <Compile Include="UI\WebControls\RibbonBarToolInfo.vb" />
     <Compile Include="UI\WebControls\DnnGridItemSelectedEventArgs.vb" />
+    <Compile Include="UI\WebControls\Tags.vb" />
     <Compile Include="UI\WebControls\TermsEventArgs.vb" />
     <Compile Include="UI\WebControls\TermsList.vb" />
     <Compile Include="UI\WebControls\TermsSelector.vb" />

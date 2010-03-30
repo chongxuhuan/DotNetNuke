@@ -26,11 +26,12 @@ Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Entities.Content.Data
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class CreateVocabularyPresenter
-        Inherits ModulePresenter(Of ICreateVocabularyView)
+        Inherits ModulePresenter(Of ICreateVocabularyView, CreateVocabularyModel)
 
 #Region "Private Members"
 
@@ -54,7 +55,6 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             _ScopeTypeController = scopeTypeController
 
             AddHandler View.Cancel, AddressOf Cancel
-            AddHandler View.Load, AddressOf Load
             AddHandler View.Save, AddressOf Save
             View.Model.Vocabulary = GetVocabulary()
         End Sub
@@ -62,6 +62,12 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 #End Region
 
 #Region "Public Properties"
+
+        Public ReadOnly Property ScopeTypeController() As IScopeTypeController
+            Get
+                Return _ScopeTypeController
+            End Get
+        End Property
 
         Public ReadOnly Property VocabularyController() As IVocabularyController
             Get
@@ -77,11 +83,11 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             Dim vocabulary As New Vocabulary()
             Dim scopeType As ScopeType
             If IsSuperUser Then
-                scopeType = _ScopeTypeController.GetScopeTypes() _
+                scopeType = ScopeTypeController.GetScopeTypes() _
                                                     .Where(Function(s) s.ScopeType = "Application") _
                                                     .SingleOrDefault
             Else
-                scopeType = _ScopeTypeController.GetScopeTypes() _
+                scopeType = ScopeTypeController.GetScopeTypes() _
                                                     .Where(Function(s) s.ScopeType = "Portal") _
                                                     .SingleOrDefault
             End If
@@ -96,14 +102,16 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #End Region
 
+        Protected Overrides Sub OnLoad()
+            MyBase.OnLoad()
+
+            View.BindVocabulary(View.Model.Vocabulary, IsSuperUser)
+        End Sub
+
 #Region "Public Methods"
 
         Public Sub Cancel(ByVal sender As Object, ByVal e As EventArgs)
             Response.Redirect(NavigateURL(TabId))
-        End Sub
-
-        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
-            View.BindVocabulary(View.Model.Vocabulary, IsSuperUser)
         End Sub
 
         Public Sub Save(ByVal sender As Object, ByVal e As EventArgs)

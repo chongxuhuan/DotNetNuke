@@ -555,6 +555,11 @@ TH
     color: #003366;
 }
 
+IMG
+{
+    border: none;
+}
+
 A:link
 {
     text-decoration: none;

@@ -18,7 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 Imports System.IO
-Imports System.threading
+Imports System.Threading
 Imports System.Xml.Serialization
 Imports System.Xml
 
@@ -33,33 +33,43 @@ Namespace DotNetNuke.Services.Log.EventLog
 
 
         Public Sub AddLog(ByVal objLogInfo As LogInfo)
-            Try
-                objLogInfo.LogCreateDate = Now
-                objLogInfo.LogServerName = Common.Globals.ServerName
-                If String.IsNullOrEmpty(objLogInfo.LogServerName) Then
-                    objLogInfo.LogServerName = "NA"
-                End If
 
-                If objLogInfo.LogUserName = "" Then
+            If (Status = UpgradeStatus.Install) Then
+                AddLogToFile(objLogInfo)
+            Else
+                Try
+                    objLogInfo.LogCreateDate = Now
+                    objLogInfo.LogServerName = Common.Globals.ServerName
+                    If String.IsNullOrEmpty(objLogInfo.LogServerName) Then
+                        objLogInfo.LogServerName = "NA"
+                    End If
 
-                    If HttpContext.Current IsNot Nothing AndAlso HttpContext.Current.Request IsNot Nothing Then
-                        If HttpContext.Current.Request.IsAuthenticated Then
-                            Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
-                            objLogInfo.LogUserName = objUserInfo.Username
+                    If objLogInfo.LogUserName = "" Then
+
+                        If HttpContext.Current IsNot Nothing AndAlso HttpContext.Current.Request IsNot Nothing Then
+                            If HttpContext.Current.Request.IsAuthenticated Then
+                                Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
+                                objLogInfo.LogUserName = objUserInfo.Username
+                            End If
                         End If
                     End If
-                End If
 
-                LoggingProvider.Instance.AddLog(objLogInfo)
-            Catch exc As Exception
-                Try
-                    Dim str As String = objLogInfo.Serialize
-                    Dim f As String
-                    f = Common.Globals.HostMapPath + "\Logs\LogFailures.xml.resources"
-                    WriteLog(f, str)
-                Catch exc2 As Exception
-                    'critical error writing
+                    LoggingProvider.Instance.AddLog(objLogInfo)
+                Catch exc As Exception
+                    AddLogToFile(objLogInfo)
                 End Try
+            End If
+        End Sub
+
+        Private Sub AddLogToFile(ByVal objLogInfo As LogInfo)
+
+            Try
+                Dim str As String = objLogInfo.Serialize
+                Dim f As String
+                f = Common.Globals.HostMapPath + "\Logs\LogFailures.xml.resources"
+                WriteLog(f, str)
+            Catch exc2 As Exception
+                'critical error writing
             End Try
         End Sub
 

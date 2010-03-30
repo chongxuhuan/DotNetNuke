@@ -1074,6 +1074,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Entities\Content\Data\Scripts\ContentItems\AddContentItem.sql" />
+    <None Include="Entities\Content\Data\Scripts\ContentItems\AddMetaData.sql" />
+    <None Include="Entities\Content\Data\Scripts\ContentItems\GetMetaData.sql" />
+    <None Include="Entities\Content\Data\Scripts\ContentItems\DeleteMetaData.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\DeleteContentItem.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItem.sql" />
     <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItemsByTerm.sql" />
@@ -1089,6 +1092,8 @@
     <None Include="Entities\Content\Data\Scripts\Scope\UpdateScopeType.sql" />
     <None Include="Entities\Content\Data\Scripts\Tables\ContentItems.sql" />
     <None Include="Entities\Content\Data\Scripts\Tables\ContentItems_Tags.sql" />
+    <None Include="Entities\Content\Data\Scripts\Tables\ContentItems_MetaData.sql" />
+    <None Include="Entities\Content\Data\Scripts\Tables\MetaData.sql" />
     <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_ScopeTypes.sql" />
     <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_Terms.sql" />
     <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_Vocabularies.sql" />

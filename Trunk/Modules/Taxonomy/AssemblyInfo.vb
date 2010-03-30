@@ -7,11 +7,11 @@ Imports System.Runtime.InteropServices
 ' associated with an assembly.
 
 ' Review the values of the assembly attributes
-<Assembly: AssemblyTitle("Taxonomy")> 
+<Assembly: AssemblyTitle("Taxonomy Manager")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Microsoft")> 
-<Assembly: AssemblyProduct("Taxonomy")> 
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2009")> 
+<Assembly: AssemblyCompany("DotNetNuke Corporation")> 
+<Assembly: AssemblyProduct("Taxonomy Manager")> 
+<Assembly: AssemblyCopyright("2010, DotNetNuke Corporation")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
@@ -30,5 +30,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+<Assembly: AssemblyVersion("1.1.0.0")> 
+<Assembly: AssemblyFileVersion("1.1.0.0")> 

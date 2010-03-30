@@ -254,8 +254,10 @@ Namespace DotNetNuke.Modules.Admin.Users
                 Else
                     If Not IsUser Then
                         If Request.IsAuthenticated Then
-                            'Display current user's profile
-                            Response.Redirect(NavigateURL(PortalSettings.UserTabId, "", "UserID=" + UserInfo.UserID.ToString), True)
+                            If Not PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
+                                'Display current user's profile
+                                Response.Redirect(NavigateURL(PortalSettings.UserTabId, "", "UserID=" + UserInfo.UserID.ToString), True)
+                            End If
                         Else
                             If (User.UserID > Null.NullInteger) Then
                                 AddModuleMessage("NotAuthorized", ModuleMessageType.YellowWarning, True)

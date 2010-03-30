@@ -20,7 +20,7 @@
 
 Imports System.Linq
 Imports System.Runtime.CompilerServices
-
+Imports System.Collections.Specialized
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports System.Text
 
@@ -64,6 +64,20 @@ Namespace DotNetNuke.Entities.Content.Common
             Return sb.ToString()
         End Function
 
+        <Extension()> _
+        Public Function ToDelimittedString(ByVal this As List(Of Term), ByVal format As String, ByVal delimitter As String) As String
+            Dim sb As New StringBuilder
+            If this IsNot Nothing Then
+                For Each _Term As Term In (From term In this Order By term.Name Ascending Select term)
+                    If sb.Length > 0 Then
+                        sb.Append(delimitter)
+                    End If
+                    sb.Append(String.Format(format, _Term.Name))
+                Next
+            End If
+            Return sb.ToString()
+        End Function
+
 #End Region
 
 #Region "Vocabulary Extensions"
@@ -86,6 +100,22 @@ Namespace DotNetNuke.Entities.Content.Common
 
 #End Region
 
+#Region "ContentItem Extensions"
+
+        <Extension()> _
+        Friend Function GetMetaData(ByVal this As ContentItem, ByVal contentItemId As Integer) As NameValueCollection
+            Dim ctl As IContentController = Util.GetContentController()
+
+            Dim _MetaData As NameValueCollection
+            If contentItemId = Null.NullInteger Then
+                _MetaData = New NameValueCollection
+            Else
+                _MetaData = ctl.GetMetaData(contentItemId)
+            End If
+
+            Return _MetaData
+        End Function
+
         <Extension()> _
         Friend Function GetTerms(ByVal this As ContentItem, ByVal contentItemId As Integer) As List(Of Term)
             Dim ctl As ITermController = Util.GetTermController()
@@ -99,6 +129,8 @@ Namespace DotNetNuke.Entities.Content.Common
 
             Return _Terms
         End Function
+
+#End Region
 
     End Module
 

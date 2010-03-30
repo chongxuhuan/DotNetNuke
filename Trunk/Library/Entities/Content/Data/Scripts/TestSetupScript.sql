@@ -11,6 +11,14 @@
 /* Add Setup Script */
 /********************/
 
+SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}MetaData ON
+INSERT INTO {databaseOwner}{objectQualifier}MetaData ([MetaDataID], [MetaDataName]) VALUES (1, 'Creator')
+INSERT INTO {databaseOwner}{objectQualifier}MetaData ([MetaDataID], [MetaDataName]) VALUES (2, 'Description')
+INSERT INTO {databaseOwner}{objectQualifier}MetaData ([MetaDataID], [MetaDataName]) VALUES (3, 'Publisher')
+INSERT INTO {databaseOwner}{objectQualifier}MetaData ([MetaDataID], [MetaDataName]) VALUES (4, 'Date')
+INSERT INTO {databaseOwner}{objectQualifier}MetaData ([MetaDataID], [MetaDataName]) VALUES (5, 'Title')
+SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}MetaData OFF
+
 SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}ContentTypes ON
 INSERT INTO {databaseOwner}{objectQualifier}ContentTypes ([ContentTypeID], [ContentType]) VALUES (1, 'Tab')
 INSERT INTO {databaseOwner}{objectQualifier}ContentTypes ([ContentTypeID], [ContentType]) VALUES (2, 'Module')
@@ -104,7 +112,16 @@ INSERT INTO {databaseOwner}{objectQualifier}ContentItems_Tags ([ContentItemTagID
 			VALUES (2, 1, 11)
 INSERT INTO {databaseOwner}{objectQualifier}ContentItems_Tags ([ContentItemTagID], [ContentItemID], [TermID])
 			VALUES (3, 2, 4)
+INSERT INTO {databaseOwner}{objectQualifier}ContentItems_Tags ([ContentItemTagID], [ContentItemID], [TermID])
+			VALUES (4, 2, 11)
 SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}ContentItems_Tags OFF
+
+SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}ContentItems_MetaData ON
+INSERT INTO {databaseOwner}{objectQualifier}ContentItems_MetaData ([ContentItemMetaDataID],  [ContentItemID], [MetaDataID], [MetaDataValue]) VALUES (1, 4, 1, 'John Smith')
+INSERT INTO {databaseOwner}{objectQualifier}ContentItems_MetaData ([ContentItemMetaDataID],  [ContentItemID], [MetaDataID], [MetaDataValue]) VALUES (2, 4, 2, 'This is Meta Data')
+INSERT INTO {databaseOwner}{objectQualifier}ContentItems_MetaData ([ContentItemMetaDataID],  [ContentItemID], [MetaDataID], [MetaDataValue]) VALUES (3, 4, 3, 'Me')
+INSERT INTO {databaseOwner}{objectQualifier}ContentItems_MetaData ([ContentItemMetaDataID],  [ContentItemID], [MetaDataID], [MetaDataValue]) VALUES (4, 4, 4, 'Mar 31 2010')
+SET IDENTITY_INSERT  {databaseOwner}{objectQualifier}ContentItems_MetaData OFF
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

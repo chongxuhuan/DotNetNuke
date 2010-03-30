@@ -20,7 +20,7 @@
 
 using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {

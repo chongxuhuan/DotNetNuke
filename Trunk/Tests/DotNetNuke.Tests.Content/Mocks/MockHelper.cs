@@ -28,12 +28,59 @@ using DotNetNuke.Web.Validators;
 using Moq;
 using DotNetNuke.ComponentModel;
 using System.Web;
+using DotNetNuke.Entities.Content.Data;
+using DotNetNuke.Entities.Content;
+using DotNetNuke.Common.Utilities;
+using System.Data;
 
 namespace DotNetNuke.Tests.Content.Mocks
 {
     public static class MockHelper
     {
-        private static Mock<TMock> RegisterMockController<TMock>(Mock<TMock> mock) where TMock: class
+
+        private static void AddBaseEntityColumns(DataTable table)
+        {
+            table.Columns.Add("CreatedByUserID", typeof(int));
+            table.Columns.Add("CreatedOnDate", typeof(DateTime));
+            table.Columns.Add("LastModifiedByUserID", typeof(int));
+            table.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+        }
+
+        private static void AddContentItemToTable(DataTable table, int id, string content, string contentKey, bool indexed, int userId, string term)
+        {
+            table.Rows.Add(new object[] { id, content, Null.NullInteger, Null.NullInteger, Null.NullInteger, 
+                                            contentKey, indexed, userId, term });
+        }
+
+        private static DataTable CreateContentItemTable()
+        {
+            // Create Categories table.
+            DataTable table = new DataTable();
+
+            // Create columns, ID and Name.
+            DataColumn idColumn = table.Columns.Add("ContentItemID", typeof(int));
+            table.Columns.Add("Content", typeof(string));
+            table.Columns.Add("ContentTypeID", typeof(int));
+            table.Columns.Add("TabID", typeof(int));
+            table.Columns.Add("ModuleID", typeof(int));
+            table.Columns.Add("ContentKey", typeof(string));
+            table.Columns.Add("Indexed", typeof(bool));
+            table.Columns.Add("UserID", typeof(int));
+            table.Columns.Add("Term", typeof(string));
+            AddBaseEntityColumns(table);
+
+            // Set the ID column as the primary key column.
+            table.PrimaryKey = new DataColumn[] { idColumn };
+
+            return table;
+        }
+
+        internal static IDataReader CreateEmptyContentItemReader()
+        {
+            return CreateContentItemTable().CreateDataReader();
+        }
+
+        private static Mock<TMock> RegisterMockController<TMock>(Mock<TMock> mock) where TMock : class
         {
             if (ComponentFactory.Container == null)
                 //Create a Container
@@ -81,8 +128,8 @@ namespace DotNetNuke.Tests.Content.Mocks
             mockTerms.Setup(t => t.GetTermsByVocabulary(Constants.VOCABULARY_ValidVocabularyId))
                         .Returns(TestTerms);
 
-            //Register Mock
-            return RegisterMockController<ITermController>(mockTerms);
+            //Return Mock
+            return mockTerms;
         }
 
         internal static Mock<IVocabularyController> CreateMockVocabularyController()
@@ -92,9 +139,55 @@ namespace DotNetNuke.Tests.Content.Mocks
             mockVocabularies.Setup(v => v.GetVocabularies())
                             .Returns(TestVocabularies);
 
-            //Register Mock
-            return RegisterMockController<IVocabularyController>(mockVocabularies);
+            //Return Mock
+            return mockVocabularies;
         }
+
+        internal static IDataReader CreateValidContentItemReader()
+        {
+            DataTable table = CreateContentItemTable();
+            AddContentItemToTable(table, Constants.CONTENT_ValidContentItemId,
+                                    ContentTestHelper.GetContent(Constants.CONTENT_ValidContentItemId),
+                                    ContentTestHelper.GetContentKey(Constants.CONTENT_ValidContentItemId),
+                                    true, Constants.USER_ValidId, Null.NullString);
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidContentItemsReader(int count, bool indexed, int startUserId, string term)
+        {
+            DataTable table = CreateContentItemTable();
+            for (int i = Constants.CONTENT_ValidContentItemId;
+                       i < Constants.CONTENT_ValidContentItemId + count;
+                       i++)
+            {
+                string content = (count == 1) ? Constants.CONTENT_ValidContent : ContentTestHelper.GetContent(i);
+                string contentKey = (count == 1) ? Constants.CONTENT_ValidContentKey : ContentTestHelper.GetContentKey(i);
+                int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
+
+                AddContentItemToTable(table, i, content, contentKey, indexed, startUserId, term);
+            }
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidMetaDataReader()
+        {
+            // Create Categories table.
+            using (DataTable table = new DataTable())
+            {
+                // Create columns, ID and Name.
+                table.Columns.Add("MetaDataName", typeof(string));
+                table.Columns.Add("MetaDataValue", typeof(string));
+                for (int i = 0; i < Constants.CONTENT_MetaDataCount; i++)
+                {
+                    table.Rows.Add(new object[] { String.Format("{0} {1}", Constants.CONTENT_ValidMetaDataName, i), Constants.CONTENT_ValidMetaDataValue });
+                }
+                return table.CreateDataReader();
+            }
+        }
+
+
 
         internal static IQueryable<ScopeType> TestScopeTypes
         {

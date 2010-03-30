@@ -25,11 +25,12 @@ Imports DotNetNuke.Services.Messaging
 Imports DotNetNuke.Services.Messaging.Data
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Web.Mvp
+Imports DotNetNuke.Modules.Messaging.Views.Models
 
 Namespace DotNetNuke.Modules.Messaging.Presenters
 
     Public Class EditMessagePresenter
-        Inherits ModulePresenter(Of IEditMessageView)
+        Inherits ModulePresenter(Of IEditMessageView, EditMessageModel)
 
 #Region "Private Members"
 
@@ -113,12 +114,15 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             If Not IsPostBack Then
 
                 If (MessageId > 0) Then
+                    Dim orgMessage = _MessagingController.GetMessageByID(PortalId, UserId, MessageId)
+
+                    AuthorizeUser(orgMessage)
 
                     If IsReplyMode Then
-                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, MessageId).GetReplyMessage()
+                        View.Model.Message = orgMessage.GetReplyMessage()
                         View.HideDeleteButton()
                     Else
-                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, MessageId)
+                        View.Model.Message = orgMessage
                     End If
                 Else
                     View.Model.Message = New Message()
@@ -126,6 +130,28 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
                 View.BindMessage(View.Model.Message)
             End If
+        End Sub
+
+        Private Sub AuthorizeUser(ByVal message As Message)
+
+            Select Case message.Status
+
+                Case MessageStatusType.Deleted
+                    Response.Redirect(GetInboxUrl())
+                Case MessageStatusType.Draft
+                    If (Not message.FromUserID = UserId) Then
+                        Response.Redirect(GetInboxUrl())
+                    End If
+                Case MessageStatusType.Read
+                    If (Not message.ToUserID = UserId) Then
+                        Response.Redirect(GetInboxUrl())
+                    End If
+                Case MessageStatusType.Unread
+                    If (Not message.ToUserID = UserId) Then
+                        Response.Redirect(GetInboxUrl())
+                    End If
+            End Select
+
         End Sub
 
         Public Sub SaveDraft(ByVal sender As Object, ByVal e As EventArgs)

@@ -38,12 +38,17 @@ namespace DotNetNuke.Tests.Content.Data
         #region Private Members
 
         private static string addContentItem = "AddContentItem";
+        private static string addMetaData = "AddMetaData";
         private static string contentItemsTableName = "ContentItems";
+        private static string contentMetaDataTableName = "ContentItems_MetaData";
         private static string deleteContentItem = "DeleteContentItem";
+        private static string deleteMetaData = "DeleteMetaData";
         private static string getContentItem = "GetContentItem";
         private static string getContentItemsByTermName = "GetContentItemsByTerm";
+        private static string getMetaData = "GetMetaData";
         private static string getUnIndexedContentItemsName = "GetUnIndexedContentItems";
         private static string keyField = "ContentItemId";
+        private static string metaDataTableName = "MetaData";
         private static string upateContentItem = "UpdateContentItem";
         private static string virtualScriptFilePath = "Library\\Entities\\Content\\Data\\Scripts\\ContentItems";
         private static int columnCount = 11;
@@ -142,7 +147,7 @@ namespace DotNetNuke.Tests.Content.Data
         }
 
         [Test]
-        public void DataService_DeleteContentItem_Delete_Record_On_Valid_Content()
+        public void DataService_DeleteContentItem_Deletes_Record_On_Valid_Content()
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
@@ -352,6 +357,140 @@ namespace DotNetNuke.Tests.Content.Data
                 connection.Open();
                 DatabaseAssert.RecordCountIsEqual(connection, contentItemsTableName, rowCount);
             }
+        }
+
+        #endregion
+
+        #region AddMetaData Tests
+
+        [Test]
+        public void DataService_AddMetaData_Adds_Value()
+        {
+            //Arrange
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addMetaData);
+
+            ContentItem content = new ContentItem();
+            content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
+            content.Content = Constants.CONTENT_ValidContent;
+            content.ContentKey = Constants.CONTENT_ValidContentKey;
+
+            DataService ds = new DataService();
+
+            //Act
+            ds.AddMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue);
+
+            //Assert
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount + 1);
+        }
+
+        [Test]
+        public void DataService_AddMetaData_Adds_MetaDataType_If_Not_Present()
+        {
+            //Arrange
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, metaDataTableName);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addMetaData);
+
+            ContentItem content = new ContentItem();
+            content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
+            content.Content = Constants.CONTENT_ValidContent;
+            content.ContentKey = Constants.CONTENT_ValidContentKey;
+
+            DataService ds = new DataService();
+
+            //Act
+            ds.AddMetaData(content, Constants.CONTENT_NewMetaDataName, Constants.CONTENT_NewMetaDataValue);
+
+            //Assert
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, metaDataTableName, rowCount + 1);
+        }
+
+        #endregion
+
+        #region DeleteMetaData Tests
+
+        [Test]
+        public void DataService_DeleteMetaData_Deletes_Record_On_Valid_MetaData()
+        {
+            //Arrange
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+
+            ContentItem content = new ContentItem();
+            content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
+            content.Content = Constants.CONTENT_ValidContent;
+            content.ContentKey = Constants.CONTENT_ValidContentKey;
+
+            DataService ds = new DataService();
+
+            //Act
+            ds.DeleteMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue);
+
+            //Assert
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount - 1);
+            DatabaseAssert.RecordDoesNotExist(DataTestHelper.ConnectionString, contentMetaDataTableName, keyField, Constants.CONTENT_ValidContentItemId.ToString());
+        }
+
+        [Test]
+        public void DataService_DeleteMetaData_Should_Do_Nothing_On_InValid_MetaData()
+        {
+            //Arrange
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+
+            ContentItem content = new ContentItem();
+            content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
+            content.Content = Constants.CONTENT_ValidContent;
+            content.ContentKey = Constants.CONTENT_ValidContentKey;
+
+            DataService ds = new DataService();
+
+            //Act
+            ds.DeleteMetaData(content, Constants.CONTENT_InValidMetaDataName, Constants.CONTENT_InValidMetaDataValue);
+
+            //Assert
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount);
+        }
+
+        [Test]
+        public void DataService_DeleteMetaData_Should_Do_Nothing_On_InValid_Content()
+        {
+            //Arrange
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+
+            ContentItem content = new ContentItem();
+            content.ContentItemId = Constants.CONTENT_InValidContentItemId;
+            content.Content = Constants.CONTENT_ValidContent;
+            content.ContentKey = Constants.CONTENT_ValidContentKey;
+
+            DataService ds = new DataService();
+
+            //Act
+            ds.DeleteMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue);
+
+            //Assert
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount);
+        }
+
+
+        #endregion
+
+        #region GetMetaData Tests
+
+        [Test]
+        public void DataService_GetMetaData_Returns_Reader_Of_MetaData()
+        {
+            //Arrange
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, getMetaData);
+
+            DataService ds = new DataService();
+
+            //Act
+            IDataReader dataReader = ds.GetMetaData(Constants.CONTENT_UpdateContentItemId);
+
+            //Assert that the count is correct
+            DatabaseAssert.ReaderRowCountIsEqual(dataReader, Constants.CONTENT_MetaDataCount);
         }
 
         #endregion

@@ -32,6 +32,11 @@ Namespace DotNetNuke.Entities.Content.Data
         Function GetUnIndexedContentItems() As IDataReader
         Sub UpdateContentItem(ByVal contentItem As ContentItem, ByVal lastModifiedByUserId As Integer)
 
+        'Content MetaData Methods
+        Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String)
+        Sub DeleteMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String)
+        Function GetMetaData(ByVal contentItemId As Integer) As IDataReader
+
         'ContentType Methods
         Function AddContentType(ByVal contentType As ContentType) As Integer
         Sub DeleteContentType(ByVal contentType As ContentType)

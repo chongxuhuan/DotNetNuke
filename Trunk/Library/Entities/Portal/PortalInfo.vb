@@ -69,6 +69,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _SplashTabId As Integer
         Private _HomeTabId As Integer
         Private _LoginTabId As Integer
+        Private _RegisterTabId As Integer
         Private _UserTabId As Integer
         Private _DefaultLanguage As String
         Private _TimeZoneOffset As Integer
@@ -402,6 +403,15 @@ Namespace DotNetNuke.Entities.Portals
             End Set
         End Property
 
+        <XmlElement("registertabid")> Public Property RegisterTabId() As Integer
+            Get
+                Return _RegisterTabId
+            End Get
+            Set(ByVal Value As Integer)
+                _RegisterTabId = Value
+            End Set
+        End Property
+
         <XmlElement("usertabid")> Public Property UserTabId() As Integer
             Get
                 Return _UserTabId
@@ -496,6 +506,7 @@ Namespace DotNetNuke.Entities.Portals
             SplashTabId = Null.SetNullInteger(dr("SplashTabID"))
             HomeTabId = Null.SetNullInteger(dr("HomeTabID"))
             LoginTabId = Null.SetNullInteger(dr("LoginTabID"))
+            RegisterTabId = Null.SetNullInteger(dr("RegisterTabID"))
             UserTabId = Null.SetNullInteger(dr("UserTabID"))
             DefaultLanguage = Null.SetNullString(dr("DefaultLanguage"))
             TimeZoneOffset = Null.SetNullInteger(dr("TimeZoneOffset"))

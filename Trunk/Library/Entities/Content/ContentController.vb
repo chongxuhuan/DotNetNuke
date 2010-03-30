@@ -25,6 +25,7 @@ Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Entities.Content.Common
 Imports DotNetNuke.Entities.Content.Data
+Imports System.Collections.Specialized
 
 Namespace DotNetNuke.Entities.Content
 
@@ -82,13 +83,6 @@ Namespace DotNetNuke.Entities.Content
             Return CBO.FillQueryable(Of ContentItem)(_DataService.GetContentItemsByTerm(term))
         End Function
 
-        Public Function GetMetadata(ByVal contentItemId As Integer) As Dictionary(Of String, String) Implements IContentController.GetMetadata
-            'Argument Contract
-            Arg.NotNegative("contentItemId", contentItemId)
-
-            Throw New NotImplementedException()
-        End Function
-
         Public Function GetUnIndexedContentItems() As IQueryable(Of ContentItem) Implements IContentController.GetUnIndexedContentItems
             Return CBO.FillQueryable(Of ContentItem)(_DataService.GetUnIndexedContentItems())
         End Function
@@ -100,6 +94,37 @@ Namespace DotNetNuke.Entities.Content
 
             _DataService.UpdateContentItem(contentItem, UserController.GetCurrentUserInfo.UserID)
         End Sub
+
+        Public Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IContentController.AddMetaData
+            'Argument Contract
+            Arg.NotNull("contentItem", contentItem)
+            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Arg.NotNullOrEmpty("name", name)
+
+            _DataService.AddMetaData(contentItem, name, value)
+        End Sub
+
+        Public Sub DeleteMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IContentController.DeleteMetaData
+            'Argument Contract
+            Arg.NotNull("contentItem", contentItem)
+            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Arg.NotNullOrEmpty("name", name)
+
+            _DataService.DeleteMetaData(contentItem, name, value)
+        End Sub
+
+        Public Function GetMetaData(ByVal contentItemId As Integer) As NameValueCollection Implements IContentController.GetMetaData
+            'Argument Contract
+            Arg.NotNegative("contentItemId", contentItemId)
+
+            Dim metadata As New NameValueCollection()
+            Dim dr As IDataReader = _DataService.GetMetaData(contentItemId)
+            While dr.Read()
+                metadata.Add(dr.GetString(0), dr.GetString(1))
+            End While
+
+            Return metadata
+        End Function
 
 #End Region
 

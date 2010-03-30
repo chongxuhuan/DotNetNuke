@@ -354,7 +354,7 @@ Namespace DotNetNuke.Common
             End Try
 
             ' purge log buffer
-            LoggingProvider.Instance.PurgeLogBuffer()
+            If (Not Status = UpgradeStatus.Install) Then LoggingProvider.Instance.PurgeLogBuffer()
         End Sub
 
         Public Shared Sub RunSchedule(ByVal request As HttpRequest)

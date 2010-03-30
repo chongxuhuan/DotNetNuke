@@ -21,6 +21,8 @@ Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Content
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Entities.Content.Common
+Imports DotNetNuke.Entities.Modules
+Imports DotNetNuke.Entities.Host
 
 Namespace DotNetNuke.UI.Skins.Controls
 
@@ -77,8 +79,23 @@ Namespace DotNetNuke.UI.Skins.Controls
                 content = Me.ModuleControl.ModuleContext.Configuration
             End If
 
+            Dim resultsUrl As String = Null.NullString
+            Dim objModules As New ModuleController
+            Dim searchTabId As Integer
+            Dim SearchModule As ModuleInfo = objModules.GetModuleByDefinition(PortalSettings.PortalId, "Search Results")
+            If SearchModule Is Nothing Then
+                Exit Sub
+            Else
+                searchTabId = SearchModule.TabID
+            End If
+            If Host.UseFriendlyUrls Then
+                resultsUrl = String.Format("<a href=""{0}?Tag={{0}}"">{{0}}</a>", NavigateURL(searchTabId))
+            Else
+                resultsUrl = String.Format("<a href=""{0}&Tag={{0}}"">{{0}}</a>", NavigateURL(searchTabId))
+            End If
+
             lblTags.CssClass = CssClass
-            lblTags.Text = content.Terms.ToDelimittedString(Separator)
+            lblTags.Text = content.Terms.ToDelimittedString(resultsUrl, Separator)
 
         End Sub
 

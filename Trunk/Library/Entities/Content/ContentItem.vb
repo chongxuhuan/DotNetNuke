@@ -25,6 +25,7 @@ Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Content.Common
 Imports DotNetNuke.Entities.Content.Taxonomy
+Imports System.Collections.Specialized
 
 Namespace DotNetNuke.Entities.Content
 
@@ -41,7 +42,7 @@ Namespace DotNetNuke.Entities.Content
         Private _ModuleID As Integer = Null.NullInteger
         Private _ContentKey As String
         Private _Indexed As Boolean
-        Private _Metadata As Dictionary(Of String, String)
+        Private _MetaData As NameValueCollection
         Private _Terms As List(Of Term)
 
 #End Region
@@ -93,12 +94,12 @@ Namespace DotNetNuke.Entities.Content
             End Set
         End Property
 
-        <XmlIgnore()> Public ReadOnly Property Metadata() As Dictionary(Of String, String)
+        <XmlIgnore()> Public ReadOnly Property MetaData() As NameValueCollection
             Get
-                If _Metadata Is Nothing Then
-                    ' _Metadata = ContentService.GetMetadata(ContentItemId)
+                If _MetaData Is Nothing Then
+                    _MetaData = GetMetaData(ContentItemId)
                 End If
-                Return _Metadata
+                Return _MetaData
             End Get
         End Property
 

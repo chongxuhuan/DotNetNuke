@@ -98,6 +98,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _SplashTabId As Integer
         Private _HomeTabId As Integer
         Private _LoginTabId As Integer
+        Private _RegisterTabId As Integer
         Private _UserTabId As Integer
         Private _DefaultLanguage As String
         Private _TimeZoneOffset As Integer
@@ -458,6 +459,16 @@ Namespace DotNetNuke.Entities.Portals
                 _LoginTabId = Value
             End Set
         End Property
+
+        Public Property RegisterTabId() As Integer
+            Get
+                Return _RegisterTabId
+            End Get
+            Set(ByVal Value As Integer)
+                _RegisterTabId = Value
+            End Set
+        End Property
+
 
         Public Property UserTabId() As Integer
             Get
@@ -892,6 +903,7 @@ Namespace DotNetNuke.Entities.Portals
             Me.SplashTabId = portal.SplashTabId
             Me.HomeTabId = portal.HomeTabId
             Me.LoginTabId = portal.LoginTabId
+            Me.RegisterTabId = portal.RegisterTabId
             Me.UserTabId = portal.UserTabId
             Me.DefaultLanguage = portal.DefaultLanguage
             Me.TimeZoneOffset = portal.TimeZoneOffset
@@ -1153,6 +1165,8 @@ Namespace DotNetNuke.Entities.Portals
                     PublicProperty = False : PropertyNotFound = False : result = (Me.HomeTabId.ToString(OutputFormat, formatProvider))
                 Case "logintabid"
                     PublicProperty = False : PropertyNotFound = False : result = (Me.LoginTabId.ToString(OutputFormat, formatProvider))
+                Case "registertabid"
+                    PublicProperty = False : PropertyNotFound = False : result = (Me.RegisterTabId.ToString(OutputFormat, formatProvider))
                 Case "usertabid"
                     PublicProperty = False : PropertyNotFound = False : result = (Me.UserTabId.ToString(OutputFormat, formatProvider))
                 Case "defaultlanguage"

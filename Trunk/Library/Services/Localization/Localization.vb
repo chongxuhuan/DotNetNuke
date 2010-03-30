@@ -229,6 +229,7 @@ Namespace DotNetNuke.Services.Localization
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Shared Function GetLocalesCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
+
             Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
             Dim locales As Dictionary(Of String, Locale)
             If portalID > Null.NullInteger Then
@@ -807,8 +808,16 @@ Namespace DotNetNuke.Services.Localization
         End Function
 
         Public Shared Function GetLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
-            Dim cacheKey As String = String.Format(DataCache.LocalesCacheKey, portalID.ToString())
-            Return CBO.GetCachedObject(Of Dictionary(Of String, Locale))(New CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), AddressOf GetLocalesCallBack)
+
+            Dim locals As New Dictionary(Of String, Locale)()
+
+            If (Not Status = UpgradeStatus.Install) Then
+                Dim cacheKey As String = String.Format(DataCache.LocalesCacheKey, portalID.ToString())
+                locals = CBO.GetCachedObject(Of Dictionary(Of String, Locale))(New CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), AddressOf GetLocalesCallBack)
+            End If
+
+            Return locals
+
         End Function
 
         Public Shared Function GetResourceFileName(ByVal resourceFileName As String, ByVal language As String, ByVal mode As String, ByVal portalId As Integer) As String

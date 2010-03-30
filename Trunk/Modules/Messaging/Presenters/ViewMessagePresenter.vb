@@ -29,7 +29,7 @@ Imports DotNetNuke.Modules.Messaging.Views.Models
 Namespace DotNetNuke.Modules.Messaging.Presenters
 
     Public Class ViewMessagePresenter
-        Inherits ModulePresenter(Of IViewMessageView)
+        Inherits ModulePresenter(Of IViewMessageView, ViewMessageModel)
 
 #Region "Private Members"
 
@@ -98,9 +98,9 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
         Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
             If Not IsPostBack Then
                 View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, IndexId)
-                If View.Model.Message Is Nothing Then
+                If View.Model.Message Is Nothing OrElse Not View.Model.Message.ToUserID = UserId Then
                     'Redirect - message does not belong to user
-                    Response.Redirect(AccessDeniedURL())
+                    Response.Redirect(GetInboxUrl())
                 End If
                 If View.Model.Message.Status = MessageStatusType.Unread Then
                     View.Model.Message.Status = MessageStatusType.Read
@@ -108,7 +108,6 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
                 End If
                 View.BindMessage(View.Model.Message)
             End If
-
         End Sub
 
         Public Function Reply() As Boolean

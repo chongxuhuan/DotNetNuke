@@ -28,7 +28,9 @@ namespace DotNetNuke.Tests.Content.Data
         private static string SetupScript = "TestSetupScript";
 
         public static string ContentItemsTableName = "ContentItems";
+        public static string ContentMetaDataTableName = "ContentItems_MetaData";
         public static string ContentTypesTableName = "ContentTypes";
+        public static string MetaDataTableName = "MetaData";
         public static string ScopeTypesTableName = "Taxonomy_ScopeTypes";
         public static string ContentTagsTableName = "ContentItems_Tags";
         public static string TermsTableName = "Taxonomy_Terms";
@@ -74,6 +76,12 @@ namespace DotNetNuke.Tests.Content.Data
                 //Create ContentItems Table
                 DataUtil.CreateObject(connection, DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentItemsTableName), ContentItemsTableName);
 
+                //Create MetaData Table
+                DataUtil.CreateObject(connection, DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + MetaDataTableName), MetaDataTableName);
+
+                //Create ContentMetaData Table
+                DataUtil.CreateObject(connection, DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentMetaDataTableName), ContentMetaDataTableName);
+
                 //Create Tags Table
                 DataUtil.CreateObject(connection, DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentTagsTableName), ContentTagsTableName);
             }
@@ -85,6 +93,12 @@ namespace DotNetNuke.Tests.Content.Data
             using (SqlConnection connection = new SqlConnection(DataTestHelper.ConnectionString))
             {
                 connection.Open();
+
+                //Remove all records in MetaData
+                DataUtil.EmptyTable(connection, MetaDataTableName);
+
+                //Remove all records in ContentMetaData
+                DataUtil.EmptyTable(connection, ContentMetaDataTableName);
 
                 //Remove all records in Tags
                 DataUtil.EmptyTable(connection, ContentTagsTableName);

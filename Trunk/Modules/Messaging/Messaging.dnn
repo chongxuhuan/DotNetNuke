@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Admin.Messaging" type="Module" version="01.00.00" isSystem="true">
+    <package name="Admin.Messaging" type="Module" version="01.01.00" isSystem="true">
       <friendlyName>Messaging</friendlyName>
       <description>The Messaging module allows users to send and receive private messages.</description>
       <owner>
@@ -12,7 +12,7 @@
       <license src="license.txt" />
       <releaseNotes src="releaseNotes.txt" />
       <dependencies>
-        <dependency type="CoreVersion">05.03.00</dependency>
+        <dependency type="CoreVersion">05.04.00</dependency>
       </dependencies>
       <components>
         <component type="Module">

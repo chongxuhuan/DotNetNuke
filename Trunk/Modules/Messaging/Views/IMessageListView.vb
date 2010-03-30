@@ -19,14 +19,14 @@
 '
 
 Imports DotNetNuke.Modules.Messaging.Views.Models
-Imports WebFormsMvp
+Imports DotNetNuke.Web.Mvp
 Imports Telerik.Web.UI
 Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Messaging.Views
 
     Public Interface IMessageListView
-        Inherits IView(Of MessageListModel)
+        Inherits IModuleView(Of MessageListModel)
 
         Event AddMessage As EventHandler
         Event MessageDataBound As GridItemEventHandler

@@ -25,10 +25,11 @@ Imports WebFormsMvp
 Imports DotNetNuke.UI.Modules
 Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.Web.Mvp
 
-    Public MustInherit Class ModulePresenter(Of TView As {Class, IView})
+    Public MustInherit Class ModulePresenter(Of TView As {Class, IModuleView(Of TModel)}, TModel As {New, Class})
         Inherits Presenter(Of TView)
 
 #Region "Private Members"
@@ -36,6 +37,7 @@ Namespace DotNetNuke.Web.Mvp
         Private _IsEditable As Boolean
         Private _IsPostBack As Boolean
         Private _IsSuperUser As Boolean
+        Private _LocalResourceFile As String
         Private _ModuleContext As ModuleInstanceContext
         Private _ModuleId As Integer
         Private _PortalId As Integer
@@ -59,17 +61,13 @@ Namespace DotNetNuke.Web.Mvp
             'Try and cast view to IModuleControl to get the Context
             Dim moduleControl As IModuleControl = TryCast(view, IModuleControl)
             If moduleControl IsNot Nothing Then
+                _LocalResourceFile = moduleControl.LocalResourceFile
                 _ModuleContext = moduleControl.ModuleContext
                 LoadFromContext()
             End If
             _Validator = New Validator(New DataAnnotationsObjectValidator())
 
-            'Try and cast view to IInitializeView to tie up Initialization Event
-            Dim initializeView As IInitializeView = TryCast(view, IInitializeView)
-            If initializeView IsNot Nothing Then
-                AddHandler initializeView.Initialize, AddressOf InitializeInternal
-            End If
-
+            AddHandler view.Initialize, AddressOf InitializeInternal
             AddHandler view.Load, AddressOf LoadInternal
         End Sub
 
@@ -117,6 +115,15 @@ Namespace DotNetNuke.Web.Mvp
             End Get
             Set(ByVal value As Boolean)
                 _IsSuperUser = value
+            End Set
+        End Property
+
+        Public Property LocalResourceFile() As String
+            Get
+                Return _LocalResourceFile
+            End Get
+            Set(ByVal value As String)
+                _LocalResourceFile = value
             End Set
         End Property
 
@@ -217,6 +224,16 @@ Namespace DotNetNuke.Web.Mvp
             End If
         End Sub
 
+        Protected Overridable Function LocalizeString(ByVal key As String) As String
+            Dim localizedString As String
+            If Not String.IsNullOrEmpty(key) Then
+                localizedString = Localization.GetString(key, LocalResourceFile)
+            Else
+                localizedString = Null.NullString
+            End If
+            Return localizedString
+        End Function
+
         Protected Overridable Sub OnInit()
         End Sub
 
@@ -239,10 +256,27 @@ Namespace DotNetNuke.Web.Mvp
             Response.Redirect(LoginURL(Request.RawUrl, False), True)
         End Sub
 
+        Protected Sub ProcessModuleLoadException(ByVal ex As Exception)
+            View.ProcessModuleLoadException(ex)
+        End Sub
+
+        Protected Sub ShowMessage(ByVal messageHeaderKey As String, ByVal messageKey As String, ByVal messageType As ModuleMessageType)
+            If Not String.IsNullOrEmpty(messageKey) Then
+                Dim header As String = Null.NullString
+                Dim message As String = Localization.GetString(messageKey, LocalResourceFile)
+
+                If Not String.IsNullOrEmpty(messageHeaderKey) Then
+                    header = Localization.GetString(messageHeaderKey, LocalResourceFile)
+                End If
+                View.ShowMessage(header, message, messageType)
+            End If
+        End Sub
+
         Protected Sub ShowMessage(ByVal messageKey As String, ByVal messageType As ModuleMessageType)
-            Dim showMessageView As IShowMessage = TryCast(View, IShowMessage)
-            If showMessageView IsNot Nothing Then
-                showMessageView.ShowMessage(messageKey, messageType)
+            If Not String.IsNullOrEmpty(messageKey) Then
+                Dim message As String = Localization.GetString(messageKey, LocalResourceFile)
+
+                View.ShowMessage(Null.NullString, message, messageType)
             End If
         End Sub
 

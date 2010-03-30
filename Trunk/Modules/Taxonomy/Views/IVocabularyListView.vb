@@ -19,13 +19,12 @@
 '
 
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
-Imports Telerik.Web.UI
-Imports WebFormsMvp
+Imports DotNetNuke.Web.Mvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface IVocabularyListView
-        Inherits IView(Of VocabularyListModel)
+        Inherits IModuleView(Of VocabularyListModel)
 
         Event AddVocabulary As EventHandler
 

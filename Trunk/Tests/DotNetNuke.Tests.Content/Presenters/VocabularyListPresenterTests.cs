@@ -37,7 +37,7 @@ namespace DotNetNuke.Tests.Content.Presenters
     [TestFixture]
     public class VocabularyListPresenterTests
     {
-        #region Initialization Tests
+        #region Constructor Tests
 
         [Test]
         public void VocabularyListPresenter_Constructor_Requires_Non_Null_VocabularyController()
@@ -49,20 +49,52 @@ namespace DotNetNuke.Tests.Content.Presenters
             AutoTester.ArgumentNull<IVocabularyController>(m => new VocabularyListPresenter(view.Object, m));
         }
 
+        #endregion
+
+        #region Initialization Tests
+
         [Test]
-        public void VocabularyListPresenter_Constructor_Calls_Controller_GetVocabularies()
+        public void VocabularyListPresenter_OnInit_Calls_Controller_GetVocabularies()
         {
             // Arrange
             Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
             Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
             view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            // Act
             VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object);
+
+            // Act (Raise the Initialize Event)
+            view.Raise(v => v.Initialize += null, EventArgs.Empty);
 
             // Assert
             mockController.Verify(c => c.GetVocabularies());
         }
+
+        [Test]
+        public void VocabularyListPresenter_OnInit_Sets_Models_NavigateUrlFormatString_Property()
+        {
+            // Arrange
+            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
+            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            view.Setup(v => v.Model).Returns(new VocabularyListModel());
+
+            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object)
+            {
+                ModuleId = Constants.MODULE_ValidId,
+                TabId = Constants.TAB_ValidId
+            };
+
+            // Act (Raise the Initialize Event)
+            view.Raise(v => v.Initialize += null, EventArgs.Empty);
+
+            // Assert
+            Assert.AreEqual<string>(Globals.NavigateURL(Constants.TAB_ValidId, 
+                                                                "EditVocabulary",
+                                                                String.Format("mid={0}", Constants.MODULE_ValidId), 
+                                                                "VocabularyId={0}"),
+                                                                view.Object.Model.NavigateUrlFormatString);
+        }
+
 
         #endregion
 

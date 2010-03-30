@@ -69,6 +69,14 @@ namespace DotNetNuke.Tests.Utilities
         public const string CONTENT_UpdateContent = "Update";
         public const string CONTENT_UpdateContentKey = "UpdateKey";
 
+        public const string CONTENT_ValidMetaDataName = "Creator";
+        public const string CONTENT_ValidMetaDataValue = "John Smith";
+        public const string CONTENT_NewMetaDataName = "Abstract";
+        public const string CONTENT_NewMetaDataValue = "My abstract";
+        public const string CONTENT_InValidMetaDataName = "InvalidName";
+        public const string CONTENT_InValidMetaDataValue = "InvalidValue";
+        public const int CONTENT_MetaDataCount = 4;
+
         #endregion
 
         #region ContentType Constants

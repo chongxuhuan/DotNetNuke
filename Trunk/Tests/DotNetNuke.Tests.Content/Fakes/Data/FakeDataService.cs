@@ -27,6 +27,7 @@ using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
+using DotNetNuke.Tests.Content.Mocks;
 
 namespace DotNetNuke.Tests.Content.Fakes.Data
 {
@@ -34,7 +35,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
     {
         #region Private Members
 
-        private static DataTable contentItemTable;
         private static DataTable contentTypeTable;
         private static DataTable scopeTypeTable;
         private static DataTable termTable;
@@ -72,42 +72,40 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         public void DeleteContentItem(ContentItem contentItem)
         {
-            DataRow[] row = contentItemTable.Select("ContentItemID = '" + contentItem.ContentItemId + "'");
-            
-            //Remove the row from the table
-            if (row.Length > 0)
-            {
-                contentItemTable.Rows.Remove(row[0]);
-            }
         }
 
         public IDataReader GetContentItem(int contentItemId)
         {
-            DataTable tempTable = ContentTestHelper.CopyContentItemRowsToNewTable(contentItemTable.Select("ContentItemID = '" + contentItemId + "'"));
-            return tempTable.CreateDataReader();
+            return MockHelper.CreateValidContentItemReader();
         }
 
         public IDataReader GetContentItemsByTerm(string term)
         {
-            DataTable tempTable = ContentTestHelper.CopyContentItemRowsToNewTable(contentItemTable.Select("Term = '" + term + "'"));
-            return tempTable.CreateDataReader();
+            return MockHelper.CreateValidContentItemReader();
         }
 
         public IDataReader GetUnIndexedContentItems()
         {
-            DataTable tempTable = ContentTestHelper.CopyContentItemRowsToNewTable(contentItemTable.Select("Indexed = 0"));
-            return tempTable.CreateDataReader();
+            return MockHelper.CreateValidContentItemReader();
         }
 
         public void UpdateContentItem(ContentItem contentItem, int lastModifiedByUserId)
         {
-            DataRow[] row = contentItemTable.Select("ContentItemID = '" + contentItem.ContentItemId + "'");
-            if (row.Length > 0)
-            {
-                row[0]["Content"] = contentItem.Content;
-                row[0]["ContentKey"] = contentItem.ContentKey;
-                row[0]["Indexed"] = contentItem.Indexed;
-            }
+        }
+
+        public void AddMetaData(ContentItem contentItem, string name, string value) 
+        {
+            //do nothing
+        }
+
+        public void DeleteMetaData(ContentItem contentItem, string name, string value)
+        {
+
+        }
+
+        public IDataReader GetMetaData(int contentItemId)
+        {
+            return MockHelper.CreateValidContentItemReader();
         }
 
         #endregion
@@ -299,20 +297,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         #region Public Methods
 
-        public void AddContentItemsToTable(int count, bool indexed, int startUserId, Func<int, string> termFunction)
-        {
-            for (int i = Constants.CONTENT_ValidContentItemId;
-                       i < Constants.CONTENT_ValidContentItemId + count;
-                       i++)
-            {
-                string content = (count == 1) ? Constants.CONTENT_ValidContent : ContentTestHelper.GetContent(i);
-                string contentKey = (count == 1) ? Constants.CONTENT_ValidContentKey : ContentTestHelper.GetContentKey(i);
-                int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
-
-                ContentTestHelper.AddContentItemToTable(contentItemTable, i, content, contentKey, indexed, startUserId, termFunction(i));
-            }
-        }
-
         public void AddContentTypesToTable(int count)
         {
             for (int i = Constants.CONTENTTYPE_ValidContentTypeId;
@@ -363,22 +347,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
                 int weight = Constants.VOCABULARY_ValidWeight;
                 ContentTestHelper.AddVocabularyToTable(vocabularyTable, i, typeId, name, description, scopeIdFunction(i), scopeTypeId, weight);
             }
-        }
-
-        public ContentItem GetContentItemFromTable(int contentItemId)
-        {
-            ContentItem content = null;
-            DataRow[] row = contentItemTable.Select("ContentItemID = '" + contentItemId + "'");
-            if (row.Length > 0)
-            {
-                content = new ContentItem();
-                content.ContentItemId = contentItemId;
-                content.Content = (string)row[0]["Content"];
-                content.ContentKey = (string)row[0]["ContentKey"];
-                content.Indexed = (bool)row[0]["Indexed"];
-            }
-
-            return content;
         }
 
         public ContentType GetContentTypeFromTable(int contentTypeID)
@@ -442,11 +410,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
             }
 
             return vocabulary;
-        }
-
-        public void SetUpContentItemTable()
-        {
-            contentItemTable = ContentTestHelper.CreateContentItemTable();
         }
 
         public void SetUpContentTypeTable()

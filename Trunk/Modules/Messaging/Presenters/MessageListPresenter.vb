@@ -27,11 +27,12 @@ Imports DotNetNuke.Services.Messaging.Data
 Imports Telerik.Web.UI
 Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Web.UI.WebControls
+Imports DotNetNuke.Modules.Messaging.Views.Models
 
 Namespace DotNetNuke.Modules.Messaging.Presenters
 
     Public Class MessageListPresenter
-        Inherits ModulePresenter(Of IMessageListView)
+        Inherits ModulePresenter(Of IMessageListView, MessageListModel)
 
 #Region "Private Fields"
 

@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Portal Messaging")> 
 <Assembly: AssemblyCompany("DotNetNuke Corporation")> 
 <Assembly: AssemblyProduct("Portal Messaging")> 
-<Assembly: AssemblyCopyright("2007, DotNetNuke Corporation")> 
+<Assembly: AssemblyCopyright("2010, DotNetNuke Corporation")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 
@@ -30,6 +30,5 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
-<Assembly: WebResource("Messaging.css", "text/css")> 
+<Assembly: AssemblyVersion("1.1.0.0")> 
+<Assembly: AssemblyFileVersion("1.1.0.0")> 

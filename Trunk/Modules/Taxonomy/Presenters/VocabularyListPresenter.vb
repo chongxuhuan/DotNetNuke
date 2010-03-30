@@ -23,14 +23,12 @@ Imports DotNetNuke.Modules.Taxonomy.Views
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Entities.Content.Data
-Imports Telerik.Web.UI
-Imports WebFormsMvp
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class VocabularyListPresenter
-        Inherits ModulePresenter(Of IVocabularyListView)
+        Inherits ModulePresenter(Of IVocabularyListView, VocabularyListModel)
 
 #Region "Private Members"
 
@@ -52,6 +50,15 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             AddHandler View.AddVocabulary, AddressOf AddVocabulary
 
+        End Sub
+
+#End Region
+
+#Region "Protected Methods"
+
+        Protected Overrides Sub OnInit()
+            MyBase.OnInit()
+
             View.Model.Vocabularies = (From v In _VocabularyController.GetVocabularies() _
                                       Where v.ScopeType.ScopeType = "Application" _
                                       OrElse v.ScopeType.ScopeType = "Portal" AndAlso v.ScopeId = PortalId _
@@ -65,13 +72,13 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                                                                 "VocabularyId={0}")
         End Sub
 
-#End Region
-
         Protected Overrides Sub OnLoad()
             MyBase.OnLoad()
 
             View.ShowAddButton(IsEditable)
         End Sub
+
+#End Region
 
 #Region "Public Methods"
 

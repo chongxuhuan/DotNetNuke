@@ -274,10 +274,10 @@
     <value>The Login Page for your site.</value>
   </data>
   <data name="plUserTabId.Text" xml:space="preserve">
-    <value>User Registration/Profile Page:</value>
+    <value>User Profile Page:</value>
   </data>
   <data name="plUserTabId.Help" xml:space="preserve">
-    <value>The User Registration/Profile Page for your site.</value>
+    <value>The User Profile Page for your site.</value>
   </data>
   <data name="Payment.Text" xml:space="preserve">
     <value>Payment Settings</value>
@@ -572,5 +572,11 @@
   </data>
   <data name="plHideSystemFolders.Text" xml:space="preserve">
     <value>Hide System Folders</value>
+  </data>
+  <data name="plRegisterTabId.Help" xml:space="preserve">
+    <value>The User Registration page for your site.</value>
+  </data>
+  <data name="plRegisterTabId.Text" xml:space="preserve">
+    <value>Registration Page:</value>
   </data>
 </root>

@@ -149,8 +149,7 @@
                             <table id="tblPages" cellspacing="2" cellpadding="2" summary="Page Management Design Table" border="0" runat="server">
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plSplashTabId" runat="server" ControlName="cboSplashTabId" /></td>
-                                    <td class="NormalTextBox" valign="top" style="width:450px">
-                                        <asp:DropDownList ID="cboSplashTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:DropDownList ID="cboSplashTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plHomeTabId" runat="server" ControlName="cboHomeTabId" /></td>
@@ -159,6 +158,10 @@
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plLoginTabId" runat="server" ControlName="cboLoginTabId" /></td>
                                     <td class="NormalTextBox" valign="top" style="width:450px"><asp:DropDownList ID="cboLoginTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plRegisterTabId" runat="server" ControlName="cboRegisterTabId" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:DropDownList ID="cboRegisterTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId" /></td>
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plUserTabId" runat="server" ControlName="cboUserTabId" /></td>

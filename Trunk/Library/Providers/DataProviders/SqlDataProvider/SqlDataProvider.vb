@@ -47,6 +47,7 @@ Namespace DotNetNuke.Data
         Private _providerPath As String
         Private _scriptDelimiterRegex As String = "(?<=(?:[^\w]+|^))GO(?=(?: |\t)*?(?:\r?\n|$))"
         Private _upgradeConnectionString As String
+        Private _isConnectionValid As Boolean
 
 #End Region
 
@@ -91,6 +92,9 @@ Namespace DotNetNuke.Data
             Else
                 _upgradeConnectionString = _coreConnectionString
             End If
+
+            _isConnectionValid = TestDatabaseConnection(ConnectionString, DatabaseOwner, ObjectQualifier)
+
         End Sub
 
 #End Region
@@ -136,6 +140,12 @@ Namespace DotNetNuke.Data
         Public ReadOnly Property UpgradeConnectionString() As String
             Get
                 Return _upgradeConnectionString
+            End Get
+        End Property
+
+        Public ReadOnly Property IsConnectionValid() As Boolean
+            Get
+                Return _isConnectionValid
             End Get
         End Property
 
@@ -295,39 +305,38 @@ Namespace DotNetNuke.Data
             Return Exceptions
         End Function
 
-        Private Overloads Function TestDatabaseConnection(ByVal ConnectionString As String, ByVal Owner As String, ByVal Qualifier As String) As String
-            Dim dr As IDataReader = Nothing
-            Dim message As String = String.Empty
+        'Private Overloads Function TestDatabaseConnection(ByVal ConnectionString As String, ByVal Owner As String, ByVal Qualifier As String) As Boolean
+        '    Dim result As Boolean
+
+        '    Try
+        '        SqlHelper.ExecuteReader(ConnectionString, Owner & Qualifier & "GetDatabaseVersion")
+        '        result = True
+        '    Catch ex As SqlException
+        '    End Try
+
+        '    Return result
+
+        'End Function
+
+        Private Overloads Function TestDatabaseConnection(ByVal ConnectionString As String, ByVal Owner As String, ByVal Qualifier As String) As Boolean
+
+            Dim bError As Boolean = True
+
             Try
-                dr = SqlHelper.ExecuteReader(ConnectionString, Owner & Qualifier & "GetDatabaseVersion")
+                SqlHelper.ExecuteReader(ConnectionString, Owner & Qualifier & "GetDatabaseVersion")
             Catch ex As SqlException
-                Dim bError As Boolean = True
-                Dim i As Integer
-                Dim errorMessages As New StringBuilder()
-                For i = 0 To ex.Errors.Count - 1
-                    Dim sqlError As SqlError = ex.Errors(i)
-                    If sqlError.Number = 2812 And sqlError.Class = 16 Then
-                        bError = False
+                Dim canConnect As Boolean = True
+
+                For Each c As SqlError In ex.Errors
+                    If Not (c.Number = 2812 And c.Class = 16) Then
+                        canConnect = False
                         Exit For
-                    Else
-                        errorMessages.Append("<b>Index #:</b> " & i.ToString() & "<br/>" _
-                            & "<b>Source:</b> " & sqlError.Source & "<br/>" _
-                            & "<b>Class:</b> " & sqlError.Class & "<br/>" _
-                            & "<b>Number:</b> " & sqlError.Number & "<br/>" _
-                            & "<b>Message:</b> " & sqlError.Message & "<br/><br/>" _
-                        )
                     End If
-                Next i
-                If bError Then
-                    message = "ERROR:" & errorMessages.ToString()
-                End If
-            Finally
-                CBO.CloseDataReader(dr, True)
+                Next
             End Try
 
-            Return message
+            Return bError
         End Function
-
 
 #End Region
 
@@ -604,7 +613,7 @@ Namespace DotNetNuke.Data
                 GetProviderPath = objHttpContext.Server.MapPath(GetProviderPath)
 
                 If Directory.Exists(GetProviderPath) Then
-                    If TestDatabaseConnection(ConnectionString, DatabaseOwner, ObjectQualifier) <> "" Then
+                    If Not IsConnectionValid Then
                         GetProviderPath = "ERROR: Could not connect to database specified in connectionString for SqlDataProvider"
                     End If
                 Else
@@ -743,14 +752,14 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetPortalSpaceUsed(ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortalSpaceUsed", GetNull(PortalId)), IDataReader)
         End Function
-        Public Overrides Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal UserTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String, ByVal lastModifiedByUserID As Integer, ByVal CultureCode As String)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalInfo", PortalId, PortalName, GetNull(LogoFile), GetNull(FooterText), GetNull(ExpiryDate), UserRegistration, BannerAdvertising, Currency, GetNull(AdministratorId), HostFee, HostSpace, PageQuota, UserQuota, GetNull(PaymentProcessor), GetNull(ProcessorUserId), GetNull(ProcessorPassword), GetNull(Description), GetNull(KeyWords), GetNull(BackgroundFile), GetNull(SiteLogHistory), GetNull(SplashTabId), GetNull(HomeTabId), GetNull(LoginTabId), GetNull(UserTabId), GetNull(DefaultLanguage), GetNull(TimeZoneOffset), HomeDirectory, lastModifiedByUserID, CultureCode)
+        Public Overrides Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String, ByVal lastModifiedByUserID As Integer, ByVal CultureCode As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalInfo", PortalId, PortalName, GetNull(LogoFile), GetNull(FooterText), GetNull(ExpiryDate), UserRegistration, BannerAdvertising, Currency, GetNull(AdministratorId), HostFee, HostSpace, PageQuota, UserQuota, GetNull(PaymentProcessor), GetNull(ProcessorUserId), GetNull(ProcessorPassword), GetNull(Description), GetNull(KeyWords), GetNull(BackgroundFile), GetNull(SiteLogHistory), GetNull(SplashTabId), GetNull(HomeTabId), GetNull(LoginTabId), GetNull(RegisterTabId), GetNull(UserTabId), GetNull(DefaultLanguage), GetNull(TimeZoneOffset), HomeDirectory, lastModifiedByUserID, CultureCode)
         End Sub
         Public Overrides Sub UpdatePortalSetting(ByVal PortalId As Integer, ByVal SettingName As String, ByVal SettingValue As String, ByVal UserID As Integer, ByVal CultureCode As String)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetting", PortalId, SettingName, SettingValue, UserID, CultureCode)
         End Sub
-        Public Overrides Sub UpdatePortalSetup(ByVal PortalId As Integer, ByVal AdministratorId As Integer, ByVal AdministratorRoleId As Integer, ByVal RegisteredRoleId As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal UserTabId As Integer, ByVal AdminTabId As Integer, ByVal CultureCode As String)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetup", PortalId, AdministratorId, AdministratorRoleId, RegisteredRoleId, SplashTabId, HomeTabId, LoginTabId, UserTabId, AdminTabId, CultureCode)
+        Public Overrides Sub UpdatePortalSetup(ByVal PortalId As Integer, ByVal AdministratorId As Integer, ByVal AdministratorRoleId As Integer, ByVal RegisteredRoleId As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal AdminTabId As Integer, ByVal CultureCode As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetup", PortalId, AdministratorId, AdministratorRoleId, RegisteredRoleId, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, AdminTabId, CultureCode)
         End Sub
         Public Overrides Function VerifyPortal(ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "VerifyPortal", PortalId), IDataReader)
@@ -761,7 +770,7 @@ Namespace DotNetNuke.Data
 
         ' tab
         Public Overloads Overrides Function AddTab(ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal CreatedByUserID As Integer, ByVal CultureCode As String) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTab", ContentItemID, GetNull(PortalId), TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, CreatedByUserID, CultureCode), Integer)
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTab", ContentItemId, GetNull(PortalId), TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, CreatedByUserID, CultureCode), Integer)
         End Function
         <Obsolete("This method is used for legacy support during the upgrade process (pre v3.1.1). It has been replaced by one that adds the RefreshInterval and PageHeadText variables.")> _
         Public Overloads Overrides Sub UpdateTab(ByVal TabId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal CultureCode As String)

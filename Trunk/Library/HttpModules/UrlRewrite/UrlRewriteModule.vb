@@ -94,12 +94,12 @@ Namespace DotNetNuke.HttpModules
                         ' icreate a well formed querystring based on the array of parameters
                         For intParameter As Integer = 1 To arrParameters.Length - 1
                             ' ignore the page name 
-                            If arrParameters(intParameter).ToLower.IndexOf(".aspx") = -1 Then
+                            If arrParameters(intParameter).IndexOf(".aspx", StringComparison.InvariantCultureIgnoreCase) = -1 Then
                                 ' get parameter name
                                 strParameterName = arrParameters(intParameter).Trim()
                                 If strParameterName.Length > 0 Then
                                     ' add parameter to SendTo if it does not exist already  
-                                    If sendTo.ToLower.IndexOf("?" & strParameterName.ToLower & "=") = -1 And sendTo.ToLower.IndexOf("&" & strParameterName.ToLower & "=") = -1 Then
+                                    If sendTo.IndexOf("?" & strParameterName & "=", StringComparison.InvariantCultureIgnoreCase) = -1 And sendTo.IndexOf("&" & strParameterName & "=", StringComparison.InvariantCultureIgnoreCase) = -1 Then
                                         ' get parameter delimiter
                                         If sendTo.IndexOf("?") <> -1 Then
                                             strParameterDelimiter = "&"
@@ -141,7 +141,7 @@ Namespace DotNetNuke.HttpModules
                         strParameterName = strParameterName.Substring(0, strParameterName.IndexOf("="))
                     End If
                     ' check if parameter already exists
-                    If sendTo.ToLower.IndexOf("?" & strParameterName.ToLower & "=") = -1 And sendTo.ToLower.IndexOf("&" & strParameterName.ToLower & "=") = -1 Then
+                    If sendTo.IndexOf("?" & strParameterName & "=", StringComparison.InvariantCultureIgnoreCase) = -1 And sendTo.IndexOf("&" & strParameterName & "=", StringComparison.InvariantCultureIgnoreCase) = -1 Then
                         ' add parameter to SendTo value
                         If sendTo.IndexOf("?") <> -1 Then
                             sendTo = sendTo & "&" & arrParameters(intParameter)
@@ -313,21 +313,21 @@ Namespace DotNetNuke.HttpModules
             Dim Response As HttpResponse = app.Response
             Dim requestedPath As String = app.Request.Url.AbsoluteUri
 
-            If Request.Url.LocalPath.ToLower.EndsWith("scriptresource.axd") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("webresource.axd") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("gif") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("jpg") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("css") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("js") Then
+            If Request.Url.LocalPath.EndsWith("scriptresource.axd", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("webresource.axd", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("gif", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("jpg", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("css", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("js", StringComparison.InvariantCultureIgnoreCase) Then
                 Exit Sub
             End If
 
             'Carry out first time initialization tasks
             Initialize.Init(app)
 
-            If Request.Url.LocalPath.ToLower.EndsWith("install.aspx") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") _
-                    OrElse Request.Url.LocalPath.ToLower.EndsWith("captcha.aspx") Then
+            If Request.Url.LocalPath.EndsWith("install.aspx", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("installwizard.aspx", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("captcha.aspx", StringComparison.InvariantCultureIgnoreCase) Then
                 Exit Sub
             End If
 
@@ -410,12 +410,12 @@ Namespace DotNetNuke.HttpModules
                             'see if the correct domain can be found and redirect it 
                             objPortalAliasInfo = PortalAliasController.GetPortalAliasInfo(DomainName)
                             If Not objPortalAliasInfo Is Nothing Then
-                                If app.Request.Url.AbsoluteUri.ToLower.StartsWith("https://") Then
+                                If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
                                     strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
                                 Else
                                     strURL = "http://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
                                 End If
-                                If strURL.ToLower.IndexOf(DomainName.ToLower()) = -1 Then
+                                If strURL.IndexOf(DomainName, StringComparison.InvariantCultureIgnoreCase) = -1 Then
                                     strURL += app.Request.Url.PathAndQuery
                                 End If
                                 Response.Redirect(strURL, True)
@@ -437,7 +437,7 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    If Not Request.Url.LocalPath.ToLower.EndsWith(glbDefaultPage.ToLower) Then
+                    If Not Request.Url.LocalPath.EndsWith(glbDefaultPage, StringComparison.InvariantCultureIgnoreCase) Then
                         ' allows requests for aspx pages in custom folder locations to be processed
                         Exit Sub
                     Else
@@ -448,10 +448,19 @@ Namespace DotNetNuke.HttpModules
                             Dim objPortalAliasController As New PortalAliasController
                             Dim arrPortalAliases As ArrayList
                             arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
+
+                            If arrPortalAliases.Count = 0 Then
+                                objPortalAliasInfo = New PortalAliasInfo()
+                                objPortalAliasInfo.PortalID = PortalId
+                                objPortalAliasInfo.HTTPAlias = PortalAlias
+                                objPortalAliasController.AddPortalAlias(objPortalAliasInfo)
+                                arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
+                            End If
+
                             If arrPortalAliases.Count > 0 Then
                                 'Get the first Alias
                                 objPortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
-                                If app.Request.Url.AbsoluteUri.ToLower.StartsWith("https://") Then
+                                If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
                                     strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
                                 Else
                                     strURL = "http://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
@@ -464,6 +473,8 @@ Namespace DotNetNuke.HttpModules
                         End If
                     End If
                 End If
+
+
             Catch ex As Exception
                 ''500 Error - Redirect to ErrorPage
                 strURL = "~/ErrorPage.aspx?status=500&error=" & Server.UrlEncode(ex.Message)
@@ -493,7 +504,7 @@ Namespace DotNetNuke.HttpModules
                 End If
 
                 ' manage secure connections
-                If Request.Url.AbsolutePath.ToLower.EndsWith(".aspx") Then
+                If Request.Url.AbsolutePath.EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase) Then
                     ' request is for a standard page
                     strURL = ""
                     ' if SSL is enabled
@@ -519,7 +530,7 @@ Namespace DotNetNuke.HttpModules
                     End If
                     ' if a protocol switch is necessary
                     If strURL <> "" Then
-                        If strURL.ToLower.StartsWith("https://") Then
+                        If strURL.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
                             ' redirect to secure connection
                             Response.Redirect(strURL, True)
                         Else ' when switching to an unsecure page, use a clientside redirector to avoid the browser security warning

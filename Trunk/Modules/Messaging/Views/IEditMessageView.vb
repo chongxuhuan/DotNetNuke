@@ -18,14 +18,14 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports WebFormsMvp
+Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Services.Messaging.Data
 Imports DotNetNuke.Modules.Messaging.Views.Models
 
 Namespace DotNetNuke.Modules.Messaging.Views
 
     Public Interface IEditMessageView
-        Inherits IView(Of EditMessageModel)
+        Inherits IModuleView(Of EditMessageModel)
 
         Sub BindMessage(ByVal message As Message)
         Sub ShowInvalidUserError()

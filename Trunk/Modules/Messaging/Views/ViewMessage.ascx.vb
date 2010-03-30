@@ -35,13 +35,6 @@ Namespace DotNetNuke.Modules.Messaging.Views
 
 #Region "IViewMessageView Implementation"
 
-        'Protected Overrides Sub ConnectEvents()
-        '    MyBase.ConnectEvents()
-
-        '    AddHandler replyMessage.Click, CreateSimpleHandler(Function(p) p.Reply())
-
-        'End Sub
-
         Public Event Cancel(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Cancel
         Public Event Delete(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Delete
         Public Event Reply(ByVal sender As Object, ByVal e As EventArgs) Implements IViewMessageView.Reply

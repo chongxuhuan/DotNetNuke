@@ -24,7 +24,7 @@
             <table id="tblPackage" runat="server" cellspacing="2" cellpadding="4" broder="0">
                 <tr id="trExtensionType" runat="server">
                     <td style="width:20px"></td>
-                    <td class="SubHead" style="width:200px"><dnn:Label ID="plExtensionType" runat="server" ControlName="cboExtensionType /></td>
+                    <td class="SubHead" style="width:200px"><dnn:Label ID="plExtensionType" runat="server" ControlName="cboExtensionType" /></td>
                     <td class="NormalTextBox" style="width:325px">
                         <asp:DropDownList ID="cboExtensionType" runat="server" DataTextField="Description" DataValueField="PackageType" AutoPostBack="true"/>
                     </td>

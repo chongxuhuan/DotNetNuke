@@ -306,6 +306,11 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     If Not cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString) Is Nothing Then
                         cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString).Selected = True
                     End If
+                    cboRegisterTabId.DataSource = listTabs
+                    cboRegisterTabId.DataBind()
+                    If Not cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString) Is Nothing Then
+                        cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString).Selected = True
+                    End If
 
                     listTabs = TabController.GetPortalTabs(intPortalId, Null.NullInteger, False, True)
                     cboUserTabId.DataSource = listTabs
@@ -681,6 +686,11 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         intLoginTabId = Integer.Parse(cboLoginTabId.SelectedItem.Value)
                     End If
 
+                    Dim intRegisterTabId As Integer = Null.NullInteger
+                    If Not cboRegisterTabId.SelectedItem Is Nothing Then
+                        intRegisterTabId = Integer.Parse(cboRegisterTabId.SelectedItem.Value)
+                    End If
+
                     Dim intUserTabId As Integer = Null.NullInteger
                     If Not cboUserTabId.SelectedItem Is Nothing Then
                         intUserTabId = Integer.Parse(cboUserTabId.SelectedItem.Value)
@@ -711,7 +721,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         dblHostSpace, intPageQuota, intUserQuota, _
                         IIf(cboProcessor.SelectedValue = "", "", cboProcessor.SelectedItem.Text).ToString, _
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
-                        strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, _
+                        strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
                         intUserTabId, cboDefaultLanguage.SelectedValue, Convert.ToInt32(cboTimeZone.SelectedValue), _
                         lblHomeDirectory.Text)
 

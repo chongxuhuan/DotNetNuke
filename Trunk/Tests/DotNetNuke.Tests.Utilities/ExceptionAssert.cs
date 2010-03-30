@@ -19,8 +19,8 @@
 */
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
+using Gallio.Framework.Assertions;
 
 namespace DotNetNuke.Tests.Utilities
 {
@@ -82,11 +82,11 @@ namespace DotNetNuke.Tests.Utilities
 
             if (!thrown)
             {
-                throw new AssertFailedException(String.Format("Expected exception of type '{0}' was not thrown", typeof(TException).FullName));
+                throw new AssertionException(String.Format("Expected exception of type '{0}' was not thrown", typeof(TException).FullName));
             }
             else if (!matched)
             {
-                throw new AssertFailedException(String.Format("Expected exception of type '{0}' was thrown but did not match the configured criteria", typeof(TException).FullName));
+                throw new AssertionException(String.Format("Expected exception of type '{0}' was thrown but did not match the configured criteria", typeof(TException).FullName));
             }
         }
 

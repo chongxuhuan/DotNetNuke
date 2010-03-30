@@ -2241,7 +2241,13 @@ Namespace DotNetNuke.Common
                 extraParams += String.Concat("&orignalurl=", originalURL)
             End If
 
-            strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Register", extraParams)
+            If _portalSettings.RegisterTabId <> -1 Then
+                ' user defined tab
+                strURL = NavigateURL(_portalSettings.RegisterTabId, "", extraParams)
+            Else
+                ' portal tab
+                strURL = NavigateURL(_portalSettings.ActiveTab.TabID, "Register", extraParams)
+            End If
 
             Return strURL
         End Function

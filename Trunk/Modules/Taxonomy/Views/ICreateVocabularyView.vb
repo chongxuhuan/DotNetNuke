@@ -21,11 +21,12 @@
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
 Imports WebFormsMvp
+Imports DotNetNuke.Web.Mvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface ICreateVocabularyView
-        Inherits IView(Of CreateVocabularyModel)
+        Inherits IModuleView(Of CreateVocabularyModel)
 
         Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal showScope As Boolean)
         Event Cancel As EventHandler

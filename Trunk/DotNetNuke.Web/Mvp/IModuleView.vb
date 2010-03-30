@@ -1,4 +1,4 @@
-'
+﻿'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -18,20 +18,18 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System.Collections.Specialized
+Imports WebFormsMvp
+Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 
-Namespace DotNetNuke.Entities.Content
-    Public Interface IContentController
-        Function AddContentItem(ByVal contentItem As ContentItem) As Integer
-        Sub DeleteContentItem(ByVal contentItem As ContentItem)
-        Function GetContentItem(ByVal contentItemId As Integer) As ContentItem
-        Function GetContentItemsByTerm(ByVal term As String) As IQueryable(Of ContentItem)
-        Function GetUnIndexedContentItems() As IQueryable(Of ContentItem)
-        Sub UpdateContentItem(ByVal contentItem As ContentItem)
+Namespace DotNetNuke.Web.Mvp
+    Public Interface IModuleView(Of T As {Class, New})
+        Inherits IView(Of T)
 
-        Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String)
-        Sub DeleteMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String)
-        Function GetMetaData(ByVal contentItemId As Integer) As NameValueCollection
+        Event Initialize As EventHandler
 
+        Sub ProcessModuleLoadException(ByVal ex As Exception)
+
+        Sub ShowMessage(ByVal messageHeader As String, ByVal message As String, ByVal messageType As ModuleMessageType)
     End Interface
 End Namespace
+

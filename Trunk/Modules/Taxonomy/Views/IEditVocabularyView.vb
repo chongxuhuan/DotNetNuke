@@ -22,11 +22,12 @@ Imports DotNetNuke.Entities.Content.Taxonomy
 Imports DotNetNuke.Modules.Taxonomy.Views.Models
 Imports DotNetNuke.Web.UI.WebControls
 Imports WebFormsMvp
+Imports DotNetNuke.Web.Mvp
 
 Namespace DotNetNuke.Modules.Taxonomy.Views
 
     Public Interface IEditVocabularyView
-        Inherits IView(Of EditVocabularyModel)
+        Inherits IModuleView(Of EditVocabularyModel)
 
         Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean)
         Sub BindTerms(ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal dataBind As Boolean)

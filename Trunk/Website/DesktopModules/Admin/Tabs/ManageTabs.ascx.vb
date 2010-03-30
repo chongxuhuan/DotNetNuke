@@ -29,6 +29,7 @@ Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Security.Permissions
 Imports System.Linq
 Imports DotNetNuke.Entities.Content
+Imports DotNetNuke.Services.OutputCache
 
 Namespace DotNetNuke.Modules.Admin.Tabs
 
@@ -153,7 +154,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 End If
 
                 ' copy page options
-            	cboCopyPage.DataSource = GetTabs(True, False, False)
+                cboCopyPage.DataSource = GetTabs(True, False, False)
                 cboCopyPage.DataBind()
                 rowModules.Visible = False
             End If
@@ -240,7 +241,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 End If
             End If
 
-            cboCacheProvider.DataSource = OutputCache.OutputCachingProvider.GetProviderList()
+            cboCacheProvider.DataSource = OutputCachingProvider.GetProviderList()
             cboCacheProvider.DataBind()
             cboCacheProvider.Items.Insert(0, New ListItem(Localization.GetString("None_Specified"), ""))
             If objTab Is Nothing Then
@@ -879,11 +880,11 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             ShowCacheRows()
         End Sub
         Protected Sub cmdClearPageCache_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdClearPageCache.Click
-            OutputCache.OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).Remove(Me.TabId)
+            OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).Remove(Me.TabId)
             ShowCacheRows()
         End Sub
         Protected Sub cmdClearAllPageCache_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdClearAllPageCache.Click
-            OutputCache.OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).PurgeCache(Me.PortalId)
+            OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).PurgeCache(Me.PortalId)
             ShowCacheRows()
         End Sub
         Private Sub ShowCacheRows()
@@ -895,7 +896,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 cmdClearPageCache.Visible = True
                 ShowCacheIncludeExcludeRows()
                 trCacheStatus.Visible = True
-                Dim cachedItemCount As Integer = OutputCache.OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).GetItemCount(Me.TabId)
+                Dim cachedItemCount As Integer = OutputCachingProvider.Instance(cboCacheProvider.SelectedValue).GetItemCount(Me.TabId)
                 If cachedItemCount = 0 Then
                     cmdClearAllPageCache.Enabled = False
                     cmdClearPageCache.Enabled = False

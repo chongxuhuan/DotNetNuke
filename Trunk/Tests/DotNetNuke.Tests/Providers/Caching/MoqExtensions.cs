@@ -22,14 +22,15 @@
 using DotNetNuke.Tests.Utilities;
 using Moq.Language;
 using Moq.Language.Flow;
+using DotNetNuke.Services.Cache;
 
 namespace DotNetNuke.Tests.Providers.Caching
 {
     public static class MoqExtensions
     {
-        public static IReturnsResult ReturnsValidValue(this IReturns<object> ret)
+        public static IReturnsResult<CachingProvider> ReturnsValidValue(this ISetup<CachingProvider, object> ret)
         {
-            return ret.Returns(Constants.CACHEING_ValidValue);
+            return ret.Returns(() => Constants.CACHEING_ValidValue);
         }
     }
 }

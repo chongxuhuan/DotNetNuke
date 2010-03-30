@@ -75,6 +75,20 @@ Namespace DotNetNuke.Entities.Content.Data
 
 #End Region
 
+#Region "MetaData Methods"
+
+        Public Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IDataService.AddMetaData
+            provider.ExecuteNonQuery("AddMetaData", contentItem.ContentItemId, name, value)
+        End Sub
+        Public Sub DeleteMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IDataService.DeleteMetaData
+            provider.ExecuteNonQuery("DeleteMetaData", contentItem.ContentItemId, name, value)
+        End Sub
+        Public Function GetMetaData(ByVal contentItemId As Integer) As IDataReader Implements IDataService.GetMetaData
+            Return provider.ExecuteReader("GetMetaData", contentItemId)
+        End Function
+
+#End Region
+
 #Region "ContentType Methods"
 
         Function AddContentType(ByVal contentType As ContentType) As Integer Implements IDataService.AddContentType

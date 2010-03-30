@@ -84,7 +84,7 @@ Namespace DotNetNuke.Modules.Admin.Host
             lblDataProvider.Text = ProviderConfiguration.GetProviderConfiguration("data").DefaultProvider
             lblFramework.Text = Common.Globals.NETFrameworkVersion.ToString(2)
 
-            If Not Upgrade.Upgrade.IsNETFrameworkCurrent Then
+            If Not Upgrade.Upgrade.IsNETFrameworkCurrent("3.5") Then
                 DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("FrameworkDownLevel", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End If
 

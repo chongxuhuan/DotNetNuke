@@ -26,16 +26,14 @@ Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.Web.Mvp
-    Public MustInherit Class ModuleView
+    Public MustInherit Class ModuleView(Of TModel As {Class, New})
         Inherits ModuleUserControlBase
-        Implements IView
-        Implements IInitializeView
-        Implements IShowMessage
-
+        Implements IModuleView(Of TModel)
 
 #Region "Private Members"
 
         Private _AutoDataBind As Boolean
+        Private _Model As TModel
 
 #End Region
 
@@ -78,6 +76,13 @@ Namespace DotNetNuke.Web.Mvp
             Return String.Format(CultureInfo.CurrentCulture, format, DataValue(Of T))
         End Function
 
+        Protected Overrides Sub LoadViewState(ByVal savedState As Object)
+            'Call the base class to load any View State
+            MyBase.LoadViewState(savedState)
+
+            AttributeBasedViewStateSerializer.DeSerialize(Model, ViewState)
+        End Sub
+
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             PageViewHost.Register(Me, Context)
 
@@ -88,29 +93,44 @@ Namespace DotNetNuke.Web.Mvp
             AddHandler Page.Load, AddressOf Page_Load
         End Sub
 
+        Protected Overrides Function SaveViewState() As Object
+            AttributeBasedViewStateSerializer.Serialize(Model, ViewState)
+
+            'Call the base class to save the View State
+            Return MyBase.SaveViewState()
+        End Function
+
 #End Region
 
-#Region "IInitializeView Implementation"
+#Region "IModuleView(Of TModel) Implementation"
 
-        Public Event Initialize As EventHandler Implements IInitializeView.Initialize
+        Public Event Initialize As EventHandler Implements IModuleView(Of TModel).Initialize
 
-#End Region
+        Public Sub ProcessModuleLoadException(ByVal ex As Exception) Implements IModuleView(Of TModel).ProcessModuleLoadException
+            DotNetNuke.Services.Exceptions.ProcessModuleLoadException(Me, ex)
+        End Sub
 
-#Region "IShowMessage Implementation"
-
-        Public Sub ShowMessage(ByVal messageKey As String, ByVal messageType As ModuleMessageType) Implements IShowMessage.ShowMessage
-            If Not String.IsNullOrEmpty(messageKey) Then
-                Dim message As String = Localization.GetString(messageKey, Me.LocalResourceFile)
-
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, message, messageType)
-            End If
+        Public Sub ShowMessage(ByVal messageHeader As String, ByVal message As String, ByVal messageType As ModuleMessageType) Implements IModuleView(Of TModel).ShowMessage
+            DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, messageHeader, message, messageType)
         End Sub
 
 #End Region
 
-#Region "IView Implementation"
+#Region "IView(Of TModel) Implementation"
 
         Public Shadows Event Load(ByVal sender As Object, ByVal e As System.EventArgs) Implements IView.Load
+
+        Public Property Model() As TModel Implements IView(Of TModel).Model
+            Get
+                If (_Model Is Nothing) Then
+                    Throw New InvalidOperationException("The Model property is currently null, however it should have been automatically initialized by the presenter. This most likely indicates that no presenter was bound to the control. Check your presenter bindings.")
+                End If
+                Return _Model
+            End Get
+            Set(ByVal value As TModel)
+                _Model = value
+            End Set
+        End Property
 
 #End Region
 

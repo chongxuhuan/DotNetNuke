@@ -27,11 +27,12 @@ Imports DotNetNuke.Web.Validators
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Web.Mvp
 Imports DotNetNuke.Web.UI.WebControls
+Imports DotNetNuke.Modules.Taxonomy.Views.Models
 
 Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
     Public Class EditVocabularyPresenter
-        Inherits ModulePresenter(Of IEditVocabularyView)
+        Inherits ModulePresenter(Of IEditVocabularyView, EditVocabularyModel)
 
 #Region "Private Members"
 
@@ -63,11 +64,9 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             AddHandler View.CancelTerm, AddressOf CancelTerm
             AddHandler View.Delete, AddressOf DeleteVocabulary
             AddHandler View.DeleteTerm, AddressOf DeleteTerm
-            AddHandler View.Load, AddressOf Load
             AddHandler View.Save, AddressOf SaveVocabulary
             AddHandler View.SaveTerm, AddressOf SaveTerm
             AddHandler View.SelectTerm, AddressOf SelectTerm
-
         End Sub
 
 #End Region
@@ -76,8 +75,14 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         Public ReadOnly Property IsEditEnabled() As Boolean
             Get
-                Dim user As UserInfo = UserController.GetCurrentUserInfo()
-                Return String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", False) = 0 OrElse (user IsNot Nothing AndAlso user.IsSuperUser)
+                Dim _isEnabled As Boolean = IsSuperUser
+                If Not _isEnabled Then
+                    'Check Portal Scope
+                    If View.Model IsNot Nothing AndAlso View.Model.Vocabulary IsNot Nothing AndAlso View.Model.Vocabulary.ScopeType IsNot Nothing Then
+                        _isEnabled = (String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", False) = 0)
+                    End If
+                End If
+                Return _isEnabled
             End Get
         End Property
 
@@ -145,6 +150,16 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             End If
         End Sub
 
+        Protected Overrides Sub OnLoad()
+            MyBase.OnLoad()
+
+            'Bind Vocabulary to View
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
+
+            'Bind Terms to View
+            View.BindTerms(View.Model.Terms, IsHeirarchical, Not IsPostBack)
+        End Sub
+
 #End Region
 
 #Region "Public Methods"
@@ -190,16 +205,6 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             'Redirect to List
             Response.Redirect(NavigateURL(TabId))
-        End Sub
-
-        Public Sub Load(ByVal sender As Object, ByVal e As EventArgs)
-            Dim user As UserInfo = UserController.GetCurrentUserInfo()
-
-            'Bind Vocabulary to View
-            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
-
-            'Bind Terms to View
-            View.BindTerms(View.Model.Terms, IsHeirarchical, Not IsPostBack)
         End Sub
 
         Public Sub SaveTerm(ByVal sender As Object, ByVal e As EventArgs)
