@@ -37,6 +37,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 #Region "Private Members"
 
         Private _Description As String
+        Private _IsSystem As Boolean
         Private _Name As String
         Private _ScopeId As Integer
         Private _ScopeType As ScopeType
@@ -94,6 +95,15 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             Get
                 Return (Type = VocabularyType.Hierarchy)
             End Get
+        End Property
+
+        Public Property IsSystem() As Boolean
+            Get
+                Return _IsSystem
+            End Get
+            Set(ByVal value As Boolean)
+                _IsSystem = value
+            End Set
         End Property
 
         Public Property Name() As String
@@ -179,6 +189,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
                 Case 1 : Type = VocabularyType.Simple
                 Case 2 : Type = VocabularyType.Hierarchy
             End Select
+            IsSystem = Null.SetNullBoolean(dr("IsSystem"))
             Name = Null.SetNullString(dr("Name"))
             Description = Null.SetNullString(dr("Description"))
             ScopeId = Null.SetNullInteger(dr("ScopeID"))

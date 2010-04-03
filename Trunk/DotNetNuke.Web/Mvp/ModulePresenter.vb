@@ -226,7 +226,7 @@ Namespace DotNetNuke.Web.Mvp
 
         Protected Overridable Function LocalizeString(ByVal key As String) As String
             Dim localizedString As String
-            If Not String.IsNullOrEmpty(key) Then
+            If Not String.IsNullOrEmpty(key) AndAlso Not String.IsNullOrEmpty(LocalResourceFile) Then
                 localizedString = Localization.GetString(key, LocalResourceFile)
             Else
                 localizedString = Null.NullString
@@ -263,20 +263,16 @@ Namespace DotNetNuke.Web.Mvp
         Protected Sub ShowMessage(ByVal messageHeaderKey As String, ByVal messageKey As String, ByVal messageType As ModuleMessageType)
             If Not String.IsNullOrEmpty(messageKey) Then
                 Dim header As String = Null.NullString
-                Dim message As String = Localization.GetString(messageKey, LocalResourceFile)
-
                 If Not String.IsNullOrEmpty(messageHeaderKey) Then
-                    header = Localization.GetString(messageHeaderKey, LocalResourceFile)
+                    header = LocalizeString(messageKey)
                 End If
-                View.ShowMessage(header, message, messageType)
+                View.ShowMessage(header, LocalizeString(messageKey), messageType)
             End If
         End Sub
 
         Protected Sub ShowMessage(ByVal messageKey As String, ByVal messageType As ModuleMessageType)
             If Not String.IsNullOrEmpty(messageKey) Then
-                Dim message As String = Localization.GetString(messageKey, LocalResourceFile)
-
-                View.ShowMessage(Null.NullString, message, messageType)
+                View.ShowMessage(Null.NullString, LocalizeString(messageKey), messageType)
             End If
         End Sub
 

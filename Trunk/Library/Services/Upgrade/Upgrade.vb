@@ -1403,6 +1403,10 @@ Namespace DotNetNuke.Services.Upgrade
                 End If
             End If
 
+            'Add Content List module definition
+            Dim moduleDefID As Integer = AddModuleDefinition("Admin.ContentList", "This module displays a list of content by tag.", "Content List")
+            AddModuleControl(moduleDefID, "", "", "DesktopModules/Admin/ContentList/ContentList.ascx", "", SecurityAccessLevel.View, 0)
+
             'Update registration page
             Dim objPortals As New PortalController
             Dim arrPortals As ArrayList = objPortals.GetPortals
@@ -1410,7 +1414,13 @@ Namespace DotNetNuke.Services.Upgrade
                 objPortal.RegisterTabId = objPortal.UserTabId
                 objPortals.UpdatePortalInfo(objPortal)
 
+                'Add ContentList to Search Results Page
+                Dim tabController As New TabController()
+                Dim tabId As Integer = tabController.GetTabByTabPath(objPortal.PortalID, "//SearchResults")
+                Dim searchPage As TabInfo = tabController.GetTab(tabId, objPortal.PortalID, False)
+                AddModuleToPage(searchPage, moduleDefID, "Results", "")
             Next
+
         End Sub
 
 #End Region

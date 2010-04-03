@@ -188,7 +188,7 @@ Namespace DotNetNuke.Entities.Portals
             Return CBO.GetCachedObject(Of PortalAliasCollection)(New CacheItemArgs(DataCache.PortalAliasCacheKey, _
                                                                                                 DataCache.PortalAliasCacheTimeOut, _
                                                                                                 DataCache.PortalAliasCachePriority), _
-                                                                                                AddressOf GetPortalAliasLookupCallBack)
+                                                                                                AddressOf GetPortalAliasLookupCallBack, True)
         End Function
 
 #End Region

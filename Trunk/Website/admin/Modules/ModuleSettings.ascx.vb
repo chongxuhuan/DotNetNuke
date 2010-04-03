@@ -31,6 +31,11 @@ Imports DotNetNuke.Entities.Content
 
 Namespace DotNetNuke.Modules.Admin.Modules
 
+    Public Class chkAdminBorder
+        Public Sub New()
+
+        End Sub
+    End Class
     ''' -----------------------------------------------------------------------------
     ''' <summary>
     ''' The ModuleSettingsPage PortalModuleBase is used to edit the settings for a 
@@ -109,6 +114,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
 
                 chkAllTabs.Checked = [Module].AllTabs
                 cboVisibility.SelectedIndex = [Module].Visibility
+                chkAdminBorder.Checked = Settings("hideadminborder")
 
                 If Not IsPostBack Then
                     BindInstalledOnPagesData()
@@ -556,6 +562,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                         AllTabsChanged = True
                     End If
                     [Module].AllTabs = chkAllTabs.Checked
+                    objModules.UpdateTabModuleSetting([Module].TabModuleID, "hideadminborder", chkAdminBorder.Checked.ToString)
                     Select Case Int32.Parse(cboVisibility.SelectedItem.Value)
                         Case 0 : [Module].Visibility = VisibilityState.Maximized
                         Case 1 : [Module].Visibility = VisibilityState.Minimized

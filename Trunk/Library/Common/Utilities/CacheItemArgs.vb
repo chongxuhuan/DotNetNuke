@@ -65,7 +65,7 @@ Namespace DotNetNuke.Common.Utilities
             _CacheKey = key
             _CacheTimeOut = 20
             _CachePriority = CacheItemPriority.Default
-            _ParamList = New ArrayList()
+            ''_ParamList = New ArrayList()
         End Sub
 
         '''-----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ Namespace DotNetNuke.Common.Utilities
             Me.New(key)
             _CacheTimeOut = timeout
             _CachePriority = CacheItemPriority.Default
-            _ParamList = New ArrayList()
+            ''_ParamList = New ArrayList()
         End Sub
 
         '''-----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ Namespace DotNetNuke.Common.Utilities
         Public Sub New(ByVal key As String, ByVal priority As CacheItemPriority)
             Me.New(key)
             _CachePriority = priority
-            _ParamList = New ArrayList()
+            ''_ParamList = New ArrayList()
         End Sub
 
         '''-----------------------------------------------------------------------------
@@ -237,6 +237,10 @@ Namespace DotNetNuke.Common.Utilities
         '''-----------------------------------------------------------------------------
         Public ReadOnly Property ParamList() As ArrayList
             Get
+                If (_ParamList Is Nothing) Then
+                    _ParamList = New ArrayList()
+                End If
+
                 Return _ParamList
             End Get
         End Property

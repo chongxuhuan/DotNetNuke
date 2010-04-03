@@ -44,7 +44,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         Public Sub New(ByVal listView As IVocabularyListView, ByVal vocabularyController As IVocabularyController)
             MyBase.New(listView)
-            Arg.NotNull("vocabularyController", vocabularyController)
+            Requires.NotNull("vocabularyController", vocabularyController)
 
             _VocabularyController = vocabularyController
 

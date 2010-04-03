@@ -60,8 +60,8 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Function AddScopeType(ByVal scopeType As ScopeType) As Integer Implements IScopeTypeController.AddScopeType
             'Argument Contract
-            Arg.NotNull("scopeType", scopeType)
-            Arg.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType)
+            Requires.NotNull("scopeType", scopeType)
+            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType)
 
             scopeType.ScopeTypeId = _DataService.AddScopeType(scopeType)
 
@@ -77,8 +77,8 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub DeleteScopeType(ByVal scopeType As ScopeType) Implements IScopeTypeController.DeleteScopeType
             'Argument Contract
-            Arg.NotNull("scopeType", scopeType)
-            Arg.PropertyNotNegative("scopeType", "ScopeTypeId", scopeType.ScopeTypeId)
+            Requires.NotNull("scopeType", scopeType)
+            Requires.PropertyNotNegative("scopeType", "ScopeTypeId", scopeType.ScopeTypeId)
 
             _DataService.DeleteScopeType(scopeType)
 
@@ -93,9 +93,9 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub UpdateScopeType(ByVal scopeType As ScopeType) Implements IScopeTypeController.UpdateScopeType
             'Argument Contract
-            Arg.NotNull("scopeType", scopeType)
-            Arg.PropertyNotNegative("scopeType", "ScopeTypeId", scopeType.ScopeTypeId)
-            Arg.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType)
+            Requires.NotNull("scopeType", scopeType)
+            Requires.PropertyNotNegative("scopeType", "ScopeTypeId", scopeType.ScopeTypeId)
+            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType)
 
             _DataService.UpdateScopeType(scopeType)
 

@@ -60,8 +60,8 @@ Namespace DotNetNuke.Entities.Content
 
         Public Function AddContentType(ByVal contentType As ContentType) As Integer Implements IContentTypeController.AddContentType
             'Argument Contract
-            Arg.NotNull("contentType", ContentType)
-            Arg.PropertyNotNullOrEmpty("contentType", "ContentType", ContentType.ContentType)
+            Requires.NotNull("contentType", contentType)
+            Requires.PropertyNotNullOrEmpty("contentType", "ContentType", contentType.ContentType)
 
             ContentType.ContentTypeId = _DataService.AddContentType(ContentType)
 
@@ -77,8 +77,8 @@ Namespace DotNetNuke.Entities.Content
 
         Public Sub DeleteContentType(ByVal contentType As ContentType) Implements IContentTypeController.DeleteContentType
             'Argument Contract
-            Arg.NotNull("contentType", ContentType)
-            Arg.PropertyNotNegative("contentType", "ContentTypeId", ContentType.ContentTypeId)
+            Requires.NotNull("contentType", contentType)
+            Requires.PropertyNotNegative("contentType", "ContentTypeId", contentType.ContentTypeId)
 
             _DataService.DeleteContentType(ContentType)
 
@@ -93,9 +93,9 @@ Namespace DotNetNuke.Entities.Content
 
         Public Sub UpdateContentType(ByVal contentType As ContentType) Implements IContentTypeController.UpdateContentType
             'Argument Contract
-            Arg.NotNull("contentType", ContentType)
-            Arg.PropertyNotNegative("contentType", "ContentTypeId", ContentType.ContentTypeId)
-            Arg.PropertyNotNullOrEmpty("contentType", "ContentType", ContentType.ContentType)
+            Requires.NotNull("contentType", contentType)
+            Requires.PropertyNotNegative("contentType", "ContentTypeId", contentType.ContentTypeId)
+            Requires.PropertyNotNullOrEmpty("contentType", "ContentType", contentType.ContentType)
 
             _DataService.UpdateContentType(ContentType)
 

@@ -48,7 +48,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
         Public Sub New(ByVal listView As IMessageListView, ByVal messagingController As IMessagingController)
             MyBase.New(listView)
-            Arg.NotNull("messagingController", messagingController)
+            Requires.NotNull("messagingController", messagingController)
             _MessagingController = messagingController
 
             AddHandler View.AddMessage, AddressOf AddMessage

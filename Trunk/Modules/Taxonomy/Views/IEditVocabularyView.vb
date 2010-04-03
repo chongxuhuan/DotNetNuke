@@ -29,7 +29,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
     Public Interface IEditVocabularyView
         Inherits IModuleView(Of EditVocabularyModel)
 
-        Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean)
+        Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal deleteEnabled As Boolean, ByVal showScope As Boolean)
         Sub BindTerms(ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal dataBind As Boolean)
         Sub BindTerm(ByVal term As Term, ByVal terms As IEnumerable(Of Term), ByVal isHeirarchical As Boolean, ByVal loadFromControl As Boolean, ByVal editEnabled As Boolean)
         Sub ClearSelectedTerm()

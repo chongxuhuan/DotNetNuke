@@ -320,27 +320,27 @@ Namespace DotNetNuke.Common.Utilities
                             objPropertyInfo.SetValue(objObject, objDataValue, Nothing)
                         Else
                             ' business object info class member data type does not match datareader member data type
-                            Try
-                                'need to handle enumeration conversions differently than other base types
-                                If objPropertyType.BaseType.Equals(GetType(System.Enum)) Then
-                                    ' check if value is numeric and if not convert to integer ( supports databases like Oracle )
-                                    If IsNumeric(objDataValue) Then
-                                        objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, Convert.ToInt32(objDataValue)), Nothing)
-                                    Else
-                                        objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, objDataValue), Nothing)
-                                    End If
-                                ElseIf objPropertyType.FullName.Equals("System.Guid") Then
-                                    ' guid is not a datatype common across all databases ( ie. Oracle )
-                                    objPropertyInfo.SetValue(objObject, Convert.ChangeType(New Guid(objDataValue.ToString()), objPropertyType), Nothing)
-                                ElseIf objPropertyType.FullName.Equals("System.Version") Then
-                                    objPropertyInfo.SetValue(objObject, New Version(objDataValue.ToString()), Nothing)
+
+                            'need to handle enumeration conversions differently than other base types
+                            If objPropertyType.BaseType.Equals(GetType(System.Enum)) Then
+                                ' check if value is numeric and if not convert to integer ( supports databases like Oracle )
+                                If IsNumeric(objDataValue) Then
+                                    objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, Convert.ToInt32(objDataValue)), Nothing)
                                 Else
-                                    ' try explicit conversion
-                                    objPropertyInfo.SetValue(objObject, objDataValue, Nothing)
+                                    objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, objDataValue), Nothing)
                                 End If
-                            Catch
+                            ElseIf objPropertyType Is GetType(Guid) Then
+                                ' guid is not a datatype common across all databases ( ie. Oracle )
+                                objPropertyInfo.SetValue(objObject, Convert.ChangeType(New Guid(objDataValue.ToString()), objPropertyType), Nothing)
+                            ElseIf objPropertyType Is GetType(System.Version) Then
+                                objPropertyInfo.SetValue(objObject, New Version(objDataValue.ToString()), Nothing)
+                            ElseIf (objPropertyType Is objDataType) Then
+                                ' try explicit conversion
+                                objPropertyInfo.SetValue(objObject, objDataValue, Nothing)
+                            Else
                                 objPropertyInfo.SetValue(objObject, Convert.ChangeType(objDataValue, objPropertyType), Nothing)
-                            End Try
+                            End If
+
                         End If
                     End If
                 End If
@@ -1015,6 +1015,10 @@ Namespace DotNetNuke.Common.Utilities
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetCachedObject(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback) As TObject
             Return DataCache.GetCachedData(Of TObject)(cacheItemArgs, cacheItemExpired)
+        End Function
+
+        Public Shared Function GetCachedObject(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback, ByVal saveInDictionary As Boolean) As TObject
+            Return DataCache.GetCachedData(Of TObject)(cacheItemArgs, cacheItemExpired, saveInDictionary)
         End Function
 
 #End Region

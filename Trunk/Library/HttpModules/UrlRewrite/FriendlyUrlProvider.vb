@@ -23,7 +23,7 @@ Imports System.Text.RegularExpressions
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Common.Utilities
-Imports DotnetNuke.Entities.Portals
+Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Services.Url.FriendlyUrl
 Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.Entities.Tabs
@@ -49,7 +49,8 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
         Private _regexMatch As String
         Private _fileExtension As String
         Private _urlFormat As UrlFormatType = UrlFormatType.SearchFriendly
-
+        Private Shared _friendlyPathRegex As New Regex("[^?]*/Tab[Ii]d/(\d+)/default.aspx$", RegexOptions.IgnoreCase Or RegexOptions.Compiled)
+        Private Shared _friendlyReturn As New Regex("[^?]*/Tab[Ii]d/(\d+)/ctl/([A-Z][a-z]+)/default.aspx(\?returnurl=([^>]+))?$", RegexOptions.IgnoreCase Or RegexOptions.Compiled)
 #End Region
 
 #Region " Constructors "
@@ -154,48 +155,48 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             friendlyPath = GetFriendlyQueryString(tab, friendlyPath, pageName)
 
             If (UrlFormat = UrlFormatType.HumanFriendly) Then
-                If (Regex.IsMatch(friendlyPath, "[^?]*/Tab[Ii]d/(\d+)/default.aspx$", RegexOptions.IgnoreCase)) Then
-                    If Not (tab Is Nothing) Then
+                If (tab IsNot Nothing) Then
+                    If (_friendlyPathRegex.IsMatch(friendlyPath)) Then
                         'Return AddHTTP(portalAlias & "/" & tab.TabPath.Replace("//", "/").TrimStart(Convert.ToChar("/")) + ".aspx")
-                        friendlyPath = GetFriendlyAlias("~/" & tab.TabPath.Replace("//", "/").TrimStart(Convert.ToChar("/")) + ".aspx", portalAlias, isPagePath)
-                    End If
-                Else
-                    Dim re As Regex = New Regex("[^?]*/Tab[Ii]d/(\d+)/ctl/([A-Z][a-z]+)/default.aspx(\?returnurl=([^>]+))?$", RegexOptions.IgnoreCase)
-                    If (re.IsMatch(friendlyPath)) Then
-                        Dim sesMatch As Match = re.Match(friendlyPath)
+                        friendlyPath = GetFriendlyAlias("~/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath)
+                    Else
 
-                        If (sesMatch.Groups.Count > 2) Then
-                            Select Case sesMatch.Groups(2).Value.ToLower
-                                Case "terms"
-                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                    friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                Case "privacy"
-                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                    friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                Case "login"
-                                    If (sesMatch.Groups(4).Value.ToLower() <> "") Then
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
-                                        friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
-                                    Else
+                        If (_friendlyReturn.IsMatch(friendlyPath)) Then
+                            Dim sesMatch As Match = _friendlyReturn.Match(friendlyPath)
+                            If (sesMatch.Groups.Count > 2) Then
+                                Select Case sesMatch.Groups(2).Value.ToLower
+                                    Case "terms"
                                         'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                         friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                    End If
-                                Case "register"
-                                    If (sesMatch.Groups(4).Value.ToLower() <> "") Then
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
-                                        friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
-                                    Else
+                                    Case "privacy"
                                         'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                         friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                    End If
-                                Case Else
-                                    Return friendlyPath
-                            End Select
+                                    Case "login"
+                                        If (sesMatch.Groups(4).Value.ToLower() <> "") Then
+                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
+                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
+                                        Else
+                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
+                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
+                                        End If
+                                    Case "register"
+                                        If (sesMatch.Groups(4).Value.ToLower() <> "") Then
+                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
+                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
+                                        Else
+                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
+                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
+                                        End If
+                                    Case Else
+                                        Return friendlyPath
+                                End Select
+                            Else
+                                Return friendlyPath
+                            End If
                         Else
+                            'Debug.Print("B=>" + friendlyPath)
                             Return friendlyPath
                         End If
-                    Else
-                        Return friendlyPath
                     End If
                 End If
             End If

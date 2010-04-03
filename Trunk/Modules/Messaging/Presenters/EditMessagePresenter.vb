@@ -46,7 +46,7 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
         Public Sub New(ByVal editView As IEditMessageView, ByVal messagingController As IMessagingController)
             MyBase.New(editView)
-            Arg.NotNull("messagingController", messagingController)
+            Requires.NotNull("messagingController", messagingController)
 
             _MessagingController = messagingController
 

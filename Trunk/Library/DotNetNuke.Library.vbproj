@@ -155,8 +155,9 @@
     <Compile Include="AssemblyInfo.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\Arg.vb" />
     <Compile Include="Common\Assembly.vb" />
+    <Compile Include="Common\Guard.vb" />
+    <Compile Include="Common\Requires.vb" />
     <Compile Include="Common\Utilities\CacheItemArgs.vb" />
     <Compile Include="Common\Utilities\CacheItemExpiredCallback.vb" />
     <Compile Include="Entities\Content\Common\Extensions.vb" />

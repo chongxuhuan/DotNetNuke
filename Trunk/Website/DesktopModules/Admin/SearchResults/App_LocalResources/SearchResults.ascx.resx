@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Relevance.Text" xml:space="preserve">
-    <value>Relevance: </value>
+    <value> - Relevance: </value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About the Search Results Module&lt;/h1&gt;&lt;p&gt;The Search Results module provides the ability to display search results.&lt;/p&gt;</value>

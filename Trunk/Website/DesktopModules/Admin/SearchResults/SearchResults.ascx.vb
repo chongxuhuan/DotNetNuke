@@ -21,9 +21,12 @@
 Imports System.Data.SqlClient
 Imports System.IO
 Imports System.Text.RegularExpressions
+Imports System.Linq
 Imports System.Web
 Imports DotNetNuke
 Imports DotNetNuke.Services.Search
+Imports System.Collections.Generic
+Imports DotNetNuke.Entities.Content
 
 Namespace DotNetNuke.Modules.SearchResults
 
@@ -44,13 +47,13 @@ Namespace DotNetNuke.Modules.SearchResults
     '''     [cnurse]    01/04/2005  Modified so "Nos" stay in order
     ''' </history>
     ''' -----------------------------------------------------------------------------
-    Partial  Class SearchResults
+    Partial Class SearchResults
         Inherits Entities.Modules.PortalModuleBase
 
 #Region "Private Members"
 
         Private _CurrentPage As Integer = 1
-        Private _SearchQuery As String
+        Private _SearchQuery As String = Null.NullString
 
 #End Region
 
@@ -90,27 +93,8 @@ Namespace DotNetNuke.Modules.SearchResults
 
 #Region "Private Methods"
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' BindData binds the Search Results to the Grid
-        ''' </summary>
-        ''' <history>
-        ''' 	[cnurse]	12/13/2004	created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub BindData()
-
-            Dim Results As SearchResultsInfoCollection = SearchDataStoreProvider.Instance.GetSearchResults(PortalId, _searchQuery)
-
-            Dim dt As New DataTable
-            Dim dc As New DataColumn("TabId")
-            dt.Columns.Add(New DataColumn("TabId", GetType(System.Int32)))
-            dt.Columns.Add(New DataColumn("Guid", GetType(System.String)))
-            dt.Columns.Add(New DataColumn("Title", GetType(System.String)))
-            dt.Columns.Add(New DataColumn("Relevance", GetType(System.Int32)))
-            dt.Columns.Add(New DataColumn("Description", GetType(System.String)))
-            dt.Columns.Add(New DataColumn("PubDate", GetType(System.DateTime)))
-
+        Private Function BindSearchResults(ByVal dt As DataTable) As Integer
+            Dim Results As SearchResultsInfoCollection = SearchDataStoreProvider.Instance.GetSearchResults(PortalId, _SearchQuery)
 
             'Get the maximum items to display
             Dim maxItems As Integer = 0
@@ -155,26 +139,52 @@ Namespace DotNetNuke.Modules.SearchResults
                 dt.Rows.Add(dr)
             Next
 
-            'Bind Search Results Grid
-            Dim dv As New DataView(dt)
-            dv.Sort = "Relevance DESC"
-            dgResults.PageSize = PageSize
-            dgResults.DataSource = dv
-            dgResults.DataBind()
+            Return Results.Count
 
-            If Results.Count = 0 Then
-                dgResults.Visible = False
-                lblMessage.Text = String.Format(Localization.GetString("NoResults", LocalResourceFile), _SearchQuery)
-            Else
-                lblMessage.Text = String.Format(Localization.GetString("Results", LocalResourceFile), _SearchQuery)
-            End If
-            If Results.Count <= dgResults.PageSize Then
-                ctlPagingControl.Visible = False
-            Else
-                ctlPagingControl.Visible = True
-            End If
+        End Function
 
-            ctlPagingControl.TotalRecords = Results.Count
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' BindData binds the Search Results to the Grid
+        ''' </summary>
+        ''' <history>
+        ''' 	[cnurse]	12/13/2004	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub BindData()
+            Using dt As New DataTable()
+                dt.Columns.Add(New DataColumn("TabId", GetType(System.Int32)))
+                dt.Columns.Add(New DataColumn("Guid", GetType(System.String)))
+                dt.Columns.Add(New DataColumn("Title", GetType(System.String)))
+                dt.Columns.Add(New DataColumn("Relevance", GetType(System.Int32)))
+                dt.Columns.Add(New DataColumn("Description", GetType(System.String)))
+                dt.Columns.Add(New DataColumn("PubDate", GetType(System.DateTime)))
+
+                Dim count As Integer = Null.NullInteger
+
+                If _SearchQuery.Length > 0 Then
+                    count = BindSearchResults(dt)
+                End If
+
+                'Bind Search Results Grid
+                Dim dv As New DataView(dt)
+                dv.Sort = "Relevance DESC"
+                dgResults.PageSize = PageSize
+                dgResults.DataSource = dv
+                dgResults.DataBind()
+                If count = 0 Then
+                    dgResults.Visible = False
+                    lblMessage.Text = String.Format(Localization.GetString("NoResults", LocalResourceFile), _SearchQuery)
+                Else
+                    lblMessage.Text = String.Format(Localization.GetString("Results", LocalResourceFile), _SearchQuery)
+                End If
+                If count <= dgResults.PageSize Then
+                    ctlPagingControl.Visible = False
+                Else
+                    ctlPagingControl.Visible = True
+                End If
+                ctlPagingControl.TotalRecords = count
+            End Using
             ctlPagingControl.PageSize = dgResults.PageSize
             ctlPagingControl.CurrentPage = CurrentPage
         End Sub
@@ -208,7 +218,11 @@ Namespace DotNetNuke.Modules.SearchResults
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Protected Function FormatRelevance(ByVal relevance As Integer) As String
-            Return Services.Localization.Localization.GetString("Relevance", Me.LocalResourceFile) & relevance.ToString
+            Dim relevanceString As String = Null.NullString
+            If relevance > 0 Then
+                relevanceString = Services.Localization.Localization.GetString("Relevance", Me.LocalResourceFile) & relevance.ToString
+            End If
+            Return relevanceString
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -276,8 +290,6 @@ Namespace DotNetNuke.Modules.SearchResults
             Dim objSecurity As New PortalSecurity
             If Not Request.Params("Search") Is Nothing Then
                 _SearchQuery = HttpContext.Current.Server.HtmlEncode(objSecurity.InputFilter(Request.Params("Search").ToString, PortalSecurity.FilterFlag.NoScripting Or PortalSecurity.FilterFlag.NoMarkup))
-            Else
-                _SearchQuery = ""
             End If
 
             If _SearchQuery.Length > 0 Then
@@ -285,8 +297,7 @@ Namespace DotNetNuke.Modules.SearchResults
                     BindData()
                 End If
             Else
-                lblMessage.Text = String.Format(Localization.GetString("NoSearch", LocalResourceFile), _SearchQuery)
-                ctlPagingControl.Visible = False
+                Me.ContainerControl.Visible = False
             End If
         End Sub
 

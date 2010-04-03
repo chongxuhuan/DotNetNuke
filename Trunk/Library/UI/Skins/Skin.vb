@@ -647,7 +647,7 @@ Namespace DotNetNuke.UI.Skins
 
             Try
                 Dim SkinSrc As String = SkinPath
-                If SkinPath.ToLower.IndexOf(Common.Globals.ApplicationPath.ToLower) <> -1 Then
+                If SkinPath.ToLower.IndexOf(Common.Globals.ApplicationPath) <> -1 Then
                     SkinPath = SkinPath.Remove(0, Len(Common.Globals.ApplicationPath))
                 End If
                 ctlSkin = ControlUtilities.LoadControl(Of DotNetNuke.UI.Skins.Skin)(Page, SkinPath)

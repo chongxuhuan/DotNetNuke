@@ -316,6 +316,44 @@ AS
 	WHERE ContentItemId = @ContentItemId
 GO
 
+/* Add IsSystem to Vocabularies Table */
+/**************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Taxonomy_Vocabularies' AND COLUMN_NAME='IsSystem')
+	BEGIN
+		-- Add new RegisterTabId Column
+		ALTER TABLE {databaseOwner}{objectQualifier}Taxonomy_Vocabularies
+			ADD IsSystem bit NOT NULL CONSTRAINT DF_{objectQualifier}Taxonomy_Vocabularies_IsSystem DEFAULT 0
+	END
+GO
+
+/* Add Tags System Vocabulary */
+/******************************/
+
+INSERT INTO {databaseOwner}{objectQualifier}Taxonomy_Vocabularies	(
+		[VocabularyTypeID],
+		[Name],
+		[Description],
+		[IsSystem],
+		[ScopeTypeID],
+        [CreatedByUserID],
+        [CreatedOnDate],
+        [LastModifiedByUserID],
+        [LastModifiedOnDate]
+    )
+     VALUES	(
+			1,
+			'Tags',
+			'System Vocabulary for free form user entered Tags',
+			1,
+			1,
+			-1,
+			GETDATE(),
+			-1,
+			GETDATE()
+        )
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

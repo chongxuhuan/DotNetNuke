@@ -64,9 +64,9 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Function AddTerm(ByVal term As Term) As Integer Implements ITermController.AddTerm
             'Argument Contract
-            Arg.NotNull("term", term)
-            Arg.PropertyNotNegative("term", "VocabularyId", term.VocabularyId)
-            Arg.PropertyNotNullOrEmpty("term", "Name", term.Name)
+            Requires.NotNull("term", term)
+            Requires.PropertyNotNegative("term", "VocabularyId", term.VocabularyId)
+            Requires.PropertyNotNullOrEmpty("term", "Name", term.Name)
 
             If (term.IsHeirarchical) Then
                 term.TermId = _DataService.AddHeirarchicalTerm(term, UserController.GetCurrentUserInfo.UserID)
@@ -82,16 +82,16 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub AddTermToContent(ByVal term As Term, ByVal contentItem As ContentItem) Implements ITermController.AddTermToContent
             'Argument Contract
-            Arg.NotNull("term", term)
-            Arg.NotNull("contentItem", contentItem)
+            Requires.NotNull("term", term)
+            Requires.NotNull("contentItem", contentItem)
 
             _DataService.AddTermToContent(term, contentItem)
         End Sub
 
         Public Sub DeleteTerm(ByVal term As Term) Implements ITermController.DeleteTerm
             'Argument Contract
-            Arg.NotNull("term", term)
-            Arg.PropertyNotNegative("term", "TermId", term.TermId)
+            Requires.NotNull("term", term)
+            Requires.PropertyNotNegative("term", "TermId", term.TermId)
 
             If (term.IsHeirarchical) Then
                 _DataService.DeleteHeirarchicalTerm(term)
@@ -105,21 +105,21 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Function GetTerm(ByVal termId As Integer) As Term Implements ITermController.GetTerm
             'Argument Contract
-            Arg.NotNegative("termId", termId)
+            Requires.NotNegative("termId", termId)
 
             Return CBO.FillObject(Of Term)(_DataService.GetTerm(termId))
         End Function
 
         Public Function GetTermsByContent(ByVal contentItemId As Integer) As IQueryable(Of Term) Implements ITermController.GetTermsByContent
             'Argument Contract
-            Arg.NotNegative("contentItemId", contentItemId)
+            Requires.NotNegative("contentItemId", contentItemId)
 
             Return CBO.FillQueryable(Of Term)(_DataService.GetTermsByContent(contentItemId))
         End Function
 
         Public Function GetTermsByVocabulary(ByVal vocabularyId As Integer) As IQueryable(Of Term) Implements ITermController.GetTermsByVocabulary
             'Argument Contract
-            Arg.NotNegative("vocabularyId", vocabularyId)
+            Requires.NotNegative("vocabularyId", vocabularyId)
 
             Return CBO.GetCachedObject(Of IQueryable(Of Term)) _
                     (New CacheItemArgs(String.Format(_CacheKey, vocabularyId), _
@@ -128,20 +128,20 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub RemoveTermsFromContent(ByVal contentItem As ContentItem) Implements ITermController.RemoveTermsFromContent
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
+            Requires.NotNull("contentItem", contentItem)
 
             _DataService.RemoveTermsFromContent(contentItem)
         End Sub
 
         Public Sub UpdateTerm(ByVal term As Term) Implements ITermController.UpdateTerm
             'Argument Contract
-            Arg.NotNull("term", term)
-            Arg.PropertyNotNegative("term", "TermId", term.TermId)
-            Arg.PropertyNotNegative("term", "Vocabulary.VocabularyId", term.VocabularyId)
-            Arg.PropertyNotNullOrEmpty("term", "Name", term.Name)
+            Requires.NotNull("term", term)
+            Requires.PropertyNotNegative("term", "TermId", term.TermId)
+            Requires.PropertyNotNegative("term", "Vocabulary.VocabularyId", term.VocabularyId)
+            Requires.PropertyNotNullOrEmpty("term", "Name", term.Name)
 
             If (term.IsHeirarchical) Then
-                'Arg.PropertyNotNull("term", "ParentTermId", term.ParentTermId)
+                'Requires.PropertyNotNull("term", "ParentTermId", term.ParentTermId)
                 _DataService.UpdateHeirarchicalTerm(term, UserController.GetCurrentUserInfo.UserID)
             Else
                 _DataService.UpdateSimpleTerm(term, UserController.GetCurrentUserInfo.UserID)

@@ -53,10 +53,10 @@ Namespace DotNetNuke.Modules.Taxonomy.Views
             termsList.BindTerms(terms.ToList(), isHeirarchical, dataBind)
         End Sub
 
-        Public Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal showScope As Boolean) Implements IEditVocabularyView.BindVocabulary
+        Public Sub BindVocabulary(ByVal vocabulary As Vocabulary, ByVal editEnabled As Boolean, ByVal deleteEnabled As Boolean, ByVal showScope As Boolean) Implements IEditVocabularyView.BindVocabulary
             editVocabularyControl.BindVocabulary(vocabulary, editEnabled, showScope)
             saveVocabulary.Enabled = editEnabled
-            deleteVocabulary.Enabled = editEnabled
+            deleteVocabulary.Visible = deleteEnabled
             addTermButton.Enabled = editEnabled
             saveTermButton.Enabled = editEnabled
             deleteTermButton.Enabled = editEnabled

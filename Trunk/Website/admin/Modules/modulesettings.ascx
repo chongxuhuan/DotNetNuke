@@ -58,6 +58,10 @@
 								<td class="SubHead" style="width:225px"><dnn:label id="plNewTabs" runat="server" controlname="chkNewTabs"/></td>
 								<td><asp:checkbox id="chkNewTabs" runat="server"/></td>
 							</tr>
+							<tr id="tradminBorder" runat="server" visible="true">
+								<td class="SubHead" style="width:225px"><dnn:label id="plAdminBorder" runat="server" controlname="chkAdminBorder"/></td>
+								<td><asp:checkbox id="chkAdminBorder" runat="server"/></td>
+							</tr>
 							<tr>
 								<td class="SubHead" style="width:225px"><dnn:label id="plHeader" text="Header:" runat="server" controlname="txtHeader"/></td>
 								<td valign="top"><asp:textbox id="txtHeader" style="width:450px" cssclass="NormalTextBox" runat="server" textmode="MultiLine" rows="6"/></td>

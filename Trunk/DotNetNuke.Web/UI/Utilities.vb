@@ -28,6 +28,8 @@ Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.UI.ControlPanels
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Services.FileSystem
+Imports DotNetNuke.UI.Modules
+Imports DotNetNuke.UI.Skins
 
 Namespace DotNetNuke.Web.UI
 
@@ -211,8 +213,8 @@ Namespace DotNetNuke.Web.UI
                     End If
                 End If
 
-                If TypeOf ctrl Is PortalModuleBase Then
-                    resourceFileName = DirectCast(ctrl, PortalModuleBase).LocalResourceFile
+                If TypeOf ctrl Is IModuleControl Then
+                    resourceFileName = DirectCast(ctrl, IModuleControl).LocalResourceFile
                     Exit While
                 End If
 

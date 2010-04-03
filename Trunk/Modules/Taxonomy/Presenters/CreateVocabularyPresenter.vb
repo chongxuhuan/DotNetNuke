@@ -48,8 +48,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         Public Sub New(ByVal createView As ICreateVocabularyView, ByVal vocabularyController As IVocabularyController, ByVal scopeTypeController As IScopeTypeController)
             MyBase.New(createView)
-            Arg.NotNull("vocabularyController", vocabularyController)
-            Arg.NotNull("scopeTypeController", scopeTypeController)
+            Requires.NotNull("vocabularyController", vocabularyController)
+            Requires.NotNull("scopeTypeController", scopeTypeController)
 
             _VocabularyController = vocabularyController
             _ScopeTypeController = scopeTypeController

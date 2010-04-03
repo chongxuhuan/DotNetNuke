@@ -10,7 +10,7 @@
 		</asp:TemplateColumn>
 		<asp:TemplateColumn>
 			<ItemTemplate>
-				<asp:HyperLink id="lnkTitle" runat="server" CssClass="SubHead" NavigateUrl='<%# FormatURL(DataBinder.Eval(Container.DataItem,"TabId"),DataBinder.Eval(Container.DataItem,"Guid")) %>' Text='<%# DataBinder.Eval(Container.DataItem, "Title") %>' />&nbsp;-
+				<asp:HyperLink id="lnkTitle" runat="server" CssClass="SubHead" NavigateUrl='<%# FormatURL(DataBinder.Eval(Container.DataItem,"TabId"),DataBinder.Eval(Container.DataItem,"Guid")) %>' Text='<%# DataBinder.Eval(Container.DataItem, "Title") %>' />
 				<asp:Label id="lblRelevance" runat="server" CssClass="Normal" Text='<%# FormatRelevance(DataBinder.Eval(Container.DataItem, "Relevance")) %>' />
 				<br/>
 				<asp:Label id="lblSummary" runat="server" CssClass="Normal" Text='<%# DataBinder.Eval(Container.DataItem, "Description") + "<br>" %>' Visible="<%# ShowDescription() %>" />

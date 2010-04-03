@@ -247,7 +247,7 @@ Namespace DotNetNuke.Services.Localization
         Private Shared Function GetResourceFileLookupDictionary() As Dictionary(Of String, Boolean)
             Return CBO.GetCachedObject(Of Dictionary(Of String, Boolean))(New CacheItemArgs(DataCache.ResourceFileLookupDictionaryCacheKey, _
                                                                     DataCache.ResourceFileLookupDictionaryTimeOut, _
-                                                                    DataCache.ResourceFileLookupDictionaryCachePriority), AddressOf GetResourceFileLookupDictionary)
+                                                                    DataCache.ResourceFileLookupDictionaryCachePriority), AddressOf GetResourceFileLookupDictionary, True)
         End Function
 
         Private Shared Function GetResourceFileCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
@@ -298,7 +298,7 @@ Namespace DotNetNuke.Services.Localization
 
         Private Shared Function GetResourceFile(ByVal resourceFile As String) As Dictionary(Of String, String)
             Return CBO.GetCachedObject(Of Dictionary(Of String, String))(New CacheItemArgs(resourceFile, DataCache.ResourceFilesCacheTimeOut, _
-                                                                    DataCache.ResourceFilesCachePriority), AddressOf GetResourceFileCallBack)
+                                                                    DataCache.ResourceFilesCachePriority), AddressOf GetResourceFileCallBack, True)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -588,7 +588,7 @@ Namespace DotNetNuke.Services.Localization
                     resourceFileName = resourceFile.Replace(".resx", ".Portal-" + portalID.ToString + ".resx")
             End Select
 
-            If resourceFileName.ToLowerInvariant().StartsWith("desktopmodules") OrElse resourceFileName.ToLowerInvariant().StartsWith("admin") Then
+            If resourceFileName.StartsWith("desktopmodules", StringComparison.InvariantCultureIgnoreCase) OrElse resourceFileName.StartsWith("admin", StringComparison.InvariantCultureIgnoreCase) Then
                 resourceFileName = "~/" + resourceFileName
             End If
 
@@ -596,13 +596,13 @@ Namespace DotNetNuke.Services.Localization
             'The following logic creates a cachekey of /....
             Dim cacheKey As String = resourceFileName.Replace("~/", "/").ToLowerInvariant()
             If Not String.IsNullOrEmpty(ApplicationPath) Then
-                If ApplicationPath.ToLowerInvariant <> "/portals" Then
-                    If cacheKey.StartsWith(ApplicationPath.ToLowerInvariant()) Then
+                If ApplicationPath <> "/portals" Then
+                    If cacheKey.StartsWith(ApplicationPath) Then
                         cacheKey = cacheKey.Substring(ApplicationPath.Length)
                     End If
                 Else
                     cacheKey = "~" & cacheKey
-                    If cacheKey.StartsWith("~" & ApplicationPath.ToLowerInvariant()) Then
+                    If cacheKey.StartsWith("~" & ApplicationPath) Then
                         cacheKey = cacheKey.Substring(ApplicationPath.Length + 1)
                     End If
                 End If
@@ -807,13 +807,14 @@ Namespace DotNetNuke.Services.Localization
             Return language
         End Function
 
+
         Public Shared Function GetLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
 
             Dim locals As New Dictionary(Of String, Locale)()
 
             If (Not Status = UpgradeStatus.Install) Then
                 Dim cacheKey As String = String.Format(DataCache.LocalesCacheKey, portalID.ToString())
-                locals = CBO.GetCachedObject(Of Dictionary(Of String, Locale))(New CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), AddressOf GetLocalesCallBack)
+                locals = CBO.GetCachedObject(Of Dictionary(Of String, Locale))(New CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), AddressOf GetLocalesCallBack, True)
             End If
 
             Return locals
@@ -1623,7 +1624,10 @@ Namespace DotNetNuke.Services.Localization
                 Dim isEnabled As Boolean = False
                 Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings()
                 Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(_Settings.PortalId)
-                If dicLocales.Item(localeCode) Is Nothing Then
+
+                If (Not dicLocales.ContainsKey(localeCode)) Then
+                    isEnabled = False
+                ElseIf dicLocales.Item(localeCode) Is Nothing Then
                     'if localecode is neutral (en, es,...) try to find a locale that has the same language
                     If localeCode.IndexOf("-") = -1 Then
                         For Each strLocale As String In dicLocales.Keys

@@ -741,7 +741,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>357</moduleID>
               <title>Search Results</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -787,6 +786,53 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <tabmodulesettings />
               <definition>SearchResults</definition>
               <moduledefinition>Search Results</moduledefinition>
+            </module>
+            <module>
+              <title>Results</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>0</cachetime>
+              <cachemethod />
+              <alignment />
+              <color />
+              <border />
+              <iconfile />
+              <visibility>Maximized</visibility>
+              <containersrc />
+              <displaytitle>true</displaytitle>
+              <displayprint>true</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>VIEW</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>All Users</rolename>
+                </permission>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>VIEW</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+              </modulepermissions>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>Admin.ContentList</definition>
+              <moduledefinition>Content List</moduledefinition>
             </module>
           </modules>
         </pane>

@@ -289,17 +289,29 @@ Namespace DotNetNuke.UI.Containers
                     PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId Then
                 isAdminTab = True
             End If
-
+            'get settings from hash table
+            Dim showMessage As Boolean = False
             If viewRoles = PortalSettings.AdministratorRoleName.ToLowerInvariant AndAlso Not isAdminTab Then
                 adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text")
+
+                Dim objModules As New ModuleController
+                Dim borderHash As New Hashtable
+                borderHash = objModules.GetTabModuleSettings(ModuleConfiguration.TabModuleID)
+                If (Not Null.IsNull(borderHash("hideadminborder"))) Or (Not borderHash("hideadminborder") Is Nothing) Then
+                    showMessage = DirectCast(borderHash("hideadminborder"), Boolean)
+                Else
+                    showMessage = False
+                End If
             End If
             If ModuleConfiguration.StartDate >= Now Then
                 adminMessage = String.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString())
+                showMessage = True
             End If
             If ModuleConfiguration.EndDate <= Now Then
                 adminMessage = String.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate.ToShortDateString())
+                showMessage = True
             End If
-            If Not String.IsNullOrEmpty(adminMessage) Then
+            If showMessage Then
                 AddAdministratorOnlyHighlighting(adminMessage)
             End If
         End Sub

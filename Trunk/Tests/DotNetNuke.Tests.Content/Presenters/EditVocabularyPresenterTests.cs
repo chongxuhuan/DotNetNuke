@@ -126,9 +126,11 @@ namespace DotNetNuke.Tests.Content.Presenters
         #region View Load Tests
 
         [Test]
-        [Row(true)]
-        [Row(false)]
-        public void EditVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser)
+        [Row(true, true)]
+        [Row(true, false)]
+        [Row(false, true)]
+        [Row(false, false)]
+        public void EditVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser, bool isSystem)
         {
             // Arrange
             Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
@@ -137,7 +139,8 @@ namespace DotNetNuke.Tests.Content.Presenters
                 Vocabulary = new Vocabulary()
                 {
                     VocabularyId = Constants.VOCABULARY_UpdateVocabularyId,
-                    ScopeTypeId = 1
+                    ScopeTypeId = 1,
+                    IsSystem = isSystem // Set the IsSytem property
                 }
             };
             mockView.Setup(v => v.Model).Returns(editModel);
@@ -152,6 +155,7 @@ namespace DotNetNuke.Tests.Content.Presenters
             // Assert
             mockView.Verify(v => v.BindVocabulary(It.Is<Vocabulary>(vm => vm.VocabularyId == Constants.VOCABULARY_UpdateVocabularyId),
                                                                             presenter.IsEditEnabled,
+                                                                            presenter.IsDeleteEnabled,
                                                                             isSuperUser));
         }
 
@@ -405,7 +409,6 @@ namespace DotNetNuke.Tests.Content.Presenters
             // Assert
             mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
         }
-
 
         #endregion
 

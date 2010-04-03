@@ -54,7 +54,7 @@ Namespace DotNetNuke.Entities.Content
 
         Public Function AddContentItem(ByVal contentItem As ContentItem) As Integer Implements IContentController.AddContentItem
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
+            Requires.NotNull("contentItem", contentItem)
 
             contentItem.ContentItemId = _DataService.AddContentItem(contentItem, UserController.GetCurrentUserInfo.UserID)
 
@@ -63,22 +63,22 @@ Namespace DotNetNuke.Entities.Content
 
         Public Sub DeleteContentItem(ByVal contentItem As ContentItem) Implements IContentController.DeleteContentItem
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
-            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Requires.NotNull("contentItem", contentItem)
+            Requires.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
 
             _DataService.DeleteContentItem(contentItem)
         End Sub
 
         Public Function GetContentItem(ByVal contentItemId As Integer) As ContentItem Implements IContentController.GetContentItem
             'Argument Contract
-            Arg.NotNegative("contentItemId", contentItemId)
+            Requires.NotNegative("contentItemId", contentItemId)
 
             Return CBO.FillObject(Of ContentItem)(_DataService.GetContentItem(contentItemId))
         End Function
 
         Public Function GetContentItemsByTerm(ByVal term As String) As IQueryable(Of ContentItem) Implements IContentController.GetContentItemsByTerm
             'Argument Contract
-            Arg.NotNullOrEmpty("term", term)
+            Requires.NotNullOrEmpty("term", term)
 
             Return CBO.FillQueryable(Of ContentItem)(_DataService.GetContentItemsByTerm(term))
         End Function
@@ -89,33 +89,33 @@ Namespace DotNetNuke.Entities.Content
 
         Public Sub UpdateContentItem(ByVal contentItem As ContentItem) Implements IContentController.UpdateContentItem
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
-            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Requires.NotNull("contentItem", contentItem)
+            Requires.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
 
             _DataService.UpdateContentItem(contentItem, UserController.GetCurrentUserInfo.UserID)
         End Sub
 
         Public Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IContentController.AddMetaData
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
-            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
-            Arg.NotNullOrEmpty("name", name)
+            Requires.NotNull("contentItem", contentItem)
+            Requires.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Requires.NotNullOrEmpty("name", name)
 
             _DataService.AddMetaData(contentItem, name, value)
         End Sub
 
         Public Sub DeleteMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IContentController.DeleteMetaData
             'Argument Contract
-            Arg.NotNull("contentItem", contentItem)
-            Arg.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
-            Arg.NotNullOrEmpty("name", name)
+            Requires.NotNull("contentItem", contentItem)
+            Requires.PropertyNotNegative("contentItem", "ContentItemId", contentItem.ContentItemId)
+            Requires.NotNullOrEmpty("name", name)
 
             _DataService.DeleteMetaData(contentItem, name, value)
         End Sub
 
         Public Function GetMetaData(ByVal contentItemId As Integer) As NameValueCollection Implements IContentController.GetMetaData
             'Argument Contract
-            Arg.NotNegative("contentItemId", contentItemId)
+            Requires.NotNegative("contentItemId", contentItemId)
 
             Dim metadata As New NameValueCollection()
             Dim dr As IDataReader = _DataService.GetMetaData(contentItemId)

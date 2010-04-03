@@ -387,4 +387,10 @@
   <data name="plTags.Text" xml:space="preserve">
     <value>Tags:</value>
   </data>
+  <data name="plAdminBorder.Help" xml:space="preserve">
+    <value>Checking this box will enable red admin border to be displayed around the module to admins when logged on to the site.</value>
+  </data>
+  <data name="plAdminBorder.Text" xml:space="preserve">
+    <value>Hide Admin Border</value>
+  </data>
 </root>

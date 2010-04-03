@@ -53,8 +53,8 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
                        ByVal vocabularyController As IVocabularyController, _
                        ByVal termController As ITermController)
             MyBase.New(editView)
-            Arg.NotNull("vocabularyController", vocabularyController)
-            Arg.NotNull("termController", termController)
+            Requires.NotNull("vocabularyController", vocabularyController)
+            Requires.NotNull("termController", termController)
 
             _VocabularyController = vocabularyController
             _TermController = termController
@@ -73,6 +73,17 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
 #Region "Public Properties"
 
+        Public ReadOnly Property IsDeleteEnabled() As Boolean
+            Get
+                Dim _isEnabled As Boolean = IsEditEnabled
+                If _isEnabled Then
+                    If View.Model IsNot Nothing AndAlso View.Model.Vocabulary IsNot Nothing AndAlso View.Model.Vocabulary.IsSystem Then
+                        _isEnabled = Null.NullBoolean
+                    End If
+                End If
+                Return _isEnabled
+            End Get
+        End Property
         Public ReadOnly Property IsEditEnabled() As Boolean
             Get
                 Dim _isEnabled As Boolean = IsSuperUser
@@ -154,7 +165,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
             MyBase.OnLoad()
 
             'Bind Vocabulary to View
-            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsDeleteEnabled, IsSuperUser)
 
             'Bind Terms to View
             View.BindTerms(View.Model.Terms, IsHeirarchical, Not IsPostBack)
@@ -232,7 +243,7 @@ Namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         Public Sub SaveVocabulary(ByVal sender As Object, ByVal e As EventArgs)
             'Bind Vocabulary to View
-            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsSuperUser)
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsDeleteEnabled, IsSuperUser)
 
             Dim result As ValidationResult = Validator.ValidateObject(View.Model.Vocabulary)
             If result.IsValid Then

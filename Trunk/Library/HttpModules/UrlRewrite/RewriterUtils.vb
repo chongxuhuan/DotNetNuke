@@ -72,7 +72,9 @@ Namespace DotNetNuke.HttpModules
                 Return appPath
             End If
 
-            If (url.ToCharArray()(1) = "/" Or url.ToCharArray()(1) = "\") Then
+            Dim seperatorChar As Char = url.ToCharArray()(1)
+
+            If (seperatorChar = "/" Or seperatorChar = "\") Then
                 ' Url looks like ~/ or ~\
                 If (appPath.Length > 1) Then
                     Return appPath + "/" & url.Substring(2)

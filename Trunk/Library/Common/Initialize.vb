@@ -138,10 +138,10 @@ Namespace DotNetNuke.Common
                 If Config.GetSetting("InstallationSubfolder") = "" Then
                     ApplicationPath = ""
                 Else
-                    ApplicationPath = Config.GetSetting("InstallationSubfolder") & "/"
+                    ApplicationPath = (Config.GetSetting("InstallationSubfolder") & "/").ToLowerInvariant()
                 End If
             Else
-                ApplicationPath = Request.ApplicationPath
+                ApplicationPath = Request.ApplicationPath.ToLowerInvariant()
             End If
             ApplicationMapPath = System.AppDomain.CurrentDomain.BaseDirectory.Substring(0, System.AppDomain.CurrentDomain.BaseDirectory.Length - 1)
             ApplicationMapPath = ApplicationMapPath.Replace("/", "\")

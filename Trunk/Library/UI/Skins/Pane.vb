@@ -173,7 +173,7 @@ Namespace DotNetNuke.UI.Skins
 
             Try
                 Dim ContainerSrc As String = ContainerPath
-                If ContainerPath.ToLower.IndexOf(Common.Globals.ApplicationPath.ToLower) <> -1 Then
+                If ContainerPath.IndexOf(Common.Globals.ApplicationPath, StringComparison.InvariantCultureIgnoreCase) <> -1 Then
                     ContainerPath = ContainerPath.Remove(0, Len(Common.Globals.ApplicationPath))
                 End If
                 ctlContainer = ControlUtilities.LoadControl(Of DotNetNuke.UI.Containers.Container)(PaneControl.Page, ContainerPath)

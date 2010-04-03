@@ -62,9 +62,9 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Function AddVocabulary(ByVal vocabulary As Vocabulary) As Integer Implements IVocabularyController.AddVocabulary
             'Argument Contract
-            Arg.NotNull("vocabulary", vocabulary)
-            Arg.PropertyNotNullOrEmpty("vocabulary", "Name", vocabulary.Name)
-            Arg.PropertyNotNegative("vocabulary", "ScopeTypeId", vocabulary.ScopeTypeId)
+            Requires.NotNull("vocabulary", vocabulary)
+            Requires.PropertyNotNullOrEmpty("vocabulary", "Name", vocabulary.Name)
+            Requires.PropertyNotNegative("vocabulary", "ScopeTypeId", vocabulary.ScopeTypeId)
 
             vocabulary.VocabularyId = _DataService.AddVocabulary(vocabulary, UserController.GetCurrentUserInfo.UserID)
 
@@ -80,8 +80,8 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub DeleteVocabulary(ByVal vocabulary As Vocabulary) Implements IVocabularyController.DeleteVocabulary
             'Argument Contract
-            Arg.NotNull("vocabulary", vocabulary)
-            Arg.PropertyNotNegative("vocabulary", "VocabularyId", vocabulary.VocabularyId)
+            Requires.NotNull("vocabulary", vocabulary)
+            Requires.PropertyNotNegative("vocabulary", "VocabularyId", vocabulary.VocabularyId)
 
             _DataService.DeleteVocabulary(vocabulary)
 
@@ -96,9 +96,9 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
         Public Sub UpdateVocabulary(ByVal vocabulary As Vocabulary) Implements IVocabularyController.UpdateVocabulary
             'Argument Contract
-            Arg.NotNull("vocabulary", vocabulary)
-            Arg.PropertyNotNegative("vocabulary", "VocabularyId", vocabulary.VocabularyId)
-            Arg.PropertyNotNullOrEmpty("vocabulary", "Name", vocabulary.Name)
+            Requires.NotNull("vocabulary", vocabulary)
+            Requires.PropertyNotNegative("vocabulary", "VocabularyId", vocabulary.VocabularyId)
+            Requires.PropertyNotNullOrEmpty("vocabulary", "Name", vocabulary.Name)
 
             'Refresh Cache
             DataCache.RemoveCache(_CacheKey)

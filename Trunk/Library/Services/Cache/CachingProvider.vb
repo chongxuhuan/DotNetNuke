@@ -30,7 +30,7 @@ Namespace DotNetNuke.Services.Cache
 #Region "Private Members"
 
         Private Shared _objCache As Caching.Cache
-        Private Shared _cachePrefix As String = "DNN_{0}"
+        Private Shared _cachePrefix As String = "DNN_"
 
 #End Region
 
@@ -58,7 +58,7 @@ Namespace DotNetNuke.Services.Cache
             If String.IsNullOrEmpty(CacheKey) Then
                 Throw New ArgumentException("Argument cannot be null or an empty string", "CacheKey")
             End If
-            Return String.Format(_cachePrefix, CacheKey)
+            Return _cachePrefix + CacheKey
         End Function
 
 #End Region

@@ -36,7 +36,7 @@ Namespace DotNetNuke.Web.Validators
         End Sub
 
         Public Sub New(ByVal errors As IEnumerable(Of ValidationError))
-            Arg.NotNull("errors", errors)
+            Requires.NotNull("errors", errors)
             _Errors = errors
         End Sub
 
@@ -67,7 +67,7 @@ Namespace DotNetNuke.Web.Validators
 #Region "Public Methods"
 
         Public Function CombineWith(ByVal other As ValidationResult) As ValidationResult
-            Arg.NotNull("other", other)
+            Requires.NotNull("other", other)
 
             'Just concatenate the errors collection
             Return New ValidationResult(_Errors.Concat(other.Errors))
