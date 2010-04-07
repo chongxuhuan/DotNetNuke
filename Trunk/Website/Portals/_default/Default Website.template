@@ -831,7 +831,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               </modulepermissions>
               <modulesettings />
               <tabmodulesettings />
-              <definition>Admin.ContentList</definition>
+              <definition>DotNetNuke.ContentList</definition>
               <moduledefinition>Content List</moduledefinition>
             </module>
           </modules>
@@ -2321,8 +2321,8 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
     <tab>
       <name>Taxonomy</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_moduledefinitions_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_moduledefinitions_32px.gif</iconfilelarge>
+      <iconfile>~/images/icon_tag_16px.gif</iconfile>
+      <iconfilelarge>~/images/icon_tag_32px.gif</iconfilelarge>
       <disabled>false</disabled>
       <title>Taxonomy</title>
       <description>Manage the Taxonomy for your Site.</description>
@@ -2370,7 +2370,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_moduledefinitions_32px.gif</iconfile>
+              <iconfile>~/images/icon_tag_32px.gif</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>

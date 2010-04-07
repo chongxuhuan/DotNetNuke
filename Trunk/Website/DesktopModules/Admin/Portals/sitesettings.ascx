@@ -7,6 +7,8 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
+<%@ Register TagPrefix="dnn" TagName="LocaleSelector" Src="~/controls/LocaleSelectorControl.ascx" %>
+<dnn:LocaleSelector id="plLocale" text="Locale:" runat="server" visible="false" />
 <!-- Settings Tables -->
 <table class="Settings" cellspacing="2" cellpadding="2" width="760" summary="Site Settings Design Table" border="0">
     <tr>

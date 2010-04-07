@@ -232,6 +232,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     cmdCancel.Visible = False
                 End If
 
+                If DotNetNuke.Services.Localization.Localization.ActiveLanguagesByPortalID(PortalId) > 1 Then
+                    plLocale.Visible = True
+                End If
                 'this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdExpiryCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtExpiryDate)
                 DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdRestore, Services.Localization.Localization.GetString("RestoreCCSMessage", Me.LocalResourceFile))
@@ -713,7 +716,10 @@ Namespace DotNetNuke.Modules.Admin.Portals
                             Throw New System.Exception
                         End If
                     End If
-
+                    Dim activeLanguage As String = objPortal.defaultlanguage
+                    If plLocale.Visible = True Then
+                        ' activeLanguage = plLocale.
+                    End If
                     objPortalController.UpdatePortalInfo(intPortalId, txtPortalName.Text, strLogo, _
                         txtFooterText.Text, datExpiryDate, optUserRegistration.SelectedIndex, _
                         optBanners.SelectedIndex, cboCurrency.SelectedItem.Value, _
@@ -723,7 +729,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
                         intUserTabId, cboDefaultLanguage.SelectedValue, Convert.ToInt32(cboTimeZone.SelectedValue), _
-                        lblHomeDirectory.Text)
+                        lblHomeDirectory.Text, activeLanguage)
 
                     If Not refreshPage Then
                         refreshPage = (PortalSettings.DefaultAdminSkin = ctlAdminSkin.SkinSrc) OrElse (PortalSettings.DefaultAdminContainer = ctlAdminContainer.SkinSrc)

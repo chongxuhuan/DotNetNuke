@@ -862,8 +862,8 @@
     <tab>
       <name>Taxonomy</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_moduledefinitions_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_moduledefinitions_32px.gif</iconfilelarge>
+      <iconfile>~/images/icon_tag_16px.gif</iconfile>
+      <iconfilelarge>~/images/icon_tag_32px.gif</iconfilelarge>
       <disabled>false</disabled>
       <title>Taxonomy</title>
       <description>Manage the Taxonomy for your Site.</description>
@@ -912,7 +912,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_moduledefinitions_32px.gif</iconfile>
+              <iconfile>~/images/icon_tag_32px.gif</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>

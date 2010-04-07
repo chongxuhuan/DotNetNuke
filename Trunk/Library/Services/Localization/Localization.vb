@@ -729,6 +729,11 @@ Namespace DotNetNuke.Services.Localization
 
 #Region "Public Shared Methods"
 
+        Public Shared Function ActiveLanguagesByPortalID(ByVal portalID As Integer) As Integer
+            'CATHALTODO: add caching code
+            Return Localization.GetLocales(portalID).Count
+        End Function
+
         Public Shared Sub AddLanguageToPortal(ByVal portalID As Integer, ByVal languageID As Integer, ByVal clearCache As Boolean)
             DataProvider.Instance().AddPortalLanguage(portalID, languageID, UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController

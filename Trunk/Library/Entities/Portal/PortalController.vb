@@ -60,8 +60,31 @@ Namespace DotNetNuke.Entities.Portals
         ''' -----------------------------------------------------------------------------
         Private Shared Function GetPortalCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
             Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
-            'TODO: ensure localised portalsettings have localised cache object
-            Return CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, Entities.Host.Host.ContentLocale.ToString))
+            Dim cultureCode As String = DirectCast(cacheItemArgs.ParamList(1), String)
+            If Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
+                'only 1 language active, no need for fallback check
+                Return CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, cultureCode))
+            Else
+                Dim dr As System.Data.IDataReader
+                dr = DataProvider.Instance.GetPortal(portalID, cultureCode)
+                If dr Is Nothing Then
+                    'Get Fallback language
+                    Dim fallbackLanguage As String = String.Empty
+                    Dim userLocale As Locale = Localization.GetLocale(cultureCode)
+                    If userLocale IsNot Nothing AndAlso Not String.IsNullOrEmpty(userLocale.Fallback) Then
+                        fallbackLanguage = userLocale.Fallback
+                    End If
+                    dr = DataProvider.Instance.GetPortal(portalID, fallbackLanguage)
+                    If dr Is Nothing Then
+                        Return CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, PortalController.GetPortalDefaultLanguage(portalID)))
+                    Else
+                        Return CBO.FillObject(Of PortalInfo)(dr)
+                    End If
+                Else
+                    Return CBO.FillObject(Of PortalInfo)(dr)
+                End If
+            End If
+
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -110,7 +133,7 @@ Namespace DotNetNuke.Entities.Portals
         Private Shared Function GetPortalSettingsDictionaryCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
             Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
             Dim dicSettings As New Dictionary(Of String, String)
-            Dim dr As IDataReader = DataProvider.Instance.GetPortalSettings(portalID, Entities.Host.Host.ContentLocale.ToString)
+            Dim dr As IDataReader = DataProvider.Instance.GetPortalSettings(portalID, PortalController.GetPortalDefaultLanguage(portalID))
             Try
                 While dr.Read()
                     If Not dr.IsDBNull(1) Then
@@ -249,7 +272,7 @@ Namespace DotNetNuke.Entities.Portals
         End Function
 
         Public Shared Sub DeletePortalSetting(ByVal portalID As Integer, ByVal settingName As String)
-            DeletePortalSetting(portalID, settingName, Entities.Host.Host.ContentLocale.ToString)
+            DeletePortalSetting(portalID, settingName, PortalController.GetPortalDefaultLanguage(portalID))
         End Sub
 
         Public Shared Sub DeletePortalSetting(ByVal portalID As Integer, ByVal settingName As String, ByVal CultureCode As String)
@@ -367,6 +390,14 @@ Namespace DotNetNuke.Entities.Portals
             Next
             Return modulesNotInstalled.ToString
         End Function
+
+        Public Shared Function GetPortalDefaultLanguage(ByVal portalID As Integer) As String
+            Return DataProvider.Instance().GetPortalDefaultLanguage(portalID)
+        End Function
+
+        Public Shared Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
+            DataProvider.Instance().UpdatePortalDefaultLanguage(portalID, CultureCode)
+        End Sub
 #End Region
 
 #Region "Private Methods"
@@ -469,7 +500,7 @@ Namespace DotNetNuke.Entities.Portals
             ' update portal setup
             Dim objportal As PortalInfo
             objportal = GetPortal(portalID)
-            UpdatePortalSetup(portalID, administratorId, administratorRoleId, registeredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+            UpdatePortalSetup(portalID, administratorId, administratorRoleId, registeredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(portalID))
         End Sub
 
         Private Sub ParseRoleGroups(ByVal nav As XPathNavigator, ByVal portalID As Integer, ByVal administratorId As Integer)
@@ -506,7 +537,7 @@ Namespace DotNetNuke.Entities.Portals
             ' update portal setup
             Dim objportal As PortalInfo
             objportal = GetPortal(portalID)
-            UpdatePortalSetup(portalID, administratorId, administratorRoleId, registeredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+            UpdatePortalSetup(portalID, administratorId, administratorRoleId, registeredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(portalID))
         End Sub
 
 #End Region
@@ -1068,26 +1099,26 @@ Namespace DotNetNuke.Entities.Portals
                 ' when processing the template we should try and identify the Admin tab
                 If objTab.TabName = "Admin" Then
                     objportal.AdminTabId = objTab.TabID
-                    DataProvider.Instance().UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+                    UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(PortalId))
                     objEventLog.AddLog("AdminTab", objTab.TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
                 End If
                 ' when processing the template we can find: hometab, usertab, logintab
                 Select Case XmlUtils.GetNodeValue(nodeTab, "tabtype", "")
                     Case "splashtab"
                         objportal.SplashTabId = objTab.TabID
-                        DataProvider.Instance().UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+                        UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(PortalId))
                         objEventLog.AddLog("SplashTab", objTab.TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
                     Case "hometab"
                         objportal.HomeTabId = objTab.TabID
-                        DataProvider.Instance().UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+                        UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(PortalId))
                         objEventLog.AddLog("HomeTab", objTab.TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
                     Case "logintab"
                         objportal.LoginTabId = objTab.TabID
-                        DataProvider.Instance().UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+                        UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(PortalId))
                         objEventLog.AddLog("LoginTab", objTab.TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
                     Case "usertab"
                         objportal.UserTabId = objTab.TabID
-                        DataProvider.Instance().UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, Entities.Host.Host.ContentLocale.ToString)
+                        UpdatePortalSetup(PortalId, objportal.AdministratorId, objportal.AdministratorRoleId, objportal.RegisteredRoleId, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, objportal.AdminTabId, PortalController.GetPortalDefaultLanguage(PortalId))
                         objEventLog.AddLog("UserTab", objTab.TabID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTAL_SETTING_UPDATED)
                 End Select
             End If
@@ -1431,8 +1462,13 @@ Namespace DotNetNuke.Entities.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Function GetPortal(ByVal PortalId As Integer) As PortalInfo
-            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, PortalId.ToString())
-            Return CBO.GetCachedObject(Of PortalInfo)(New CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, PortalId), _
+            Dim defaultLanguage As String = PortalController.GetPortalDefaultLanguage(PortalId)
+            Return GetPortal(PortalId, defaultLanguage)
+        End Function
+
+        Public Function GetPortal(ByVal PortalId As Integer, ByVal CultureCode As String) As PortalInfo
+            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, PortalId.ToString() & "-" & CultureCode)
+            Return CBO.GetCachedObject(Of PortalInfo)(New CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, PortalId, CultureCode), _
                                                                                         AddressOf GetPortalCallback)
         End Function
 
@@ -1447,12 +1483,12 @@ Namespace DotNetNuke.Entities.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Function GetPortals() As ArrayList
-            Return CBO.FillCollection(DataProvider.Instance().GetPortals(Entities.Host.Host.ContentLocale.ToString), GetType(PortalInfo))
+            Return CBO.FillCollection(DataProvider.Instance().GetPortals(), GetType(PortalInfo))
         End Function
 
-        Public Function GetPortals(ByVal CultureCode As String) As ArrayList
-            Return CBO.FillCollection(DataProvider.Instance().GetPortals(CultureCode), GetType(PortalInfo))
-        End Function
+        'Public Function GetPortals(ByVal CultureCode As String) As ArrayList
+        '    Return CBO.FillCollection(DataProvider.Instance().GetPortals(CultureCode), GetType(PortalInfo))
+        'End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -1690,7 +1726,7 @@ Namespace DotNetNuke.Entities.Portals
         End Sub
 
         Public Sub UpdatePortalExpiry(ByVal PortalId As Integer)
-            UpdatePortalExpiry(PortalId, Entities.Host.Host.ContentLocale.ToString)
+            UpdatePortalExpiry(PortalId, PortalController.GetPortalDefaultLanguage(PortalId))
         End Sub
 
         Public Sub UpdatePortalExpiry(ByVal PortalId As Integer, ByVal CultureCode As String)
@@ -1775,7 +1811,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String)
-            UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, DefaultLanguage, TimeZoneOffset, HomeDirectory, Entities.Host.Host.ContentLocale.ToString)
+            UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, DefaultLanguage, TimeZoneOffset, HomeDirectory, PortalController.GetPortalDefaultLanguage(PortalId))
         End Sub
 
         Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String, ByVal CultureCode As String)

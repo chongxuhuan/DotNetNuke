@@ -126,8 +126,18 @@ Namespace DotNetNuke.Services.Cache
         End Sub
 
         Private Sub ClearPortalCacheInternal(ByVal portalId As Integer, ByVal cascade As Boolean, ByVal clearRuntime As Boolean)
-            RemoveFormattedCacheKey(DataCache.PortalCacheKey, clearRuntime, portalId)
             RemoveFormattedCacheKey(DataCache.PortalSettingsCacheKey, clearRuntime, portalId)
+
+            Dim locales As Dictionary(Of String, Locale) = Localization.Localization.GetLocales(portalId)
+            If locales.Count = 0 Then
+                'At least attempt to remove default locale
+                Dim defaultLocale As String = PortalController.GetPortalDefaultLanguage(portalId)
+                RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString() & "-" & defaultLocale), clearRuntime)
+            Else
+                For Each portalLocale As Locale In Localization.Localization.GetLocales(portalId).Values
+                    RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString() & "-" & portalLocale.Code), clearRuntime)
+                Next
+            End If
 
             If cascade Then
                 Dim objTabs As New TabController

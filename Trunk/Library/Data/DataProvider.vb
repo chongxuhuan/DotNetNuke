@@ -106,7 +106,8 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetPortalByAlias(ByVal PortalAlias As String) As IDataReader
         Public MustOverride Function GetPortalByTab(ByVal TabId As Integer, ByVal PortalAlias As String) As IDataReader
         Public MustOverride Function GetPortalCount() As Integer
-        Public MustOverride Function GetPortals(ByVal CultureCode As String) As IDataReader
+        ' Public MustOverride Function GetPortals(ByVal CultureCode As String) As IDataReader
+        Public MustOverride Function GetPortals() As IDataReader
         Public MustOverride Function GetPortalsByName(ByVal nameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
         Public MustOverride Function GetPortalSettings(ByVal PortalId As Integer, ByVal CultureCode As String) As IDataReader
         Public MustOverride Function GetPortalSpaceUsed(ByVal PortalId As Integer) As IDataReader
@@ -456,6 +457,9 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetLanguagePackByPackage(ByVal packageID As Integer) As IDataReader
         Public MustOverride Function UpdateLanguagePack(ByVal languagePackID As Integer, ByVal packageID As Integer, ByVal languageID As Integer, ByVal dependentPackageID As Integer, ByVal LastModifiedByUserID As Integer) As Integer
 
+        'localisation
+        Public MustOverride Function GetPortalDefaultLanguage(ByVal portalID As Integer) As String
+        Public MustOverride Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
 #End Region
 
     End Class

@@ -30,7 +30,7 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _AddImageUrl As String = "~/images/add.gif"
         Private _AllowTagging As Boolean = True
         Private _CancelImageUrl As String = "~/images/lt.gif"
-        Private _CategoryImageUrl As String = "~/images/folder.gif"
+        Private _CategoryImageUrl As String = "~/images/icon_filemanager_16px.gif"
         Private _CategoryLabelCssClass As String = "SkinObject"
         Private _CssClass As String = "SkinObject"
         Private _ObjectType As String = "Page"
@@ -38,7 +38,7 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _Separator As String
         Private _ShowCategories As Boolean = True
         Private _ShowTags As Boolean = True
-        Private _TagImageUrl As String = "~/images/tag.gif"
+        Private _TagImageUrl As String = "~/images/icon_tag_16px.gif"
         Private _TagLabelCssClass As String = "SkinObject"
 
         Const MyFileName As String = "Tags.ascx"

@@ -264,9 +264,13 @@ Namespace DotNetNuke.Services.Installer.Installers
         Public Overrides Sub Commit()
             For index As Integer = 0 To ComponentInstallers.Count - 1
                 Dim compInstaller As ComponentInstallerBase = ComponentInstallers.Values(index)
-                If compInstaller.Version > Package.InstalledVersion AndAlso compInstaller.Completed Then
+
+                'TODO: Check with Charles why we are doing version checks here
+                'If compInstaller.Version > Package.InstalledVersion AndAlso compInstaller.Completed Then
+                If compInstaller.Completed Then
                     compInstaller.Commit()
                 End If
+
             Next
             If Log.Valid Then
                 Log.AddInfo(Util.INSTALL_Committed)

@@ -79,12 +79,13 @@ Namespace DotNetNuke.Modules.Dashboard.Data
         End Function
 
         Public Shared Function GetPortals() As IDataReader
-            Return provider.GetPortals(System.Threading.Thread.CurrentThread.CurrentCulture.ToString.ToLower)
+            ' Return provider.GetPortals(System.Threading.Thread.CurrentThread.CurrentCulture.ToString.ToLower)
+            Return provider.GetPortals()
         End Function
 
-        Public Shared Function GetPortals(ByVal CultureCode As String) As IDataReader
-            Return provider.GetPortals(CultureCode)
-        End Function
+        'Public Shared Function GetPortals(ByVal CultureCode As String) As IDataReader
+        '    Return provider.GetPortals(CultureCode)
+        'End Function
 
 
         Public Shared Function GetServerErrors() As IDataReader

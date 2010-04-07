@@ -740,9 +740,13 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetPortalCount() As Integer
             Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortalCount"), Integer)
         End Function
-        Public Overrides Function GetPortals(ByVal CultureCode As String) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortals", CultureCode), IDataReader)
+        'Public Overrides Function GetPortals(ByVal CultureCode As String) As IDataReader
+        '    Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortals", CultureCode), IDataReader)
+        'End Function
+        Public Overrides Function GetPortals() As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortals"), IDataReader)
         End Function
+
         Public Overrides Function GetPortalsByName(ByVal nameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortalsByName", nameToMatch, pageIndex, pageSize), IDataReader)
         End Function
@@ -1680,10 +1684,18 @@ Namespace DotNetNuke.Data
 		End Function
 		Public Overrides Function UpdateLanguagePack(ByVal languagePackID As Integer, ByVal packageID As Integer, ByVal languageID As Integer, ByVal dependentPackageID As Integer, ByVal LastModifiedByUserID As Integer) As Integer
 			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateLanguagePack", languagePackID, packageID, languageID, dependentPackageID, LastModifiedByUserID)
-		End Function
+        End Function
+
+        'localisation
+        Public Overrides Function GetPortalDefaultLanguage(ByVal portalID As Integer) As String
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortalDefaultLanguage", portalID), String)
+        End Function
+        Public Overrides Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalDefaultLanguage", portalID, CultureCode)
+        End Sub
 
 #End Region
 
-	End Class
+    End Class
 
 End Namespace

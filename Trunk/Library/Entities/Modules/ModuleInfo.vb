@@ -387,6 +387,20 @@ Namespace DotNetNuke.Entities.Modules
             End Set
         End Property
 
+        <XmlIgnore()> Public ReadOnly Property HideAdminBorder() As Boolean
+            Get
+                Dim setting As Object = TabModuleSettings("hideadminborder")
+                If setting Is Nothing OrElse _
+                    String.IsNullOrEmpty(setting.ToString) Then
+                    Return False
+                End If
+
+                Dim val As Boolean
+                Boolean.TryParse(setting.ToString, val)
+                Return val
+            End Get
+        End Property
+
 #End Region
 
 #Region "Desktop Module Properties"

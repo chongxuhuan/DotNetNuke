@@ -19,6 +19,89 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objec
 	END
 GO
 
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
+AS
+SELECT     PL.PortalID, PL.CultureCode, PL.PortalName, PL.LogoFile, 
+                      PL.FooterText, PL.Description, PL.KeyWords, PL.BackgroundFile, 
+                      PL.HomeTabId, PL.LoginTabId, PL.UserTabId, PL.AdminTabId, 
+                      PL.SplashTabId, PL.CreatedByUserID, PL.CreatedOnDate, 
+                      PL.LastModifiedByUserID, PL.LastModifiedOnDate, P.PortalID AS Expr1, P.ExpiryDate, 
+                      P.UserRegistration, P.BannerAdvertising, P.AdministratorId, P.Currency, P.HostFee, 
+                      P.HostSpace, P.AdministratorRoleId, P.RegisteredRoleId, P.GUID, P.PaymentProcessor, 
+                      P.ProcessorUserId, P.ProcessorPassword, P.SiteLogHistory, P.DefaultLanguage, 
+                      P.TimezoneOffset, P.HomeDirectory, P.PageQuota, P.UserQuota
+FROM         {databaseOwner}{objectQualifier}PortalLocalization AS PL INNER JOIN
+                      {databaseOwner}{objectQualifier}Portals AS P ON PL.PortalID = P.PortalID AND PL.CultureCode = P.DefaultLanguage
+
+GO
+/* Initialize HideAdminBorder setting for modules under the Admin and Host tabs */
+/*************************************************/
+
+DECLARE @TabModuleID int
+DECLARE CursorQuery CURSOR FOR
+SELECT     TabModuleID, TabID
+FROM         {databaseOwner}{objectQualifier}TabModules
+WHERE     (TabID IN
+                          (SELECT     TabID
+                            FROM          {databaseOwner}{objectQualifier}Tabs
+                            WHERE      (TabID IN
+                                                       (SELECT     AdminTabId
+                                                         FROM          {databaseOwner}{objectQualifier}vw_Portals)) OR
+                                                   (ParentId IN
+                                                       (SELECT     AdminTabId
+                                                         FROM          {databaseOwner}{objectQualifier}vw_Portals AS vw_Portals_1)) OR
+                                                   (PortalID IS NULL)))
+OPEN CursorQuery
+---Perform fetch
+FETCH NEXT FROM CursorQuery
+INTO @TabModuleID
+-- Check @@FETCH_STATUS to see if there are any more rows to fetch.
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            -- now insert the id from the main table into the related table.
+            -- hard code values for now for some options.
+            -- This is executed as long as the previous fetch succeeds.
+        INSERT INTO {databaseOwner}{objectQualifier}TabModuleSettings (
+			TabModuleId,
+     			SettingName,
+			SettingValue,
+			CreatedByUserID,
+			CreatedOnDate,
+			LastModifiedByUserId,
+			LastModifiedOnDate
+			) VALUES (
+			@TabModuleID,
+			'hideadminborder',
+			'True',
+			-1,
+			GetDate(),
+			-1,
+			GetDate())
+
+ FETCH NEXT FROM CursorQuery
+ INTO @TabModuleID
+
+END
+
+CLOSE CursorQuery
+DEALLOCATE CursorQuery
+
+
+/* Update GetPortals */
+/*********************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortals]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+
+AS
+SELECT *
+FROM {databaseOwner}{objectQualifier}vw_PortalsDefaultLanguage
+ORDER BY PortalName
+GO
+
 /* Update vw_Portals View */
 /**************************/
 
@@ -353,6 +436,51 @@ INSERT INTO {databaseOwner}{objectQualifier}Taxonomy_Vocabularies	(
 			GETDATE()
         )
 GO
+
+/* Add RibbonBar Control Panel */
+/*******************************/
+
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ModuleControls WHERE ControlKey='CONTROLPANEL:RIBBONBAR')
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}ModuleControls (ControlKey, ControlSrc, ControlType)
+		VALUES('CONTROLPANEL:RIBBONBAR', 'Admin/ControlPanel/RibbonBar.ascx', -3)
+	END
+
+GO
+
+
+create procedure {databaseOwner}{objectQualifier}GetPortalDefaultLanguage
+
+@PortalId            int
+AS
+SELECT defaultlanguage
+FROM {databaseOwner}{objectQualifier}Portals
+where portalid=@PortalId 
+GO
+
+create procedure {databaseOwner}{objectQualifier}UpdatePortalDefaultLanguage
+
+@PortalId            int,
+@CultureCode   nvarchar(50)
+AS
+UPDATE {databaseOwner}{objectQualifier}Portals
+SET defaultlanguage=@CultureCode
+where portalid=@PortalId 
+GO
+
+/* add key and cascade delete rule */
+ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization ADD CONSTRAINT
+	FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals FOREIGN KEY
+	(
+	PortalID
+	) REFERENCES {databaseOwner}{objectQualifier}Portals
+	(
+	PortalID
+	) 
+	 ON DELETE  CASCADE 
+	
+GO
+
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

@@ -1404,7 +1404,7 @@ Namespace DotNetNuke.Services.Upgrade
             End If
 
             'Add Content List module definition
-            Dim moduleDefID As Integer = AddModuleDefinition("Admin.ContentList", "This module displays a list of content by tag.", "Content List")
+            Dim moduleDefID As Integer = AddModuleDefinition("ContentList", "This module displays a list of content by tag.", "Content List")
             AddModuleControl(moduleDefID, "", "", "DesktopModules/Admin/ContentList/ContentList.ascx", "", SecurityAccessLevel.View, 0)
 
             'Update registration page

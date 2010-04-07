@@ -36,12 +36,12 @@ Namespace DotNetNuke.Modules.Taxonomy
                             'Add Module to Admin Page for all Portals
                             DotNetNuke.Services.Upgrade.Upgrade.AddAdminPages("Taxonomy", _
                                                 "Manage the Taxonomy for your Site", _
-                                                "~/images/icon_moduledefinitions_16px.gif", _
-                                                "~/images/icon_moduledefinitions_32px.gif", _
+                                                "~/images/icon_tag_16px.gif", _
+                                                "~/images/icon_tag_32px.gif", _
                                                 True, _
                                                 moduleDefinition.ModuleDefID, _
                                                 "Taxonomy Manager", _
-                                                "~/images/icon_moduledefinitions_32px.gif", _
+                                                "~/images/icon_tag_32px.gif", _
                                                 True)
                         End If
                 End Select

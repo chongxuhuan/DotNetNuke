@@ -265,6 +265,8 @@ Namespace DotNetNuke.Services.Installer
                     RemoveAttribute(rootNode, node)
                 Case "update"
                     UpdateNode(rootNode, node)
+                Case "setinnerxml"
+                    UpdateNodeRaw(rootNode, node)
                 Case "updateattribute"
                     UpdateAttribute(rootNode, node)
             End Select
@@ -382,6 +384,10 @@ Namespace DotNetNuke.Services.Installer
                     End If
                 End If
             Next
+        End Sub
+
+        Private Sub UpdateNodeRaw(ByVal rootNode As XmlNode, ByVal actionNode As XmlNode)
+            rootNode.InnerXml = actionNode.InnerXml
         End Sub
 
 #End Region

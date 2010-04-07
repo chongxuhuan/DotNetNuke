@@ -113,7 +113,7 @@ Namespace DotNetNuke.Entities.Tabs
                          objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, objTab.Url, _
                          objTab.SkinSrc, objTab.ContainerSrc, objTab.TabPath, objTab.StartDate, objTab.EndDate, _
                          objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
-                         objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, Entities.Host.Host.ContentLocale.ToString)
+                         objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetPortalDefaultLanguage(objTab.PortalID))
 
                 objTab.TabID = iTabID
 
@@ -390,7 +390,7 @@ Namespace DotNetNuke.Entities.Tabs
                            objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
                            objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
                            objtab.PageHeadText, objtab.IsSecure, objtab.PermanentRedirect, _
-                           objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, Entities.Host.Host.ContentLocale.ToString)
+                           objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetPortalDefaultLanguage(portalId))
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("TabID", intTabid.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
 
@@ -950,7 +950,7 @@ Namespace DotNetNuke.Entities.Tabs
         End Sub
 
         Public Sub UpdateTab(ByVal updatedTab As TabInfo)
-            UpdateTab(updatedTab, Entities.Host.Host.ContentLocale.ToString)
+            UpdateTab(updatedTab, PortalController.GetPortalDefaultLanguage(updatedTab.PortalID))
         End Sub
 
         Public Sub UpdateTab(ByVal updatedTab As TabInfo, ByVal CultureCode As String)
@@ -1341,7 +1341,7 @@ Namespace DotNetNuke.Entities.Tabs
 #Region "Public Shared Methods"
 
         Public Shared Sub CopyDesignToChildren(ByVal parentTab As TabInfo, ByVal skinSrc As String, ByVal containerSrc As String)
-            CopyDesignToChildren(parentTab, skinSrc, containerSrc, Entities.Host.Host.ContentLocale.ToString)
+            CopyDesignToChildren(parentTab, skinSrc, containerSrc, PortalController.GetPortalDefaultLanguage(parentTab.PortalID))
         End Sub
 
         Public Shared Sub CopyDesignToChildren(ByVal parentTab As TabInfo, ByVal skinSrc As String, ByVal containerSrc As String, ByVal CultureCode As String)
@@ -1817,7 +1817,7 @@ Namespace DotNetNuke.Entities.Tabs
                      objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
                      objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
                      objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
-                     objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, Entities.Host.Host.ContentLocale.ToString)
+                     objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetPortalDefaultLanguage(objTab.PortalID))
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
                 objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
             Next

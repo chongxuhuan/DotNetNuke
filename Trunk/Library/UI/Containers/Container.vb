@@ -283,25 +283,10 @@ Namespace DotNetNuke.UI.Containers
             End If
             viewRoles = viewRoles.Replace(";"c, String.Empty).Trim().ToLowerInvariant
 
-            Dim isAdminTab As Boolean = False
-            If PortalSettings.ActiveTab.IsSuperTab OrElse _
-                    PortalSettings.ActiveTab.TabID = PortalSettings.AdminTabId OrElse _
-                    PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId Then
-                isAdminTab = True
-            End If
-            'get settings from hash table
             Dim showMessage As Boolean = False
-            If viewRoles = PortalSettings.AdministratorRoleName.ToLowerInvariant AndAlso Not isAdminTab Then
+            If viewRoles = PortalSettings.AdministratorRoleName.ToLowerInvariant Then
                 adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text")
-
-                Dim objModules As New ModuleController
-                Dim borderHash As New Hashtable
-                borderHash = objModules.GetTabModuleSettings(ModuleConfiguration.TabModuleID)
-                If (Not Null.IsNull(borderHash("hideadminborder"))) Or (Not borderHash("hideadminborder") Is Nothing) Then
-                    showMessage = DirectCast(borderHash("hideadminborder"), Boolean)
-                Else
-                    showMessage = False
-                End If
+                showMessage = Not ModuleConfiguration.HideAdminBorder
             End If
             If ModuleConfiguration.StartDate >= Now Then
                 adminMessage = String.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString())

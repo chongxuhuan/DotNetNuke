@@ -25,9 +25,9 @@
         </component>
         <component type="File">
           <files>
-            <basePath>Documentation</basePath>
             <file>
-              <name>Documentation/Telerik_EULA.pdf</name>
+		<path>Documentation</path>
+              <name>Telerik_EULA.pdf</name>
             </file>
           </files>
         </component>

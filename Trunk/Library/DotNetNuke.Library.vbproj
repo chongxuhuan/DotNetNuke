@@ -762,6 +762,9 @@
     <Compile Include="Common\Utilities\Calendar.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\UserControls\LocaleSelectorControl.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="UI\Utilities\ClientAPI.vb">
       <SubType>Code</SubType>
     </Compile>
