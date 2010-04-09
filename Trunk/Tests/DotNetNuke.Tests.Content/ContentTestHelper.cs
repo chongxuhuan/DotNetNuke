@@ -37,16 +37,6 @@ namespace DotNetNuke.Tests.Content
             table.Columns.Add("LastModifiedOnDate", typeof(DateTime));
         }
 
-        internal static void AddContentTypeToTable(DataTable table, int id, string contentType)
-        {
-            table.Rows.Add(new object[] { id, contentType });
-        }
-
-        internal static void AddScopeTypeToTable(DataTable table, int id, string scopeType)
-        {
-            table.Rows.Add(new object[] { id, scopeType });
-        }
-
         internal static void AddTermToTable(DataTable table, int id, int contentItemId, int vocabularyId, string name, string description, int weight, int parentId)
         {
             table.Rows.Add(new object[] { id, contentItemId, vocabularyId, name, description, weight, parentId });
@@ -55,21 +45,6 @@ namespace DotNetNuke.Tests.Content
         internal static void AddVocabularyToTable(DataTable table, int id, int typeId, string name, string description, int scopeId, int scopeTypeId, int weight)
         {
             table.Rows.Add(new object[] { id, typeId, name, description, scopeId, scopeTypeId, weight });
-        }
-
-        internal static DataTable CopyScopeTypeRowsToNewTable(DataRow[] rows)
-        {
-            DataTable tempTable = ContentTestHelper.CreateScopeTypeTable();
-
-            for (int i = 0; i < rows.Length; i++)
-            {
-                ContentTestHelper.AddScopeTypeToTable(tempTable,
-                                (int)rows[i]["ScopeTypeID"],
-                                (string)rows[i]["ScopeType"]
-                );
-            }
-
-            return tempTable;
         }
 
         internal static DataTable CopyTermRowsToNewTable(DataRow[] rows)
@@ -112,33 +87,6 @@ namespace DotNetNuke.Tests.Content
             return tempTable;
         }
 
-        internal static DataTable CreateContentTypeTable()
-        {
-            // Create Tags table.
-            DataTable table = new DataTable();
-
-            // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("ContentTypeID", typeof(int));
-            table.Columns.Add("ContentType", typeof(string));
-            // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
-
-            return table;
-        }
-
-        internal static DataTable CreateScopeTypeTable()
-        {
-            // Create Tags table.
-            DataTable table = new DataTable();
-
-            // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("ScopeTypeID", typeof(int));
-            table.Columns.Add("ScopeType", typeof(string));
-            // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
-
-            return table;
-        }
 
         internal static DataTable CreateTermTable()
         {
@@ -165,10 +113,12 @@ namespace DotNetNuke.Tests.Content
 
         internal static ContentItem CreateValidContentItem()
         {
-            ContentItem content = new ContentItem { 
-                                        Content = Constants.CONTENT_ValidContent, 
-                                        ContentKey = Constants.CONTENT_ValidContentKey, 
-                                        Indexed = Constants.CONTENT_IndexedFalse };
+            ContentItem content = new ContentItem
+            {
+                Content = Constants.CONTENT_ValidContent,
+                ContentKey = Constants.CONTENT_ValidContentKey,
+                Indexed = Constants.CONTENT_IndexedFalse
+            };
             return content;
         }
 

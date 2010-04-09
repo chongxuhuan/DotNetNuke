@@ -119,13 +119,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         public void DeleteContentType(ContentType contentType)
         {
-            DataRow[] row = contentTypeTable.Select("ContentTypeID = '" + contentType.ContentTypeId + "'");
-
-            //Remove the row from the table
-            if (row.Length > 0)
-            {
-                contentTypeTable.Rows.Remove(row[0]);
-            }
         }
 
         public IDataReader GetContentTypes()
@@ -135,11 +128,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         public void UpdateContentType(ContentType contentType)
         {
-            DataRow[] row = contentTypeTable.Select("ContentTypeID = '" + contentType.ContentTypeId + "'");
-            if (row.Length > 0)
-            {
-                row[0]["ContentType"] = contentType.ContentType;
-            }
         }
 
         #endregion
@@ -153,13 +141,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         public void DeleteScopeType(ScopeType scopeType)
         {
-            DataRow[] row = scopeTypeTable.Select("ScopeTypeID = '" + scopeType.ScopeTypeId + "'");
-
-            //Remove the row from the table
-            if (row.Length > 0)
-            {
-                scopeTypeTable.Rows.Remove(row[0]);
-            }
         }
 
         public IDataReader GetScopeTypes()
@@ -169,11 +150,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         public void UpdateScopeType(ScopeType scopeType)
         {
-            DataRow[] row = scopeTypeTable.Select("ScopeTypeID = '" + scopeType.ScopeTypeId + "'");
-            if (row.Length > 0)
-            {
-                row[0]["ScopeType"] = scopeType.ScopeType;
-            }
         }
 
         #endregion
@@ -297,30 +273,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
 
         #region Public Methods
 
-        public void AddContentTypesToTable(int count)
-        {
-            for (int i = Constants.CONTENTTYPE_ValidContentTypeId;
-                       i < Constants.CONTENTTYPE_ValidContentTypeId + count;
-                       i++)
-            {
-                string contentType = (count == 1) ? Constants.CONTENTTYPE_ValidContentType : ContentTestHelper.GetContentType(i);
-
-                ContentTestHelper.AddContentTypeToTable(contentTypeTable, i, contentType);
-            }
-        }
-
-        public void AddScopeTypesToTable(int count)
-        {
-            for (int i = Constants.SCOPETYPE_ValidScopeTypeId;
-                       i < Constants.SCOPETYPE_ValidScopeTypeId + count;
-                       i++)
-            {
-                string scopeType = (count == 1) ? Constants.SCOPETYPE_ValidScopeType : ContentTestHelper.GetScopeType(i);
-
-                ContentTestHelper.AddScopeTypeToTable(scopeTypeTable, i, scopeType);
-            }
-        }
-
         public void AddTermsToTable(int count, Func<int, int> contentIdFunction, Func<int, int> vocabularyIdFunction)
         {
             for (int i = Constants.TERM_ValidTermId;
@@ -347,34 +299,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
                 int weight = Constants.VOCABULARY_ValidWeight;
                 ContentTestHelper.AddVocabularyToTable(vocabularyTable, i, typeId, name, description, scopeIdFunction(i), scopeTypeId, weight);
             }
-        }
-
-        public ContentType GetContentTypeFromTable(int contentTypeID)
-        {
-            ContentType contentType = null;
-            DataRow[] row = contentTypeTable.Select("ContentTypeID = '" + contentTypeID + "'");
-            if (row.Length > 0)
-            {
-                contentType = new ContentType();
-                contentType.ContentTypeId = contentTypeID;
-                contentType.ContentType = (string)row[0]["ContentType"];
-            }
-
-            return contentType;
-        }
-
-        public ScopeType GetScopeTypeFromTable(int scopeTypeID)
-        {
-            ScopeType scopeType = null;
-            DataRow[] row = scopeTypeTable.Select("ScopeTypeID = '" + scopeTypeID + "'");
-            if (row.Length > 0)
-            {
-                scopeType = new ScopeType();
-                scopeType.ScopeTypeId = scopeTypeID;
-                scopeType.ScopeType = (string)row[0]["ScopeType"];
-            }
-
-            return scopeType;
         }
 
         public Term GetTermFromTable(int termId)
@@ -410,16 +334,6 @@ namespace DotNetNuke.Tests.Content.Fakes.Data
             }
 
             return vocabulary;
-        }
-
-        public void SetUpContentTypeTable()
-        {
-            contentTypeTable = ContentTestHelper.CreateContentTypeTable();
-        }
-
-        public void SetUpScopeTypeTable()
-        {
-            scopeTypeTable = ContentTestHelper.CreateScopeTypeTable();
         }
 
         public void SetUpTermTable()

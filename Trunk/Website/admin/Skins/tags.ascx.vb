@@ -30,16 +30,13 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _AddImageUrl As String = "~/images/add.gif"
         Private _AllowTagging As Boolean = True
         Private _CancelImageUrl As String = "~/images/lt.gif"
-        Private _CategoryImageUrl As String = "~/images/icon_filemanager_16px.gif"
-        Private _CategoryLabelCssClass As String = "SkinObject"
         Private _CssClass As String = "SkinObject"
         Private _ObjectType As String = "Page"
+        Private _RepeatDirection As String = "Horizontal"
         Private _SaveImageUrl As String = "~/images/save.gif"
-        Private _Separator As String
+        Private _Separator As String = ",&nbsp;"
         Private _ShowCategories As Boolean = True
         Private _ShowTags As Boolean = True
-        Private _TagImageUrl As String = "~/images/icon_tag_16px.gif"
-        Private _TagLabelCssClass As String = "SkinObject"
 
         Const MyFileName As String = "Tags.ascx"
 
@@ -72,24 +69,6 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Set
         End Property
 
-        Public Property CategoryImageUrl() As String
-            Get
-                Return _CategoryImageUrl
-            End Get
-            Set(ByVal Value As String)
-                _CategoryImageURL = Value
-            End Set
-        End Property
-
-        Public Property CategoryLabelCssClass() As String
-            Get
-                Return _CategoryLabelCssClass
-            End Get
-            Set(ByVal Value As String)
-                _CategoryLabelCssClass = Value
-            End Set
-        End Property
-
         Public Property CssClass() As String
             Get
                 Return _CssClass
@@ -105,6 +84,15 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Get
             Set(ByVal Value As String)
                 _ObjectType = Value
+            End Set
+        End Property
+
+        Public Property RepeatDirection() As String
+            Get
+                Return _RepeatDirection
+            End Get
+            Set(ByVal value As String)
+                _RepeatDirection = value
             End Set
         End Property
 
@@ -144,24 +132,6 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Set
         End Property
 
-        Public Property TagImageUrl() As String
-            Get
-                Return _TagImageUrl
-            End Get
-            Set(ByVal Value As String)
-                _TagImageURL = Value
-            End Set
-        End Property
-
-        Public Property TagLabelCssClass() As String
-            Get
-                Return _TagLabelCssClass
-            End Get
-            Set(ByVal Value As String)
-                _TagLabelCssClass = Value
-            End Set
-        End Property
-
 #End Region
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -184,16 +154,13 @@ Namespace DotNetNuke.UI.Skins.Controls
 
             tagsControl.AddImageUrl = AddImageUrl
             tagsControl.CancelImageUrl = CancelImageUrl
-            tagsControl.CategoryImageUrl = CategoryImageUrl
             tagsControl.SaveImageUrl = SaveImageUrl
-            tagsControl.TagImageUrl = TagImageUrl
 
             tagsControl.CssClass = CssClass
-            tagsControl.CategoryLabelCssClass = CategoryLabelCssClass
-            tagsControl.TagLabelCssClass = TagLabelCssClass
 
             tagsControl.AllowTagging = AllowTagging AndAlso Request.IsAuthenticated
             tagsControl.NavigateUrlFormatString = NavigateURL(searchTabId, "", "Tag={0}")
+            tagsControl.RepeatDirection = RepeatDirection
             tagsControl.Separator = Separator
             tagsControl.ShowCategories = ShowCategories
             tagsControl.ShowTags = ShowTags

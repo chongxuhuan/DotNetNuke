@@ -52,6 +52,16 @@ namespace DotNetNuke.Tests.Content.Mocks
                                             contentKey, indexed, userId, term });
         }
 
+        private static void AddContentTypeToTable(DataTable table, int id, string contentType)
+        {
+            table.Rows.Add(new object[] { id, contentType });
+        }
+
+        private static void AddScopeTypeToTable(DataTable table, int id, string scopeType)
+        {
+            table.Rows.Add(new object[] { id, scopeType });
+        }
+
         private static DataTable CreateContentItemTable()
         {
             // Create Categories table.
@@ -75,9 +85,32 @@ namespace DotNetNuke.Tests.Content.Mocks
             return table;
         }
 
-        internal static IDataReader CreateEmptyContentItemReader()
+        private static DataTable CreateContentTypeTable()
         {
-            return CreateContentItemTable().CreateDataReader();
+            // Create ContentTypes table.
+            DataTable table = new DataTable();
+
+            // Create columns, ID and Name.
+            DataColumn idColumn = table.Columns.Add("ContentTypeID", typeof(int));
+            table.Columns.Add("ContentType", typeof(string));
+            // Set the ID column as the primary key column.
+            table.PrimaryKey = new DataColumn[] { idColumn };
+
+            return table;
+        }
+
+        private static DataTable CreateScopeTypeTable()
+        {
+            // Create ScopeTypes table.
+            DataTable table = new DataTable();
+
+            // Create columns, ID and Name.
+            DataColumn idColumn = table.Columns.Add("ScopeTypeID", typeof(int));
+            table.Columns.Add("ScopeType", typeof(string));
+            // Set the ID column as the primary key column.
+            table.PrimaryKey = new DataColumn[] { idColumn };
+
+            return table;
         }
 
         private static Mock<TMock> RegisterMockController<TMock>(Mock<TMock> mock) where TMock : class
@@ -99,6 +132,22 @@ namespace DotNetNuke.Tests.Content.Mocks
                 ComponentFactory.RegisterComponentInstance<TMock>(getMock.Object);
             }
             return getMock;
+        }
+
+
+        internal static IDataReader CreateEmptyContentItemReader()
+        {
+            return CreateContentItemTable().CreateDataReader();
+        }
+
+        internal static IDataReader CreateEmptyContentTypeReader()
+        {
+            return CreateContentTypeTable().CreateDataReader();
+        }
+
+        internal static IDataReader CreateEmptyScopeTypeReader()
+        {
+            return CreateScopeTypeTable().CreateDataReader();
         }
 
         internal static Mock<HttpContextBase> CreateMockHttpContext()
@@ -166,6 +215,36 @@ namespace DotNetNuke.Tests.Content.Mocks
                 int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
 
                 AddContentItemToTable(table, i, content, contentKey, indexed, startUserId, term);
+            }
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidContentTypesReader(int count)
+        {
+            DataTable table = CreateContentTypeTable();
+            for (int i = Constants.CONTENTTYPE_ValidContentTypeId;
+                       i < Constants.CONTENTTYPE_ValidContentTypeId + count;
+                       i++)
+            {
+                string contentType = (count == 1) ? Constants.CONTENTTYPE_ValidContentType : ContentTestHelper.GetContentType(i);
+
+                AddContentTypeToTable(table, i, contentType);
+            }
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidScopeTypesReader(int count)
+        {
+            DataTable table = CreateScopeTypeTable();
+            for (int i = Constants.SCOPETYPE_ValidScopeTypeId;
+                       i < Constants.SCOPETYPE_ValidScopeTypeId + count;
+                       i++)
+            {
+                string scopeType = (count == 1) ? Constants.SCOPETYPE_ValidScopeType : ContentTestHelper.GetScopeType(i);
+
+                AddScopeTypeToTable(table, i, scopeType);
             }
 
             return table.CreateDataReader();

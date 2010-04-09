@@ -265,8 +265,6 @@ Namespace DotNetNuke.Services.Installer
                     RemoveAttribute(rootNode, node)
                 Case "update"
                     UpdateNode(rootNode, node)
-                Case "setinnerxml"
-                    UpdateNodeRaw(rootNode, node)
                 Case "updateattribute"
                     UpdateAttribute(rootNode, node)
             End Select
@@ -300,12 +298,13 @@ Namespace DotNetNuke.Services.Installer
         End Sub
 
         Private Sub RemoveNode(ByVal node As XmlNode)
-            'Get Parent
-            Dim parentNode As XmlNode = node.ParentNode
+            If node IsNot Nothing Then
+                'Get Parent
+                Dim parentNode As XmlNode = node.ParentNode
 
-            'Remove current Node
-            parentNode.RemoveChild(node)
-
+                'Remove current Node
+                parentNode.RemoveChild(node)
+            End If
         End Sub
 
         Private Sub UpdateAttribute(ByVal rootNode As XmlNode, ByVal actionNode As XmlNode)
@@ -369,25 +368,19 @@ Namespace DotNetNuke.Services.Installer
                         Select Case collisionAction.ToLowerInvariant()
                             Case "overwrite"
                                 rootNode.RemoveChild(targetNode)
-                                rootNode.AppendChild(TargetConfig.ImportNode(child, True))
+                                rootNode.InnerXml = rootNode.InnerXml + child.OuterXml
                             Case "save"
                                 Dim commentHeaderText As String = String.Format(Localization.Localization.GetString("XMLMERGE_Upgrade", Localization.Localization.SharedResourceFile), Environment.NewLine, Sender, Version, DateTime.Now)
                                 Dim commentHeader As XmlComment = TargetConfig.CreateComment(commentHeaderText)
                                 Dim commentNode As XmlComment = TargetConfig.CreateComment(targetNode.OuterXml)
                                 rootNode.RemoveChild(targetNode)
-                                rootNode.AppendChild(commentHeader)
-                                rootNode.AppendChild(commentNode)
-                                rootNode.AppendChild(TargetConfig.ImportNode(child, True))
+                                rootNode.InnerXml = rootNode.InnerXml & commentHeader.OuterXml & commentNode.OuterXml & child.OuterXml
                             Case "ignore"
                                 'Do nothing
                         End Select
                     End If
                 End If
             Next
-        End Sub
-
-        Private Sub UpdateNodeRaw(ByVal rootNode As XmlNode, ByVal actionNode As XmlNode)
-            rootNode.InnerXml = actionNode.InnerXml
         End Sub
 
 #End Region

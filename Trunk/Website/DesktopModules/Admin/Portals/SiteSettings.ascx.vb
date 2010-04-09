@@ -231,9 +231,10 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     ctlBackground.ShowUpLoad = True
                     cmdCancel.Visible = False
                 End If
-
+                Dim activeLanguage As String = PortalController.GetPortalDefaultLanguage(PortalId)
                 If DotNetNuke.Services.Localization.Localization.ActiveLanguagesByPortalID(PortalId) > 1 Then
                     plLocale.Visible = True
+                    activeLanguage = plLocale.CultureCode.ToString
                 End If
                 'this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdExpiryCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtExpiryDate)
@@ -256,7 +257,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     cboProcessor.DataBind()
                     cboProcessor.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString("None_Specified") + ">", ""))
 
-                    Dim objPortal As PortalInfo = objPortalController.GetPortal(intPortalId)
+                    Dim objPortal As PortalInfo = objPortalController.GetPortal(intPortalId, activeLanguage)
                     txtPortalName.Text = objPortal.PortalName
                     ctlLogo.FilePath = objPortal.LogoFile
                     ctlLogo.FileFilter = glbImageFileTypes
@@ -718,7 +719,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     End If
                     Dim activeLanguage As String = objPortal.defaultlanguage
                     If plLocale.Visible = True Then
-                        ' activeLanguage = plLocale.
+                        activeLanguage = plLocale.CultureCode.ToString
                     End If
                     objPortalController.UpdatePortalInfo(intPortalId, txtPortalName.Text, strLogo, _
                         txtFooterText.Text, datExpiryDate, optUserRegistration.SelectedIndex, _

@@ -1403,6 +1403,9 @@ Namespace DotNetNuke.Services.Upgrade
                 End If
             End If
 
+            'Add Styles Skin Object
+            AddSkinControl("TAGS", "DotNetNuke.TagsSkinObject", "Admin/Skins/Tags.ascx")
+
             'Add Content List module definition
             Dim moduleDefID As Integer = AddModuleDefinition("ContentList", "This module displays a list of content by tag.", "Content List")
             AddModuleControl(moduleDefID, "", "", "DesktopModules/Admin/ContentList/ContentList.ascx", "", SecurityAccessLevel.View, 0)
@@ -2267,6 +2270,9 @@ Namespace DotNetNuke.Services.Upgrade
                 InstallPackages("Provider", True)
                 InstallPackages("AuthSystem", True)
                 InstallPackages("Package", True)
+
+                'Refresh Status
+                Globals.GetStatus()
 
                 ' parse portal(s) if available
                 nodes = xmlDoc.SelectNodes("//dotnetnuke/portals/portal")

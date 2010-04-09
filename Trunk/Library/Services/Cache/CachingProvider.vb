@@ -50,8 +50,11 @@ Namespace DotNetNuke.Services.Cache
 
 #Region "Shared/Static Methods"
 
-        Public Shared Function Instance() As CachingProvider
-            Return DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of CachingProvider)()
+        Public Shared Function CleanCacheKey(ByVal CacheKey As String) As String
+            If String.IsNullOrEmpty(CacheKey) Then
+                Throw New ArgumentException("Argument cannot be null or an empty string", "CacheKey")
+            End If
+            Return CacheKey.Substring(_cachePrefix.Length)
         End Function
 
         Public Shared Function GetCacheKey(ByVal CacheKey As String) As String
@@ -59,6 +62,10 @@ Namespace DotNetNuke.Services.Cache
                 Throw New ArgumentException("Argument cannot be null or an empty string", "CacheKey")
             End If
             Return _cachePrefix + CacheKey
+        End Function
+
+        Public Shared Function Instance() As CachingProvider
+            Return DotNetNuke.ComponentModel.ComponentFactory.GetComponent(Of CachingProvider)()
         End Function
 
 #End Region
@@ -212,6 +219,8 @@ Namespace DotNetNuke.Services.Cache
         End Sub
 
         Protected Sub RemoveInternal(ByVal CacheKey As String)
+            'attempt remove from private dictionary
+            DataCache.RemoveFromPrivateDictionary(CacheKey)
             ' remove item from memory
             If Not Cache(CacheKey) Is Nothing Then
                 Cache.Remove(CacheKey)

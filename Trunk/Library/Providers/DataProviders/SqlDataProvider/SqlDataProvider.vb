@@ -93,7 +93,7 @@ Namespace DotNetNuke.Data
                 _upgradeConnectionString = _coreConnectionString
             End If
 
-            _isConnectionValid = TestDatabaseConnection(ConnectionString, DatabaseOwner, ObjectQualifier)
+            _isConnectionValid = CanConnect(ConnectionString, DatabaseOwner, ObjectQualifier)
 
         End Sub
 
@@ -318,24 +318,23 @@ Namespace DotNetNuke.Data
 
         'End Function
 
-        Private Overloads Function TestDatabaseConnection(ByVal ConnectionString As String, ByVal Owner As String, ByVal Qualifier As String) As Boolean
+        Private Overloads Function CanConnect(ByVal ConnectionString As String, ByVal Owner As String, ByVal Qualifier As String) As Boolean
 
-            Dim bError As Boolean = True
+            Dim connectionValid As Boolean = True
 
             Try
                 SqlHelper.ExecuteReader(ConnectionString, Owner & Qualifier & "GetDatabaseVersion")
             Catch ex As SqlException
-                Dim canConnect As Boolean = True
 
                 For Each c As SqlError In ex.Errors
                     If Not (c.Number = 2812 And c.Class = 16) Then
-                        canConnect = False
+                        connectionValid = False
                         Exit For
                     End If
                 Next
             End Try
 
-            Return bError
+            Return connectionValid
         End Function
 
 #End Region
@@ -597,7 +596,7 @@ Namespace DotNetNuke.Data
                     If sqlError.Number = 2812 And sqlError.Class = 16 Then
                         Exit For
                     Else
-                        Throw ex
+                        Throw
                     End If
                 Next i
             End Try

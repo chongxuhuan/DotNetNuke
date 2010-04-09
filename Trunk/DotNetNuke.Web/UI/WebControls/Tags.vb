@@ -40,17 +40,14 @@ Namespace DotNetNuke.Web.UI.WebControls
         Private _AddImageUrl As String
         Private _AllowTagging As Boolean = False
         Private _CancelImageUrl As String
-        Private _CategoryImageUrl As String
-        Private _CategoryLabelCssClass As String
         Private _ContentItem As ContentItem
         Private _NavigateUrlFormatString As String
-        Private _SaveImageUrl As String
         Private _Separator As String = ",&nbsp;"
+        Private _SaveImageUrl As String
+        Private _RepeatDirection As String = "Horizontal"
         Private _ShowCategories As Boolean
         Private _ShowTags As Boolean
-        Private _TagImageUrl As String
         Private _Tags As String
-        Private _TagLabelCssClass As String
 
         Private ReadOnly Property TagVocabulary() As Vocabulary
             Get
@@ -93,24 +90,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Public Property CategoryImageUrl() As String
-            Get
-                Return _CategoryImageUrl
-            End Get
-            Set(ByVal value As String)
-                _CategoryImageUrl = value
-            End Set
-        End Property
-
-        Public Property CategoryLabelCssClass() As String
-            Get
-                Return _CategoryLabelCssClass
-            End Get
-            Set(ByVal value As String)
-                _CategoryLabelCssClass = value
-            End Set
-        End Property
-
         Public Property ContentItem() As ContentItem
             Get
                 Return _ContentItem
@@ -139,6 +118,15 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Get
             Set(ByVal value As String)
                 _NavigateUrlFormatString = value
+            End Set
+        End Property
+
+        Public Property RepeatDirection() As String
+            Get
+                Return _RepeatDirection
+            End Get
+            Set(ByVal value As String)
+                _RepeatDirection = value
             End Set
         End Property
 
@@ -178,26 +166,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Public Property TagImageUrl() As String
-            Get
-                Return _TagImageUrl
-            End Get
-            Set(ByVal value As String)
-                _TagImageUrl = value
-            End Set
-        End Property
-
-        Public Property TagLabelCssClass() As String
-            Get
-                EnsureChildControls()
-                Return _TagLabelCssClass
-            End Get
-            Set(ByVal value As String)
-                EnsureChildControls()
-                _TagLabelCssClass = value
-            End Set
-        End Property
-
 #End Region
 
 #Region "Private Methods"
@@ -229,13 +197,7 @@ Namespace DotNetNuke.Web.UI.WebControls
             writer.RenderEndTag()
         End Sub
 
-        Private Sub RenderTerm(ByVal writer As HtmlTextWriter, ByVal term As Term, ByRef count As Integer)
-            If count = 0 Then
-                writer.Write("&nbsp;")
-            Else
-                writer.Write(Separator)
-            End If
-
+        Private Sub RenderTerm(ByVal writer As HtmlTextWriter, ByVal term As Term, ByVal renderSeparator As Boolean)
             writer.AddAttribute(HtmlTextWriterAttribute.Href, String.Format(NavigateUrlFormatString, term.Name))
             writer.AddAttribute(HtmlTextWriterAttribute.Title, term.Name)
             writer.AddAttribute(HtmlTextWriterAttribute.Rel, "tag")
@@ -243,7 +205,9 @@ Namespace DotNetNuke.Web.UI.WebControls
             writer.Write(term.Name)
             writer.RenderEndTag()
 
-            count += 1
+            If renderSeparator Then
+                writer.Write(Separator)
+            End If
         End Sub
 
         Private Sub SaveTags()
@@ -292,63 +256,70 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Public Overrides Sub RenderControl(ByVal writer As HtmlTextWriter)
 
+            'Render Outer Div
+            writer.AddAttribute(HtmlTextWriterAttribute.Class, RepeatDirection.ToLower)
+            writer.RenderBeginTag(HtmlTextWriterTag.Div)
+
             'Render Categories
             If ShowCategories Then
-                If Not String.IsNullOrEmpty(CategoryLabelCssClass) Then
-                    writer.AddAttribute(HtmlTextWriterAttribute.Class, CategoryLabelCssClass)
-                End If
-                writer.RenderBeginTag(HtmlTextWriterTag.Span)
-
-                'Render Category Image
-                If Not String.IsNullOrEmpty(CategoryImageUrl) Then
-                    writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(CategoryImageUrl))
-                    writer.RenderBeginTag(HtmlTextWriterTag.Img)
-                    writer.RenderEndTag()
-                End If
-
-                writer.Write(LocalizeString("Category"))
-                writer.RenderEndTag()
+                'Render UL
+                writer.AddAttribute(HtmlTextWriterAttribute.Class, "categories")
+                writer.AddAttribute(HtmlTextWriterAttribute.Title, LocalizeString("Category.ToolTip"))
+                writer.RenderBeginTag(HtmlTextWriterTag.Ul)
 
                 'Render Category Links
-                Dim categoryCount As Integer = 0
-                For Each term As Term In ContentItem.Terms
-                    If term.VocabularyId <> TagVocabulary.VocabularyId Then
-                        RenderTerm(writer, term, categoryCount)
-                    End If
-                Next
-            End If
+                Dim categories As IEnumerable(Of Term) = (From cat As Term In ContentItem.Terms _
+                                                    Where cat.VocabularyId <> TagVocabulary.VocabularyId _
+                                                    Select cat)
 
-            If ShowCategories AndAlso ShowTags Then
-                writer.Write("&nbsp;&nbsp;")
+                For i As Integer = 0 To categories.Count() - 1
+                    If i = 0 Then
+                        'First Category
+                        writer.AddAttribute(HtmlTextWriterAttribute.Class, "first_tag")
+                    ElseIf i = categories.Count() - 1 Then
+                        'Last Category
+                        writer.AddAttribute(HtmlTextWriterAttribute.Class, "last_tag")
+                    End If
+                    writer.RenderBeginTag(HtmlTextWriterTag.Li)
+
+                    RenderTerm(writer, categories(i), i < categories.Count() - 1 AndAlso RepeatDirection.ToLower = "horizontal")
+
+                    writer.RenderEndTag()
+                Next
+
+                writer.RenderEndTag()
+
             End If
 
             If ShowTags Then
-                If Not String.IsNullOrEmpty(TagLabelCssClass) Then
-                    writer.AddAttribute(HtmlTextWriterAttribute.Class, TagLabelCssClass)
-                End If
-                writer.RenderBeginTag(HtmlTextWriterTag.Span)
+                'Render UL
+                writer.AddAttribute(HtmlTextWriterAttribute.Class, "tags")
+                writer.AddAttribute(HtmlTextWriterAttribute.Title, LocalizeString("Tag.ToolTip"))
+                writer.RenderBeginTag(HtmlTextWriterTag.Ul)
 
-                'Render Category Image
-                If Not String.IsNullOrEmpty(TagImageUrl) Then
-                    writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(TagImageUrl))
-                    writer.RenderBeginTag(HtmlTextWriterTag.Img)
+                'Render Tag Links
+                Dim tags As IEnumerable(Of Term) = (From cat As Term In ContentItem.Terms _
+                                                    Where cat.VocabularyId = TagVocabulary.VocabularyId _
+                                                    Select cat)
+
+                For i As Integer = 0 To tags.Count() - 1
+                    If i = 0 Then
+                        'First Tag
+                        writer.AddAttribute(HtmlTextWriterAttribute.Class, "first_tag")
+                    ElseIf i = tags.Count() - 1 Then
+                        'Last Tag
+                        writer.AddAttribute(HtmlTextWriterAttribute.Class, "last_tag")
+                    End If
+                    writer.RenderBeginTag(HtmlTextWriterTag.Li)
+
+                    RenderTerm(writer, tags(i), i < tags.Count() - 1 AndAlso RepeatDirection.ToLower = "horizontal")
+
                     writer.RenderEndTag()
-                End If
-
-                writer.Write(LocalizeString("Tag"))
-                writer.RenderEndTag()
-
-                If Not IsEditMode Then
-                    'Render Tag Links
-                    Dim tagCount As Integer = 0
-                    For Each term As Term In ContentItem.Terms
-                        If term.VocabularyId = TagVocabulary.VocabularyId Then
-                            RenderTerm(writer, term, tagCount)
-                        End If
-                    Next
-                End If
+                Next
 
                 If AllowTagging Then
+                    writer.RenderBeginTag(HtmlTextWriterTag.Li)
+
                     If IsEditMode Then
                         writer.Write("&nbsp;&nbsp;")
 
@@ -371,8 +342,15 @@ Namespace DotNetNuke.Web.UI.WebControls
                         'Render Add Button
                         RenderButton(writer, "Add", AddImageUrl)
                     End If
+
+                    writer.RenderEndTag()
                 End If
+
+                writer.RenderEndTag()
+
             End If
+
+            writer.RenderEndTag()
 
         End Sub
 

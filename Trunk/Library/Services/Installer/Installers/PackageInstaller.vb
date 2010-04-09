@@ -265,9 +265,7 @@ Namespace DotNetNuke.Services.Installer.Installers
             For index As Integer = 0 To ComponentInstallers.Count - 1
                 Dim compInstaller As ComponentInstallerBase = ComponentInstallers.Values(index)
 
-                'TODO: Check with Charles why we are doing version checks here
-                'If compInstaller.Version > Package.InstalledVersion AndAlso compInstaller.Completed Then
-                If compInstaller.Completed Then
+                If compInstaller.Version >= Package.InstalledVersion AndAlso compInstaller.Completed Then
                     compInstaller.Commit()
                 End If
 

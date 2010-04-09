@@ -923,6 +923,7 @@ Namespace DotNetNuke.Common
 
             'First check if there is a Database version
             If DataBaseVersion IsNot Nothing Then
+                _Status = UpgradeStatus.None
                 Exit Sub
             End If
 

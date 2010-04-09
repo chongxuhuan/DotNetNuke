@@ -337,7 +337,7 @@ Namespace DotNetNuke.Entities.Users
             Dim dr As IDataReader = Nothing
             Try
                 'Determine if the User is the Portal Administrator
-                dr = DataProvider.Instance().GetPortal(objUser.PortalID, PortalController.GetPortalDefaultLanguage(objUser.PortalID))
+                dr = DataProvider.Instance().GetPortal(objUser.PortalID, PortalController.GetActivePortalLanguage(objUser.PortalID))
                 If dr.Read Then
                     If objUser.UserID = Convert.ToInt32(dr("AdministratorId")) Then
                         CanDelete = deleteAdmin

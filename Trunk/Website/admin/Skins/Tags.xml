@@ -1,20 +1,8 @@
 <Settings>
   <Setting>
-    <Name>CategoryLabelCssClass</Name>
-    <Type>String</Type>
-    <Help>Sets the CSS class used to render the category label</Help>
-    <Value></Value>
-  </Setting>
-  <Setting>
     <Name>CssClass</Name>
     <Type>String</Type>
     <Help>Sets the CSS class used to render this skin object</Help>
-    <Value></Value>
-  </Setting>
-  <Setting>
-    <Name>TagLabelCssClass</Name>
-    <Type>String</Type>
-    <Help>Sets the CSS class used to render the tag label</Help>
     <Value></Value>
   </Setting>
   <Setting>
@@ -30,21 +18,9 @@
     <Value></Value>
   </Setting>
   <Setting>
-    <Name>CategoryImageUrl</Name>
-    <Type>String</Type>
-    <Help>Path to the url to use for the Categories</Help>
-    <Value></Value>
-  </Setting>
-  <Setting>
     <Name>SaveImageUrl</Name>
     <Type>String</Type>
     <Help>Path to the url to use for the Save link</Help>
-    <Value></Value>
-  </Setting>
-  <Setting>
-    <Name>TagImageUrl</Name>
-    <Type>String</Type>
-    <Help>Path to the url to use for the Tags</Help>
     <Value></Value>
   </Setting>
   <Setting>
@@ -75,6 +51,12 @@
     <Name>ObjectType</Name>
     <Type>String</Type>
     <Help>The type of object that the skinobject should display tags/categories for. (Page/Module)</Help>
+    <Value></Value>
+  </Setting>
+  <Setting>
+    <Name>RepeatDirection</Name>
+    <Type>String</Type>
+    <Help>The direction of repreatig elements (Horizontal or Vertical)</Help>
     <Value></Value>
   </Setting>
 </Settings>

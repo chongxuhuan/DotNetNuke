@@ -8,49 +8,19 @@
 /*****                                                  *****/
 /************************************************************/
 
-/* Add RegisterTabId to PortalLocalization Table */
-/*************************************************/
-
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}PortalLocalization' AND COLUMN_NAME='RegisterTabId')
-	BEGIN
-		-- Add new RegisterTabId Column
-		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization
-			ADD RegisterTabId int NULL
-	END
-GO
-
-CREATE VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
-AS
-SELECT     PL.PortalID, PL.CultureCode, PL.PortalName, PL.LogoFile, 
-                      PL.FooterText, PL.Description, PL.KeyWords, PL.BackgroundFile, 
-                      PL.HomeTabId, PL.LoginTabId, PL.UserTabId, PL.AdminTabId, 
-                      PL.SplashTabId, PL.CreatedByUserID, PL.CreatedOnDate, 
-                      PL.LastModifiedByUserID, PL.LastModifiedOnDate, P.PortalID AS Expr1, P.ExpiryDate, 
-                      P.UserRegistration, P.BannerAdvertising, P.AdministratorId, P.Currency, P.HostFee, 
-                      P.HostSpace, P.AdministratorRoleId, P.RegisteredRoleId, P.GUID, P.PaymentProcessor, 
-                      P.ProcessorUserId, P.ProcessorPassword, P.SiteLogHistory, P.DefaultLanguage, 
-                      P.TimezoneOffset, P.HomeDirectory, P.PageQuota, P.UserQuota
-FROM         {databaseOwner}{objectQualifier}PortalLocalization AS PL INNER JOIN
-                      {databaseOwner}{objectQualifier}Portals AS P ON PL.PortalID = P.PortalID AND PL.CultureCode = P.DefaultLanguage
-
-GO
 /* Initialize HideAdminBorder setting for modules under the Admin and Host tabs */
 /*************************************************/
 
 DECLARE @TabModuleID int
 DECLARE CursorQuery CURSOR FOR
-SELECT     TabModuleID, TabID
-FROM         {databaseOwner}{objectQualifier}TabModules
-WHERE     (TabID IN
-                          (SELECT     TabID
-                            FROM          {databaseOwner}{objectQualifier}Tabs
-                            WHERE      (TabID IN
-                                                       (SELECT     AdminTabId
-                                                         FROM          {databaseOwner}{objectQualifier}vw_Portals)) OR
-                                                   (ParentId IN
-                                                       (SELECT     AdminTabId
-                                                         FROM          {databaseOwner}{objectQualifier}vw_Portals AS vw_Portals_1)) OR
-                                                   (PortalID IS NULL)))
+
+SELECT TabModuleID
+FROM {databaseOwner}{objectQualifier}TabModules
+WHERE (TabID IN(SELECT TabID
+FROM {databaseOwner}{objectQualifier}Tabs
+WHERE (TabID IN(SELECT AdminTabId FROM {databaseOwner}{objectQualifier}vw_Portals)) OR
+(ParentId IN(SELECT AdminTabId FROM {databaseOwner}{objectQualifier}vw_Portals AS vw_Portals_1)) OR (PortalID IS NULL)))
+
 OPEN CursorQuery
 ---Perform fetch
 FETCH NEXT FROM CursorQuery
@@ -86,6 +56,77 @@ END
 CLOSE CursorQuery
 DEALLOCATE CursorQuery
 
+/* Add RegisterTabId to PortalLocalization Table */
+/*************************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}PortalLocalization' AND COLUMN_NAME='RegisterTabId')
+	BEGIN
+		-- Add new RegisterTabId Column
+		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization
+			ADD RegisterTabId int NULL
+	END
+GO
+
+/* Add vw_PortalsDefaultLanguage View */
+/**************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]') AND OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
+AS
+    SELECT DISTINCT    
+        P.PortalID,   
+        PL.PortalName as PortalName, 
+        CASE WHEN LEFT(LOWER(PL.LogoFile), 7) = 'fileid=' THEN  
+                      (SELECT Folder + FileName  
+                        FROM  {databaseOwner}{objectQualifier}Files  
+                        WHERE fileid = CAST((RIGHT(LOWER(PL.LogoFile), Len(PL.LogoFile) - 7)) AS int)) ELSE PL.LogoFile END AS LogoFile,       
+        PL.FooterText as FooterText,   
+        P.ExpiryDate,   
+        P.UserRegistration,   
+        P.BannerAdvertising,   
+        P.AdministratorId,   
+        P.Currency,   
+        P.HostFee,   
+        P.HostSpace,   
+        P.PageQuota,   
+        P.UserQuota,   
+        P.AdministratorRoleId,   
+        P.RegisteredRoleId,   
+        PL.Description as Description,   
+        PL.KeyWords as KeyWords,   
+         CASE WHEN LEFT(LOWER(PL.BackgroundFile), 7) = 'fileid=' THEN  
+                          (SELECT Folder + FileName  
+                            FROM {databaseOwner}{objectQualifier}Files  
+                            WHERE fileid = CAST((RIGHT(LOWER(PL.BackgroundFile), Len(PL.BackgroundFile) - 7)) AS int)) ELSE PL.BackgroundFile END AS BackgroundFile,   
+        P.GUID,   
+        P.PaymentProcessor,   
+        P.ProcessorUserId,   
+        P.ProcessorPassword,   
+        P.SiteLogHistory,   
+        U.Email,   
+        P.DefaultLanguage,   
+        P.TimezoneOffset,   
+        PL.AdminTabId as AdminTabId,   
+        P.HomeDirectory,   
+        PL.SplashTabId as SplashTabId,   
+        PL.HomeTabId as HomeTabId,   
+        PL.LoginTabId as LoginTabId,   
+        PL.RegisterTabId as RegisterTabId,   
+        PL.UserTabId as UserTabId,  
+        (SELECT TOP 1 TabID FROM {databaseOwner}{objectQualifier}Tabs WHERE (PortalID IS NULL) AND (ParentId IS NULL)) AS SuperTabId,
+        P.CreatedByUserID, 
+        P.CreatedOnDate, 
+        P.LastModifiedByUserID, 
+        P.LastModifiedOnDate,
+        PL.CultureCode
+	FROM  {databaseOwner}{objectQualifier}Portals AS P 
+		INNER JOIN {databaseOwner}{objectQualifier}PortalLocalization AS PL ON P.PortalID = PL.PortalID AND PL.CultureCode = P.DefaultLanguage 
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+
+GO
 
 /* Update GetPortals */
 /*********************/
@@ -113,12 +154,12 @@ CREATE VIEW {databaseOwner}[{objectQualifier}vw_Portals]
 AS  
     SELECT DISTINCT    
         P.PortalID,   
-        pl.PortalName as PortalName, 
-        CASE WHEN LEFT(LOWER(pl.LogoFile), 7) = 'fileid=' THEN  
+        PL.PortalName as PortalName, 
+        CASE WHEN LEFT(LOWER(PL.LogoFile), 7) = 'fileid=' THEN  
                       (SELECT Folder + FileName  
                         FROM  {databaseOwner}{objectQualifier}Files  
-                        WHERE fileid = CAST((RIGHT(LOWER(pl.LogoFile), Len(pl.LogoFile) - 7)) AS int)) ELSE pl.LogoFile END AS LogoFile,       
-        pl.FooterText as FooterText,   
+                        WHERE fileid = CAST((RIGHT(LOWER(PL.LogoFile), Len(PL.LogoFile) - 7)) AS int)) ELSE PL.LogoFile END AS LogoFile,       
+        PL.FooterText as FooterText,   
         P.ExpiryDate,   
         P.UserRegistration,   
         P.BannerAdvertising,   
@@ -130,12 +171,12 @@ AS
         P.UserQuota,   
         P.AdministratorRoleId,   
         P.RegisteredRoleId,   
-        pl.Description as Description,   
-        pl.KeyWords as KeyWords,   
-         CASE WHEN LEFT(LOWER(pl.BackgroundFile), 7) = 'fileid=' THEN  
+        PL.Description as Description,   
+        PL.KeyWords as KeyWords,   
+         CASE WHEN LEFT(LOWER(PL.BackgroundFile), 7) = 'fileid=' THEN  
                           (SELECT Folder + FileName  
                             FROM {databaseOwner}{objectQualifier}Files  
-                            WHERE fileid = CAST((RIGHT(LOWER(pl.BackgroundFile), Len(pl.BackgroundFile) - 7)) AS int)) ELSE pl.BackgroundFile END AS BackgroundFile,   
+                            WHERE fileid = CAST((RIGHT(LOWER(PL.BackgroundFile), Len(PL.BackgroundFile) - 7)) AS int)) ELSE PL.BackgroundFile END AS BackgroundFile,   
         P.GUID,   
         P.PaymentProcessor,   
         P.ProcessorUserId,   
@@ -144,21 +185,21 @@ AS
         U.Email,   
         P.DefaultLanguage,   
         P.TimezoneOffset,   
-        pl.AdminTabId as AdminTabId,   
+        PL.AdminTabId as AdminTabId,   
         P.HomeDirectory,   
-        pl.SplashTabId as SplashTabId,   
-        pl.HomeTabId as HomeTabId,   
-        pl.LoginTabId as LoginTabId,   
-        pl.RegisterTabId as RegisterTabId,   
-        pl.UserTabId as UserTabId,  
+        PL.SplashTabId as SplashTabId,   
+        PL.HomeTabId as HomeTabId,   
+        PL.LoginTabId as LoginTabId,   
+        PL.RegisterTabId as RegisterTabId,   
+        PL.UserTabId as UserTabId,  
         (SELECT TOP 1 TabID FROM {databaseOwner}{objectQualifier}Tabs WHERE (PortalID IS NULL) AND (ParentId IS NULL)) AS SuperTabId,
         P.CreatedByUserID, 
         P.CreatedOnDate, 
         P.LastModifiedByUserID, 
         P.LastModifiedOnDate,
         PL.CultureCode
-   FROM  {databaseOwner}{objectQualifier}Portals AS P INNER JOIN
-		{databaseOwner}{objectQualifier}PortalLocalization AS PL ON P.PortalID = PL.PortalID
+	FROM  {databaseOwner}{objectQualifier}Portals AS P 
+		INNER JOIN {databaseOwner}{objectQualifier}PortalLocalization AS PL ON P.PortalID = PL.PortalID
         LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
 
 GO

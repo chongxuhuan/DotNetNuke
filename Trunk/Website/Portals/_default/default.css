@@ -1284,3 +1284,21 @@ div.SearchIcon img
 	border: 1px #eee solid;	
 	background-color: #f5f9fc;	
 }
+
+/*---------------- Taxonomy ------------------------*/
+
+/* Horizontal taxonomy styles */
+.horizontal ul.categories,.horizontal ul.tags{list-style:none;padding:0;margin:0;text-indent:25px;line-height:28px;}
+.horizontal ul.categories{background:url(../../images/category.gif) no-repeat left;}
+.horizontal ul.tags{background:url(../../images/tag.gif) no-repeat left;}
+.horizontal ul.categories li,.horizontal ul.tags li{display:inline;margin:0;}
+.horizontal ul.tags li.add-tags{margin-left: 20px;}
+.horizontal ul.tags li.add-tags img{vertical-align:middle;}
+
+/* Vertical taxonomy styles */
+.vertical ul.categories,.vertical ul.tags{list-style:none;padding-top:0;padding-left:0;margin-top:0;margin-bottom:0; azimuth}
+.vertical ul.categories li,.vertical ul.tags li{margin:0;line-height:20px;}
+.vertical ul.categories li{list-style-image:url(../../images/category.gif); list-style-position:inside;}
+.vertical ul.tags li{list-style-image:url(../../images/tag.gif); list-style-position:inside; }
+.vertical ul.tags li.add-tags{list-style-image:none;}
+.vertical ul.tags li.add-tags img{vertical-align:middle;}

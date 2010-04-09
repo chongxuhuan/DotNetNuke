@@ -198,6 +198,10 @@ Namespace DotNetNuke.Common.Utilities
             Return CachingProvider.GetCacheKey(CacheKey)
         End Function
 
+        Private Shared Function CleanCacheKey(ByVal CacheKey As String) As String
+            Return CachingProvider.CleanCacheKey(CacheKey)
+        End Function
+
 #End Region
 
 #Region "Friend Methods"
@@ -331,8 +335,6 @@ Namespace DotNetNuke.Common.Utilities
             Return GetCachedData(Of TObject)(cacheItemArgs, cacheItemExpired, False)
         End Function
 
-
-
         Friend Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback, ByVal storeInDictionary As Boolean) As TObject
             ' declare local object and try and retrieve item from the cache
 
@@ -373,7 +375,6 @@ Namespace DotNetNuke.Common.Utilities
                         If (storeInDictionary) Then
                             dictionaryCache.Add(cacheItemArgs.CacheKey, objObject)
                         Else
-
                             ' set cache timeout
                             Dim timeOut As Integer = cacheItemArgs.CacheTimeOut * Convert.ToInt32(Host.PerformanceSetting)
 
@@ -476,8 +477,11 @@ Namespace DotNetNuke.Common.Utilities
 #Region "Remove Cache"
 
         Public Shared Sub RemoveCache(ByVal CacheKey As String)
-            dictionaryCache.Remove(CacheKey)
             CachingProvider.Instance().Remove(GetDnnCacheKey(CacheKey))
+        End Sub
+
+        Public Shared Sub RemoveFromPrivateDictionary(ByVal DnnCacheKey As String)
+            dictionaryCache.Remove(CleanCacheKey(DnnCacheKey))
         End Sub
 
 #End Region

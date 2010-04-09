@@ -252,22 +252,6 @@ namespace DotNetNuke.Tests.Content
         }
 
         [Test]
-        public void ContentController_GetContentItemsByTerm_Returns_Empty_List_If_Term_Not_Used()
-        {
-            //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(ds => ds.GetContentItemsByTerm(Constants.TERM_UnusedName))
-                            .Returns(MockHelper.CreateEmptyContentItemReader());
-            ContentController controller = new ContentController(mockDataService.Object);
-
-            //Act
-            IQueryable<ContentItem> contentItems = controller.GetContentItemsByTerm(Constants.TERM_UnusedName);
-
-            //Assert
-            Assert.AreEqual<int>(0, contentItems.Count());
-        }
-
-        [Test]
         public void ContentController_GetContentItemsByTerm_Calls_DataService()
         {
             //Arrange
@@ -281,6 +265,22 @@ namespace DotNetNuke.Tests.Content
 
             //Assert
             mockDataService.Verify(ds => ds.GetContentItemsByTerm(Constants.TERM_ValidName));
+        }
+
+        [Test]
+        public void ContentController_GetContentItemsByTerm_Returns_Empty_List_If_Term_Not_Used()
+        {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.GetContentItemsByTerm(Constants.TERM_UnusedName))
+                            .Returns(MockHelper.CreateEmptyContentItemReader());
+            ContentController controller = new ContentController(mockDataService.Object);
+
+            //Act
+            IQueryable<ContentItem> contentItems = controller.GetContentItemsByTerm(Constants.TERM_UnusedName);
+
+            //Assert
+            Assert.AreEqual<int>(0, contentItems.Count());
         }
 
         [Test]

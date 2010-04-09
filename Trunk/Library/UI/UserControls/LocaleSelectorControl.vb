@@ -82,6 +82,16 @@ Namespace DotNetNuke.UI.UserControls
 
 #End Region
 
+#Region "Public properties"
+
+        Public ReadOnly Property CultureCode() As String
+            Get
+                Return ddlPortalDefaultLanguage.SelectedValue.ToString
+            End Get
+        End Property
+
+#End Region
+
 #Region "Event Handlers"
 
         Private Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load

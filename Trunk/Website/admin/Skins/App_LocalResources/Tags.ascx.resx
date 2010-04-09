@@ -129,9 +129,6 @@
   <data name="Cancel.ToolTip" xml:space="preserve">
     <value>Click to cancel editing without saving</value>
   </data>
-  <data name="Category.Text" xml:space="preserve">
-    <value>Categories:</value>
-  </data>
   <data name="Category.ToolTip" xml:space="preserve">
     <value>Categories</value>
   </data>
@@ -140,9 +137,6 @@
   </data>
   <data name="Save.ToolTip" xml:space="preserve">
     <value>Click to save the tags</value>
-  </data>
-  <data name="Tag.Text" xml:space="preserve">
-    <value>Tags:</value>
   </data>
   <data name="Tag.ToolTip" xml:space="preserve">
     <value>Tags</value>

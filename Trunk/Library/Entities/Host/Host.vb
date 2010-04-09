@@ -409,6 +409,7 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cathal]	20/10/2009   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("property obsoleted in 5.4.0 - code updated to use portalcontroller method")> _
         Public Shared ReadOnly Property ContentLocale() As String
             Get
                 Return "en-us"

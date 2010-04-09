@@ -194,7 +194,7 @@
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
   </Target>
-  <Target Name="DeployModule">
+  <Target Name="DeployModule" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="Views\*.ascx">
       <Output TaskParameter="Include" ItemName="Views" />
     </CreateItem>
