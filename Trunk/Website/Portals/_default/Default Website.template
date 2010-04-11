@@ -1,5 +1,5 @@
 ﻿<portal version="5.0">
-  <description>Default Website Template</description>
+  <description>The default website template.</description>
   <settings>
     <logofile>logo.gif</logofile>
     <footertext>Copyright 2009 by DotNetNuke Corporation</footertext>
@@ -453,9 +453,7 @@
   </rolegroups>
   <tabs>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>40</KeyID>
       <name>Home</name>
       <visible>true</visible>
       <iconfile />
@@ -494,7 +492,32 @@
           <rolename>Administrators</rolename>
         </permission>
       </tabpermissions>
-      <tabsettings />
+      <tabsettings>
+        <tabsetting>
+          <settingname>CacheDuration</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+        <tabsetting>
+          <settingname>ExcludeVaryBy</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+        <tabsetting>
+          <settingname>CacheProvider</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+        <tabsetting>
+          <settingname>IncludeVaryBy</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+        <tabsetting>
+          <settingname>MaxVaryByCount</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+        <tabsetting>
+          <settingname>CacheIncludeExclude</settingname>
+          <settingvalue></settingvalue>
+        </tabsetting>
+      </tabsettings>
       <tabtype>hometab</tabtype>
       <panes>
         <pane>
@@ -503,7 +526,6 @@
             <module>
               <moduleID>354</moduleID>
               <Terms />
-              <KeyID>354</KeyID>
               <title>DotNetNuke® Community Edition</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -535,9 +557,9 @@
               </modulepermissions>
               <content type="DNNHTML" version="05.02.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&lt;div class=&quot;branding-top&quot;&gt;
     &lt;div class=&quot;link_main&quot;&gt;
-        &lt;div class=&quot;link_proedition&quot; onclick=&quot;window.open('http://www.dotnetnuke.com/tabid/1209/Default.aspx')&quot;&gt;
+        &lt;div class=&quot;link_proedition&quot; onclick=&quot;window.open(&#39;http://www.dotnetnuke.com/tabid/1209/Default.aspx&#39;)&quot;&gt;
         &lt;/div&gt;
-        &lt;div class=&quot;link_adminguide&quot; onclick=&quot;window.open('http://www.dotnetnuke.com/tabid/1220/Default.aspx')&quot;&gt;
+        &lt;div class=&quot;link_adminguide&quot; onclick=&quot;window.open(&#39;http://www.dotnetnuke.com/tabid/1220/Default.aspx&#39;)&quot;&gt;
         &lt;/div&gt;
         &lt;div&gt;
         &lt;/div&gt;
@@ -583,7 +605,7 @@
                 &lt;dt&gt;Learn from the experts &lt;/dt&gt;
                 &lt;dd&gt;
                     &lt;a target=&quot;_blank&quot; href=&quot;http://www.dotnetnuke.com/tabid/1222/Default.aspx&quot;&gt;Learn how
-                        to use all of DotNetNuke's potential from experts&lt;/a&gt;
+                        to use all of DotNetNuke&#39;s potential from experts&lt;/a&gt;
                 &lt;/dd&gt;
             &lt;/dl&gt;
             &lt;dl class=&quot;bt&quot;&gt;
@@ -610,7 +632,6 @@
             <module>
               <moduleID>355</moduleID>
               <Terms />
-              <KeyID>355</KeyID>
               <title />
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -700,7 +721,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>356</moduleID>
               <Terms />
-              <KeyID>356</KeyID>
               <title>Sponsors</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -730,8 +750,8 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="05.02.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&lt;div&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=24&amp;amp;VendorId=21&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;The Official Microsoft ASP.NET Site&quot; src=&quot;aspnet.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=35&amp;amp;VendorId=49&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;MaximumASP - Serious Web Hosting For Serious Microsoft Developers&quot; src=&quot;MaximumASP.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=73&amp;amp;VendorId=63&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Telerik - The Most Comprehensive Toolset For ASP.NET&quot; src=&quot;telerik.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=78&amp;amp;VendorId=66&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;ExactTarget&quot; src=&quot;exacttarget.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; href=&quot;https://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=464&amp;amp;VendorId=79&amp;amp;PortalId=25&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Webhost4life – Same value, much better price&quot; src=&quot;wh4l.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=629&amp;amp;VendorId=21&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Click here to go to dev.live.com for Windows Live developer resources&quot; src=&quot;windowslive.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=29&amp;amp;VendorId=42&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Red-Gate&quot; src=&quot;redgate.gif&quot; /&gt;&lt;/a&gt;
-&lt;div style=&quot;clear: both&quot;&gt;&amp;#160;&lt;/div&gt;
+              <content type="DNNHTML" version="05.02.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&lt;div&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=24&amp;VendorId=21&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;The Official Microsoft ASP.NET Site&quot; src=&quot;aspnet.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=35&amp;VendorId=49&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;MaximumASP - Serious Web Hosting For Serious Microsoft Developers&quot; src=&quot;MaximumASP.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=73&amp;VendorId=63&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Telerik - The Most Comprehensive Toolset For ASP.NET&quot; src=&quot;telerik.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=78&amp;VendorId=66&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;ExactTarget&quot; src=&quot;exacttarget.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; href=&quot;https://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=464&amp;VendorId=79&amp;PortalId=25&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Webhost4life – Same value, much better price&quot; src=&quot;wh4l.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=629&amp;VendorId=21&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Click here to go to dev.live.com for Windows Live developer resources&quot; src=&quot;windowslive.gif&quot; /&gt;&lt;/a&gt;&lt;a class=&quot;SponsorIcon&quot; target=&quot;new&quot; href=&quot;http://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=29&amp;VendorId=42&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Red-Gate&quot; src=&quot;redgate.gif&quot; /&gt;&lt;/a&gt;
+&lt;div style=&quot;clear: both&quot;&gt;&#160;&lt;/div&gt;
 &lt;/div&gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings />
               <tabmodulesettings />
@@ -743,9 +763,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>41</KeyID>
       <name>Search Results</name>
       <visible>false</visible>
       <iconfile />
@@ -792,7 +810,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>357</moduleID>
               <Terms />
-              <KeyID>357</KeyID>
               <title>Search Results</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -839,14 +856,49 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <definition>SearchResults</definition>
               <moduledefinition>Search Results</moduledefinition>
             </module>
+            <module>
+              <moduleID>380</moduleID>
+              <Terms />
+              <title>Results</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>0</cachetime>
+              <cachemethod />
+              <alignment />
+              <color />
+              <border />
+              <iconfile />
+              <visibility>Maximized</visibility>
+              <containersrc />
+              <displaytitle>true</displaytitle>
+              <displayprint>true</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+              </modulepermissions>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>ContentList</definition>
+              <moduledefinition>Content List</moduledefinition>
+            </module>
           </modules>
         </pane>
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>42</KeyID>
       <name>User Profile</name>
       <visible>false</visible>
       <iconfile />
@@ -894,7 +946,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>358</moduleID>
               <Terms />
-              <KeyID>358</KeyID>
               <title>My Profile</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -944,7 +995,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>359</moduleID>
               <Terms />
-              <KeyID>359</KeyID>
               <title>My InBox</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -990,9 +1040,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>43</KeyID>
       <name>Admin</name>
       <visible>true</visible>
       <iconfile />
@@ -1033,7 +1081,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>360</moduleID>
               <Terms />
-              <KeyID>360</KeyID>
               <title>Basic Features</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1072,20 +1119,20 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <content type="Console" version="01.00.00"><![CDATA[&lt;ConsoleSettings&gt;&lt;DefaultSize&gt;IconFileLarge&lt;/DefaultSize&gt;&lt;AllowSizeChange&gt;False&lt;/AllowSizeChange&gt;&lt;DefaultView&gt;Hide&lt;/DefaultView&gt;&lt;AllowViewChange&gt;False&lt;/AllowViewChange&gt;&lt;ShowTooltip&gt;True&lt;/ShowTooltip&gt;&lt;ConsoleWidth&gt;&lt;/ConsoleWidth&gt;&lt;/ConsoleSettings&gt;]]></content>
               <modulesettings>
                 <modulesetting>
-                  <settingname>ShowTooltip</settingname>
-                  <settingvalue>True</settingvalue>
-                </modulesetting>
-                <modulesetting>
-                  <settingname>DefaultSize</settingname>
-                  <settingvalue>IconFileLarge</settingvalue>
+                  <settingname>ConsoleWidth</settingname>
+                  <settingvalue></settingvalue>
                 </modulesetting>
                 <modulesetting>
                   <settingname>AllowSizeChange</settingname>
                   <settingvalue>False</settingvalue>
                 </modulesetting>
                 <modulesetting>
-                  <settingname>ConsoleWidth</settingname>
-                  <settingvalue></settingvalue>
+                  <settingname>ShowTooltip</settingname>
+                  <settingvalue>True</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>DefaultSize</settingname>
+                  <settingvalue>IconFileLarge</settingvalue>
                 </modulesetting>
                 <modulesetting>
                   <settingname>DefaultView</settingname>
@@ -1110,9 +1157,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>44</KeyID>
       <name>Site Settings</name>
       <visible>true</visible>
       <iconfile>~/images/icon_sitesettings_16px.gif</iconfile>
@@ -1154,7 +1199,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>361</moduleID>
               <Terms />
-              <KeyID>361</KeyID>
               <title>Site Settings</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1199,9 +1243,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>45</KeyID>
       <name>Pages</name>
       <visible>true</visible>
       <iconfile>~/images/icon_tabs_16px.gif</iconfile>
@@ -1243,7 +1285,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>362</moduleID>
               <Terms />
-              <KeyID>362</KeyID>
               <title>Pages</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1288,9 +1329,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>46</KeyID>
       <name>Extensions</name>
       <visible>true</visible>
       <iconfile>~/images/icon_extensions_16px.gif</iconfile>
@@ -1332,7 +1371,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>363</moduleID>
               <Terms />
-              <KeyID>363</KeyID>
               <title>Extensions</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1377,9 +1415,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>47</KeyID>
       <name>Languages</name>
       <visible>true</visible>
       <iconfile>~/images/icon_language_16px.gif</iconfile>
@@ -1421,7 +1457,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>364</moduleID>
               <Terms />
-              <KeyID>364</KeyID>
               <title>Language Editor</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1466,9 +1501,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>48</KeyID>
       <name>Skins</name>
       <visible>true</visible>
       <iconfile>~/images/icon_skins_16px.gif</iconfile>
@@ -1510,7 +1543,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>365</moduleID>
               <Terms />
-              <KeyID>365</KeyID>
               <title>Skin Editor</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1553,7 +1585,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>366</moduleID>
               <Terms />
-              <KeyID>366</KeyID>
               <title>Skin Designer</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1598,9 +1629,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>49</KeyID>
       <name>Security Roles</name>
       <visible>true</visible>
       <iconfile>~/images/icon_securityroles_16px.gif</iconfile>
@@ -1642,7 +1671,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>367</moduleID>
               <Terms />
-              <KeyID>367</KeyID>
               <title>Security Roles</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1687,9 +1715,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>50</KeyID>
       <name>User Accounts</name>
       <visible>true</visible>
       <iconfile>~/images/icon_users_16px.gif</iconfile>
@@ -1731,7 +1757,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>368</moduleID>
               <Terms />
-              <KeyID>368</KeyID>
               <title>User Accounts</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1776,9 +1801,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>51</KeyID>
       <name>Vendors</name>
       <visible>true</visible>
       <iconfile>~/images/icon_vendors_16px.gif</iconfile>
@@ -1820,7 +1843,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>369</moduleID>
               <Terms />
-              <KeyID>369</KeyID>
               <title>Vendors</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1865,9 +1887,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>52</KeyID>
       <name>Site Log</name>
       <visible>true</visible>
       <iconfile>~/images/icon_sitelog_16px.gif</iconfile>
@@ -1909,7 +1929,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>370</moduleID>
               <Terms />
-              <KeyID>370</KeyID>
               <title>Site Log</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1954,9 +1973,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>53</KeyID>
       <name>Newsletters</name>
       <visible>true</visible>
       <iconfile>~/images/icon_bulkmail_16px.gif</iconfile>
@@ -1998,7 +2015,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>371</moduleID>
               <Terms />
-              <KeyID>371</KeyID>
               <title>Newsletters</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2043,9 +2059,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>54</KeyID>
       <name>File Manager</name>
       <visible>true</visible>
       <iconfile>~/images/icon_filemanager_16px.gif</iconfile>
@@ -2087,7 +2101,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>372</moduleID>
               <Terms />
-              <KeyID>372</KeyID>
               <title>File Manager</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2132,9 +2145,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>55</KeyID>
       <name>Recycle Bin</name>
       <visible>true</visible>
       <iconfile>~/images/icon_recyclebin_16px.gif</iconfile>
@@ -2176,7 +2187,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>373</moduleID>
               <Terms />
-              <KeyID>373</KeyID>
               <title>Recycle Bin</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2221,9 +2231,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>56</KeyID>
       <name>Log Viewer</name>
       <visible>true</visible>
       <iconfile>~/images/icon_viewstats_16px.gif</iconfile>
@@ -2265,7 +2273,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>374</moduleID>
               <Terms />
-              <KeyID>374</KeyID>
               <title>Log Viewer</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2310,9 +2317,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>57</KeyID>
       <name>Site Wizard</name>
       <visible>true</visible>
       <iconfile>~/images/icon_wizard_16px.gif</iconfile>
@@ -2354,7 +2359,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>375</moduleID>
               <Terms />
-              <KeyID>375</KeyID>
               <title>Site Wizard</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2399,9 +2403,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>58</KeyID>
       <name>Google Analytics</name>
       <visible>true</visible>
       <iconfile>~/images/icon_analytics_16px.gif</iconfile>
@@ -2443,7 +2445,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>376</moduleID>
               <Terms />
-              <KeyID>376</KeyID>
               <title>Google Analytics</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2488,9 +2489,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>59</KeyID>
       <name>Taxonomy</name>
       <visible>true</visible>
       <iconfile>~/images/icon_tag_16px.gif</iconfile>
@@ -2532,7 +2531,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>377</moduleID>
               <Terms />
-              <KeyID>377</KeyID>
               <title>Taxonomy Manager</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2577,9 +2575,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
       </panes>
     </tab>
     <tab>
-      <moduleID>-1</moduleID>
       <Terms />
-      <KeyID>60</KeyID>
       <name>Search Engine SiteMap</name>
       <visible>true</visible>
       <iconfile>~/images/icon_analytics_16px.gif</iconfile>
@@ -2621,7 +2617,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
             <module>
               <moduleID>378</moduleID>
               <Terms />
-              <KeyID>378</KeyID>
               <title>Search Engine SiteMap</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>

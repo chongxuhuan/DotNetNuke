@@ -400,7 +400,7 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
             Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
             emailMessage.Sender = New MailAddress(senderAddress)
 
-            If (Not String.IsNullOrEmpty(body) And body.StartsWith("<p>") And body.EndsWith("</p>")) Then
+            If (HtmlUtils.IsHtml(body)) Then
                 emailMessage.IsBodyHtml = True
             End If
 

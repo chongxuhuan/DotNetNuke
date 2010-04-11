@@ -253,8 +253,8 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         objTab.ParentId = Int32.Parse(cboParentTab.SelectedItem.Value)
                     End If
 
-                    Tab.TabPath = GenerateTabPath(Tab.ParentId, Tab.TabName)
-                    Dim tabID As Integer = TabController.GetTabByTabPath(Tab.PortalID, Tab.TabPath)
+                    objTab.TabPath = GenerateTabPath(objTab.ParentId, objTab.TabName)
+                    Dim tabID As Integer = TabController.GetTabByTabPath(objTab.PortalID, objTab.TabPath)
                     Dim objTabs As New TabController
 
                     'Check if tab exists

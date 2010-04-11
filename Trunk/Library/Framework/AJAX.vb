@@ -28,71 +28,30 @@ Namespace DotNetNuke.Framework
 
     Public Class AJAX
 
-        Private Shared m_IsInstalled As Boolean = Null.NullBoolean
-        Private Shared m_IsInstalledLoaded As Boolean = Null.NullBoolean
-
-        Private Shared m_Initialized As Boolean = Null.NullBoolean
-        Private Shared m_ScriptManagerType As Type
-        Private Shared m_UpdatePanelType As Type
-        Private Shared m_UpdateProgressType As Type
-        Private Shared m_UpdatePanelUpdateModeType As Type
-
-
-#Region "Private Methods"
-
-        Private Shared Function ScriptManagerType() As Type
-            If m_ScriptManagerType Is Nothing Then
-                If Not m_Initialized Then
-                    m_ScriptManagerType = Reflection.CreateType("System.Web.UI.ScriptManager", True)
-                End If
-                m_Initialized = True
-            End If
-            Return m_ScriptManagerType
-        End Function
-
-        Private Shared Function UpdatePanelType() As Type
-            If m_UpdatePanelType Is Nothing Then
-                m_UpdatePanelType = Reflection.CreateType("System.Web.UI.UpdatePanel")
-            End If
-            Return m_UpdatePanelType
-        End Function
-
-        Private Shared Function UpdateProgressType() As Type
-            If m_UpdateProgressType Is Nothing Then
-                m_UpdateProgressType = Reflection.CreateType("System.Web.UI.UpdateProgress")
-            End If
-            Return m_UpdateProgressType
-        End Function
-
-        Private Shared Function UpdatePanelUpdateModeType() As Type
-            If m_UpdatePanelUpdateModeType Is Nothing Then
-                m_UpdatePanelUpdateModeType = Reflection.CreateType("System.Web.UI.UpdatePanelUpdateMode")
-            End If
-            Return m_UpdatePanelUpdateModeType
-        End Function
-
-        Private Shared Sub SetScriptManagerProperty(ByVal objControl As Control, ByVal PropertyName As String, ByVal Args() As Object)
-            If Not ScriptManagerType() Is Nothing Then
-                Reflection.SetProperty(ScriptManagerType, PropertyName, objControl, Args)
-            End If
-        End Sub
-
-#End Region
-
 #Region "Public Methods"
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' IsHostEnabled is used to determine whether the Host user has enabled AJAX.
+        ''' AddScriptManager is used internally by the framework to add a ScriptManager control to the page
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
         ''' <history>
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <Obsolete("MS AJax is now required for DotNetNuke 5.0 and above - value no longer read from Host.EnableAjax")> _
-        Public Shared Function IsHostEnabled() As Boolean
-            Return True
+        Public Shared Sub AddScriptManager(ByVal objPage As Page)
+            If GetScriptManager(objPage) Is Nothing Then
+                Using objScriptManager As ScriptManager = New ScriptManager() With {.ID = "ScriptManager", .EnableScriptGlobalization = True}
+                    objPage.Form.Controls.AddAt(0, objScriptManager)
+                    If HttpContext.Current.Items("System.Web.UI.ScriptManager") Is Nothing Then
+                        HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", True)
+                    End If
+                End Using
+            End If
+        End Sub
+
+        Public Shared Function GetScriptManager(ByVal objPage As Page) As ScriptManager
+            Return TryCast(objPage.FindControl("ScriptManager"), ScriptManager)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -123,26 +82,24 @@ Namespace DotNetNuke.Framework
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function IsInstalled() As Boolean
-            If Not m_IsInstalledLoaded Then
-                'First check that the script module is installed
-                Dim configDoc As XmlDocument = Config.Load()
-                Dim moduleNavigator As XPathNavigator = configDoc.CreateNavigator.SelectSingleNode("/configuration/system.web/httpModules/add[@name='ScriptModule']")
-                If moduleNavigator Is Nothing Then
-                    'Check that user hasn't used a <location> node
-                    moduleNavigator = configDoc.CreateNavigator.SelectSingleNode("/configuration/location/system.web/httpModules/add[@name='ScriptModule']")
-                    If moduleNavigator Is Nothing Then
-                        m_IsInstalled = False
-                        m_IsInstalledLoaded = True
-                    End If
-                End If
-
-                If Not m_IsInstalledLoaded Then
-                    m_IsInstalled = Not ScriptManagerType() Is Nothing
-                    m_IsInstalledLoaded = True
-                End If
-            End If
-            Return m_IsInstalled
+            Return True
         End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Allows a control to be excluded from UpdatePanel async callback
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Sub RegisterPostBackControl(ByVal objControl As Control)
+            Dim objScriptManager As ScriptManager = GetScriptManager(objControl.Page)
+            If objScriptManager IsNot Nothing Then
+                objScriptManager.RegisterPostBackControl(objControl)
+            End If
+        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -161,51 +118,6 @@ Namespace DotNetNuke.Framework
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' ScriptManagerControl provides a reference to the ScriptManager control on the page
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function ScriptManagerControl(ByVal objPage As Page) As Control
-            Return objPage.FindControl("ScriptManager")
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' AddScriptManager is used internally by the framework to add a ScriptManager control to the page
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Sub AddScriptManager(ByVal objPage As Page)
-            If IsInstalled() AndAlso objPage.FindControl("ScriptManager") Is Nothing Then
-                Dim objScriptManager As Object = Reflection.CreateInstance(ScriptManagerType)
-                Dim objControl As Control = CType(objScriptManager, Control)
-                objControl.ID = "ScriptManager"
-
-                Dim args() As [Object] = {True}
-                SetScriptManagerProperty(objControl, "EnableScriptGlobalization", args)
-
-                Try
-                    objPage.Form.Controls.AddAt(0, objControl)
-
-                    If HttpContext.Current.Items("System.Web.UI.ScriptManager") Is Nothing Then
-                        HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", True)
-                    End If
-                Catch ex As Exception
-                    ' ScriptManager can not be added to a page if running in Medium Trust and AJAX not installed in GAC
-                    m_ScriptManagerType = Nothing
-                    m_Initialized = False
-                End Try
-            End If
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
         ''' RemoveScriptManager will remove the ScriptManager control during Page Render if the RegisterScriptManager has not been called
         ''' </summary>
         ''' <remarks>
@@ -214,60 +126,12 @@ Namespace DotNetNuke.Framework
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Sub RemoveScriptManager(ByVal objPage As Page)
-            If IsInstalled() = False Or IsEnabled() = False Then
+            If IsEnabled() = False Then
                 Dim objControl As Control = objPage.FindControl("ScriptManager")
                 If Not objControl Is Nothing Then
                     objPage.Form.Controls.Remove(objControl)
                 End If
             End If
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' SetScriptManagerProperty uses reflection to set properties on the dynamically generated ScriptManager control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Sub SetScriptManagerProperty(ByVal objPage As Page, ByVal PropertyName As String, ByVal Args() As Object)
-            If Not ScriptManagerControl(objPage) Is Nothing Then
-                SetScriptManagerProperty(ScriptManagerControl(objPage), PropertyName, Args)
-            End If
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' UpdatePanelControl dynamically creates an instance of an UpdatePanel control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function CreateUpdatePanelControl() As Control
-            Dim objCtl As Control = CType(Reflection.CreateInstance(UpdatePanelType), Control)
-            Reflection.SetProperty(UpdatePanelType, "UpdateMode", objCtl, New Object() {System.Enum.Parse(UpdatePanelUpdateModeType, "1")})  'Conditional
-            Return objCtl
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Allows a control to be excluded from UpdatePanel async callback
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Sub RegisterPostBackControl(ByVal objControl As Control)
-            If Not ScriptManagerType() Is Nothing Then
-                If Not ScriptManagerControl(objControl.Page) Is Nothing Then
-                    Reflection.InvokeMethod(ScriptManagerType, "RegisterPostBackControl", ScriptManagerControl(objControl.Page), New Object() {objControl})
-                End If
-            End If
-
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -280,13 +144,15 @@ Namespace DotNetNuke.Framework
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function WrapUpdatePanelControl(ByVal objControl As Control, ByVal blnIncludeProgress As Boolean) As Control
-            Dim objPanel As Control = CreateUpdatePanelControl()
-            objPanel.ID = objControl.ID & "_UP"
-            Dim objContentTemplateContainer As Control = AJAX.ContentTemplateContainerControl(objPanel)
+            Dim updatePanel As New UpdatePanel()
+            updatePanel.ID = objControl.ID & "_UP"
+            updatePanel.UpdateMode = UpdatePanelUpdateMode.Conditional
+
+            Dim objContentTemplateContainer As Control = updatePanel.ContentTemplateContainer
 
             For i As Integer = 0 To objControl.Parent.Controls.Count - 1    'find offset of original control
                 If objControl.Parent.Controls(i).ID = objControl.ID Then    'if ID matches
-                    objControl.Parent.Controls.AddAt(i, objPanel)       'insert update panel in that position
+                    objControl.Parent.Controls.AddAt(i, updatePanel)       'insert update panel in that position
                     objContentTemplateContainer.Controls.Add(objControl)    'inject passed in control into update panel
                     Exit For
                 End If
@@ -297,70 +163,77 @@ Namespace DotNetNuke.Framework
                 Dim objImage As System.Web.UI.WebControls.Image = New System.Web.UI.WebControls.Image()
                 objImage.ImageUrl = "~/images/progressbar.gif"  'hardcoded
                 objImage.AlternateText = "ProgressBar"
-                objContentTemplateContainer.Controls.Add(AJAX.CreateUpdateProgressControl(objPanel.ID, objImage))
+
+                Dim updateProgress As New UpdateProgress
+                updateProgress.AssociatedUpdatePanelID = updatePanel.ID
+                updateProgress.ID = updatePanel.ID + "_Prog"
+                updateProgress.ProgressTemplate = New UI.WebControls.LiteralTemplate(objImage)
+
+                objContentTemplateContainer.Controls.Add(updateProgress)
             End If
 
-            Return objPanel
+            Return updatePanel
         End Function
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' UpdateProgressControl dynamically creates an instance of an UpdateProgress control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String) As Control
-            Dim objCtl As Control = CType(Reflection.CreateInstance(UpdateProgressType), Control)
-            objCtl.ID = AssociatedUpdatePanelID + "_Prog"
-            Reflection.SetProperty(UpdateProgressType, "AssociatedUpdatePanelID", objCtl, New Object() {AssociatedUpdatePanelID})
-            Return objCtl
-        End Function
+#End Region
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' UpdateProgressControl dynamically creates an instance of an UpdateProgress control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String, ByVal ProgressHTML As String) As Control
-            Dim objCtl As Control = CreateUpdateProgressControl(AssociatedUpdatePanelID)
-            Reflection.SetProperty(UpdateProgressType, "ProgressTemplate", objCtl, New Object() {New UI.WebControls.LiteralTemplate(ProgressHTML)})
-            Return objCtl
-        End Function
+#Region "Obsolete Methods"
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' UpdateProgressControl dynamically creates an instance of an UpdateProgress control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String, ByVal ProgressControl As Control) As Control
-            Dim objCtl As Control = CreateUpdateProgressControl(AssociatedUpdatePanelID)
-            Reflection.SetProperty(UpdateProgressType, "ProgressTemplate", objCtl, New Object() {New UI.WebControls.LiteralTemplate(ProgressControl)})
-            Return objCtl
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' ContentTemplateContainerControl gets a reference to the ContentTemplateContainer control within an UpdatePanel
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
+        <Obsolete("Deprecated in DNN 5.4, Developers can work directly with the UpdatePanel")> _
         Public Shared Function ContentTemplateContainerControl(ByVal objUpdatePanel As Object) As Control
-            Return CType(Reflection.GetProperty(UpdatePanelType, "ContentTemplateContainer", objUpdatePanel), Control)
+            Return TryCast(objUpdatePanel, UpdatePanel).ContentTemplateContainer
         End Function
+
+        <Obsolete("Deprecated in DNN 5.4, MS AJax is now required for DotNetNuke 5.0.  Develoers can create the control directly")> _
+        Public Shared Function CreateUpdatePanelControl() As Control
+            Dim updatePanel As New UpdatePanel()
+            updatePanel.UpdateMode = UpdatePanelUpdateMode.Conditional
+            Return updatePanel
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.4, MS AJax is now required for DotNetNuke 5.0. Developers can work directly with the UpdateProgress")> _
+        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String) As Control
+            Dim updateProgress As New UpdateProgress
+            updateProgress.ID = AssociatedUpdatePanelID + "_Prog"
+            updateProgress.AssociatedUpdatePanelID = AssociatedUpdatePanelID
+            Return updateProgress
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.4, MS AJax is now required for DotNetNuke 5.0. Developers can work directly with the UpdateProgress")> _
+        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String, ByVal ProgressHTML As String) As Control
+            Dim updateProgress As New UpdateProgress
+            updateProgress.ID = AssociatedUpdatePanelID + "_Prog"
+            updateProgress.AssociatedUpdatePanelID = AssociatedUpdatePanelID
+            updateProgress.ProgressTemplate = New UI.WebControls.LiteralTemplate(ProgressHTML)
+            Return updateProgress
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.4, MS AJax is now required for DotNetNuke 5.0. Developers can work directly with the UpdateProgress")> _
+        Public Shared Function CreateUpdateProgressControl(ByVal AssociatedUpdatePanelID As String, ByVal ProgressControl As Control) As Control
+            Dim updateProgress As New UpdateProgress
+            updateProgress.ID = AssociatedUpdatePanelID + "_Prog"
+            updateProgress.AssociatedUpdatePanelID = AssociatedUpdatePanelID
+            updateProgress.ProgressTemplate = New UI.WebControls.LiteralTemplate(ProgressControl)
+            Return updateProgress
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.0, MS AJax is now required for DotNetNuke 5.0 and above - value no longer read from Host.EnableAjax")> _
+        Public Shared Function IsHostEnabled() As Boolean
+            Return True
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.4, Replaced by GetScriptManager")> _
+        Public Shared Function ScriptManagerControl(ByVal objPage As Page) As Control
+            Return objPage.FindControl("ScriptManager")
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.4, Developers can work directly with the ScriptManager")> _
+        Public Shared Sub SetScriptManagerProperty(ByVal objPage As Page, ByVal PropertyName As String, ByVal Args() As Object)
+            Dim scriptManager As ScriptManager = GetScriptManager(objPage)
+            If scriptManager IsNot Nothing Then
+                Reflection.SetProperty(scriptManager.GetType(), PropertyName, scriptManager, Args)
+            End If
+        End Sub
 
 #End Region
 

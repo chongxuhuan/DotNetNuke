@@ -271,14 +271,18 @@ Namespace DotNetNuke.UI.Modules
             AJAX.RegisterScriptManager()
 
             'enable Partial Rendering
-            AJAX.SetScriptManagerProperty(Me.Page, "EnablePartialRendering", New Object() {True})
+            Dim scriptManager As ScriptManager = AJAX.GetScriptManager(Me.Page)
+            If scriptManager IsNot Nothing Then
+                scriptManager.EnablePartialRendering = True
+            End If
 
             'create update panel
-            Dim objUpdatePanel As Control = AJAX.CreateUpdatePanelControl
-            objUpdatePanel.ID = _Control.ID & "_UP"
+            Dim updatePanel As New UpdatePanel()
+            updatePanel.UpdateMode = UpdatePanelUpdateMode.Conditional
+            updatePanel.ID = _Control.ID & "_UP"
 
             'get update panel content template
-            Dim objContentTemplateContainer As Control = AJAX.ContentTemplateContainerControl(objUpdatePanel)
+            Dim objContentTemplateContainer As Control = updatePanel.ContentTemplateContainer
 
             ' inject a message placeholder for common module messaging - UI.Skins.Skin.AddModuleMessage
             InjectMessageControl(objContentTemplateContainer)
@@ -287,7 +291,7 @@ Namespace DotNetNuke.UI.Modules
             objContentTemplateContainer.Controls.Add(_Control)
 
             'inject the update panel into the panel
-            InjectModuleContent(objUpdatePanel)
+            InjectModuleContent(updatePanel)
 
             'create image for update progress control
             Dim objImage As System.Web.UI.WebControls.Image = New System.Web.UI.WebControls.Image()
@@ -295,7 +299,11 @@ Namespace DotNetNuke.UI.Modules
             objImage.AlternateText = "ProgressBar"
 
             'inject updateprogress into the panel
-            Me.Controls.Add(AJAX.CreateUpdateProgressControl(objUpdatePanel.ID, objImage))
+            Dim updateProgress As New UpdateProgress
+            updateProgress.AssociatedUpdatePanelID = updatePanel.ID
+            updateProgress.ID = updatePanel.ID + "_Prog"
+            updateProgress.ProgressTemplate = New UI.WebControls.LiteralTemplate(objImage)
+            Me.Controls.Add(updateProgress)
         End Sub
 
         ''' -----------------------------------------------------------------------------

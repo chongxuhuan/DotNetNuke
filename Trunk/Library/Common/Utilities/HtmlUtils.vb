@@ -18,13 +18,11 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System.Net
+
 Imports System.Web
 Imports System.IO
-
-Imports DotNetNuke.Data
-Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.Services.Upgrade
+Imports System.Text.RegularExpressions
 
 Namespace DotNetNuke.Common.Utilities
 
@@ -43,6 +41,9 @@ Namespace DotNetNuke.Common.Utilities
     ''' </history>
     ''' -----------------------------------------------------------------------------
     Public Class HtmlUtils
+
+
+        Private Shared HtmlDetectionRegex As New Regex("<([A-Z][A-Z0-9]*)(.*\s*)*</([A-Z][A-Z0-9]*)", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -383,7 +384,7 @@ Namespace DotNetNuke.Common.Utilities
                 Return Null.NullString
             Else
                 Return System.Text.RegularExpressions.Regex.Replace(HTML, "\s+", RepString)
-            End if
+            End If
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -409,13 +410,30 @@ Namespace DotNetNuke.Common.Utilities
                 RepString = ""
             End If
 
-            'Replace Tags by replacement String and return mofified string
+            'Replace Tags by replacement String and return modified string
             If HTML Is Nothing Then
                 Return HTML
             Else
                 Return System.Text.RegularExpressions.Regex.Replace(HTML, "\W*", RepString)
             End If
         End Function
+
+        ''' <summary>
+        ''' Determines wether or not the passed in string contains any HTML tags
+        ''' </summary>
+        ''' <param name="text">Text to be inspected</param>
+        ''' <returns>True for HTML and False for plain text</returns>
+        ''' <remarks></remarks>
+        Public Shared Function IsHtml(ByVal text As String) As Boolean
+
+            If (String.IsNullOrEmpty(text)) Then
+                Return False
+            End If
+            Return HtmlDetectionRegex.IsMatch(text)
+
+        End Function
+
+
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

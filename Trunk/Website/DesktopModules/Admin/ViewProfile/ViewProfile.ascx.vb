@@ -68,60 +68,62 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' 	[jlucarino]	02/25/2010    created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load, Me.Load
+        Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
-                If ProfileUserId = Null.NullInteger Then
-                    'Clicked on breadcrumb - don't know which user
-                    If Request.IsAuthenticated Then
-                        Response.Redirect(UserProfileURL(Me.ModuleContext.PortalSettings.UserId), True)
-                    Else
-                        Response.Redirect(NavigateURL(Me.ModuleContext.PortalSettings.HomeTabId), True)
-                    End If
+                If Me.ModuleContext.TabId <> Me.ModuleContext.PortalSettings.UserTabId Then
+                    Skin.AddModuleMessage(Me, Localization.GetString("ModuleNotIntended", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
                 Else
-                    Dim oUser As UserInfo = UserController.GetUserById(Me.ModuleContext.PortalId, ProfileUserId)
-
-                    If Not IsUser Then
-                        cmdEdit.Visible = False
-                    End If
-
-                    Dim properties As ProfilePropertyDefinitionCollection = oUser.Profile.ProfileProperties
-                    Dim visibleCount As Integer = 0
-
-                    'loop through properties to see if any are set to visible
-                    For Each profProperty As ProfilePropertyDefinition In properties
-                        If profProperty.Visible Then
-                            'Check Visibility
-                            If profProperty.Visibility = UserVisibilityMode.AdminOnly Then
-                                'Only Visible if Admin (or self)
-                                profProperty.Visible = (IsAdmin Or IsUser)
-                            ElseIf profProperty.Visibility = UserVisibilityMode.MembersOnly Then
-                                'Only Visible if Is a Member (ie Authenticated)
-                                profProperty.Visible = Request.IsAuthenticated
-                            End If
-                        End If
-                        If profProperty.Visible Then visibleCount += 1
-                    Next
-
-                    If visibleCount = 0 Then
-                        lblNoProperties.Visible = True
-                    Else
-                        Dim Template As String = ""
-                        Dim oToken As New TokenReplace
-
-                        oToken.User = oUser                                               'user in profile
-                        oToken.AccessingUser = Me.ModuleContext.PortalSettings.UserInfo   'user browsing the site
-
-                        If Not Me.ModuleContext.Settings("ProfileTemplate") Is Nothing Then
-                            Template = Convert.ToString(Me.ModuleContext.Settings("ProfileTemplate"))
+                    If ProfileUserId = Null.NullInteger Then
+                        'Clicked on breadcrumb - don't know which user
+                        If Request.IsAuthenticated Then
+                            Response.Redirect(UserProfileURL(Me.ModuleContext.PortalSettings.UserId), True)
                         Else
-                            Template = Localization.GetString("DefaultTemplate", Me.LocalResourceFile)
+                            Response.Redirect(NavigateURL(Me.ModuleContext.PortalSettings.HomeTabId), True)
+                        End If
+                    Else
+                        Dim oUser As UserInfo = UserController.GetUserById(Me.ModuleContext.PortalId, ProfileUserId)
+
+                        If Not IsUser Then
+                            cmdEdit.Visible = False
                         End If
 
-                        ProfileOutput.Text = oToken.ReplaceEnvironmentTokens(Template)
+                        Dim properties As ProfilePropertyDefinitionCollection = oUser.Profile.ProfileProperties
+                        Dim visibleCount As Integer = 0
+
+                        'loop through properties to see if any are set to visible
+                        For Each profProperty As ProfilePropertyDefinition In properties
+                            If profProperty.Visible Then
+                                'Check Visibility
+                                If profProperty.Visibility = UserVisibilityMode.AdminOnly Then
+                                    'Only Visible if Admin (or self)
+                                    profProperty.Visible = (IsAdmin Or IsUser)
+                                ElseIf profProperty.Visibility = UserVisibilityMode.MembersOnly Then
+                                    'Only Visible if Is a Member (ie Authenticated)
+                                    profProperty.Visible = Request.IsAuthenticated
+                                End If
+                            End If
+                            If profProperty.Visible Then visibleCount += 1
+                        Next
+
+                        If visibleCount = 0 Then
+                            lblNoProperties.Visible = True
+                        Else
+                            Dim Template As String = ""
+                            Dim oToken As New TokenReplace
+
+                            oToken.User = oUser                                               'user in profile
+                            oToken.AccessingUser = Me.ModuleContext.PortalSettings.UserInfo   'user browsing the site
+
+                            If Not Me.ModuleContext.Settings("ProfileTemplate") Is Nothing Then
+                                Template = Convert.ToString(Me.ModuleContext.Settings("ProfileTemplate"))
+                            Else
+                                Template = Localization.GetString("DefaultTemplate", Me.LocalResourceFile)
+                            End If
+
+                            ProfileOutput.Text = oToken.ReplaceEnvironmentTokens(Template)
+                        End If
                     End If
                 End If
-
-
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try

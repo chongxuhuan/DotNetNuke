@@ -123,6 +123,9 @@
   <data name="Edit.Text" xml:space="preserve">
     <value>Edit Profile</value>
   </data>
+  <data name="ModuleNotIntended.Text" xml:space="preserve">
+    <value>This module is only intended for use on a page which is defined as the profile page for the portal.</value>
+  </data>
   <data name="NoProperties.Text" xml:space="preserve">
     <value>This user has elected to hide his/her profile.</value>
   </data>

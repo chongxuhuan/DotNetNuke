@@ -132,4 +132,7 @@
   <data name="NoSearch.Text" xml:space="preserve">
     <value>No search term entered.</value>
   </data>
+  <data name="ModuleHidden.Text" xml:space="preserve">
+    <value>This module is hidden to regular users if there is no Search=xxx querystring parameter. </value>
+  </data>
 </root>

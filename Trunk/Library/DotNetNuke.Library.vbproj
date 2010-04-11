@@ -114,6 +114,9 @@
     <Reference Include="System.Web">
       <Name>system.web</Name>
     </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>

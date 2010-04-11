@@ -1686,6 +1686,7 @@ Namespace DotNetNuke.Entities.Tabs
 
             'remove unwanted elements
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("tabid"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("moduleID"))
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("taborder"))
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("portalid"))
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("parentid"))

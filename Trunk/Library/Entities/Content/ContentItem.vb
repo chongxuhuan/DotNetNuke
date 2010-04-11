@@ -154,7 +154,7 @@ Namespace DotNetNuke.Entities.Content
             FillInternal(dr)
         End Sub
 
-        Public Overridable Property KeyID() As Integer Implements IHydratable.KeyID
+        <XmlIgnore()> Public Overridable Property KeyID() As Integer Implements IHydratable.KeyID
             Get
                 Return ContentItemId
             End Get

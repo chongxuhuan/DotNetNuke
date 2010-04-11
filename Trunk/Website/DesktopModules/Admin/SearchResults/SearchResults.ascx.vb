@@ -297,7 +297,11 @@ Namespace DotNetNuke.Modules.SearchResults
                     BindData()
                 End If
             Else
-                Me.ContainerControl.Visible = False
+                If Me.IsEditable Then
+                    Skin.AddModuleMessage(Me, Localization.GetString("ModuleHidden", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                Else
+                    Me.ContainerControl.Visible = False
+                End If
             End If
         End Sub
 

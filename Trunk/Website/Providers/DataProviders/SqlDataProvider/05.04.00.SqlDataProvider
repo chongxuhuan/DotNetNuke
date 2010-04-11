@@ -489,39 +489,75 @@ IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ModuleControls WHERE
 
 GO
 
+/* Add GetPortalDefaultLanguage Procedure */
+/******************************************/
 
-create procedure {databaseOwner}{objectQualifier}GetPortalDefaultLanguage
-
-@PortalId            int
-AS
-SELECT defaultlanguage
-FROM {databaseOwner}{objectQualifier}Portals
-where portalid=@PortalId 
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetPortalDefaultLanguage]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetPortalDefaultLanguage
 GO
 
-create procedure {databaseOwner}{objectQualifier}UpdatePortalDefaultLanguage
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetPortalDefaultLanguage
 
-@PortalId            int,
-@CultureCode   nvarchar(50)
+	@PortalId            int
+
 AS
-UPDATE {databaseOwner}{objectQualifier}Portals
-SET defaultlanguage=@CultureCode
-where portalid=@PortalId 
+	SELECT defaultlanguage
+		FROM {databaseOwner}{objectQualifier}Portals
+		where portalid=@PortalId 
 GO
 
-/* add key and cascade delete rule */
-ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization ADD CONSTRAINT
-	FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals FOREIGN KEY
-	(
-	PortalID
-	) REFERENCES {databaseOwner}{objectQualifier}Portals
-	(
-	PortalID
-	) 
-	 ON DELETE  CASCADE 
+/* Add UpdatePortalDefaultLanguage Procedure */
+/*********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalDefaultLanguage]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalDefaultLanguage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalDefaultLanguage
+
+	@PortalId            int,
+	@CultureCode   nvarchar(50)
+AS
+	UPDATE {databaseOwner}{objectQualifier}Portals
+		SET defaultlanguage=@CultureCode
+		where portalid=@PortalId 
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals') AND OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+	BEGIN
+		/* add key and cascade delete rule */
+		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization 
+			ADD CONSTRAINT FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals 
+				FOREIGN KEY ( PortalID ) REFERENCES {databaseOwner}{objectQualifier}Portals ( PortalID ) ON DELETE  CASCADE 
+	END	
+GO
+
+/* Add GetTabPermissionsByPortal Procedure */
+/*********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetTabPermissionsByPortal]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetTabPermissionsByPortal
+GO
+
+CREATE procedure {databaseOwner}{objectQualifier}GetTabPermissionsByPortal
 	
-GO
+	@PortalID int
 
+AS
+
+	IF @portalid is not null
+		BEGIN 
+			SELECT *
+				FROM {databaseOwner}{objectQualifier}vw_TabPermissions
+				WHERE PortalID = @PortalID
+		END
+	ELSE
+		BEGIN
+			SELECT *
+				FROM {databaseOwner}{objectQualifier}vw_TabPermissions
+				WHERE PortalID IS NULL 
+		END
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

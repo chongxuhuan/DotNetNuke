@@ -392,7 +392,7 @@ Namespace DotNetNuke.Entities.Portals
         End Function
 
         Public Shared Function GetActivePortalLanguage(ByVal portalID As Integer) As String
-            If Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
+            If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 Return GetPortalDefaultLanguage(portalID)
             Else
                 Return Thread.CurrentThread.CurrentCulture.Name
