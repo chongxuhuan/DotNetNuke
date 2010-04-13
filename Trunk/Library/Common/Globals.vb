@@ -923,7 +923,6 @@ Namespace DotNetNuke.Common
 
             'First check if there is a Database version
             If DataBaseVersion IsNot Nothing Then
-                _Status = UpgradeStatus.None
                 Exit Sub
             End If
 
@@ -969,6 +968,10 @@ Namespace DotNetNuke.Common
                 End If
             End If
 
+        End Sub
+
+        Public Sub SetStatus(ByVal status As UpgradeStatus)
+            _Status = status
         End Sub
 
         ''' -----------------------------------------------------------------------------

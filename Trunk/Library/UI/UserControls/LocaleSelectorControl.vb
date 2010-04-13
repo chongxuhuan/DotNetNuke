@@ -77,7 +77,9 @@ Namespace DotNetNuke.UI.UserControls
 #Region "Public Methods"
 
         Public Sub BindDefaultLanguageSelector()
-            Localization.LoadCultureDropDownList(ddlPortalDefaultLanguage, DisplayType, PortalSettings.DefaultLanguage, True)
+            If Page.IsPostBack = False Then
+                Localization.LoadCultureDropDownList(ddlPortalDefaultLanguage, DisplayType, PortalSettings.DefaultLanguage, True)
+            End If
         End Sub
 
 #End Region

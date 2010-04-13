@@ -77,7 +77,6 @@
     <Compile Include="Data\ScopeTypeDataServiceTests.cs" />
     <Compile Include="Data\SimpleTermDataServiceTests.cs" />
     <Compile Include="Data\VocabularyDataServiceTests.cs" />
-    <Compile Include="Fakes\Data\FakeDataService.cs" />
     <Compile Include="Mocks\MockHelper.cs">
       <SubType>Code</SubType>
     </Compile>

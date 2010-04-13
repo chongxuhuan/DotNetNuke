@@ -25,11 +25,12 @@ using System.Linq;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Entities.Content.Taxonomy;
-using DotNetNuke.Tests.Content.Fakes.Data;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 using Moq;
 using MbUnit.Framework;
+using DotNetNuke.Entities.Content.Data;
+using DotNetNuke.Tests.Content.Mocks;
 
 namespace DotNetNuke.Tests.Content.Taxonomy
 {
@@ -41,9 +42,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
     {
         #region Private Members
 
-        private FakeDataService dataService = new FakeDataService();
         private Mock<CachingProvider> mockCache;
-        private VocabularyController vocabularyController;
 
         #endregion
 
@@ -52,8 +51,6 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         [SetUp()]
         public void SetUp()
         {
-            vocabularyController = new VocabularyController(dataService);
-
             //Register MockCachingProvider
             mockCache = MockCachingProvider.CreateMockProvider();
         }
@@ -62,34 +59,70 @@ namespace DotNetNuke.Tests.Content.Taxonomy
 
         #region AddVocabulary
 
-       [Test]
+        [Test]
         public void VocabularyController_AddVocabulary_Throws_On_Null_Vocabulary()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
+            //Act, Arrange
             AutoTester.ArgumentNull<Vocabulary>(vocabulary => vocabularyController.AddVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_AddVocabulary_Throws_On_Invalid_Name()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.Name = Constants.VOCABULARY_InValidName;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.AddVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_AddVocabulary_Throws_On_Negative_ScopeTypeID()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.ScopeTypeId = Null.NullInteger;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.AddVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
+        public void VocabularyController_AddVocabulary_Calls_DataService_On_Valid_Arguments()
+        {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
+            Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
+
+            //Act
+            int vocabularyId = vocabularyController.AddVocabulary(vocabulary);
+
+            //Assert
+            mockDataService.Verify(ds => ds.AddVocabulary(vocabulary, It.IsAny<int>()));
+        }
+
+        [Test]
         public void VocabularyController_AddVocabulary_Returns_ValidId_On_Valid_Vocabulary()
         {
             //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
+                          .Returns(Constants.VOCABULARY_AddVocabularyId);
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
             //Act
@@ -99,10 +132,15 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Assert.AreEqual<int>(Constants.VOCABULARY_AddVocabularyId, vocabularyId);
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_AddVocabulary_Sets_ValidId_On_Valid_Vocabulary()
         {
             //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
+                          .Returns(Constants.VOCABULARY_AddVocabularyId);
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
             //Act
@@ -112,10 +150,13 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Assert.AreEqual<int>(Constants.VOCABULARY_AddVocabularyId, vocabulary.VocabularyId);
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_AddVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
             //Act
@@ -129,47 +170,57 @@ namespace DotNetNuke.Tests.Content.Taxonomy
 
         #region DeleteVocabulary
 
-       [Test]
+        [Test]
         public void VocabularyController_DeleteVocabulary_Throws_On_Null_Vocabulary()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
+            //Act, Arrange
             AutoTester.ArgumentNull<Vocabulary>(marker => vocabularyController.DeleteVocabulary(marker));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_DeleteVocabulary_Throws_On_Negative_VocabularyId()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = new Vocabulary();
             vocabulary.VocabularyId = Null.NullInteger;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.DeleteVocabulary(vocabulary));
         }
 
-       [Test]
-        public void VocabularyController_DeleteVocabulary_Succeeds_On_Valid_VocabularyId()
+        [Test]
+        public void VocabularyController_DeleteVocabulary_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            dataService.SetUpVocabularyTable();
-            dataService.AddVocabulariesToTable(Constants.VOCABULARY_ValidCount, Constants.VOCABULARY_ValidScopeTypeId, i => i, j => Constants.VOCABULARY_SimpleTypeId);
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
-            Vocabulary vocabulary = new Vocabulary();
-            vocabulary.VocabularyId = Constants.VOCABULARY_DeleteVocabularyId;
+            Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
+            vocabulary.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
 
             //Act
             vocabularyController.DeleteVocabulary(vocabulary);
 
             //Assert
-            Assert.IsNull(dataService.GetVocabularyFromTable(Constants.VOCABULARY_DeleteVocabularyId));
+            mockDataService.Verify(ds => ds.DeleteVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_DeleteVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
-            dataService.SetUpVocabularyTable();
-            dataService.AddVocabulariesToTable(Constants.VOCABULARY_ValidCount, Constants.VOCABULARY_ValidScopeTypeId, i => i, j => Constants.VOCABULARY_SimpleTypeId);
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
-            Vocabulary vocabulary = new Vocabulary();
-            vocabulary.VocabularyId = Constants.VOCABULARY_DeleteVocabularyId;
+            Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
+            vocabulary.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
 
             //Act
             vocabularyController.DeleteVocabulary(vocabulary);
@@ -182,98 +233,121 @@ namespace DotNetNuke.Tests.Content.Taxonomy
 
         #region GetVocabularies
 
-       [Test]
-        public void VocabularyController_GetVocabularies_Returns_All_Vocabularies()
+        [Test]
+        public void VocabularyController_GetVocabularies_Calls_DataService()
         {
             //Arrange
-            dataService.SetUpVocabularyTable();
-            dataService.AddVocabulariesToTable(Constants.VOCABULARY_ValidCount, 
-                                                Constants.VOCABULARY_ValidScopeTypeId, i => i, 
-                                                j => Constants.VOCABULARY_SimpleTypeId);
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.GetVocabularies())
+                            .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act
-            List<Vocabulary> vocabularys = vocabularyController.GetVocabularies().ToList<Vocabulary>();
+            IQueryable<Vocabulary> vocabularys = vocabularyController.GetVocabularies();
 
             //Assert
-            Assert.AreEqual(Constants.VOCABULARY_ValidCount, vocabularys.Count);
+            mockDataService.Verify(ds => ds.GetVocabularies());
+        }
+
+        [Test]
+        public void VocabularyController_GetVocabularies_Returns_List_Of_Vocabularies()
+        {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.GetVocabularies())
+                            .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
+            //Act
+            IQueryable<Vocabulary> vocabularys = vocabularyController.GetVocabularies();
+
+            //Assert
+            Assert.AreEqual<int>(Constants.VOCABULARY_ValidCount, vocabularys.Count());
         }
 
         #endregion
 
         #region UpdateVocabulary
 
-       [Test]
+        [Test]
         public void VocabularyController_UpdateVocabulary_Throws_On_Null_Vocabulary()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
+            //Act, Arrange
             AutoTester.ArgumentNull<Vocabulary>(marker => vocabularyController.UpdateVocabulary(marker));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_UpdateVocabulary_Throws_On_Negative_VocabularyId()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Null.NullInteger;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_UpdateVocabulary_Throws_On_Invalid_Name()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.Name = Constants.VOCABULARY_InValidName;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController_UpdateVocabulary_Throws_On_Negative_ScopeTypeID()
         {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.ScopeTypeId = Null.NullInteger;
 
+            //Act, Arrange
             ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
-       [Test]
-        public void VocabularyController_UpdateVocabulary_Succeeds_On_Valid_Vocabulary()
+        [Test]
+        public void VocabularyController_UpdateVocabulary_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            dataService.SetUpVocabularyTable();
-            dataService.AddVocabulariesToTable(Constants.VOCABULARY_ValidCount, 
-                                                Constants.VOCABULARY_ValidScopeTypeId,
-                                                i => i, 
-                                                j => Constants.VOCABULARY_SimpleTypeId);
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_UpdateVocabularyId;
-            vocabulary.Name = Constants.VOCABULARY_UpdateName;
-            vocabulary.Weight = Constants.VOCABULARY_UpdateWeight;
 
             //Act
             vocabularyController.UpdateVocabulary(vocabulary);
 
             //Assert
-            vocabulary = dataService.GetVocabularyFromTable(Constants.VOCABULARY_UpdateVocabularyId);
-            Assert.AreEqual<int>(Constants.VOCABULARY_UpdateVocabularyId, vocabulary.VocabularyId);
-            Assert.AreEqual<string>(Constants.VOCABULARY_UpdateName, vocabulary.Name);
-            Assert.AreEqual<int>(Constants.VOCABULARY_UpdateWeight, vocabulary.Weight);
+            mockDataService.Verify(ds => ds.UpdateVocabulary(vocabulary, It.IsAny<int>()));
         }
 
-       [Test]
+        [Test]
         public void VocabularyController__UpdateVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
-            dataService.SetUpVocabularyTable();
-            dataService.AddVocabulariesToTable(Constants.VOCABULARY_ValidCount, 
-                                                Constants.VOCABULARY_ValidScopeTypeId,
-                                                i => i, 
-                                                j => Constants.VOCABULARY_SimpleTypeId);
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_UpdateVocabularyId;
-            vocabulary.Name = Constants.VOCABULARY_UpdateName;
-            vocabulary.Weight = Constants.VOCABULARY_UpdateWeight;
 
             //Act
             vocabularyController.UpdateVocabulary(vocabulary);

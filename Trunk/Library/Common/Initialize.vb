@@ -229,7 +229,6 @@ Namespace DotNetNuke.Common
 
         Public Shared Sub Init(ByVal app As HttpApplication)
             Dim Response As HttpResponse = app.Response
-            Dim Request As HttpRequest = app.Request
             Dim redirect As String = Null.NullString
 
             'Check if app is initialised

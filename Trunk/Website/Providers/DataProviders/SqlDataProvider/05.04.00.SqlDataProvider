@@ -348,6 +348,27 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 	END
 GO
 
+/* Add Initial MetaData */
+/************************/
+
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Title')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Creator')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Subject')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Description')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Publisher')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Contributor')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Date')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Type')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Format')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Identifier')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Source')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Language')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Relation')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Coverage')
+INSERT INTO {databaseOwner}[{objectQualifier}MetaData] ( [MetaDataName] ) VALUES ('Rights')
+
+GO
+
 /* Add ContentItems_MetaData Table */
 /***********************************/
 
@@ -557,6 +578,141 @@ AS
 				FROM {databaseOwner}{objectQualifier}vw_TabPermissions
 				WHERE PortalID IS NULL 
 		END
+GO
+
+/* portals */
+/* Update UpdatePortalInfo Stored Procedure */
+/****************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+	@PortalID           int,
+	@PortalName         nvarchar(128),
+	@LogoFile           nvarchar(50),
+	@FooterText         nvarchar(100),
+	@ExpiryDate         datetime,
+	@UserRegistration   int,
+	@BannerAdvertising  int,
+	@Currency           char(3),
+	@AdministratorId    int,
+	@HostFee            money,
+	@HostSpace          int,
+	@PageQuota          int,
+	@UserQuota          int,
+	@PaymentProcessor   nvarchar(50),
+	@ProcessorUserId    nvarchar(50),
+	@ProcessorPassword  nvarchar(50),
+	@Description        nvarchar(500),
+	@KeyWords           nvarchar(500),
+	@BackgroundFile     nvarchar(50),
+	@SiteLogHistory     int,
+	@SplashTabId        int,
+	@HomeTabId          int,
+	@LoginTabId         int,
+	@RegisterTabId      int,
+	@UserTabId          int,
+	@DefaultLanguage    nvarchar(10),
+	@TimeZoneOffset	    int,
+	@HomeDirectory		varchar(100),
+	@LastModifiedByUserID	int,
+	@CultureCode   nvarchar(50)
+
+AS
+
+update {databaseOwner}{objectQualifier}Portals
+SET    
+			   ExpiryDate = @ExpiryDate,
+			   UserRegistration = @UserRegistration,
+			   BannerAdvertising = @BannerAdvertising,
+			   Currency = @Currency,
+			   AdministratorId = @AdministratorId,
+			   HostFee = @HostFee,
+			   HostSpace = @HostSpace,
+			   PageQuota = @PageQuota,
+			   UserQuota = @UserQuota,
+			   PaymentProcessor = @PaymentProcessor,
+			   ProcessorUserId = @ProcessorUserId,
+			   ProcessorPassword = @ProcessorPassword,
+			   SiteLogHistory = @SiteLogHistory,
+			   DefaultLanguage = @DefaultLanguage,
+			   TimeZoneOffset = @TimeZoneOffset,
+			   HomeDirectory = @HomeDirectory,
+			   LastModifiedByUserID = @LastModifiedByUserID,
+			   LastModifiedOnDate = getdate()
+	WHERE  PortalId = @PortalID
+
+
+
+IF EXISTS (select * from {databaseOwner}{objectQualifier}PortalLocalization where culturecode=@CultureCode)
+BEGIN 
+UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+SET
+				PortalName = @PortalName,
+				LogoFile = @LogoFile,
+				FooterText = @FooterText,
+				Description = @Description,
+				KeyWords = @KeyWords,
+				BackgroundFile = @BackgroundFile,
+				HomeTabId = @HomeTabId,
+				LoginTabId = @LoginTabId,
+				RegisterTabId = @RegisterTabId,
+				UserTabId = @UserTabId,
+				SplashTabId = @SplashTabId,
+				LastModifiedByUserID = @LastModifiedByUserID,
+				LastModifiedOnDate = getdate()
+	WHERE	PortalId = @PortalID AND CultureCode = @CultureCode
+END 
+ELSE
+BEGIN 
+DECLARE @AdminTabId int
+SET @AdminTabId = (SELECT AdminTabId 
+						FROM {databaseOwner}{objectQualifier}PortalLocalization 
+						WHERE PortalID = @PortalID and CultureCode='en-us')
+
+INSERT INTO {databaseOwner}[{objectQualifier}PortalLocalization]
+           ([PortalID]
+           ,[CultureCode]
+           ,[PortalName]
+           ,[LogoFile]
+           ,[FooterText]
+           ,[Description]
+           ,[KeyWords]
+           ,[BackgroundFile]
+           ,[HomeTabId]
+           ,[LoginTabId]
+           ,[UserTabId]
+           ,[AdminTabId]
+           ,[SplashTabId]
+           ,[CreatedByUserID]
+           ,[CreatedOnDate]
+           ,[LastModifiedByUserID]
+           ,[LastModifiedOnDate])
+     VALUES
+     (
+     @PortalID,
+     @CultureCode,
+     @PortalName,
+	@LogoFile, 
+	@FooterText,
+	@Description,
+	@KeyWords,
+	@BackgroundFile,
+	@HomeTabId ,
+	@LoginTabId ,
+	@UserTabId,
+	@AdminTabid,
+	@SplashTabId  ,
+-1,
+		getdate(),
+		-1,
+		getdate()
+		)
+
+END 
+
 GO
 
 /************************************************************/

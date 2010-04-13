@@ -25,7 +25,6 @@ using System.Linq;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Entities.Content.Taxonomy;
-using DotNetNuke.Tests.Content.Fakes.Data;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;

@@ -2271,8 +2271,8 @@ Namespace DotNetNuke.Services.Upgrade
                 InstallPackages("AuthSystem", True)
                 InstallPackages("Package", True)
 
-                'Refresh Status
-                Globals.GetStatus()
+                'Set Status to None
+                Globals.SetStatus(UpgradeStatus.None)
 
                 ' parse portal(s) if available
                 nodes = xmlDoc.SelectNodes("//dotnetnuke/portals/portal")

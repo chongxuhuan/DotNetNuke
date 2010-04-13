@@ -62,6 +62,16 @@ namespace DotNetNuke.Tests.Content.Mocks
             table.Rows.Add(new object[] { id, scopeType });
         }
 
+        private static void AddTermToTable(DataTable table, int id, int contentItemId, int vocabularyId, string name, string description, int weight, int parentId)
+        {
+            table.Rows.Add(new object[] { id, contentItemId, vocabularyId, name, description, weight, parentId });
+        }
+
+        private static void AddVocabularyToTable(DataTable table, int id, int typeId, string name, string description, int scopeId, int scopeTypeId, int weight)
+        {
+            table.Rows.Add(new object[] { id, typeId, false, name, description, scopeId, scopeTypeId, weight });
+        }
+
         private static DataTable CreateContentItemTable()
         {
             // Create Categories table.
@@ -113,6 +123,51 @@ namespace DotNetNuke.Tests.Content.Mocks
             return table;
         }
 
+        private static DataTable CreateTermTable()
+        {
+            // Create Vocabulary table.
+            DataTable table = new DataTable();
+
+            // Create columns, ID and Name.
+            DataColumn idColumn = table.Columns.Add("TermID", typeof(int));
+            table.Columns.Add("ContentItemID", typeof(int));
+            table.Columns.Add("VocabularyID", typeof(int));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Description", typeof(string));
+            table.Columns.Add("Weight", typeof(int));
+            table.Columns.Add("ParentTermID", typeof(int));
+            table.Columns.Add("TermLeft", typeof(int));
+            table.Columns.Add("TermRight", typeof(int));
+            AddBaseEntityColumns(table);
+
+            // Set the ID column as the primary key column.
+            table.PrimaryKey = new DataColumn[] { idColumn };
+
+            return table;
+        }
+
+        private static DataTable CreateVocabularyTable()
+        {
+            // Create Vocabulary table.
+            DataTable table = new DataTable();
+
+            // Create columns, ID and Name.
+            DataColumn idColumn = table.Columns.Add("VocabularyID", typeof(int));
+            table.Columns.Add("VocabularyTypeID", typeof(int));
+            table.Columns.Add("IsSystem", typeof(bool));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Description", typeof(string));
+            table.Columns.Add("ScopeID", typeof(int));
+            table.Columns.Add("ScopeTypeID", typeof(int));
+            table.Columns.Add("Weight", typeof(int));
+            AddBaseEntityColumns(table);
+
+            // Set the ID column as the primary key column.
+            table.PrimaryKey = new DataColumn[] { idColumn };
+
+            return table;
+        }
+
         private static Mock<TMock> RegisterMockController<TMock>(Mock<TMock> mock) where TMock : class
         {
             if (ComponentFactory.Container == null)
@@ -148,6 +203,11 @@ namespace DotNetNuke.Tests.Content.Mocks
         internal static IDataReader CreateEmptyScopeTypeReader()
         {
             return CreateScopeTypeTable().CreateDataReader();
+        }
+
+        internal static IDataReader CreateEmptyTermReader()
+        {
+            return CreateTermTable().CreateDataReader();
         }
 
         internal static Mock<HttpContextBase> CreateMockHttpContext()
@@ -188,8 +248,8 @@ namespace DotNetNuke.Tests.Content.Mocks
             mockVocabularies.Setup(v => v.GetVocabularies())
                             .Returns(TestVocabularies);
 
-            //Return Mock
-            return mockVocabularies;
+            //Register Mock
+            return RegisterMockController<IVocabularyController>(mockVocabularies);
         }
 
         internal static IDataReader CreateValidContentItemReader()
@@ -266,6 +326,55 @@ namespace DotNetNuke.Tests.Content.Mocks
             }
         }
 
+        internal static IDataReader CreateValidTermReader()
+        {
+            DataTable table = CreateTermTable();
+            AddTermToTable(table, 
+                Constants.TERM_ValidTermId, 
+                Constants.TERM_ValidContent1,
+                Constants.TERM_ValidVocabulary1, 
+                Constants.TERM_ValidName, 
+                Constants.TERM_ValidName, 
+                Constants.TERM_ValidWeight, 
+                Constants.TERM_ValidParentTermId);
+
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidTermsReader(int count, Func<int, int> vocabularyIdFunction, Func<int, int> contentIdFunction)
+        {
+            DataTable table = CreateTermTable();
+            for (int i = Constants.TERM_ValidTermId;
+                       i < Constants.TERM_ValidTermId + count;
+                       i++)
+            {
+                string name = (count == 1) ? Constants.TERM_ValidName : ContentTestHelper.GetTermName(i);
+                string description = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetTermName(i);
+                int weight = Constants.TERM_ValidWeight;
+                int parentId = Constants.TERM_ValidParentTermId;
+                AddTermToTable(table, i, contentIdFunction(i), vocabularyIdFunction(i), name, description, weight, parentId);
+            }
+
+            return table.CreateDataReader();
+        }
+
+        internal static IDataReader CreateValidVocabulariesReader(int count)
+        {
+            DataTable table = CreateVocabularyTable();
+            for (int i = Constants.VOCABULARY_ValidVocabularyId;
+                       i < Constants.VOCABULARY_ValidVocabularyId + count;
+                       i++)
+            {
+                string name = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetVocabularyName(i);
+                int typeId = Constants.VOCABULARY_SimpleTypeId;
+                string description = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetVocabularyName(i);
+                int weight = Constants.VOCABULARY_ValidWeight;
+                AddVocabularyToTable(table, i, typeId, name, description, Constants.VOCABULARY_ValidScopeId, Constants.VOCABULARY_ValidScopeTypeId, weight);
+            }
+
+            return table.CreateDataReader();
+        }
 
 
         internal static IQueryable<ScopeType> TestScopeTypes
@@ -318,7 +427,7 @@ namespace DotNetNuke.Tests.Content.Mocks
                     Vocabulary vocabulary = new Vocabulary();
                     vocabulary.VocabularyId = i;
                     vocabulary.Name = ContentTestHelper.GetVocabularyName(i);
-                    vocabulary.Type = VocabularyType.Simple;
+                    vocabulary.Type = (i == Constants.VOCABULARY_HierarchyVocabularyId) ? VocabularyType.Hierarchy : VocabularyType.Simple;
                     vocabulary.Description = ContentTestHelper.GetVocabularyName(i);
                     vocabulary.ScopeTypeId = Constants.SCOPETYPE_ValidScopeTypeId;
                     vocabulary.Weight = Constants.VOCABULARY_ValidWeight;

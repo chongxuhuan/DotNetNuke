@@ -29,88 +29,6 @@ namespace DotNetNuke.Tests.Content
     public class ContentTestHelper
     {
 
-        private static void AddBaseEntityColumns(DataTable table)
-        {
-            table.Columns.Add("CreatedByUserID", typeof(int));
-            table.Columns.Add("CreatedOnDate", typeof(DateTime));
-            table.Columns.Add("LastModifiedByUserID", typeof(int));
-            table.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-        }
-
-        internal static void AddTermToTable(DataTable table, int id, int contentItemId, int vocabularyId, string name, string description, int weight, int parentId)
-        {
-            table.Rows.Add(new object[] { id, contentItemId, vocabularyId, name, description, weight, parentId });
-        }
-
-        internal static void AddVocabularyToTable(DataTable table, int id, int typeId, string name, string description, int scopeId, int scopeTypeId, int weight)
-        {
-            table.Rows.Add(new object[] { id, typeId, name, description, scopeId, scopeTypeId, weight });
-        }
-
-        internal static DataTable CopyTermRowsToNewTable(DataRow[] rows)
-        {
-            DataTable tempTable = CreateTermTable();
-
-            for (int i = 0; i < rows.Length; i++)
-            {
-                AddTermToTable(tempTable,
-                                (int)rows[i]["TermID"],
-                                (int)rows[i]["ContentItemID"],
-                                (int)rows[i]["VocabularyID"],
-                                (string)rows[i]["Name"],
-                                (string)rows[i]["Description"],
-                                (int)rows[i]["Weight"],
-                                (int)rows[i]["ParentTermID"]
-                );
-            }
-
-            return tempTable;
-        }
-
-        internal static DataTable CopyVocabularyRowsToNewTable(DataRow[] rows)
-        {
-            DataTable tempTable = CreateVocabularyTable();
-
-            for (int i = 0; i < rows.Length; i++)
-            {
-                AddVocabularyToTable(tempTable,
-                                    (int) rows[i]["VocabularyID"],
-                                    (int) rows[i]["VocabularyTypeID"],
-                                    (string) rows[i]["Name"],
-                                    (string) rows[i]["Description"],
-                                    (int) rows[i]["ScopeID"],
-                                    (int) rows[i]["ScopeTypeID"],
-                                    (int)rows[i]["Weight"]
-                );
-            }
-
-            return tempTable;
-        }
-
-
-        internal static DataTable CreateTermTable()
-        {
-            // Create Vocabulary table.
-            DataTable table = new DataTable();
-
-            // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("TermID", typeof(int));
-            table.Columns.Add("ContentItemID", typeof(int));
-            table.Columns.Add("VocabularyID", typeof(int));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Description", typeof(string));
-            table.Columns.Add("Weight", typeof(int));
-            table.Columns.Add("ParentTermID", typeof(int));
-            table.Columns.Add("TermLeft", typeof(int));
-            table.Columns.Add("TermRight", typeof(int));
-            AddBaseEntityColumns(table);
-
-            // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
-
-            return table;
-        }
-
         internal static ContentItem CreateValidContentItem()
         {
             ContentItem content = new ContentItem
@@ -165,27 +83,6 @@ namespace DotNetNuke.Tests.Content
                                         Weight = Constants.VOCABULARY_ValidWeight };
 
             return vocabulary;
-        }
-
-        internal static DataTable CreateVocabularyTable()
-        {
-            // Create Vocabulary table.
-            DataTable table = new DataTable();
-
-            // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("VocabularyID", typeof(int));
-            table.Columns.Add("VocabularyTypeID", typeof(int));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Description", typeof(string));
-            table.Columns.Add("ScopeID", typeof(int));
-            table.Columns.Add("ScopeTypeID", typeof(int));
-            table.Columns.Add("Weight", typeof(int));
-            AddBaseEntityColumns(table);
-
-            // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
-
-            return table;
         }
 
         internal static string GetContent(int i)
