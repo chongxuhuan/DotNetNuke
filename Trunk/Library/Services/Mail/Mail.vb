@@ -115,7 +115,8 @@ Namespace DotNetNuke.Services.Mail
             message.Subject = Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
             message.Body = Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
             message.Status = Messaging.Data.MessageStatusType.Unread
-            messageController.SaveMessage(message)
+            'messageController.SaveMessage(message)
+            SendEmail(settings.Email, UserController.GetUserById(settings.PortalId, toUser).Email, message.Subject, message.Body)
 
         End Function
 
@@ -386,14 +387,15 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
         Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
 
-            SendEmail(fromAddress, String.Empty, toAddress, subject, body)
+            SendEmail(fromAddress, toAddress, toAddress, subject, body)
 
         End Sub
 
         Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal senderAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
 
             If (String.IsNullOrEmpty(Host.SMTPServer)) Then
-                Throw New InvalidOperationException("SMTP Server not configured")
+                'Throw New InvalidOperationException("SMTP Server not configured")
+                Return
             End If
 
 

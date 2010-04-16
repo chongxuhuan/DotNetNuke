@@ -61,13 +61,15 @@ Namespace DotNetNuke.Entities.Portals
         Private Shared Function GetPortalCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
             Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
             Dim cultureCode As String = DirectCast(cacheItemArgs.ParamList(1), String)
+            Dim objPortal As Object
             If Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 'only 1 language active, no need for fallback check
                 Return CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, cultureCode))
             Else
                 Dim dr As System.Data.IDataReader
                 dr = DataProvider.Instance.GetPortal(portalID, cultureCode)
-                If dr Is Nothing Then
+                objPortal = CBO.FillObject(Of PortalInfo)(dr)
+                If objPortal Is Nothing Then
                     'Get Fallback language
                     Dim fallbackLanguage As String = String.Empty
                     Dim userLocale As Locale = Localization.GetLocale(cultureCode)
@@ -75,16 +77,15 @@ Namespace DotNetNuke.Entities.Portals
                         fallbackLanguage = userLocale.Fallback
                     End If
                     dr = DataProvider.Instance.GetPortal(portalID, fallbackLanguage)
-                    If dr Is Nothing Then
-                        Return CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, PortalController.GetActivePortalLanguage(portalID)))
-                    Else
-                        Return CBO.FillObject(Of PortalInfo)(dr)
+                    objPortal = CBO.FillObject(Of PortalInfo)(dr)
+                    If objPortal Is Nothing Then
+                        objPortal = CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, PortalController.GetActivePortalLanguage(portalID)))
                     End If
-                Else
-                    Return CBO.FillObject(Of PortalInfo)(dr)
+                    dr.Close()
+                    dr.Dispose()
                 End If
             End If
-
+            Return objPortal
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -390,19 +391,46 @@ Namespace DotNetNuke.Entities.Portals
             Next
             Return modulesNotInstalled.ToString
         End Function
-
+        ''' <summary>
+        ''' function provides the language for portalinfo requests
+        ''' in case where language has not been installed yet, will return the core install default of en-us
+        ''' </summary>
+        ''' <param name="portalID"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
         Public Shared Function GetActivePortalLanguage(ByVal portalID As Integer) As String
+            ' get Language
+            Dim Language As String = "en-US" 'handles case where portalcontroller methods invoked before a language is installed
             If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 Return GetPortalDefaultLanguage(portalID)
-            Else
-                Return Thread.CurrentThread.CurrentCulture.Name
             End If
+            If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
+                Language = HttpContext.Current.Request.QueryString("language")
+            Else
+                If Not HttpContext.Current.Request.Cookies("language") Is Nothing Then
+                    Language = HttpContext.Current.Request.Cookies("language").Value
+                End If
+            End If
+            Return Language
         End Function
 
+        ''' <summary>
+        ''' return the current DefaultLanguage value from the Portals table for the requested Portalid
+        ''' </summary>
+        ''' <param name="portalID"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
         Public Shared Function GetPortalDefaultLanguage(ByVal portalID As Integer) As String
             Return DataProvider.Instance().GetPortalDefaultLanguage(portalID)
         End Function
 
+        ''' <summary>
+        ''' set the required DefaultLanguage in the Portals table for a particular portal
+        ''' saves having to update an entire PortalInfo object
+        ''' </summary>
+        ''' <param name="portalID"></param>
+        ''' <param name="CultureCode"></param>
+        ''' <remarks></remarks>
         Public Shared Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
             DataProvider.Instance().UpdatePortalDefaultLanguage(portalID, CultureCode)
         End Sub

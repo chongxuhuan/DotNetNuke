@@ -579,4 +579,10 @@
   <data name="plRegisterTabId.Text" xml:space="preserve">
     <value>Registration Page:</value>
   </data>
+  <data name="EnglishName.Text" xml:space="preserve">
+    <value>English Name</value>
+  </data>
+  <data name="NativeName.Text" xml:space="preserve">
+    <value>Native Name</value>
+  </data>
 </root>

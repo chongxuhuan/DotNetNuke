@@ -636,8 +636,9 @@ Namespace DotNetNuke.Security.Roles
             _message.Body = Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom)
             _message.Status = MessageStatusType.Unread
 
-            _messagingController.SaveMessage(_message)
+            '_messagingController.SaveMessage(_message)
 
+            Services.Mail.Mail.SendEmail(PortalSettings.Email, PortalSettings.Email, _message.Subject, _message.Body)
 
         End Sub
 

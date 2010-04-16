@@ -132,19 +132,67 @@
     <Content Include="Config\ConfigDocumented.xml" />
     <Content Include="Config\ToolsDefault.xml" />
     <Content Include="Config\ToolsMinimal.xml" />
+    <Content Include="Dialogs\About.ascx" />
+    <Content Include="Dialogs\AccessibleTable.ascx" />
+    <Content Include="Dialogs\CellProperties.ascx" />
+    <Content Include="Dialogs\DocumentManager.ascx" />
+    <Content Include="Dialogs\FileBrowser.ascx" />
+    <Content Include="Dialogs\FindAndReplace.ascx" />
+    <Content Include="Dialogs\FlashManager.ascx" />
+    <Content Include="Dialogs\FormatCodeBlock.ascx" />
+    <Content Include="Dialogs\Help.ascx" />
+    <Content Include="Dialogs\ImageEditor.ascx" />
+    <Content Include="Dialogs\ImageManager.ascx" />
+    <Content Include="Dialogs\ImageMap.ascx" />
+    <Content Include="Dialogs\MediaManager.ascx" />
+    <Content Include="Dialogs\MozillaPasteHtmlDialog.ascx" />
+    <Content Include="Dialogs\MozillaPasteTextDialog.ascx" />
+    <Content Include="Dialogs\PageProperties.ascx" />
+    <Content Include="Dialogs\SetImageProperties.ascx" />
+    <Content Include="Dialogs\SilverlightManager.ascx" />
+    <Content Include="Dialogs\StyleBuilder.ascx" />
+    <Content Include="Dialogs\TableBorder.ascx" />
+    <Content Include="Dialogs\TableDesign.ascx" />
+    <Content Include="Dialogs\TableProperties.ascx" />
+    <Content Include="Dialogs\TableWizard.ascx" />
+    <Content Include="Dialogs\TrackChangesDialog.ascx" />
+    <Content Include="Dialogs\XhtmlValidator.ascx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Telerik.Web.UI.SpellCheckHandler.ashx" />
     <None Include="TelerikEditorProvider.dnn" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\RadEditor.Dialogs.resx" />
+    <Content Include="App_LocalResources\RadEditor.Main.resx" />
+    <Content Include="App_LocalResources\RadEditor.Modules.resx" />
+    <Content Include="App_LocalResources\RadEditor.Tools.resx" />
+    <Content Include="App_LocalResources\RadListBox.resx" />
+    <Content Include="App_LocalResources\RadProgressArea.resx" />
+    <Content Include="App_LocalResources\RadScheduler.Main.resx" />
+    <Content Include="App_LocalResources\RadSpell.Dialog.resx" />
+    <Content Include="App_LocalResources\RadUpload.resx" />
+    <Content Include="EditorOverride.css" />
+    <Content Include="Telerik.Web.UI.DialogHandler.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>TelerikEditorProvider</DNNFileName>
+    <PackageName>TelerikEditorProvider</PackageName>
+    <Providers>
+    </Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\TelerikProviderPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
   </Target>
-  -->
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">

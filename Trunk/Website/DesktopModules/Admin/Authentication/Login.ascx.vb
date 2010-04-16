@@ -918,8 +918,9 @@ Namespace DotNetNuke.Modules.Admin.Authentication
                     _message.Subject = Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_SUBJECT", Localization.GlobalResourceFile, Custom)
                     _message.Body = Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_BODY", Localization.GlobalResourceFile, Custom)
                     _message.Status = MessageStatusType.Unread
-                    _messagingController.SaveMessage(_message)
+                    '_messagingController.SaveMessage(_message)
 
+                    Services.Mail.Mail.SendEmail(PortalSettings.Email, PortalSettings.Email, _message.Subject, _message.Body)
 
                 Case UserLoginStatus.LOGIN_FAILURE
                     'A Login Failure can mean one of two things:

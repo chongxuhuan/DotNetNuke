@@ -318,7 +318,8 @@ Namespace DotNetNuke.Services.Mail
             _message.Body = strbody
             _message.Status = MessageStatusType.Unread
 
-            _messagingController.SaveMessage(_message)
+            '_messagingController.SaveMessage(_message)
+            Services.Mail.Mail.SendEmail(_sendingUser.Email, _sendingUser.Email, _message.Subject, _message.Body)
 
         End Sub
 

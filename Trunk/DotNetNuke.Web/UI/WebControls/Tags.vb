@@ -214,28 +214,31 @@ Namespace DotNetNuke.Web.UI.WebControls
             Dim tags As String = New PortalSecurity().InputFilter(_Tags, PortalSecurity.FilterFlag.NoMarkup Or PortalSecurity.FilterFlag.NoScripting)
             If Not String.IsNullOrEmpty(tags) Then
                 For Each tag As String In tags.Split(","c)
-                    Dim existingTerm As Term = (From t As Term In ContentItem.Terms.AsQueryable _
-                                                Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
-                                                Select t) _
-                                                .SingleOrDefault()
+                    If Not String.IsNullOrEmpty(tag) Then
+                        tag = tag.Trim(" "c)
+                        Dim existingTerm As Term = (From t As Term In ContentItem.Terms.AsQueryable _
+                                                    Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
+                                                    Select t) _
+                                                    .SingleOrDefault()
 
-                    If existingTerm Is Nothing Then
-                        'Not tagged
-                        Dim termController As New TermController()
-                        Dim term As Term = (From t As Term In termController.GetTermsByVocabulary(TagVocabulary.VocabularyId) _
-                                                Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
-                                                Select t) _
-                                                .SingleOrDefault()
-                        If term Is Nothing Then
-                            'Add term
-                            term = New Term(TagVocabulary.VocabularyId)
-                            term.Name = tag
-                            termController.AddTerm(term)
+                        If existingTerm Is Nothing Then
+                            'Not tagged
+                            Dim termController As New TermController()
+                            Dim term As Term = (From t As Term In termController.GetTermsByVocabulary(TagVocabulary.VocabularyId) _
+                                                    Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
+                                                    Select t) _
+                                                    .SingleOrDefault()
+                            If term Is Nothing Then
+                                'Add term
+                                term = New Term(TagVocabulary.VocabularyId)
+                                term.Name = tag
+                                termController.AddTerm(term)
+                            End If
+
+                            'Add term to content
+                            ContentItem.Terms.Add(term)
+                            termController.AddTermToContent(term, ContentItem)
                         End If
-
-                        'Add term to content
-                        ContentItem.Terms.Add(term)
-                        termController.AddTermToContent(term, ContentItem)
                     End If
                 Next
             End If

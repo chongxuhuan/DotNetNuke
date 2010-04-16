@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="MSBuild.Community.Tasks.Targets" />
+  <Target Name="PackageProvider" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <XmlRead Prefix="n"
+                    Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+                    XPath="dotnetnuke/packages/package/@version"
+                    XmlFileName="$(DNNFileName).dnn">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    <CreateItem Include="$(DNNFileName).dnn">
+      <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
+    </CreateItem>
+    <CreateItem Include="*.txt">
+      <Output TaskParameter="Include" ItemName="PackageTextFiles" />
+    </CreateItem>
+    <CreateItem Include="*.ashx;*.aspx;*.css;">
+      <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
+    </CreateItem>
+    <CreateItem Include="App_LocalResources\*.resx">
+      <Output TaskParameter="Include" ItemName="PackageLocalResourceFiles" />
+    </CreateItem>
+    <CreateItem Include="Dialogs\*.aspx;Dialogs\*.ascx;">
+      <Output TaskParameter="Include" ItemName="PackageDialogFiles" />
+    </CreateItem>
+    <CreateItem Include="Dialogs\App_LocalResources\*.resx">
+      <Output TaskParameter="Include" ItemName="PackageDialogLocalResourceFiles" />
+    </CreateItem>
+    <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
+      <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
+    </CreateItem>
+    <CreateItem Include="images\*.*">
+      <Output TaskParameter="Include" ItemName="MyImages" />
+    </CreateItem>
+    <CreateItem Include="js\*.js">
+      <Output TaskParameter="Include" ItemName="MyJsFiles" />
+    </CreateItem>
+    <CreateItem Include="Config\*.*">
+      <Output TaskParameter="Include" ItemName="MyConfigFiles" />
+    </CreateItem>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website\bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
+    <Copy SourceFiles="@(PackageSourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageTextFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageDialogFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageDialogLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(MyImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(MyConfigFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
+      <Output TaskParameter="Include" ItemName="OutputContent" />
+    </CreateItem>
+    <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(Version)_Install.$(Extension)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(Version)_Install.$(Extension)" DestinationFolder="../../../../Website/Install/Provider" />
+    <Delete Files="$(MSBuildProjectDirectory)\$(PackageName)_$(Version)_Install.$(Extension)" />
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
+  </Target>
+</Project>

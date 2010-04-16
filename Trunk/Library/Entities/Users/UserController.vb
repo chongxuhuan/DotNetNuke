@@ -374,7 +374,9 @@ Namespace DotNetNuke.Entities.Users
                         _message.Subject = Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_SUBJECT", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId)
                         _message.Body = Localization.GetSystemMessage(objUser.Profile.PreferredLocale, _portalSettings, "EMAIL_USER_UNREGISTER_BODY", objUser, Localization.GlobalResourceFile, Nothing, "", _portalSettings.AdministratorId)
                         _message.Status = MessageStatusType.Unread
-                        _messagingController.SaveMessage(_message)
+                        '_messagingController.SaveMessage(_message)
+
+                        Services.Mail.Mail.SendEmail(_portalSettings.Email, _portalSettings.Email, _message.Subject, _message.Body)
 
 
                     End If

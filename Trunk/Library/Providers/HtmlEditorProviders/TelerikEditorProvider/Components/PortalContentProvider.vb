@@ -52,13 +52,13 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
 #Region "Overrides"
 
-        Protected Overrides Function IsValid(ByVal directory As System.IO.DirectoryInfo) As Boolean
-            Return MyBase.IsValid(directory)
-        End Function
+        'Protected Overrides Function IsValid(ByVal directory As System.IO.DirectoryInfo) As Boolean
+        '    Return MyBase.IsValid(directory)
+        'End Function
 
-        Protected Overrides Function IsValid(ByVal file As System.IO.FileInfo) As Boolean
-            Return MyBase.IsValid(file)
-        End Function
+        'Protected Overrides Function IsValid(ByVal file As System.IO.FileInfo) As Boolean
+        '    Return MyBase.IsValid(file)
+        'End Function
 
         Public Overrides ReadOnly Property CanCreateDirectory() As Boolean
             Get
@@ -143,9 +143,9 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
                 If (String.IsNullOrEmpty(returnValue)) Then
                     'Sync to remove old folder & files
-                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), True, True, True)
+                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), True, True, True, True)
                     'Sync to add new folder & files
-                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualNewPath), FileSystemValidation.ToDBPath(virtualNewPath), True, True, True)
+                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualNewPath), FileSystemValidation.ToDBPath(virtualNewPath), True, True, True, True)
                 End If
 
                 Return returnValue
@@ -176,7 +176,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
                 If (String.IsNullOrEmpty(returnValue)) Then
                     'Sync to add new folder & files
-                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualNewPath), FileSystemValidation.ToDBPath(virtualNewPath), True, True, True)
+                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualNewPath), FileSystemValidation.ToDBPath(virtualNewPath), True, True, True, True)
                 End If
 
                 Return returnValue
@@ -204,7 +204,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
                 If (String.IsNullOrEmpty(returnValue)) Then
                     'Sync to remove old folder & files
-                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), True, True, True)
+                    FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), True, True, True, True)
                 End If
 
                 Return returnValue
@@ -567,6 +567,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
                     Dim newDirectory As Widgets.DirectoryItem
                     If (recursive) Then
+                        radDirectory = TelerikContent().ResolveRootDirectoryAsTree(radDirectory.Path)
                         newDirectory = New Widgets.DirectoryItem( _
                           dirName, "", endUserPath, "", _
                           folderPermissions, folderFiles, AddChildDirectoriesToList(radDirectory.Directories, False, False))

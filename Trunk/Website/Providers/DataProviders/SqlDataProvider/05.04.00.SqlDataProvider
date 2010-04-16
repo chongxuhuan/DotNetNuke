@@ -715,6 +715,25 @@ END
 
 GO
 
+/* Update GetPortal */
+/********************/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetPortal]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortal]
+
+	@PortalId  int,
+	@CultureCode	nvarchar(50)
+
+AS
+SELECT *
+FROM {databaseOwner}{objectQualifier}vw_Portals
+WHERE PortalId = @PortalId
+AND CultureCode=@CultureCode
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

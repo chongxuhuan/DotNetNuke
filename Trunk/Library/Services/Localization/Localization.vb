@@ -730,7 +730,7 @@ Namespace DotNetNuke.Services.Localization
 #Region "Public Shared Methods"
 
         Public Shared Function ActiveLanguagesByPortalID(ByVal portalID As Integer) As Integer
-            'CATHALTODO: add caching code
+            'return count of cached object
             Return Localization.GetLocales(portalID).Count
         End Function
 

@@ -154,7 +154,10 @@ Namespace DotNetNuke.Modules.Html
                                 message.Subject = strSubject
                                 message.Body = strBody
                                 message.Status = Services.Messaging.Data.MessageStatusType.Unread
-                                _messagingController.SaveMessage(message)
+                                '_messagingController.SaveMessage(message)
+
+                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body)
+
                             End If
                         End If
 
@@ -171,7 +174,9 @@ Namespace DotNetNuke.Modules.Html
                             message.Subject = strSubject
                             message.Body = strBody
                             message.Status = Services.Messaging.Data.MessageStatusType.Unread
-                            _messagingController.SaveMessage(message)
+                            '_messagingController.SaveMessage(message)
+
+                            Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body)
                         End If
                     End If
                 End If
