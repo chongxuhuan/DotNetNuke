@@ -131,7 +131,12 @@ Namespace DotNetNuke.UI.ControlPanels
 				If IsPageAdmin() Then
 					RB.Visible = True
 					cmdVisibility.Visible = True
-					RB_RibbonBar.Visible = True
+                    RB_RibbonBar.Visible = True
+
+                    'Hide Support icon in CE
+                    If (DotNetNukeContext.Current.Application.Name = "DNNCORP.CE") Then
+                        G16.FindControl("SupportTickets").Visible = False
+                    End If
 
 					Localize()
 
