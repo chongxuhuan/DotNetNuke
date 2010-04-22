@@ -404,11 +404,13 @@ Namespace DotNetNuke.Entities.Portals
             If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 Return GetPortalDefaultLanguage(portalID)
             End If
-            If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
-                Language = HttpContext.Current.Request.QueryString("language")
-            Else
-                If Not HttpContext.Current.Request.Cookies("language") Is Nothing Then
-                    Language = HttpContext.Current.Request.Cookies("language").Value
+            If HttpContext.Current IsNot Nothing Then
+                If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
+                    Language = HttpContext.Current.Request.QueryString("language")
+                Else
+                    If Not HttpContext.Current.Request.Cookies("language") Is Nothing Then
+                        Language = HttpContext.Current.Request.Cookies("language").Value
+                    End If
                 End If
             End If
             Return Language

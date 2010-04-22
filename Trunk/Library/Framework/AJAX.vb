@@ -42,9 +42,11 @@ Namespace DotNetNuke.Framework
         Public Shared Sub AddScriptManager(ByVal objPage As Page)
             If GetScriptManager(objPage) Is Nothing Then
                 Using objScriptManager As ScriptManager = New ScriptManager() With {.ID = "ScriptManager", .EnableScriptGlobalization = True}
-                    objPage.Form.Controls.AddAt(0, objScriptManager)
-                    If HttpContext.Current.Items("System.Web.UI.ScriptManager") Is Nothing Then
-                        HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", True)
+                    If objPage.Form IsNot Nothing Then
+                        objPage.Form.Controls.AddAt(0, objScriptManager)
+                        If HttpContext.Current.Items("System.Web.UI.ScriptManager") Is Nothing Then
+                            HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", True)
+                        End If
                     End If
                 End Using
             End If
