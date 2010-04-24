@@ -373,7 +373,7 @@ Namespace DotNetNuke.Common.Utilities
                         End Try
 
                         If (storeInDictionary) Then
-                            dictionaryCache.Add(cacheItemArgs.CacheKey, objObject)
+                            dictionaryCache(cacheItemArgs.CacheKey) = objObject
                         Else
                             ' set cache timeout
                             Dim timeOut As Integer = cacheItemArgs.CacheTimeOut * Convert.ToInt32(Host.PerformanceSetting)
@@ -393,12 +393,11 @@ Namespace DotNetNuke.Common.Utilities
                                     objEventLogInfo.LogProperties.Add(New LogDetailInfo(cacheItemArgs.CacheKey, "Overflow - Item Not Cached"))
                                     Dim objEventLog As New EventLogController()
                                     objEventLog.AddLog(objEventLogInfo)
-
                                 End If
                             End If
-                            'This thread won so remove unique Lock from collection
-                            RemoveUniqueLockObject(cacheItemArgs.CacheKey)
                         End If
+                        'This thread won so remove unique Lock from collection
+                        RemoveUniqueLockObject(cacheItemArgs.CacheKey)
                     End If
                 End SyncLock
             End If

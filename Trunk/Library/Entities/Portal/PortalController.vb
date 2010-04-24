@@ -81,6 +81,9 @@ Namespace DotNetNuke.Entities.Portals
                     If objPortal Is Nothing Then
                         objPortal = CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, PortalController.GetActivePortalLanguage(portalID)))
                     End If
+                    'if we cannot find any fallback, it mean's it's a non portal default langauge
+                    DataProvider.Instance().EnsureLocalizationExists(portalID, PortalController.GetActivePortalLanguage(portalID))
+                    objPortal = CBO.FillObject(Of PortalInfo)(DataProvider.Instance.GetPortal(portalID, PortalController.GetActivePortalLanguage(portalID)))
                     dr.Close()
                     dr.Dispose()
                 End If
@@ -404,7 +407,7 @@ Namespace DotNetNuke.Entities.Portals
             If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 Return GetPortalDefaultLanguage(portalID)
             End If
-            If HttpContext.Current IsNot Nothing Then
+            If HttpContext.Current IsNot Nothing AndAlso Status = UpgradeStatus.None Then
                 If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
                     Language = HttpContext.Current.Request.QueryString("language")
                 Else
@@ -435,6 +438,9 @@ Namespace DotNetNuke.Entities.Portals
         ''' <remarks></remarks>
         Public Shared Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
             DataProvider.Instance().UpdatePortalDefaultLanguage(portalID, CultureCode)
+            'ensure localization record exists as new portal default language may be relying on fallback chain
+            'of which it is now the final part
+            DataProvider.Instance().EnsureLocalizationExists(portalID, CultureCode)
         End Sub
 #End Region
 
@@ -1814,7 +1820,7 @@ Namespace DotNetNuke.Entities.Portals
              Portal.BackgroundFile, Portal.SiteLogHistory, Portal.SplashTabId, Portal.HomeTabId, _
              Portal.LoginTabId, Portal.RegisterTabId, Portal.UserTabId, Portal.DefaultLanguage, _
              Portal.TimeZoneOffset, Portal.HomeDirectory, PortalController.GetActivePortalLanguage(Portal.PortalID))
-
+        
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -1858,6 +1864,8 @@ Namespace DotNetNuke.Entities.Portals
 
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("PortalId", PortalId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTALINFO_UPDATED)
+            'ensure a localization item exists (in case a new default language has been set)
+            DataProvider.Instance().EnsureLocalizationExists(PortalId, DefaultLanguage)
             ' clear portal cache
             DataCache.ClearPortalCache(PortalId, False)
         End Sub

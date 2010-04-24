@@ -460,6 +460,7 @@ Namespace DotNetNuke.Data
         'localisation
         Public MustOverride Function GetPortalDefaultLanguage(ByVal portalID As Integer) As String
         Public MustOverride Sub UpdatePortalDefaultLanguage(ByVal portalID As Integer, ByVal CultureCode As String)
+        Public MustOverride Sub EnsureLocalizationExists(ByVal portalID As Integer, ByVal CultureCode As String)
 #End Region
 
     End Class

@@ -585,4 +585,10 @@
   <data name="NativeName.Text" xml:space="preserve">
     <value>Native Name</value>
   </data>
+  <data name="plLanguageSelector.Help" xml:space="preserve">
+    <value>Select the language you wish to update settings for.  You can select whether the language in the drop-down list is displayed in English or in the Native tongue.</value>
+  </data>
+  <data name="plLanguageSelector.Text" xml:space="preserve">
+    <value>Select Language:</value>
+  </data>
 </root>

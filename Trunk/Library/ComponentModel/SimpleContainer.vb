@@ -27,6 +27,7 @@ Namespace DotNetNuke.ComponentModel
 
         Private componentBuilders As New ComponentBuilderCollection()
         Private componentDependencies As New Dictionary(Of String, IDictionary)
+        Private componentLock As New Object
         Private componentTypes As New ComponentTypeCollection()
         Private registeredComponents As New Dictionary(Of System.Type, String)
 
@@ -45,6 +46,17 @@ Namespace DotNetNuke.ComponentModel
         ''' <param name="name"></param>
         Public Sub New(ByVal name As String)
             _Name = name
+        End Sub
+
+        Private Sub AddBuilder(ByVal contractType As System.Type, ByVal builder As IComponentBuilder)
+            SyncLock componentLock
+                If Not componentTypes.Item(contractType).ComponentBuilders.Contains(builder) Then
+                    componentTypes.Item(contractType).ComponentBuilders.Add(builder)
+                End If
+                If Not componentBuilders.Contains(builder) Then
+                    componentBuilders.Add(builder)
+                End If
+            End SyncLock
         End Sub
 
         Private Overloads Function GetComponent(ByVal builder As IComponentBuilder) As Object
@@ -118,8 +130,7 @@ Namespace DotNetNuke.ComponentModel
                 Case ComponentLifeStyleType.Singleton
                     builder = New SingletonComponentBuilder(name, componentType)
             End Select
-            componentTypes.Item(contractType).ComponentBuilders.Add(builder)
-            componentBuilders.Add(builder)
+            AddBuilder(contractType, builder)
 
             registeredComponents(componentType) = name
         End Sub
@@ -128,9 +139,7 @@ Namespace DotNetNuke.ComponentModel
             If Not componentTypes.Contains(contractType) Then
                 componentTypes.Add(New ComponentType(contractType))
             End If
-            Dim builder As IComponentBuilder = New InstanceComponentBuilder(name, instance)
-            componentTypes.Item(contractType).ComponentBuilders.Add(builder)
-            componentBuilders.Add(builder)
+            AddBuilder(contractType, New InstanceComponentBuilder(name, instance))
         End Sub
 
         Public Overrides Sub RegisterComponentSettings(ByVal name As String, ByVal dependencies As System.Collections.IDictionary)

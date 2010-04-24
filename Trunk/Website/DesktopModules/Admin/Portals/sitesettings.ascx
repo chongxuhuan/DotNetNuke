@@ -9,23 +9,29 @@
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%--<%@ Register TagPrefix="dnn" TagName="LocaleSelector" Src="~/controls/LocaleSelectorControl.ascx" %>
 <dnn:LocaleSelector id="plLocale" text="Locale:" runat="server" visible="false" />--%>
-<asp:panel ID="plLocale" runat="server" Visible="false">
-<asp:Literal ID="litStatus" runat="server" />
-<div>
-    <asp:RadioButtonList ID="rbViewType" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" AutoPostBack="True"/>
-</div>
-<br />
-<div>
-    <asp:DropDownList ID="ddlPortalDefaultLanguage" runat="server" CssClass="NormalTextBox"
-        AutoPostBack="true" />
-</div>
-
-</asp:panel>
 <!-- Settings Tables -->
 <table class="Settings" cellspacing="2" cellpadding="2" width="760" summary="Site Settings Design Table" border="0">
     <tr>
         <td style="vertical-align:top; width:725px">
             <asp:Panel ID="pnlSettings" runat="server" CssClass="WorkPanel" Visible="True">
+                <asp:panel ID="plLocale" runat="server" Visible="false">
+                <table>
+                    <tr>
+                        <td class="SubHead" valign="top" style="width:275px"><dnn:Label ID="plLanguageSelector" runat="server" ControlName="ddlPortalDefaultLanguage" /></td>
+                        <td class="NormalTextBox" valign="top" style="width:450px">
+                            <asp:Literal ID="litStatus" runat="server" />
+                            <div>
+                                <asp:RadioButtonList ID="rbViewType" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" AutoPostBack="True"/>
+                            </div>
+                            <br />
+                            <div>
+                                <asp:DropDownList ID="ddlPortalDefaultLanguage" runat="server" CssClass="NormalTextBox"
+                                    AutoPostBack="true" />
+                            </div>
+                       </td>
+                    </tr>
+                </table>
+                </asp:panel>
                 <dnn:SectionHead ID="dshBasic" CssClass="Head" runat="server" Text="Basic Settings" Section="tblBasic" ResourceKey="BasicSettings" IncludeRule="True" />
                 <table id="tblBasic" cellspacing="0" cellpadding="2" style="width:100%" summary="Basic Settings Design Table" border="0" runat="server">
                     <tr>

@@ -387,7 +387,7 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
         Public Shared Sub SendEmail(ByVal fromAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String)
 
-            SendEmail(fromAddress, toAddress, toAddress, subject, body)
+            SendEmail(fromAddress, fromAddress, toAddress, subject, body)
 
         End Sub
 

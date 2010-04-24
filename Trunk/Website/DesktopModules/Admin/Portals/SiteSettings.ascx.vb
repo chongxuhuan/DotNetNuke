@@ -131,12 +131,12 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         Private Sub LoadLocales()
             Dim item As ListItem
-            item = New ListItem("NATIVE", Services.Localization.Localization.GetString("NATIVE", Me.LocalResourceFile))
+            item = New ListItem(Services.Localization.Localization.GetString("NativeName.Text", Me.LocalResourceFile), "NATIVE")
             rbViewType.Items.Add(item)
             If ViewType = "NATIVE" Then
                 item.Selected = True
             End If
-            item = New ListItem("ENGLISH", Services.Localization.Localization.GetString("ENGLISH", Me.LocalResourceFile))
+            item = New ListItem(Services.Localization.Localization.GetString("EnglishName.Text", Me.LocalResourceFile), "ENGLISH")
             rbViewType.Items.Add(item)
             If ViewType = "ENGLISH" Then
                 item.Selected = True

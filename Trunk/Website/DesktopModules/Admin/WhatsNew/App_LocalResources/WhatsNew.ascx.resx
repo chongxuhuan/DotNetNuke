@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -996,5 +996,12 @@ In addition, this supports a fallback strategy where if no record exists for a l
       were corrected with each release.
     &lt;/p&gt;&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;FormAndList 05.01.02&lt;/li&gt;&lt;/ul&gt;&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Telerik Editor Provider 05.04.00
 &lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.04.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;Fixed issue with scheduler exceptions when more than one language is defined.&lt;/li&gt;&lt;li&gt;Fixed issue when creating portals in non en-us culture.&lt;/li&gt;&lt;li&gt;Fixed issue with adding a new language.&lt;/li&gt;&lt;li&gt;Fixed issue with AJAX Script Manager&lt;/li&gt;&lt;li&gt;Fixed issue with Source Package not opening correctly in Visual Studio.&lt;/li&gt;&lt;li&gt;Fixed issue with assembly version type.&lt;/li&gt;&lt;li&gt;Added missing release notes for 5.4.&lt;/li&gt;&lt;li&gt;Added label explaining portal localization drop-down on site settings. Updated static localization text to more friendly form.&lt;/li&gt;&lt;li&gt;Fixed issue with logo in Ribbon Bar.&lt;/li&gt;&lt;li&gt;Fixed issue with race condition when adding entries to shared Dictionaries.&lt;/li&gt;&lt;li&gt;Fixed issue with version number in Symbols package manifest.&lt;/li&gt;&lt;/ul&gt;&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;None&lt;/li&gt;&lt;/ul&gt;&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;&lt;p&gt;
+      The following modules and providers have been updated in the 5.4.1 packages. 
+      Please see the specific project pages for notes on what bugs or enhancements
+      were corrected with each release.
+    &lt;/p&gt;&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;None&lt;/li&gt;&lt;/ul&gt;&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;None&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
 </root>

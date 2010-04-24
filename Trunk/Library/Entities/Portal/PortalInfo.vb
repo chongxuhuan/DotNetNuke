@@ -46,7 +46,7 @@ Namespace DotNetNuke.Entities.Portals
     '''            If PortalId = Null.NullInteger Then
     '''                _PhysicalPath = DotNetNuke.Common.Globals.HostMapPath + RelativePath
     '''            Else
-    '''                If PortalSettings Is Nothing OrElse PortalSettings.PortalId <> PortalId Then
+    '''                If PortalSettings Is Nothing OrElse PortalSettings.PortalId &lt;&gt; PortalId Then
     '''                    ' Get the PortalInfo  based on the Portalid
     '''                    Dim objPortals As New PortalController()
     '''                    Dim objPortal As PortalInfo = objPortals.GetPortal(PortalId)
@@ -589,7 +589,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <returns></returns>
         ''' <remarks><example>This shows the usage of the payment processing
         ''' <code>
-        ''' If objPortal.PaymentProcessor <> "" Then
+        ''' If objPortal.PaymentProcessor &lt;&gt; "" Then
         '''     If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
         '''         cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
         '''     Else       ' default
@@ -616,10 +616,10 @@ Namespace DotNetNuke.Entities.Portals
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
-        ''' <remarks><seealso cref="PaymentProcessor"</seealso>
+        ''' <remarks> <seealso cref="PaymentProcessor"></seealso>
         ''' <example>This shows the usage of the payment processing
         ''' <code>
-        ''' If objPortal.PaymentProcessor <> "" Then
+        ''' If objPortal.PaymentProcessor &lt;&gt; "" Then
         '''     If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
         '''         cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
         '''     Else       ' default
@@ -896,6 +896,8 @@ Namespace DotNetNuke.Entities.Portals
         ''' Fills a PortalInfo from a Data Reader
         ''' </summary>
         ''' <param name="dr">The Data Reader to use</param>
+        ''' <remarks>Standard IHydratable.Fill implementation
+        ''' <seealso cref="KeyID"></seealso></remarks>
         Public Sub Fill(ByVal dr As System.Data.IDataReader) Implements IHydratable.Fill
             PortalID = Null.SetNullInteger(dr("PortalID"))
             PortalName = Null.SetNullString(dr("PortalName"))

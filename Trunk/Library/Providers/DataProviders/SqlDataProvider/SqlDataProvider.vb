@@ -1693,6 +1693,10 @@ Namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalDefaultLanguage", portalID, CultureCode)
         End Sub
 
+        Public Overrides Sub EnsureLocalizationExists(ByVal portalID As Integer, ByVal CultureCode As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "EnsureLocalizationExists", portalID, CultureCode)
+        End Sub
+
 #End Region
 
     End Class

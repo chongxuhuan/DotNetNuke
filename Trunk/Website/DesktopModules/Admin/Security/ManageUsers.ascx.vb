@@ -1031,9 +1031,9 @@ Namespace DotNetNuke.Modules.Admin.Users
                         If ProfileProviderConfig.CanEditProviderProperties Then
                             Actions.Add(GetNextActionID, Localization.GetString("ManageProfile.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_profile_16px.gif", EditUrl("ManageProfile"), False, SecurityAccessLevel.Admin, True, False)
                         End If
+                        Actions.Add(GetNextActionID, Localization.GetString("Cancel.Action", LocalResourceFile), ModuleActionType.AddContent, "", "lt.gif", ReturnUrl, False, SecurityAccessLevel.Admin, True, False)
                     End If
 
-                    Actions.Add(GetNextActionID, Localization.GetString("Cancel.Action", LocalResourceFile), ModuleActionType.AddContent, "", "lt.gif", ReturnUrl, False, SecurityAccessLevel.Admin, True, False)
                 End If
                 Return Actions
             End Get
