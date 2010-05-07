@@ -840,7 +840,7 @@ Namespace DotNetNuke.Common.Utilities
 
             Select Case Mode
                 Case EnumUserFolderElement.Root
-                    Element = (Convert.ToInt16(UserID) And BYTE_OFFSET).ToString("000")
+					Element = (Convert.ToInt32(UserID) And BYTE_OFFSET).ToString("000")
 
                 Case EnumUserFolderElement.SubFolder
                     Element = UserID.ToString("00").Substring(UserID.ToString("00").Length - SUBFOLDER_SEED_LENGTH, SUBFOLDER_SEED_LENGTH)

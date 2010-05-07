@@ -9,8 +9,30 @@
 /************************************************************/
 
 
-/* Add EnsureLocalizationExists Procedure */
-/*********************************************/
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetDesktopModulesByPortal]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetDesktopModulesByPortal
+GO
+
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetDesktopModulesByPortal
+	@PortalId int 
+AS 
+	SELECT DISTINCT DM.* 
+	FROM {databaseOwner}{objectQualifier}DesktopModules DM 
+	WHERE ( IsPremium = 0 ) 
+	OR  ( DesktopModuleID IN ( 
+		SELECT DesktopModuleID 
+		FROM {databaseOwner}{objectQualifier}PortalDesktopModules PDM 
+		WHERE PDM.PortalId = @PortalId ) ) 
+	ORDER BY FriendlyName 
+
+GO
 
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}EnsureLocalizationExists]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
   DROP PROCEDURE {databaseOwner}{objectQualifier}EnsureLocalizationExists
@@ -48,6 +70,7 @@ AS
 				@AdminTabId=AdminTabId,
 				@RegisterTabId=RegisterTabId 
 			FROM {databaseOwner}{objectQualifier}PortalLocalization
+			WHERE PortalId = @PortalId
 			INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
 				PortalId,
 				CultureCode,
@@ -88,36 +111,3 @@ AS
 			)
 		END
 GO
-
-
-/* ensure existing portal default languages have valid localization records */
-DECLARE @PortalID int
-DECLARE @DefaultLanguage nvarchar(10)
-
---Iterate through each portal
-DECLARE Portals_Cursor CURSOR FOR
-SELECT PortalID, DefaultLanguage
-FROM         {databaseOwner}{objectQualifier}Portals
-
-OPEN Portals_Cursor
---get first
-FETCH NEXT FROM Portals_Cursor
-into @PortalID,  @DefaultLanguage
-WHILE @@FETCH_STATUS = 0
-   BEGIN
-       exec {databaseOwner}{objectQualifier}EnsureLocalizationExists @PortalID,@DefaultLanguage
-
-       FETCH NEXT FROM Portals_Cursor
-       into @PortalID,  @DefaultLanguage
-
-   END
-CLOSE Portals_Cursor
-DEALLOCATE Portals_Cursor
-GO
-
-
-/************************************************************/
-/*****              SqlDataProvider                     *****/
-/************************************************************/
-
-

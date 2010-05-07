@@ -404,6 +404,12 @@ Namespace DotNetNuke.Entities.Portals
         Public Shared Function GetActivePortalLanguage(ByVal portalID As Integer) As String
             ' get Language
             Dim Language As String = "en-US" 'handles case where portalcontroller methods invoked before a language is installed
+
+            Dim tmpLanguage As String = GetPortalDefaultLanguage(portalID)
+            If Not String.IsNullOrEmpty(tmpLanguage) Then
+                Language = tmpLanguage
+            End If
+
             If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
                 Return GetPortalDefaultLanguage(portalID)
             End If

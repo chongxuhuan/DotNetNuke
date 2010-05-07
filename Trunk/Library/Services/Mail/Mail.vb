@@ -102,21 +102,12 @@ Namespace DotNetNuke.Services.Mail
                     body = "EMAIL_USER_UPDATED_OWN_PASSWORD_BODY"
             End Select
 
-            'SendMail(settings.Email, userEmail, "", _
-            '                Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
-            '                Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId), _
-            '                "", "", "", "", "", "")
 
-            Dim messageController As New Messaging.MessagingController()
-            Dim message As New Messaging.Data.Message()
-            message.ToUserID = toUser
-            message.PortalID = settings.PortalId
-            message.FromUserID = settings.AdministratorId
-            message.Subject = Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
-            message.Body = Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
-            message.Status = Messaging.Data.MessageStatusType.Unread
-            'messageController.SaveMessage(message)
-            SendEmail(settings.Email, UserController.GetUserById(settings.PortalId, toUser).Email, message.Subject, message.Body)
+          
+            subject = Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
+            body = Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId)
+        
+            SendEmail(settings.Email, UserController.GetUserById(settings.PortalId, toUser).Email, subject, body)
 
         End Function
 
@@ -141,7 +132,6 @@ Namespace DotNetNuke.Services.Mail
         '''     [cnurse]        09/29/2005  Moved to Mail class
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, ByVal Bcc As String, ByVal Subject As String, ByVal Body As String, ByVal Attachment As String, ByVal BodyType As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
 
             ' here we check if we want to format the email as html or plain text.
@@ -184,13 +174,12 @@ Namespace DotNetNuke.Services.Mail
         '''     [cnurse]        09/29/2005  Moved to Mail class
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
-Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
-    ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
-    ByVal Subject As String, ByVal BodyFormat As MailFormat, _
-    ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, _
-    ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, _
-    ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
+        Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
+            ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
+            ByVal Subject As String, ByVal BodyFormat As MailFormat, _
+            ByVal BodyEncoding As System.Text.Encoding, ByVal Body As String, _
+            ByVal Attachment As String, ByVal SMTPServer As String, ByVal SMTPAuthentication As String, _
+            ByVal SMTPUsername As String, ByVal SMTPPassword As String) As String
 
             Dim SMTPEnableSSL As Boolean = Host.EnableSMTPSSL
 
@@ -199,7 +188,6 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
 
         End Function
 
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal Priority As MailPriority, _
             ByVal Subject As String, ByVal BodyFormat As MailFormat, _
@@ -211,7 +199,6 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _
@@ -223,7 +210,6 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal ReplyTo As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _
@@ -241,7 +227,6 @@ Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String
                             SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL)
         End Function
 
-        <Obsolete("Obsoleted in DotNetNuke 5.3. Use DotNetNuke.Services.Messaging.MessagingController")> _
         Public Shared Function SendMail(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal ReplyTo As String, _
             ByVal Priority As MailPriority, ByVal Subject As String, _

@@ -588,6 +588,9 @@ Wykorzystując Windows Explorer, proszę przejść do folderu głównego witryny
     <value>&lt;b&gt;&lt;font color='red'&gt;Nazwa hosta zawiera niedozwolone znaki (można użyć tylko A-Z, 0-9, - oraz .).  Nazwa ta powinna być zmodyfikowana.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
   <data name="InstallFailed.Text">
-    <value>Niepowodzenie instalacji skryptów bazy danych</value>
+    <value>Niepowodzenie wykonywania skryptów instalacyjnych bazy danych</value>
+  </data>
+  <data name="DbNameError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Nazwa bazy danych musi być określona.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
 </root>

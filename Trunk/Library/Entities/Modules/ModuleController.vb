@@ -759,7 +759,7 @@ Namespace DotNetNuke.Entities.Modules
             dataProvider.DeleteModule(moduleId)
 
             'Remove the Content Item
-            If objModule.ContentItemId > Null.NullInteger Then
+            If objModule IsNot Nothing AndAlso objModule.ContentItemId > Null.NullInteger Then
                 Dim ctl As IContentController = DotNetNuke.Entities.Content.Common.GetContentController()
                 ctl.DeleteContentItem(objModule)
             End If

@@ -686,6 +686,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' <history>
         ''' 	[vmasanas]	04/10/2004	Created
         ''' 	[vmasanas]	25/03/2006	Modified to support new host resources and incremental saving
+		'''     [sleupold]  23/04/2010  Fixed missing parameters for navigateURL
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
@@ -784,9 +785,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
                         End If
                 End Select
                 Dim selectedFile As String = SelectedResourceFile.Replace(Server.MapPath(Common.Globals.ApplicationPath + "/"), "")
-                Response.Redirect(NavigateURL(TabId, "", "Locale=" & Locale, "ResourceFile=" & QueryStringEncode(selectedFile), _
-                                              "Mode=" & rbMode.SelectedValue, "Highlight=" & chkHighlight.Checked.ToString().ToLower(), _
-                                              "Page=" & dgEditor.CurrentPageIndex.ToString, "message=FileSaved"), True)
+                Response.Redirect(NavigateURL(TabId, "", "Locale=" & Locale, "resourceFile=" & QueryStringEncode(selectedFile), _
+                                              "mode=" & rbMode.SelectedValue, "highlight=" & chkHighlight.Checked.ToString().ToLower(), _
+                                              "ctl=Editor", "mid=" & moduleID, "Page=" & dgEditor.CurrentPageIndex.ToString, "message=FileSaved"), True)
             Catch exc As Exception    'Module failed to load
                 UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End Try

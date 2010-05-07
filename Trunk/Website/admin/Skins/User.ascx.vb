@@ -131,7 +131,11 @@ Namespace DotNetNuke.UI.Skins.Controls
                             cmdRegister.Text = cmdRegister.Text & String.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(Me, MyFileName)), messageCount)
                         End If
 
-                        cmdRegister.ToolTip = String.Format(Localization.GetString("ToolTip", Localization.GetResourceFile(Me, MyFileName)), messageCount)
+                        If (ShowUnreadMessages AndAlso messageCount > 0) Then
+                            cmdRegister.ToolTip = String.Format(Localization.GetString("ToolTipNewMessages", Localization.GetResourceFile(Me, MyFileName)), messageCount)
+                        Else
+                            cmdRegister.ToolTip = Localization.GetString("ToolTip", Localization.GetResourceFile(Me, MyFileName))
+                        End If
                     End If
                 End If
 

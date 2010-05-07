@@ -189,7 +189,8 @@ Namespace DotNetNuke.Framework
                 HttpContext.Current.Items("jquery_registered") = True
                 Dim headscript As Literal = New Literal()
                 headscript.Text = script
-                page.Header.Controls.Add(headscript)
+                Dim objCSS As Control = page.Header.FindControl("SCRIPTS")
+                objCSS.Controls.AddAt(0, headscript)
             End If
 
         End Sub

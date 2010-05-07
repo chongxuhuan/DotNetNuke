@@ -227,7 +227,7 @@ Namespace DotNetNuke.Modules.Admin.Sitemap
             Dim providers = CType(grdProviders.DataSource, List(Of SitemapProvider))
             Dim editedProvider As SitemapProvider = Nothing
 
-            For Each p In providers
+            For Each p As SitemapProvider In providers
 
                 If (String.Equals(key, p.Name, StringComparison.InvariantCultureIgnoreCase)) Then
                     editedProvider = p

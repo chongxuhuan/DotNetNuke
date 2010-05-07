@@ -58,7 +58,7 @@ Namespace DotNetNuke.Services.Sitemap
 
             ' excluded urls by priority
             Dim excludePriority As Single
-            excludePriority = Single.Parse(PortalController.GetPortalSetting("SitemapExcludePriority", PortalSettings.PortalId, "0"))
+            excludePriority = Single.Parse(PortalController.GetPortalSetting("SitemapExcludePriority", PortalSettings.PortalId, "0"), NumberFormatInfo.InvariantInfo())
 
             ' get all urls
             Dim isProviderEnabled As Boolean

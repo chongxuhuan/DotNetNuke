@@ -36,7 +36,7 @@ Namespace DotNetNuke.SitemapProviders
             Dim urls As New List(Of SitemapUrl)
 
             useLevelBasedPagePriority = Boolean.Parse(PortalController.GetPortalSetting("SitemapLevelMode", portalId, "False"))
-            minPagePriority = Single.Parse(PortalController.GetPortalSetting("SitemapMinPriority", portalId, "0.1"))
+            minPagePriority = Single.Parse(PortalController.GetPortalSetting("SitemapMinPriority", portalId, "0.1"), Globalization.NumberFormatInfo.InvariantInfo())
             includeHiddenPages = Boolean.Parse(PortalController.GetPortalSetting("SitemapIncludeHidden", portalId, "True"))
 
             Me.ps = ps

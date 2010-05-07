@@ -22,11 +22,11 @@
     <value>&lt;h3&gt;Sprache des Assistenten:&lt;/h3&gt;</value>
   </data>
   <data name="Complete.Text">
-    <value>Die Installation ist abgeschlossen.</value>
+    <value>Die Installation der Datenbank ist abgeschlossen.</value>
   </data>
   <data name="CompleteDetail.Text">
-    <value>&lt;p&gt;Sie haben DotNetNuke erfolgreich installiert.&lt;/p&gt;
-    &lt;p&gt;Weitere Unterstützung erhalten Sie bei der &lt;a href="http://www.dnn-usergroup.de" target="_blank"&gt;deutschsprachigen DotNetNuke User-Group&lt;/a&gt;.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Sie haben die Website erfolgreich installiert.&lt;/p&gt;
+    &lt;p&gt;Weitere Unterstützung erhalten Sie bei der &lt;a href="http://www.dnn-usergroup.de" target="_blank"&gt;deutschsprachigen DotNetNuke-Usergroup&lt;/a&gt;.&lt;/p&gt;</value>
   </data>
   <data name="CompleteTitle.Text">
     <value>Herzlichen Glückwunsch</value>
@@ -101,13 +101,10 @@
     <value>Erstelle Datenbank - Version {0}</value>
   </data>
   <data name="Installed.Text">
-    <value>&lt;p&gt;DotNetNuke ist auf diesem System breits installiert.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Das System ist in diesem Web-Space bereits installiert.&lt;/p&gt;</value>
   </data>
   <data name="Installing.Text">
     <value>Datenbank-Skripte ausführen ...   </value>
-  </data>
-  <data name="InstallLanguagesError.Text">
-    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren der Sprache(n):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="InstallModuleError.Text">
     <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren des Modules/der Module:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
@@ -117,9 +114,6 @@
   </data>
   <data name="InstallScript.Text">
     <value>Aktualisiere auf Version {0}</value>
-  </data>
-  <data name="InstallSkinsError.Text">
-    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren der Seitenlayouts/Modulrahmen:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
   <data name="Integrated.Text">
     <value>Integrierte Sicherheit:</value>
@@ -155,7 +149,7 @@
     <value>Modulrahmen</value>
   </data>
   <data name="IntegratedHelp.Text">
-    <value>Aktivieren Sie diese Option, wenn Sie sich über "integrierte Sicherheit" am SQL-Server mit dem Windows Benutzerkonto anmelden wollen. Wenn Sie SQL-Server Express verwenden, werden Sie diese Option vermutlich benötigen.  Wenn Sie expliztit einen Benutzernamen mit Kennwort für die Anmeldung am SQL-Server erhalten oder eingerichtet haben, deaktivieren Sie diese Option.<br/></value>
+    <value>Aktivieren Sie diese Option, wenn Sie sich über "integrierte Sicherheit" am SQL-Server mit dem Windows Benutzerkonto anmelden wollen. Wenn Sie SQL-Server Express verwenden, werden Sie diese Option vermutlich benötigen.  Wenn Sie expliztit einen Benutzernamen mit Kennwort für die Anmeldung am SQL-Server erhalten oder eingerichtet haben, deaktivieren Sie diese Option.&lt;br /&gt;</value>
   </data>
   <data name="NoPassword.Text">
     <value>Sie müssen ein Kennwort für den Benutzer eingeben!</value>
@@ -215,14 +209,18 @@
     <value>Zusammenfassung der Dateiberechtigungen:</value>
   </data>
   <data name="PermissionsError.Text">
-    <value>&lt;img alt="Dieses Bild zeigt die Berechtigungseinstellungen für den Basisordner der Web-Site. Diese muß Lesen, Schreiben, Dateien und Berechtigungen ändern für das Benutzerkonto ASPNET oder NT AUTHORITY/NETWORK SERVICE umfassen." hspace="10" align="right" src="..\403-3.gif" /&gt;
-&lt;p&gt;&lt;strong&gt;&lt;font color="#ff0000"&gt;Ihr Installationsordner hat die Berechtigungspr&amp;uuml;fung &lt;strong&gt;nicht&lt;/strong&gt; bestanden.&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
-Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer DotNetNuke-Installation (standardm&amp;auml;&amp;szlig;ig C:\DotNetNuke). Klicken Sie den Ordnernamen mit der rechten Maustaste an und wählen Sie die Option Freigabe und Sicherheit aus dem Popup-Menü ( beachten Sie, dass Sie unter  WindowsXP die Option &lt;a target="_blank" href="http://whoozoo.co.uk/winxpFilePerms.htm"&gt;Einfache Dateifreigabe verwenden&lt;/a&gt; deaktivieren müssen, um diese Option anzuzeigen). Gehen Sie zum Reiter Sicherheit und fügen Sie das entsprechende Benutzerkonto hinzu und vergeben Sie die folgenden Berechtigungen. &lt;br /&gt;
+    <value>&lt;img src="..\403-3.gif" alt="Dieses Bild zeigt die Berechtigungseinstellungen f&amp;uuml;r den Basisordner der Web-Site. Diese mu&amp;szlig; Lesen, Schreiben, Dateien und Berechtigungen &amp;auml;ndern f&amp;uuml;r das Benutzerkonto ASPNET oder NT AUTHORITY/NETWORK SERVICE umfassen." style="float: right; margin-left: 10px; margin-right: 10px;" /&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span style="color: #ff0000;"&gt;Ihr Installationsordner hat die Berechtigungspr&amp;uuml;fung &lt;strong&gt;nicht&lt;/strong&gt; bestanden.&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer Installation. Klicken Sie den Ordnernamen mit der rechten Maustaste an und w&amp;auml;hlen Sie die Option Freigabe und Sicherheit aus dem Popup-Men&amp;uuml; ( beachten Sie, dass Sie unter  WindowsXP die Option &lt;a href="http://whoozoo.co.uk/winxpFilePerms.htm" target="_blank"&gt;Einfache Dateifreigabe verwenden&lt;/a&gt; deaktivieren m&amp;uuml;ssen, um diese Option anzuzeigen). Gehen Sie zum Reiter Sicherheit und f&amp;uuml;gen Sie das entsprechende Benutzerkonto hinzu und vergeben Sie die folgenden Berechtigungen. &lt;br /&gt;
 &lt;br /&gt;
-&lt;h3&gt;Unter Windows 2000 - IIS5&lt;/h3&gt;
-&lt;p&gt;Das Benutzerkonto {Server}\ASPNET muss die Rechte Lesen, Schreiben und Berechtigungsänderungen für den Ordner der Web-Site mit der DotNetNuke-Installation besitzen.&lt;/p&gt;
-&lt;h3&gt;UNter Windows 2003 - IIS6&lt;/h3&gt;
-&lt;p&gt;Das Benutzerkonto NT AUTHORITY\NETWORK SERVICE User Account muss die Rechte Lesen, Schreiben und Berechtigungsänderungen für den Ordner besitzen, auf den das virtuellen Verzeichniss zeigt.&lt;/p&gt;</value>
+&lt;h3&gt;Unter Windows 2000 - IIS 5&lt;/h3&gt;
+&lt;p&gt;Das Benutzerkonto {Server}\ASPNET muss die Rechte Lesen, Schreiben und &amp;Auml;ndern f&amp;uuml;r den Ordner der Web-Site mit der Installation besitzen.&lt;/p&gt;
+&lt;h3&gt;Unter Windows Vista, Server 2003 und 2008&amp;nbsp; - IIS 6 / IIS 7&lt;/h3&gt;
+&lt;p&gt;Das Benutzerkonto NT AUTHORITY\NETZWERKDIENST muss die Rechte Lesen, Schreiben und &amp;Auml;ndern f&amp;uuml;r den Ordner besitzen, auf den die Web-Site oder das virtuellen Verzeichniss zeigt.&lt;/p&gt;
+&lt;p&gt;
+&lt;h3&gt;Unter Windows 7, Server 2008 R2&amp;nbsp; - IIS 7.5&lt;/h3&gt;
+&lt;p&gt;Das Benutzerkonto&amp;nbsp;IIS APP Pool\DefaultAppPool muss die Rechte Lesen, Schreiben und Berechtigungs&amp;auml;nderungen f&amp;uuml;r den Ordner besitzen, auf den die Web-Site oder das virtuellen Verzeichniss zeigt.&lt;/p&gt;
+&lt;/p&gt;</value>
   </data>
   <data name="PermissionsOk.Text">
     <value>&lt;b&gt;&lt;font color='green'&gt;Ihre Web-Site hat die Berechtigungsprüfung erfolgreich absolviert.&lt;/font?&lt;/b&gt;</value>
@@ -271,16 +269,16 @@ Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer 
     <value>Berechtigungen testen</value>
   </data>
   <data name="Title.Text">
-    <value>DotNetNuke Installationsassistent</value>
+    <value>Installationsassistent</value>
   </data>
   <data name="Typical.Text">
     <value>&lt;b&gt;Typisch&lt;/b&gt; - Beim typischen Installationsverfahren werden weitgehend Standardwerte verwendet.</value>
   </data>
   <data name="Upgrade.Text">
-    <value>&lt;p&gt;DotNetNuke-Version {0} ist bereits installiert. Aktivieren Sie "nächste" Seite, um auf die neue Version zu aktualisieren.&lt;/p&gt;</value>
+    <value>&lt;p&gt; Die Systemversion {0} ist bereits installiert. Klicken Sie "nächste" Seite, um auf die neue Version zu aktualisieren.&lt;/p&gt;</value>
   </data>
   <data name="UpgradeTitle.Text">
-    <value>DotNetNuke-Aktualisierungsassistent - Version {0}</value>
+    <value>Aktualisierungsassistent - Version {0}</value>
   </data>
   <data name="UserHelp.Text">
     <value>Geben Sie die Benutzer-ID für den Datenbankzugriff an.</value>
@@ -302,7 +300,7 @@ Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer 
   </data>
   <data name="DatabaseConfigDetail.Text">
     <value>&lt;p&gt;Sie können auf dieser Seite die Datenbank-Einstellungen aktualisieren. Wenn Sie das Portalsystem bei einem Hosting Provider mit separater Datenbank installieren, hat dieser Ihnen die entsprechenden Zugangsdaten zur Verfügung gestellt.&lt;/p&gt;
-&lt;p&gt;Es gibt zwei Optionen für SQL-Server 2005: SQL-Server 2005 unterstützt Datenbanken und Datenbankdateien, i.d.R. werden Sie hier Datenbanken bevorzugen. Bei SQL-Server 2005 Express ist die Einrichtung von Datenbankdateien besonders einfach.&lt;/p&gt;</value>
+&lt;p&gt;Es gibt zwei Optionen für SQL-Server: SQL-Server 2005/2008 unterstützen Datenbanken und Datenbankdateien, i.d.R. werden Sie hier Datenbanken bevorzugen. Bei SQL-Server 2005/2008 Express ist die Einrichtung von Datenbankdateien besonders einfach.&lt;/p&gt;</value>
   </data>
   <data name="DatabaseConfigTitle.Text">
     <value>Datenbankverbindung konfigurieren</value>
@@ -319,18 +317,13 @@ Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer 
   <data name="HostUserTitle.Text">
     <value>Systemverwalter einrichten</value>
   </data>
-  <data name="InstallPackageError.Text">
-    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren des Pakets(s):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
-  </data>
   <data name="IntroDetail.Text">
     <value>&lt;p&gt;Willkommen zum Installationsassistenten. Dieser wird Sie durch die Installation Ihres Systems begleiten.&lt;/p&gt;
 &lt;p&gt;Innerhalb des Assistenten  können Sie sich mit den Schaltflächen "weiter" und "zurück" zwischen den Seiten bewegen. Einige Seiten verfügen über eine zusätzliche Schaltfläche "Test...", die Ihnen erlaubt, die Einstellungen zu prüfen, bevor Sie fortfahren.&lt;/p&gt;
-&lt;p&gt;Im ersten Schritt wählen Sie die zu verwendende Installationsmethode und die Sprache des Installationsassistenten.&lt;/p&gt;
-
-</value>
+&lt;p&gt;Im ersten Schritt wählen Sie die zu verwendende Installationsmethode und die Sprache des Installationsassistenten.&lt;/p&gt;</value>
   </data>
   <data name="IntroTitle.Text">
-    <value>DotNetNuke Installationsassistent - Version {0}</value>
+    <value>Installationsassistent - Version {0}</value>
   </data>
   <data name="LanguagesDetail.Text">
     <value>&lt;p&gt;Die statischen Elemente dieses Systems sind vollständig übersetzbar. Auf dieser Seite können Sie Sprachpakete auswählen, die Sie installieren möchten.&lt;/p&gt;
@@ -349,21 +342,13 @@ Verwenden Sie den Windows Dateimanager, gehen Sie in das Basisverzeichnis Ihrer 
   <data name="NoPackages.Text">
     <value>Es sind keine installierbaren Authentisierungsdienste verfügbar. Sie können weitere später über den Menübefehl System :: Systemeinstellungen installieren.</value>
   </data>
-  <data name="Packages.Text">
-    <value>Authentisierungsdienste</value>
-  </data>
-  <data name="PackagesDetail.Text">
-    <value>&lt;p&gt;Das System unterstützt mehrere Authentisierungsdienste, auf dieser Seite können Sie die von Ihnen gewünschten auswählen.&lt;/p&gt;
-&lt;p&gt;Durch die Installation eines Authentisierungsdienstes wird dieser nicht automatisch für jede Web-Site aktiviert, er steht dem Portaladministrator aber hierfür zur Verfügung.&lt;/p&gt;</value>
-  </data>
-  <data name="PackagesTitle.Text">
-    <value>Authentisierungsdienste installieren</value>
-  </data>
   <data name="Page9.Title">
     <value>Web-Site installieren</value>
   </data>
   <data name="PermissionsDetail.Text">
-    <value>&lt;p&gt;Das System erlaubt es, Dateien für Inhalte und installierbare Erweiterungen hochzuladen. Diese Funktionen erfordern erweiterte Berechtigugen, so dass die Anwendung in der Lage ist, Ordner und Dateien zu erstellen und zu löschen.&lt;/p&gt;&lt;p&gt;Diese Seite prüft die aktuellen Dateizugriffsrechte, um sicherzustellen, das diese Funktionen problemlos ausgeführt werden können.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Das System erlaubt es, Dateien f&amp;uuml;r Inhalte und installierbare Erweiterungen hochzuladen. Diese Funktionen erfordern erweiterte Berechtigungen, so dass die Anwendung in der Lage ist, Ordner und Dateien zu erstellen und zu l&amp;ouml;schen.&lt;/p&gt;
+&lt;p&gt;Diese Seite pr&amp;uuml;ft die aktuellen Dateizugriffsrechte, um sicherzustellen, dass diese Funktionen problemlos ausgef&amp;uuml;hrt werden k&amp;ouml;nnen.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Hinweis&lt;/strong&gt;: Der Test pr&amp;uuml;ft die Rechte f&amp;uuml;r das Stammverzeichnis der Anwendung. Dies ist in der Regel ausreichend, da UNterordner die Berechtigung erben, allerdings kann es bei der Installation trotzdem&amp;nbsp; zu Problemen kommen, wenn die Rechte f&amp;uuml;r Unterordner eingeschr&amp;auml;nkt wurden.&lt;/p&gt;</value>
   </data>
   <data name="PermissionsTitle.Text">
     <value>Dateizugriffsrechte werden geprüft</value>
@@ -378,5 +363,124 @@ Sie müssen ein Administratorkonto angeben. Dieser Benutzer hat Zugriff auf alle
   </data>
   <data name="SkinsTitle.Text">
     <value>Zusätzliche Seitenlayouts und Modulrahmen installieren</value>
+  </data>
+  <data name="AuthSystems.Text">
+    <value>Authentisierungskomponenten</value>
+  </data>
+  <data name="AuthSystemsDetail.Text">
+    <value>&lt;p&gt;Dieses System unterstützt mehrere Authentisierungssystem, auf dieser Seite können Sie die gewünschten zur Installation auswählen.&lt;/p&gt;
+&lt;p&gt;Durch die Installation wird das Authentisierungssystem nicht automatisch aktiviert, der Administrator eines Portals muss es unter 'Erweiterungen' aktivieren und konfigurieren.&lt;/p&gt;</value>
+  </data>
+  <data name="AuthSystemsTitle.Text">
+    <value>Authentisierungskomponenten installieren</value>
+  </data>
+  <data name="DatabaseWarning.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Die 'auto'-Option wurde deaktiviert, da eine Verbingung mit den derzeitigen Datenbankangaben nicht möglich ist.  Fahren Sie mit einer der anderen beiden Optionen fort, die Ihnen die Angabe der Datenbankverbindung erlauben.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="DbNameError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Sie müssen den Namen der Datenbank angeben!&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="EmailErrorMessage.Text">
+    <value>Bemím senden der Testnahricht ist ein Fehler aufgetreten:&lt;br /&gt;{0}</value>
+  </data>
+  <data name="EmailSentMessage.Text">
+    <value>Die E-Email wurde erfolgreich versandt.</value>
+  </data>
+  <data name="EmailTestMessageSubject.Text">
+    <value>Test der SMTP-Server Konfiguration</value>
+  </data>
+  <data name="EnableUpdate.Text">
+    <value>Soll das System Sie auf den Portalseiten darauf hinweisen, dass eine neue Version vorliegt?</value>
+  </data>
+  <data name="HostWarning.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Ihr Systemname enthält ungültige Zeichen (nur A-Z, 0-9, - und . sind zulässig). Bitte ändern Sie den Namen entsprechend.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="InstallAuthSystemError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren des Authentifizierungssystems:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
+  </data>
+  <data name="InstallContainerError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler beim Installieren des Containers:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
+  </data>
+  <data name="InstallFailed.Text">
+    <value>Fehler beim Ausführen der Datenbank-Skripte</value>
+  </data>
+  <data name="InstallLanguageError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler bei der Sprachpaket-Installation:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
+  </data>
+  <data name="InstallProviderError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler bei der Provider-Installation:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
+  </data>
+  <data name="InstallSkinError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Fehler bei der Layout-Installation:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
+  </data>
+  <data name="No.Text">
+    <value>nein</value>
+  </data>
+  <data name="Page10.Title">
+    <value>Portal installieren</value>
+  </data>
+  <data name="Providers.Text">
+    <value>Provider</value>
+  </data>
+  <data name="ProvidersDetail.Text">
+    <value>&lt;p&gt;Dieses System verwendet Provider für Systemerweiterungen.&lt;/p&gt;
+</value>
+  </data>
+  <data name="ProvidersTitle.Text">
+    <value>Provider installieren</value>
+  </data>
+  <data name="SMTPAnonymous.Text">
+    <value>Anonym</value>
+  </data>
+  <data name="SMTPAuthentication.Text">
+    <value>Anmeldung:</value>
+  </data>
+  <data name="SMTPBasic.Text">
+    <value>unverschlüsselt</value>
+  </data>
+  <data name="SMTPEnableSSL.Text">
+    <value>per SSL gesichert:</value>
+  </data>
+  <data name="SMTPError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;SMTP-Server Fehler:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
+  </data>
+  <data name="SMTPNTLM.Text">
+    <value>NTLM</value>
+  </data>
+  <data name="SMTPPassword.Text">
+    <value>Kennwort:</value>
+  </data>
+  <data name="SMTPServer.Text">
+    <value>Server:</value>
+  </data>
+  <data name="SMTPSettings.Text">
+    <value>SMTP-Server-Einstellungen</value>
+  </data>
+  <data name="SMTPSettingsHelp.Text">
+    <value>Konfigurieren Sie Ihren SMTP-Server-Zugriff und testen Sie dies.</value>
+  </data>
+  <data name="SMTPSuccess.Text">
+    <value>&lt;b&gt;&lt;font color='green'&gt;SMTP-Zugriff erfolgreich:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
+  </data>
+  <data name="SMTPUsername.Text">
+    <value>Benutzername:</value>
+  </data>
+  <data name="SpecifyHostEmailMessage.Text">
+    <value>Sie müssen die Email-Adresse des Systembenutzers angeben</value>
+  </data>
+  <data name="TestSMTP.Text">
+    <value>SMTP-Server-Zugriff testen</value>
+  </data>
+  <data name="UpdateDetail.Text">
+    <value>Diese Software kann regelmäßig auf wichtige Aktualisierungen und Sicherheits-Patches prüfen, dabei werden ohne Ihre Zustimmung keine Daten über Ihr System (außer der IP und Version) übermittelt.</value>
+  </data>
+  <data name="UpdateEmail.Text">
+    <value>Wollen Sie per E-Mail über neue Versionen des Systems benachrichtigt werden?</value>
+  </data>
+  <data name="UpdateTitle.Text">
+    <value>Aktualisierungsdienst - unterstützt Sie bei der Integrität Ihrer Web-Site</value>
+  </data>
+  <data name="Yes.Text">
+    <value>ja</value>
   </data>
 </root>

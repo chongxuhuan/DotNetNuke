@@ -21,6 +21,7 @@
     <meta http-equiv="PAGE-ENTER" content="RevealTrans(Duration=0,Transition=1)" />
     <style type="text/css" id="StylePlaceholder" runat="server"></style>
     <asp:placeholder id="CSS" runat="server" />
+    <asp:placeholder id="SCRIPTS" runat="server" />
 </head>
 <body id="Body" runat="server" >
     <dnn:Form id="Form" runat="server" ENCTYPE="multipart/form-data" >

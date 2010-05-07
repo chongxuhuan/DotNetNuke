@@ -1301,7 +1301,8 @@ Namespace DotNetNuke.Services.Upgrade
                                             .DefinitionID = Null.NullInteger, _
                                             .ListName = "DataType", _
                                             .Value = "Image", _
-                                            .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web" _
+                                            .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web", _
+                                            .PortalID = Null.NullInteger _
                                     }
             listController.AddListEntry(imagedatatype)
 

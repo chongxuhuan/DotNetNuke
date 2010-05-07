@@ -185,7 +185,7 @@ Namespace DotNetNuke.Entities.Users
                 settings("Security_RequireValidProfileAtLogin") = True
             End If
             If settings("Security_UsersControl") Is Nothing Then
-                If ((Not _portalSettings Is Nothing) AndAlso (UserController.GetUserCountByPortal(_portalSettings.PortalId) > 1000)) Then
+                If ((Not _portalSettings Is Nothing) AndAlso (_portalSettings.Users > 1000)) Then
                     settings("Security_UsersControl") = UsersControl.TextBox
                 Else
                     settings("Security_UsersControl") = UsersControl.Combo

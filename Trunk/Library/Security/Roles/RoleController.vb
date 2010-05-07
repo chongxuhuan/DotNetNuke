@@ -638,7 +638,7 @@ Namespace DotNetNuke.Security.Roles
 
             '_messagingController.SaveMessage(_message)
 
-            Services.Mail.Mail.SendEmail(PortalSettings.Email, PortalSettings.Email, _message.Subject, _message.Body)
+            Services.Mail.Mail.SendEmail(PortalSettings.Email, objUser.Email, _message.Subject, _message.Body)
 
         End Sub
 

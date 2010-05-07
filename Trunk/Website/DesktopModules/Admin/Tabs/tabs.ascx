@@ -12,7 +12,7 @@
 					<tr valign="top">
 						<td width="400">
 							<label style="DISPLAY:none" for="<%=lstTabs.ClientID%>">First Tabs</label>
-							<asp:listbox id="lstTabs" runat="server" rows="22" datatextfield="IndentedTabName" datavaluefield="TabId" cssclass="NormalTextBox" width="400px"></asp:listbox>
+							<asp:listbox id="lstTabs" runat="server" rows="40" datatextfield="IndentedTabName" datavaluefield="TabId" cssclass="NormalTextBox" width="450px"></asp:listbox>
 						</td>
 						<td>&nbsp;</td>
 						<td>

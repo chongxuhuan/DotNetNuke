@@ -2367,13 +2367,12 @@ Namespace DotNetNuke.Common
             Dim strLink As String = ""
             Dim UrlType As TabType = GetURLType(Link)
 
-            If TrackClicks = True Or ForceDownload = True Or UrlType = TabType.File Then
+            If UrlType = TabType.Member Then
+                strLink = UserProfileURL(Convert.ToInt32(UrlUtils.GetParameterValue(Link)))
+            ElseIf TrackClicks = True OrElse ForceDownload = True OrElse UrlType = TabType.File Then
                 ' format LinkClick wrapper
                 If Link.ToLowerInvariant.StartsWith("fileid=") Then
                     strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link))
-                End If
-                If Link.ToLowerInvariant.StartsWith("userid=") Then
-                    strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?userticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link))
                 End If
                 If strLink = "" Then
                     strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?link=" & HttpUtility.UrlEncode(Link)
@@ -2402,8 +2401,6 @@ Namespace DotNetNuke.Common
                 Select Case UrlType
                     Case TabType.Tab
                         strLink = NavigateURL(Integer.Parse(Link))
-                    Case TabType.Member
-                        strLink = NavigateURL(_portalSettings.ActiveTab.TabID, "ViewProfile", "userticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link)))
                     Case Else
                         strLink = Link
                 End Select

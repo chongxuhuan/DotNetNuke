@@ -52,7 +52,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected ReadOnly Property ReturnUrl() As String
             Get
-                Return NavigateURL("", "Locale=" & locale, "ResourceFile=" & QueryStringEncode(resfile), "Mode=" & mode, "Highlight=" & highlight)
+                Return NavigateURL("", "ctl=Editor", "mid=" & moduleID, "Locale=" & locale, "ResourceFile=" & QueryStringEncode(resfile), "Mode=" & mode, "Highlight=" & highlight)
             End Get
         End Property
 
