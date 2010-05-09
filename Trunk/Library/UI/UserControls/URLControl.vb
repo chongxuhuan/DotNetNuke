@@ -773,7 +773,9 @@ Namespace DotNetNuke.UI.UserControls
                         If Not IncludeActiveTab Then
                             excludeTabId = _settings.ActiveTab.TabID
                         End If
-                        cboTabs.DataSource = TabController.GetPortalTabs(_settings.PortalId, excludeTabId, Not Required, True, False, False)
+
+                        cboTabs.DataSource = TabController.GetPortalTabs(_settings.PortalId, excludeTabId, Not Required, "none available", True, False, False, True, False)
+
                         cboTabs.DataBind()
                         If Not cboTabs.Items.FindByValue(_Url) Is Nothing Then
                             cboTabs.Items.FindByValue(_Url).Selected = True

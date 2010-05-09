@@ -362,31 +362,23 @@ Namespace DotNetNuke.Modules.Admin.Vendors
                         Custom.Add(txtEmail.Text)
                         Custom.Add(txtWebsite.Text)
 
-                        Dim strMessage As String = Null.NullString
-                        strMessage = Mail.SendMail(txtEmail.Text, PortalSettings.Email, "", _
-                            Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_SUBJECT"), _
-                            Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_BODY", Services.Localization.Localization.GlobalResourceFile, Custom), _
-                            "", "", "", "", "", "")
+                        'send email to Admin
+                        Mail.SendEmail(PortalSettings.Email, PortalSettings.Email, Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_SUBJECT"), _
+                                        Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_BODY", Services.Localization.Localization.GlobalResourceFile, Custom))
 
-                        If strMessage = "" Then
-                            Custom.Clear()
-                            Custom.Add(txtFirstName.Text)
-                            Custom.Add(txtLastName.Text)
-                            Custom.Add(txtVendorName.Text)
 
-                            strMessage = Mail.SendMail(PortalSettings.Email, txtEmail.Text, "", _
-                                Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_SUBJECT"), _
-                                Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_BODY", Services.Localization.Localization.GlobalResourceFile, Custom), _
-                                "", "", "", "", "", "")
-                        Else
-                            AddModuleMessage("EmailErrorAdmin", Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
-                        End If
+                        'send email to vendor
+                        Custom.Clear()
+                        Custom.Add(txtFirstName.Text)
+                        Custom.Add(txtLastName.Text)
+                        Custom.Add(txtVendorName.Text)
 
-                        If strMessage = "" Then
-                            ReturnUrl(txtVendorName.Text.Substring(0, 1))
-                        Else
-                            AddModuleMessage("EmailErrorVendor", Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
-                        End If
+                        Mail.SendEmail(PortalSettings.Email, txtEmail.Text, Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_SUBJECT"), _
+                                        Services.Localization.Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_BODY", Services.Localization.Localization.GlobalResourceFile, Custom))
+
+                     
+                        ReturnUrl(txtVendorName.Text.Substring(0, 1))
+                     
                     Else
                         ReturnUrl(Convert.ToString(ViewState("filter")))
                     End If
