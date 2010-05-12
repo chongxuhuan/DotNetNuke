@@ -60,6 +60,9 @@ Namespace DotNetNuke.Data
         Public MustOverride Function ExecuteSQL(ByVal SQL As String) As IDataReader
         Public MustOverride Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
 
+        Public MustOverride Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
+
+
         ' general
         Public MustOverride Function GetConnectionStringBuilder() As DbConnectionStringBuilder
         Public MustOverride Function GetNull(ByVal Field As Object) As Object
@@ -73,6 +76,7 @@ Namespace DotNetNuke.Data
         ' upgrade
         Public MustOverride Function GetProviderPath() As String
         Public MustOverride Overloads Function ExecuteScript(ByVal SQL As String) As String
+        Public MustOverride Overloads Function ExecuteScript(ByVal ConnectionString As String, ByVal SQL As String) As String
         Public MustOverride Overloads Function ExecuteScript(ByVal SQL As String, ByVal UseTransactions As Boolean) As String
         Public MustOverride Function GetDatabaseEngineVersion() As System.Version
         Public MustOverride Function GetDatabaseServer() As IDataReader

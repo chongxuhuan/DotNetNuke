@@ -197,6 +197,24 @@ Namespace DotNetNuke.Data
 
         End Sub
 
+        <Obsolete("Temporarily Added in DNN 5.4.2. This will be removed and replaced with named instance support.")> _
+        Private Sub ExecuteADOScript(ByVal ConnectionString As String, ByVal SQL As String)
+
+            'Create a new connection
+            Dim connection As New SqlConnection(ConnectionString)
+
+            'Create a new command (with no timeout)
+            Dim command As New SqlCommand(SQL, connection)
+            command.CommandTimeout = 0
+
+            connection.Open()
+
+            command.ExecuteNonQuery()
+
+            connection.Close()
+
+        End Sub
+
         Private Function GetRoleNull(ByVal RoleID As Integer) As Object
             If RoleID.ToString = Common.Globals.glbRoleNothing Then
                 Return DBNull.Value
@@ -382,7 +400,22 @@ Namespace DotNetNuke.Data
         End Function
 
         Public Overrides Function ExecuteSQL(ByVal SQL As String) As IDataReader
-            Return ExecuteSQL(SQL, Nothing)
+            Return ExecuteSQL(SQL, DirectCast(Nothing, IDataParameter))
+        End Function
+
+        <Obsolete("Temporarily Added in DNN 5.4.2. This will be removed and replaced with named instance support.")> _
+        Public Overrides Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
+            Dim sqlCommandParameters() As SqlParameter = Nothing
+
+            SQL = SQL.Replace("{databaseOwner}", DatabaseOwner)
+            SQL = SQL.Replace("{objectQualifier}", ObjectQualifier)
+
+            Try
+                Return CType(SqlHelper.ExecuteReader(ConnectionString, CommandType.Text, SQL, sqlCommandParameters), IDataReader)
+            Catch
+                ' error in SQL query
+                Return Nothing
+            End Try
         End Function
 
         Public Overrides Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
@@ -489,6 +522,36 @@ Namespace DotNetNuke.Data
 
         Public Overloads Overrides Function ExecuteScript(ByVal Script As String) As String
             Return ExecuteScript(Script, False)
+        End Function
+
+        ''' <summary>
+        ''' This is a temporary overload until proper support for named instances is added to the core.
+        ''' </summary>
+        ''' <param name="ConnectionString"></param>
+        ''' <param name="Script"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        <Obsolete("Temporarily Added in DNN 5.4.2. This will be removed and replaced with named instance support.")> _
+        Public Overloads Overrides Function ExecuteScript(ByVal ConnectionString As String, ByVal Script As String) As String
+            Dim SQL As String = ""
+            Dim Exceptions As String = ""
+
+            Dim arrSQL As String() = SqlDelimiterRegex.Split(Script)
+
+            For Each SQL In arrSQL
+                If Trim(SQL) <> "" Then
+                    ' script dynamic substitution
+                    SQL = SQL.Replace("{databaseOwner}", DatabaseOwner)
+                    SQL = SQL.Replace("{objectQualifier}", ObjectQualifier)
+                    Try
+                        ExecuteADOScript(ConnectionString, SQL)
+                    Catch objException As SqlException
+                        Exceptions += objException.ToString & vbCrLf & vbCrLf & SQL & vbCrLf & vbCrLf
+                    End Try
+                End If
+            Next
+
+            Return Exceptions
         End Function
 
         Public Overloads Overrides Function ExecuteScript(ByVal Script As String, ByVal UseTransactions As Boolean) As String
@@ -642,12 +705,24 @@ Namespace DotNetNuke.Data
                             bError = False
                             Exit For
                         Else
+                            Dim filteredMessage As String = String.Empty
+                            Select Case sqlError.Number
+                                Case 17
+                                    filteredMessage = "Sql server does not exist or access denied"
+                                Case 4060
+                                    filteredMessage = "Invalid Database"
+                                Case 18456
+                                    filteredMessage = "Sql login failed"
+                                Case 1205
+                                    filteredMessage = "Sql deadlock victim"
+                            End Select
+
+
                             errorMessages.Append("<b>Index #:</b> " & i.ToString() & "<br/>" _
                                 & "<b>Source:</b> " & sqlError.Source & "<br/>" _
                                 & "<b>Class:</b> " & sqlError.Class & "<br/>" _
                                 & "<b>Number:</b> " & sqlError.Number & "<br/>" _
-                                & "<b>Message:</b> " & sqlError.Message & "<br/><br/>" _
-                            )
+                                & "<b>Message:</b> " & filteredMessage.ToString & "<br/>")
                         End If
                     Next i
                     If bError Then

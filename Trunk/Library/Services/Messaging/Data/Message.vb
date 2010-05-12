@@ -202,10 +202,13 @@ Namespace DotNetNuke.Services.Messaging.Data
 
         Public Property Subject() As String
             Get
-                Return _Subject
+                Dim ps As New PortalSecurity
+                Return ps.InputFilter(_Subject, PortalSecurity.FilterFlag.NoMarkup)
             End Get
             Set(ByVal Value As String)
-                _Subject = Value
+                Dim ps As New PortalSecurity
+                ps.InputFilter(Value, PortalSecurity.FilterFlag.NoMarkup)
+                _Subject = ps.InputFilter(Value, PortalSecurity.FilterFlag.NoMarkup)
             End Set
         End Property
 

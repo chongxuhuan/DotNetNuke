@@ -91,15 +91,16 @@ Namespace DotNetNuke.Modules.Admin.SQL
 		Private Sub cmdExecute_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExecute.Click
             Try
                 If txtQuery.Text <> "" Then
+                    Dim connectionstring As String = Config.GetConnectionString(cboConnection.SelectedValue)
                     If chkRunAsScript.Checked Then
-                        Dim strError As String = DataProvider.Instance.ExecuteScript(txtQuery.Text)
+                        Dim strError As String = DataProvider.Instance.ExecuteScript(connectionstring, txtQuery.Text)
                         If strError = Null.NullString Then
                             lblMessage.Text = Services.Localization.Localization.GetString("QuerySuccess", Me.LocalResourceFile)
                         Else
                             lblMessage.Text = strError
                         End If
                     Else
-                        Dim dr As IDataReader = DataProvider.Instance().ExecuteSQL(txtQuery.Text)
+                        Dim dr As IDataReader = DataProvider.Instance().ExecuteSQL(connectionstring, txtQuery.Text)
                         If Not dr Is Nothing Then
                             gvResults.DataSource = dr
                             gvResults.DataBind()
