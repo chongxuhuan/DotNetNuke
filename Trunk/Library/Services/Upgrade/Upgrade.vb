@@ -1294,18 +1294,6 @@ Namespace DotNetNuke.Services.Upgrade
             AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/Sitemap/SitemapSettings.ascx", "~/images/icon_analytics_32px.gif", SecurityAccessLevel.View, 0)
             AddAdminPages("Search Engine Sitemap", "Configure the sitemap for submission to common search engines.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", True, ModuleDefID, "Search Engine Sitemap", "~/images/icon_analytics_32px.gif")
 
-            'Add new Image Data Type
-            Dim listController As New ListController
-            Dim imagedatatype As New ListEntryInfo() _
-                                    With { _
-                                            .DefinitionID = Null.NullInteger, _
-                                            .ListName = "DataType", _
-                                            .Value = "Image", _
-                                            .Text = "DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web", _
-                                            .PortalID = Null.NullInteger _
-                                    }
-            listController.AddListEntry(imagedatatype)
-
             'Add new Photo Profile field to Host
             Dim objListController As New ListController
             Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
@@ -2154,6 +2142,12 @@ Namespace DotNetNuke.Services.Upgrade
 
                                 'Remove any folders
                                 strSettingValue = strSettingValue.Substring(0, strSettingValue.IndexOf("/"))
+
+                                'Remove port number
+                                If Not strSettingValue.IndexOf(":") = -1 Then
+                                    strSettingValue = strSettingValue.Substring(0, strSettingValue.IndexOf(":"))
+                                End If
+
                             End If
 
                     End Select

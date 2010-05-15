@@ -43,6 +43,7 @@ Namespace DotNetNuke.Common.Lists
         Private _DefinitionID As Integer = 0
         Private _HasChildren As Boolean = False
         Private _ParentKey As String = Null.NullString
+        Private _systemlist As Boolean = False
 
 #End Region
 
@@ -187,6 +188,17 @@ Namespace DotNetNuke.Common.Lists
                 _ParentKey = Value
             End Set
         End Property
+
+
+        Public Property SystemList() As Boolean
+            Get
+                Return _systemlist
+            End Get
+            Set(ByVal value As Boolean)
+                _systemlist = value
+            End Set
+        End Property
+
 
 #End Region
 

@@ -660,7 +660,8 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
         End Sub
 
         Private Sub FillFileInfo(ByVal file As Telerik.Web.UI.UploadedFile, ByRef fileInfo As FileSystem.FileInfo)
-            fileInfo.FileName = file.FileName
+            'The core API expects the path to be stripped off the filename
+            fileInfo.FileName = If(file.FileName.Contains("\"), System.IO.Path.GetFileName(file.FileName), file.FileName)
             fileInfo.Extension = file.GetExtension()
             If (fileInfo.Extension.StartsWith(".")) Then
                 fileInfo.Extension = fileInfo.Extension.Remove(0, 1)

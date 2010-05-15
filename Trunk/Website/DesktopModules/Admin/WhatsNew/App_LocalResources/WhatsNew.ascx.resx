@@ -1047,4 +1047,65 @@ In addition, this supports a fallback strategy where if no record exists for a l
     &lt;li&gt;* None&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
+  <data name="WhatsNew.05.04.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;
+    Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Improved performance of Sql script for listing modules by portal.&lt;/li&gt;
+    &lt;li&gt;Improved DeleteModule method to handle instances where object may be null.&lt;/li&gt;
+    &lt;li&gt;Increased the size of the Admin - Pages list box to cater for sites with a large
+        number of pages.&lt;/li&gt;
+    &lt;li&gt;Updated the Installation Wizard's Polish &amp; German language packs.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with emailing Vendor details to the Admin and conformation details to
+        the Vendor.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where Sitemap does not work if globalisation culture is a culture that
+        uses comma as separator&lt;/li&gt;
+    &lt;li&gt;Fixed issue with missing type specification in SiteMapSettings.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where upgrade fails when site has a non-'en-US' default language&lt;/li&gt;
+    &lt;li&gt;Fixed issue with link editor showing pages the user does not have View permissions
+        for.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with registration emails not being sent from Child Portals.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Role update email not beiung sent to the user.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where default tabs for Site Settings were not created when creating
+        settings for a new language.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where localization upgrade script was incorrect and could result in
+        error on upgrade.&lt;/li&gt;
+    &lt;li&gt;Increased the number of Users that a DNN installation can handle to 2.14 billion.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where localization updates were not properly applied to individual portals.&lt;/li&gt;
+    &lt;li&gt;Fixed an Issue, where Language Editor returned to Language List on update of any
+        file.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with jQuery not loading early enough.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with email sending not recognizing HTML properly.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with port numbers in email address during installation.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with passing connection information to Sql Module.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where the User Skin object was ignoring the ShowUnreadMessages attribute&lt;/li&gt;
+    &lt;li&gt;Fixed issue where the profile ImageEditControl datatype was only added to Portal
+        0.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with url formatting when no context exists. Adding "http" is fallback
+        position.&lt;/li&gt;
+    &lt;li&gt;Removed "obsolete" state from DotNetNuke.Services.Mail.Mail.Sendmail.&lt;/li&gt;
+    &lt;li&gt;Fixed rare issue where the install wizard could leak useful database connection
+        information under certain conditions.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where messenging module failed to filter for dangerous html/script.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;
+    The following modules and providers have been updated in the 5.4.2 packages. Please
+    see the specific project pages for notes on what bugs or enhancements were corrected
+    with each release.
+&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
 </root>

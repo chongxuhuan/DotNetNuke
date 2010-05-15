@@ -107,7 +107,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.ModuleCaching.File
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.ModuleCaching.MemoryProvider", "Library\Providers\ModuleCachingProviders\Provider.ModuleCaching.MemoryProvider\Provider.ModuleCaching.MemoryProvider.vbproj", "{AF064E35-1BEF-4337-A462-C708F441AD1B}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Taxonomy", "Modules\Taxonomy\DotNetNuke.Modules.Taxonomy.vbproj", "{7B8E5F63-8BDD-454F-AFCE-0C824C7CAE67}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Taxonomy", "Modules\Taxonomy\DotNetNuke.Modules.Taxonomy.VS2008.vbproj", "{7B8E5F63-8BDD-454F-AFCE-0C824C7CAE67}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Web", "DotNetNuke.Web\DotNetNuke.Web.vbproj", "{B1699614-39D4-468A-AB1D-A2FBA97CADDF}"
 EndProject
@@ -115,9 +115,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sitemap Providers", "Sitema
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.BigSitemapProvider", "Library\Providers\SitemapProviders\Provider.BigSitemapProvider\Provider.BigSitemapProvider.vbproj", "{9BFBF161-35EB-4E25-9617-7E0A187C4314}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Messaging", "Modules\Messaging\DotNetNuke.Modules.Messaging.vbproj", "{A95AAB9D-3D55-4BB9-9C95-622DFF47234F}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Messaging", "Modules\Messaging\DotNetNuke.Modules.Messaging.VS2008.vbproj", "{A95AAB9D-3D55-4BB9-9C95-622DFF47234F}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Html", "Modules\HTML\DotNetNuke.Modules.Html.vbproj", "{E1EB5BFB-5C4D-465B-A98A-5E50DFBC037E}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetNuke.Modules.Html", "Modules\HTML\DotNetNuke.Modules.Html.VS2008.vbproj", "{E1EB5BFB-5C4D-465B-A98A-5E50DFBC037E}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.CoreSitemapProvider", "Library\Providers\SitemapProviders\Provider.CoreSitemapProvider\Provider.CoreSitemapProvider.vbproj", "{45467C8A-1AFC-4904-AE0B-45C786192716}"
 EndProject
@@ -171,7 +171,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Html Editor Providers", "Html Editor Providers", "{BAD4A551-B708-4800-9515-EC1082CE43C2}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.TelerikEditorProvider", "Library\Providers\HtmlEditorProviders\TelerikEditorProvider\Provider.TelerikEditorProvider.vbproj", "{A68A25AE-F7B4-41F0-9FCD-346BB2E77CFD}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Provider.TelerikEditorProvider", "Library\Providers\HtmlEditorProviders\TelerikEditorProvider\Provider.TelerikEditorProvider.VS2008.vbproj", "{A68A25AE-F7B4-41F0-9FCD-346BB2E77CFD}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

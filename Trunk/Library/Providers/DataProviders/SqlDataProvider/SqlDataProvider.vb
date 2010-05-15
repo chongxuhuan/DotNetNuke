@@ -1597,9 +1597,9 @@ Namespace DotNetNuke.Data
 		Public Overrides Function GetListEntriesByListName(ByVal ListName As String, ByVal ParentKey As String, ByVal PortalID As Integer) As IDataReader
 			Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetListEntries", ListName, ParentKey, GetNull(PortalID)), IDataReader)
 		End Function
-		Public Overrides Function AddListEntry(ByVal ListName As String, ByVal Value As String, ByVal Text As String, ByVal ParentID As Integer, ByVal Level As Integer, ByVal EnableSortOrder As Boolean, ByVal DefinitionID As Integer, ByVal Description As String, ByVal PortalID As Integer, ByVal CreatedByUserID As Integer) As Integer
-			Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddListEntry", ListName, Value, Text, ParentID, Level, EnableSortOrder, DefinitionID, Description, PortalID, CreatedByUserID), Integer)
-		End Function
+        Public Overrides Function AddListEntry(ByVal ListName As String, ByVal Value As String, ByVal Text As String, ByVal ParentID As Integer, ByVal Level As Integer, ByVal EnableSortOrder As Boolean, ByVal DefinitionID As Integer, ByVal Description As String, ByVal PortalID As Integer, ByVal SystemList As Boolean, ByVal CreatedByUserID As Integer) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddListEntry", ListName, Value, Text, ParentID, Level, EnableSortOrder, DefinitionID, Description, PortalID, SystemList, CreatedByUserID), Integer)
+        End Function
 		Public Overrides Sub UpdateListEntry(ByVal EntryID As Integer, ByVal Value As String, ByVal Text As String, ByVal Description As String, ByVal LastModifiedByUserID As Integer)
 			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateListEntry", EntryID, Value, Text, Description, LastModifiedByUserID)
 		End Sub

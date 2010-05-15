@@ -108,7 +108,7 @@ Namespace DotNetNuke.Common.Lists
             ClearCache(ListEntry.PortalID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(ListEntry, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LISTENTRY_CREATED)
-            Return DataProvider.Instance().AddListEntry(ListEntry.ListName, ListEntry.Value, ListEntry.Text, ListEntry.ParentID, ListEntry.Level, EnableSortOrder, ListEntry.DefinitionID, ListEntry.Description, ListEntry.PortalID, UserController.GetCurrentUserInfo.UserID)
+            Return DataProvider.Instance().AddListEntry(ListEntry.ListName, ListEntry.Value, ListEntry.Text, ListEntry.ParentID, ListEntry.Level, EnableSortOrder, ListEntry.DefinitionID, ListEntry.Description, ListEntry.PortalID, ListEntry.SystemList, UserController.GetCurrentUserInfo.UserID)
         End Function
 
         Public Sub DeleteList(ByVal ListName As String, ByVal ParentKey As String)

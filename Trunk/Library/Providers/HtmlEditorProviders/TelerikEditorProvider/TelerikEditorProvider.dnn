@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.TelerikEditorProvider" type="Provider" version="05.04.00">
+    <package name="DotNetNuke.TelerikEditorProvider" type="Provider" version="05.04.02">
       <friendlyName>Telerik Editor Provider</friendlyName>
       <description>DotNetNuke Html Editor Provider for Telerik Text Editor.</description>
       <dependencies />
@@ -18,7 +18,7 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.HtmlEditor.TelerikEditorProvider.dll</name>
-              <version>05.04.00</version>
+              <version>05.04.02</version>
             </assembly>
           </assemblies>
         </component>

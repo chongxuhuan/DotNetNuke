@@ -398,7 +398,7 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetListEntry(ByVal EntryID As Integer) As IDataReader
         Public MustOverride Function GetListEntry(ByVal ListName As String, ByVal Value As String) As IDataReader
         Public MustOverride Function GetListEntriesByListName(ByVal ListName As String, ByVal ParentKey As String, ByVal PortalID As Integer) As IDataReader
-        Public MustOverride Function AddListEntry(ByVal ListName As String, ByVal Value As String, ByVal Text As String, ByVal ParentID As Integer, ByVal Level As Integer, ByVal EnableSortOrder As Boolean, ByVal DefinitionID As Integer, ByVal Description As String, ByVal PortalID As Integer, ByVal CreatedByUserID As Integer) As Integer
+        Public MustOverride Function AddListEntry(ByVal ListName As String, ByVal Value As String, ByVal Text As String, ByVal ParentID As Integer, ByVal Level As Integer, ByVal EnableSortOrder As Boolean, ByVal DefinitionID As Integer, ByVal Description As String, ByVal PortalID As Integer, ByVal SystemList As Boolean, ByVal CreatedByUserID As Integer) As Integer
         Public MustOverride Sub UpdateListEntry(ByVal EntryID As Integer, ByVal Value As String, ByVal Text As String, ByVal Description As String, ByVal LastModifiedByUserID As Integer)
         Public MustOverride Sub DeleteListEntryByID(ByVal EntryID As Integer, ByVal DeleteChild As Boolean)
         Public MustOverride Sub DeleteList(ByVal ListName As String, ByVal ParentKey As String)

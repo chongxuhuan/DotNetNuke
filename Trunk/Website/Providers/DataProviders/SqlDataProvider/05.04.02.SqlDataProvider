@@ -111,3 +111,92 @@ AS
 			)
 		END
 GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddListEntry]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}AddListEntry
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddListEntry]
+
+	@ListName nvarchar(50), 
+	@Value nvarchar(100), 
+	@Text nvarchar(150),
+	@ParentID int,
+	@Level int, 
+	@EnableSortOrder bit,
+	@DefinitionID int, 
+	@Description nvarchar(500),
+	@PortalID int,
+	@SystemList bit,
+	@CreatedByUserID	int
+
+AS
+	DECLARE @SortOrder int
+
+	IF @EnableSortOrder = 1
+		SET @SortOrder = IsNull((SELECT MAX ([SortOrder]) From {databaseOwner}[{objectQualifier}Lists] Where [ListName] = @ListName), 0) + 1
+	ELSE
+		SET @SortOrder = 0
+
+	-- Check if this entry exists
+	If EXISTS (SELECT [EntryID] From {databaseOwner}[{objectQualifier}Lists] WHERE [ListName] = @ListName And [Value] = @Value And [Text] = @Text And [ParentID] = @ParentID)
+	BEGIN
+		SELECT -1
+		RETURN 
+	END
+
+	INSERT INTO {databaseOwner}[{objectQualifier}Lists] 
+		(
+  		[ListName],
+		[Value],
+		[Text],
+		[Level],
+		[SortOrder],
+		[DefinitionID],
+		[ParentID],
+		[Description],
+		[PortalID],
+		[SystemList],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+		)
+	VALUES (
+		@ListName,
+		@Value,
+		@Text,
+		@Level,
+		@SortOrder,
+		@DefinitionID,
+		@ParentID,
+		@Description,
+		@PortalID,
+		@SystemList,
+  		@CreatedByUserID,
+	  	getdate(),
+	  	@CreatedByUserID,
+	  	getdate()	
+		)
+
+	SELECT SCOPE_IDENTITY()
+
+GO
+
+IF (EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Lists L WHERE L.[ListName] = 'DataType' AND L.[Value] = 'Image' AND L.[Text] = 'DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Lists
+		SET [Description]= NULL, [PortalID] = -1, [SystemList] = 1, [CreatedByUserID]= NULL, 
+			[CreatedOnDate]=NULL,[LastModifiedByUserID]= NULL, [LastModifiedOnDate]=NULL
+		WHERE [ListName] = 'DataType' AND [Value] = 'Image' AND [Text] = 'DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web'
+	END
+ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Lists ([ListName],[Value],[Text],[ParentID],[Level],[SortOrder],[DefinitionID],[Description],[PortalID],
+															[SystemList],[CreatedByUserID],[CreatedOnDate],[LastModifiedByUserID],[LastModifiedOnDate])
+		VALUES
+           ('DataType','Image','DotNetNuke.Web.UI.WebControls.DnnImageEditControl, DotNetNuke.Web',0,0,0,-1,NULL,-1,1,NULL,NULL,NULL,NULL)
+	END
+
+GO
