@@ -316,8 +316,7 @@ Namespace DotNetNuke.UI.Modules
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Function SupportsCaching() As Boolean
-            Return _ModuleConfiguration.CacheTime <> 0 _
-                    AndAlso HttpContext.Current.Request.Browser.Crawler = False
+            Return _ModuleConfiguration.CacheTime > 0
         End Function
 
         ''' -----------------------------------------------------------------------------
