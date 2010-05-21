@@ -43,7 +43,7 @@ Namespace DotNetNuke.Common.Utilities
     Public Class HtmlUtils
 
 
-        Private Shared HtmlDetectionRegex As New Regex("<([A-Z][A-Z0-9]*)(.*\s*)*</([A-Z][A-Z0-9]*)", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+        Private Shared HtmlDetectionRegex As New Regex("^\s*<\w*(.*\s*)*\w?>\s*$", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

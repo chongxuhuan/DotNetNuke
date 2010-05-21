@@ -36,8 +36,9 @@ Namespace DotNetNuke.Services.Mail
             Return HtmlUtils.StripTags(sContent, True)
         End Function
 
+        <Obsolete("Obsoleted in DotNetNuke 5.5. Use DotNetNuke.Common.Utilities.HtmlUtils.IsHtml()")> _
         Public Shared Function IsHTMLMail(ByVal Body As String) As Boolean
-            Return System.Text.RegularExpressions.Regex.IsMatch(Body, "<[^>]*>")
+            Return HtmlUtils.IsHtml(Body)
         End Function
 
         Public Shared Function IsValidEmailAddress(ByVal Email As String, ByVal portalid As Integer) As Boolean
@@ -304,7 +305,7 @@ Namespace DotNetNuke.Services.Mail
                 objMail.AlternateViews.Add(PlainView)
 
                 'if body contains html, add html part
-                If IsHTMLMail(Body) Then
+                If HtmlUtils.IsHtml(Body) Then
                     Dim HTMLView As System.Net.Mail.AlternateView = System.Net.Mail.AlternateView.CreateAlternateViewFromString(Body, Nothing, "text/html")
                     objMail.AlternateViews.Add(HTMLView)
                 End If

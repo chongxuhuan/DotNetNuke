@@ -88,7 +88,7 @@ Namespace DotNetNuke.Services.Mail
             End Get
             Set(ByVal value As String)
                 _strBody = value
-                If Mail.IsHTMLMail(_strBody) Then
+                If HtmlUtils.IsHtml(_strBody) Then
                     _bodyFormat = MailFormat.Html
                 Else
                     _bodyFormat = MailFormat.Text
