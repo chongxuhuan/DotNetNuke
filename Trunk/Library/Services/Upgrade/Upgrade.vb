@@ -538,7 +538,7 @@ Namespace DotNetNuke.Services.Upgrade
             ' log the results
             Try
                 Dim objStream As StreamWriter
-                objStream = File.CreateText(strScriptFile.Replace("." & DefaultProvider, "") & ".log")
+                objStream = File.CreateText(strScriptFile.Replace("." & DefaultProvider, "") & ".log.resources")
                 objStream.WriteLine(strExceptions)
                 objStream.Close()
             Catch
@@ -546,7 +546,7 @@ Namespace DotNetNuke.Services.Upgrade
             End Try
 
             If writeFeedback Then
-                HtmlUtils.WriteScriptSuccessError(HttpContext.Current.Response, (strExceptions = ""), Path.GetFileName(strScriptFile).Replace("." & DefaultProvider, ".log"))
+                HtmlUtils.WriteScriptSuccessError(HttpContext.Current.Response, (strExceptions = ""), Path.GetFileName(strScriptFile).Replace("." & DefaultProvider, ".log.resources"))
             End If
 
             Return strExceptions
@@ -673,7 +673,7 @@ Namespace DotNetNuke.Services.Upgrade
             ' log the results
             Try
                 Dim objStream As StreamWriter
-                objStream = File.CreateText(providerPath + scriptFile & ".log")
+                objStream = File.CreateText(providerPath + scriptFile & ".log.resources")
                 objStream.WriteLine(strExceptions)
                 objStream.Close()
             Catch
@@ -1415,6 +1415,18 @@ Namespace DotNetNuke.Services.Upgrade
 
         End Sub
 
+        Private Shared Sub UpgradeToVersion_543()
+            ' get log file path
+            Dim LogFilePath As String = DotNetNuke.Data.DataProvider.Instance().GetProviderPath()
+            If Directory.Exists(LogFilePath) Then
+                'get log files
+                For Each fileName As String In Directory.GetFiles(LogFilePath, "*.log")
+                    Dim f As New System.IO.FileInfo(fileName)
+                    'copy requires use of move
+                    File.Move(fileName, fileName & ".resources")
+                Next
+            End If
+        End Sub
 #End Region
 
 #Region "Public Methods"
@@ -1961,7 +1973,7 @@ Namespace DotNetNuke.Services.Upgrade
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetLogFile(ByVal strProviderPath As String, ByVal version As System.Version) As String
-            Return strProviderPath + GetStringVersion(version) + ".log"
+            Return strProviderPath + GetStringVersion(version) + ".log.resources"
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -2338,6 +2350,7 @@ Namespace DotNetNuke.Services.Upgrade
 
             'Check if manifest is valid
             If objInstaller.IsValid Then
+                objInstaller.InstallerInfo.RepairInstall = True
                 blnSuccess = objInstaller.Install()
             Else
                 If objInstaller.InstallerInfo.ManifestFile Is Nothing Then
@@ -2730,6 +2743,8 @@ Namespace DotNetNuke.Services.Upgrade
                         UpgradeToVersion_530()
                     Case "5.4.0"
                         UpgradeToVersion_540()
+                    Case "5.4.3"
+                        UpgradeToVersion_543()
                 End Select
 
             Catch ex As Exception

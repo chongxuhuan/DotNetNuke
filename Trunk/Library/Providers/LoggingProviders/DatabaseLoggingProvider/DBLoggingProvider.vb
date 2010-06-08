@@ -154,8 +154,6 @@ Namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                             If objLogTypeConfigInfo.NotificationThreshold = 0 Then
                                 Dim str As String = objLogQueueItem.LogInfo.Serialize()
 
-                                'Mail.Mail.SendMail(objLogTypeConfigInfo.MailFromAddress, objLogTypeConfigInfo.MailToAddress, "", "Event Notification", str, "", "", "", "", "", "")
-
                                 Mail.Mail.SendEmail(objLogTypeConfigInfo.MailFromAddress, objLogTypeConfigInfo.MailToAddress, "Event Notification", str)
 
                             ElseIf objLogTypeConfigInfo.LogTypeKey <> "LOG_NOTIFICATION_FAILURE" Then
@@ -521,7 +519,6 @@ Namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                     CBO.CloseDataReader(dr, True)
                 End Try
                 dr = Nothing
-                'Mail.Mail.SendMail(objLogConfig.MailFromAddress, objLogConfig.MailToAddress, "", "Event Notification", strLog, "", "", "", "", "", "")
                 Mail.Mail.SendEmail(objLogConfig.MailFromAddress, objLogConfig.MailToAddress, "Event Notification", strLog)
                 DataProvider.Instance.UpdateEventLogPendingNotif(Convert.ToInt32(objLogConfig.ID))
             Next

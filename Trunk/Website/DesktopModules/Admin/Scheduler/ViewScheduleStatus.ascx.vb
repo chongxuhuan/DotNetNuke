@@ -94,6 +94,9 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
         Private Sub BindStatus()
             Status = SchedulingProvider.Instance.GetScheduleStatus
             lblStatus.Text = Status.ToString()
+
+            placeCommands.Visible = (SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD)
+
             If Status = ScheduleStatus.STOPPED And SchedulingProvider.SchedulerMode <> SchedulerMode.DISABLED Then
                 cmdStart.Enabled = True
                 cmdStop.Enabled = False

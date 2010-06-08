@@ -170,6 +170,10 @@ Namespace DotNetNuke.Services.Install
                         Response.Write("<br><br>")
                         Response.Write("<h2>Upgrade Status Report</h2>")
                         Response.Flush()
+
+                        'stop scheduler
+                        Scheduling.SchedulingProvider.Instance.Halt("Stopped by Upgrade Process")
+
                         Services.Upgrade.Upgrade.UpgradeDNN(strProviderPath, DotNetNuke.Data.DataProvider.Instance().GetVersion)
 
                         'Install optional resources if present

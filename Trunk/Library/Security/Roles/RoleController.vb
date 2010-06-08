@@ -624,10 +624,6 @@ Namespace DotNetNuke.Security.Roles
                 Case UserRoleActions.delete
                     Custom.Add("")
             End Select
-            'Mail.SendMail(PortalSettings.Email, objUser.Email, "", _
-            '    Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_SUBJECT", objUser), _
-            '    Services.Localization.Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" & UserRoleActionsCaption(Action) & "_BODY", objUser, Services.Localization.Localization.GlobalResourceFile, Custom), _
-            '    "", "", "", "", "", "")
 
             Dim _message As New Message()
             _message.FromUserID = PortalSettings.AdministratorId

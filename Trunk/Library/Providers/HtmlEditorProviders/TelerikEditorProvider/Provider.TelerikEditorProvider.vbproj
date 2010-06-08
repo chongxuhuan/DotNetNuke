@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="Telerik.Web.UI, Version=2009.2.826.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -84,6 +85,7 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\DialogParams.vb" />
     <Compile Include="Components\EditorProvider.vb">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -107,6 +109,9 @@
     <Compile Include="Dialogs\SaveTemplate.aspx.vb">
       <DependentUpon>SaveTemplate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LinkClickUrlHandler.ashx.vb">
+      <DependentUpon>LinkClickUrlHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
@@ -166,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Telerik.Web.UI.SpellCheckHandler.ashx" />
+    <Content Include="LinkClickUrlHandler.ashx" />
     <None Include="TelerikEditorProvider.dnn" />
   </ItemGroup>
   <ItemGroup>
@@ -195,9 +201,48 @@
   <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
   </Target>
   <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <CreateItem Include="$(DNNFileName).dnn">
+      <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
+    </CreateItem>
+    <CreateItem Include="*.txt">
+      <Output TaskParameter="Include" ItemName="PackageTextFiles" />
+    </CreateItem>
+    <CreateItem Include="*.ashx;*.aspx;*.css;">
+      <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
+    </CreateItem>
+    <CreateItem Include="App_LocalResources\*.resx">
+      <Output TaskParameter="Include" ItemName="PackageLocalResourceFiles" />
+    </CreateItem>
+    <CreateItem Include="Dialogs\*.aspx;Dialogs\*.ascx;">
+      <Output TaskParameter="Include" ItemName="PackageDialogFiles" />
+    </CreateItem>
+    <CreateItem Include="Dialogs\App_LocalResources\*.resx">
+      <Output TaskParameter="Include" ItemName="PackageDialogLocalResourceFiles" />
+    </CreateItem>
+    <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
+      <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
+    </CreateItem>
+    <CreateItem Include="images\*.*">
+      <Output TaskParameter="Include" ItemName="MyImages" />
+    </CreateItem>
+    <CreateItem Include="js\*.js">
+      <Output TaskParameter="Include" ItemName="MyJsFiles" />
+    </CreateItem>
+    <CreateItem Include="Config\*.*">
+      <Output TaskParameter="Include" ItemName="MyConfigFiles" />
+    </CreateItem>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="@(PackageSourceFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik" />
+    <Copy SourceFiles="@(PackageLocalResourceFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/App_LocalResources" />
+    <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik" />
+    <Copy SourceFiles="@(PackageTextFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik" />
+    <Copy SourceFiles="@(PackageDialogFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/Dialogs" />
+    <Copy SourceFiles="@(PackageDialogLocalResourceFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/Dialogs/App_LocalResources" />
+    <Copy SourceFiles="@(MyImages)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/images" />
+    <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/js" />
+    <Copy SourceFiles="@(MyConfigFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/config" />
   </Target>
   <ProjectExtensions>
     <VisualStudio>

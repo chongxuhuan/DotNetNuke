@@ -309,7 +309,6 @@ Namespace DotNetNuke.Services.Mail
 
             Dim strSubject As String = String.Format(_strConfSubject, Subject)
             If Not _bolSuppressTR Then strSubject = _objTR.ReplaceEnvironmentTokens(strSubject)
-            ''Mail.SendMail(_sendingUser.Email, _sendingUser.Email, "", "", _priority, strSubject, _bodyFormat, System.Text.Encoding.UTF8, strbody, "", _strSMTPServer, _strSMTPAuthentication, _strSMTPUsername, _strSMTPPassword, _bolSMTPEnableSSL)
 
             Dim _message As New Message()
             _message.FromUserID = _sendingUser.UserID

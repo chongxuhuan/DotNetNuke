@@ -400,26 +400,17 @@ Namespace DotNetNuke.Data
         End Function
 
         Public Overrides Function ExecuteSQL(ByVal SQL As String) As IDataReader
-            Return ExecuteSQL(SQL, DirectCast(Nothing, IDataParameter))
+            Return ExecuteSQL(_connectionString, SQL, DirectCast(Nothing, IDataParameter))
         End Function
 
-        <Obsolete("Temporarily Added in DNN 5.4.2. This will be removed and replaced with named instance support.")> _
-        Public Overrides Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
-            Dim sqlCommandParameters() As SqlParameter = Nothing
-
-            SQL = SQL.Replace("{databaseOwner}", DatabaseOwner)
-            SQL = SQL.Replace("{objectQualifier}", ObjectQualifier)
-
-            Try
-                Return CType(SqlHelper.ExecuteReader(ConnectionString, CommandType.Text, SQL, sqlCommandParameters), IDataReader)
-            Catch
-                ' error in SQL query
-                Return Nothing
-            End Try
+        <Obsolete("This is only a temporary method, it will be removed as soon as intended functionality is complete. Please do not use.")> _
+        Public Overrides Function ExecuteSQLTemp(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
+            Return ExecuteSQL(ConnectionString, SQL, DirectCast(Nothing, IDataParameter))
         End Function
 
-        Public Overrides Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
+        Public Overrides Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
             Dim sqlCommandParameters() As SqlParameter = Nothing
+
             If Not commandParameters Is Nothing Then
                 sqlCommandParameters = New SqlParameter(commandParameters.Length - 1) {}
                 For intIndex As Integer = 0 To commandParameters.Length - 1
@@ -431,12 +422,14 @@ Namespace DotNetNuke.Data
             SQL = SQL.Replace("{objectQualifier}", ObjectQualifier)
 
             Try
-                Return CType(SqlHelper.ExecuteReader(_connectionString, CommandType.Text, SQL, sqlCommandParameters), IDataReader)
+                Return CType(SqlHelper.ExecuteReader(ConnectionString, CommandType.Text, SQL, sqlCommandParameters), IDataReader)
             Catch
                 ' error in SQL query
                 Return Nothing
             End Try
+
         End Function
+  
 
 #End Region
 

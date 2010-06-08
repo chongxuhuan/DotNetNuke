@@ -78,7 +78,7 @@ Namespace DotNetNuke.Services.ModuleCache
             Dim portalInfo As PortalInfo = portalController.GetPortal(portalId)
 
             Dim cacheFolder As String = String.Concat(portalInfo.HomeDirectoryMapPath(), "\Cache\Modules\")
-            If Not Directory.Exists(cacheFolder) AndAlso Path.IsPathRooted(cacheFolder) Then
+            If Not Directory.Exists(cacheFolder) AndAlso Path.IsPathRooted(cacheFolder) AndAlso IsPathInApplication(cacheFolder) Then
                 Directory.CreateDirectory(cacheFolder)
             End If
             Return cacheFolder
@@ -120,6 +120,10 @@ Namespace DotNetNuke.Services.ModuleCache
                 Throw New IOException(String.Format("Deleted {0} files, however, some files are locked.  Could not delete the following files: {1}", i, filesNotDeleted))
             End If
         End Sub
+
+        Private Shared Function IsPathInApplication(ByVal cacheFolder As String) As Boolean
+            Return cacheFolder.Contains(DotNetNuke.Common.ApplicationMapPath)
+        End Function
 
 #End Region
 
@@ -174,7 +178,7 @@ Namespace DotNetNuke.Services.ModuleCache
 
             Dim cacheFolder As String = GetCacheFolder(portalId)
 
-            If Directory.Exists(cacheFolder) Then
+            If Directory.Exists(cacheFolder) And IsPathInApplication(cacheFolder) Then
                 For Each File As String In Directory.GetFiles(cacheFolder, String.Format("*{0}", FileProvider.AttribFileExtension))
                     If IsFileExpired(File) Then
                         Dim fileToDelete As String = File.Replace(FileProvider.AttribFileExtension, FileProvider.DataFileExtension)

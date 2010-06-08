@@ -90,6 +90,7 @@ Namespace DotNetNuke.Security
             listStrings.Add("<select[^>]*>.*?</select[^><]*>")
             listStrings.Add("<iframe[^>]*>.*?</iframe[^><]*>")
             listStrings.Add("<iframe.*?<")
+            listStrings.Add("<iframe.*?")
             listStrings.Add("<ilayer[^>]*>.*?</ilayer[^><]*>")
             listStrings.Add("<form[^>]*>")
             listStrings.Add("</form[^><]*>")

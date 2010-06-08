@@ -695,9 +695,9 @@ Namespace DotNetNuke.Modules.Admin.Host
                 ' get path to provider
                 Dim strProviderPath As String = DataProvider.Instance.GetProviderPath()
 
-                If File.Exists(strProviderPath & cboVersion.SelectedItem.Text & ".log") Then
+                If File.Exists(strProviderPath & cboVersion.SelectedItem.Text & ".log.resources") Then
                     Dim objStreamReader As StreamReader
-                    objStreamReader = File.OpenText(strProviderPath & cboVersion.SelectedItem.Text & ".log")
+                    objStreamReader = File.OpenText(strProviderPath & cboVersion.SelectedItem.Text & ".log.resources")
                     Dim upgradeText As String = objStreamReader.ReadToEnd
                     If upgradeText.Trim = "" Then
                         upgradeText = Localization.GetString("LogEmpty", Me.LocalResourceFile)

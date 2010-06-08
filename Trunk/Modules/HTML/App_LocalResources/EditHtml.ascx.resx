@@ -184,7 +184,7 @@
     <value>Preview Content</value>
   </data>
   <data name="Edit.Text" xml:space="preserve">
-    <value>Rollback Content</value>
+    <value>Rollback Content To This Version</value>
   </data>
   <data name="dshPreview.Text" xml:space="preserve">
     <value>Preview Content</value>

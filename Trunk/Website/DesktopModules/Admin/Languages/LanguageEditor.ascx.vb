@@ -405,7 +405,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Dim folders As String() = Directory.GetDirectories(_path)
             Dim folder As String
             Dim found As Boolean = False
-            Dim objFile As IO.FileInfo
+            Dim objFile As System.IO.FileInfo
             Dim objFolder As DirectoryInfo
             Dim node, leaf As DNNControls.TreeNode
 

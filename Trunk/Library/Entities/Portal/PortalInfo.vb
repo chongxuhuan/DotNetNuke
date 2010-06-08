@@ -35,7 +35,7 @@ Namespace DotNetNuke.Entities.Portals
     ''' </summary>
     ''' <remarks><seealso cref="IHydratable"/>
     ''' <example>This example shows how the <c>PortalInfo</c> class is used to get physical file names
-    '''  <code>
+    '''  <code lang="vbnet">
     ''' Public ReadOnly Property PhysicalPath() As String
     '''        Get
     '''            Dim _PhysicalPath As String
@@ -116,7 +116,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' </summary>
         ''' <remarks>
         ''' <example>This example illustrates the creation of a new <c>PortalInfo</c> object
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' For Each portal As PortalInfo In New PortalController().GetPortals
         '''     Dim portalID As Integer = portal.PortalID
         '''     ...
@@ -137,7 +137,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <returns>Returns the the footer text of the portal</returns>
         ''' <remarks>
         ''' <example>This show the usage of the <c>FooterText</c> property
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' txtFooterText.Text = objPortal.FooterText
         ''' </code>
         ''' </example>
@@ -155,7 +155,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' </summary>
         ''' <value>URL of the logo</value>
         ''' <returns>URL of the Portal logo</returns>
-        ''' <remarks><example><code>
+        ''' <remarks><example><code lang="vbnet">
         '''  urlLogo.Url = objPortal.LogoFile
         '''  urlLogo.FileFilter = glbImageFileTypes
         '''</code></example></remarks>
@@ -187,7 +187,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Name of the portal</value>
         ''' <returns>Name of the portal</returns>
         ''' <remarks><example>This show the usage of the <c>PortalName</c> property
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' Dim objPortalController As New PortalController
         ''' Dim objPortal As PortalInfo = objPortalController.GetPortal(PortalID)
         '''      txtPortalName.Text = objPortal.PortalName
@@ -208,7 +208,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Date of expiration of the portal</value>
         ''' <returns>Date of expiration of the portal</returns>
         ''' <remarks><example>This show the Portal expiration date usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If
@@ -234,7 +234,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Type of registration</value>
         ''' <returns>Type of registration</returns>
         ''' <remarks><example>Registration type
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' optUserRegistration.SelectedIndex = objPortal.UserRegistration
         ''' </code></example></remarks>
         <XmlElement("userregistration")> Public Property UserRegistration() As Integer
@@ -251,7 +251,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Type of banner advertising</value>
         ''' <returns>Type of banner advertising</returns>
         ''' <remarks><example>This show the usage of BannerAdvertising setting
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' optBanners.SelectedIndex = objPortal.BannerAdvertising
         ''' </code></example></remarks>
         <XmlElement("banneradvertising")> Public Property BannerAdvertising() As Integer
@@ -268,7 +268,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>UserId of the user who is the portal admin</value>
         ''' <returns>UserId of the user who is the portal admin</returns>
         ''' <remarks><example>This show the usage of the <c>AdministratorId</c>
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' Dim Arr As ArrayList = objRoleController.GetUserRolesByRoleName(intPortalId, objPortal.AdministratorRoleName)
         ''' Dim i As Integer
         '''       For i = 0 To Arr.Count - 1
@@ -293,7 +293,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Currency of the portal</value>
         ''' <returns>Currency of the portal</returns>
         ''' <remarks><example>This exampels show the usage of the Currentcy property
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' cboCurrency.DataSource = colList
         ''' cboCurrency.DataBind()
         ''' If Null.IsNull(objPortal.Currency) Or cboCurrency.Items.FindByValue(objPortal.Currency) Is Nothing Then
@@ -316,7 +316,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Currency amount hosting fee</value>
         ''' <returns>Currency amount hosting fee</returns>
         ''' <remarks><example>This show the Portal <c>HostFee</c>usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If
@@ -342,7 +342,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Diskspace allowed for the portal</value>
         ''' <returns>Diskspace allowed for the portal</returns>
         ''' <remarks><example>This show the Portal <c>HostSpace</c>usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If
@@ -368,7 +368,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Number of portal pages allowed</value>
         ''' <returns>Number of portal pages allowed</returns>
         ''' <remarks><example>This show the Portal <c>PageQuota</c>usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If
@@ -394,7 +394,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Number of registered users allowed </value>
         ''' <returns>Number of registered users allowed </returns>
         ''' <remarks><example>This show the Portal userQuota usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If
@@ -420,7 +420,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>RoleId of de Administrators Security Role</value>
         ''' <returns>RoleId of de Administrators Security Role</returns>
         ''' <remarks><example>This shows the usage of the AdministratoprRoleId
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' Dim objPortal As PortalInfo = New PortalController().GetPortal(PortalID)
         '''     If RoleID = objPortal.AdministratorRoleId Then
         '''         _RoleType = Roles.RoleType.Administrator
@@ -504,7 +504,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Description of the portal</value>
         ''' <returns>Description of the portal</returns>
         ''' <remarks><example>This show the usage of the <c>Description</c> property
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' Dim objPortalController As New PortalController
         ''' Dim objPortal As PortalInfo = objPortalController.GetPortal(PortalID)
         '''      txtPortalName.Text = objPortal.PortalName
@@ -525,7 +525,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Keywords seperated by ,</value>
         ''' <returns>Keywords for this portal</returns>
         ''' <remarks><example>This show the usage of the <c>KeyWords</c> property
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' Dim objPortalController As New PortalController
         ''' Dim objPortal As PortalInfo = objPortalController.GetPortal(PortalID)
         '''      txtPortalName.Text = objPortal.PortalName
@@ -588,7 +588,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value>Payment Processor password</value>
         ''' <returns></returns>
         ''' <remarks><example>This shows the usage of the payment processing
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If objPortal.PaymentProcessor &lt;&gt; "" Then
         '''     If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
         '''         cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
@@ -618,7 +618,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <returns></returns>
         ''' <remarks> <seealso cref="PaymentProcessor"></seealso>
         ''' <example>This shows the usage of the payment processing
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If objPortal.PaymentProcessor &lt;&gt; "" Then
         '''     If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
         '''         cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
@@ -647,7 +647,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' <value># of days sitelog history</value>
         ''' <returns># of days sitelog history</returns>
         ''' <remarks><example>This show the Portal <c>SiteLogHistory</c>usage
-        ''' <code>
+        ''' <code lang="vbnet">
         ''' If Not Null.IsNull(objPortal.ExpiryDate) Then
         '''     txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
         ''' End If

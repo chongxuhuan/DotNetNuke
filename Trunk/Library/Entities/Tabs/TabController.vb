@@ -313,8 +313,8 @@ Namespace DotNetNuke.Entities.Tabs
                 UpdateTab(objTab)
 
                 'Update the current tabs level and tabpath
-                objTab.Level = objTab.Level - 1
-                UpdateTabOrder(objTab, True)
+                'objTab.Level = objTab.Level - 1
+                'UpdateTabOrder(objTab, True)
 
                 'Update the Descendents of this tab
                 UpdateDescendantLevel(descendantTabs, -1)
@@ -954,7 +954,7 @@ Namespace DotNetNuke.Entities.Tabs
         End Sub
 
         Public Sub UpdateTab(ByVal updatedTab As TabInfo, ByVal CultureCode As String)
-            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, False)
+            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, True)
             Dim updateOrder As Boolean = (originalTab.ParentId <> updatedTab.ParentId)
             Dim levelDelta As Integer = (updatedTab.Level - originalTab.Level)
             Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
@@ -995,8 +995,8 @@ Namespace DotNetNuke.Entities.Tabs
             'Updated Tab Level
             If levelDelta <> 0 Then
                 'Get the descendents
+                'Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
                 Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
-
                 'Update the Descendents of this tab
                 UpdateDescendantLevel(descendantTabs, levelDelta)
             End If

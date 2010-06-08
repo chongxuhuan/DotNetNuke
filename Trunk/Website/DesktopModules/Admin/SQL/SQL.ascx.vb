@@ -100,7 +100,7 @@ Namespace DotNetNuke.Modules.Admin.SQL
                             lblMessage.Text = strError
                         End If
                     Else
-                        Dim dr As IDataReader = DataProvider.Instance().ExecuteSQL(connectionstring, txtQuery.Text)
+                        Dim dr As IDataReader = DataProvider.Instance().ExecuteSQLTemp(connectionstring, txtQuery.Text)
                         If Not dr Is Nothing Then
                             gvResults.DataSource = dr
                             gvResults.DataBind()

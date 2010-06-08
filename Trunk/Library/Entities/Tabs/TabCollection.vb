@@ -20,6 +20,7 @@
 
 Imports System.Collections.Generic
 Imports System.Runtime.Serialization
+Imports System.Linq
 
 Namespace DotNetNuke.Entities.Tabs
 
@@ -127,6 +128,7 @@ Namespace DotNetNuke.Entities.Tabs
                     Exit For
                 End If
             Next
+
             Return descendantTabs
         End Function
 

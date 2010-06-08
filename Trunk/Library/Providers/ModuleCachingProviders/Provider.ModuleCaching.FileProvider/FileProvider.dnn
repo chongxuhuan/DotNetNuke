@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.ModuleCaching.FileProvider" type="Provider" version="05.02.01">
+    <package name="DotNetNuke.ModuleCaching.FileProvider" type="Provider" version="05.04.03">
       <friendlyName>DotNetNuke Module Caching File Provider</friendlyName>
       <description>DotNetNuke Module Caching Provider that uses a File as its persistence medium.</description>
       <dependencies/>
@@ -27,7 +27,7 @@
             <assembly>
               <path>bin\Providers</path>
               <name>DotNetNuke.Provider.ModuleCaching.FileProvider.dll</name>
-              <version>05.02.01</version>
+              <version>05.04.03</version>
             </assembly>
           </assemblies>
         </component>

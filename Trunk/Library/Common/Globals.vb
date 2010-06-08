@@ -298,7 +298,7 @@ Namespace DotNetNuke.Common
             If Not String.IsNullOrEmpty(providerpath) Then
                 providerpath = HttpContext.Current.Server.MapPath(providerpath)
                 If Directory.Exists(providerpath) Then
-                    Return Directory.GetFiles(providerpath, "*.log").Length > 0
+                    Return Directory.GetFiles(providerpath, "*.log.resources").Length > 0
                 End If
             End If
 

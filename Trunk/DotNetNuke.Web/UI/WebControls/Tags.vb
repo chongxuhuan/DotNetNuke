@@ -25,6 +25,8 @@ Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Content.Taxonomy
 Imports System.Web.UI
 Imports DotNetNuke.Security
+Imports System.Text
+
 
 Namespace DotNetNuke.Web.UI.WebControls
 
@@ -257,6 +259,31 @@ Namespace DotNetNuke.Web.UI.WebControls
 
 #Region "Public Methods"
 
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
+
+            If (Not Me.Page.ClientScript.IsClientScriptBlockRegistered(Me.UniqueID)) Then
+                Dim sb As StringBuilder = New StringBuilder
+
+                sb.Append("<script language='javascript' type='text/javascript' >")
+                sb.Append(Environment.NewLine)
+                sb.Append("function disableEnterKey(e)")
+                sb.Append("{")
+                sb.Append("var key;")
+                sb.Append("if(window.event)")
+                sb.Append("key = window.event.keyCode;")
+                sb.Append("else ")
+                sb.Append("key = e.which;")
+                sb.Append("return (key != 13);")
+                sb.Append("}")
+                sb.Append("</script>")
+
+                Me.Page.ClientScript.RegisterClientScriptBlock(Me.GetType, Me.UniqueID, sb.ToString())
+            End If
+
+        End Sub
+
+
         Public Overrides Sub RenderControl(ByVal writer As HtmlTextWriter)
 
             'Render Outer Div
@@ -327,6 +354,7 @@ Namespace DotNetNuke.Web.UI.WebControls
                         writer.Write("&nbsp;&nbsp;")
 
                         writer.AddAttribute(HtmlTextWriterAttribute.Name, Me.UniqueID)
+                        writer.AddAttribute("OnKeyPress", "return disableEnterKey(event)")
                         writer.RenderBeginTag(HtmlTextWriterTag.Input)
                         writer.RenderEndTag()
 

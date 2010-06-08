@@ -1,3 +1,15 @@
+function loadWidgets()
+{
+    if (typeof (DotNetNuke) === "undefined")
+        Type.registerNamespace("DotNetNuke.UI.WebControls");
+
+    if (typeof (DotNetNuke.UI.WebControls.Utility) === "undefined")
+        jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/DotNetNukeAjaxShared.js",
+                    function() { jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/widgets.js"); });
+    else
+        jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/widgets.js");
+}
+
 if (typeof ($dnn) === "undefined") {
     $dnn = new Object();
     $dnn.pageScripts = document.getElementsByTagName("script");
@@ -14,14 +26,6 @@ if (typeof (Sys) === "undefined")
 else 
     loadWidgets();
 
-function loadWidgets()
-{
-    if (typeof (DotNetNuke) === "undefined")
-        Type.registerNamespace("DotNetNuke.UI.WebControls");
-
-    if (typeof (DotNetNuke.UI.WebControls.Utility) === "undefined")
-        jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/DotNetNukeAjaxShared.js",
-                    function() { jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/widgets.js"); });
-    else
-        jQuery.getScript($dnn.baseResourcesUrl + "Shared/scripts/widgets.js");
+if ( Sys && Sys.Application ){   
+	Sys.Application.notifyScriptLoaded();
 }

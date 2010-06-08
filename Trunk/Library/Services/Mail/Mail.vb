@@ -244,14 +244,6 @@ Namespace DotNetNuke.Services.Mail
                 Return ex.Message
             End If
 
-            ''Attempt to route the email through portal messaging
-            If (Attachments.Count = 0 AndAlso HttpContext.Current IsNot Nothing) Then
-                If (RouteToUserMessaging(MailFrom, MailTo, Cc, Bcc, Subject, Body, Attachments)) Then
-                    Return Nothing
-                End If
-            End If
-
-
             ' SMTP server configuration
             If String.IsNullOrEmpty(SMTPServer) AndAlso Not String.IsNullOrEmpty(Host.SMTPServer) Then
                 SMTPServer = Host.SMTPServer
@@ -430,6 +422,62 @@ Namespace DotNetNuke.Services.Mail
 
         End Sub
 
+        Public Shared Function SendEmail(ByVal fromAddress As String, ByVal senderAddress As String, ByVal toAddress As String, ByVal subject As String, ByVal body As String, ByVal Attachments As List(Of Attachment)) As String
+
+            If (String.IsNullOrEmpty(Host.SMTPServer)) Then
+                Return "SMTP Server not configured"
+            End If
+
+            Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
+            emailMessage.Sender = New MailAddress(senderAddress)
+
+            If (HtmlUtils.IsHtml(body)) Then
+                emailMessage.IsBodyHtml = True
+            End If
+
+            For Each myAtt As Attachment In Attachments
+                emailMessage.Attachments.Add(myAtt)
+            Next
+
+            Dim smtpClient As New System.Net.Mail.SmtpClient(Host.SMTPServer)
+
+            Dim smtpHostParts As String() = Host.SMTPServer.Split(":"c)
+            If smtpHostParts.Length > 1 Then
+                smtpClient.Host = smtpHostParts(0)
+                smtpClient.Port = Convert.ToInt32(smtpHostParts(1))
+            End If
+
+
+            Select Case Host.SMTPAuthentication
+                Case "", "0" ' anonymous
+                Case "1" ' basic
+                    If Host.SMTPUsername <> "" And Host.SMTPPassword <> "" Then
+                        smtpClient.UseDefaultCredentials = False
+                        smtpClient.Credentials = New System.Net.NetworkCredential(Host.SMTPUsername, Host.SMTPPassword)
+                    End If
+                Case "2" ' NTLM
+                    smtpClient.UseDefaultCredentials = True
+            End Select
+
+            smtpClient.EnableSsl = Host.EnableSMTPSSL
+
+            ''Retry up to 5 times to send the message
+            For index As Integer = 1 To 5
+                Try
+                    smtpClient.Send(emailMessage)
+                    Return ""
+                Catch ex As Exception
+                    If (index = 5) Then
+                        Throw
+                    End If
+                    Threading.Thread.Sleep(1000)
+                End Try
+            Next
+
+            Return ""
+
+        End Function
+
 
         Friend Shared Function RouteToUserMessaging(ByVal MailFrom As String, ByVal MailTo As String, _
             ByVal Cc As String, ByVal Bcc As String, ByVal Subject As String, _
@@ -460,9 +508,9 @@ Namespace DotNetNuke.Services.Mail
 
             For Each email As String In ToEmails
                 If (Not String.IsNullOrEmpty(email)) Then
-                    Dim toUser As ArrayList = UserController.GetUsersByEmail(PortalSettings.Current.PortalId, email, -1, -1, -1)
-                    If (toUser.Count <> 0) Then
-                        ToUsers.Add(CType(fromUsersList(0), UserInfo))
+                    Dim toUsersList As ArrayList = UserController.GetUsersByEmail(PortalSettings.Current.PortalId, email, -1, -1, -1)
+                    If (toUsersList.Count <> 0) Then
+                        ToUsers.Add(CType(toUsersList(0), UserInfo))
                     Else
                         Return False
                     End If
@@ -482,6 +530,7 @@ Namespace DotNetNuke.Services.Mail
 
             Next
 
+            Return True
         End Function
 
     End Class

@@ -758,6 +758,9 @@ Press "OK" to confirm deletion.</value>
   <data name="LinkManager_LinkText" xml:space="preserve">
     <value>Link Text</value>
   </data>
+  <data name="LinkManager_TrackLink" xml:space="preserve">
+    <value>Track Link</value>
+  </data>
   <data name="LinkManager_LinkTooltip" xml:space="preserve">
     <value>Tooltip</value>
   </data>

@@ -34,6 +34,7 @@
             <asp:Label CssClass="NormalBold" ID="lblFreeThreads" runat="server" />
         </td>
     </tr>
+    <asp:PlaceHolder ID="placeCommands" runat="server">
     <tr>
         <td class="SubHead">
             <asp:Label ID="lblCommand" resourcekey="lblCommand" runat="server">Command:</asp:Label>
@@ -44,6 +45,7 @@
             <asp:LinkButton ID="cmdStop" resourcekey="cmdStop" CssClass="CommandButton" runat="server">Stop</asp:LinkButton>
         </td>
     </tr>
+    </asp:PlaceHolder>
 </table>
 <br>
 <asp:Panel ID="pnlScheduleProcessing" runat="server">

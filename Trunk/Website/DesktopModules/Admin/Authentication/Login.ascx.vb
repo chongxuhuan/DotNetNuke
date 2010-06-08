@@ -907,10 +907,6 @@ Namespace DotNetNuke.Modules.Admin.Authentication
                     ' notify administrator about account lockout ( possible hack attempt )
                     Dim Custom As New ArrayList
                     Custom.Add(e.UserToken)
-                    'Mail.SendMail(PortalSettings.Email, PortalSettings.Email, "", _
-                    '    Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_SUBJECT", Localization.GlobalResourceFile, Custom), _
-                    '    Localization.GetSystemMessage(PortalSettings, "EMAIL_USER_LOCKOUT_BODY", Localization.GlobalResourceFile, Custom), _
-                    '    "", "", "", "", "", "")
 
                     Dim _message As New Message()
                     _message.FromUserID = PortalSettings.AdministratorId

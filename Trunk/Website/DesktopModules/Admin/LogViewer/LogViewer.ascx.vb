@@ -309,8 +309,7 @@ Namespace DotNetNuke.Modules.Admin.LogViewer
                 Dim attachment As New Attachment(filePath, ct)
                 attachments.Add(attachment)
 
-                ReturnMsg = Mail.SendMail(strFromEmailAddress, txtEmailAddress.Text, "", "", strFromEmailAddress, DotNetNuke.Services.Mail.MailPriority.Normal, _
-                    txtSubject.Text, MailFormat.Text, System.Text.Encoding.UTF8, txtMessage.Text, attachments, "", "", "", "", False)
+                ReturnMsg = Mail.SendEmail(strFromEmailAddress, strFromEmailAddress, txtEmailAddress.Text, txtSubject.Text, txtMessage.Text, attachments)
 
                 FileSystemUtils.DeleteFile(filePath)
 

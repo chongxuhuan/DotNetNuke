@@ -532,6 +532,11 @@ Namespace DotNetNuke.Framework
             ' ClientCallback Logic 
             DotNetNuke.UI.Utilities.ClientAPI.HandleClientAPICallbackEvent(Me)
 
+            'add viewstateuserkey to protect against CSRF attacks
+            If User.Identity.IsAuthenticated Then
+                ViewStateUserKey = User.Identity.Name
+            End If
+
         End Sub
 
         ''' <summary>

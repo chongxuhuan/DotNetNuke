@@ -352,7 +352,15 @@ Namespace DotNetNuke.UI.ControlPanel
                     'modules which are displayed on all tabs should not be displayed on the Admin or Super tabs
                     If m.AllTabs = False Or PortalSettings.Current.ActiveTab.IsSuperTab = False Then
                         If m.PaneName = PaneLst.SelectedValue Then
-                            items.Add(m.ModuleOrder.ToString(), m.ModuleTitle)
+
+                            Dim moduleOrder As Integer = m.ModuleOrder
+
+                            While (items.ContainsKey(moduleOrder.ToString()) Or moduleOrder = 0)
+                                moduleOrder += 1
+                            End While
+
+                            items.Add(moduleOrder.ToString(), m.ModuleTitle)
+
                         End If
                     End If
                 End If

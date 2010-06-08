@@ -66,7 +66,8 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -87,7 +88,8 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -177,6 +179,7 @@
     <Compile Include="Common\Requires.vb" />
     <Compile Include="Common\Utilities\CacheItemArgs.vb" />
     <Compile Include="Common\Utilities\CacheItemExpiredCallback.vb" />
+    <Compile Include="Common\Utilities\JsonExtensions.vb" />
     <Compile Include="Entities\Content\Common\Extensions.vb" />
     <Compile Include="Entities\Content\Common\Util.vb" />
     <Compile Include="Entities\Content\ContentController.vb" />
@@ -198,6 +201,7 @@
     <Compile Include="Entities\Content\Taxonomy\VocabularyController.vb" />
     <Compile Include="Entities\Content\Taxonomy\VocabularyType.vb" />
     <Compile Include="Entities\Tabs\TabExistsException.vb" />
+    <Compile Include="Framework\BaseHttpHandler.vb" />
     <Compile Include="Services\Messaging\Data\IMessagingDataService.vb" />
     <Compile Include="Services\Messaging\Data\MessageStatusType.vb" />
     <Compile Include="Services\Messaging\Data\MessagingDataService.vb" />

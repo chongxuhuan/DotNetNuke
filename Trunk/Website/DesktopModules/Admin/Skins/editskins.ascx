@@ -42,7 +42,7 @@
 	                <td align="center"><table id="tblSkins" runat="server" cellspacing="4" cellpadding="4" /></td>
 	            </tr>
 	        </table>
-	        <table border="1" cellspacing="0" cellpadding="2" width="100%"">
+	        <table border="1" cellspacing="0" cellpadding="2" width="100%">
 	            <tr>
 	                <td align="center" bgcolor="CCCCCC" class="Head">
 	                    <asp:Label ID="lblContainerTitle" runat="server" resourcekey="plContainers" />

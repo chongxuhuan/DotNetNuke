@@ -142,6 +142,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 Return _toolsFile
             End Get
             Set(ByVal Value As String)
+                _editor.ToolsFile = Value
                 _toolsFile = Value
             End Set
         End Property
