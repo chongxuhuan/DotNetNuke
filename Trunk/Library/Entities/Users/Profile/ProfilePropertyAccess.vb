@@ -119,7 +119,7 @@ Namespace DotNetNuke.Entities.Users
             Return _
                     VisibilityMode = UserVisibilityMode.AllUsers _
                     OrElse _
-                    (VisibilityMode = UserVisibilityMode.MembersOnly And Not AccessingUser Is Nothing) _
+                    (VisibilityMode = UserVisibilityMode.MembersOnly And Not AccessingUser Is Nothing And Not AccessingUser.UserID = -1) _
                     OrElse _
                     (AccessingUser.IsSuperUser OrElse objUser.UserID = AccessingUser.UserID OrElse AccessingUser.IsInRole(strAdministratorRoleName))
         End Function

@@ -29,8 +29,17 @@
 
     function _PageOnSite_Change(obj) {
         if (obj) {
+            var linkTextTextBox = document.getElementById("LinkText");
             var linkUrlTextBox = document.getElementById("LinkURL");
             var trackLink = document.getElementById("TrackLink");
+            if (linkTextTextBox && linkTextTextBox.value == "") {
+                //strip ... prefix
+                var text = obj.get_text();
+                while (text.substring(0, 3) == "...")
+                    text = text.substring(3, text.length);
+
+                linkTextTextBox.value = text;
+            }
             if (linkUrlTextBox) {
                 if (trackLink.checked == true) {
                     linkUrlTextBox.value = obj.get_value();
@@ -53,7 +62,7 @@
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 url: 'LinkClickUrlHandler.ashx',
-                data: '{"LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
+                data: '{"ModuleID": "' + _moduleId + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
                 dataType: 'json',
                 success: function Success(data) {
                     var linkUrlTextBox = document.getElementById("LinkURL");
@@ -503,7 +512,9 @@
 	    }
 	}
 
-	Telerik.Web.UI.Widgets.LinkManager.registerClass("Telerik.Web.UI.Widgets.LinkManager", Telerik.Web.UI.RadWebControl, Telerik.Web.IParameterConsumer); 
+	Telerik.Web.UI.Widgets.LinkManager.registerClass("Telerik.Web.UI.Widgets.LinkManager", Telerik.Web.UI.RadWebControl, Telerik.Web.IParameterConsumer);
+
+	var _moduleId = parent.dnn.getVar('editorModuleId');
     // -->
 </script>
 

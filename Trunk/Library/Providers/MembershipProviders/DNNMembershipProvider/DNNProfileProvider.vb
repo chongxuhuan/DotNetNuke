@@ -24,6 +24,7 @@ Imports DotNetNuke.ComponentModel
 Imports DotNetNuke.Entities.Profile
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Security.Membership.Data
+Imports System.Web
 
 Namespace DotNetNuke.Security.Profile
 
@@ -172,7 +173,8 @@ Namespace DotNetNuke.Security.Profile
                 If (Not profProperty.PropertyValue Is Nothing) AndAlso (profProperty.IsDirty) Then
                     Dim objSecurity As New PortalSecurity
                     Dim propertyValue As String = objSecurity.InputFilter(profProperty.PropertyValue, PortalSecurity.FilterFlag.NoScripting)
-
+                    'add additional html encoding to profile data
+                    propertyValue = HttpUtility.HtmlEncode(propertyValue)
                     dataProvider.UpdateProfileProperty(Null.NullInteger, user.UserID, profProperty.PropertyDefinitionId, propertyValue, profProperty.Visibility, Now())
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog(user, Entities.Portals.PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", "USERPROFILE_UPDATED")

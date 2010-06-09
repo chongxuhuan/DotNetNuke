@@ -27,11 +27,13 @@ Imports System.Xml
 
 Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Entities.Users
-
+Imports DotNetNuke.UI.Utilities
 Imports System.Reflection
+Imports DotNetNuke.Entities.Modules
 Imports Telerik.Web.UI
 Imports DotNetNuke.Framework.Providers
 Imports System.Collections.Generic
+Imports DotNetNuke.UI
 
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
@@ -213,6 +215,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 End If
 
                 ProcessConfigFile()
+
             Catch ex As Exception
                 _TrackException = New Exception("Could not load RadEditor. " & Environment.NewLine & ex.Message, ex)
                 DotNetNuke.Services.Exceptions.LogException(_TrackException)
@@ -266,6 +269,10 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                     _panel.Controls.Clear()
                     _panel.Controls.Add(New LiteralControl(_TrackException.Message))
                 End If
+                Dim parentModule As PortalModuleBase = ControlUtilities.FindParentControl(Of PortalModuleBase)(HtmlEditorControl)
+                Dim moduleid As Integer = CType(If(parentModule Is Nothing, -1, parentModule.ModuleId), Integer)
+
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorModuleId", moduleid, True)
             Catch ex As Exception
                 Throw ex
             End Try

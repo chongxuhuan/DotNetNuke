@@ -40,6 +40,9 @@
             <file>
               <name>Telerik.Web.UI.SpellCheckHandler.ashx</name>
             </file>
+            <file>
+              <name>LinkClickUrlHandler.ashx</name>
+            </file>
           </files>
         </component>
         <component type="File">

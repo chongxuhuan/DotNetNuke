@@ -21,6 +21,16 @@ Imports System
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
     Public Class DialogParams
 
+        Private _moduleId As Integer
+        Public Property ModuleId() As Integer
+            Get
+                Return _moduleId
+            End Get
+            Set(ByVal value As Integer)
+                _moduleId = value
+            End Set
+        End Property
+
         Private _linkUrl As String
         Public Property LinkUrl() As String
             Get

@@ -214,6 +214,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Private Sub SaveTags()
             Dim tags As String = New PortalSecurity().InputFilter(_Tags, PortalSecurity.FilterFlag.NoMarkup Or PortalSecurity.FilterFlag.NoScripting)
+            tags = System.Web.HttpContext.Current.Server.HtmlEncode(tags)
             If Not String.IsNullOrEmpty(tags) Then
                 For Each tag As String In tags.Split(","c)
                     If Not String.IsNullOrEmpty(tag) Then

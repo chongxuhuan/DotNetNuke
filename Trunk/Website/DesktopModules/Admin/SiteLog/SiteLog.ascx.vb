@@ -254,6 +254,22 @@ Namespace DotNetNuke.Modules.Admin.SiteLog
                 ProcessModuleLoadException(Me, exc)
             End Try
         End Sub
+        ''' <summary>
+        ''' ensure sitelog grid data is htmlencoded
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks></remarks>
+        Protected Sub grdLog_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdLog.ItemDataBound
+            Dim item As DataGridItem = DirectCast(e.Item, DataGridItem)
+            Dim itemType As ListItemType = item.ItemType
+            If ((itemType = ListItemType.AlternatingItem) OrElse (itemType = ListItemType.Item)) Then
+                Dim cells As TableCellCollection = DirectCast(item.Cells, TableCellCollection)
+                For Each cell As TableCell In cells
+                    cell.Text = HttpUtility.HtmlEncode(cell.Text.ToString())
+                Next
+            End If
+        End Sub
 
 #End Region
 
