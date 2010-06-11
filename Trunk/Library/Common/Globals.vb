@@ -2364,6 +2364,10 @@ Namespace DotNetNuke.Common
 
         Public Function LinkClick(ByVal Link As String, ByVal TabID As Integer, ByVal ModuleID As Integer, ByVal TrackClicks As Boolean, ByVal ForceDownload As Boolean) As String
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+            Return LinkClick(Link, TabID, ModuleID, TrackClicks, ForceDownload, _portalSettings.PortalId, _portalSettings.EnableUrlLanguage, _portalSettings.GUID.ToString)
+        End Function
+
+        Public Function LinkClick(ByVal Link As String, ByVal TabID As Integer, ByVal ModuleID As Integer, ByVal TrackClicks As Boolean, ByVal ForceDownload As Boolean, ByVal PortalId As Integer, ByVal EnableUrlLanguage As Boolean, ByVal portalGuid As String) As String
             Dim strLink As String = ""
             Dim UrlType As TabType = GetURLType(Link)
 
@@ -2372,7 +2376,7 @@ Namespace DotNetNuke.Common
             ElseIf TrackClicks = True OrElse ForceDownload = True OrElse UrlType = TabType.File Then
                 ' format LinkClick wrapper
                 If Link.ToLowerInvariant.StartsWith("fileid=") Then
-                    strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link))
+                    strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link), portalGuid)
                 End If
                 If strLink = "" Then
                     strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?link=" & HttpUtility.UrlEncode(Link)
@@ -2389,7 +2393,7 @@ Namespace DotNetNuke.Common
                 End If
 
                 'only add language to url if more than one locale is enabled, and if admin did not turn it off
-                If Localization.GetLocales(_portalSettings.PortalId).Count > 1 AndAlso _portalSettings.EnableUrlLanguage Then
+                If Localization.GetLocales(PortalId).Count > 1 AndAlso EnableUrlLanguage Then
                     strLink += "&language=" & Thread.CurrentThread.CurrentCulture.Name
                 End If
 

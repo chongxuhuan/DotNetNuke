@@ -94,7 +94,7 @@ Namespace DotNetNuke.Entities.Users
                     Case "richtext"
                         result = PropertyAccess.FormatString(HttpUtility.HtmlDecode(prop.PropertyValue), strFormat)
                     Case Else
-                        result = PropertyAccess.FormatString(prop.PropertyValue, strFormat)
+                        result = HttpUtility.HtmlEncode(PropertyAccess.FormatString(prop.PropertyValue, strFormat))
                 End Select
             End If
             Return result

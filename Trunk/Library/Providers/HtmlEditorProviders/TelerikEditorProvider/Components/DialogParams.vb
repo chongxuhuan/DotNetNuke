@@ -21,6 +21,26 @@ Imports System
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
     Public Class DialogParams
 
+        Private _portalId As Integer
+        Public Property PortalId() As Integer
+            Get
+                Return _portalId
+            End Get
+            Set(ByVal value As Integer)
+                _portalId = value
+            End Set
+        End Property
+
+        Private _tabId As Integer
+        Public Property TabId() As Integer
+            Get
+                Return _tabId
+            End Get
+            Set(ByVal value As Integer)
+                _tabId = value
+            End Set
+        End Property
+
         Private _moduleId As Integer
         Public Property ModuleId() As Integer
             Get
@@ -28,6 +48,26 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             End Get
             Set(ByVal value As Integer)
                 _moduleId = value
+            End Set
+        End Property
+
+        Private _homeDirectory As String
+        Public Property HomeDirectory() As String
+            Get
+                Return _homeDirectory
+            End Get
+            Set(ByVal value As String)
+                _homeDirectory = value
+            End Set
+        End Property
+
+        Private _portalGuid As String
+        Public Property PortalGuid() As String
+            Get
+                Return _portalGuid
+            End Get
+            Set(ByVal value As String)
+                _portalGuid = value
             End Set
         End Property
 
@@ -68,6 +108,16 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             End Get
             Set(ByVal value As Boolean)
                 _trackUser = value
+            End Set
+        End Property
+
+        Private _enableUrlLanguage As Boolean
+        Public Property EnableUrlLanguage() As Boolean
+            Get
+                Return _enableUrlLanguage
+            End Get
+            Set(ByVal value As Boolean)
+                _enableUrlLanguage = value
             End Set
         End Property
 

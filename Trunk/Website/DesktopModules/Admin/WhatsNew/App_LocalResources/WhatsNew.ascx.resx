@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1096,6 +1096,77 @@ In addition, this supports a fallback strategy where if no record exists for a l
     Updated Modules/Providers&lt;/h3&gt;
 &lt;p&gt;
     The following modules and providers have been updated in the 5.4.2 packages. Please
+    see the specific project pages for notes on what bugs or enhancements were corrected
+    with each release.
+&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.04.03" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;
+    Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Fixed issue where page level and TabPath were not properly updated for descendents&lt;/li&gt;
+    &lt;li&gt;Implemented LinkClick functionality in Telerik editor.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with displaying a module on all pages.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with page management not working correctly.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where messaging was using incorrect logic to notify users.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Event Log Email Notifications.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with PurgeExpiredItems when the portal's home folder may not have been
+        mapped correctly.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where bulk updates did not properly repair existing modules.&lt;/li&gt;
+    &lt;li&gt;Fixed issue when hitting Enter while in the Tag edit text box.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with sending Event Viewer exception messages when using Secure SMTP.&lt;/li&gt;
+    &lt;li&gt;Fixed a bunch of minor HTML formatting issues.&lt;/li&gt;
+    &lt;li&gt;Fixxed issue with module caching being ignored for non-browser user agents.&lt;/li&gt;
+    &lt;li&gt;Improved performance by only loading HTML Module menu when user is allowed to see
+        it.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where the DNNCountryEditControl does not return a value in the PropertyEditor&lt;/li&gt;
+    &lt;li&gt;Fixed issue with using external URL Rewriters causing error in initWidgets.js&lt;/li&gt;
+    &lt;li&gt;Fixed the issue with the ToolsFile property of the Telerik Editor to set the appropriate
+        property on the underlying RadEditor.&lt;/li&gt;
+    &lt;li&gt;protection was added to ensure that a hacker who had a valid login to a site could
+        not use viewstate details to perform a cross-site request forgery to public functions.&lt;/li&gt;&lt;li&gt;
+            alter log files extension so their existance or contents cannot be useful to potential
+            hackers&lt;/li&gt;
+    &lt;li&gt;an additional filter was added to the existing core blacklist filter to catch an
+        invalid tag that could lead to a cross-site scripting issue&lt;/li&gt;
+    &lt;li&gt;at present profile properties automatically strip dangerous XSS characters from
+        data. In addition they support regular expressions to allow sites to configure the
+        allowable characters. We've added an additonal htmlencoding to ensure dangerous
+        html cannot be passed&lt;/li&gt;
+    &lt;li&gt;due to a logical error in the profile property provider, it's possible for member
+        only profile properties to be displayed to non-members. Code was added to protect
+        against misconfiguration revealing sensitive data.&lt;/li&gt;
+    &lt;li&gt;added additional encoding to sitelog to follow security best practices.&lt;/li&gt;
+    &lt;li&gt;Improved security by HTML Encoding taxonomy tags.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno37/tabid/1568/Default.aspx"&gt;
+        Logfiles contents after exception may lead to information leakage&lt;/a&gt; &lt;/li&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno38/tabid/1569/Default.aspx"&gt;
+        Cross-site request forgery possible against other users of a site &lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno39/tabid/1570/Default.aspx"&gt;
+        Update inputfilter for invalid tag that could allow XSS attack &lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno40/tabid/1571/Default.aspx"&gt;
+        Mail function can result in unauthorized email access&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno41/tabid/1572/Default.aspx"&gt;
+        Fix issue where member only profile properties could be exposed publically under
+        certain conditions&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno42/tabid/1573/Default.aspx"&gt;
+        Profile properties not htmlencoding data&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;
+    The following modules and providers have been updated in the 5.2.0 packages. Please
     see the specific project pages for notes on what bugs or enhancements were corrected
     with each release.
 &lt;/p&gt;

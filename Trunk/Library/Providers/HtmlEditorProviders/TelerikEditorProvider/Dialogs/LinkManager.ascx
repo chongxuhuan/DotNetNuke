@@ -62,7 +62,7 @@
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 url: 'LinkClickUrlHandler.ashx',
-                data: '{"ModuleID": "' + _moduleId + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
+                data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
                 dataType: 'json',
                 success: function Success(data) {
                     var linkUrlTextBox = document.getElementById("LinkURL");
@@ -182,7 +182,7 @@
 	            href = currentHref;
 	        }
 	        var pos = href.toLowerCase().indexOf("linkclick.aspx")
-	        if (pos >= 0) {
+	        if (pos >= 0 && this._trackLink != null) {
 	            this._trackLink.checked = true;
 	        }
 	        this._linkUrl.value = href;
@@ -515,7 +515,12 @@
 	Telerik.Web.UI.Widgets.LinkManager.registerClass("Telerik.Web.UI.Widgets.LinkManager", Telerik.Web.UI.RadWebControl, Telerik.Web.IParameterConsumer);
 
 	var _moduleId = parent.dnn.getVar('editorModuleId');
-    // -->
+	var _tabId = parent.dnn.getVar('editorTabId');
+	var _portalId = parent.dnn.getVar('editorPortalId');
+	var _homeDirectory = parent.dnn.getVar('editorHomeDirectory');
+	var _portalGuid = parent.dnn.getVar('editorPortalGuid');
+	var _enableUrlLanguage = parent.dnn.getVar('editorEnableUrlLanguage');
+	// -->
 </script>
 
 
@@ -569,13 +574,13 @@
 								</td>
 							</tr>
                             <tr>
-                            	<td class="reLabelCell">
-								    <label for="TrackLink" class="reDialogLabel">
+                            	<td class="reLabelCell">&nbsp;
+<%--								    <label for="TrackLink" class="reDialogLabel">
 									    <span>
 										    <script type="text/javascript">document.write(localization["TrackLink"]);</script>
 									    </span>
 								    </label>
-							    </td>
+--%>							    </td>
                                 <td>
                                     <asp:CheckBox ID="TrackLink" runat="server" Text="Track Clicks" />
                                     <asp:CheckBox ID="TrackUser" runat="server" Text="Track User" />

@@ -271,8 +271,14 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 End If
                 Dim parentModule As PortalModuleBase = ControlUtilities.FindParentControl(Of PortalModuleBase)(HtmlEditorControl)
                 Dim moduleid As Integer = CType(If(parentModule Is Nothing, -1, parentModule.ModuleId), Integer)
-
+                Dim portalId As Integer = CType(If(parentModule Is Nothing, -1, parentModule.PortalId), Integer)
+                Dim tabId As Integer = CType(If(parentModule Is Nothing, -1, parentModule.TabId), Integer)
                 ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorModuleId", moduleid, True)
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorTabId", tabId, True)
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorPortalId", portalId, True)
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorHomeDirectory", PortalSettings.HomeDirectory, True)
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorPortalGuid", PortalSettings.GUID.ToString, True)
+                ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorEnableUrlLanguage", PortalSettings.EnableUrlLanguage, True)
             Catch ex As Exception
                 Throw ex
             End Try

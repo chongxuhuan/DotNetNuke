@@ -23,42 +23,44 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             Dim params As DialogParams = Content.FromJson(Of DialogParams)()
             Dim link As String = params.LinkUrl
             params.LinkClickUrl = link
-            Dim portal As PortalSettings = PortalController.GetCurrentPortalSettings
+            Dim pac As New PortalAliasController
+            Dim aliasList As ArrayList = pac.GetPortalAliasArrayByPortalID(params.PortalId)
             If (params IsNot Nothing) Then
                 If params.Track Then
                     If Not params.LinkUrl.ToLower.Contains("linkclick.aspx") Then
-                        If params.LinkUrl.Contains(portal.HomeDirectory) Then
-                            'File linking
+                        If params.LinkUrl.Contains(params.HomeDirectory) Then
                             Dim fc As New DotNetNuke.Services.FileSystem.FileController
-                            Dim filePath As String = params.LinkUrl.Replace(portal.HomeDirectory, "")
-                            Dim linkedFile As FileInfo = fc.GetFile(filePath, PortalController.GetCurrentPortalSettings().PortalId)
-                            link = String.Format("fileID={0}", linkedFile.FileId)
+                            Dim linkedFileId As String = fc.ConvertFilePathToFileId(params.LinkUrl.Replace(params.HomeDirectory, ""), params.PortalId)
+                            link = String.Format("fileID={0}", linkedFileId)
                         Else
-                            Dim tabPath As String = params.LinkUrl.Replace("http://", "").Replace(portal.PortalAlias.HTTPAlias, "").Replace("/", "//").Replace(".aspx", "")
-                            link = TabController.GetTabByTabPath(portal.PortalId, tabPath)
+                            For Each portalAlias As PortalAliasInfo In aliasList
+                                params.LinkUrl = params.LinkUrl.Replace(portalAlias.HTTPAlias, "")
+                            Next
+                            Dim tabPath As String = params.LinkUrl.Replace("http://", "").Replace("/", "//").Replace(".aspx", "")
+                            link = TabController.GetTabByTabPath(params.PortalId, tabPath)
                             If link = Null.NullInteger Then
                                 link = params.LinkUrl
                             End If
                         End If
-                        params.LinkClickUrl = DotNetNuke.Common.Globals.LinkClick(link, PortalController.GetCurrentPortalSettings.ActiveTab.TabID, params.ModuleId, True)
+                        params.LinkClickUrl = DotNetNuke.Common.Globals.LinkClick(link, params.TabId, params.ModuleId, True, False, params.PortalId, params.EnableUrlLanguage, params.PortalGuid)
                     End If
                     Dim objUrls As New UrlController
-                    objUrls.UpdateUrl(portal.PortalId, params.LinkClickUrl, DotNetNuke.Common.Globals.GetURLType(link), params.TrackUser, True, params.ModuleId, False)
+                    objUrls.UpdateUrl(params.PortalId, params.LinkClickUrl, DotNetNuke.Common.Globals.GetURLType(link), params.TrackUser, True, params.ModuleId, False)
                 Else
                     If params.LinkUrl.Contains("fileticket") Then
                         Dim queryString = params.LinkUrl.Split("=")
                         Dim encryptedFileId = queryString(1).Split("&")(0)
-                        Dim fileID As String = UrlUtils.DecryptParameter(encryptedFileId)
+                        Dim fileID As String = UrlUtils.DecryptParameter(encryptedFileId, params.PortalGuid)
                         Dim fc As New FileController
-                        Dim savedFile As FileInfo = fc.GetFileById(fileID, portal.PortalId)
-                        params.LinkClickUrl = String.Format("{0}{1}/{2}", portal.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/")
+                        Dim savedFile As FileInfo = fc.GetFileById(fileID, params.PortalId)
+                        params.LinkClickUrl = String.Format("{0}{1}/{2}", params.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/")
                     Else
                         Try
                             link = params.LinkUrl.Split(Convert.ToChar("?"))(1).Split(Convert.ToChar("&"))(0).Split(Convert.ToChar("="))(1)
                             Dim tabId As Integer
                             If Integer.TryParse(link, tabId) Then
                                 Dim tc As New TabController
-                                params.LinkClickUrl = tc.GetTab(tabId, portal.PortalId, True).FullUrl
+                                params.LinkClickUrl = tc.GetTab(tabId, params.PortalId, True).FullUrl
                             Else
                                 params.LinkClickUrl = HttpContext.Current.Server.UrlDecode(link)
                             End If
