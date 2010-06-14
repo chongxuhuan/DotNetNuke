@@ -26,6 +26,7 @@ Imports DotNetNuke
 Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Common.Utilities
+Imports System.Threading
 
 Namespace DotNetNuke.Services.FileSystem
 
@@ -47,6 +48,7 @@ Namespace DotNetNuke.Services.FileSystem
         ''' 	[cpaterra]	4/19/2006	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        ''' 
         Public Sub ProcessRequest(ByVal context As System.Web.HttpContext) Implements System.Web.IHttpHandler.ProcessRequest
 
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
@@ -151,8 +153,11 @@ Namespace DotNetNuke.Services.FileSystem
                             End If
                         Case Else
                             ' redirect to URL
+
                             context.Response.Redirect(URL, True)
                     End Select
+                Catch ex As ThreadAbortException
+
                 Catch ex As Exception
                     Throw New HttpException(404, "Not Found")
                 End Try

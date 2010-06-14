@@ -45,7 +45,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                         params.LinkClickUrl = DotNetNuke.Common.Globals.LinkClick(link, params.TabId, params.ModuleId, True, False, params.PortalId, params.EnableUrlLanguage, params.PortalGuid)
                     End If
                     Dim objUrls As New UrlController
-                    objUrls.UpdateUrl(params.PortalId, params.LinkClickUrl, DotNetNuke.Common.Globals.GetURLType(link), params.TrackUser, True, params.ModuleId, False)
+                    objUrls.UpdateUrl(params.PortalId, link, DotNetNuke.Common.Globals.GetURLType(link), params.TrackUser, True, params.ModuleId, False)
                 Else
                     If params.LinkUrl.Contains("fileticket") Then
                         Dim queryString = params.LinkUrl.Split("=")
