@@ -62,7 +62,8 @@
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 url: 'LinkClickUrlHandler.ashx',
-                data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
+                data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + false + '", "LinkClickUrl": ""}',
+                //data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
                 dataType: 'json',
                 success: function Success(data) {
                     var linkUrlTextBox = document.getElementById("LinkURL");
@@ -583,7 +584,7 @@
 --%>							    </td>
                                 <td>
                                     <asp:CheckBox ID="TrackLink" runat="server" Text="Track Clicks" />
-                                    <asp:CheckBox ID="TrackUser" runat="server" Text="Track User" />
+                                    <%--<asp:CheckBox ID="TrackUser" runat="server" Text="Track User" />--%>
                                 </td>
                             </tr>
 						</asp:PlaceHolder>

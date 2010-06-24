@@ -66,7 +66,8 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -87,7 +88,8 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -96,6 +98,7 @@
     <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

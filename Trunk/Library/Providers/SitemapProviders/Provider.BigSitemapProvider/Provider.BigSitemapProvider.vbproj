@@ -44,7 +44,8 @@
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\..\..\..\Website\bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Sitemap.BigSitemapProvider.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -55,7 +56,8 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>DotNetNuke.Sitemap.BigSitemapProvider.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -91,6 +93,7 @@
     <ProjectReference Include="..\..\..\..\Library\DotNetNuke.Library.vbproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

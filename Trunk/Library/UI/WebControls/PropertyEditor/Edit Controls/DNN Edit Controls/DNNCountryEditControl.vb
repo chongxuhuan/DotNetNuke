@@ -57,7 +57,7 @@ Namespace DotNetNuke.UI.WebControls
             ListName = "Country"
             ParentKey = ""
             TextField = ListBoundField.Text
-            ValueField = ListBoundField.Value
+            ValueField = ListBoundField.Text
         End Sub
 
 #End Region

@@ -58,11 +58,10 @@ Namespace DotNetNuke.Data
         Public MustOverride Function ExecuteScalar(Of T)(ByVal ProcedureName As String, ByVal ParamArray commandParameters() As Object) As T
         Public MustOverride Function ExecuteDataSet(ByVal ProcedureName As String, ByVal ParamArray commandParameters() As Object) As DataSet
         Public MustOverride Function ExecuteSQL(ByVal SQL As String) As IDataReader
+        Public MustOverride Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
 
+        'temp
         Public MustOverride Function ExecuteSQLTemp(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
-
-        Public MustOverride Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
-
 
         ' general
         Public MustOverride Function GetConnectionStringBuilder() As DbConnectionStringBuilder

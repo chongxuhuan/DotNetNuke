@@ -75,6 +75,7 @@
     <Reference Include="WebFormsMvp, Version=0.9.7.2, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -150,10 +151,12 @@
     <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.vbproj">
       <Project>{B1699614-39D4-468A-AB1D-A2FBA97CADDF}</Project>
       <Name>DotNetNuke.Web</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.vbproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
