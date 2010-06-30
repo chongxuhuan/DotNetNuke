@@ -1313,7 +1313,8 @@ Namespace DotNetNuke.Services.Upgrade
                     ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
 
                     'Rename old Default Page template
-                    File.Move(String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath), String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
+                    Dim DefaultPageTemplatePath As String = String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath)
+                    If File.Exists(DefaultPageTemplatePath) Then File.Move(DefaultPageTemplatePath, String.Format("{0}Templates\Default_old.page.template", objPortal.HomeDirectoryMapPath))
 
                     'Update Default profile template in every portal
                     objPortals.CopyPageTemplate("Default.page.template", objPortal.HomeDirectoryMapPath)

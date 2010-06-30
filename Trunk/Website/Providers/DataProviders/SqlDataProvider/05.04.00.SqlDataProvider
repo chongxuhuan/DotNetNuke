@@ -549,6 +549,8 @@ GO
 
 IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals') AND OBJECTPROPERTY(id, N'IsForeignKey') = 1)
 	BEGIN
+		/* Delete unused entries in PortalLocalization */
+		DELETE FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE portalID not In (SELECT PortalID from {databaseOwner}{objectQualifier}Portals)
 		/* add key and cascade delete rule */
 		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization 
 			ADD CONSTRAINT FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals 
