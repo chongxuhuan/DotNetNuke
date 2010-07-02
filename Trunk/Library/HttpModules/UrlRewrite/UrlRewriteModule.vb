@@ -165,7 +165,7 @@ Namespace DotNetNuke.HttpModules
 
                 ' Try to rewrite by TabPath
                 Dim domain As String = ""
-                Dim url As String = app.Request.Url.Host & app.Request.Url.LocalPath
+                Dim url As String = app.Request.Url.GetComponents(CType(UriComponents.Host + UriComponents.Port + UriComponents.Path, UriComponents), UriFormat.Unescaped) 'app.Request.Url.Host & app.Request.Url.LocalPath
 
                 Dim splitUrl() As String = url.Split(Convert.ToChar("/"))
 
