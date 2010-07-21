@@ -30,17 +30,17 @@ Imports DotNetNuke.UI.WebControls
 
 Namespace DotNetNuke.Modules.Admin.Users
 
-	''' -----------------------------------------------------------------------------
-	''' <summary>
+    ''' -----------------------------------------------------------------------------
+    ''' <summary>
     ''' The EditProfileDefinition PortalModuleBase is used to manage a Profile Property
     ''' for a portal
-	''' </summary>
+    ''' </summary>
     ''' <remarks>
-	''' </remarks>
-	''' <history>
+    ''' </remarks>
+    ''' <history>
     ''' 	[cnurse]	02/22/2006  Created
     ''' </history>
-	''' -----------------------------------------------------------------------------
+    ''' -----------------------------------------------------------------------------
     Partial Class EditProfileDefinition
         Inherits Entities.Modules.PortalModuleBase
 
@@ -180,18 +180,16 @@ Namespace DotNetNuke.Modules.Admin.Users
         End Sub
 
         Private Function GetResourceFile(ByVal type As String, ByVal language As String) As String
-            Dim resourcefilename As String = ResourceFile + ".resx"
+            Dim resourcefilename As String = ResourceFile
             If language <> Localization.SystemLocale Then
-                resourcefilename = resourcefilename.Substring(0, resourcefilename.Length - 5) + "." + language + ".resx"
+                resourcefilename = resourcefilename + "." + language
             End If
-
             If type = "Portal" Then
-                resourcefilename = resourcefilename.Substring(0, resourcefilename.Length - 5) + "." + "Portal-" + PortalId.ToString + ".resx"
+                resourcefilename = resourcefilename + "." + "Portal-" + PortalId.ToString()
             ElseIf type = "Host" Then
-                resourcefilename = resourcefilename.Substring(0, resourcefilename.Length - 5) + "." + "Host.resx"
+                resourcefilename = resourcefilename + "." + "Host"
             End If
-
-            Return HttpContext.Current.Server.MapPath(resourcefilename)
+            Return HttpContext.Current.Server.MapPath(resourcefilename + ".resx")
 
         End Function
 

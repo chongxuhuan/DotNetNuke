@@ -17,6 +17,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Portals
@@ -67,7 +68,9 @@ Namespace DotNetNuke.Services.Tokens
         Private ReadOnly Property HostSettings() As Dictionary(Of String, String)
             Get
                 If _Hostsettings Is Nothing Then
-                    _Hostsettings = Host.GetSecureHostSettingsDictionary()
+                    _Hostsettings = HostController.Instance.GetSettings(). _
+                        Where(Function(c) Not c.Value.IsSecure). _
+                        ToDictionary(Function(c) c.Key, Function(c) c.Value.Value)
                 End If
                 Return _Hostsettings
             End Get
@@ -233,7 +236,7 @@ Namespace DotNetNuke.Services.Tokens
                     End If
                 End If
                 If String.IsNullOrEmpty(Language) Then
-                    Me.Language = New Localization.Localization().CurrentCulture
+                    Me.Language = New Localization.Localization().CurrentUICulture
                 Else
                     Me.Language = Language
                 End If
@@ -343,7 +346,7 @@ Namespace DotNetNuke.Services.Tokens
         ''' /08/10/2007 sCullmann created
         ''' </history>
         ''' <remarks >
-        ''' security is not the purpose of the initialization, this is in the resonsibilty of each property access class
+        ''' security is not the purpose of the initialization, this is in the responsibility of each property access class
         ''' </remarks>
         Private Sub InitializePropertySources()
 
@@ -362,7 +365,7 @@ Namespace DotNetNuke.Services.Tokens
                 If PortalSettings IsNot Nothing Then
                     PropertySource("portal") = PortalSettings
                     PropertySource("tab") = PortalSettings.ActiveTab
-           
+
                 End If
                 PropertySource("host") = New HostPropertyAccess()
                 If Not (ModuleInfo Is Nothing) Then

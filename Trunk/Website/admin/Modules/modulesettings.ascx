@@ -7,6 +7,7 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
+<%@ Register TagPrefix="dnn" TagName="ModuleLocalization" Src="~/Admin/Modules/ModuleLocalization.ascx" %>
 <table class="Settings" cellspacing="2" cellpadding="2" style="width:760px" summary="Module Settings Design Table" border="0">
 	<tr>
 		<td style="width:760px" valign="top">
@@ -20,6 +21,14 @@
 					<td valign="top" style="width:675px">
 						<dnn:sectionhead id="dshDetails" cssclass="Head" runat="server" text="Basic Settings" section="tblDetails" resourcekey="GeneralDetails" />
 						<table id="tblDetails" cellspacing="2" cellpadding="2" summary="Appearance Design Table" border="0" runat="server">
+                            <tr id="cultureRow" runat="server">
+                                <td class="SubHead" style="width:150px;">
+                                    <dnn:Label ID="cultureLabel" runat="server" ControlName="cultureName"></dnn:Label>
+                                </td>
+                                <td style="width:525px;">
+                                    <dnn:DnnLanguageLabel ID="cultureLanguageLabel" runat="server"  />
+                                </td>
+                            </tr>
 							<tr>
 								<td class="SubHead" style="width:150px"><dnn:label id="plFriendlyName" text="Module:" runat="server" controlname="lblFriendlyName"></dnn:label></td>
 								<td><asp:TextBox ID="txtFriendlyName" runat="server" CssClass="NormalTextBox" Width="525" Enabled="False"></asp:TextBox></td>
@@ -109,7 +118,7 @@
 				</tr>
 			</table>
 			<br/>
-			<dnn:sectionhead id="dshPage" cssclass="Head" runat="server" text="Page Settings" section="tblPage" resourcekey="PageSettings" isexpanded="False" includerule="True" />
+            <dnn:sectionhead id="dshPage" cssclass="Head" runat="server" text="Page Settings" section="tblPage" resourcekey="PageSettings" isexpanded="False" includerule="True" />
 			<table id="tblPage" cellspacing="0" cellpadding="2" style="width:725px" summary="Advanced Settings Design Table" border="0" runat="server">
 				<tr>
 					<td colspan="2"><asp:label id="lblPageSettingsHelp" cssclass="Normal" runat="server" resourcekey="PageSettingsHelp" enableviewstate="False"/></td>

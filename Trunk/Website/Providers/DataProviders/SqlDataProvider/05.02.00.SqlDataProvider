@@ -1399,7 +1399,7 @@ BEGIN
 END
 
 insert into {databaseOwner}{objectQualifier}PortalLocalization (PortalID,CultureCode,PortalName,Description,KeyWords)
-			values (@PortalID,'en-us',@PortalName,@PortalName,@PortalName)
+			values (@PortalID,'en-US',@PortalName,@PortalName,@PortalName)
            
   
 SELECT @PortalID

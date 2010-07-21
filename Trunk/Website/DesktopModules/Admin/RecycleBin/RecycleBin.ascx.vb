@@ -64,8 +64,16 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
             lstModules.Items.Clear()
             lstTabs.Items.Clear()
 
+            Dim currentLocale As Locale = LocaleController.Instance().GetCurrentLocale(PortalId)
+
             Dim arrDeletedTabs As New ArrayList
-            For Each objTab In TabController.GetTabsBySortOrder(PortalId)
+            Dim tabsList As TabCollection
+            If modeButtonList.SelectedValue = "ALL" Then
+                tabsList = objTabs.GetTabsByPortal(PortalId)
+            Else
+                tabsList = objTabs.GetTabsByPortal(PortalId).WithCulture(currentLocale.Code, True)
+            End If
+            For Each objTab In tabsList.Values
                 If objTab.IsDeleted = True Then
                     arrDeletedTabs.Add(objTab)
                 End If
@@ -74,15 +82,20 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
             Dim arrModules As ArrayList = objModules.GetModules(PortalId)
             For intModule = 0 To arrModules.Count - 1
                 objModule = CType(arrModules(intModule), ModuleInfo)
-                If objModule.IsDeleted = True Then
+                If objModule.IsDeleted = True AndAlso (modeButtonList.SelectedValue = "ALL" OrElse objModule.CultureCode = currentLocale.Code) Then
                     If objModule.ModuleTitle = "" Then
                         objModule.ModuleTitle = objModule.DesktopModule.FriendlyName
                     End If
-                    objTab = objTabs.GetTab(objModule.TabID, PortalId, False)
-                    If objTab IsNot Nothing Then
-                        lstModules.Items.Add(New ListItem(objTab.TabName & " - " & objModule.ModuleTitle, objModule.TabID.ToString & "-" & objModule.ModuleID.ToString))
+                    Dim locale As Locale = LocaleController.Instance().GetLocale(objModule.CultureCode)
+                    If locale IsNot Nothing Then
+                        objTab = objTabs.GetTabByCulture(objModule.TabID, PortalId, locale)
                     Else
+                        objTab = objTabs.GetTab(objModule.TabID, PortalId, False)
+                    End If
+                    If objTab Is Nothing Then
                         lstModules.Items.Add(New ListItem(objModule.ModuleTitle, objModule.TabID.ToString & "-" & objModule.ModuleID.ToString))
+                    ElseIf objTab.TabID = objModule.TabID Then
+                        lstModules.Items.Add(New ListItem(objTab.TabName & " - " & objModule.ModuleTitle, objModule.TabID.ToString & "-" & objModule.ModuleID.ToString))
                     End If
                 End If
             Next
@@ -200,118 +213,10 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
                 tblTabButtons.Visible = Me.IsEditable
                 cmdEmpty.Visible = Me.IsEditable
 
+                modePlaceHolder.Visible = PortalSettings.ContentLocalizationEnabled
+
                 BindData()
             End If
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Restores selected tabs in the listbox
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' Adds a log entry for each restored tab to the EventLog
-        ''' Redirects to same page after restoring so the menu can be refreshed with restored tabs.
-        ''' This will not restore deleted modules for selected tabs, only the tabs are restored.
-        ''' </remarks>
-        ''' <history>
-        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
-        '''                 30/09/2004  Child tabs cannot be restored until their parent is restored first.
-        '''                             Change logic so log is only added when tab is actually restored
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdRestoreTab_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdRestoreTab.Click
-            Dim item As ListItem
-            Dim errors As Boolean = False
-
-            For Each item In lstTabs.Items
-                If item.Selected Then
-                    Dim objTabs As New TabController
-                    Dim objTab As TabInfo = objTabs.GetTab(Integer.Parse(item.Value), PortalId, False)
-
-                    If Not RestoreTab(objTab) Then
-                        errors = True
-                    End If
-                End If
-            Next
-            If Not errors Then
-                Response.Redirect(NavigateURL())
-            Else
-                BindData()
-            End If
-
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Deletes selected tabs in the listbox
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' Parent tabs will not be deleted. To delete a parent tab all child tabs need to be deleted before.
-        ''' Reloads data to refresh deleted modules and tabs listboxes
-        ''' </remarks>
-        ''' <history>
-        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdDeleteTab_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdDeleteTab.Click
-            Dim item As ListItem
-
-            For Each item In lstTabs.Items
-                If item.Selected Then
-                    Dim intTabId As Integer = Integer.Parse(item.Value)
-                    Dim objTabs As New TabController
-                    Dim objTab As TabInfo = objTabs.GetTab(intTabId, PortalId, False)
-                    If objTab IsNot Nothing Then
-                        If objTab.HasChildren Then
-                            UI.Skins.Skin.AddModuleMessage(Me, String.Format(DotNetNuke.Services.Localization.Localization.GetString("ParentTab.ErrorMessage", Me.LocalResourceFile()), objTab.TabName), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
-                        Else
-                            DeleteTab(objTab, False)
-                        End If
-                    End If
-                End If
-            Next
-            BindData()
-
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Restores selected modules in the listbox
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' Adds a log entry for each restored module to the EventLog
-        ''' </remarks>
-        ''' <history>
-        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdRestoreModule_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdRestoreModule.Click
-            Dim item As ListItem
-            Dim errors As Boolean = False
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            Dim objModules As New ModuleController
-
-            For Each item In lstModules.Items
-                If item.Selected Then
-                    Dim values As String() = item.Value.Split("-")
-                    Dim tabId As Integer = Integer.Parse(values(0))
-                    Dim moduleId As Integer = Integer.Parse(values(1))
-
-                    ' restore module
-                    Dim objModule As ModuleInfo = objModules.GetModule(moduleId, tabId, False)
-                    If Not objModule Is Nothing Then
-                        objModules.RestoreModule(objModule)
-                        objEventLog.AddLog(objModule, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_RESTORED)
-                    End If
-                End If
-            Next
-            BindData()
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -343,6 +248,41 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
                         'hard-delete Tab Module Instance
                         objModules.DeleteTabModule(tabId, moduleId, False)
                         objEventLog.AddLog(objModule, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_DELETED)
+                    End If
+                End If
+            Next
+            BindData()
+
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Deletes selected tabs in the listbox
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks>
+        ''' Parent tabs will not be deleted. To delete a parent tab all child tabs need to be deleted before.
+        ''' Reloads data to refresh deleted modules and tabs listboxes
+        ''' </remarks>
+        ''' <history>
+        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdDeleteTab_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdDeleteTab.Click
+            Dim item As ListItem
+
+            For Each item In lstTabs.Items
+                If item.Selected Then
+                    Dim intTabId As Integer = Integer.Parse(item.Value)
+                    Dim objTabs As New TabController
+                    Dim objTab As TabInfo = objTabs.GetTab(intTabId, PortalId, False)
+                    If objTab IsNot Nothing Then
+                        If objTab.HasChildren Then
+                            UI.Skins.Skin.AddModuleMessage(Me, String.Format(DotNetNuke.Services.Localization.Localization.GetString("ParentTab.ErrorMessage", Me.LocalResourceFile()), objTab.TabName), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                        Else
+                            DeleteTab(objTab, False)
+                        End If
                     End If
                 End If
             Next
@@ -392,6 +332,85 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
             Next
             BindData()
 
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Restores selected modules in the listbox
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks>
+        ''' Adds a log entry for each restored module to the EventLog
+        ''' </remarks>
+        ''' <history>
+        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdRestoreModule_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdRestoreModule.Click
+            Dim item As ListItem
+            Dim errors As Boolean = False
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            Dim objModules As New ModuleController
+
+            For Each item In lstModules.Items
+                If item.Selected Then
+                    Dim values As String() = item.Value.Split("-")
+                    Dim tabId As Integer = Integer.Parse(values(0))
+                    Dim moduleId As Integer = Integer.Parse(values(1))
+
+                    ' restore module
+                    Dim objModule As ModuleInfo = objModules.GetModule(moduleId, tabId, False)
+                    If Not objModule Is Nothing Then
+                        objModules.RestoreModule(objModule)
+                        objEventLog.AddLog(objModule, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_RESTORED)
+                    End If
+                End If
+            Next
+            BindData()
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Restores selected tabs in the listbox
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks>
+        ''' Adds a log entry for each restored tab to the EventLog
+        ''' Redirects to same page after restoring so the menu can be refreshed with restored tabs.
+        ''' This will not restore deleted modules for selected tabs, only the tabs are restored.
+        ''' </remarks>
+        ''' <history>
+        ''' 	[VMasanas]	18/08/2004	Added support for multiselect listbox
+        '''                 30/09/2004  Child tabs cannot be restored until their parent is restored first.
+        '''                             Change logic so log is only added when tab is actually restored
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdRestoreTab_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdRestoreTab.Click
+            Dim item As ListItem
+            Dim errors As Boolean = False
+
+            For Each item In lstTabs.Items
+                If item.Selected Then
+                    Dim objTabs As New TabController
+                    Dim objTab As TabInfo = objTabs.GetTab(Integer.Parse(item.Value), PortalId, False)
+
+                    If Not RestoreTab(objTab) Then
+                        errors = True
+                    End If
+                End If
+            Next
+            If Not errors Then
+                Response.Redirect(NavigateURL())
+            Else
+                BindData()
+            End If
+
+        End Sub
+
+        Protected Sub modeButtonList_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles modeButtonList.SelectedIndexChanged
+            BindData()
         End Sub
 
 #End Region

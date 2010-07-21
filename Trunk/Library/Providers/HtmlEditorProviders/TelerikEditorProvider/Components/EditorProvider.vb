@@ -1,6 +1,6 @@
 ﻿'
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -215,7 +215,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 End If
 
                 ProcessConfigFile()
-
             Catch ex As Exception
                 _TrackException = New Exception("Could not load RadEditor. " & Environment.NewLine & ex.Message, ex)
                 DotNetNuke.Services.Exceptions.LogException(_TrackException)

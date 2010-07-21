@@ -19,6 +19,8 @@
 '
 Imports System.IO
 Imports DotNetNuke.UI.WebControls
+Imports System.Collections.Specialized
+
 
 Namespace DotNetNuke.UI.Skins
 
@@ -42,6 +44,7 @@ Namespace DotNetNuke.UI.Skins
 #End Region
 
 #Region "Public Properties"
+
 
         Public Property DefaultKey() As String
             Get
@@ -104,67 +107,19 @@ Namespace DotNetNuke.UI.Skins
 
         Private Sub LoadSkins()
 
-            Dim strRoot As String
-            Dim strFolder As String
-            Dim arrFolders As String()
-            Dim strFile As String
-            Dim arrFiles As String()
-            Dim strLastFolder As String
-            Dim strSeparator As String = "----------------------------------------"
-
             cboSkin.Items.Clear()
 
-            If optHost.Checked Then
-                ' load host skins
-                strLastFolder = ""
-                strRoot = Common.Globals.HostMapPath & SkinRoot
-                If Directory.Exists(strRoot) Then
-                    arrFolders = Directory.GetDirectories(strRoot)
-                    For Each strFolder In arrFolders
-                        If Not strFolder.EndsWith(glbHostSkinFolder) Then
-                            arrFiles = Directory.GetFiles(strFolder, "*.ascx")
-                            For Each strFile In arrFiles
-                                strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
-                                If strLastFolder <> strFolder Then
-                                    If strLastFolder <> "" Then
-                                        cboSkin.Items.Add(New ListItem(strSeparator, ""))
-                                    End If
-                                    strLastFolder = strFolder
-                                End If
-                                cboSkin.Items.Add(New ListItem(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[G]" & SkinRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
-                            Next
-                        End If
-                    Next
-                End If
-            End If
 
-            If optSite.Checked Then
-                ' load portal skins
-                strLastFolder = ""
-                strRoot = _objPortal.HomeDirectoryMapPath & SkinRoot
-                If Directory.Exists(strRoot) Then
-                    arrFolders = Directory.GetDirectories(strRoot)
-                    For Each strFolder In arrFolders
-                        arrFiles = Directory.GetFiles(strFolder, "*.ascx")
-                        For Each strFile In arrFiles
-                            strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
-                            If strLastFolder <> strFolder Then
-                                If strLastFolder <> "" Then
-                                    cboSkin.Items.Add(New ListItem(strSeparator, ""))
-                                End If
-                                strLastFolder = strFolder
-                            End If
-                            cboSkin.Items.Add(New ListItem(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[L]" & SkinRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
-                        Next
-                    Next
-                End If
-            End If
-
-            ' default value
-            If cboSkin.Items.Count > 0 Then
-                cboSkin.Items.Insert(0, New ListItem(strSeparator, ""))
-            End If
             cboSkin.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString(DefaultKey, LocalResourceFile) + ">", ""))
+
+            Dim skins As List(Of KeyValuePair(Of String, String)) = SkinController.GetSkins(_objPortal, _SkinRoot)
+
+            For Each Skin As KeyValuePair(Of String, String) In skins
+
+                cboSkin.Items.Add(New ListItem(Skin.Key, Skin.Value))
+
+            Next
+
 
             ' select current skin
             Dim intIndex As Integer
@@ -177,30 +132,8 @@ Namespace DotNetNuke.UI.Skins
 
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' format skin name
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <param name="strSkinFolder">The Folder Name</param>
-        ''' <param name="strSkinFile">The File Name without extension</param>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function FormatSkinName(ByVal strSkinFolder As String, ByVal strSkinFile As String) As String
-            If strSkinFolder.ToLower = "_default" Then
-                ' host folder
-                Return strSkinFile
-            Else ' portal folder
-                Select Case strSkinFile.ToLower
-                    Case "skin", "container", "default"
-                        Return strSkinFolder
-                    Case Else
-                        Return strSkinFolder & " - " & strSkinFile
-                End Select
-            End If
-        End Function
+
+
 
 #End Region
 

@@ -60,7 +60,6 @@ Namespace DotNetNuke.Data
         Public MustOverride Function ExecuteSQL(ByVal SQL As String) As IDataReader
         Public MustOverride Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
 
-        'temp
         Public MustOverride Function ExecuteSQLTemp(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
 
         ' general
@@ -110,7 +109,6 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetPortalByAlias(ByVal PortalAlias As String) As IDataReader
         Public MustOverride Function GetPortalByTab(ByVal TabId As Integer, ByVal PortalAlias As String) As IDataReader
         Public MustOverride Function GetPortalCount() As Integer
-        ' Public MustOverride Function GetPortals(ByVal CultureCode As String) As IDataReader
         Public MustOverride Function GetPortals() As IDataReader
         Public MustOverride Function GetPortalsByName(ByVal nameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
         Public MustOverride Function GetPortalSettings(ByVal PortalId As Integer, ByVal CultureCode As String) As IDataReader
@@ -122,21 +120,25 @@ Namespace DotNetNuke.Data
         Public MustOverride Function VerifyPortal(ByVal PortalId As Integer) As IDataReader
 
         ' tab
-        Public MustOverride Function AddTab(ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal CreatedByUserID As Integer, ByVal CultureCode As String) As Integer
+        Public MustOverride Function AddTab(ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal CreatedByUserID As Integer, ByVal CultureCode As String) As Integer
+        Public MustOverride Sub UpdateTabVersion(ByVal TabId As Integer, ByVal VersionGuid As Guid)
         Public MustOverride Sub UpdateTab(ByVal TabId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal CultureCode As String)
-        Public MustOverride Sub UpdateTab(ByVal TabId As Integer, ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal LastModifiedByuserID As Integer, ByVal CultureCode As String)
+        Public MustOverride Sub UpdateTab(ByVal TabId As Integer, ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal LastModifiedByuserID As Integer, ByVal CultureCode As String)
         Public MustOverride Sub UpdateTabOrder(ByVal TabId As Integer, ByVal TabOrder As Integer, ByVal Level As Integer, ByVal ParentId As Integer, ByVal TabPath As String, ByVal LastModifiedByUserID As Integer)
+        Public MustOverride Sub UpdateTabTranslationStatus(ByVal TabId As Integer, ByVal LocalizedVersionGuid As Guid, ByVal LastModifiedByUserID As Integer)
         Public MustOverride Sub DeleteTab(ByVal TabId As Integer)
         Public MustOverride Function GetTabs(ByVal PortalId As Integer) As IDataReader
         Public MustOverride Function GetAllTabs() As IDataReader
-        Public MustOverride Function GetTabPaths(ByVal PortalId As Integer) As IDataReader
+        Public MustOverride Function GetTabPaths(ByVal PortalId As Integer, ByVal cultureCode As String) As IDataReader
         Public MustOverride Function GetTab(ByVal TabId As Integer) As IDataReader
+        Public MustOverride Function GetTabByUniqueID(ByVal UniqueId As Guid) As IDataReader
         Public MustOverride Function GetTabByName(ByVal TabName As String, ByVal PortalId As Integer) As IDataReader
         Public MustOverride Function GetTabsByParentId(ByVal ParentId As Integer) As IDataReader
         Public MustOverride Function GetTabsByModuleID(ByVal moduleID As Integer) As IDataReader
         Public MustOverride Function GetTabsByPackageID(ByVal portalID As Integer, ByVal packageID As Integer, ByVal forHost As Boolean) As IDataReader
         Public MustOverride Function GetTabCount(ByVal PortalId As Integer) As Integer
         Public MustOverride Function GetPortalTabModules(ByVal PortalId As Integer, ByVal TabId As Integer) As IDataReader
+        Public MustOverride Function GetTabModule(ByVal TabModuleId As Integer) As IDataReader
         Public MustOverride Function GetTabModules(ByVal TabId As Integer) As IDataReader
         Public MustOverride Function GetTabPanes(ByVal TabId As Integer) As IDataReader
 
@@ -144,20 +146,24 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetAllModules() As IDataReader
         Public MustOverride Function GetModules(ByVal PortalId As Integer) As IDataReader
         Public MustOverride Function GetAllTabsModules(ByVal PortalId As Integer, ByVal AllTabs As Boolean) As IDataReader
+        Public MustOverride Function GetAllTabsModulesByModuleID(ByVal ModuleId As Integer) As IDataReader
         Public MustOverride Function GetModule(ByVal ModuleId As Integer, ByVal TabId As Integer) As IDataReader
+        Public MustOverride Function GetModuleByUniqueID(ByVal UniqueID As Guid) As IDataReader
         Public MustOverride Function GetModuleByDefinition(ByVal PortalId As Integer, ByVal FriendlyName As String) As IDataReader
         Public MustOverride Function GetSearchModules(ByVal PortalId As Integer) As IDataReader
-        Public MustOverride Function AddModule(ByVal ContentItemID As Integer, ByVal PortalID As Integer, ByVal ModuleDefID As Integer, ByVal ModuleTitle As String, ByVal AllTabs As Boolean, ByVal Header As String, ByVal Footer As String, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal createdByUserID As Integer) As Integer
-        Public MustOverride Sub UpdateModule(ByVal ModuleId As Integer, ByVal ContentItemId As Integer, ByVal ModuleTitle As String, ByVal AllTabs As Boolean, ByVal Header As String, ByVal Footer As String, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
+        Public MustOverride Function AddModule(ByVal ContentItemID As Integer, ByVal PortalID As Integer, ByVal ModuleDefID As Integer, ByVal AllTabs As Boolean, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal createdByUserID As Integer) As Integer
+        Public MustOverride Sub UpdateModule(ByVal ModuleId As Integer, ByVal ContentItemId As Integer, ByVal AllTabs As Boolean, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
         Public MustOverride Sub DeleteModule(ByVal ModuleId As Integer)
         Public MustOverride Function GetTabModuleOrder(ByVal TabId As Integer, ByVal PaneName As String) As IDataReader
         Public MustOverride Sub UpdateModuleOrder(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String)
 
-        Public MustOverride Sub AddTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal createdByUserID As Integer)
+        Public MustOverride Sub AddTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleTitle As String, ByVal Header As String, ByVal Footer As String, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal CultureCode As String, ByVal createdByUserID As Integer)
         Public MustOverride Sub DeleteTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal softDelete As Boolean)
         Public MustOverride Sub MoveTabModule(ByVal fromTabId As Integer, ByVal moduleId As Integer, ByVal toTabId As Integer, ByVal toPaneName As String, ByVal lastModifiedByUserID As Integer)
         Public MustOverride Sub RestoreTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer)
-        Public MustOverride Sub UpdateTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal lastModifiedByUserID As Integer)
+        Public MustOverride Sub UpdateTabModule(ByVal TabModuleId As Integer, ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleTitle As String, ByVal Header As String, ByVal Footer As String, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal CultureCode As String, ByVal lastModifiedByUserID As Integer)
+        Public MustOverride Sub UpdateTabModuleTranslationStatus(ByVal TabModuleId As Integer, ByVal LocalizedVersionGuid As Guid, ByVal LastModifiedByUserID As Integer)
+        Public MustOverride Sub UpdateTabModuleVersion(ByVal TabModuleId As Integer, ByVal VersionGuid As Guid)
 
 		Public MustOverride Function GetModuleSettings(ByVal ModuleId As Integer) As IDataReader
         Public MustOverride Function GetModuleSetting(ByVal ModuleId As Integer, ByVal SettingName As String) As IDataReader
@@ -222,13 +228,15 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetFiles(ByVal PortalId As Integer, ByVal FolderID As Integer) As IDataReader
         Public MustOverride Function GetFile(ByVal FileName As String, ByVal PortalId As Integer, ByVal FolderID As Integer) As IDataReader
         Public MustOverride Function GetFileById(ByVal FileId As Integer, ByVal PortalId As Integer) As IDataReader
+        Public MustOverride Function GetFileByUniqueID(ByVal UniqueID As Guid) As IDataReader
         Public MustOverride Sub DeleteFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal FolderID As Integer)
         Public MustOverride Sub DeleteFiles(ByVal PortalId As Integer)
-        Public MustOverride Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer) As Integer
-        Public MustOverride Sub UpdateFile(ByVal FileId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer)
+        Public MustOverride Function AddFile(ByVal PortalId As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer, ByVal createdByUserID As Integer, ByVal hash As String) As Integer
+        Public MustOverride Sub UpdateFile(ByVal FileId As Integer, ByVal VersionGuid As Guid, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer, ByVal lastModifiedByUserID As Integer, ByVal has As String)
         Public MustOverride Function GetAllFiles() As DataTable
         Public MustOverride Function GetFileContent(ByVal FileId As Integer, ByVal PortalId As Integer) As IDataReader
         Public MustOverride Sub UpdateFileContent(ByVal FileId As Integer, ByVal StreamFile() As Byte)
+        Public MustOverride Sub UpdateFileVersion(ByVal FileId As Integer, ByVal VersionGuid As Guid)
 
         ' site log
         Public MustOverride Sub AddSiteLog(ByVal DateTime As Date, ByVal PortalId As Integer, ByVal UserId As Integer, ByVal Referrer As String, ByVal URL As String, ByVal UserAgent As String, ByVal UserHostAddress As String, ByVal UserHostName As String, ByVal TabId As Integer, ByVal AffiliateId As Integer)
@@ -290,12 +298,12 @@ Namespace DotNetNuke.Data
         Public MustOverride Sub UpdateProfile(ByVal UserId As Integer, ByVal PortalId As Integer, ByVal ProfileData As String)
 
         'profile property definitions
-        Public MustOverride Function AddPropertyDefinition(ByVal PortalId As Integer, ByVal ModuleDefId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal CreatedByUserID As Integer) As Integer
+        Public MustOverride Function AddPropertyDefinition(ByVal PortalId As Integer, ByVal ModuleDefId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal DefaultVisibility As Integer, ByVal CreatedByUserID As Integer) As Integer
         Public MustOverride Sub DeletePropertyDefinition(ByVal definitionId As Integer)
         Public MustOverride Function GetPropertyDefinition(ByVal definitionId As Integer) As IDataReader
         Public MustOverride Function GetPropertyDefinitionByName(ByVal portalId As Integer, ByVal name As String) As IDataReader
         Public MustOverride Function GetPropertyDefinitionsByPortal(ByVal portalId As Integer) As IDataReader
-        Public MustOverride Sub UpdatePropertyDefinition(ByVal PropertyDefinitionId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal LastModifiedByUserID As Integer)
+        Public MustOverride Sub UpdatePropertyDefinition(ByVal PropertyDefinitionId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal DefaultVisibility As Integer, ByVal LastModifiedByUserID As Integer)
 
         ' urls
         Public MustOverride Function GetUrls(ByVal PortalID As Integer) As IDataReader
@@ -314,9 +322,11 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetFoldersByPortal(ByVal PortalID As Integer) As IDataReader
         Public MustOverride Function GetFolder(ByVal PortalID As Integer, ByVal FolderID As Integer) As IDataReader
         Public MustOverride Function GetFolder(ByVal PortalID As Integer, ByVal FolderPath As String) As IDataReader
-        Public MustOverride Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal createdByUserID As Integer) As Integer
-        Public MustOverride Sub UpdateFolder(ByVal PortalID As Integer, ByVal FolderID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal lastModifiedByUserID As Integer)
+        Public MustOverride Function GetFolderByUniqueID(ByVal UniqueID As Guid) As IDataReader
+        Public MustOverride Function AddFolder(ByVal PortalID As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal createdByUserID As Integer) As Integer
+        Public MustOverride Sub UpdateFolder(ByVal PortalID As Integer, ByVal VersionGuid As Guid, ByVal FolderID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal lastModifiedByUserID As Integer)
         Public MustOverride Sub DeleteFolder(ByVal PortalID As Integer, ByVal FolderPath As String)
+        Public MustOverride Sub UpdateFolderVersion(ByVal FolderID As Integer, ByVal VersionGuid As Guid)
 
         'Permission
         Public MustOverride Function GetPermission(ByVal permissionID As Integer) As IDataReader
@@ -452,9 +462,10 @@ Namespace DotNetNuke.Data
         Public MustOverride Function GetLanguages() As IDataReader
         Public MustOverride Sub UpdateLanguage(ByVal languageID As Integer, ByVal cultureCode As String, ByVal cultureName As String, ByVal fallbackCulture As String, ByVal LastModifiedByUserID As Integer)
 
-        Public MustOverride Function AddPortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal CreatedByUserID As Integer) As Integer
+        Public MustOverride Function AddPortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal IsPublished As Boolean, ByVal CreatedByUserID As Integer) As Integer
         Public MustOverride Sub DeletePortalLanguages(ByVal portalID As Integer, ByVal languageID As Integer)
         Public MustOverride Function GetLanguagesByPortal(ByVal portalID As Integer) As IDataReader
+        Public MustOverride Sub UpdatePortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal IsPublished As Boolean, ByVal ByValUpdatedByUserID As Integer)
 
         Public MustOverride Function AddLanguagePack(ByVal packageID As Integer, ByVal languageID As Integer, ByVal dependentPackageID As Integer, ByVal CreatedByUserID As Integer) As Integer
         Public MustOverride Sub DeleteLanguagePack(ByVal languagePackID As Integer)

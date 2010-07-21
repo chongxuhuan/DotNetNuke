@@ -125,7 +125,7 @@ Namespace DotNetNuke.Services.Tokens
         Protected ReadOnly Property FormatProvider() As System.Globalization.CultureInfo
             Get
                 If _FormatProvider Is Nothing Then
-                    _FormatProvider = System.Threading.Thread.CurrentThread.CurrentCulture
+                    _FormatProvider = System.Threading.Thread.CurrentThread.CurrentUICulture
                 End If
                 Return _FormatProvider
             End Get

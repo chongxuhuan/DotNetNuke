@@ -413,7 +413,7 @@ Namespace DotNetNuke.Entities.Modules
             Get
                 Dim strCacheKey As String = "TabModule:"
                 strCacheKey += TabModuleId.ToString & ":"
-                strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
+                strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
                 Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache" & "\" & CleanFileName(strCacheKey) & ".resources"
             End Get
         End Property
@@ -423,7 +423,7 @@ Namespace DotNetNuke.Entities.Modules
             Get
                 Dim strCacheKey As String = "TabModule:"
                 strCacheKey += TabModuleID.ToString & ":"
-                strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
+                strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
                 Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache" & "\" & CleanFileName(strCacheKey) & ".resources"
             End Get
         End Property
@@ -433,7 +433,7 @@ Namespace DotNetNuke.Entities.Modules
             Get
                 Dim strCacheKey As String = "TabModule:"
                 strCacheKey += TabModuleId.ToString & ":"
-                strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
+                strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
                 Return strCacheKey
             End Get
         End Property
@@ -443,7 +443,7 @@ Namespace DotNetNuke.Entities.Modules
             Get
                 Dim strCacheKey As String = "TabModule:"
                 strCacheKey += TabModuleID.ToString & ":"
-                strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
+                strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
                 Return strCacheKey
             End Get
         End Property

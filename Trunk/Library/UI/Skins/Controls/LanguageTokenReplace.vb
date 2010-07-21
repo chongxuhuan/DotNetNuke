@@ -18,7 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 Imports System.Collections.Specialized
-
+Imports DotNetNuke.Entities.Tabs
 
 Namespace DotNetNuke.UI.Skins.Controls
 
@@ -90,13 +90,6 @@ Namespace DotNetNuke.UI.Skins.Controls
                 End If
             Next
 
-            Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings
-            If Localization.GetLocales(_Settings.PortalId).Count > 1 AndAlso (_Settings.EnableUrlLanguage = False) Then
-                'because useLanguageInUrl is false, navigateUrl won't add a language param, so we need to do that ourselves
-                If returnValue <> "" Then returnValue += "&"
-                returnValue += "language=" + newLanguage
-            End If
-
             'return the new querystring as a string array
             Return returnValue.Split("&"c)
         End Function
@@ -112,7 +105,16 @@ Namespace DotNetNuke.UI.Skins.Controls
         ''' </history>
         Private Function newUrl(ByVal newLanguage As String) As String
             Dim objSecurity As New PortalSecurity
-            Return objSecurity.InputFilter(NavigateURL(objPortal.ActiveTab.TabID, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString("ctl"), newLanguage, getQSParams(newLanguage)), PortalSecurity.FilterFlag.NoScripting)
+            Dim newLocale As Locale = LocaleController.Instance().GetLocale(newLanguage)
+
+            'Ensure that the current ActiveTab is the culture of the new language
+            Dim tabId As Integer = objPortal.ActiveTab.TabID
+            Dim localizedTab As TabInfo = New TabController().GetTabByCulture(tabId, objPortal.PortalId, newLocale)
+            If localizedTab IsNot Nothing Then
+                tabId = localizedTab.TabID
+            End If
+
+            Return objSecurity.InputFilter(NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString("ctl"), newLanguage, getQSParams(newLanguage)), PortalSecurity.FilterFlag.NoScripting)
         End Function
 
 

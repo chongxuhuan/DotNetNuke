@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -62,7 +62,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider.Dialogs
                 SetResStrings()
                 If Not IsPostBack Then
                     Dim portalID As Integer = DotNetNuke.Entities.Portals.PortalController.GetCurrentPortalSettings().PortalId
-                    Dim folders As ArrayList = DotNetNuke.Common.Utilities.FileSystemUtils.GetFoldersByUser(portalID, True, True, "Add")
+                    Dim folders As ArrayList = DotNetNuke.Common.Utilities.FileSystemUtils.GetFoldersByUser(portalID, True, True, "ADD")
 
                     If folders.Count = 0 Then
                         msgError.InnerHtml = GetString("msgNoFolders.Text")

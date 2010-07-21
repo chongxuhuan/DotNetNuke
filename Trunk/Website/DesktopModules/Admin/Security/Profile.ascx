@@ -19,9 +19,9 @@
 				helpstyle-cssclass="Help"
 				labelstyle-cssclass="SubHead" 
 				visibilitystyle-cssclass="Normal" 
-				editcontrolwidth="525px" 
-				labelwidth="175px"
-				width="700px" />
+				editcontrolwidth="700px" 
+				labelwidth="150px"
+				width="850px" />
 		</td>
 	</tr>
 	<tr>

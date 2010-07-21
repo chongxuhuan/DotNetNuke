@@ -30,6 +30,7 @@ Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Modules.Actions
 Imports DotNetNuke.Services.Installer
+Imports Telerik.Web.UI
 
 Namespace DotNetNuke.Modules.Admin.Languages
 
@@ -108,6 +109,20 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
 #Region "Private Methods"
 
+        Private Function AddResourceKey(ByVal resourceDoc As XmlDocument, ByVal resourceKey As String) As XmlNode
+            Dim nodeData As XmlNode
+            Dim attr As XmlAttribute
+
+            ' missing entry
+            nodeData = resourceDoc.CreateElement("data")
+            attr = resourceDoc.CreateAttribute("name")
+            attr.Value = resourceKey
+            nodeData.Attributes.Append(attr)
+            resourceDoc.SelectSingleNode("//root").AppendChild(nodeData)
+
+            Return nodeData.AppendChild(resourceDoc.CreateElement("value"))
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Loads Resource information into the datagrid
@@ -119,14 +134,15 @@ Namespace DotNetNuke.Modules.Admin.Languages
         '''     [vmasanas}  25/03/2006  Modified to support new features
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub BindGrid()
+        Private Sub BindGrid(ByVal reBind As Boolean)
             Dim EditTable As Hashtable
             Dim DefaultTable As Hashtable
 
             EditTable = LoadFile(rbMode.SelectedValue, "Edit")
             DefaultTable = LoadFile(rbMode.SelectedValue, "Default")
 
-            lblResourceFile.Text = ResourceFile(Locale, rbMode.SelectedValue).Replace(ApplicationMapPath, "")
+            lblResourceFile.Text = Path.GetFileName(ResourceFile(Locale, rbMode.SelectedValue).Replace(ApplicationMapPath, ""))
+            lblFolder.Text = ResourceFile(Locale, rbMode.SelectedValue).Replace(ApplicationMapPath, "").Replace("\" + lblResourceFile.Text, "")
 
             ' check edit table
             ' if empty, just use default
@@ -162,20 +178,11 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
             Dim s As New SortedList(EditTable)
 
-            dgEditor.DataSource = s
-            dgEditor.DataBind()
-
-            If UsePaging Then
-                ctlPagingControl.TotalRecords = s.Count
-                ctlPagingControl.PageSize = PageSize
-                ctlPagingControl.CurrentPage = dgEditor.CurrentPageIndex + 1
-                ctlPagingControl.Visible = True
-            Else
-                ctlPagingControl.Visible = False
+            resourcesGrid.DataSource = s
+            If reBind Then
+                resourcesGrid.DataBind()
             End If
-
         End Sub
-
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -187,96 +194,19 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' 	[vmasanas]	25/03/2006	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub InitTree()
-            Dim idx, idx2 As Integer
+        Private Sub LoadRootNodes()
 
-            ' configure tree
-            DNNTree.SystemImagesPath = ResolveUrl("~/images/")
-            DNNTree.ImageList.Add(ResolveUrl("~/images/folder.gif"))
-            DNNTree.ImageList.Add(ResolveUrl("~/images/file.gif"))
-            DNNTree.IndentWidth = 10
-            DNNTree.CollapsedNodeImage = ResolveUrl("~/images/max.gif")
-            DNNTree.ExpandedNodeImage = ResolveUrl("~/images/min.gif")
+            Dim node As New RadTreeNode()
+            node.Text = "Local Resources"
+            node.Value = "Local Resources"
+            node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+            resourceFiles.Nodes.Add(node)
 
-            'Local resources
-            idx = DNNTree.TreeNodes.Add("Local Resources")
-            DNNTree.TreeNodes(idx).Key = "Local Resources"
-            DNNTree.TreeNodes(idx).ToolTip = "Local Resources"
-            DNNTree.TreeNodes(idx).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).ClickAction = DNNControls.eClickAction.Expand
-
-            'admin
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("Admin")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "Admin"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "Admin"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Server.MapPath("~\admin"))
-
-            'controls
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("Controls")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "Controls"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "Controls"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Server.MapPath("~\controls"))
-
-            'desktopmodules
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("DesktopModules")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "DesktopModules"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "DesktopModules"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Server.MapPath("~\desktopmodules"))
-
-            'providers
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("Providers")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "Providers"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "Providers"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Server.MapPath("~\providers"))
-
-            'install folder
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("Install")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "Install"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "Install"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Server.MapPath("~\Install"))
-
-            'Skins folder
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("HostSkins")
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "HostSkins"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "HostSkins"
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-            PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Path.Combine(HostMapPath, "Skins"))
-
-            Dim portalSkinFolder As String = Path.Combine(PortalSettings.HomeDirectoryMapPath, "Skins")
-            If Directory.Exists(portalSkinFolder) AndAlso (PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId) Then
-                idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add("PortalSkins")
-                DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = "PortalSkins"
-                DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = "PortalSkins"
-                DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Folder
-                DNNTree.TreeNodes(idx).TreeNodes(idx2).ClickAction = DNNControls.eClickAction.Expand
-                PopulateTree(DNNTree.TreeNodes(idx).TreeNodes(idx2).TreeNodes, Path.Combine(PortalSettings.HomeDirectoryMapPath, "Skins"))
-            End If
-
-            ' add application resources
-            idx = DNNTree.TreeNodes.Add("Global Resources")
-            DNNTree.TreeNodes(idx).Key = "Global Resources"
-            DNNTree.TreeNodes(idx).ToolTip = "Global Resources"
-            DNNTree.TreeNodes(idx).ImageIndex = eImageType.Folder
-            DNNTree.TreeNodes(idx).ClickAction = DNNControls.eClickAction.Expand
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add(Path.GetFileNameWithoutExtension(Localization.GlobalResourceFile))
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = Server.MapPath(Localization.GlobalResourceFile)
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = DNNTree.TreeNodes(idx).TreeNodes(idx2).Text
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Page
-            idx2 = DNNTree.TreeNodes(idx).TreeNodes.Add(Path.GetFileNameWithoutExtension(Localization.SharedResourceFile))
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).Key = Server.MapPath(Localization.SharedResourceFile)
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ToolTip = DNNTree.TreeNodes(idx).TreeNodes(idx2).Text
-            DNNTree.TreeNodes(idx).TreeNodes(idx2).ImageIndex = eImageType.Page
+            node = New RadTreeNode()
+            node.Text = "Global Resources"
+            node.Value = "Global Resources"
+            node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+            resourceFiles.Nodes.Add(node)
 
         End Sub
 
@@ -388,79 +318,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' Loads Local Resource files in the tree
-        ''' </summary>
-        ''' <param name="Nodes">Node collection where to add new nodes</param>
-        ''' <param name="_path">Folder to search for</param>
-        ''' <returns>true if a Local Resource file is found in the given path</returns>
-        ''' <remarks>
-        ''' The Node collection will only contain en-US resources
-        ''' Only folders with Resource files will be included in the tree
-        ''' </remarks>
-        ''' <history>
-        ''' 	[vmasanas]	07/10/2004	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function PopulateTree(ByVal Nodes As DNNControls.TreeNodeCollection, ByVal _path As String) As Boolean
-            Dim folders As String() = Directory.GetDirectories(_path)
-            Dim folder As String
-            Dim found As Boolean = False
-            Dim objFile As System.IO.FileInfo
-            Dim objFolder As DirectoryInfo
-            Dim node, leaf As DNNControls.TreeNode
-
-            For Each folder In folders
-                objFolder = New System.IO.DirectoryInfo(folder)
-                node = New DNNControls.TreeNode(objFolder.Name)
-                node.Key = objFolder.FullName
-                node.ToolTip = objFolder.Name
-                node.ImageIndex = eImageType.Folder
-                node.ClickAction = DNNControls.eClickAction.Expand
-                Nodes.Add(node)
-
-                If objFolder.Name.ToLowerInvariant = Localization.LocalResourceDirectory.ToLowerInvariant Then
-                    ' found local resource folder, add resources
-                    For Each objFile In objFolder.GetFiles("*.ascx.resx")
-                        leaf = New DNNControls.TreeNode(Path.GetFileNameWithoutExtension(objFile.Name))
-                        leaf.Key = objFile.FullName
-                        leaf.ToolTip = objFile.Name
-                        leaf.ImageIndex = eImageType.Page
-                        node.TreeNodes.Add(leaf)
-                    Next
-                    For Each objFile In objFolder.GetFiles("*.aspx.resx")
-                        leaf = New DNNControls.TreeNode(Path.GetFileNameWithoutExtension(objFile.Name))
-                        leaf.Key = objFile.FullName
-                        leaf.ToolTip = objFile.Name
-                        leaf.ImageIndex = eImageType.Page
-                        node.TreeNodes.Add(leaf)
-                    Next
-                    ' add LocalSharedResources if found
-                    If File.Exists(Path.Combine(folder, Localization.LocalSharedResourceFile)) Then
-                        objFile = New System.IO.FileInfo(Path.Combine(folder, Localization.LocalSharedResourceFile))
-                        leaf = New DNNControls.TreeNode(Path.GetFileNameWithoutExtension(objFile.Name))
-                        leaf.Key = objFile.FullName
-                        leaf.ToolTip = objFile.Name
-                        leaf.ImageIndex = eImageType.Page
-                        node.TreeNodes.Add(leaf)
-                    End If
-                    found = True
-                Else
-                    'recurse
-                    If PopulateTree(node.TreeNodes, folder) Then
-                        ' found resources
-                        found = True
-                    Else
-                        ' not found, remove node
-                        Nodes.Remove(node)
-                    End If
-                End If
-            Next
-
-            Return found
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
         ''' Returns the resource file name for a given resource and language
         ''' </summary>
         ''' <param name="mode">Identifies the resource being searched (System, Host, Portal)</param>
@@ -538,13 +395,18 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
 #Region "Event Handlers"
 
+        Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
+            resourcesGrid.AllowPaging = UsePaging
+            resourcesGrid.PageSize = PageSize
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Loads suported locales and shows default values
         ''' </summary>
         ''' <param name="sender"></param>
         ''' <param name="e"></param>
-		''' <remarks>
+        ''' <remarks>
         ''' </remarks>
         ''' <history>
         ''' 	[vmasanas]	04/10/2004	Created
@@ -557,11 +419,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"))
 
                     ' init tree
-                    InitTree()
+                    LoadRootNodes()
 
-                    Dim language As Locale = Localization.GetLocale(Locale)
-                    lblEditingLanguage.Text = language.Text
-
+                    Dim language As Locale = LocaleController.Instance.GetLocale(Locale)
+                    languageLabel.Language = language.Code
 
                     If Me.UserInfo.IsSuperUser Then
                         Dim mode As String = Request.QueryString("mode")
@@ -590,22 +451,12 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     Else
                         SelectedResourceFile = Server.MapPath(Localization.GlobalResourceFile)
                     End If
-                    DNNTree.SelectNodeByKey(SelectedResourceFile)
-
-                    dgEditor.AllowPaging = UsePaging
-                    dgEditor.PageSize = PageSize
-                    If Not String.IsNullOrEmpty(Request.QueryString("page")) Then
-                        Dim pageNo As Integer = Int32.Parse(Request.QueryString("page"))
-                        dgEditor.CurrentPageIndex = pageNo
-                    Else
-                        dgEditor.CurrentPageIndex = 0
-                    End If
 
                     If Not String.IsNullOrEmpty(Request.QueryString("message")) Then
                         Skins.Skin.AddModuleMessage(Me, Localization.GetString(Request.QueryString("message"), Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
                     End If
 
-                    BindGrid()
+                    BindGrid(Not IsPostBack)
                 End If
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
@@ -628,12 +479,15 @@ Namespace DotNetNuke.Modules.Admin.Languages
         Private Sub chkHighlight_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkHighlight.CheckedChanged
             Try
                 Personalization.Personalization.SetProfile("LanguageEditor", "HighLight" & PortalSettings.PortalId.ToString, chkHighlight.Checked.ToString)
-                BindGrid()
+                BindGrid(True)
             Catch exc As Exception    'Module failed to load
                 UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End Try
         End Sub
 
+        Protected Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
+            Response.Redirect(NavigateURL())
+        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -660,7 +514,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
                             File.Delete(ResourceFile(Locale, rbMode.SelectedValue))
                             UI.Skins.Skin.AddModuleMessage(Me, String.Format(Localization.GetString("Deleted", Me.LocalResourceFile), ResourceFile(Locale, rbMode.SelectedValue)), UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
 
-                            BindGrid()
+                            BindGrid(True)
 
                             'Clear the resource file lookup dictionary as we have removed a file
                             DotNetNuke.Common.Utilities.DataCache.RemoveCache(DotNetNuke.Common.Utilities.DataCache.ResourceFileLookupDictionaryCacheKey)
@@ -674,7 +528,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
             End Try
         End Sub
 
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Updates all values from the datagrid
@@ -686,13 +539,11 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' <history>
         ''' 	[vmasanas]	04/10/2004	Created
         ''' 	[vmasanas]	25/03/2006	Modified to support new host resources and incremental saving
-		'''     [sleupold]  23/04/2010  Fixed missing parameters for navigateURL
+        '''     [sleupold]  23/04/2010  Fixed missing parameters for navigateURL
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
-            Dim di As DataGridItem
-            Dim node, nodeData, parent As XmlNode
-            Dim attr As XmlAttribute
+            Dim node, parent As XmlNode
             Dim resDoc As New XmlDocument
             Dim defDoc As New XmlDocument
             Dim filename As String
@@ -707,53 +558,38 @@ Namespace DotNetNuke.Modules.Admin.Languages
                 End If
                 defDoc.Load(ResourceFile(Localization.SystemLocale, "System"))
 
-                Select Case rbMode.SelectedValue
-                    Case "System"
-                        ' this will save all items
-                        For Each di In dgEditor.Items
-                            If (di.ItemType = ListItemType.Item Or di.ItemType = ListItemType.AlternatingItem) Then
-								Dim ctl1 As TextBox = CType(di.Cells(1).FindControl("txtValue"), TextBox)
-								node = resDoc.SelectSingleNode("//root/data[@name='" + di.Cells(0).Text + "']/value")
+                ' only items different from default will be saved
+                For Each di In resourcesGrid.Items
+                    If (di.ItemType = GridItemType.Item Or di.ItemType = GridItemType.AlternatingItem) Then
+                        Dim resourceKey As Label = CType(di.FindControl("resourceKey"), Label)
+                        Dim txtValue As TextBox = CType(di.FindControl("txtValue"), TextBox)
+                        Dim txtDefault As TextBox = CType(di.FindControl("txtDefault"), TextBox)
+
+                        node = resDoc.SelectSingleNode("//root/data[@name='" + resourceKey.Text + "']/value")
+
+                        Select Case rbMode.SelectedValue
+                            Case "System"
+                                ' this will save all items
                                 If node Is Nothing Then
-                                    ' missing entry
-                                    nodeData = resDoc.CreateElement("data")
-                                    attr = resDoc.CreateAttribute("name")
-									attr.Value = di.Cells(0).Text
-                                    nodeData.Attributes.Append(attr)
-                                    resDoc.SelectSingleNode("//root").AppendChild(nodeData)
-
-                                    node = nodeData.AppendChild(resDoc.CreateElement("value"))
+                                    node = AddResourceKey(resDoc, resourceKey.Text)
                                 End If
-                                node.InnerXml = Server.HtmlEncode(ctl1.Text)
-                            End If
-                        Next
-                    Case "Host", "Portal"
-                        ' only items different from default will be saved
-                        For Each di In dgEditor.Items
-                            If (di.ItemType = ListItemType.Item Or di.ItemType = ListItemType.AlternatingItem) Then
-								Dim ctl1 As TextBox = CType(di.Cells(1).FindControl("txtValue"), TextBox)
-								Dim ctl2 As TextBox = CType(di.Cells(2).FindControl("txtDefault"), TextBox)
+                                node.InnerXml = Server.HtmlEncode(txtValue.Text)
 
-								node = resDoc.SelectSingleNode("//root/data[@name='" + di.Cells(0).Text + "']/value")
-                                If ctl1.Text <> ctl2.Text Then
+                            Case "Host", "Portal"
+                                ' only items different from default will be saved
+
+                                If txtValue.Text <> txtDefault.Text Then
                                     If node Is Nothing Then
-                                        ' missing entry
-                                        nodeData = resDoc.CreateElement("data")
-                                        attr = resDoc.CreateAttribute("name")
-										attr.Value = di.Cells(0).Text
-                                        nodeData.Attributes.Append(attr)
-                                        resDoc.SelectSingleNode("//root").AppendChild(nodeData)
-
-                                        node = nodeData.AppendChild(resDoc.CreateElement("value"))
+                                        node = AddResourceKey(resDoc, resourceKey.Text)
                                     End If
-                                    node.InnerXml = Server.HtmlEncode(ctl1.Text)
+                                    node.InnerXml = Server.HtmlEncode(txtValue.Text)
                                 ElseIf Not node Is Nothing Then
                                     ' remove item = default
                                     resDoc.SelectSingleNode("//root").RemoveChild(node.ParentNode)
                                 End If
-                            End If
-                        Next
-                End Select
+                        End Select
+                    End If
+                Next
 
                 ' remove obsolete keys
                 For Each node In resDoc.SelectNodes("//root/data")
@@ -785,100 +621,14 @@ Namespace DotNetNuke.Modules.Admin.Languages
                         End If
                 End Select
                 Dim selectedFile As String = SelectedResourceFile.Replace(Server.MapPath(Common.Globals.ApplicationPath + "/"), "")
-                Response.Redirect(NavigateURL(TabId, "", "Locale=" & Locale, "resourceFile=" & QueryStringEncode(selectedFile), _
-                                              "mode=" & rbMode.SelectedValue, "highlight=" & chkHighlight.Checked.ToString().ToLower(), _
-                                              "ctl=Editor", "mid=" & moduleID, "Page=" & dgEditor.CurrentPageIndex.ToString, "message=FileSaved"), True)
+                BindGrid(True)
+                'Response.Redirect(NavigateURL(TabId, "", "Locale=" & Locale, "resourceFile=" & QueryStringEncode(selectedFile), _
+                '                              "mode=" & rbMode.SelectedValue, "highlight=" & chkHighlight.Checked.ToString().ToLower(), _
+                '                              "ctl=Editor", "mid=" & ModuleId, "Page=" & dgEditor.CurrentPageIndex.ToString, "message=FileSaved"), True)
             Catch exc As Exception    'Module failed to load
                 UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End Try
 
-        End Sub
-
-        Protected Sub ctlPagingControl_PageChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ctlPagingControl.PageChanged
-            dgEditor.CurrentPageIndex = ctlPagingControl.CurrentPage - 1
-            BindGrid()
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Binds a data item to the datagrid
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' Adds a warning message before leaving the page to edit in full editor so the user can save changes
-        ''' Customizes edit textbox and default value
-        ''' </remarks>
-        ''' <history>
-        ''' 	[vmasanas]	20/10/2004	Created
-        ''' 	[vmasanas]	25/03/2006	Modified to support new host resources and incremental saving
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub dgEditor_ItemDataBound(ByVal sender As Object, ByVal e As DataGridItemEventArgs) Handles dgEditor.ItemDataBound
-            Try
-                If e.Item.ItemType = ListItemType.AlternatingItem Or e.Item.ItemType = ListItemType.Item Then
-                    Dim c As HyperLink
-                    c = CType(e.Item.FindControl("lnkEdit"), HyperLink)
-                    If Not c Is Nothing Then
-                        ClientAPI.AddButtonConfirm(c, Localization.GetString("SaveWarning", Me.LocalResourceFile))
-                    End If
-
-                    Dim p As Pair = CType(CType(e.Item.DataItem, DictionaryEntry).Value, Pair)
-
-                    Dim t As TextBox
-					Dim d As TextBox
-					t = CType(e.Item.FindControl("txtValue"), TextBox)
-					d = CType(e.Item.FindControl("txtDefault"), TextBox)
-					If p.First.ToString() = p.Second.ToString() And chkHighlight.Checked And Not p.Second.ToString = "" Then
-						t.CssClass = "Pending"
-					End If
-					If p.First.ToString().Length > 30 Or p.Second.ToString().Length > 30 Then
-						t.Height = New Unit("100")
-						d.Height = New Unit("100")
-					End If
-					t.Text = Server.HtmlDecode(p.First.ToString())
-					d.Text = Server.HtmlDecode(p.Second.ToString())
-                End If
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-        End Sub
-
-        Protected Sub dgEditor_PageIndexChanged(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridPageChangedEventArgs) Handles dgEditor.PageIndexChanged
-            dgEditor.CurrentPageIndex = e.NewPageIndex
-            BindGrid()
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Open the selected resource file in editor or expand/collapse node if is folder
-        ''' </summary>
-        ''' <param name="source"></param>
-        ''' <param name="e"></param>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[vmasanas]	07/10/2004	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub DNNTree_NodeClick(ByVal source As Object, ByVal e As DotNetNuke.UI.WebControls.DNNTreeNodeClickEventArgs) Handles DNNTree.NodeClick
-            Try
-                If e.Node.ImageIndex = eImageType.Page Then
-                    SelectedResourceFile = e.Node.Key
-                    Try
-                        dgEditor.CurrentPageIndex = 0
-                        BindGrid()
-                    Catch
-                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
-                    End Try
-                ElseIf e.Node.IsExpanded Then
-                    e.Node.Collapse()
-                Else
-                    e.Node.Expand()
-                End If
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -897,43 +647,161 @@ Namespace DotNetNuke.Modules.Admin.Languages
         Private Sub rbMode_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbMode.SelectedIndexChanged
             Try
                 Personalization.Personalization.SetProfile("LanguageEditor", "Mode" & PortalSettings.PortalId.ToString, rbMode.SelectedValue)
-                dgEditor.CurrentPageIndex = 0
-                BindGrid()
+                BindGrid(True)
             Catch
                 UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
             End Try
         End Sub
 
-		Protected Sub dgEditor_ItemCreated(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles dgEditor.ItemCreated
-			If (e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem) Then
-				e.Item.Cells(1).Style.Add("padding-bottom", "10px")
-				e.Item.Cells(1).Style.Add("padding-right", "20px")
+        Protected Sub resourceFiles_NodeClick(ByVal sender As Object, ByVal e As Telerik.Web.UI.RadTreeNodeEventArgs) Handles resourceFiles.NodeClick
+            Try
+                If e.Node.Nodes.Count = 0 Then
+                    SelectedResourceFile = e.Node.Value
+                    Try
+                        BindGrid(True)
+                    Catch
+                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("Save.ErrorMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                    End Try
+                End If
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
 
-				Dim lbl1 As Label = New Label()
-				lbl1.CssClass = "NormalBold"
-				lbl1.Text = Localization.GetString("ResourceName.Text", LocalResourceFile) & " "
+        Protected Sub resourceFiles_NodeExpand(ByVal sender As Object, ByVal e As Telerik.Web.UI.RadTreeNodeEventArgs) Handles resourceFiles.NodeExpand
+            Dim node As RadTreeNode
+            Select Case e.Node.Value
+                Case "Local Resources"
+                    node = New RadTreeNode()
+                    node.Text = "Admin"
+                    node.Value = Server.MapPath("~/Admin")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = "Controls"
+                    node.Value = Server.MapPath("~/Controls")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = "DesktopModules"
+                    node.Value = Server.MapPath("~/DesktopModules")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = "Install"
+                    node.Value = Server.MapPath("~/Install")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = "Providers"
+                    node.Value = Server.MapPath("~/Providers")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
 
-				Dim lbl2 As Label = New Label()
-				lbl2.ID = "lblName"
-				lbl2.CssClass = "Normal"
-				lbl2.Text = DataBinder.Eval(e.Item.DataItem, "key")
+                    node = New RadTreeNode()
+                    node.Text = "HostSkins"
+                    node.Value = Path.Combine(HostMapPath, "Skins")
+                    node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                    e.Node.Nodes.Add(node)
 
-				Dim tableCell As TableCell = New TableCell()
-				tableCell.ColumnSpan = 3
-				tableCell.BackColor = Color.FromArgb(243, 243, 243)
-				tableCell.Controls.Add(lbl1)
-				tableCell.Controls.Add(lbl2)
+                    Dim portalSkinFolder As String = Path.Combine(PortalSettings.HomeDirectoryMapPath, "Skins")
+                    If Directory.Exists(portalSkinFolder) AndAlso (PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId) Then
+                        node = New RadTreeNode()
+                        node.Text = "PortalSkins"
+                        node.Value = Path.Combine(PortalSettings.HomeDirectoryMapPath, "Skins")
+                        node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
+                        e.Node.Nodes.Add(node)
+                    End If
+                Case "Global Resources"
+                    node = New RadTreeNode()
+                    node.Text = "Exceptions"
+                    node.Value = Server.MapPath("~/App_GlobalResources/Exceptions")
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = Path.GetFileNameWithoutExtension(Localization.GlobalResourceFile)
+                    node.Value = Server.MapPath(Localization.GlobalResourceFile)
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = Path.GetFileNameWithoutExtension(Localization.SharedResourceFile)
+                    node.Value = Server.MapPath(Localization.SharedResourceFile)
+                    e.Node.Nodes.Add(node)
+                    node = New RadTreeNode()
+                    node.Text = "WebControls"
+                    node.Value = Server.MapPath("~/App_GlobalResources/WebControls")
+                    e.Node.Nodes.Add(node)
+                Case Else
+                    For Each folder In Directory.GetDirectories(e.Node.Value)
+                        Dim folderInfo As New System.IO.DirectoryInfo(folder)
+                        node = New RadTreeNode()
+                        node.Value = folderInfo.FullName
+                        node.Text = folderInfo.Name
+                        node.ExpandMode = TreeNodeExpandMode.ServerSideCallBack
 
-				Dim dataGridItem As DataGridItem = New DataGridItem(e.Item.ItemIndex + 1, 0, ListItemType.Item)
-				dataGridItem.Cells.Add(New TableCell())
-				dataGridItem.Cells.Add(tableCell)
+                        If folderInfo.GetFiles("*.resx").Length > 0 OrElse folderInfo.GetDirectories().Length > 0 Then
+                            e.Node.Nodes.Add(node)
+                        End If
+                    Next
+                    For Each file In Directory.GetFiles(e.Node.Value, "*.as?x.resx")
+                        Dim fileInfo As New System.IO.FileInfo(file)
+                        node = New RadTreeNode()
+                        node.Value = fileInfo.FullName
+                        node.Text = fileInfo.Name.Replace(".resx", "")
 
-				dgEditor.Controls(0).Controls.Add(dataGridItem)
-			End If
-		End Sub
+                        e.Node.Nodes.Add(node)
+                    Next
+                    For Each file In Directory.GetFiles(e.Node.Value, "SharedResources.resx")
+                        Dim fileInfo As New System.IO.FileInfo(file)
+                        node = New RadTreeNode()
+                        node.Value = fileInfo.FullName
+                        node.Text = fileInfo.Name.Replace(".resx", "")
 
-        Protected Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
-            Response.Redirect(NavigateURL())
+                        e.Node.Nodes.Add(node)
+                    Next
+            End Select
+
+            e.Node.Expanded = True
+        End Sub
+
+        Protected Sub resourcesGrid_ItemDataBound(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Handles resourcesGrid.ItemDataBound
+            Try
+                If e.Item.ItemType = GridItemType.AlternatingItem Or e.Item.ItemType = GridItemType.Item Then
+                    Dim c As HyperLink
+                    c = CType(e.Item.FindControl("lnkEdit"), HyperLink)
+                    If Not c Is Nothing Then
+                        ClientAPI.AddButtonConfirm(c, Localization.GetString("SaveWarning", Me.LocalResourceFile))
+                    End If
+
+                    Dim p As Pair = CType(CType(e.Item.DataItem, DictionaryEntry).Value, Pair)
+
+                    Dim t As TextBox
+                    Dim d As TextBox
+                    t = CType(e.Item.FindControl("txtValue"), TextBox)
+                    d = CType(e.Item.FindControl("txtDefault"), TextBox)
+                    If p.First.ToString() = p.Second.ToString() And chkHighlight.Checked And Not p.Second.ToString = "" Then
+                        t.CssClass = "Pending"
+                    End If
+                    Dim length As Integer = p.First.ToString().Length
+                    If p.Second.ToString().Length > length Then
+                        length = p.Second.ToString().Length
+                    End If
+                    If length > 30 Then
+                        Dim height As Integer = 20 * (length \ 30)
+                        If height > 100 Then height = 100
+                        t.Height = New Unit(height)
+                        t.TextMode = TextBoxMode.MultiLine
+                        d.Height = New Unit(height)
+                        d.TextMode = TextBoxMode.MultiLine
+                    End If
+                    t.Text = Server.HtmlDecode(p.First.ToString())
+                    d.Text = Server.HtmlDecode(p.Second.ToString())
+                End If
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        Protected Sub resourcesGrid_NeedDataSource(ByVal source As Object, ByVal e As Telerik.Web.UI.GridNeedDataSourceEventArgs) Handles resourcesGrid.NeedDataSource
+            BindGrid(False)
         End Sub
 
 #End Region
@@ -952,6 +820,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
 #End Region
 
-    End Class
+     End Class
 
 End Namespace

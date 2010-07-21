@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+    <LangVersion>9</LangVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -66,8 +69,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <DebugType>full</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -88,8 +90,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <DebugType>pdbonly</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -179,9 +180,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\MembershipProviderPackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">
   </Target>
-  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />

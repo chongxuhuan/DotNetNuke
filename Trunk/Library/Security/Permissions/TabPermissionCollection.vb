@@ -106,6 +106,12 @@ Namespace DotNetNuke.Security.Permissions
             Next
         End Sub
 
+        Public Sub AddRange(ByVal tabPermissions As IEnumerable(Of TabPermissionInfo))
+            For Each permission As TabPermissionInfo In tabPermissions
+                Add(permission)
+            Next
+        End Sub
+
         Public Sub AddRange(ByVal tabPermissions As TabPermissionCollection)
             For Each permission As TabPermissionInfo In tabPermissions
                 Add(permission)
@@ -167,7 +173,12 @@ Namespace DotNetNuke.Security.Permissions
             Return PermissionController.BuildPermissions(List, key)
         End Function
 
+        Public Function Where(ByVal predicate As Func(Of TabPermissionInfo, Boolean)) As IEnumerable(Of TabPermissionInfo)
+            Return Me.Cast(Of TabPermissionInfo).Where(predicate)
+        End Function
+
 #End Region
+
 
     End Class
 

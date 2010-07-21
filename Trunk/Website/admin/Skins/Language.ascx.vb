@@ -23,6 +23,8 @@ Imports System.IO
 Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Services.Tokens
+Imports DotNetNuke.Security.Permissions
+Imports System.Collections.Generic
 
 Namespace DotNetNuke.UI.Skins.Controls
 
@@ -33,11 +35,13 @@ Namespace DotNetNuke.UI.Skins.Controls
     Partial Class Language
         Inherits UI.Skins.SkinObjectBase
 
-#Region " private members "
+#Region "Private Members"
+
         Private _cssClass As String
         Private _itemTemplate As String
         Private _headerTemplate As String
         Private _footerTemplate As String
+        Private _SelectedItemTemplate As String
         Private _separatorTemplate As String
         Private _alternateTemplate As String
         Private _commonHeaderTemplate As String
@@ -46,13 +50,16 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _showLinks As Boolean = False
         Private _localResourceFile As String
         Private _localTokenReplace As LanguageTokenReplace
+
 #End Region
 
-#Region " constants "
+#Region "Public Constants"
+
         Const MyFileName As String = "Language.ascx"
+
 #End Region
 
-#Region " Public Properties"
+#Region "Public Properties"
 
         Public Property AlternateTemplate() As String
             Get
@@ -135,6 +142,18 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Set
         End Property
 
+        Public Property SelectedItemTemplate() As String
+            Get
+                If String.IsNullOrEmpty(_SelectedItemTemplate) Then
+                    _SelectedItemTemplate = Localization.GetString("SelectedItemTemplate.Default", LocalResourceFile)
+                End If
+                Return _SelectedItemTemplate
+            End Get
+            Set(ByVal value As String)
+                _SelectedItemTemplate = value
+            End Set
+        End Property
+
         Public Property SeparatorTemplate() As String
             Get
                 If String.IsNullOrEmpty(_separatorTemplate) Then
@@ -200,7 +219,7 @@ Namespace DotNetNuke.UI.Skins.Controls
 
 #End Region
 
-#Region " Private Methods "
+#Region "Private Methods"
 
         Private Function parseTemplate(ByVal template As String, ByVal locale As String) As String
             Dim strReturnValue As String = template
@@ -211,7 +230,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                     LocalTokenReplace.Language = locale
                 Else
                     'for non data items use page culture
-                    LocalTokenReplace.Language = currentCulture
+                    LocalTokenReplace.Language = CurrentCulture
                 End If
 
                 'perform token replacements
@@ -228,13 +247,13 @@ Namespace DotNetNuke.UI.Skins.Controls
             If String.IsNullOrEmpty(CommonHeaderTemplate) Then
                 litCommonHeaderTemplate.Visible = False
             Else
-                litCommonHeaderTemplate.Text = parseTemplate(CommonHeaderTemplate, currentCulture)
+                litCommonHeaderTemplate.Text = parseTemplate(CommonHeaderTemplate, CurrentCulture)
             End If
 
             If String.IsNullOrEmpty(CommonFooterTemplate) Then
                 litCommonFooterTemplate.Visible = False
             Else
-                litCommonFooterTemplate.Text = parseTemplate(CommonFooterTemplate, currentCulture)
+                litCommonFooterTemplate.Text = parseTemplate(CommonFooterTemplate, CurrentCulture)
             End If
         End Sub
 
@@ -246,13 +265,19 @@ Namespace DotNetNuke.UI.Skins.Controls
             Try
 
                 If ShowLinks Then
-                    If Localization.GetLocales(PortalSettings.PortalId).Count > 1 Then
-                        rptLanguages.DataSource = Localization.GetLocales(PortalSettings.PortalId).Values
+                    Dim locales As  New Dictionary(Of String, Locale)
+                    For Each loc As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
+                        Dim defaultRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", loc.Code), PortalSettings.PortalId, "Administrators")
+                        If PortalSecurity.IsInRoles(PortalSettings.AdministratorRoleName) OrElse loc.IsPublished OrElse PortalSecurity.IsInRoles(defaultRoles) Then
+                            locales.Add(loc.Code, loc)
+                        End If
+                    Next
+                    If locales.Count > 1 Then
+                        rptLanguages.DataSource = locales.Values
                         rptLanguages.DataBind()
                     Else
                         rptLanguages.Visible = False
                     End If
-
                 End If
 
                 If Not Page.IsPostBack Then
@@ -282,10 +307,6 @@ Namespace DotNetNuke.UI.Skins.Controls
         End Sub
 
         Private Sub selectCulture_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles selectCulture.SelectedIndexChanged
-
-            ' Store selected language in cookie
-            ' Localization.SetLanguage(selectCulture.SelectedItem.Value)
-
             'Redirect to same page to update all controls for newly selected culture
             LocalTokenReplace.Language = selectCulture.SelectedItem.Value
             Response.Redirect(LocalTokenReplace.ReplaceEnvironmentTokens("[URL]"))
@@ -310,7 +331,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                         Case ListItemType.Item
                             strTemplate = ItemTemplate
                         Case ListItemType.AlternatingItem
-                            If Not String.IsNullOrEmpty(Me.AlternateTemplate) Then
+                            If Not String.IsNullOrEmpty(AlternateTemplate) Then
                                 strTemplate = AlternateTemplate
                             Else
                                 strTemplate = ItemTemplate
@@ -328,12 +349,16 @@ Namespace DotNetNuke.UI.Skins.Controls
                     Else
                         If e.Item.DataItem IsNot Nothing Then
                             Dim locale As Locale = TryCast(e.Item.DataItem, Locale)
-                            If locale IsNot Nothing Then
+                            If locale IsNot Nothing AndAlso (e.Item.ItemType = ListItemType.Item OrElse _
+                                                             e.Item.ItemType = ListItemType.AlternatingItem) Then
+                                If locale.Code = PortalSettings.CultureCode AndAlso Not String.IsNullOrEmpty(SelectedItemTemplate) Then
+                                    strTemplate = SelectedItemTemplate
+                                End If
                                 litTemplate.Text = parseTemplate(strTemplate, locale.Code)
                             End If
                         Else
                             'for non data items use page culture
-                            litTemplate.Text = parseTemplate(strTemplate, currentCulture)
+                            litTemplate.Text = parseTemplate(strTemplate, CurrentCulture)
                         End If
                     End If
 
@@ -343,6 +368,7 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Try
 
         End Sub
+
 #End Region
 
     End Class

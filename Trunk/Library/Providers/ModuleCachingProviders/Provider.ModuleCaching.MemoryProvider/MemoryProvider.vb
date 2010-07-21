@@ -88,7 +88,7 @@ Namespace DotNetNuke.Services.ModuleCache
         End Sub
 
         Public Overrides Sub PurgeExpiredItems(ByVal portalId As Integer)
-            Throw New NotSupportedException()
+            'Throw New NotSupportedException()
         End Sub
 
 #End Region

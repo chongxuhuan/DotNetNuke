@@ -95,8 +95,9 @@ Namespace DotNetNuke.Services.EventQueue
         Private Shared Function GetSubscribers(ByVal eventName As String) As String()
             'Get the subscribers to this event
             Dim subscribers(-1) As String
-            If Not IsNothing(Config.EventQueueConfiguration.GetConfig().PublishedEvents(eventName)) Then
-                subscribers = Config.EventQueueConfiguration.GetConfig().PublishedEvents(eventName).Subscribers().Split(";".ToCharArray())
+            Dim publishedEvent As PublishedEvent
+            If Config.EventQueueConfiguration.GetConfig().PublishedEvents.TryGetValue(eventName, publishedEvent) Then
+                subscribers = publishedEvent.Subscribers().Split(";".ToCharArray())
             Else
                 subscribers(0) = ""
             End If

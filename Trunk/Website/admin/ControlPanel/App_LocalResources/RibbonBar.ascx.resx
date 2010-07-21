@@ -135,12 +135,6 @@
   <data name="hypUpgrade.Text" xml:space="preserve">
     <value>Click Here To Get The Latest Version</value>
   </data>
-  <data name="hypMessageImage.Text" xml:space="preserve">
-    <value>~/admin/ControlPanel/images/iconbar_logo.gif</value>
-  </data>
-  <data name="hypMessageTooltip.Text" xml:space="preserve">
-    <value>DotnetNuke Community Edition</value>
-  </data>
   <data name="hypMessageUrl.Text" xml:space="preserve">
     <value>http://www.dotnetnuke.com</value>
   </data>
@@ -253,7 +247,7 @@
     <value>Super Users</value>
   </data>
   <data name="Tool.UserRoles.Text" xml:space="preserve">
-    <value>User Roles</value>
+    <value>Roles</value>
   </data>
   <data name="Tool.Users.Text" xml:space="preserve">
     <value>Users</value>

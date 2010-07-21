@@ -310,8 +310,8 @@ Namespace DotNetNuke.UI.ControlPanels
 								cmdHost.Visible = True
 							Else ' branding
                                 If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) AndAlso Host.DisplayCopyright Then
-                                    hypMessage.ImageUrl = Localization.GetString("hypMessageImage.Text", LocalResourceFile)
-                                    hypMessage.ToolTip = Localization.GetString("hypMessageTooltip.Text", LocalResourceFile)
+                                    hypMessage.ImageUrl = "~/images/branding/iconbar_logo.png"
+                                    hypMessage.ToolTip = DotNetNukeContext.Current.Application.Description
                                     hypMessage.NavigateUrl = Localization.GetString("hypMessageUrl.Text", LocalResourceFile)
                                 Else
                                     hypMessage.Visible = False

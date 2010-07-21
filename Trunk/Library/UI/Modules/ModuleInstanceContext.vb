@@ -272,23 +272,6 @@ Namespace DotNetNuke.UI.Modules
 
 #Region "To be moved to global objects"
 
-        ' CONVERSION: Should be moved to Global Object
-        ' Examples: PortalSettings.IsAdminMenu
-        '           PortalSettings.IsHostMenu
-        '           PortalSettings.PortalAlias
-        '           PortalSettings.PortalId
-        '           PortalSettings.Current
-
-        'Public ReadOnly Property IsAdminMenu() As Boolean
-        '    Get
-        '        Dim _IsAdmin As Boolean = False
-        '        If PortalSettings.ActiveTab.ParentId = PortalSettings.AdminTabId Then
-        '            _IsAdmin = True
-        '        End If
-        '        Return _IsAdmin
-        '    End Get
-        'End Property
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets whether this module is on a Host Menu

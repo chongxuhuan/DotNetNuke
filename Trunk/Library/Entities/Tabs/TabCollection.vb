@@ -19,8 +19,9 @@
 '
 
 Imports System.Collections.Generic
-Imports System.Runtime.Serialization
 Imports System.Linq
+Imports System.Runtime.CompilerServices
+Imports System.Runtime.Serialization
 
 Namespace DotNetNuke.Entities.Tabs
 
@@ -40,6 +41,9 @@ Namespace DotNetNuke.Entities.Tabs
         'This is used to provide a collection of children
         Private children As Dictionary(Of Integer, List(Of TabInfo))
 
+        'This is used to provide a culture based set of tabs
+        Private localizedTabs As Dictionary(Of String, List(Of TabInfo))
+
 #End Region
 
 #Region "Constructors"
@@ -47,6 +51,7 @@ Namespace DotNetNuke.Entities.Tabs
         Public Sub New()
             list = New List(Of TabInfo)
             children = New Dictionary(Of Integer, List(Of TabInfo))
+            localizedTabs = New Dictionary(Of String, List(Of TabInfo))
         End Sub
 
         'Required for Serialization
@@ -54,12 +59,14 @@ Namespace DotNetNuke.Entities.Tabs
             MyBase.New(info, context)
         End Sub
 
-        Public Sub New(ByVal tabs As List(Of TabInfo))
+        Public Sub New(ByVal tabs As IEnumerable(Of TabInfo))
             Me.New()
             AddRange(tabs)
         End Sub
 
 #End Region
+
+#Region "Private Methods"
 
         Private Function AddToChildren(ByVal tab As TabInfo) As Integer
             Dim childList As List(Of TabInfo) = Nothing
@@ -73,6 +80,45 @@ Namespace DotNetNuke.Entities.Tabs
 
             Return childList.Count
         End Function
+
+        Private Sub AddToLocalizedTabCollection(ByVal tab As TabInfo, ByVal cultureCode As String)
+            Dim localizedTabCollection As List(Of TabInfo) = Nothing
+
+            If Not localizedTabs.TryGetValue(cultureCode.ToLowerInvariant(), localizedTabCollection) Then
+                localizedTabCollection = New List(Of TabInfo)()
+                localizedTabs.Add(cultureCode.ToLowerInvariant(), localizedTabCollection)
+            End If
+
+            'Add tab to end of localized tabs
+            localizedTabCollection.Add(tab)
+        End Sub
+
+        Private Sub AddToLocalizedTabs(ByVal tab As TabInfo)
+            If String.IsNullOrEmpty(tab.CultureCode) Then
+                'Add to all cultures
+                For Each locale As Locale In LocaleController.Instance().GetLocales(tab.PortalID).Values
+                    AddToLocalizedTabCollection(tab, locale.Code)
+                Next
+            Else
+                AddToLocalizedTabCollection(tab, tab.CultureCode)
+            End If
+        End Sub
+
+        Private Function IsLocalizationEnabled() As Boolean
+            Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
+            If _portalSettings IsNot Nothing Then
+                Return PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", _portalSettings.PortalId, False)
+            Else
+                Return Null.NullBoolean
+            End If
+        End Function
+
+        Private Function IsLocalizationEnabled(ByVal PortalId As Integer) As Boolean
+            Return PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", PortalId, False)
+        End Function
+
+#End Region
+
 
 #Region "Public Methods"
 
@@ -98,9 +144,14 @@ Namespace DotNetNuke.Entities.Tabs
                     End If
                 Next
             End If
+
+            'Add to localized tabs
+            If tab.PortalID = Null.NullInteger OrElse IsLocalizationEnabled(tab.PortalID) Then
+                AddToLocalizedTabs(tab)
+            End If
         End Sub
 
-        Public Sub AddRange(ByVal tabs As List(Of TabInfo))
+        Public Sub AddRange(ByVal tabs As IEnumerable(Of TabInfo))
             For Each tab As TabInfo In tabs
                 Add(tab)
             Next
@@ -128,7 +179,6 @@ Namespace DotNetNuke.Entities.Tabs
                     Exit For
                 End If
             Next
-
             Return descendantTabs
         End Function
 
@@ -140,6 +190,31 @@ Namespace DotNetNuke.Entities.Tabs
             Return tabs
         End Function
 
+        Public Function WithCulture(ByVal cultureCode As String, ByVal includeNeutral As Boolean) As TabCollection
+            Dim tabs As List(Of TabInfo) = Nothing
+            Dim collection As TabCollection = Nothing
+            If IsLocalizationEnabled() Then
+                If String.IsNullOrEmpty(cultureCode) Then
+                    'No culture passed in - so return all tabs
+                    collection = New TabCollection(list)
+                ElseIf Not localizedTabs.TryGetValue(cultureCode.ToLowerInvariant(), tabs) Then
+                    collection = New TabCollection(New List(Of TabInfo))
+                Else
+                    If Not includeNeutral Then
+                        'Remove neutral culture tabs
+                        collection = New TabCollection(From t As TabInfo In tabs _
+                                                        Where t.CultureCode.ToLowerInvariant = cultureCode.ToLowerInvariant() _
+                                                        Select t)
+                    Else
+                        collection = New TabCollection(tabs)
+                    End If
+                End If
+            Else
+                collection = New TabCollection(list)
+            End If
+            Return collection
+        End Function
+
         Public Function WithParentId(ByVal parentId As Integer) As List(Of TabInfo)
             Dim tabs As List(Of TabInfo) = Nothing
             If Not children.TryGetValue(parentId, tabs) Then
@@ -148,8 +223,30 @@ Namespace DotNetNuke.Entities.Tabs
             Return tabs
         End Function
 
+        Public Function WithTabId(ByVal tabId As Integer) As TabInfo
+            Dim t As TabInfo = Nothing
+            If ContainsKey(tabId) Then
+                t = Item(tabId)
+            End If
+            Return t
+        End Function
+
+        Public Function WithTabNameAndParentId(ByVal tabName As String, ByVal parentId As Integer) As TabInfo
+            Return (From t As TabInfo In list _
+                    Where t.TabName.Equals(tabName, StringComparison.InvariantCultureIgnoreCase) _
+                    AndAlso t.ParentId = parentId _
+                    Select t).SingleOrDefault()
+        End Function
+
+        Public Function WithTabName(ByVal tabName As String) As TabInfo
+            Return (From t As TabInfo In list _
+                   Where t.TabName.Equals(tabName, StringComparison.InvariantCultureIgnoreCase) _
+                   Select t).FirstOrDefault()
+        End Function
 
 #End Region
+
+
     End Class
 
 End Namespace

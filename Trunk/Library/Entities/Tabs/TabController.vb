@@ -35,7 +35,13 @@ Namespace DotNetNuke.Entities.Tabs
 
     Public Class TabController
 
+#Region "Private Shared Members"
+
         Private Shared provider As DataProvider = DataProvider.Instance()
+
+#End Region
+
+#Region "Public Shared Members"
 
         Public Shared ReadOnly Property CurrentPage() As TabInfo
             Get
@@ -46,6 +52,8 @@ Namespace DotNetNuke.Entities.Tabs
                 Return _tab
             End Get
         End Property
+
+#End Region
 
 #Region "Private Methods"
 
@@ -67,7 +75,7 @@ Namespace DotNetNuke.Entities.Tabs
                 Next
 
                 If canAdd Then
-                    objmodules.CopyModule(allTabsModule.ModuleID, allTabsModule.TabID, objTab.TabID, "", True)
+                    objmodules.CopyModule(allTabsModule, objTab, Null.NullString, True)
                 End If
             Next
         End Sub
@@ -85,7 +93,7 @@ Namespace DotNetNuke.Entities.Tabs
         Private Function AddTabInternal(ByVal objTab As TabInfo, ByVal includeAllTabsModules As Boolean) As Integer
             Dim newTab As Boolean = True
             objTab.TabPath = GenerateTabPath(objTab.ParentId, objTab.TabName)
-            Dim iTabID As Integer = GetTabByTabPath(objTab.PortalID, objTab.TabPath)
+            Dim iTabID As Integer = GetTabByTabPath(objTab.PortalID, objTab.TabPath, objTab.CultureCode)
 
             If iTabID > Null.NullInteger Then
                 'Tab exists so Throw
@@ -109,11 +117,12 @@ Namespace DotNetNuke.Entities.Tabs
                 Dim contentItemID As Integer = contentController.AddContentItem(objTab)
 
                 'Add Module
-                iTabID = provider.AddTab(contentItemID, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, objTab.ParentId, _
-                         objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, objTab.Url, _
-                         objTab.SkinSrc, objTab.ContainerSrc, objTab.TabPath, objTab.StartDate, objTab.EndDate, _
-                         objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
-                         objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetActivePortalLanguage(objTab.PortalID))
+                iTabID = provider.AddTab(contentItemID, objTab.PortalID, objTab.UniqueId, objTab.VersionGuid, objTab.DefaultLanguageGuid, objTab.LocalizedVersionGuid, _
+                            objTab.TabName, objTab.IsVisible, objTab.DisableLink, objTab.ParentId, _
+                            objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, objTab.Url, _
+                            objTab.SkinSrc, objTab.ContainerSrc, objTab.TabPath, objTab.StartDate, objTab.EndDate, _
+                            objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
+                            objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objTab.CultureCode)
 
                 objTab.TabID = iTabID
 
@@ -160,7 +169,7 @@ Namespace DotNetNuke.Entities.Tabs
         ''' -----------------------------------------------------------------------------
         Private Sub AddTabToEndOfList(ByVal objTab As TabInfo, ByVal updateTabPath As Boolean)
             'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
 
             'Get the Parent Tab
             Dim parentTab As TabInfo = GetTab(objTab.ParentId, objTab.PortalID, False)
@@ -171,17 +180,22 @@ Namespace DotNetNuke.Entities.Tabs
             End If
 
             'Update the TabOrder for the Siblings
-            UpdateTabOrder(siblingTabs, 2)
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
+            'UpdateOrder for the new tab
             objTab.TabOrder = 2 * siblingTabs.Count + 1
-
-            'UpdateOrder 
             UpdateTabOrder(objTab, updateTabPath)
         End Sub
 
         Private Sub DeleteTabInternal(ByVal tabId As Integer, ByVal portalId As Integer)
             'Get the tab from the Cache
             Dim objTab As TabInfo = GetTab(tabId, portalId, False)
+
+            'Delete ant tabModule Instances
+            Dim moduleCtrl As New ModuleController
+            For Each m As ModuleInfo In moduleCtrl.GetTabModules(tabId).Values
+                moduleCtrl.DeleteTabModule(m.TabID, m.ModuleID, False)
+            Next
 
             'Delete Tab
             provider.DeleteTab(tabId)
@@ -223,50 +237,6 @@ Namespace DotNetNuke.Entities.Tabs
             End If
         End Sub
 
-        Private Function GetTabByNameAndParent(ByVal TabName As String, ByVal PortalId As Integer, ByVal ParentId As Integer) As TabInfo
-            Dim arrTabs As ArrayList = GetTabsByNameAndPortal(TabName, PortalId)
-            Dim intTab As Integer = -1
-
-            If Not arrTabs Is Nothing Then
-                Select Case arrTabs.Count
-                    Case 0    ' no results
-                    Case 1    ' exact match
-                        intTab = 0
-                    Case Else    ' multiple matches
-                        Dim intIndex As Integer
-                        Dim objTab As TabInfo
-                        For intIndex = 0 To arrTabs.Count - 1
-                            objTab = CType(arrTabs(intIndex), TabInfo)
-                            ' check if the parentids match
-                            If objTab.ParentId = ParentId Then
-                                intTab = intIndex
-                            End If
-                        Next intIndex
-                        If intTab = -1 Then
-                            ' no match - return the first item
-                            intTab = 0
-                        End If
-                End Select
-            End If
-
-            If intTab <> -1 Then
-                Return CType(arrTabs(intTab), TabInfo)
-            Else
-                Return Nothing
-            End If
-        End Function
-
-        Private Function GetTabsByNameAndPortal(ByVal TabName As String, ByVal PortalId As Integer) As ArrayList
-            Dim returnTabs As New ArrayList()
-            For Each kvp As KeyValuePair(Of Integer, TabInfo) In GetTabsByPortal(PortalId)
-                Dim objTab As TabInfo = kvp.Value
-                If String.Compare(objTab.TabName, TabName, True) = 0 Then
-                    returnTabs.Add(objTab)
-                End If
-            Next
-            Return returnTabs
-        End Function
-
         Private Function GetIndexOfTab(ByVal objTab As TabInfo, ByVal tabs As List(Of TabInfo)) As Integer
             Dim tabIndex As Integer = Null.NullInteger
             For index As Integer = 0 To tabs.Count - 1
@@ -276,6 +246,10 @@ Namespace DotNetNuke.Entities.Tabs
                 End If
             Next
             Return tabIndex
+        End Function
+
+        Private Function GetSiblingTabs(ByVal objTab As TabInfo) As List(Of TabInfo)
+            Return GetTabsByPortal(objTab.PortalID).WithCulture(objTab.CultureCode, True).WithParentId(objTab.ParentId)
         End Function
 
         Private Sub PromoteTab(ByVal objTab As TabInfo, ByVal siblingTabs As List(Of TabInfo))
@@ -292,11 +266,11 @@ Namespace DotNetNuke.Entities.Tabs
                 UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2)
 
                 'Get the siblings of the Parent
-                siblingTabs = GetTabsByPortal(objTab.PortalID).WithParentId(parentTab.ParentId)
+                siblingTabs = GetSiblingTabs(parentTab)
                 siblingCount = siblingTabs.Count
 
                 'First make sure the list is sorted and spaced
-                UpdateTabOrder(siblingTabs, 2)
+                UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
                 'Get Parents Index position in the Sibling List
                 Dim parentIndex As Integer = GetIndexOfTab(parentTab, siblingTabs)
@@ -313,8 +287,10 @@ Namespace DotNetNuke.Entities.Tabs
                 UpdateTab(objTab)
 
                 'Update the current tabs level and tabpath
-                'objTab.Level = objTab.Level - 1
-                'UpdateTabOrder(objTab, True)
+                Dim tabLevel As Integer = objTab.Level - 1
+                If tabLevel < 0 Then tabLevel = 0
+                objTab.Level = tabLevel
+                UpdateTabOrder(objTab, True)
 
                 'Update the Descendents of this tab
                 UpdateDescendantLevel(descendantTabs, -1)
@@ -332,39 +308,10 @@ Namespace DotNetNuke.Entities.Tabs
         ''' -----------------------------------------------------------------------------
         Private Sub RemoveTab(ByVal objTab As TabInfo)
             'Tab is being moved from the original list of siblings, so update the Taborder for the remaining tabs
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
-            For index As Integer = 0 To siblingCount - 1
-                Dim sibling As TabInfo = siblingTabs(index)
-                If sibling.TabID = objTab.TabID Then
-                    'This is the tab we are moving so update the taborder for the remaining items
-                    UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, -2)
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab).Where(Function(t) t.TabID < objTab.TabID).ToList
 
-                    Exit For
-                End If
-            Next
-        End Sub
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Swaps two adjacent tabs in the same level
-        ''' </summary>
-        ''' <param name="firstTab">ID of the first tab</param>
-        ''' <param name="secondTab">ID of the second Tab</param>
-        ''' <history>
-        ''' 	[cnurse]	04/30/2008	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub SwapAdjacentTabs(ByVal firstTab As TabInfo, ByVal secondTab As TabInfo)
-            firstTab.TabOrder -= 2
-
-            'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-            UpdateTabOrder(firstTab, False)
-
-            secondTab.TabOrder += 2
-
-            'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-            UpdateTabOrder(secondTab, False)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -385,12 +332,15 @@ Namespace DotNetNuke.Entities.Tabs
                 Dim oldTabPath As String = objtab.TabPath
                 objtab.TabPath = GenerateTabPath(objtab.ParentId, objtab.TabName)
                 If oldTabPath <> objtab.TabPath Then
-                    provider.UpdateTab(objtab.TabID, objtab.ContentItemId, objtab.PortalID, objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
-                           objtab.ParentId, objtab.IconFile, objtab.IconFileLarge, objtab.Title, objtab.Description, _
-                           objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
-                           objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
-                           objtab.PageHeadText, objtab.IsSecure, objtab.PermanentRedirect, _
-                           objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetActivePortalLanguage(portalId))
+                    provider.UpdateTab(objtab.TabID, objtab.ContentItemId, objtab.PortalID, objtab.VersionGuid, objtab.DefaultLanguageGuid, objtab.LocalizedVersionGuid, _
+                            objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
+                            objtab.ParentId, objtab.IconFile, objtab.IconFileLarge, objtab.Title, objtab.Description, _
+                            objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
+                            objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
+                            objtab.PageHeadText, objtab.IsSecure, objtab.PermanentRedirect, _
+                            objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objtab.CultureCode)
+                    UpdateTabVersion(objtab.TabID)
+
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("TabID", intTabid.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
 
@@ -421,8 +371,12 @@ Namespace DotNetNuke.Entities.Tabs
                 objTab.TabPath = GenerateTabPath(objTab.ParentId, objTab.TabName)
             End If
             provider.UpdateTabOrder(objTab.TabID, objTab.TabOrder, objTab.Level, objTab.ParentId, objTab.TabPath, UserController.GetCurrentUserInfo.UserID)
+            UpdateTabVersion(objTab.TabID)
+
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_ORDER_UPDATED)
+
+            ClearCache(objTab.PortalID)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -444,7 +398,6 @@ Namespace DotNetNuke.Entities.Tabs
                 'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
                 UpdateTabOrder(objTab, False)
             Next
-
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -455,19 +408,62 @@ Namespace DotNetNuke.Entities.Tabs
         ''' <param name="increment">The increment to update each tabs TabOrder</param>
         ''' <history>
         ''' 	[cnurse]	06/09/2009	Created
+        ''' 	[kbeigi]	14/06/2010	Updated to only update the tab order only when needed
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub UpdateTabOrder(ByVal tabs As List(Of TabInfo), ByVal increment As Integer)
+        Private Sub UpdateTabOrder(ByVal tabs As List(Of TabInfo), ByVal culture As String, ByVal portalId As Integer, ByVal increment As Integer)
+            Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
+            If _PortalSettings IsNot Nothing AndAlso _PortalSettings.ContentLocalizationEnabled Then
+                If String.IsNullOrEmpty(culture) Then
+                    UpdateTabOrderInternal(tabs.Where(Function(t) t.CultureCode = _PortalSettings.DefaultLanguage OrElse String.IsNullOrEmpty(t.CultureCode)), increment)
+                Else
+                    UpdateTabOrderInternal(tabs, increment)
+                End If
+            Else
+                UpdateTabOrderInternal(tabs, increment)
+            End If
+        End Sub
+
+        Private Sub UpdateTabOrderInternal(ByVal tabs As IEnumerable(Of TabInfo), ByVal increment As Integer)
             Dim tabOrder As Integer = 1
-            For index As Integer = 0 To tabs.Count - 1
-                Dim objTab As TabInfo = tabs(index)
-                objTab.TabOrder = tabOrder
+            For Each objTab As TabInfo In tabs.OrderBy(Function(t) t.TabOrder)
+                If objTab.IsDeleted Then
+                    objTab.TabOrder = -1
+                    UpdateTabOrder(objTab, False)
 
-                'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                UpdateTabOrder(objTab, False)
+                    'Update the tab order of all child languages
+                    For Each localizedtab As TabInfo In objTab.LocalizedTabs.Values
+                        localizedtab.TabOrder = -1
+                        UpdateTabOrder(localizedtab, False)
+                    Next
+                Else
+                    'Only update the tabOrder if it actually needs to be updated
+                    If (objTab.TabOrder <> tabOrder) Then
+                        objTab.TabOrder = tabOrder
+                        UpdateTabOrder(objTab, False)
 
-                tabOrder += increment
+                        'Update the tab order of all child languages
+                        For Each localizedtab As TabInfo In objTab.LocalizedTabs.Values
+                            If localizedtab.TabOrder <> tabOrder Then
+                                localizedtab.TabOrder = tabOrder
+                                UpdateTabOrder(localizedtab, False)
+                            End If
+                        Next
+                    End If
+
+                    tabOrder += increment
+                End If
+
             Next
+        End Sub
+
+        ''' <summary>
+        ''' Updates the VersionGuid
+        ''' </summary>
+        ''' <param name="tabId"></param>
+        ''' <remarks></remarks>
+        Private Sub UpdateTabVersion(ByVal tabId As Integer)
+            provider.UpdateTabVersion(tabId, Guid.NewGuid())
         End Sub
 
 #End Region
@@ -526,130 +522,30 @@ Namespace DotNetNuke.Entities.Tabs
         ''' -----------------------------------------------------------------------------
         Public Function AddTabAfter(ByVal objTab As TabInfo, ByVal afterTabId As Integer) As Integer
             'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
-
-            'First make sure that the siblings are sorted correctly
-            UpdateTabOrder(siblingTabs, 2)
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
 
             'Add tab to store
             Dim tabID As Integer = AddTabInternal(objTab, True)
 
             'New tab is to be inserted into the siblings List after TabId=afterTabId
-            For index As Integer = 0 To siblingCount - 1
-                Dim sibling As TabInfo = siblingTabs(index)
-                If sibling.TabID = afterTabId Then
-                    'we need to insert the tab here
-                    objTab.Level = sibling.Level
-                    objTab.TabOrder = sibling.TabOrder + 2
+            Dim afterTab As TabInfo = siblingTabs.Find(Function(t) t.TabID = afterTabId)
+            If afterTab Is Nothing Then
+                'AfterTabId probably relates to a Tab in the current culture (objTab is in a different culture)
+                afterTab = GetTab(afterTabId, objTab.PortalID, False)
+            End If
+            objTab.Level = afterTab.Level
+            objTab.TabOrder = afterTab.TabOrder + 1 ' tabs will be 1,3(afterTabId),4(newTab),5
 
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
+            siblingTabs.Add(objTab)
 
-                    'We need to update the taborder for the remaining items
-                    UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, 2)
-
-                    Exit For
-                End If
-            Next
+            'Sort and Update siblings
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
             'Clear the Cache
             ClearCache(objTab.PortalID)
 
             Return tabID
         End Function
-
-        Public Sub MoveTabAfter(ByVal objTab As TabInfo, ByVal afterTabId As Integer)
-            If (objTab.TabID < 0) Then
-                Return
-            End If
-
-            'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
-
-            'First make sure that the siblings are sorted correctly
-            UpdateTabOrder(siblingTabs, 2)
-
-            'New tab is to be inserted into the siblings List after TabId=afterTabId
-            For index As Integer = 0 To siblingCount - 1
-                Dim sibling As TabInfo = siblingTabs(index)
-                If sibling.TabID = afterTabId Then
-                    'we need to insert the tab here
-                    objTab.Level = sibling.Level
-                    objTab.TabOrder = sibling.TabOrder + 2
-
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
-
-                    'We need to update the taborder for the remaining items, excluding the current tab
-                    'UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, 2)
-                    Dim remainingTabOrder As Integer = objTab.TabOrder
-                    For remainingIndex As Integer = index + 1 To siblingCount - 1
-                        Dim remainingTab As TabInfo = siblingTabs(remainingIndex)
-
-                        If (remainingTab.TabID = objTab.TabID) Then
-                            Continue For
-                        End If
-                        remainingTabOrder = remainingTabOrder + 2
-                        remainingTab.TabOrder = remainingTabOrder
-
-                        'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                        UpdateTabOrder(remainingTab, False)
-                    Next
-                    Exit For
-                End If
-            Next
-
-            'Clear the Cache
-            ClearCache(objTab.PortalID)
-        End Sub
-
-        Public Sub MoveTabBefore(ByVal objTab As TabInfo, ByVal beforeTabId As Integer)
-            If (objTab.TabID < 0) Then
-                Return
-            End If
-
-            'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
-
-            'First make sure that the siblings are sorted correctly
-            UpdateTabOrder(siblingTabs, 2)
-
-            'New tab is to be inserted into the siblings List before TabId=beforeTabId
-            For index As Integer = 0 To siblingCount - 1
-                Dim sibling As TabInfo = siblingTabs(index)
-                If sibling.TabID = beforeTabId Then
-                    'we need to insert the tab here
-                    objTab.Level = sibling.Level
-                    objTab.TabOrder = sibling.TabOrder
-
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
-
-                    'We need to update the taborder for the remaining items, including the current one
-                    Dim remainingTabOrder As Integer = objTab.TabOrder
-                    For remainingIndex As Integer = index To siblingCount - 1
-                        Dim remainingTab As TabInfo = siblingTabs(remainingIndex)
-
-                        If (remainingTab.TabID = objTab.TabID) Then
-                            Continue For
-                        End If
-
-                        remainingTabOrder = remainingTabOrder + 2
-                        remainingTab.TabOrder = remainingTabOrder
-
-                        'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                        UpdateTabOrder(remainingTab, False)
-                    Next
-                    Exit For
-                End If
-            Next
-
-            'Clear the Cache
-            ClearCache(objTab.PortalID)
-        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -663,32 +559,23 @@ Namespace DotNetNuke.Entities.Tabs
         ''' -----------------------------------------------------------------------------
         Public Function AddTabBefore(ByVal objTab As TabInfo, ByVal beforeTabId As Integer) As Integer
             'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
-
-            'First make sure that the siblings are sorted correctly
-            UpdateTabOrder(siblingTabs, 2)
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
 
             'Add tab to store
             Dim tabID As Integer = AddTabInternal(objTab, True)
 
             'New tab is to be inserted into the siblings List before TabId=beforeTabId
-            For index As Integer = 0 To siblingCount - 1
-                Dim sibling As TabInfo = siblingTabs(index)
-                If sibling.TabID = beforeTabId Then
-                    'we need to insert the tab here
-                    objTab.Level = sibling.Level
-                    objTab.TabOrder = sibling.TabOrder
+            Dim beforeTab As TabInfo = siblingTabs.Find(Function(t) t.TabID = beforeTabId)
+            If beforeTab Is Nothing Then
+                'beforeTabId probably relates to a Tab in the current culture (objTab is in a different culture)
+                beforeTab = GetTab(beforeTabId, objTab.PortalID, False)
+            End If
+            objTab.Level = beforeTab.Level
+            objTab.TabOrder = beforeTab.TabOrder - 1 ' tabs will be 1,3,4(newTab),5(beforeTabid)
+            siblingTabs.Add(objTab)
 
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
-
-                    'We need to update the taborder for the remaining items
-                    UpdateTabOrder(siblingTabs, index, siblingCount - 1, 2)
-
-                    Exit For
-                End If
-            Next
+            'Sort and Update siblings
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
             'Clear the Cache
             ClearCache(objTab.PortalID)
@@ -701,38 +588,6 @@ Namespace DotNetNuke.Entities.Tabs
 
             'Clear the Portal cache so the Pages count is correct
             DataCache.ClearPortalCache(portalId, False)
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Copies the modules from one tab to another
-        ''' </summary>
-        ''' <param name="PortalId">The Id iof the portal</param>
-        ''' <param name="FromTabId">The Id of the tab to copy modules from.</param>
-        ''' <param name="ToTabId">The Id of the tab to copy modules to.</param>
-        ''' <param name="asReference">A flag indicating whether the module should be copied as a reference</param>
-        ''' <history>
-        ''' 	[cnurse]	04/30/2008	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Sub CopyTab(ByVal PortalId As Integer, ByVal FromTabId As Integer, ByVal ToTabId As Integer, ByVal asReference As Boolean)
-            Dim objModules As New ModuleController
-            Dim objModule As ModuleInfo
-
-            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In objModules.GetTabModules(FromTabId)
-                objModule = kvp.Value
-
-                ' if the module shows on all pages does not need to be copied since it will
-                ' be already added to this page
-                If Not objModule.AllTabs Then
-                    If asReference = False Then
-                        objModule.ModuleID = Null.NullInteger
-                    End If
-
-                    objModule.TabID = ToTabId
-                    objModules.AddModule(objModule)
-                End If
-            Next
         End Sub
 
         Public Sub CreateContentItem(ByVal updatedTab As TabInfo)
@@ -755,7 +610,6 @@ Namespace DotNetNuke.Entities.Tabs
             updatedTab.ContentItemId = contentController.AddContentItem(updatedTab)
         End Sub
 
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Deletes a tab premanently from the database
@@ -771,24 +625,7 @@ Namespace DotNetNuke.Entities.Tabs
         Public Sub DeleteTab(ByVal TabId As Integer, ByVal PortalId As Integer)
             ' parent tabs can not be deleted
             If GetTabsByPortal(PortalId).WithParentId(TabId).Count = 0 Then
-                'Fetch Tab
-                Dim objTab As TabInfo = GetTab(TabId, PortalId, False)
-
-                'Get the List of tabs with the same parent
-                Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(PortalId).WithParentId(objTab.ParentId)
-                Dim siblingCount As Integer = siblingTabs.Count
-
-                'Find tab to delete
-                For index As Integer = 0 To siblingCount - 1
-                    Dim sibling As TabInfo = siblingTabs(index)
-                    If sibling.TabID = TabId Then
-                        DeleteTabInternal(TabId, PortalId)
-
-                        'We need to update the taborder for the remaining items
-                        UpdateTabOrder(siblingTabs, index + 1, siblingCount - 1, -2)
-                        Exit For
-                    End If
-                Next
+                DeleteTabInternal(TabId, PortalId)
 
                 ClearCache(PortalId)
                 DataCache.RemoveCache(DataCache.PortalDictionaryCacheKey)
@@ -831,39 +668,68 @@ Namespace DotNetNuke.Entities.Tabs
 
         Public Function GetTab(ByVal TabId As Integer, ByVal PortalId As Integer, ByVal ignoreCache As Boolean) As TabInfo
             Dim tab As TabInfo = Nothing
-            Dim bFound As Boolean = False
 
             ' if we are using the cache
             If Not ignoreCache Then
                 ' if we do not know the PortalId then try to find it in the Portals Dictionary using the TabId
-                If Null.IsNull(PortalId) Then
-                    Dim portalDic As Dictionary(Of Integer, Integer) = PortalController.GetPortalDictionary()
-                    If portalDic IsNot Nothing AndAlso portalDic.ContainsKey(TabId) Then
-                        PortalId = portalDic(TabId)
-                    End If
-                End If
-                ' if we have the PortalId then try to get the TabInfo object from the Tabs Dictionary
-                If Not Null.IsNull(PortalId) Then
-                    Dim dicTabs As Dictionary(Of Integer, TabInfo)
-                    dicTabs = GetTabsByPortal(PortalId)
-                    bFound = dicTabs.TryGetValue(TabId, tab)
-                End If
+                PortalId = GetPortalId(TabId, PortalId)
+
+                ' if we have the PortalId then try to get the TabInfo object
+                tab = GetTabsByPortal(PortalId).WithTabId(TabId)
             End If
 
             ' if we are not using the cache or did not find the TabInfo object in the cache
-            If ignoreCache Or Not bFound Then
+            If ignoreCache OrElse (tab Is Nothing) Then
                 tab = CBO.FillObject(Of TabInfo)(provider.GetTab(TabId))
             End If
 
             Return tab
         End Function
 
+        Public Function GetTabByUniqueID(ByVal UniqueID As Guid) As TabInfo
+            Dim tab As TabInfo = Nothing
+            tab = CBO.FillObject(Of TabInfo)(provider.GetTabByUniqueID(UniqueID))
+            Return tab
+        End Function
+
+        Public Function GetTabByCulture(ByVal tabId As Integer, ByVal portalId As Integer, ByVal locale As Locale) As TabInfo
+            Dim originalTab As TabInfo = Nothing
+            Dim localizedTab As TabInfo = Nothing
+            Dim tabs As TabCollection = GetTabsByPortal(portalId)
+
+            'Get Tab specified by Id
+            originalTab = tabs.WithTabId(tabId)
+
+            If locale IsNot Nothing AndAlso originalTab IsNot Nothing Then
+                'Check if tab is in the requested culture
+                If String.IsNullOrEmpty(originalTab.CultureCode) OrElse originalTab.CultureCode = locale.Code Then
+                    localizedTab = originalTab
+                Else
+                    'See if tab exists for culture
+                    If originalTab.IsDefaultLanguage Then
+                        originalTab.LocalizedTabs.TryGetValue(locale.Code, localizedTab)
+                    Else
+                        If originalTab.DefaultLanguageTab IsNot Nothing Then
+                            If originalTab.DefaultLanguageTab.CultureCode = locale.Code Then
+                                localizedTab = originalTab.DefaultLanguageTab
+                            Else
+                                If Not originalTab.DefaultLanguageTab.LocalizedTabs.TryGetValue(locale.Code, localizedTab) Then
+                                    localizedTab = originalTab.DefaultLanguageTab
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+            Return localizedTab
+        End Function
+
         Public Function GetTabByName(ByVal TabName As String, ByVal PortalId As Integer) As TabInfo
-            Return GetTabByNameAndParent(TabName, PortalId, Integer.MinValue)
+            Return GetTabsByPortal(PortalId).WithTabName(TabName)
         End Function
 
         Public Function GetTabByName(ByVal TabName As String, ByVal PortalId As Integer, ByVal ParentId As Integer) As TabInfo
-            Return GetTabByNameAndParent(TabName, PortalId, ParentId)
+            Return GetTabsByPortal(PortalId).WithTabNameAndParentId(TabName, ParentId)
         End Function
 
         Public Function GetTabCount(ByVal portalId As Integer) As Integer
@@ -886,153 +752,90 @@ Namespace DotNetNuke.Entities.Tabs
 
         Public Sub MoveTab(ByVal objTab As TabInfo, ByVal type As TabMoveType)
             'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
             Dim siblingCount As Integer = siblingTabs.Count
-
-            'First make sure the list is sorted and spaced
-            UpdateTabOrder(siblingTabs, 2)
 
             Select Case type
                 Case TabMoveType.Top
-                    'Tab is being moved to the top of the current level - Set TabOrder = 1
-                    objTab.TabOrder = 1
+                    'Tab is being moved to the top of the current level - Set TabOrder = -1 to ensure it gets put at the top
+                    objTab.TabOrder = -1
 
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
+                    'Sort and Update siblings
+                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-                    'Get Tabs Index position in the Sibling List
-                    Dim tabIndex As Integer = GetIndexOfTab(objTab, siblingTabs)
-
-                    'We need to update the taborder for items that were before this tab
-                    UpdateTabOrder(siblingTabs, 0, tabIndex - 1, 2)
                 Case TabMoveType.Bottom    'Tab is being moved to the bottom of the current level
                     'Tab is being moved to the bottom of the current level - Set TabOrder = 2*TabCount - 1
-                    objTab.TabOrder = siblingCount * 2 - 1
+                    objTab.TabOrder = siblingCount * 2 + 1
 
-                    'UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                    UpdateTabOrder(objTab, False)
+                    'Sort and Update siblings
+                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-                    'Get Tabs Index position in the Sibling List
-                    Dim tabIndex As Integer = GetIndexOfTab(objTab, siblingTabs)
-
-                    'We need to update the taborder for items that were after this tab
-                    UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2)
                 Case TabMoveType.Up 'Tab is being moved up one position in the current level
-                    'Get Tabs Index position in the Sibling List
-                    Dim tabIndex As Integer = GetIndexOfTab(objTab, siblingTabs)
+                    objTab.TabOrder -= 3
 
-                    If tabIndex > 0 Then
-                        'Get Tab that is one position up in the level
-                        Dim swapTab As TabInfo = siblingTabs(tabIndex - 1)
+                    'Sort and Update siblings
+                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-                        'Swap the tab orders
-                        SwapAdjacentTabs(objTab, swapTab)
-                    End If
                 Case TabMoveType.Down 'Tab is being moved down one position in the current level
-                    'Get Tabs Index position in the Sibling List
-                    Dim tabIndex As Integer = GetIndexOfTab(objTab, siblingTabs)
+                    objTab.TabOrder += 3
 
-                    If tabIndex < siblingCount - 1 Then
-                        'Get Tab that is one position down in the level
-                        Dim swapTab As TabInfo = siblingTabs(tabIndex + 1)
+                    'Sort and Update siblings
+                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-                        'Swap the tab orders
-                        SwapAdjacentTabs(swapTab, objTab)
-                    End If
                 Case TabMoveType.Promote 'Tab is being promoted to the next level up in the heirarchy
                     PromoteTab(objTab, siblingTabs)
+
                 Case TabMoveType.Demote 'Tab is being demoted to the next level down in the heirarchy
                     DemoteTab(objTab, siblingTabs)
+
             End Select
 
             'Clear Cache
             ClearCache(objTab.PortalID)
         End Sub
 
-        Public Sub UpdateTab(ByVal updatedTab As TabInfo)
-            UpdateTab(updatedTab, PortalController.GetActivePortalLanguage(updatedTab.PortalID))
+        Public Sub MoveTabAfter(ByVal objTab As TabInfo, ByVal afterTabId As Integer)
+            If (objTab.TabID < 0) Then
+                Return
+            End If
+
+            'Get the List of tabs with the same parent
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
+
+            'tab is to be moved after TabId=afterTabId
+            Dim afterTab As TabInfo = siblingTabs.Find(Function(t) t.TabID = afterTabId)
+            objTab.Level = afterTab.Level
+            objTab.TabOrder = afterTab.TabOrder + 1 ' tabs will be 1,3(afterTabId),4(moveTab),5
+
+            siblingTabs.Add(objTab)
+
+            'Sort and Update siblings
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
+
+            'Clear the Cache
+            ClearCache(objTab.PortalID)
         End Sub
 
-        Public Sub UpdateTab(ByVal updatedTab As TabInfo, ByVal CultureCode As String)
-            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, True)
-            Dim updateOrder As Boolean = (originalTab.ParentId <> updatedTab.ParentId)
-            Dim levelDelta As Integer = (updatedTab.Level - originalTab.Level)
-            Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
-
-            'Update ContentItem If neccessary
-            If updatedTab.ContentItemId = Null.NullInteger AndAlso updatedTab.TabID <> Null.NullInteger Then
-                CreateContentItem(updatedTab)
+        Public Sub MoveTabBefore(ByVal objTab As TabInfo, ByVal beforeTabId As Integer)
+            If (objTab.TabID < 0) Then
+                Return
             End If
 
-            'Update Tab to DataStore
-            provider.UpdateTab(updatedTab.TabID, updatedTab.ContentItemId, updatedTab.PortalID, updatedTab.TabName, updatedTab.IsVisible, updatedTab.DisableLink, _
-                updatedTab.ParentId, updatedTab.IconFile, updatedTab.IconFileLarge, updatedTab.Title, updatedTab.Description, updatedTab.KeyWords, _
-                updatedTab.IsDeleted, updatedTab.Url, updatedTab.SkinSrc, updatedTab.ContainerSrc, updatedTab.TabPath, _
-                updatedTab.StartDate, updatedTab.EndDate, updatedTab.RefreshInterval, updatedTab.PageHeadText, _
-                updatedTab.IsSecure, updatedTab.PermanentRedirect, updatedTab.SiteMapPriority, _
-                UserController.GetCurrentUserInfo.UserID, CultureCode)
+            'Get the List of tabs with the same parent
+            Dim siblingTabs As List(Of TabInfo) = GetSiblingTabs(objTab)
 
-            'Update Tags
-            Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
-            termController.RemoveTermsFromContent(updatedTab)
-            For Each _Term As Term In updatedTab.Terms
-                termController.AddTermToContent(_Term, updatedTab)
-            Next
+            'tab is to be moved after TabId=afterTabId
+            Dim beforeTab As TabInfo = siblingTabs.Find(Function(t) t.TabID = beforeTabId)
+            objTab.Level = beforeTab.Level
+            objTab.TabOrder = beforeTab.TabOrder - 1 ' tabs will be 1,3(afterTabId),4(moveTab),5
 
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            objEventLog.AddLog(updatedTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
+            siblingTabs.Add(objTab)
 
-            'Update Tab permissions
-            TabPermissionController.SaveTabPermissions(updatedTab)
+            'Sort and Update siblings
+            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2)
 
-            'Update TabSettings - use Try/catch as tabs are added during upgrade ptocess and the sproc may not exist
-            Try
-                UpdateTabSettings(updatedTab)
-            Catch ex As Exception
-                LogException(ex)
-            End Try
-
-            'Updated Tab Level
-            If levelDelta <> 0 Then
-                'Get the descendents
-                'Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
-                Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
-                'Update the Descendents of this tab
-                UpdateDescendantLevel(descendantTabs, levelDelta)
-            End If
-
-            'Update Tab Order
-            If updateOrder Then
-                'Tab is being moved from the original list of siblings, so update the Taborder for the remaining tabs
-                RemoveTab(updatedTab)
-
-                'UpdateOrder - Parent has changed so we need to regenerate TabPath
-                AddTabToEndOfList(updatedTab, True)
-            End If
-
-            'Update Tab Path for descendents
-            If updateChildren Then
-                'Clear Tab Cache to ensure that previous updates are picked up
-                ClearCache(updatedTab.PortalID)
-                UpdateChildTabPath(updatedTab.TabID, updatedTab.PortalID)
-            End If
-
-            'Clear Tab Caches
-            ClearCache(updatedTab.PortalID)
-            If updatedTab.PortalID <> originalTab.PortalID Then
-                ClearCache(originalTab.PortalID)
-            End If
-        End Sub
-
-        Private Sub UpdateTabSettings(ByRef updatedTab As TabInfo)
-            Dim sKey As String
-            For Each sKey In updatedTab.TabSettings.Keys
-                UpdateTabSetting(updatedTab.TabID, sKey, CType(updatedTab.TabSettings(sKey), String))
-            Next
-        End Sub
-
-        Public Sub UpdateTabOrder(ByVal objTab As TabInfo)
-            UpdateTabOrder(objTab, True)
+            'Clear the Cache
+            ClearCache(objTab.PortalID)
         End Sub
 
         Public Sub PopulateBreadCrumbs(ByRef tab As TabInfo)
@@ -1066,7 +869,107 @@ Namespace DotNetNuke.Entities.Tabs
             End If
         End Sub
 
+        Public Sub UpdateTab(ByVal updatedTab As TabInfo)
+            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, False)
+            Dim updateOrder As Boolean = (originalTab.ParentId <> updatedTab.ParentId)
+            Dim levelDelta As Integer = (updatedTab.Level - originalTab.Level)
+            Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
+
+            'Update ContentItem If neccessary
+            If updatedTab.ContentItemId = Null.NullInteger AndAlso updatedTab.TabID <> Null.NullInteger Then
+                CreateContentItem(updatedTab)
+            End If
+
+            'Update Tab to DataStore
+            provider.UpdateTab(updatedTab.TabID, updatedTab.ContentItemId, updatedTab.PortalID, _
+                    updatedTab.VersionGuid, updatedTab.DefaultLanguageGuid, updatedTab.LocalizedVersionGuid, _
+                    updatedTab.TabName, updatedTab.IsVisible, updatedTab.DisableLink, _
+                    updatedTab.ParentId, updatedTab.IconFile, updatedTab.IconFileLarge, updatedTab.Title, updatedTab.Description, updatedTab.KeyWords, _
+                    updatedTab.IsDeleted, updatedTab.Url, updatedTab.SkinSrc, updatedTab.ContainerSrc, updatedTab.TabPath, _
+                    updatedTab.StartDate, updatedTab.EndDate, updatedTab.RefreshInterval, updatedTab.PageHeadText, _
+                    updatedTab.IsSecure, updatedTab.PermanentRedirect, updatedTab.SiteMapPriority, _
+                    UserController.GetCurrentUserInfo.UserID, updatedTab.CultureCode)
+
+            'Update Tags
+            Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
+            termController.RemoveTermsFromContent(updatedTab)
+            For Each _Term As Term In updatedTab.Terms
+                termController.AddTermToContent(_Term, updatedTab)
+            Next
+
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            objEventLog.AddLog(updatedTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
+
+            'Update Tab permissions
+            TabPermissionController.SaveTabPermissions(updatedTab)
+
+            'Update TabSettings - use Try/catch as tabs are added during upgrade ptocess and the sproc may not exist
+            Try
+                UpdateTabSettings(updatedTab)
+            Catch ex As Exception
+                LogException(ex)
+            End Try
+
+            'Updated Tab Level
+            If levelDelta <> 0 Then
+                'Get the descendents
+                Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
+
+                'Update the Descendents of this tab
+                UpdateDescendantLevel(descendantTabs, levelDelta)
+            End If
+
+            'Update Tab Order
+            If updateOrder Then
+                'Tab is being moved from the original list of siblings, so update the Taborder for the remaining tabs
+                RemoveTab(originalTab)
+
+                'UpdateOrder - Parent has changed so we need to regenerate TabPath
+                AddTabToEndOfList(updatedTab, True)
+            End If
+
+            'Update Tab Path for descendents
+            If updateChildren Then
+                'Clear Tab Cache to ensure that previous updates are picked up
+                ClearCache(updatedTab.PortalID)
+                UpdateChildTabPath(updatedTab.TabID, updatedTab.PortalID)
+            End If
+
+            'Update Tab Version
+            UpdateTabVersion(updatedTab.TabID)
+
+            'Clear Tab Caches
+            ClearCache(updatedTab.PortalID)
+            If updatedTab.PortalID <> originalTab.PortalID Then
+                ClearCache(originalTab.PortalID)
+            End If
+        End Sub
+
+        Private Sub UpdateTabSettings(ByRef updatedTab As TabInfo)
+            Dim sKey As String
+            For Each sKey In updatedTab.TabSettings.Keys
+                UpdateTabSetting(updatedTab.TabID, sKey, CType(updatedTab.TabSettings(sKey), String))
+            Next
+        End Sub
+
+        Public Sub UpdateTabOrder(ByVal objTab As TabInfo)
+            UpdateTabOrder(objTab, True)
+        End Sub
+
+        Public Sub UpdateTranslationStatus(ByVal localizedTab As TabInfo, ByVal isTranslated As Boolean)
+            If isTranslated AndAlso (localizedTab.DefaultLanguageTab IsNot Nothing) Then
+                localizedTab.LocalizedVersionGuid = localizedTab.DefaultLanguageTab.LocalizedVersionGuid
+            Else
+                localizedTab.LocalizedVersionGuid = Guid.NewGuid
+            End If
+            DataProvider.Instance.UpdateTabTranslationStatus(localizedTab.TabID, localizedTab.LocalizedVersionGuid, UserController.GetCurrentUserInfo().UserID)
+
+            'Clear Tab Caches
+            ClearCache(localizedTab.PortalID)
+        End Sub
+
 #Region "TabSettings"
+
         ''' <summary>
         ''' read all settings for a tab from TabSettings table
         ''' </summary>
@@ -1133,8 +1036,8 @@ Namespace DotNetNuke.Entities.Tabs
             End If
             dr.Close()
 
+            UpdateTabVersion(TabId)
             DataCache.RemoveCache("GetTabSettings" & TabId.ToString)
-
         End Sub
 
         ''' <summary>
@@ -1153,6 +1056,8 @@ Namespace DotNetNuke.Entities.Tabs
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingName", SettingName.ToString))
             objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.TAB_SETTING_DELETED.ToString
             objEventLog.AddLog(objEventLogInfo)
+
+            UpdateTabVersion(TabId)
             DataCache.RemoveCache("GetTabSettings" & TabId.ToString)
         End Sub
 
@@ -1170,8 +1075,173 @@ Namespace DotNetNuke.Entities.Tabs
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("TabId", TabId.ToString))
             objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.TAB_SETTING_DELETED.ToString
             objEventLog.AddLog(objEventLogInfo)
+
+            UpdateTabVersion(TabId)
             DataCache.RemoveCache("GetTabSettings" & TabId.ToString)
         End Sub
+
+#End Region
+
+#Region "Content Localization"
+
+        Public Sub CreateLocalizedCopies(ByVal originalTab As TabInfo)
+            Dim defaultLocale As Locale = LocaleController.Instance.GetDefaultLocale(originalTab.PortalID)
+            For Each subLocale As Locale In LocaleController.Instance.GetLocales(originalTab.PortalID).Values
+                If Not subLocale.Code = defaultLocale.Code Then
+                    CreateLocalizedCopy(originalTab, subLocale)
+                End If
+            Next
+        End Sub
+
+        Public Sub CreateLocalizedCopy(ByVal tabs As List(Of TabInfo), ByVal locale As Locale)
+            For Each t As TabInfo In tabs
+                CreateLocalizedCopy(t, locale)
+            Next
+        End Sub
+
+        Public Sub CreateLocalizedCopy(ByVal originalTab As TabInfo, ByVal locale As Locale)
+            'First Clone the Tab
+            Dim localizedCopy As TabInfo = originalTab.Clone()
+            localizedCopy.TabID = Null.NullInteger
+
+            'Set Guids and Culture Code
+            localizedCopy.UniqueId = Guid.NewGuid()
+            localizedCopy.VersionGuid = Guid.NewGuid
+            localizedCopy.DefaultLanguageGuid = originalTab.UniqueId
+            localizedCopy.LocalizedVersionGuid = Guid.NewGuid
+            localizedCopy.CultureCode = locale.Code
+            localizedCopy.TabName = localizedCopy.TabName + " (" + locale.Code + ")"
+
+            'Copy Permissions from original Tab for Admins only
+            Dim portalCtrl As New PortalController
+            Dim portal As PortalInfo = portalCtrl.GetPortal(originalTab.PortalID)
+            localizedCopy.TabPermissions.AddRange(originalTab.TabPermissions.Where(Function(p) p.RoleID = portal.AdministratorRoleId))
+
+            'Give default translators for this language and administrators permissions
+            Dim permissionCtrl As New PermissionController
+            Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", locale.Code), originalTab.PortalID, "")
+            Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
+            If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
+                Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
+                For Each translatorRole As String In translatorRoles.Split(";"c)
+                    Dim roleName As String = translatorRole
+                    Dim role As RoleInfo = New RoleController().GetRoleByName(originalTab.PortalID, roleName)
+                    If role IsNot Nothing Then
+                        Dim perm As TabPermissionInfo = localizedCopy.TabPermissions.Where( _
+                                                            Function(tp) tp.RoleID = role.RoleID _
+                                                                AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
+                        If perm Is Nothing Then
+                            'Create Permission
+                            Dim tabTranslatePermission As New TabPermissionInfo(translatePermisison)
+                            tabTranslatePermission.RoleID = role.RoleID
+                            tabTranslatePermission.AllowAccess = True
+
+                            localizedCopy.TabPermissions.Add(tabTranslatePermission)
+                        End If
+                    End If
+                Next
+            End If
+
+            'Get the original Tabs Parent
+            Dim originalParent As TabInfo = GetTab(originalTab.ParentId, originalTab.PortalID, False)
+
+            If originalParent IsNot Nothing Then
+                'Get the localized parent
+                Dim localizedParent As TabInfo = GetTabByCulture(originalParent.TabID, originalParent.PortalID, locale)
+
+                localizedCopy.ParentId = localizedParent.TabID
+            End If
+
+            'Save Tab
+            Dim localizedTabId As Integer = AddTabInternal(localizedCopy, True)
+
+            'Update TabOrder for this tab
+            UpdateTabOrder(localizedCopy, False)
+
+            'Make shallow copies of all modules
+            Dim moduleCtrl As New ModuleController
+            moduleCtrl.CopyModules(originalTab, localizedCopy, True)
+
+            'Convert these shallow copies to deep copies
+            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleCtrl.GetTabModules(originalTab.TabID)
+                moduleCtrl.LocalizeModule(kvp.Value)
+            Next
+
+            'Clear the Cache
+            ClearCache(originalTab.PortalID)
+            DataCache.RemoveCache(DataCache.PortalDictionaryCacheKey)
+
+        End Sub
+
+        Public Sub LocalizeTabs(ByVal portalid As Integer, ByVal cultureCode As String)
+            Dim tabCtrl As New TabController()
+            Dim locale As Locale = LocaleController.Instance.GetLocale(cultureCode)
+
+            If LocaleController.Instance().IsDefaultLanguage(cultureCode) Then
+                'Convert tabs to culture
+                Dim tabList As List(Of TabInfo) = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(portalid) _
+                                                    Where Not kvp.Value.TabPath.StartsWith("//Admin") _
+                                                    AndAlso kvp.Value.IsDeleted = False _
+                                                    Select kvp.Value).ToList()
+
+                tabCtrl.LocalizeTabs(tabList, locale)
+            Else
+                'Create localized copy
+                Dim tabList As List(Of TabInfo) = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(portalid) _
+                                                    Where Not kvp.Value.TabPath.StartsWith("//Admin") _
+                                                    AndAlso kvp.Value.CultureCode = PortalController.GetCurrentPortalSettings.DefaultLanguage _
+                                                    AndAlso kvp.Value.IsDeleted = False _
+                                                    Select kvp.Value).ToList()
+
+                tabCtrl.CreateLocalizedCopy(tabList, locale)
+
+            End If
+        End Sub
+
+        Public Sub LocalizeTabs(ByVal tabs As List(Of TabInfo), ByVal locale As Locale)
+            For Each t As TabInfo In tabs
+                LocalizeTab(t, locale)
+            Next
+        End Sub
+
+        Public Sub LocalizeTab(ByVal originalTab As TabInfo, ByVal locale As Locale)
+            originalTab.CultureCode = locale.Code
+
+            UpdateTab(originalTab)
+
+            'Update culture of modules on this page
+            Dim moduleCtl As New ModuleController
+            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleCtl.GetTabModules(originalTab.TabID)
+                moduleCtl.LocalizeModule(kvp.Value, locale)
+            Next
+        End Sub
+
+        Public Sub PublishTab(ByVal publishTab As TabInfo)
+            'To publish a subsidiary language tab we need to enable the View Permissions
+            If publishTab IsNot Nothing AndAlso publishTab.DefaultLanguageTab IsNot Nothing Then
+                For Each perm As TabPermissionInfo In publishTab.DefaultLanguageTab.TabPermissions.Where(Function(p) _
+                                                                                                p.PermissionKey = "VIEW")
+                    Dim sourcePerm As TabPermissionInfo = perm
+                    Dim targetPerm As TabPermissionInfo = publishTab.TabPermissions.Where(Function(p) _
+                                                                        p.PermissionKey = sourcePerm.PermissionKey AndAlso _
+                                                                        p.RoleID = sourcePerm.RoleID AndAlso _
+                                                                        p.UserID = sourcePerm.UserID).SingleOrDefault
+
+                    If targetPerm Is Nothing Then
+                        publishTab.TabPermissions.Add(sourcePerm)
+                    End If
+
+                    TabPermissionController.SaveTabPermissions(publishTab)
+                Next
+            End If
+        End Sub
+
+        Public Sub PublishTabs(ByVal tabs As List(Of TabInfo))
+            For Each t As TabInfo In tabs
+                PublishTab(t)
+            Next
+        End Sub
+
 #End Region
 
 #End Region
@@ -1192,18 +1262,23 @@ Namespace DotNetNuke.Entities.Tabs
             Return bDeleted
         End Function
 
-        Private Shared Function DeleteTab(ByVal objtab As TabInfo, ByVal PortalSettings As PortalSettings, ByVal UserId As Integer) As Boolean
+        Private Shared Function DeleteTab(ByVal tabToDelete As TabInfo, ByVal PortalSettings As PortalSettings, ByVal UserId As Integer) As Boolean
             Dim objtabs As New TabController
             Dim bDeleted As Boolean = True
 
-            If Not IsSpecialTab(objtab.TabID, PortalSettings) Then
+            If Not IsSpecialTab(tabToDelete.TabID, PortalSettings) Then
                 'delete child tabs
-                If DeleteChildTabs(objtab.TabID, PortalSettings, UserId) Then
-                    objtab.IsDeleted = True
-                    objtabs.UpdateTab(objtab)
+                If DeleteChildTabs(tabToDelete.TabID, PortalSettings, UserId) Then
+                    tabToDelete.IsDeleted = True
+                    objtabs.UpdateTab(tabToDelete)
+
+                    Dim moduleCtrl As New ModuleController
+                    For Each m As ModuleInfo In moduleCtrl.GetTabModules(tabToDelete.TabID).Values
+                        moduleCtrl.DeleteTabModule(m.TabID, m.ModuleID, True)
+                    Next
 
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
-                    objEventLog.AddLog(objtab, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_SENT_TO_RECYCLE_BIN)
+                    objEventLog.AddLog(tabToDelete, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_SENT_TO_RECYCLE_BIN)
                 Else
                     bDeleted = False
                 End If
@@ -1300,6 +1375,16 @@ Namespace DotNetNuke.Entities.Tabs
             Next
         End Sub
 
+        Private Shared Function GetPortalId(ByVal TabId As Integer, ByVal PortalId As Integer) As Integer
+            If Null.IsNull(PortalId) Then
+                Dim portalDic As Dictionary(Of Integer, Integer) = PortalController.GetPortalDictionary()
+                If portalDic IsNot Nothing AndAlso portalDic.ContainsKey(TabId) Then
+                    PortalId = portalDic(TabId)
+                End If
+            End If
+            Return PortalId
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' GetTabsByPortalCallBack gets a Dictionary of Tabs by 
@@ -1318,9 +1403,10 @@ Namespace DotNetNuke.Entities.Tabs
         End Function
 
         Private Shared Function GetTabPathDictionaryCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
-            Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
+            Dim cultureCode As String = DirectCast(cacheItemArgs.ParamList(0), String)
+            Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(1), Integer)
             Dim tabpathDic As New Dictionary(Of String, Integer)(StringComparer.CurrentCultureIgnoreCase)
-            Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(portalID)
+            Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(portalID, cultureCode)
             Try
                 While dr.Read
                     ' add to dictionary
@@ -1347,14 +1433,19 @@ Namespace DotNetNuke.Entities.Tabs
         Public Shared Sub CopyDesignToChildren(ByVal parentTab As TabInfo, ByVal skinSrc As String, ByVal containerSrc As String, ByVal CultureCode As String)
             Dim clearCache As Boolean = Null.NullBoolean
             Dim childTabs As List(Of TabInfo) = New TabController().GetTabsByPortal(parentTab.PortalID).DescendentsOf(parentTab.TabID)
+            Dim objTabController As New TabController()
 
             For Each objTab As TabInfo In childTabs
                 If TabPermissionController.CanAdminPage(objTab) Then
-                    provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
-                          objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
-                          objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
-                          objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
-                          objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, CultureCode)
+                    provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, _
+                            objTab.VersionGuid, objTab.DefaultLanguageGuid, objTab.LocalizedVersionGuid, _
+                            objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
+                            objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
+                            objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
+                            objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
+                            objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objTab.CultureCode)
+
+                    objTabController.UpdateTabVersion(objTab.TabID)
 
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
@@ -1370,6 +1461,7 @@ Namespace DotNetNuke.Entities.Tabs
         Public Shared Sub CopyPermissionsToChildren(ByVal parentTab As TabInfo, ByVal newPermissions As Permissions.TabPermissionCollection)
             Dim objTabPermissionController As New Security.Permissions.TabPermissionController
             Dim clearCache As Boolean = Null.NullBoolean
+            Dim objTabController As New TabController()
 
             Dim childTabs As List(Of TabInfo) = New TabController().GetTabsByPortal(parentTab.PortalID).DescendentsOf(parentTab.TabID)
 
@@ -1379,6 +1471,8 @@ Namespace DotNetNuke.Entities.Tabs
                     objTab.TabPermissions.AddRange(newPermissions)
 
                     TabPermissionController.SaveTabPermissions(objTab)
+
+                    objTabController.UpdateTabVersion(objTab.TabID)
                     clearCache = True
                 End If
             Next
@@ -1394,25 +1488,21 @@ Namespace DotNetNuke.Entities.Tabs
 
             Dim objTab As TabInfo = objController.GetTab(tabId, PortalSettings.PortalId, False)
             If objTab IsNot Nothing Then
-                'Get the List of tabs with the same parent
-                Dim siblingTabs As List(Of TabInfo) = objController.GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-                Dim siblingCount As Integer = siblingTabs.Count
-
-                'First make sure the list is sorted and spaced
-                objController.UpdateTabOrder(siblingTabs, 2)
-
-                'Get Tabs Index position in the Sibling List
-                Dim tabIndex As Integer = objController.GetIndexOfTab(objTab, siblingTabs)
+                'Delete Tab
                 bDeleted = DeleteTab(objTab, PortalSettings, UserId)
 
-                'Clear deleted tabs TabOrder
-                objTab.TabOrder = 0
+                'Delete any localized children
+                If bDeleted Then
+                    For Each localizedtab As TabInfo In objTab.LocalizedTabs.Values
+                        DeleteTab(localizedtab, PortalSettings, UserId)
+                    Next
+                End If
+
+                'Get the List of tabs with the same parent
+                Dim siblingTabs As List(Of TabInfo) = objController.GetSiblingTabs(objTab)
 
                 'Update TabOrder
-                objController.UpdateTabOrder(objTab, False)
-
-                'We need to update the taborder for items that were after this tab
-                objController.UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2)
+                objController.UpdateTabOrder(siblingTabs, objTab.CultureCode, PortalSettings.PortalId, 2)
             Else
                 bDeleted = False
             End If
@@ -1477,6 +1567,7 @@ Namespace DotNetNuke.Entities.Tabs
                     objTab.ParentId = Null.NullInteger
                     objTab.TabName = tabName
                 End If
+
                 objTab.PortalID = PortalId
                 objTab.Title = XmlUtils.GetNodeValue(nodeTab, "title")
                 objTab.Description = XmlUtils.GetNodeValue(nodeTab, "description")
@@ -1492,6 +1583,8 @@ Namespace DotNetNuke.Entities.Tabs
                 objTab.PageHeadText = XmlUtils.GetNodeValue(nodeTab, "pageheadtext", Null.NullString)
                 objTab.IsSecure = XmlUtils.GetNodeValueBoolean(nodeTab, "issecure", False)
                 objTab.SiteMapPriority = XmlUtils.GetNodeValueSingle(nodeTab, "sitemappriority", 0.5)
+                'objTab.UniqueId = New Guid(XmlUtils.GetNodeValue(nodeTab, "guid", Guid.NewGuid.ToString()))
+                'objTab.VersionGuid = New Guid(XmlUtils.GetNodeValue(nodeTab, "versionGuid", Guid.NewGuid.ToString()))
 
                 objTab.TabPermissions.Clear()
                 DeserializeTabPermissions(nodeTab.SelectNodes("tabpermissions/permission"), objTab, IsAdminTemplate)
@@ -1552,15 +1645,15 @@ Namespace DotNetNuke.Entities.Tabs
         End Function
 
         Public Shared Function GetPortalTabs(ByVal portalId As Integer, ByVal excludeTabId As Integer, ByVal includeNoneSpecified As Boolean, ByVal includeHidden As Boolean) As List(Of TabInfo)
-            Return GetPortalTabs(GetTabsBySortOrder(portalId), excludeTabId, includeNoneSpecified, "<" + Localization.GetString("None_Specified") + ">", includeHidden, False, False, False, False)
+            Return GetPortalTabs(GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), True), excludeTabId, includeNoneSpecified, "<" + Localization.GetString("None_Specified") + ">", includeHidden, False, False, False, False)
         End Function
 
         Public Shared Function GetPortalTabs(ByVal portalId As Integer, ByVal excludeTabId As Integer, ByVal includeNoneSpecified As Boolean, ByVal includeHidden As Boolean, ByVal includeDeleted As Boolean, ByVal includeURL As Boolean) As List(Of TabInfo)
-            Return GetPortalTabs(GetTabsBySortOrder(portalId), excludeTabId, includeNoneSpecified, "<" + Localization.GetString("None_Specified") + ">", includeHidden, includeDeleted, includeURL, False, False)
+            Return GetPortalTabs(GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), True), excludeTabId, includeNoneSpecified, "<" + Localization.GetString("None_Specified") + ">", includeHidden, includeDeleted, includeURL, False, False)
         End Function
 
         Public Shared Function GetPortalTabs(ByVal portalId As Integer, ByVal excludeTabId As Integer, ByVal includeNoneSpecified As Boolean, ByVal NoneSpecifiedText As String, ByVal includeHidden As Boolean, ByVal includeDeleted As Boolean, ByVal includeURL As Boolean, ByVal checkViewPermisison As Boolean, ByVal checkEditPermission As Boolean) As List(Of TabInfo)
-            Return GetPortalTabs(GetTabsBySortOrder(portalId), excludeTabId, includeNoneSpecified, NoneSpecifiedText, includeHidden, includeDeleted, includeURL, checkViewPermisison, checkEditPermission)
+            Return GetPortalTabs(GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), True), excludeTabId, includeNoneSpecified, NoneSpecifiedText, includeHidden, includeDeleted, includeURL, checkViewPermisison, checkEditPermission)
         End Function
 
         Public Shared Function GetPortalTabs(ByVal tabs As List(Of TabInfo), ByVal excludeTabId As Integer, ByVal includeNoneSpecified As Boolean, ByVal NoneSpecifiedText As String, ByVal includeHidden As Boolean, ByVal includeDeleted As Boolean, ByVal includeURL As Boolean, ByVal checkViewPermisison As Boolean, ByVal checkEditPermission As Boolean) As List(Of TabInfo)
@@ -1600,8 +1693,8 @@ Namespace DotNetNuke.Entities.Tabs
             Return listTabs
         End Function
 
-        Public Shared Function GetTabByTabPath(ByVal portalId As Integer, ByVal tabPath As String) As Integer
-            Dim tabpathDic As Dictionary(Of String, Integer) = GetTabPathDictionary(portalId)
+        Public Shared Function GetTabByTabPath(ByVal portalId As Integer, ByVal tabPath As String, ByVal cultureCode As String) As Integer
+            Dim tabpathDic As Dictionary(Of String, Integer) = GetTabPathDictionary(portalId, cultureCode)
             If tabpathDic.ContainsKey(tabPath) Then
                 Return tabpathDic(tabPath)
             Else
@@ -1609,18 +1702,18 @@ Namespace DotNetNuke.Entities.Tabs
             End If
         End Function
 
-        Public Shared Function GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer)
-            Dim cacheKey As String = String.Format(DataCache.TabPathCacheKey, portalId.ToString())
+        Public Shared Function GetTabPathDictionary(ByVal portalId As Integer, ByVal cultureCode As String) As Dictionary(Of String, Integer)
+            Dim cacheKey As String = String.Format(DataCache.TabPathCacheKey, cultureCode, portalId.ToString())
             Return CBO.GetCachedObject(Of Dictionary(Of String, Integer))(New CacheItemArgs(cacheKey, DataCache.TabPathCacheTimeOut, _
-              DataCache.TabPathCachePriority, portalId), AddressOf GetTabPathDictionaryCallback)
+              DataCache.TabPathCachePriority, cultureCode, portalId), AddressOf GetTabPathDictionaryCallback)
         End Function
 
         Public Shared Function GetTabsByParent(ByVal parentId As Integer, ByVal portalId As Integer) As List(Of TabInfo)
             Return New TabController().GetTabsByPortal(portalId).WithParentId(parentId)
         End Function
 
-        Public Shared Function GetTabsBySortOrder(ByVal portalId As Integer) As List(Of TabInfo)
-            Return New TabController().GetTabsByPortal(portalId).AsList()
+        Public Shared Function GetTabsBySortOrder(ByVal portalId As Integer, ByVal cultureCode As String, ByVal includeNeutral As Boolean) As List(Of TabInfo)
+            Return New TabController().GetTabsByPortal(portalId).WithCulture(cultureCode, includeNeutral).AsList()
         End Function
 
         Public Shared Function IsSpecialTab(ByVal tabId As Integer, ByVal PortalSettings As PortalSettings) As Boolean
@@ -1636,14 +1729,17 @@ Namespace DotNetNuke.Entities.Tabs
             objTab.IsDeleted = False
             objController.UpdateTab(objTab)
 
+            'Restore any localized children
+            For Each localizedtab As TabInfo In objTab.LocalizedTabs.Values
+                localizedtab.IsDeleted = False
+                objController.UpdateTab(localizedtab)
+            Next
+
             'Get the List of tabs with the same parent
-            Dim siblingTabs As List(Of TabInfo) = objController.GetTabsByPortal(objTab.PortalID).WithParentId(objTab.ParentId)
-            Dim siblingCount As Integer = siblingTabs.Count
+            Dim siblingTabs As List(Of TabInfo) = objController.GetSiblingTabs(objTab)
 
-            objTab.TabOrder = 2 * siblingTabs.Count + 1
-
-            'UpdateOrder 
-            objController.UpdateTabOrder(objTab, False)
+            'Update TabOrder
+            objController.UpdateTabOrder(siblingTabs, objTab.CultureCode, PortalSettings.PortalId, 2)
 
             objEventLog.AddLog(objTab, PortalSettings, UserId, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_RESTORED)
 
@@ -1651,7 +1747,7 @@ Namespace DotNetNuke.Entities.Tabs
             Dim arrMods As ArrayList = objmodules.GetAllTabsModules(objTab.PortalID, True)
 
             For Each objModule As ModuleInfo In arrMods
-                objmodules.CopyModule(objModule.ModuleID, objModule.TabID, objTab.TabID, "", True)
+                objmodules.CopyModule(objModule, objTab, Null.NullString, True)
             Next
 
             objController.ClearCache(objTab.PortalID)
@@ -1694,6 +1790,11 @@ Namespace DotNetNuke.Entities.Tabs
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("tabpath"))
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("haschildren"))
             nodeTab.RemoveChild(nodeTab.SelectSingleNode("skindoctype"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("uniqueid"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("versionguid"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("cultureCode"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("defaultLanguageGuid"))
+            nodeTab.RemoveChild(nodeTab.SelectSingleNode("localizedVersionGuid"))
 
             For Each nodePermission As XmlNode In nodeTab.SelectNodes("tabpermissions/permission")
                 nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabpermissionid"))
@@ -1796,29 +1897,42 @@ Namespace DotNetNuke.Entities.Tabs
 
 #Region "Obsolete"
 
-        <Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.5.Replaced by ModuleController.CopyModules")> _
+        Public Sub CopyTab(ByVal PortalId As Integer, ByVal FromTabId As Integer, ByVal ToTabId As Integer, ByVal asReference As Boolean)
+            Dim objModules As New ModuleController
+            Dim sourceTab As TabInfo = GetTab(FromTabId, PortalId, False)
+            Dim destinationTab As TabInfo = GetTab(FromTabId, ToTabId, False)
+
+            If sourceTab IsNot Nothing AndAlso destinationTab IsNot Nothing Then
+                objModules.CopyModules(sourceTab, destinationTab, asReference)
+            End If
+        End Sub
+
+        <Obsolete("Deprecated in DotNetNuke 5.0. Replaced by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")> _
         Public Shared Function DeserializeTab(ByVal tabName As String, ByVal nodeTab As XmlNode, ByVal PortalId As Integer) As TabInfo
             Return TabController.DeserializeTab(nodeTab, Nothing, New Hashtable(), PortalId, False, PortalTemplateModuleAction.Ignore, New Hashtable())
         End Function
 
-        <Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.0. Replaced by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")> _
         Public Shared Function DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer) As TabInfo
             Return TabController.DeserializeTab(nodeTab, objTab, New Hashtable(), PortalId, False, PortalTemplateModuleAction.Ignore, New Hashtable())
         End Function
 
-        <Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.0. Replaced by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")> _
         Public Shared Function DeserializeTab(ByVal tabName As String, ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable) As TabInfo
             Return TabController.DeserializeTab(nodeTab, objTab, hTabs, PortalId, IsAdminTemplate, mergeTabs, hModules)
         End Function
 
-        <Obsolete("This method has replaced in DotNetNuke 5.0 by CopyDesignToChildren(TabInfo,String, String)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.0. Replaced by CopyDesignToChildren(TabInfo,String, String)")> _
         Public Sub CopyDesignToChildren(ByVal tabs As ArrayList, ByVal skinSrc As String, ByVal containerSrc As String)
             For Each objTab As TabInfo In tabs
-                provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
-                     objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
-                     objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
-                     objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
-                     objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, PortalController.GetActivePortalLanguage(objTab.PortalID))
+                provider.UpdateTab(objTab.TabID, objTab.ContentItemId, objTab.PortalID, _
+                        objTab.VersionGuid, objTab.DefaultLanguageGuid, objTab.LocalizedVersionGuid, _
+                        objTab.TabName, objTab.IsVisible, objTab.DisableLink, _
+                        objTab.ParentId, objTab.IconFile, objTab.IconFileLarge, objTab.Title, objTab.Description, objTab.KeyWords, _
+                        objTab.IsDeleted, objTab.Url, skinSrc, containerSrc, objTab.TabPath, objTab.StartDate, _
+                        objTab.EndDate, objTab.RefreshInterval, objTab.PageHeadText, objTab.IsSecure, objTab.PermanentRedirect, _
+                        objTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objTab.CultureCode)
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
                 objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
             Next
@@ -1844,15 +1958,25 @@ Namespace DotNetNuke.Entities.Tabs
             End If
         End Sub
 
-        <Obsolete("This method is obsolete.  It has been replaced by GetTab(ByVal TabId As Integer, ByVal PortalId As Integer, ByVal ignoreCache As Boolean) ")> _
+        <Obsolete("Deprecated in DotNetNuke 5.0.  It has been replaced by GetTab(ByVal TabId As Integer, ByVal PortalId As Integer, ByVal ignoreCache As Boolean) ")> _
         Public Function GetTab(ByVal TabId As Integer) As TabInfo
             Return CBO.FillObject(Of TabInfo)(DataProvider.Instance().GetTab(TabId))
         End Function
 
-        <Obsolete("This method has been replaced in 5.0 by GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer) ")> _
+        <Obsolete("Deprecated in DNN 5.5. Replaced by GetTabByTabPath(portalId, tabPath, cultureCode) ")> _
+        Public Shared Function GetTabByTabPath(ByVal portalId As Integer, ByVal tabPath As String) As Integer
+            Return GetTabByTabPath(portalId, tabPath, Null.NullString)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by GetTabPathDictionary(portalId, cultureCode) ")> _
+        Public Shared Function GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer)
+            Return GetTabPathDictionary(portalId, Null.NullString)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.0. Replaced by GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer) ")> _
         Public Shared Function GetTabPathDictionary() As Dictionary(Of String, Integer)
             Dim tabpathDic As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)(StringComparer.CurrentCultureIgnoreCase)
-            Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(Null.NullInteger)
+            Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(Null.NullInteger, Null.NullString)
             Try
                 While dr.Read
                     ' add to dictionary
@@ -1886,6 +2010,17 @@ Namespace DotNetNuke.Entities.Tabs
             Next
             Return arrTabs
         End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by GetTabsBySortOrder(portalId, cultureCode) ")> _
+        Public Shared Function GetTabsBySortOrder(ByVal portalId As Integer) As List(Of TabInfo)
+            Return GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), True)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by UpdateTab(updatedTab)")> _
+        Public Sub UpdateTab(ByVal updatedTab As TabInfo, ByVal CultureCode As String)
+            updatedTab.CultureCode = CultureCode
+            UpdateTab(updatedTab)
+        End Sub
 
         <Obsolete("This method is obsolete.  It has been replaced by UpdateTabOrder(ByVal objTab As TabInfo) ")> _
         Public Sub UpdateTabOrder(ByVal PortalID As Integer, ByVal TabId As Integer, ByVal TabOrder As Integer, ByVal Level As Integer, ByVal ParentId As Integer)

@@ -584,11 +584,9 @@ create procedure {databaseOwner}{objectQualifier}GetHtmlTextUser
 as
 
 select {objectQualifier}HtmlTextUsers.*,
-       {objectQualifier}WorkflowStates.StateName,
-       {objectQualifier}Modules.ModuleTitle
+       {objectQualifier}WorkflowStates.StateName
 from   {databaseOwner}{objectQualifier}HtmlTextUsers
 inner join {databaseOwner}{objectQualifier}WorkflowStates on {databaseOwner}{objectQualifier}HtmlTextUsers.StateID = {databaseOwner}{objectQualifier}WorkflowStates.StateID
-inner join {databaseOwner}{objectQualifier}Modules on {databaseOwner}{objectQualifier}HtmlTextUsers.ModuleID = {databaseOwner}{objectQualifier}Modules.ModuleID
 where  {objectQualifier}HtmlTextUsers.UserID = @UserID
 order by {objectQualifier}HtmlTextUsers.CreatedOnDate asc
 

@@ -33,8 +33,10 @@ Namespace DotNetNuke.Services.FileSystem
 #Region "Private Members"
 
         ' local property declarations
-        Private _folderID As Integer
+        Private _folderID As Integer = Null.NullInteger
         Private _portalID As Integer
+        Private _uniqueID As Guid
+        Private _versionGuid As Guid
         Private _folderPath As String
         Private _storageLocation As Integer
         Private _isProtected As Boolean
@@ -44,9 +46,31 @@ Namespace DotNetNuke.Services.FileSystem
 
 #End Region
 
+#Region "Constructors"
+
+        Public Sub New()
+        End Sub
+
+        Public Sub New(ByVal portalId As Integer, ByVal folderpath As String, ByVal storageLocation As Integer, ByVal isProtected As Boolean, ByVal isCached As Boolean, ByVal lastUpdated As Date)       
+            Me.New(Guid.NewGuid(), portalId, folderpath, storageLocation, isProtected, isCached, lastUpdated)
+        End Sub
+
+        Public Sub New(ByVal uniqueID As Guid, ByVal portalId As Integer, ByVal folderpath As String, ByVal storageLocation As Integer, ByVal isProtected As Boolean, ByVal isCached As Boolean, ByVal lastUpdated As Date)
+            Me.UniqueId = uniqueID
+            Me.VersionGuid = Guid.NewGuid()
+
+            Me.PortalID = portalId
+            Me.FolderPath = folderpath
+            Me.StorageLocation = storageLocation
+            Me.IsProtected = isProtected
+            Me.IsCached = isCached
+            Me.LastUpdated = lastUpdated
+        End Sub
+#End Region
+
 #Region "Public Properties"
 
-        <XmlIgnore()> Public Property FolderID() As Integer
+        <XmlElement("folderid")> Public Property FolderID() As Integer
             Get
                 Return _folderID
             End Get
@@ -55,7 +79,26 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public ReadOnly Property FolderName() As String
+        <XmlElement("uniqueid")> Public Property UniqueId() As Guid
+            Get
+                Return _uniqueID
+            End Get
+            Set(ByVal Value As Guid)
+                _uniqueID = Value
+            End Set
+
+        End Property
+
+        <XmlElement("versionguid")> Public Property VersionGuid() As Guid
+            Get
+                Return _versionGuid
+            End Get
+            Set(ByVal Value As Guid)
+                _versionGuid = Value
+            End Set
+        End Property
+
+        <XmlElement("foldername")> Public ReadOnly Property FolderName() As String
             Get
                 Dim _folderName As String = FileSystemUtils.RemoveTrailingSlash(_folderPath)
                 If _folderName.Length > 0 AndAlso _folderName.LastIndexOf("/") > -1 Then
@@ -74,7 +117,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property IsCached() As Boolean
+        <XmlElement("iscached")> Public Property IsCached() As Boolean
             Get
                 Return _isCached
             End Get
@@ -83,7 +126,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property IsProtected() As Boolean
+        <XmlElement("isprotected")> Public Property IsProtected() As Boolean
             Get
                 Return _isProtected
             End Get
@@ -101,7 +144,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public ReadOnly Property PhysicalPath() As String
+        <XmlElement("physicalpath")> Public ReadOnly Property PhysicalPath() As String
             Get
                 Dim _PhysicalPath As String
                 Dim PortalSettings As PortalSettings = Nothing
@@ -127,7 +170,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Get
         End Property
 
-        <XmlIgnore()> Public Property PortalID() As Integer
+        <XmlElement("portalid")> Public Property PortalID() As Integer
             Get
                 Return _portalID
             End Get
@@ -145,7 +188,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public ReadOnly Property FolderPermissions() As FolderPermissionCollection
+        <XmlElement("folderpermissions")> Public ReadOnly Property FolderPermissions() As FolderPermissionCollection
             Get
                 If _FolderPermissions Is Nothing Then
                     _FolderPermissions = New FolderPermissionCollection(FolderPermissionController.GetFolderPermissionsCollectionByFolder(PortalID, FolderPath))
@@ -165,10 +208,13 @@ Namespace DotNetNuke.Services.FileSystem
         ''' <param name="dr">The Data Reader to use</param>
         ''' <history>
         ''' 	[cnurse]	07/14/2008   Documented
+        '''     [vnguyen]   30/04/2010   Modified: Added VersionGuid
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub Fill(ByVal dr As System.Data.IDataReader) Implements IHydratable.Fill
             FolderID = Null.SetNullInteger(dr("FolderID"))
+            UniqueId = Null.SetNullGuid(dr("UniqueId"))
+            VersionGuid = Null.SetNullGuid(dr("VersionGuid"))
             PortalID = Null.SetNullInteger(dr("PortalID"))
             FolderPath = Null.SetNullString(dr("FolderPath"))
             IsCached = Null.SetNullBoolean(dr("IsCached"))

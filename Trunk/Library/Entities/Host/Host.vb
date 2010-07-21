@@ -26,112 +26,14 @@ Imports DotNetNuke.Services.Scheduling
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Services.Cache
 Imports System.Threading
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Host
 
     Public Class Host
         Inherits BaseEntityInfo
 
-#Region "Private Shared Methods"
-
-        Private Shared Function GetHostSettingAsBoolean(ByVal key As String, ByVal defaultValue As Boolean) As Boolean
-            Dim retValue As Boolean
-            Try
-                Dim setting As String = GetHostSetting(key)
-                If String.IsNullOrEmpty(setting) Then
-                    retValue = defaultValue
-                Else
-                    retValue = (setting.ToUpperInvariant().StartsWith("Y") OrElse setting.ToUpperInvariant = "TRUE")
-                End If
-            Catch ex As Exception
-                'we just want to trap the error as we may not be installed so there will be no Settings
-            End Try
-            Return retValue
-        End Function
-
-        Private Shared Function GetHostSettingAsDouble(ByVal key As String, ByVal defaultValue As Double) As Double
-            Dim retValue As Double
-            Try
-                Dim setting As String = GetHostSetting(key)
-                If String.IsNullOrEmpty(setting) Then
-                    retValue = defaultValue
-                Else
-                    retValue = Convert.ToDouble(setting)
-                End If
-            Catch ex As Exception
-                'we just want to trap the error as we may not be installed so there will be no Settings
-            End Try
-            Return retValue
-        End Function
-
-        Private Shared Function GetHostSettingAsInteger(ByVal key As String) As Integer
-            Return GetHostSettingAsInteger(key, Null.NullInteger)
-        End Function
-
-        Private Shared Function GetHostSettingAsInteger(ByVal key As String, ByVal defaultValue As Integer) As Integer
-            Dim retValue As Integer
-            Try
-                Dim setting As String = GetHostSetting(key)
-                If String.IsNullOrEmpty(setting) Then
-                    retValue = defaultValue
-                Else
-                    retValue = Convert.ToInt32(setting)
-                End If
-            Catch ex As Exception
-                'we just want to trap the error as we may not be installed so there will be no Settings
-            End Try
-            Return retValue
-        End Function
-
-        Private Shared Function GetHostSettingAsString(ByVal key As String, ByVal defaultValue As String) As String
-            Dim retValue As String = defaultValue
-            Try
-                Dim setting As String = GetHostSetting(key)
-                If Not String.IsNullOrEmpty(setting) Then
-                    retValue = setting
-                End If
-            Catch ex As Exception
-                'we just want to trap the error as we may not be installed so there will be no Settings
-            End Try
-            Return retValue
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' GetSecureHostSettingsDictionaryCallBack gets a Dictionary of Security Host 
-        ''' Settings from the Database.
-        ''' </summary>
-        ''' <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
-        ''' needed for the database call</param>
-        ''' <history>
-        ''' 	[cnurse]	07/15/2008   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Shared Function GetSecureHostSettingsDictionaryCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
-            Dim dicSettings As New Dictionary(Of String, String)
-
-            Dim dr As IDataReader = DataProvider.Instance().GetHostSettings
-            Try
-                While dr.Read()
-                    If Not Convert.ToBoolean(dr(2)) Then
-                        Dim settingName As String = dr.GetString(0)
-                        If settingName.ToLower.IndexOf("password") = -1 Then
-                            If Not dr.IsDBNull(1) Then
-                                dicSettings.Add(settingName, dr.GetString(1))
-                            Else
-                                dicSettings.Add(settingName, "")
-                            End If
-                        End If
-                    End If
-                End While
-            Finally
-                CBO.CloseDataReader(dr, True)
-            End Try
-
-            Return dicSettings
-        End Function
-
-#End Region
+        Private Shared hostCont As New HostController()
 
 #Region "Public Shared Properties"
 
@@ -146,7 +48,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property AutoAccountUnlockDuration() As Integer
             Get
-                Return GetHostSettingAsInteger("AutoAccountUnlockDuration", 10)
+                Return HostController.Instance.GetInteger("AutoAccountUnlockDuration", 10)
             End Get
         End Property
 
@@ -161,7 +63,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property AuthenticatedCacheability() As String
             Get
-                Return GetHostSettingAsString("AuthenticatedCacheability", "4")
+                Return HostController.Instance.GetString("AuthenticatedCacheability", "4")
             End Get
         End Property
 
@@ -176,7 +78,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property CheckUpgrade() As Boolean
             Get
-                Return GetHostSettingAsBoolean("CheckUpgrade", True)
+                Return HostController.Instance.GetBoolean("CheckUpgrade", True)
             End Get
         End Property
 
@@ -191,7 +93,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ControlPanel() As String
             Get
-                Dim setting As String = GetHostSetting("ControlPanel")
+                Dim setting As String = HostController.Instance.GetString("ControlPanel")
                 If String.IsNullOrEmpty(setting) Then
                     setting = glbDefaultControlPanel
                 End If
@@ -209,7 +111,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DefaultAdminContainer() As String
             Get
-                Dim setting As String = GetHostSetting("DefaultAdminContainer")
+                Dim setting As String = HostController.Instance.GetString("DefaultAdminContainer")
                 If String.IsNullOrEmpty(setting) Then
                     setting = SkinController.GetDefaultAdminContainer()
                 End If
@@ -227,7 +129,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DefaultAdminSkin() As String
             Get
-                Dim setting As String = GetHostSetting("DefaultAdminSkin")
+                Dim setting As String = HostController.Instance.GetString("DefaultAdminSkin")
                 If String.IsNullOrEmpty(setting) Then
                     setting = SkinController.GetDefaultAdminSkin()
                 End If
@@ -246,7 +148,7 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property DefaultDocType() As String
             Get
                 Dim doctype As String = "<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">"
-                Dim setting As String = GetHostSetting("DefaultDocType")
+                Dim setting As String = HostController.Instance.GetString("DefaultDocType")
                 If Not String.IsNullOrEmpty(setting) Then
                     Select Case setting
                         Case "0" : doctype = "<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">"
@@ -268,7 +170,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DefaultPortalContainer() As String
             Get
-                Dim setting As String = GetHostSetting("DefaultPortalContainer")
+                Dim setting As String = HostController.Instance.GetString("DefaultPortalContainer")
                 If String.IsNullOrEmpty(setting) Then
                     setting = SkinController.GetDefaultPortalContainer()
                 End If
@@ -286,7 +188,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DefaultPortalSkin() As String
             Get
-                Dim setting As String = GetHostSetting("DefaultPortalSkin")
+                Dim setting As String = HostController.Instance.GetString("DefaultPortalSkin")
                 If String.IsNullOrEmpty(setting) Then
                     setting = SkinController.GetDefaultPortalSkin()
                 End If
@@ -305,7 +207,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DemoPeriod() As Integer
             Get
-                Return GetHostSettingAsInteger("DemoPeriod", Null.NullInteger)
+                Return HostController.Instance.GetInteger("DemoPeriod")
             End Get
         End Property
 
@@ -320,7 +222,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DemoSignup() As Boolean
             Get
-                Return GetHostSettingAsBoolean("DemoSignup", False)
+                Return HostController.Instance.GetBoolean("DemoSignup", False)
             End Get
         End Property
 
@@ -335,7 +237,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DisplayBetaNotice() As Boolean
             Get
-                Return GetHostSettingAsBoolean("DisplayBetaNotice", True)
+                Return HostController.Instance.GetBoolean("DisplayBetaNotice", True)
             End Get
         End Property
 
@@ -350,7 +252,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property DisplayCopyright() As Boolean
             Get
-                Return GetHostSettingAsBoolean("Copyright", True)
+                Return HostController.Instance.GetBoolean("Copyright", True)
             End Get
         End Property
 
@@ -366,7 +268,7 @@ Namespace DotNetNuke.Entities.Host
         <Obsolete("MS AJax is now required for DotNetNuke 5.0 and above")> _
         Public Shared ReadOnly Property EnableAJAX() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableAJAX", True)
+                Return HostController.Instance.GetBoolean("EnableAJAX", True)
             End Get
         End Property
 
@@ -381,22 +283,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableFileAutoSync() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableFileAutoSync", False)
-            End Get
-        End Property
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Gets whether content localization has been enabled
-        ''' </summary>
-        ''' <remarks>Defaults to False</remarks>
-        ''' <history>
-        ''' 	[cathal]	20/10/2009   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared ReadOnly Property ContentLocalization() As Boolean
-            Get
-                Return GetHostSettingAsBoolean("ContentLocalization", False)
+                Return HostController.Instance.GetBoolean("EnableFileAutoSync", False)
             End Get
         End Property
 
@@ -418,7 +305,6 @@ Namespace DotNetNuke.Entities.Host
 
         End Property
 
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets whether Browser Language Detection is Enabled
@@ -430,7 +316,22 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableBrowserLanguage() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableBrowserLanguage", True)
+                Return HostController.Instance.GetBoolean("EnableBrowserLanguage", True)
+            End Get
+        End Property
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets whether a css class based on the Module Name is automatically rendered
+        ''' </summary>
+        ''' <remarks>Defaults to True</remarks>
+        ''' <history>
+        ''' 	[cnurse]	06/30/2010   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared ReadOnly Property EnableCustomModuleCssClass() As Boolean
+            Get
+                Return HostController.Instance.GetBoolean("EnableCustomModuleCssClass", True)
             End Get
         End Property
 
@@ -445,7 +346,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableModuleOnLineHelp() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableModuleOnLineHelp", False)
+                Return HostController.Instance.GetBoolean("EnableModuleOnLineHelp", False)
             End Get
         End Property
 
@@ -460,7 +361,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableRequestFilters() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableRequestFilters", False)
+                Return HostController.Instance.GetBoolean("EnableRequestFilters", False)
             End Get
         End Property
 
@@ -475,7 +376,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableUrlLanguage() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EnableUrlLanguage", True)
+                Return HostController.Instance.GetBoolean("EnableUrlLanguage", True)
             End Get
         End Property
 
@@ -490,7 +391,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableUsersOnline() As Boolean
             Get
-                Return Not GetHostSettingAsBoolean("DisableUsersOnline", True)
+                Return Not HostController.Instance.GetBoolean("DisableUsersOnline", True)
             End Get
         End Property
 
@@ -505,7 +406,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EnableSMTPSSL() As Boolean
             Get
-                Return GetHostSettingAsBoolean("SMTPEnableSSL", False)
+                Return HostController.Instance.GetBoolean("SMTPEnableSSL", False)
             End Get
         End Property
 
@@ -520,7 +421,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property EventLogBuffer() As Boolean
             Get
-                Return GetHostSettingAsBoolean("EventLogBuffer", False)
+                Return HostController.Instance.GetBoolean("EventLogBuffer", False)
             End Get
         End Property
 
@@ -534,7 +435,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property FileExtensions() As String
             Get
-                Return GetHostSetting("FileExtensions")
+                Return HostController.Instance.GetString("FileExtensions")
             End Get
         End Property
 
@@ -548,7 +449,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property GUID() As String
             Get
-                Return GetHostSetting("GUID")
+                Return HostController.Instance.GetString("GUID")
             End Get
         End Property
 
@@ -562,7 +463,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HelpURL() As String
             Get
-                Return GetHostSetting("HelpURL")
+                Return HostController.Instance.GetString("HelpURL")
             End Get
         End Property
 
@@ -577,7 +478,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostCurrency() As String
             Get
-                Dim setting As String = GetHostSetting("HostCurrency")
+                Dim setting As String = HostController.Instance.GetString("HostCurrency")
                 If String.IsNullOrEmpty(setting) Then
                     setting = "USD"
                 End If
@@ -595,7 +496,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostEmail() As String
             Get
-                Return GetHostSetting("HostEmail")
+                Return HostController.Instance.GetString("HostEmail")
             End Get
         End Property
 
@@ -610,7 +511,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostFee() As Double
             Get
-                Return GetHostSettingAsDouble("HostFee", 0)
+                Return HostController.Instance.GetDouble("HostFee", 0)
             End Get
         End Property
 
@@ -625,7 +526,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostPortalID() As Integer
             Get
-                Return GetHostSettingAsInteger("HostPortalId")
+                Return HostController.Instance.GetInteger("HostPortalId")
             End Get
         End Property
 
@@ -640,7 +541,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostSpace() As Double
             Get
-                Return GetHostSettingAsDouble("HostSpace", 0)
+                Return HostController.Instance.GetDouble("HostSpace", 0)
             End Get
         End Property
 
@@ -654,7 +555,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostTitle() As String
             Get
-                Return GetHostSetting("HostTitle")
+                Return HostController.Instance.GetString("HostTitle")
             End Get
         End Property
 
@@ -668,7 +569,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HostURL() As String
             Get
-                Return GetHostSetting("HostURL")
+                Return HostController.Instance.GetString("HostURL")
             End Get
         End Property
 
@@ -683,7 +584,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property HttpCompressionAlgorithm() As Integer
             Get
-                Return GetHostSettingAsInteger("HttpCompression")
+                Return HostController.Instance.GetInteger("HttpCompression")
             End Get
         End Property
 
@@ -697,7 +598,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ModuleCachingMethod() As String
             Get
-                Return GetHostSetting("ModuleCaching")
+                Return HostController.Instance.GetString("ModuleCaching")
             End Get
         End Property
 
@@ -711,7 +612,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PageCachingMethod() As String
             Get
-                Return GetHostSetting("PageCaching")
+                Return HostController.Instance.GetString("PageCaching")
             End Get
         End Property
 
@@ -726,7 +627,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PageQuota() As Integer
             Get
-                Return GetHostSettingAsInteger("PageQuota", 0)
+                Return HostController.Instance.GetInteger("PageQuota", 0)
             End Get
         End Property
 
@@ -740,7 +641,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PageStatePersister() As String
             Get
-                Dim setting As String = GetHostSetting("PageStatePersister")
+                Dim setting As String = HostController.Instance.GetString("PageStatePersister")
                 If String.IsNullOrEmpty(setting) Then
                     setting = "P"
                 End If
@@ -759,7 +660,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PasswordExpiry() As Integer
             Get
-                Return GetHostSettingAsInteger("PasswordExpiry", 0)
+                Return HostController.Instance.GetInteger("PasswordExpiry", 0)
             End Get
         End Property
 
@@ -774,7 +675,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PasswordExpiryReminder() As Integer
             Get
-                Return GetHostSettingAsInteger("PasswordExpiryReminder", 7)
+                Return HostController.Instance.GetInteger("PasswordExpiryReminder", 7)
             End Get
         End Property
 
@@ -788,7 +689,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property PaymentProcessor() As String
             Get
-                Return GetHostSetting("PaymentProcessor")
+                Return HostController.Instance.GetString("PaymentProcessor")
             End Get
         End Property
 
@@ -804,7 +705,7 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property PerformanceSetting() As PerformanceSettings
             Get
                 Dim setting As PerformanceSettings = PerformanceSettings.ModerateCaching
-                Dim s As String = GetHostSetting("PerformanceSetting")
+                Dim s As String = HostController.Instance.GetString("PerformanceSetting")
                 If Not String.IsNullOrEmpty(s) Then
                     setting = CType(s, PerformanceSettings)
                 End If
@@ -822,7 +723,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProcessorPassword() As String
             Get
-                Return GetHostSetting("ProcessorPassword")
+                Return HostController.Instance.GetString("ProcessorPassword")
             End Get
         End Property
 
@@ -836,7 +737,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProcessorUserId() As String
             Get
-                Return GetHostSetting("ProcessorUserId")
+                Return HostController.Instance.GetString("ProcessorUserId")
             End Get
         End Property
 
@@ -850,7 +751,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProxyPassword() As String
             Get
-                Return GetHostSetting("ProxyPassword")
+                Return HostController.Instance.GetString("ProxyPassword")
             End Get
         End Property
 
@@ -864,7 +765,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProxyPort() As Integer
             Get
-                Return GetHostSettingAsInteger("ProxyPort")
+                Return HostController.Instance.GetInteger("ProxyPort")
             End Get
         End Property
 
@@ -878,7 +779,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProxyServer() As String
             Get
-                Return GetHostSetting("ProxyServer")
+                Return HostController.Instance.GetString("ProxyServer")
             End Get
         End Property
 
@@ -892,7 +793,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ProxyUsername() As String
             Get
-                Return GetHostSetting("ProxyUsername")
+                Return HostController.Instance.GetString("ProxyUsername")
             End Get
         End Property
 
@@ -907,7 +808,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property RememberCheckbox() As Boolean
             Get
-                Return GetHostSettingAsBoolean("RememberCheckbox", True)
+                Return HostController.Instance.GetBoolean("RememberCheckbox", True)
             End Get
         End Property
 
@@ -923,7 +824,7 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property SchedulerMode() As SchedulerMode
             Get
                 Dim setting As SchedulerMode = Scheduling.SchedulerMode.TIMER_METHOD
-                Dim s As String = GetHostSetting("SchedulerMode")
+                Dim s As String = HostController.Instance.GetString("SchedulerMode")
                 If Not String.IsNullOrEmpty(s) Then
                     setting = CType(s, Services.Scheduling.SchedulerMode)
                 End If
@@ -942,7 +843,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SearchIncludeCommon() As Boolean
             Get
-                Return GetHostSettingAsBoolean("SearchIncludeCommon", False)
+                Return HostController.Instance.GetBoolean("SearchIncludeCommon", False)
             End Get
         End Property
 
@@ -957,7 +858,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SearchIncludeNumeric() As Boolean
             Get
-                Return GetHostSettingAsBoolean("SearchIncludeNumeric", True)
+                Return HostController.Instance.GetBoolean("SearchIncludeNumeric", True)
             End Get
         End Property
 
@@ -972,7 +873,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SearchMaxWordlLength() As Integer
             Get
-                Return GetHostSettingAsInteger("MaxSearchWordLength", 50)
+                Return HostController.Instance.GetInteger("MaxSearchWordLength", 50)
             End Get
         End Property
 
@@ -987,7 +888,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SearchMinWordlLength() As Integer
             Get
-                Return GetHostSettingAsInteger("MinSearchWordLength", 4)
+                Return HostController.Instance.GetInteger("MinSearchWordLength", 4)
             End Get
         End Property
 
@@ -1002,7 +903,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SiteLogBuffer() As Integer
             Get
-                Return GetHostSettingAsInteger("SiteLogBuffer", 1)
+                Return HostController.Instance.GetInteger("SiteLogBuffer", 1)
             End Get
         End Property
 
@@ -1017,7 +918,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SiteLogHistory() As Integer
             Get
-                Return GetHostSettingAsInteger("SiteLogHistory", Null.NullInteger)
+                Return HostController.Instance.GetInteger("SiteLogHistory")
             End Get
         End Property
 
@@ -1032,7 +933,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SiteLogStorage() As String
             Get
-                Dim setting As String = GetHostSetting("SiteLogStorage")
+                Dim setting As String = HostController.Instance.GetString("SiteLogStorage")
                 If String.IsNullOrEmpty(setting) Then
                     setting = "D"
                 End If
@@ -1050,7 +951,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SMTPAuthentication() As String
             Get
-                Return GetHostSetting("SMTPAuthentication")
+                Return HostController.Instance.GetString("SMTPAuthentication")
             End Get
         End Property
 
@@ -1064,7 +965,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SMTPPassword() As String
             Get
-                Return GetHostSetting("SMTPPassword")
+                Return HostController.Instance.GetString("SMTPPassword")
             End Get
         End Property
 
@@ -1078,7 +979,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SMTPServer() As String
             Get
-                Return GetHostSetting("SMTPServer")
+                Return HostController.Instance.GetString("SMTPServer")
             End Get
         End Property
 
@@ -1092,7 +993,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property SMTPUsername() As String
             Get
-                Return GetHostSetting("SMTPUsername")
+                Return HostController.Instance.GetString("SMTPUsername")
             End Get
         End Property
 
@@ -1107,7 +1008,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property ThrowCBOExceptions() As Boolean
             Get
-                Return GetHostSettingAsBoolean("ThrowCBOExceptions", False)
+                Return HostController.Instance.GetBoolean("ThrowCBOExceptions", False)
             End Get
         End Property
 
@@ -1122,7 +1023,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property UseFriendlyUrls() As Boolean
             Get
-                Return GetHostSettingAsBoolean("UseFriendlyUrls", False)
+                Return HostController.Instance.GetBoolean("UseFriendlyUrls", False)
             End Get
         End Property
 
@@ -1137,7 +1038,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property UseCustomErrorMessages() As Boolean
             Get
-                Return GetHostSettingAsBoolean("UseCustomErrorMessages", False)
+                Return HostController.Instance.GetBoolean("UseCustomErrorMessages", False)
             End Get
         End Property
 
@@ -1152,7 +1053,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property UserQuota() As Integer
             Get
-                Return GetHostSettingAsInteger("UserQuota", 0)
+                Return HostController.Instance.GetInteger("UserQuota", 0)
             End Get
         End Property
 
@@ -1167,7 +1068,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property UsersOnlineTimeWindow() As Integer
             Get
-                Return GetHostSettingAsInteger("UsersOnlineTime", 15)
+                Return HostController.Instance.GetInteger("UsersOnlineTime", 15)
             End Get
         End Property
 
@@ -1182,7 +1083,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property WebRequestTimeout() As Integer
             Get
-                Return GetHostSettingAsInteger("WebRequestTimeout", 10000)
+                Return HostController.Instance.GetInteger("WebRequestTimeout", 10000)
             End Get
         End Property
 
@@ -1197,7 +1098,7 @@ Namespace DotNetNuke.Entities.Host
         ''' -----------------------------------------------------------------------------
         Public Shared ReadOnly Property WhitespaceFilter() As Boolean
             Get
-                Return GetHostSettingAsBoolean("WhitespaceFilter", False)
+                Return HostController.Instance.GetBoolean("WhitespaceFilter", False)
             End Get
         End Property
 
@@ -1210,7 +1111,7 @@ Namespace DotNetNuke.Entities.Host
         ''' </history>
         Public Shared ReadOnly Property jQueryDebug() As Boolean
             Get
-                Return GetHostSettingAsBoolean("jQueryDebug", False)
+                Return HostController.Instance.GetBoolean("jQueryDebug", False)
             End Get
         End Property
 
@@ -1223,7 +1124,7 @@ Namespace DotNetNuke.Entities.Host
         ''' </history>
         Public Shared ReadOnly Property jQueryHosted() As Boolean
             Get
-                Return GetHostSettingAsBoolean("jQueryHosted", False)
+                Return HostController.Instance.GetBoolean("jQueryHosted", False)
             End Get
         End Property
 
@@ -1239,9 +1140,9 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property jQueryUrl() As String
             Get
                 If HttpContext.Current.Request.IsSecureConnection = True Then
-                    Return GetHostSettingAsString("jQueryUrl", jQuery.DefaultHostedUrl).Replace("http://", "https://")
+                    Return HostController.Instance.GetString("jQueryUrl", jQuery.DefaultHostedUrl).Replace("http://", "https://")
                 Else
-                    Return GetHostSettingAsString("jQueryUrl", jQuery.DefaultHostedUrl)
+                    Return HostController.Instance.GetString("jQueryUrl", jQuery.DefaultHostedUrl)
                 End If
             End Get
         End Property
@@ -1259,13 +1160,9 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	01/28/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetHostSetting()")> _
         Private Shared Function GetHostSetting(ByVal key As String) As String
-            Dim setting As String = Null.NullString
-
-            If DotNetNuke.Common.Globals.DataBaseVersion IsNot Nothing Then
-                GetHostSettingsDictionary.TryGetValue(key, setting)
-            End If
-            Return setting
+            Return HostController.Instance.GetString(key)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1277,8 +1174,9 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	07/15/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetHostSettingsDictionary()")> _
         Public Shared Function GetHostSettingsDictionary() As Dictionary(Of String, String)
-            Dim dicSettings As Dictionary(Of String, String) = DataCache.GetCache(Of Dictionary(Of String, String))(DataCache.HostSettingsCacheKey)
+            Dim dicSettings As Dictionary(Of String, String) = DataCache.GetCache(Of Dictionary(Of String, String))(DataCache.UnSecureHostSettingsCacheKey)
 
             If dicSettings Is Nothing Then
                 dicSettings = New Dictionary(Of String, String)
@@ -1295,8 +1193,8 @@ Namespace DotNetNuke.Entities.Host
 
                 'Save settings to cache
                 Dim objDependency As DNNCacheDependency = Nothing
-                DataCache.SetCache(DataCache.HostSettingsCacheKey, dicSettings, objDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, _
-                                        TimeSpan.FromMinutes(DataCache.HostSettingsCacheTimeOut), DataCache.HostSettingsCachePriority, Nothing)
+                DataCache.SetCache(DataCache.UnSecureHostSettingsCacheKey, dicSettings, objDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, _
+                                   TimeSpan.FromMinutes(DataCache.HostSettingsCacheTimeOut), DataCache.HostSettingsCachePriority, Nothing)
             End If
 
             Return dicSettings
@@ -1311,10 +1209,9 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	01/28/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetSecureHostSetting()")> _
         Public Shared Function GetSecureHostSetting(ByVal key As String) As String
-            Dim setting As String = Null.NullString
-            GetSecureHostSettingsDictionary.TryGetValue(key, setting)
-            Return setting
+            Return HostController.Instance.GetString(key)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1326,14 +1223,52 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	01/28/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetSecureHostSettingsDictionary()")> _
         Public Shared Function GetSecureHostSettingsDictionary() As Dictionary(Of String, String)
-            Return CBO.GetCachedObject(Of Dictionary(Of String, String))(New CacheItemArgs(DataCache.SecureHostSettingsCacheKey, _
-                                                                                               DataCache.HostSettingsCacheTimeOut, _
-                                                                                               DataCache.HostSettingsCachePriority), _
-                                                                                               AddressOf GetSecureHostSettingsDictionaryCallBack)
+            Dim dicSettings As Dictionary(Of String, String) = DataCache.GetCache(Of Dictionary(Of String, String))(DataCache.SecureHostSettingsCacheKey)
+
+            If dicSettings Is Nothing Then
+                dicSettings = New Dictionary(Of String, String)
+                Dim dr As IDataReader = DataProvider.Instance().GetHostSettings
+                Try
+                    While dr.Read()
+                        If Not Convert.ToBoolean(dr(2)) Then
+                            Dim settingName As String = dr.GetString(0)
+                            If settingName.ToLower.IndexOf("password") = -1 Then
+                                If Not dr.IsDBNull(1) Then
+                                    dicSettings.Add(settingName, dr.GetString(1))
+                                Else
+                                    dicSettings.Add(settingName, "")
+                                End If
+                            End If
+                        End If
+                    End While
+                Finally
+                    CBO.CloseDataReader(dr, True)
+                End Try
+
+                'Save settings to cache
+                Dim objDependency As DNNCacheDependency = Nothing
+                DataCache.SetCache(DataCache.SecureHostSettingsCacheKey, dicSettings, objDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, _
+                                   TimeSpan.FromMinutes(DataCache.HostSettingsCacheTimeOut), DataCache.HostSettingsCachePriority, Nothing)
+            End If
+
+            Return dicSettings
         End Function
 
 #End Region
+
+#Region "Obsolete Properties"
+
+        <Obsolete("Deprecated in 5.5.  This setting was never used and has been replaced in 5.5 by a Portal Setting as Content Localization is Portal based.")> _
+        Public Shared ReadOnly Property ContentLocalization() As Boolean
+            Get
+                Return HostController.Instance.GetBoolean("ContentLocalization", False)
+            End Get
+        End Property
+
+#End Region
+
 
     End Class
 

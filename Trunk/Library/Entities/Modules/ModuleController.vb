@@ -56,8 +56,75 @@ Namespace DotNetNuke.Entities.Modules
 
 #Region "Private Methods"
 
-        Private Sub ClearCache(ByVal TabId As Integer)
-            DataCache.ClearModuleCache(TabId)
+        Private Sub AddModuleInternal(ByVal objModule As ModuleInfo)
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            ' add module
+            If Null.IsNull(objModule.ModuleID) Then
+                Dim typeController As IContentTypeController = New ContentTypeController
+                Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
+                                                 Where t.ContentType = "Module" _
+                                                 Select t) _
+                                                 .SingleOrDefault
+
+                Dim contentController As IContentController = New ContentController()
+                objModule.Content = objModule.ModuleTitle
+                objModule.ContentTypeId = contentType.ContentTypeId
+                objModule.Indexed = False
+                Dim contentItemID As Integer = contentController.AddContentItem(objModule)
+
+                'Add Module
+                objModule.ModuleID = dataProvider.AddModule(contentItemID, objModule.PortalID, objModule.ModuleDefID, objModule.AllTabs, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+
+                'Now we have the ModuleID - update the contentItem
+                contentController.UpdateContentItem(objModule)
+
+                objEventLog.AddLog(objModule, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_CREATED)
+
+                ' set module permissions
+                ModulePermissionController.SaveModulePermissions(objModule)
+            End If
+
+            'Save ModuleSettings
+            UpdateModuleSettings(objModule)
+        End Sub
+
+        Private Sub UpdateModuleSettings(ByVal updatedModule As ModuleInfo)
+            Dim sKey As String
+            For Each sKey In updatedModule.ModuleSettings.Keys
+                UpdateModuleSetting(updatedModule.ModuleID, sKey, CType(updatedModule.ModuleSettings(sKey), String))
+            Next
+        End Sub
+
+        Private Sub UpdateTabModuleSettings(ByVal updatedTabModule As ModuleInfo)
+            Dim sKey As String
+            For Each sKey In updatedTabModule.TabModuleSettings.Keys
+                UpdateTabModuleSetting(updatedTabModule.TabModuleID, sKey, CType(updatedTabModule.TabModuleSettings(sKey), String))
+            Next
+        End Sub
+
+        Private Sub UpdateTabModuleVersion(ByVal tabModuleId As Integer)
+            dataProvider.UpdateTabModuleVersion(tabModuleId, Guid.NewGuid())
+        End Sub
+
+        ''' <summary>
+        ''' Updates version guids of all tabModules link to the particular moduleID
+        ''' </summary>
+        ''' <param name="moduleID"></param>
+        ''' <remarks></remarks>
+        Private Sub UpdateTabModuleVersionsByModuleID(ByVal moduleID As Integer)
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
+
+            ' Update the version guid of each TabModule linked to the updated module
+            For Each modInfo As ModuleInfo In GetAllTabsModulesByModuleID(moduleID)
+                UpdateTabModuleVersion(modInfo.TabModuleID)
+
+                objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("TabModuleId", modInfo.TabModuleID.ToString))
+                objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.TABMODULE_UPDATED.ToString
+                objEventLog.AddLog(objEventLogInfo)
+
+                ClearCache(modInfo.TabID)
+            Next
         End Sub
 
 #End Region
@@ -119,29 +186,7 @@ Namespace DotNetNuke.Entities.Modules
             Return IsInstance
         End Function
 
-        Private Shared Sub CreateEventQueueMessage(ByVal objModule As ModuleInfo, ByVal strContent As String, ByVal strVersion As String, ByVal userID As Integer)
-            Dim oAppStartMessage As New EventQueue.EventMessage
-            oAppStartMessage.Priority = MessagePriority.High
-            oAppStartMessage.ExpirationDate = Now.AddYears(-1)
-            oAppStartMessage.SentDate = System.DateTime.Now
-            oAppStartMessage.Body = ""
-            oAppStartMessage.ProcessorType = "DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke"
-            oAppStartMessage.ProcessorCommand = "ImportModule"
-
-            'Add custom Attributes for this message
-            oAppStartMessage.Attributes.Add("BusinessControllerClass", objModule.DesktopModule.BusinessControllerClass)
-            oAppStartMessage.Attributes.Add("ModuleId", objModule.ModuleID.ToString())
-            oAppStartMessage.Attributes.Add("Content", strContent)
-            oAppStartMessage.Attributes.Add("Version", strVersion)
-            oAppStartMessage.Attributes.Add("UserID", userID.ToString)
-
-            'send it to occur on next App_Start Event
-            EventQueueController.SendMessage(oAppStartMessage, "Application_Start_FirstRequest")
-        End Sub
-
         Private Shared Function DeserializeModule(ByVal nodeModule As XmlNode, ByVal nodePane As XmlNode, ByVal PortalId As Integer, ByVal TabId As Integer, ByVal ModuleDefId As Integer) As ModuleInfo
-            Dim objModules As New ModuleController
-
             'Create New Module
             Dim objModule As New ModuleInfo
             objModule.PortalID = PortalId
@@ -272,7 +317,7 @@ Namespace DotNetNuke.Entities.Modules
                     ' save content in eventqueue for processing after an app restart,
                     ' as modules Supported Features are not updated yet so we
                     ' cannot determine if the module supports IsPortable
-                    CreateEventQueueMessage(objModule, strcontent, strVersion, objportal.AdministratorId)
+                    EventMessageProcessor.CreateImportModuleMessage(objModule, strcontent, strVersion, objportal.AdministratorId)
                 Else
                     strcontent = HttpContext.Current.Server.HtmlDecode(strcontent)
                     If objModule.DesktopModule.IsPortable Then
@@ -283,7 +328,7 @@ Namespace DotNetNuke.Entities.Modules
                             End If
                         Catch
                             'if there is an error then the type cannot be loaded at this time, so add to EventQueeue
-                            CreateEventQueueMessage(objModule, strcontent, strVersion, objportal.AdministratorId)
+                            EventMessageProcessor.CreateImportModuleMessage(objModule, strcontent, strVersion, objportal.AdministratorId)
                         End Try
                     End If
                 End If
@@ -446,6 +491,11 @@ Namespace DotNetNuke.Entities.Modules
             nodeModule.RemoveChild(nodeModule.SelectSingleNode("moduleorder"))
             nodeModule.RemoveChild(nodeModule.SelectSingleNode("panename"))
             nodeModule.RemoveChild(nodeModule.SelectSingleNode("isdeleted"))
+            nodeModule.RemoveChild(nodeModule.SelectSingleNode("uniqueId"))
+            nodeModule.RemoveChild(nodeModule.SelectSingleNode("versionGuid"))
+            nodeModule.RemoveChild(nodeModule.SelectSingleNode("defaultLanguageGuid"))
+            nodeModule.RemoveChild(nodeModule.SelectSingleNode("localizedVersionGuid"))
+            nodeModule.RemoveChild(nodeModule.SelectSingleNode("cultureCode"))
 
             For Each nodePermission As XmlNode In nodeModule.SelectNodes("modulepermissions/permission")
                 nodePermission.RemoveChild(nodePermission.SelectSingleNode("modulepermissionid"))
@@ -487,18 +537,23 @@ Namespace DotNetNuke.Entities.Modules
             For Each objModule As ModuleInfo In arrModules
                 tabSettings = tabController.GetTabSettings(objModule.TabID)
                 If tabSettings("CacheProvider") IsNot Nothing AndAlso tabSettings("CacheProvider").ToString().Length > 0 Then
-                    Dim provider As OutputCache.OutputCachingProvider = OutputCache.OutputCachingProvider.Instance(tabSettings("CacheProvider").ToString())
-                    If provider IsNot Nothing Then
-                        provider.Remove(objModule.TabID)
+                    Dim outputProvider As OutputCache.OutputCachingProvider = OutputCache.OutputCachingProvider.Instance(tabSettings("CacheProvider").ToString())
+                    If outputProvider IsNot Nothing Then
+                        outputProvider.Remove(objModule.TabID)
                     End If
                 End If
 
-                If HttpContext.Current IsNot Nothing Then
-                    Dim provider As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod)
-                    If provider IsNot Nothing Then
-                        provider.Remove(objModule.TabModuleID)
-                    End If
+                Dim moduleProvider As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(objModule.GetEffectiveCacheMethod)
+                If moduleProvider IsNot Nothing Then
+                    moduleProvider.Remove(objModule.TabModuleID)
                 End If
+
+                'Synchronize module is called when a module needs to indicate that the content
+                'has changed and the cache's should be refreshed.  So we can update the Version
+                objModules.UpdateTabModuleVersionsByModuleID(moduleID)
+
+                'We should also indicate that the Transalation Status has changed
+                objModules.UpdateTranslationStatus(objModule, False)
             Next
         End Sub
 
@@ -517,29 +572,7 @@ Namespace DotNetNuke.Entities.Modules
         Public Function AddModule(ByVal objModule As ModuleInfo) As Integer
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             ' add module
-            If Null.IsNull(objModule.ModuleID) Then
-                Dim typeController As IContentTypeController = New ContentTypeController
-                Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
-                                                 Where t.ContentType = "Module" _
-                                                 Select t) _
-                                                 .SingleOrDefault
-
-                Dim contentController As IContentController = New ContentController()
-                objModule.Content = objModule.ModuleTitle
-                objModule.ContentTypeId = contentType.ContentTypeId
-                objModule.Indexed = False
-                Dim contentItemID As Integer = contentController.AddContentItem(objModule)
-
-                'Add Module
-                objModule.ModuleID = dataProvider.AddModule(contentItemID, objModule.PortalID, objModule.ModuleDefID, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
-
-                'Now we have the ModuleID - update the contentItem
-                contentController.UpdateContentItem(objModule)
-
-                objEventLog.AddLog(objModule, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Services.Log.EventLog.EventLogController.EventLogType.MODULE_CREATED)
-                ' set module permissions
-                ModulePermissionController.SaveModulePermissions(objModule)
-            End If
+            AddModuleInternal(objModule)
 
             'Lets see if the module already exists
             Dim tmpModule As ModuleInfo = GetModule(objModule.ModuleID, objModule.TabID)
@@ -551,7 +584,16 @@ Namespace DotNetNuke.Entities.Modules
                 End If
             Else
                 ' add tabmodule
-                dataProvider.AddTabModule(objModule.TabID, objModule.ModuleID, objModule.ModuleOrder, objModule.PaneName, objModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, UserController.GetCurrentUserInfo.UserID)
+                dataProvider.AddTabModule(objModule.TabID, objModule.ModuleID, objModule.ModuleTitle, objModule.Header, _
+                                          objModule.Footer, objModule.ModuleOrder, objModule.PaneName, _
+                                          objModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, _
+                                          objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, _
+                                          objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, _
+                                          objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, _
+                                          objModule.WebSliceTTL, objModule.UniqueId, objModule.VersionGuid, _
+                                          objModule.DefaultLanguageGuid, objModule.LocalizedVersionGuid, _
+                                          objModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
+
                 Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
                 objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("TabId", objModule.TabID.ToString))
                 objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("ModuleID", objModule.ModuleID.ToString))
@@ -568,9 +610,6 @@ Namespace DotNetNuke.Entities.Modules
             End If
 
             'Save ModuleSettings
-            UpdateModuleSettings(objModule)
-
-            'Save ModuleSettings
             If objModule.TabModuleID = -1 Then
                 If tmpModule Is Nothing Then tmpModule = GetModule(objModule.ModuleID, objModule.TabID)
                 objModule.TabModuleID = tmpModule.TabModuleID
@@ -580,73 +619,79 @@ Namespace DotNetNuke.Entities.Modules
             ClearCache(objModule.TabID)
 
             Return objModule.ModuleID
-
         End Function
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' CopyModule copies a Module from one Tab to another optionally including all the 
-        '''	TabModule settings
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        '''	<param name="moduleId">The Id of the module to copy</param>
-        '''	<param name="fromTabId">The Id of the source tab</param>
-        '''	<param name="toTabId">The Id of the destination tab</param>
-        '''	<param name="toPaneName">The name of the Pane on the destination tab where the module will end up</param>
-        '''	<param name="includeSettings">A flag to indicate whether the settings are copied to the new Tab</param>
-        ''' <history>
-        ''' 	[cnurse]	10/21/2004	created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabId As Integer, ByVal toPaneName As String, ByVal includeSettings As Boolean)
-            'First Get the Module itself
-            Dim objModule As ModuleInfo = GetModule(moduleId, fromTabId, False)
+        Public Sub ClearCache(ByVal TabId As Integer)
+            DataCache.ClearModuleCache(TabId)
+        End Sub
 
-            'If the Destination Pane Name is not set, assume the same name as the source
-            If toPaneName = "" Then
-                toPaneName = objModule.PaneName
+        Public Sub CopyModule(ByVal sourceModule As ModuleInfo, ByVal destinationTab As TabInfo, ByVal toPaneName As String, ByVal includeSettings As Boolean)
+            Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+            'Clone Module
+            Dim destinationModule As ModuleInfo = sourceModule.Clone
+            If Not String.IsNullOrEmpty(toPaneName) Then
+                destinationModule.PaneName = toPaneName
+            End If
+
+            destinationModule.TabID = destinationTab.TabID
+
+            'The new reference copy should have the same culture as the destination Tab
+            destinationModule.UniqueId = Guid.NewGuid
+            destinationModule.CultureCode = destinationTab.CultureCode
+            destinationModule.VersionGuid = Guid.NewGuid
+            destinationModule.LocalizedVersionGuid = Guid.NewGuid
+
+            'Figure out the DefaultLanguage Guid
+            If Not String.IsNullOrEmpty(sourceModule.CultureCode) AndAlso _
+                    sourceModule.CultureCode = _PortalSettings.DefaultLanguage AndAlso _
+                    Not String.IsNullOrEmpty(destinationModule.CultureCode) Then
+                'Tab is localized so set Default language Guid reference
+                destinationModule.DefaultLanguageGuid = sourceModule.UniqueId
             End If
 
             'This will fail if the page already contains this module
             Try
                 'Add a copy of the module to the bottom of the Pane for the new Tab
-                dataProvider.AddTabModule(toTabId, moduleId, -1, toPaneName, objModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, UserController.GetCurrentUserInfo.UserID)
+                dataProvider.AddTabModule(destinationModule.TabID, destinationModule.ModuleID, destinationModule.ModuleTitle, _
+                                          destinationModule.Header, destinationModule.Footer, destinationModule.ModuleOrder, _
+                                          destinationModule.PaneName, destinationModule.CacheTime, destinationModule.CacheMethod, _
+                                          destinationModule.Alignment, destinationModule.Color, destinationModule.Border, _
+                                          destinationModule.IconFile, destinationModule.Visibility, destinationModule.ContainerSrc, _
+                                          destinationModule.DisplayTitle, destinationModule.DisplayPrint, destinationModule.DisplaySyndicate, _
+                                          destinationModule.IsWebSlice, destinationModule.WebSliceTitle, destinationModule.WebSliceExpiryDate, _
+                                          destinationModule.WebSliceTTL, destinationModule.UniqueId, destinationModule.VersionGuid, _
+                                          destinationModule.DefaultLanguageGuid, destinationModule.LocalizedVersionGuid, _
+                                          destinationModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
 
                 'Optionally copy the TabModuleSettings
                 If includeSettings Then
-                    Dim toModule As ModuleInfo = GetModule(moduleId, toTabId, False)
-                    CopyTabModuleSettings(objModule, toModule)
+                    CopyTabModuleSettings(sourceModule, destinationModule)
                 End If
             Catch
                 ' module already in the page, ignore error
             End Try
 
-            ClearCache(fromTabId)
-            ClearCache(toTabId)
-
+            ClearCache(sourceModule.TabID)
+            ClearCache(destinationTab.TabID)
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' CopyModule copies a Module from one Tab to a collection of Tabs optionally
-        '''	including the TabModule settings
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        '''	<param name="moduleId">The Id of the module to copy</param>
-        '''	<param name="fromTabId">The Id of the source tab</param>
-        '''	<param name="toTabs">An ArrayList of TabItem objects</param>
-        '''	<param name="includeSettings">A flag to indicate whether the settings are copied to the new Tab</param>
-        ''' <history>
-        ''' 	[cnurse]	2004-10-22	created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabs As List(Of TabInfo), ByVal includeSettings As Boolean)
-            'Iterate through collection copying the module to each Tab (except the source)
-            For Each objTab As TabInfo In toTabs
-                If objTab.TabID <> fromTabId Then
-                    CopyModule(moduleId, fromTabId, objTab.TabID, "", includeSettings)
+        Public Sub CopyModules(ByVal sourceTab As TabInfo, ByVal destinationTab As TabInfo, ByVal asReference As Boolean)
+            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In GetTabModules(sourceTab.TabID)
+                Dim sourceModule As ModuleInfo = kvp.Value
+
+                ' if the module shows on all pages does not need to be copied since it will
+                ' be already added to this page
+                If Not sourceModule.AllTabs AndAlso Not sourceModule.IsDeleted Then
+                    If Not asReference Then
+                        'Deep Copy
+                        sourceModule.ModuleID = Null.NullInteger
+                        sourceModule.TabID = destinationTab.TabID
+                        AddModule(sourceModule)
+                    Else
+                        'Shallow (Reference Copy)
+                        CopyModule(sourceModule, destinationTab, Null.NullString, True)
+                    End If
                 End If
             Next
         End Sub
@@ -675,6 +720,14 @@ Namespace DotNetNuke.Entities.Modules
 
         End Sub
 
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="updatedModule"></param>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   20110-05-10   Modified: Added update tabmodule versionguids
+        ''' </history>
         Public Sub CreateContentItem(ByVal updatedModule As ModuleInfo)
             Dim typeController As IContentTypeController = New ContentTypeController
             Dim contentType As ContentType = (From t In typeController.GetContentTypes() _
@@ -781,7 +834,8 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="moduleId">ID of the module instance</param>
         ''' <param name="softDelete">A flag that determines whether the instance should be soft-deleted</param>
         ''' <history>
-        '''    [sleupold]   1007-09-24 documented
+        '''    [sleupold]   1007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added logic to update tabmodule version guid
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub DeleteTabModule(ByVal tabId As Integer, ByVal moduleId As Integer, ByVal softDelete As Boolean)
@@ -791,6 +845,7 @@ Namespace DotNetNuke.Entities.Modules
             If Not objModule Is Nothing Then
                 ' delete the module instance for the tab
                 dataProvider.DeleteTabModule(tabId, moduleId, softDelete)
+
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
                 Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
                 objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("tabId", tabId.ToString))
@@ -810,6 +865,41 @@ Namespace DotNetNuke.Entities.Modules
 
             ClearCache(tabId)
         End Sub
+
+        Public Function DeLocalizeModule(ByVal sourceModule As ModuleInfo) As Integer
+            Dim moduleId As Integer = Null.NullInteger
+
+            If sourceModule IsNot Nothing AndAlso sourceModule.DefaultLanguageModule IsNot Nothing Then
+                ' clone the module object ( to avoid creating an object reference to the data cache )
+                Dim newModule As ModuleInfo = sourceModule.Clone()
+
+                'Get the Module ID of the default language instance
+                newModule.ModuleID = sourceModule.DefaultLanguageModule.ModuleID
+
+                If newModule.ModuleID <> sourceModule.ModuleID Then
+                    ' update tabmodule
+                    dataProvider.UpdateTabModule(newModule.TabModuleID, newModule.TabID, newModule.ModuleID, newModule.ModuleTitle, _
+                                                 newModule.Header, newModule.Footer, newModule.ModuleOrder, newModule.PaneName, _
+                                                 newModule.CacheTime, newModule.CacheMethod, newModule.Alignment, newModule.Color, _
+                                                 newModule.Border, newModule.IconFile, newModule.Visibility, newModule.ContainerSrc, _
+                                                 newModule.DisplayTitle, newModule.DisplayPrint, newModule.DisplaySyndicate, _
+                                                 newModule.IsWebSlice, newModule.WebSliceTitle, newModule.WebSliceExpiryDate, _
+                                                 newModule.WebSliceTTL, newModule.VersionGuid, newModule.DefaultLanguageGuid, _
+                                                 newModule.LocalizedVersionGuid, newModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
+
+                    'delete the deep copy "module info"
+                    DeleteModule(sourceModule.ModuleID)
+                End If
+
+                moduleId = newModule.ModuleID
+
+                'Clear Caches
+                ClearCache(newModule.TabID)
+                ClearCache(sourceModule.TabID)
+            End If
+
+            Return moduleId
+        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -851,6 +941,23 @@ Namespace DotNetNuke.Entities.Modules
         ''' -----------------------------------------------------------------------------
         Public Function GetModule(ByVal moduleID As Integer, ByVal tabID As Integer) As ModuleInfo
             Return GetModule(moduleID, tabID, False)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' get a Module object
+        ''' </summary>
+        ''' <param name="uniqueID"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   2010/05/11   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetModuleByUniqueID(ByVal uniqueID As Guid) As ModuleInfo
+            Dim modInfo As ModuleInfo = Nothing
+            modInfo = CBO.FillObject(Of ModuleInfo)(dataProvider.GetModuleByUniqueID(uniqueID))
+            Return modInfo
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -907,6 +1014,20 @@ Namespace DotNetNuke.Entities.Modules
         ''' -----------------------------------------------------------------------------
         Public Function GetAllTabsModules(ByVal portalID As Integer, ByVal allTabs As Boolean) As ArrayList
             Return CBO.FillCollection(dataProvider.GetAllTabsModules(portalID, allTabs), GetType(ModuleInfo))
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' get TabModule objects that are linked to a particular ModuleID
+        ''' </summary>
+        ''' <param name="moduleID">ID of the module</param>
+        ''' <returns>ArrayList of TabModuleInfo objects</returns>
+        ''' <history>
+        '''    [vnguyen]   2010-05-10   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetAllTabsModulesByModuleID(ByVal moduleID As Integer) As ArrayList
+            Return CBO.FillCollection(dataProvider.GetAllTabsModulesByModuleID(moduleID), GetType(ModuleInfo))
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -980,6 +1101,20 @@ Namespace DotNetNuke.Entities.Modules
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Get a list of all TabModule references of a module instance
+        ''' </summary>
+        ''' <param name="ModuleID">ID of the Module</param>
+        ''' <returns>ArrayList of ModuleInfo</returns>
+        ''' <history>
+        '''    [sleupold]   2007-09-24 documented
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetModuleTabs(ByVal moduleID As Integer) As ArrayList
+            Return CBO.FillCollection(dataProvider.GetModule(moduleID, Null.NullInteger), GetType(ModuleInfo))
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' For a portal get a list of all active module and tabmodule references that support iSearchable
         ''' </summary>
         ''' <param name="portalID">ID of the portal to be searched</param>
@@ -990,6 +1125,23 @@ Namespace DotNetNuke.Entities.Modules
         ''' -----------------------------------------------------------------------------
         Public Function GetSearchModules(ByVal portalID As Integer) As ArrayList
             Return CBO.FillCollection(dataProvider.GetSearchModules(portalID), GetType(ModuleInfo))
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' get a Module object
+        ''' </summary>
+        ''' <param name="tabModuleID">ID of the tabmodule</param>
+        ''' <returns>An ModuleInfo object</returns>
+        ''' <history>
+        '''    [vnguyen]   04-07-2010
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetTabModule(ByVal tabModuleID As Integer) As ModuleInfo
+            Dim modInfo As ModuleInfo = Nothing
+            Dim bFound As Boolean = False
+            modInfo = CBO.FillObject(Of ModuleInfo)(dataProvider.GetTabModule(tabModuleID))
+            Return modInfo
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1008,6 +1160,82 @@ Namespace DotNetNuke.Entities.Modules
                                                                                         AddressOf GetTabModulesCallBack)
         End Function
 
+        Public Function LocalizeModule(ByVal sourceModule As ModuleInfo) As Integer
+            Dim moduleId As Integer = Null.NullInteger
+
+            If sourceModule IsNot Nothing Then
+                ' clone the module object ( to avoid creating an object reference to the data cache )
+                Dim newModule As ModuleInfo = sourceModule.Clone()
+                newModule.ModuleID = Null.NullInteger 'reset the module id
+
+                'Copy Permissions from original Module
+                newModule.ModulePermissions.AddRange(sourceModule.ModulePermissions)
+
+                'Add the default translators for this language
+                Dim permissionCtrl As New PermissionController
+                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", sourceModule.CultureCode), sourceModule.PortalID, "")
+                Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT")
+                If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
+                    Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
+                    For Each translatorRole As String In translatorRoles.Split(";"c)
+                        Dim roleName As String = translatorRole
+                        Dim perm As ModulePermissionInfo = newModule.ModulePermissions.Where( _
+                                                            Function(tp) tp.RoleName = roleName _
+                                                                AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
+                        If perm Is Nothing Then
+                            'Create Permission
+                            Dim moduleTranslatePermission As New ModulePermissionInfo(translatePermisison)
+                            Dim role As RoleInfo = New RoleController().GetRoleByName(sourceModule.PortalID, roleName)
+                            If role IsNot Nothing Then
+                                moduleTranslatePermission.RoleID = role.RoleID
+                                moduleTranslatePermission.AllowAccess = True
+
+                                newModule.ModulePermissions.Add(moduleTranslatePermission)
+                            End If
+                        End If
+                    Next
+                End If
+
+                'Add Module
+                AddModuleInternal(newModule)
+
+                ' update tabmodule
+                dataProvider.UpdateTabModule(newModule.TabModuleID, newModule.TabID, newModule.ModuleID, newModule.ModuleTitle, _
+                                             newModule.Header, newModule.Footer, newModule.ModuleOrder, newModule.PaneName, _
+                                             newModule.CacheTime, newModule.CacheMethod, newModule.Alignment, newModule.Color, _
+                                             newModule.Border, newModule.IconFile, newModule.Visibility, newModule.ContainerSrc, _
+                                             newModule.DisplayTitle, newModule.DisplayPrint, newModule.DisplaySyndicate, _
+                                             newModule.IsWebSlice, newModule.WebSliceTitle, newModule.WebSliceExpiryDate, _
+                                             newModule.WebSliceTTL, newModule.VersionGuid, newModule.DefaultLanguageGuid, _
+                                             newModule.LocalizedVersionGuid, newModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
+
+                If newModule.DesktopModule.BusinessControllerClass <> "" Then
+                    Dim objObject As Object = Framework.Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass)
+                    Dim portableModule As IPortable = TryCast(objObject, IPortable)
+                    If portableModule IsNot Nothing Then
+                        Dim Content As String = portableModule.ExportModule(sourceModule.ModuleID)
+                        If Content <> "" Then
+                            portableModule.ImportModule(newModule.ModuleID, Content, newModule.DesktopModule.Version, UserController.GetCurrentUserInfo.UserID)
+                        End If
+                    End If
+                End If
+
+                moduleId = newModule.ModuleID
+
+                'Clear Caches
+                ClearCache(newModule.TabID)
+                ClearCache(sourceModule.TabID)
+            End If
+
+            Return moduleId
+        End Function
+
+        Public Sub LocalizeModule(ByVal originalModule As ModuleInfo, ByVal locale As Locale)
+            originalModule.CultureCode = locale.Code
+
+            UpdateModule(originalModule)
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' MoveModule moes a Module from one Tab to another including all the 
@@ -1018,7 +1246,7 @@ Namespace DotNetNuke.Entities.Modules
         '''	<param name="toTabId">The Id of the destination tab</param>
         '''	<param name="toPaneName">The name of the Pane on the destination tab where the module will end up</param>
         ''' <history>
-        ''' 	[cnurse]	10/21/2004	created
+        '''    [cnurse]	    10/21/2004	 created
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub MoveModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabId As Integer, ByVal toPaneName As String)
@@ -1028,10 +1256,10 @@ Namespace DotNetNuke.Entities.Modules
             'Move the module to the Tab
             dataProvider.MoveTabModule(fromTabId, moduleId, toTabId, toPaneName, UserController.GetCurrentUserInfo.UserID)
 
-            'Update Module Order for source tab
+            'Update Module Order for source tab, also updates the tabmodule version guid
             UpdateTabModuleOrder(fromTabId)
 
-            'Update Module Order for target tab
+            'Update Module Order for target tab, also updates the tabmodule version guid
             UpdateTabModuleOrder(toTabId)
         End Sub
 
@@ -1040,27 +1268,14 @@ Namespace DotNetNuke.Entities.Modules
             ClearCache(objModule.TabID)
         End Sub
 
-        Private Sub UpdateModuleSettings(ByVal updatedModule As ModuleInfo)
-            Dim sKey As String
-            For Each sKey In updatedModule.ModuleSettings.Keys
-                UpdateModuleSetting(updatedModule.ModuleID, sKey, CType(updatedModule.ModuleSettings(sKey), String))
-            Next
-        End Sub
-
-        Private Sub UpdateTabModuleSettings(ByVal updatedTabModule As ModuleInfo)
-            Dim sKey As String
-            For Each sKey In updatedTabModule.TabModuleSettings.Keys
-                UpdateTabModuleSetting(updatedTabModule.TabModuleID, sKey, CType(updatedTabModule.TabModuleSettings(sKey), String))
-            Next
-        End Sub
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Update module settings and permissions in database from ModuleInfo
         ''' </summary>
         ''' <param name="objModule">ModuleInfo of the module to update</param>
         ''' <history>
-        '''    [sleupold]   2007-09-24 commented
+        '''    [sleupold]   2007-09-24   commented
+        '''    [vnguyen]    2010-05-10   Modified: Added update tabmodule version guid
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateModule(ByVal objModule As ModuleInfo)
@@ -1070,7 +1285,7 @@ Namespace DotNetNuke.Entities.Modules
             End If
 
             ' update module
-            dataProvider.UpdateModule(objModule.ModuleID, objModule.ContentItemId, objModule.ModuleTitle, objModule.AllTabs, objModule.Header, objModule.Footer, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
+            dataProvider.UpdateModule(objModule.ModuleID, objModule.ContentItemId, objModule.AllTabs, objModule.StartDate, objModule.EndDate, objModule.InheritViewPermissions, objModule.IsDeleted, UserController.GetCurrentUserInfo.UserID)
 
             'Update Tags
             Dim termController As ITermController = DotNetNuke.Entities.Content.Common.GetTermController()
@@ -1085,11 +1300,21 @@ Namespace DotNetNuke.Entities.Modules
             ModulePermissionController.SaveModulePermissions(objModule)
             UpdateModuleSettings(objModule)
 
-            If Not Null.IsNull(objModule.TabID) Then
+            objModule.VersionGuid = Guid.NewGuid
+            objModule.LocalizedVersionGuid = Guid.NewGuid
 
+            If Not Null.IsNull(objModule.TabID) Then
                 ' update tabmodule
-                dataProvider.UpdateTabModule(objModule.TabID, objModule.ModuleID, objModule.ModuleOrder, objModule.PaneName, objModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, UserController.GetCurrentUserInfo.UserID)
+                dataProvider.UpdateTabModule(objModule.TabModuleID, objModule.TabID, objModule.ModuleID, objModule.ModuleTitle, _
+                                             objModule.Header, objModule.Footer, objModule.ModuleOrder, objModule.PaneName, _
+                                             objModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, _
+                                             objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, _
+                                             objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, _
+                                             objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, _
+                                             objModule.WebSliceTTL, objModule.VersionGuid, objModule.DefaultLanguageGuid, _
+                                             objModule.LocalizedVersionGuid, objModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(objModule, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.TABMODULE_UPDATED)
+
                 ' update module order in pane
                 UpdateModuleOrder(objModule.TabID, objModule.ModuleID, objModule.ModuleOrder, objModule.PaneName)
 
@@ -1113,6 +1338,7 @@ Namespace DotNetNuke.Entities.Modules
                     End If
                 End If
 
+
                 ' apply settings to all desktop modules in portal
                 If objModule.AllModules Then
                     Dim objTabs As New TabController
@@ -1120,7 +1346,18 @@ Namespace DotNetNuke.Entities.Modules
                         Dim objTab As TabInfo = tabPair.Value
                         For Each modulePair As KeyValuePair(Of Integer, ModuleInfo) In GetTabModules(objTab.TabID)
                             Dim objTargetModule As ModuleInfo = modulePair.Value
-                            dataProvider.UpdateTabModule(objTargetModule.TabID, objTargetModule.ModuleID, objTargetModule.ModuleOrder, objTargetModule.PaneName, objTargetModule.CacheTime, objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, UserController.GetCurrentUserInfo.UserID)
+                            objTargetModule.VersionGuid = Guid.NewGuid
+                            objTargetModule.LocalizedVersionGuid = Guid.NewGuid
+
+                            dataProvider.UpdateTabModule(objTargetModule.TabModuleID, objTargetModule.TabID, objTargetModule.ModuleID, _
+                                                         objTargetModule.ModuleTitle, objTargetModule.Header, objTargetModule.Footer, _
+                                                            objTargetModule.ModuleOrder, objTargetModule.PaneName, objTargetModule.CacheTime, _
+                                                            objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, _
+                                                            objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, _
+                                                            objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, _
+                                                            objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, _
+                                                            objModule.VersionGuid, objModule.DefaultLanguageGuid, objModule.LocalizedVersionGuid, _
+                                                            objModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
                         Next
                     Next
                 End If
@@ -1141,7 +1378,7 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="ModuleOrder">position within the controls list on page, -1 if to be added at the end</param>
         ''' <param name="PaneName">name of the pane, the module is placed in on the page</param>
         ''' <history>
-        '''    [sleupold] 2007-09-24 commented
+        '''    [sleupold]   2007-09-24   commented
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateModuleOrder(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String)
@@ -1185,7 +1422,8 @@ Namespace DotNetNuke.Entities.Modules
         ''' </summary>
         ''' <param name="TabId">ID of the page</param>
         ''' <history>
-        '''    [sleupold]   2007-09-24 documented
+        '''    [sleupold]   2007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added update tabmodule version guid
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateTabModuleOrder(ByVal TabId As Integer)
@@ -1218,19 +1456,21 @@ Namespace DotNetNuke.Entities.Modules
             ClearCache(TabId)
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Get a list of all TabModule references of a module instance
-        ''' </summary>
-        ''' <param name="ModuleID">ID of the Module</param>
-        ''' <returns>ArrayList of ModuleInfo</returns>
-        ''' <history>
-        '''    [sleupold]   2007-09-24 documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Function GetModuleTabs(ByVal moduleID As Integer) As ArrayList
-            Return CBO.FillCollection(dataProvider.GetModule(moduleID, Null.NullInteger), GetType(ModuleInfo))
-        End Function
+        Public Sub UpdateTranslationStatus(ByVal localizedModule As ModuleInfo, ByVal isTranslated As Boolean)
+            If isTranslated AndAlso (localizedModule.DefaultLanguageModule IsNot Nothing) Then
+                localizedModule.LocalizedVersionGuid = localizedModule.DefaultLanguageModule.LocalizedVersionGuid
+            Else
+                localizedModule.LocalizedVersionGuid = Guid.NewGuid
+            End If
+            dataProvider.Instance.UpdateTabModuleTranslationStatus(localizedModule.TabModuleID, localizedModule.LocalizedVersionGuid, UserController.GetCurrentUserInfo().UserID)
+
+            'Clear Tab Caches
+            ClearCache(localizedModule.TabID)
+        End Sub
+
+#Region "localization enhancements"
+
+#End Region
 
 #Region "ModuleSettings"
 
@@ -1284,7 +1524,8 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="SettingValue">value of the setting (String).</param>
         ''' <remarks>empty SettingValue will remove the setting, if not preserveIfEmpty is true</remarks>
         ''' <history>
-        '''    [sleupold] 2007-09-24 added removal for empty settings
+        '''    [sleupold]   2007-09-24   added removal for empty settings
+        '''    [vnguyen]    2010-05-10   Modified: Added update tab module version
         ''' </history>
         Public Sub UpdateModuleSetting(ByVal ModuleId As Integer, ByVal SettingName As String, ByVal SettingValue As String)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
@@ -1305,6 +1546,9 @@ Namespace DotNetNuke.Entities.Modules
                     objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_CREATED.ToString
                     objEventLog.AddLog(objEventLogInfo)
                 End If
+
+                UpdateTabModuleVersionsByModuleID(ModuleId)
+
             Catch ex As Exception
                 LogException(ex)
             Finally
@@ -1322,16 +1566,21 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="ModuleId">ID of the affected module</param>
         ''' <param name="SettingName">Name of the setting to be deleted</param>
         ''' <history>
-        '''    [sleupold] 2007-09-24 documented
+        '''    [sleupold]   2007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added update tab module version
         ''' </history>
         Public Sub DeleteModuleSetting(ByVal ModuleId As Integer, ByVal SettingName As String)
             dataProvider.DeleteModuleSetting(ModuleId, SettingName)
+
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("ModuleId", ModuleId.ToString))
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingName", SettingName.ToString))
             objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_DELETED.ToString
             objEventLog.AddLog(objEventLogInfo)
+
+            UpdateTabModuleVersionsByModuleID(ModuleId)
+
             DataCache.RemoveCache("GetModuleSettings" & ModuleId.ToString)
         End Sub
 
@@ -1340,15 +1589,20 @@ Namespace DotNetNuke.Entities.Modules
         ''' </summary>
         ''' <param name="ModuleId">ID of the affected module</param>
         ''' <history>
-        '''    [sleupold] 2007-09-24 documented
+        '''    [sleupold]   2007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added update tab module version
         ''' </history>
         Public Sub DeleteModuleSettings(ByVal ModuleId As Integer)
             dataProvider.DeleteModuleSettings(ModuleId)
+
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("ModuleId", ModuleId.ToString))
             objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_DELETED.ToString
             objEventLog.AddLog(objEventLogInfo)
+
+            UpdateTabModuleVersionsByModuleID(ModuleId)
+
             DataCache.RemoveCache("GetModuleSettings" & ModuleId.ToString)
         End Sub
 
@@ -1406,7 +1660,8 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="SettingValue">value of the setting (String).</param>
         ''' <remarks>empty SettingValue will relove the setting</remarks>
         ''' <history>
-        '''    [sleupold] 2007-09-24 added removal for empty settings
+        '''    [sleupold]   2007-09-24   added removal for empty settings
+        '''    [vnguyen]    2010-05-10   Modified: Added update tabmodule version guid
         ''' </history>
         Public Sub UpdateTabModuleSetting(ByVal TabModuleId As Integer, ByVal SettingName As String, ByVal SettingValue As String)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
@@ -1427,6 +1682,8 @@ Namespace DotNetNuke.Entities.Modules
                     objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.TABMODULE_SETTING_CREATED.ToString
                     objEventLog.AddLog(objEventLogInfo)
                 End If
+
+                UpdateTabModuleVersion(TabModuleId)
             Catch ex As Exception
                 LogException(ex)
             Finally
@@ -1443,10 +1700,14 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="TabModuleId">ID of the affected tabmodule</param>
         ''' <param name="SettingName">Name of the setting to remove</param>
         ''' <history>
-        '''    [sleupold] 2007-09-24 documented
+        '''    [sleupold]   2007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added update tabmodule version guid
         ''' </history>
         Public Sub DeleteTabModuleSetting(ByVal TabModuleId As Integer, ByVal SettingName As String)
             dataProvider.DeleteTabModuleSetting(TabModuleId, SettingName)
+
+            UpdateTabModuleVersion(TabModuleId)
+
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
             objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("TabModuleId", TabModuleId.ToString))
@@ -1462,12 +1723,17 @@ Namespace DotNetNuke.Entities.Modules
         ''' </summary>
         ''' <param name="TabModuleId">ID of the affected tabmodule</param>
         ''' <history>
-        '''    [sleupold] 2007-09-24 documented
+        '''    [sleupold]   2007-09-24   documented
+        '''    [vnguyen]    2010-05-10   Modified: Added update module version guid
         ''' </history>
         Public Sub DeleteTabModuleSettings(ByVal TabModuleId As Integer)
             dataProvider.DeleteTabModuleSettings(TabModuleId)
+
+            UpdateTabModuleVersion(TabModuleId)
+
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("TabModuleID", TabModuleId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.TABMODULE_SETTING_DELETED)
+
             DataCache.RemoveCache("GetTabModuleSettings" & TabModuleId.ToString)
         End Sub
 
@@ -1477,22 +1743,63 @@ Namespace DotNetNuke.Entities.Modules
 
 #Region "Obsolete"
 
-        <Obsolete("Replaced in DotNetNuke 5.0 by CopyModule(Integer, integer, List(Of TabInfo), Boolean)")> _
-        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabs As ArrayList, ByVal includeSettings As Boolean)
+        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
+        Public Shared Function CacheDirectory() As String
+            Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache"
+        End Function
+
+        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
+        Public Shared Function CacheFileName(ByVal TabModuleID As Integer) As String
+            Dim strCacheKey As String = "TabModule:"
+            strCacheKey += TabModuleID.ToString & ":"
+            strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
+            Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache" & "\" & CleanFileName(strCacheKey) & ".resources"
+        End Function
+
+        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
+        Public Shared Function CacheKey(ByVal TabModuleID As Integer) As String
+            Dim strCacheKey As String = "TabModule:"
+            strCacheKey += TabModuleID.ToString & ":"
+            strCacheKey += System.Threading.Thread.CurrentThread.CurrentUICulture.ToString
+            Return strCacheKey
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5.  Replaced by CopyModule(ModuleInfo, TabInfo, String, Boolean)")> _
+        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabs As List(Of TabInfo), ByVal includeSettings As Boolean)
+            Dim objModule As ModuleInfo = GetModule(moduleId, fromTabId, False)
             'Iterate through collection copying the module to each Tab (except the source)
             For Each objTab As TabInfo In toTabs
                 If objTab.TabID <> fromTabId Then
-                    CopyModule(moduleId, fromTabId, objTab.TabID, "", includeSettings)
+                    CopyModule(objModule, objTab, "", includeSettings)
                 End If
             Next
         End Sub
 
-        <Obsolete("Deprectaed in DNN 5.1.  Replaced By DeleteAllModules(Integer,Integer, List(Of TabInfo), Boolean, Boolean, Boolean)")> _
+        <Obsolete("Deprecated in DNN 5.5.  Replaced by CopyModule(ModuleInfo, TabInfo, String, Boolean)")> _
+        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabId As Integer, ByVal toPaneName As String, ByVal includeSettings As Boolean)
+            Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+            Dim objModule As ModuleInfo = GetModule(moduleId, fromTabId, False)
+            Dim objTab As TabInfo = New TabController().GetTab(toTabId, _portalSettings.PortalId, False)
+            CopyModule(objModule, objTab, toPaneName, includeSettings)
+        End Sub
+
+        <Obsolete("Deprecated in DNN 5.0.  Replaced by CopyModule(ModuleInfo, TabInfo, String, Boolean)")> _
+        Public Sub CopyModule(ByVal moduleId As Integer, ByVal fromTabId As Integer, ByVal toTabs As ArrayList, ByVal includeSettings As Boolean)
+            Dim objModule As ModuleInfo = GetModule(moduleId, fromTabId, False)
+            'Iterate through collection copying the module to each Tab (except the source)
+            For Each objTab As TabInfo In toTabs
+                If objTab.TabID <> fromTabId Then
+                    CopyModule(objModule, objTab, "", includeSettings)
+                End If
+            Next
+        End Sub
+
+        <Obsolete("Deprecated in DNN 5.1.  Replaced By DeleteAllModules(Integer,Integer, List(Of TabInfo), Boolean, Boolean, Boolean)")> _
         Public Sub DeleteAllModules(ByVal moduleId As Integer, ByVal tabId As Integer, ByVal fromTabs As List(Of TabInfo), ByVal includeCurrent As Boolean, ByVal deleteBaseModule As Boolean)
             DeleteAllModules(moduleId, tabId, fromTabs, True, includeCurrent, deleteBaseModule)
         End Sub
 
-        <Obsolete("Replaced in DotNetNuke 5.0 by DeleteAllModules(Integer, integer, List(Of TabInfo), Boolean, boolean)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.0.  Replaced by DeleteAllModules(Integer, integer, List(Of TabInfo), Boolean, boolean)")> _
         Public Sub DeleteAllModules(ByVal moduleId As Integer, ByVal tabId As Integer, ByVal fromTabs As ArrayList, ByVal includeCurrent As Boolean, ByVal deleteBaseModule As Boolean)
             Dim listTabs As New List(Of TabInfo)
             For Each objTab As TabInfo In fromTabs
@@ -1525,30 +1832,9 @@ Namespace DotNetNuke.Entities.Modules
             UpdateTabModuleOrder(tabId)
         End Sub
 
-        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
-        Public Shared Function CacheDirectory() As String
-            Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache"
-        End Function
-
-        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
-        Public Shared Function CacheFileName(ByVal TabModuleID As Integer) As String
-            Dim strCacheKey As String = "TabModule:"
-            strCacheKey += TabModuleID.ToString & ":"
-            strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
-            Return PortalController.GetCurrentPortalSettings.HomeDirectoryMapPath & "Cache" & "\" & CleanFileName(strCacheKey) & ".resources"
-        End Function
-
-        <Obsolete("The module caching feature has been updated in version 5.2.0.  This method is no longer used.")> _
-        Public Shared Function CacheKey(ByVal TabModuleID As Integer) As String
-            Dim strCacheKey As String = "TabModule:"
-            strCacheKey += TabModuleID.ToString & ":"
-            strCacheKey += System.Threading.Thread.CurrentThread.CurrentCulture.ToString
-            Return strCacheKey
-        End Function
-
 #End Region
 
-    End Class
+     End Class
 
 
 End Namespace

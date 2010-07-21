@@ -172,7 +172,7 @@
     <value>System</value>
   </data>
   <data name="ModePortal.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Site</value>
   </data>
   <data name="plMode.Text" xml:space="preserve">
     <value>Select Mode:</value>
@@ -230,5 +230,11 @@
   </data>
   <data name="ControlTitle_editor.Text" xml:space="preserve">
     <value>Language Editor</value>
+  </data>
+  <data name="plFolder.Help" xml:space="preserve">
+    <value>Selected Folder</value>
+  </data>
+  <data name="plFolder.Text" xml:space="preserve">
+    <value>Selected Folder</value>
   </data>
 </root>

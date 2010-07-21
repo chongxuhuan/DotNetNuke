@@ -30,6 +30,7 @@ Namespace DotNetNuke.Modules.Messaging
         Implements DotNetNuke.Entities.Modules.IUpgradeable
 
         Public Function UpgradeModule(ByVal Version As String) As String Implements DotNetNuke.Entities.Modules.IUpgradeable.UpgradeModule
+
             Try
                 Select Case Version
                     Case "01.00.00"

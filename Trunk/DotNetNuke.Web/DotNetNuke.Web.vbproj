@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <LangVersion>9</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -20,7 +23,7 @@
     <OptionInfer>On</OptionInfer>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>4.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -45,7 +48,8 @@
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Web.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -56,7 +60,8 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Web.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -82,10 +87,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Telerik.Web.UI, Version=2009.3.1104.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Telerik.Web.UI">
       <HintPath>..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=0.9.6.0, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -108,7 +111,15 @@
     <Compile Include="Mvp\AttributeBasedViewStateSerializer.vb" />
     <Compile Include="Mvp\IModuleView.vb" />
     <Compile Include="Mvp\ModulePresenter.vb" />
+    <Compile Include="Mvp\ModulePresenterBase.vb" />
+    <Compile Include="Mvp\ModulePresenterOfT.vb" />
     <Compile Include="Mvp\ModuleView.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Mvp\ModuleViewBase.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Mvp\ModuleViewOfT.vb">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Mvp\ViewStateAttribute.vb" />
@@ -116,6 +127,12 @@
     <Compile Include="UI\MessageWindowParameters.vb" />
     <Compile Include="UI\RibbonBarManager.vb" />
     <Compile Include="UI\Utilities.vb" />
+    <Compile Include="UI\WebControls\DnnGridTableView.vb" />
+    <Compile Include="UI\WebControls\DnnLanguageLabel.vb" />
+    <Compile Include="UI\WebControls\DnnCheckBox.vb" />
+    <Compile Include="UI\WebControls\DnnLanguageComboBox.vb" />
+    <Compile Include="UI\WebControls\DnnGridTemplateColumn.vb" />
+    <Compile Include="UI\WebControls\DnnGridImageColumn.vb" />
     <Compile Include="UI\WebControls\DnnGridCheckBoxColumn.vb" />
     <Compile Include="UI\WebControls\DnnImageEditControl.vb" />
     <Compile Include="UI\WebControls\DnnFileEditControl.vb" />
@@ -149,6 +166,7 @@
     <Compile Include="UI\WebControls\DnnWindowManager.vb" />
     <Compile Include="UI\WebControls\DnnFilePicker.vb" />
     <Compile Include="UI\WebControls\IDnnRibbonBarTool.vb" />
+    <Compile Include="UI\WebControls\DnnToolTipManager.vb" />
     <Compile Include="UI\WebControls\RibbonBarToolInfo.vb" />
     <Compile Include="UI\WebControls\DnnGridItemSelectedEventArgs.vb" />
     <Compile Include="UI\WebControls\Tags.vb" />

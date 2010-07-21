@@ -400,19 +400,18 @@ Namespace DotNetNuke.Data
         End Function
 
         Public Overrides Function ExecuteSQL(ByVal SQL As String) As IDataReader
-            Return ExecuteSQL(_connectionString, SQL, DirectCast(Nothing, IDataParameter))
-        End Function
-
-        <Obsolete("This is only a temporary method, it will be removed as soon as intended functionality is complete. Please do not use.")> _
-        Public Overrides Function ExecuteSQLTemp(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
-            Return ExecuteSQL(ConnectionString, SQL, DirectCast(Nothing, IDataParameter))
+            Return ExecuteSQLInternal(_connectionString, SQL, DirectCast(Nothing, IDataParameter))
         End Function
 
         Public Overrides Function ExecuteSQL(ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
-            Return ExecuteSQL(_connectionString, SQL, commandParameters)
+            Return ExecuteSQLInternal(_connectionString, SQL, commandParameters)
         End Function
 
-        Private Overloads Function ExecuteSQL(ByVal ConnectionString As String, ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
+        Public Overrides Function ExecuteSQLTemp(ByVal ConnectionString As String, ByVal SQL As String) As IDataReader
+            Return ExecuteSQLInternal(ConnectionString, SQL, DirectCast(Nothing, IDataParameter))
+        End Function
+
+        Private Function ExecuteSQLInternal(ByVal ConnectionString As String, ByVal SQL As String, ByVal ParamArray commandParameters() As IDataParameter) As IDataReader
             Dim sqlCommandParameters() As SqlParameter = Nothing
 
             If Not commandParameters Is Nothing Then
@@ -433,7 +432,7 @@ Namespace DotNetNuke.Data
             End Try
 
         End Function
-
+  
 
 #End Region
 
@@ -550,7 +549,6 @@ Namespace DotNetNuke.Data
 
             Return Exceptions
         End Function
-
         Public Overloads Overrides Function ExecuteScript(ByVal Script As String, ByVal UseTransactions As Boolean) As String
             Dim SQL As String = ""
             Dim Exceptions As String = ""
@@ -811,9 +809,6 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetPortalCount() As Integer
             Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortalCount"), Integer)
         End Function
-        'Public Overrides Function GetPortals(ByVal CultureCode As String) As IDataReader
-        '    Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortals", CultureCode), IDataReader)
-        'End Function
         Public Overrides Function GetPortals() As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPortals"), IDataReader)
         End Function
@@ -844,34 +839,42 @@ Namespace DotNetNuke.Data
         End Function
 
         ' tab
-        Public Overloads Overrides Function AddTab(ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal CreatedByUserID As Integer, ByVal CultureCode As String) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTab", ContentItemId, GetNull(PortalId), TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, CreatedByUserID, CultureCode), Integer)
+        Public Overloads Overrides Function AddTab(ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal CreatedByUserID As Integer, ByVal CultureCode As String) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTab", ContentItemId, GetNull(PortalId), UniqueId, VersionGuid, GetNull(DefaultLanguageGuid), LocalizedVersionGuid, TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, CreatedByUserID, GetNull(CultureCode)), Integer)
         End Function
         <Obsolete("This method is used for legacy support during the upgrade process (pre v3.1.1). It has been replaced by one that adds the RefreshInterval and PageHeadText variables.")> _
         Public Overloads Overrides Sub UpdateTab(ByVal TabId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal CultureCode As String)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTab", TabId, TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, Title, Description, KeyWords, IsDeleted, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), CultureCode)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTab", TabId, TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, Title, Description, KeyWords, IsDeleted, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(CultureCode))
         End Sub
-        Public Overloads Overrides Sub UpdateTab(ByVal TabId As Integer, ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal LastModifiedByUserID As Integer, ByVal CultureCode As String)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTab", TabId, ContentItemId, GetNull(PortalId), TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, IsDeleted, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, LastModifiedByUserID, CultureCode)
+        Public Overloads Overrides Sub UpdateTab(ByVal TabId As Integer, ByVal ContentItemId As Integer, ByVal PortalId As Integer, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal TabName As String, ByVal IsVisible As Boolean, ByVal DisableLink As Boolean, ByVal ParentId As Integer, ByVal IconFile As String, ByVal IconFileLarge As String, ByVal Title As String, ByVal Description As String, ByVal KeyWords As String, ByVal IsDeleted As Boolean, ByVal Url As String, ByVal SkinSrc As String, ByVal ContainerSrc As String, ByVal TabPath As String, ByVal StartDate As Date, ByVal EndDate As Date, ByVal RefreshInterval As Integer, ByVal PageHeadText As String, ByVal IsSecure As Boolean, ByVal PermanentRedirect As Boolean, ByVal SiteMapPriority As Single, ByVal LastModifiedByUserID As Integer, ByVal CultureCode As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTab", TabId, ContentItemId, GetNull(PortalId), VersionGuid, GetNull(DefaultLanguageGuid), LocalizedVersionGuid, TabName, IsVisible, DisableLink, GetNull(ParentId), IconFile, IconFileLarge, Title, Description, KeyWords, IsDeleted, Url, GetNull(SkinSrc), GetNull(ContainerSrc), TabPath, GetNull(StartDate), GetNull(EndDate), GetNull(RefreshInterval), GetNull(PageHeadText), IsSecure, PermanentRedirect, SiteMapPriority, LastModifiedByUserID, GetNull(CultureCode))
+        End Sub
+        Public Overrides Sub UpdateTabTranslationStatus(ByVal TabId As Integer, ByVal LocalizedVersionGuid As Guid, ByVal LastModifiedByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabTranslationStatus", TabId, LocalizedVersionGuid, LastModifiedByUserID)
         End Sub
         Public Overrides Sub UpdateTabOrder(ByVal TabId As Integer, ByVal TabOrder As Integer, ByVal Level As Integer, ByVal ParentId As Integer, ByVal TabPath As String, ByVal LastModifiedByUserID As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabOrder", TabId, TabOrder, Level, GetNull(ParentId), TabPath, LastModifiedByUserID)
+        End Sub
+        Public Overrides Sub UpdateTabVersion(ByVal TabId As Integer, ByVal VersionGuid As Guid)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabVersion", TabId, VersionGuid)
         End Sub
         Public Overrides Sub DeleteTab(ByVal TabId As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteTab", TabId)
         End Sub
         Public Overrides Function GetTabs(ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabs", GetNull(PortalId)), IDataReader)
-            'Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetModules", PortalId), IDataReader)
         End Function
         Public Overrides Function GetAllTabs() As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetAllTabs"), IDataReader)
         End Function
-        Public Overrides Function GetTabPaths(ByVal PortalId As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabPaths", GetNull(PortalId)), IDataReader)
+        Public Overrides Function GetTabPaths(ByVal PortalId As Integer, ByVal cultureCode As String) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabPaths", GetNull(PortalId), cultureCode), IDataReader)
         End Function
         Public Overrides Function GetTab(ByVal TabId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTab", TabId), IDataReader)
+        End Function
+        Public Overrides Function GetTabByUniqueID(ByVal UniqueId As Guid) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabByUniqueID", UniqueID), IDataReader)
         End Function
         Public Overrides Function GetTabByName(ByVal TabName As String, ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabByName", TabName, GetNull(PortalId)), IDataReader)
@@ -894,6 +897,9 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetPortalTabModules(ByVal PortalId As Integer, ByVal TabId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabModules", TabId), IDataReader)
         End Function
+        Public Overrides Function GetTabModule(ByVal TabModuleId As Integer) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabModule", TabModuleId), IDataReader)
+        End Function
         Public Overrides Function GetTabModules(ByVal TabId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetTabModules", TabId), IDataReader)
         End Function
@@ -908,17 +914,23 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetAllTabsModules(ByVal PortalId As Integer, ByVal AllTabs As Boolean) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetAllTabsModules", PortalId, AllTabs), IDataReader)
         End Function
+        Public Overrides Function GetAllTabsModulesByModuleID(ByVal ModuleId As Integer) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetAllTabsModulesByModuleID", ModuleId), IDataReader)
+        End Function
         Public Overrides Function GetModule(ByVal ModuleId As Integer, ByVal TabId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetModule", ModuleId, GetNull(TabId)), IDataReader)
+        End Function
+        Public Overrides Function GetModuleByUniqueID(ByVal UniqueID As Guid) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetModuleByUniqueID", UniqueID), IDataReader)
         End Function
         Public Overrides Function GetModuleByDefinition(ByVal PortalId As Integer, ByVal FriendlyName As String) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetModuleByDefinition", GetNull(PortalId), FriendlyName), IDataReader)
         End Function
-        Public Overrides Function AddModule(ByVal ContentItemID As Integer, ByVal PortalID As Integer, ByVal ModuleDefID As Integer, ByVal ModuleTitle As String, ByVal AllTabs As Boolean, ByVal Header As String, ByVal Footer As String, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal createdByUserID As Integer) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddModule", ContentItemID, GetNull(PortalID), ModuleDefID, ModuleTitle, AllTabs, GetNull(Header), GetNull(Footer), GetNull(StartDate), GetNull(EndDate), InheritViewPermissions, IsDeleted, createdByUserID), Integer)
+        Public Overrides Function AddModule(ByVal ContentItemID As Integer, ByVal PortalID As Integer, ByVal ModuleDefID As Integer, ByVal AllTabs As Boolean, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal createdByUserID As Integer) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddModule", ContentItemID, GetNull(PortalID), ModuleDefID, AllTabs, GetNull(StartDate), GetNull(EndDate), InheritViewPermissions, IsDeleted, createdByUserID), Integer)
         End Function
-        Public Overrides Sub UpdateModule(ByVal ModuleId As Integer, ByVal ContentItemId As Integer, ByVal ModuleTitle As String, ByVal AllTabs As Boolean, ByVal Header As String, ByVal Footer As String, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateModule", ModuleId, ContentItemId, ModuleTitle, AllTabs, GetNull(Header), GetNull(Footer), GetNull(StartDate), GetNull(EndDate), InheritViewPermissions, IsDeleted, lastModifiedByUserID)
+        Public Overrides Sub UpdateModule(ByVal ModuleId As Integer, ByVal ContentItemId As Integer, ByVal AllTabs As Boolean, ByVal StartDate As DateTime, ByVal EndDate As DateTime, ByVal InheritViewPermissions As Boolean, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateModule", ModuleId, ContentItemId, AllTabs, GetNull(StartDate), GetNull(EndDate), InheritViewPermissions, IsDeleted, lastModifiedByUserID)
         End Sub
         Public Overrides Sub DeleteModule(ByVal ModuleId As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteModule", ModuleId)
@@ -930,8 +942,8 @@ Namespace DotNetNuke.Data
         Public Overrides Sub UpdateModuleOrder(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateModuleOrder", TabId, ModuleId, ModuleOrder, PaneName)
         End Sub
-        Public Overrides Sub AddTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal createdByUserID As Integer)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTabModule", TabId, ModuleId, ModuleOrder, PaneName, CacheTime, GetNull(CacheMethod), GetNull(Alignment), GetNull(Color), GetNull(Border), GetNull(IconFile), Visibility, GetNull(ContainerSrc), DisplayTitle, DisplayPrint, DisplaySyndicate, IsWebSlice, WebSliceTitle, GetNull(WebSliceExpiryDate), WebSliceTTL, createdByUserID)
+        Public Overrides Sub AddTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleTitle As String, ByVal Header As String, ByVal Footer As String, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal CultureCode As String, ByVal createdByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "AddTabModule", TabId, ModuleId, ModuleTitle, GetNull(Header), GetNull(Footer), ModuleOrder, PaneName, CacheTime, GetNull(CacheMethod), GetNull(Alignment), GetNull(Color), GetNull(Border), GetNull(IconFile), Visibility, GetNull(ContainerSrc), DisplayTitle, DisplayPrint, DisplaySyndicate, IsWebSlice, WebSliceTitle, GetNull(WebSliceExpiryDate), WebSliceTTL, UniqueId, VersionGuid, GetNull(DefaultLanguageGuid), LocalizedVersionGuid, CultureCode, createdByUserID)
         End Sub
         Public Overrides Sub DeleteTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal softDelete As Boolean)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteTabModule", TabId, ModuleId, softDelete)
@@ -943,8 +955,14 @@ Namespace DotNetNuke.Data
         Public Overrides Sub RestoreTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "RestoreTabModule", TabId, ModuleId)
         End Sub
-        Public Overrides Sub UpdateTabModule(ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal lastModifiedByUserID As Integer)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModule", TabId, ModuleId, ModuleOrder, PaneName, CacheTime, GetNull(CacheMethod), GetNull(Alignment), GetNull(Color), GetNull(Border), GetNull(IconFile), Visibility, GetNull(ContainerSrc), DisplayTitle, DisplayPrint, DisplaySyndicate, IsWebSlice, WebSliceTitle, GetNull(WebSliceExpiryDate), WebSliceTTL, lastModifiedByUserID)
+        Public Overrides Sub UpdateTabModule(ByVal TabModuleId As Integer, ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleTitle As String, ByVal Header As String, ByVal Footer As String, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal CultureCode As String, ByVal lastModifiedByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModule", TabModuleId, TabId, ModuleId, ModuleTitle, GetNull(Header), GetNull(Footer), ModuleOrder, PaneName, CacheTime, GetNull(CacheMethod), GetNull(Alignment), GetNull(Color), GetNull(Border), GetNull(IconFile), Visibility, GetNull(ContainerSrc), DisplayTitle, DisplayPrint, DisplaySyndicate, IsWebSlice, WebSliceTitle, GetNull(WebSliceExpiryDate), WebSliceTTL, VersionGuid, GetNull(DefaultLanguageGuid), LocalizedVersionGuid, CultureCode, lastModifiedByUserID)
+        End Sub
+        Public Overrides Sub UpdateTabModuleTranslationStatus(ByVal TabModuleId As Integer, ByVal LocalizedVersionGuid As Guid, ByVal LastModifiedByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModuleTranslationStatus", TabModuleId, LocalizedVersionGuid, LastModifiedByUserID)
+        End Sub
+        Public Overrides Sub UpdateTabModuleVersion(ByVal TabModuleId As Integer, ByVal VersionGuid As Guid)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModuleVersion", TabModuleId, VersionGuid)
         End Sub
 
         Public Overrides Function GetSearchModules(ByVal PortalId As Integer) As IDataReader
@@ -1117,17 +1135,20 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetFileById(ByVal FileId As Integer, ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFileById", FileId, GetNull(PortalId)), IDataReader)
         End Function
+        Public Overrides Function GetFileByUniqueID(ByVal UniqueID As Guid) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFileByUniqueID", UniqueID), IDataReader)
+        End Function
         Public Overrides Sub DeleteFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal FolderID As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteFile", GetNull(PortalId), FileName, FolderID)
         End Sub
         Public Overrides Sub DeleteFiles(ByVal PortalId As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteFiles", GetNull(PortalId))
         End Sub
-        Public Overrides Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddFile", GetNull(PortalId), FileName, Extension, Size, GetNull(Width), GetNull(Height), ContentType, Folder, FolderID), Integer)
+        Public Overrides Function AddFile(ByVal PortalId As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer, ByVal createdByUserID As Integer, ByVal hash As String) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddFile", GetNull(PortalId), UniqueId, VersionGuid, FileName, Extension, Size, GetNull(Width), GetNull(Height), ContentType, Folder, FolderID, createdByUserID, hash), Integer)
         End Function
-        Public Overrides Sub UpdateFile(ByVal FileId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFile", FileId, FileName, Extension, Size, GetNull(Width), GetNull(Height), ContentType, Folder, FolderID)
+        Public Overrides Sub UpdateFile(ByVal FileId As Integer, ByVal VersionGuid As Guid, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal Folder As String, ByVal FolderID As Integer, ByVal lastModifiedByUserID As Integer, ByVal hash As String)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFile", FileId, VersionGuid, FileName, Extension, Size, GetNull(Width), GetNull(Height), ContentType, Folder, FolderID, lastModifiedByUserID, hash)
         End Sub
         Public Overrides Function GetAllFiles() As DataTable
             Return SqlHelper.ExecuteDataset(ConnectionString, DatabaseOwner & ObjectQualifier & "GetAllFiles").Tables(0)
@@ -1137,6 +1158,9 @@ Namespace DotNetNuke.Data
         End Function
         Public Overrides Sub UpdateFileContent(ByVal FileId As Integer, ByVal Content() As Byte)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFileContent", FileId, GetNull(Content))
+        End Sub
+        Public Overrides Sub UpdateFileVersion(ByVal FileId As Integer, ByVal VersionGuid As Guid)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFileVersion", FileId, VersionGuid)
         End Sub
 
         ' site log
@@ -1293,12 +1317,12 @@ Namespace DotNetNuke.Data
         End Sub
 
         'profile property definitions
-        Public Overrides Function AddPropertyDefinition(ByVal PortalId As Integer, ByVal ModuleDefId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal CreatedByUserID As Integer) As Integer
+        Public Overrides Function AddPropertyDefinition(ByVal PortalId As Integer, ByVal ModuleDefId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal DefaultVisibility As Integer, ByVal CreatedByUserID As Integer) As Integer
             Dim retValue As Integer = Null.NullInteger
             Try
                 retValue = CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddPropertyDefinition", _
                  GetNull(PortalId), ModuleDefId, DataType, DefaultValue, PropertyCategory, _
-                 PropertyName, Required, ValidationExpression, ViewOrder, Visible, Length, CreatedByUserID), Integer)
+                 PropertyName, Required, ValidationExpression, ViewOrder, Visible, Length, DefaultVisibility, CreatedByUserID), Integer)
             Catch ex As SqlException
                 'If not a duplicate (throw an Exception)
                 retValue = -ex.Number
@@ -1320,10 +1344,10 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetPropertyDefinitionsByPortal(ByVal portalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetPropertyDefinitionsByPortal", GetNull(portalId)), IDataReader)
         End Function
-        Public Overrides Sub UpdatePropertyDefinition(ByVal PropertyDefinitionId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal LastModifiedByUserID As Integer)
+        Public Overrides Sub UpdatePropertyDefinition(ByVal PropertyDefinitionId As Integer, ByVal DataType As Integer, ByVal DefaultValue As String, ByVal PropertyCategory As String, ByVal PropertyName As String, ByVal Required As Boolean, ByVal ValidationExpression As String, ByVal ViewOrder As Integer, ByVal Visible As Boolean, ByVal Length As Integer, ByVal DefaultVisibility As Integer, ByVal LastModifiedByUserID As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePropertyDefinition", _
              PropertyDefinitionId, DataType, DefaultValue, PropertyCategory, _
-             PropertyName, Required, ValidationExpression, ViewOrder, Visible, Length, LastModifiedByUserID)
+             PropertyName, Required, ValidationExpression, ViewOrder, Visible, Length, DefaultVisibility, LastModifiedByUserID)
         End Sub
 
         ' urls
@@ -1482,14 +1506,20 @@ Namespace DotNetNuke.Data
         Public Overloads Overrides Function GetFolder(ByVal PortalID As Integer, ByVal FolderPath As String) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFolderByFolderPath", GetNull(PortalID), FolderPath), IDataReader)
         End Function
-        Public Overrides Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal createdByUserID As Integer) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddFolder", GetNull(PortalID), FolderPath, StorageLocation, IsProtected, IsCached, GetNull(LastUpdated), createdByUserID), Integer)
+        Public Overrides Function GetFolderByUniqueID(ByVal UniqueID As Guid) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFolderByUniqueID", UniqueID), IDataReader)
         End Function
-        Public Overrides Sub UpdateFolder(ByVal PortalID As Integer, ByVal FolderID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal lastModifiedByUserID As Integer)
-            SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFolder", GetNull(PortalID), FolderID, FolderPath, StorageLocation, IsProtected, IsCached, GetNull(LastUpdated), lastModifiedByUserID)
+        Public Overrides Function AddFolder(ByVal PortalID As Integer, ByVal UniqueId As Guid, ByVal VersionGuid As Guid, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal createdByUserID As Integer) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddFolder", GetNull(PortalID), UniqueId, VersionGuid, FolderPath, StorageLocation, IsProtected, IsCached, GetNull(LastUpdated), createdByUserID), Integer)
+        End Function
+        Public Overrides Sub UpdateFolder(ByVal PortalID As Integer, ByVal VersionGuid As Guid, ByVal FolderID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date, ByVal lastModifiedByUserID As Integer)
+            SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFolder", GetNull(PortalID), VersionGuid, FolderID, FolderPath, StorageLocation, IsProtected, IsCached, GetNull(LastUpdated), lastModifiedByUserID)
         End Sub
         Public Overrides Sub DeleteFolder(ByVal PortalID As Integer, ByVal FolderPath As String)
             SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "DeleteFolder", GetNull(PortalID), FolderPath)
+        End Sub
+        Public Overrides Sub UpdateFolderVersion(ByVal FolderId As Integer, ByVal VersionGuid As Guid)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateFolderVersion", FolderId, VersionGuid)
         End Sub
 
         'FolderPermission
@@ -1734,8 +1764,8 @@ Namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateLanguage", languageID, cultureCode, cultureName, fallbackCulture, LastModifiedByUserID)
         End Sub
 
-        Public Overrides Function AddPortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal CreatedByUserID As Integer) As Integer
-            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddPortalLanguage", portalID, languageID, CreatedByUserID), Integer)
+        Public Overrides Function AddPortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal IsPublished As Boolean, ByVal CreatedByUserID As Integer) As Integer
+            Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddPortalLanguage", portalID, languageID, IsPublished, CreatedByUserID), Integer)
         End Function
         Public Overrides Sub DeletePortalLanguages(ByVal portalID As Integer, ByVal languageID As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "DeletePortalLanguages", GetNull(portalID), GetNull(languageID))
@@ -1743,6 +1773,10 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetLanguagesByPortal(ByVal portalID As Integer) As IDataReader
             Return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetLanguagesByPortal", portalID)
         End Function
+        Public Overrides Sub UpdatePortalLanguage(ByVal portalID As Integer, ByVal languageID As Integer, ByVal IsPublished As Boolean, ByVal UpdatedByUserID As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalLanguage", portalID, languageID, IsPublished, UpdatedByUserID)
+        End Sub
+
 
         Public Overrides Function AddLanguagePack(ByVal packageID As Integer, ByVal languageID As Integer, ByVal dependentPackageID As Integer, ByVal CreatedByUserID As Integer) As Integer
             Return CType(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner & ObjectQualifier & "AddLanguagePack", packageID, languageID, dependentPackageID, CreatedByUserID), Integer)

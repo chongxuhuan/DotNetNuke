@@ -1,6 +1,6 @@
 ﻿'
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -696,7 +696,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 If (_UserFolders Is Nothing) Then
                     _UserFolders = New Dictionary(Of String, FileSystem.FolderInfo)
 
-                    Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, True, True, "READ")
+                    Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, True, True, "BROWSE, ADD")
 
                     For Each folder In folders
                         Dim dnnFolder As FileSystem.FolderInfo = DirectCast(folder, FileSystem.FolderInfo)

@@ -40,6 +40,7 @@
                     <xs:element name="propertyname" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="datatype" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="length" type="xs:integer" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="defaultvisibility" type="xs:integer" minOccurs="0" maxOccurs="1" />
                   </xs:all>
                 </xs:complexType>
               </xs:element>
@@ -363,6 +364,7 @@
                   <xs:sequence>
                     <xs:element name="folderpath" type="xs:string" />
                     <xs:element name="storagelocation" type="xs:integer" maxOccurs="1" minOccurs="0" />
+		    <xs:element name="isprotected" type="xs:boolean" maxOccurs="1" minOccurs="0" />
                     <xs:element name="folderpermissions" maxOccurs="1" minOccurs="0">
                       <xs:complexType>
                         <xs:sequence>

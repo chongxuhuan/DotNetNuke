@@ -340,21 +340,21 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' Gets or sets whether to Include Personal Folder
+        ''' Gets or sets whether to Use Personal Folder
         ''' </summary>
         ''' <remarks>Defaults to false</remarks>
         ''' <value>A Boolean</value>
         ''' -----------------------------------------------------------------------------
-        Public Property IncludePersonalFolder() As Boolean
+        Public Property UsePersonalFolder() As Boolean
             Get
-                If ViewState("IncludePersonalFolder") Is Nothing Then
+                If ViewState("UsePersonalFolder") Is Nothing Then
                     Return False
                 Else
-                    Return Convert.ToBoolean(ViewState("IncludePersonalFolder"))
+                    Return Convert.ToBoolean(ViewState("UsePersonalFolder"))
                 End If
             End Get
             Set(ByVal value As Boolean)
-                ViewState("IncludePersonalFolder") = value
+                ViewState("UsePersonalFolder") = value
             End Set
         End Property
 
@@ -379,6 +379,20 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Get
             Set(ByVal value As String)
                 ViewState("LabelCssClass") = value
+            End Set
+        End Property
+
+        Public Property Permissions() As String
+            Get
+                Dim _Permissions As String = Convert.ToString(ViewState("Permissions"))
+                If String.IsNullOrEmpty(_Permissions) Then
+                    Return "BROWSE,ADD"
+                Else
+                    Return _Permissions
+                End If
+            End Get
+            Set(ByVal value As String)
+                ViewState("Permissions") = value
             End Set
         End Property
 
@@ -425,6 +439,19 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Get
             Set(ByVal value As Boolean)
                 ViewState("ShowDatabase") = value
+            End Set
+        End Property
+
+        Public Property ShowFolders As Boolean
+            Get
+                If ViewState("ShowFolders") Is Nothing Then
+                    Return True
+                Else
+                    Return Convert.ToBoolean(ViewState("ShowFolders"))
+                End If
+            End Get
+            Set(ByVal value As Boolean)
+                ViewState("ShowFolders") = value
             End Set
         End Property
 
@@ -683,22 +710,28 @@ Namespace DotNetNuke.Web.UI.WebControls
         Private Sub LoadFolders()
             cboFolders.Items.Clear()
 
-            Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalId, ShowSecure, ShowDatabase, "READ,ADD")
-            For Each folder As FolderInfo In folders
-                Dim folderItem As New ListItem
-                If folder.FolderPath = Null.NullString Then
-                    folderItem.Text = Utilities.GetLocalizedString("PortalRoot")
-                Else
-                    folderItem.Text = folder.FolderPath
-                End If
-                folderItem.Value = folder.FolderPath
-                cboFolders.Items.Add(folderItem)
-            Next
-
             'Add Personal Folder
-            If IncludePersonalFolder Then
-                cboFolders.Items.Add(New ListItem(Utilities.GetLocalizedString("MyFolder"), _
-                                                  String.Format("Users/{0}/", FileSystemUtils.GetUserFolderPath(UserController.GetCurrentUserInfo().UserID).Replace("\", "/"))))
+            If UsePersonalFolder Then
+                Dim userFolder As String = String.Format("Users/{0}/", FileSystemUtils.GetUserFolderPath(UserController.GetCurrentUserInfo().UserID).Replace("\", "/"))
+                Dim userFolderItem As ListItem = cboFolders.Items.FindByValue(userFolder)
+                If userFolderItem IsNot Nothing Then
+                    userFolderItem.Text = Utilities.GetLocalizedString("MyFolder")
+                Else
+                    'Add Dummy Folder
+                    cboFolders.Items.Add(New ListItem(Utilities.GetLocalizedString("MyFolder"), userFolder))
+                End If
+            Else
+                Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalId, ShowSecure, ShowDatabase, Permissions)
+                For Each folder As FolderInfo In folders
+                    Dim folderItem As New ListItem
+                    If folder.FolderPath = Null.NullString Then
+                        folderItem.Text = Utilities.GetLocalizedString("PortalRoot")
+                    Else
+                        folderItem.Text = folder.FolderPath
+                    End If
+                    folderItem.Value = folder.FolderPath
+                    cboFolders.Items.Add(folderItem)
+                Next
             End If
 
         End Sub
@@ -783,6 +816,7 @@ Namespace DotNetNuke.Web.UI.WebControls
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             MyBase.OnInit(e)
             LocalResourceFile = Utilities.GetLocalResourceFile(Me)
+            Me.EnsureChildControls()
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -866,21 +900,23 @@ Namespace DotNetNuke.Web.UI.WebControls
                 End If
                 cboFiles.Width = Width
 
-                'Set up command buttons
-                If Not String.IsNullOrEmpty(folderPath) Then
-                    folderPath = folderPath.Substring(0, folderPath.Length - 1)
+                If cboFolders.Items.Count > 1 AndAlso ShowFolders Then
+                    cboFolders.Visible = True
+                    lblFolder.Visible = True
+                Else
+                    cboFolders.Visible = False
+                    lblFolder.Visible = False
                 End If
 
                 'Configure Mode
                 Select Case Mode
                     Case FileControlMode.Normal
                         fileRow.Visible = True
-                        folderRow.Visible = True
                         cboFiles.Visible = True
                         ShowImage()
                         txtFile.Visible = False
-                        If (FolderPermissionController.HasFolderPermission(PortalId, folderPath, "ADD") OrElse _
-                                IsUserFolder(folderPath)) AndAlso _
+                        If (FolderPermissionController.HasFolderPermission(PortalId, cboFolders.SelectedItem.Value, "ADD") OrElse _
+                                IsUserFolder(cboFolders.SelectedItem.Value)) AndAlso _
                                 ShowUpLoad Then
                             ShowButton(cmdUpload, "Upload")
                         End If

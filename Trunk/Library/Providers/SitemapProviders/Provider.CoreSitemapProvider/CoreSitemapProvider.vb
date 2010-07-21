@@ -8,6 +8,7 @@ Imports System.Web
 Imports DotNetNuke.Services.Localization
 Imports System.Collections.Generic
 Imports DotNetNuke.Services.Sitemap
+Imports DotNetNuke.Entities.Modules
 
 Namespace DotNetNuke.SitemapProviders
 
@@ -50,7 +51,7 @@ Namespace DotNetNuke.SitemapProviders
                    IsTabPublic(objTab.TabPermissions) Then
 
                     If includeHiddenPages Or objTab.IsVisible Then
-                        For Each languageCode As String In DotNetNuke.Services.Localization.Localization.GetLocales(portalId).Keys
+                        For Each languageCode As String In LocaleController.Instance().GetLocales(portalId).Keys
                             pageUrl = GetPageUrl(objTab, languageCode)
                             urls.Add(pageUrl)
                         Next
@@ -81,8 +82,17 @@ Namespace DotNetNuke.SitemapProviders
                     pageUrl.Url = AddHTTP(ps.PortalAlias.HTTPAlias.ToLower()) + pageUrl.Url
                 End If
             End If
+
             pageUrl.Priority = GetPriority(objTab)
-            pageUrl.LastModified = DateTime.Now
+
+            pageUrl.LastModified = objTab.LastModifiedOnDate
+            Dim modCtrl As New ModuleController
+            For Each m As ModuleInfo In modCtrl.GetTabModules(objTab.TabID).Values
+                If m.LastModifiedOnDate > objTab.LastModifiedOnDate Then
+                    pageUrl.LastModified = m.LastModifiedOnDate
+                End If
+            Next
+
             pageUrl.ChangeFrequency = SitemapChangeFrequency.Daily
 
             Return pageUrl

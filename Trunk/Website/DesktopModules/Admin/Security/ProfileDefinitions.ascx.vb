@@ -49,8 +49,8 @@ Namespace DotNetNuke.Modules.Admin.Users
 
 #Region "Constants"
 
-        Const COLUMN_REQUIRED As Integer = 10
-        Const COLUMN_VISIBLE As Integer = 11
+        Const COLUMN_REQUIRED As Integer = 11
+        Const COLUMN_VISIBLE As Integer = 12
         Const COLUMN_MOVE_DOWN As Integer = 2
         Const COLUMN_MOVE_UP As Integer = 3
 

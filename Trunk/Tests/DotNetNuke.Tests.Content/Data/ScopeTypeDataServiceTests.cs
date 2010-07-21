@@ -1,29 +1,29 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System.Data;
 using System.Data.SqlClient;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities;
+using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Data
@@ -52,7 +52,8 @@ namespace DotNetNuke.Tests.Content.Data
         public void SetUp()
         {
             //Set up Data Provider
-            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner, DataTestHelper.ObjectQualifier);
+            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner,
+                                           DataTestHelper.ObjectQualifier);
 
             //Create Database Tables
             ContentDataTestHelper.CreateDatabaseTables();
@@ -61,22 +62,24 @@ namespace DotNetNuke.Tests.Content.Data
             ContentDataTestHelper.AddDataToTables();
         }
 
-        [TearDown()]
+        [TearDown]
         public void TearDown()
         {
             //Remove all records from Tables
             ContentDataTestHelper.EmptyDatabaseTables();
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
 
         #region AddScopeType Tests
 
-       [Test]
+        [Test]
         public void DataService_AddScopeType_Adds_Record_On_Valid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, addScopeType);
 
             ScopeType scopeType = new ScopeType();
@@ -88,14 +91,16 @@ namespace DotNetNuke.Tests.Content.Data
             int scopeTypeItemId = ds.AddScopeType(scopeType);
 
             //Assert
-            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName, rowCount + 1);
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName,
+                                              rowCount + 1);
         }
 
-       [Test]
+        [Test]
         public void DataService_AddScopeType_Returns_Correct_Id_On_Valid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, addScopeType);
 
             ScopeType scopeType = new ScopeType();
@@ -107,18 +112,21 @@ namespace DotNetNuke.Tests.Content.Data
             int scopeTypeItemId = ds.AddScopeType(scopeType);
 
             //Assert
-            DatabaseAssert.RecordLastAddedIdEquals(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName, "ScopeTypeID", scopeTypeItemId);
+            DatabaseAssert.RecordLastAddedIdEquals(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName, "ScopeTypeID",
+                                                   scopeTypeItemId);
         }
 
         #endregion
 
         #region DeleteScopeType Tests
 
-       [Test]
+        [Test]
         public void DataService_DeleteScopeType_Should_Do_Nothing_On_InValid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
@@ -130,14 +138,16 @@ namespace DotNetNuke.Tests.Content.Data
             ds.DeleteScopeType(scopeType);
 
             //Assert
-            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName, rowCount);
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName,
+                                              rowCount);
         }
 
-       [Test]
+        [Test]
         public void DataService_DeleteScopeType_Delete_Record_On_Valid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
@@ -153,7 +163,8 @@ namespace DotNetNuke.Tests.Content.Data
             {
                 connection.Open();
                 DatabaseAssert.RecordCountIsEqual(connection, ContentDataTestHelper.ScopeTypesTableName, rowCount - 1);
-                DatabaseAssert.RecordDoesNotExist(connection, ContentDataTestHelper.ScopeTypesTableName, keyField, Constants.SCOPETYPE_ValidScopeTypeId.ToString());
+                DatabaseAssert.RecordDoesNotExist(connection, ContentDataTestHelper.ScopeTypesTableName, keyField,
+                                                  Constants.SCOPETYPE_ValidScopeTypeId.ToString());
             }
         }
 
@@ -161,11 +172,12 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region GetScopeTypes Tests
 
-       [Test]
+        [Test]
         public void DataService_GetScopeTypes_Returns_Reader_Of_The_ScopeTypes()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, getScopeTypes);
 
             DataService ds = new DataService();
@@ -181,11 +193,12 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region UpdateScopeType Tests
 
-       [Test]
+        [Test]
         public void DataService_UpdateScopeType_Does_Nothing_On_InValid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, upateScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
@@ -204,21 +217,25 @@ namespace DotNetNuke.Tests.Content.Data
                 DatabaseAssert.RecordCountIsEqual(connection, ContentDataTestHelper.ScopeTypesTableName, rowCount);
 
                 //Check that values have not changed
-                IDataReader dataReader = DataUtil.GetRecordsByField(connection, ContentDataTestHelper.ScopeTypesTableName, keyField, Constants.SCOPETYPE_UpdateScopeTypeId.ToString());
+                IDataReader dataReader = DataUtil.GetRecordsByField(connection,
+                                                                    ContentDataTestHelper.ScopeTypesTableName, keyField,
+                                                                    Constants.SCOPETYPE_UpdateScopeTypeId.ToString());
                 while (dataReader.Read())
                 {
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "ScopeType", Constants.SCOPETYPE_OriginalUpdateScopeType);
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "ScopeType",
+                                                       Constants.SCOPETYPE_OriginalUpdateScopeType);
                 }
 
                 dataReader.Close();
             }
         }
 
-       [Test]
+        [Test]
         public void DataService_UpdateScopeType_Updates_Record_On_Valid_ScopeType()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ScopeTypesTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ScopeTypesTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, upateScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
@@ -237,10 +254,12 @@ namespace DotNetNuke.Tests.Content.Data
                 DatabaseAssert.RecordCountIsEqual(connection, ContentDataTestHelper.ScopeTypesTableName, rowCount);
 
                 //Check Values are updated
-                IDataReader dataReader = DataUtil.GetRecordsByField(connection, ContentDataTestHelper.ScopeTypesTableName, keyField, Constants.SCOPETYPE_UpdateScopeTypeId.ToString());
+                IDataReader dataReader = DataUtil.GetRecordsByField(connection,
+                                                                    ContentDataTestHelper.ScopeTypesTableName, keyField,
+                                                                    Constants.SCOPETYPE_UpdateScopeTypeId.ToString());
                 while (dataReader.Read())
                 {
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "ScopeType", Constants.SCOPETYPE_UpdateScopeType);
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "ScopeType", Constants.SCOPETYPE_UpdateScopeType);
                 }
 
                 dataReader.Close();

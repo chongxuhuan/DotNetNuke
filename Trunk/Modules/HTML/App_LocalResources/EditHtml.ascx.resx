@@ -234,4 +234,7 @@
   <data name="True.Text" xml:space="preserve">
     <value>True</value>
   </data>
+  <data name="dshMaster.Text" xml:space="preserve">
+    <value>Master Language Version</value>
+  </data>
 </root>

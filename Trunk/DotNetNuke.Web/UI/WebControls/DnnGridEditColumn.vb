@@ -26,51 +26,26 @@ Namespace DotNetNuke.Web.UI.WebControls
     Public Class DnnGridEditColumn
         Inherits Telerik.Web.UI.GridEditCommandColumn
 
-        Implements ILocalizable
+#Region "Public Properties"
 
-#Region "Private Members"
-
-        Private _Localize As Boolean = True
-        Private _LocalResourceFile As String
+        Public ReadOnly Property LocalResourceFile As String
+            Get
+                Return Utilities.GetLocalResourceFile(Me.Owner.OwnerGrid.Parent)
+            End Get
+        End Property
 
 #End Region
 
-#Region "ILocalizable Implementation"
+#Region "Public Methods"
 
-        Public Property Localize() As Boolean Implements ILocalizable.Localize
-            Get
-                Return _Localize
-            End Get
-            Set(ByVal value As Boolean)
-                _Localize = value
-            End Set
-        End Property
+        Public Overloads Overrides Function Clone() As GridColumn
+            Dim dnnGridColumn As New DnnGridEditColumn()
 
-        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
-            Get
-                Return _LocalResourceFile
-            End Get
-            Set(ByVal value As String)
-                _LocalResourceFile = value
-            End Set
-        End Property
+            'you should override CopyBaseProperties if you have some column specific properties
+            dnnGridColumn.CopyBaseProperties(Me)
 
-        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
-            If Localize Then
-                If (Not String.IsNullOrEmpty(HeaderText)) Then
-                    HeaderText = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
-                End If
-                If (Not String.IsNullOrEmpty(EditText)) Then
-                    EditText = Localization.GetString(EditText, LocalResourceFile)
-                End If
-                If (Not String.IsNullOrEmpty(CancelText)) Then
-                    CancelText = Localization.GetString(CancelText, LocalResourceFile)
-                End If
-                If (Not String.IsNullOrEmpty(UpdateText)) Then
-                    UpdateText = Localization.GetString(UpdateText, LocalResourceFile)
-                End If
-            End If
-        End Sub
+            Return dnnGridColumn
+        End Function
 
 #End Region
 

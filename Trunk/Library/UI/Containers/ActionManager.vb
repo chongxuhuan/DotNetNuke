@@ -163,6 +163,35 @@ Namespace DotNetNuke.UI.Containers
             End If
         End Sub
 
+        Private Sub Localize(ByVal Command As ModuleAction)
+            Dim moduleCtrl As New ModuleController
+            Dim sourceModule As ModuleInfo = moduleCtrl.GetModule(ModuleContext.ModuleId, ModuleContext.TabId, False)
+
+            Select Case Command.CommandName
+                Case ModuleActionType.LocalizeModule
+                    moduleCtrl.LocalizeModule(sourceModule)
+                Case ModuleActionType.DeLocalizeModule
+                    moduleCtrl.DeLocalizeModule(sourceModule)
+            End Select
+
+            ' Redirect to the same page to pick up changes
+            Response.Redirect(Request.RawUrl, True)
+        End Sub
+
+        Private Sub Translate(ByVal Command As ModuleAction)
+            Dim moduleCtrl As New ModuleController
+            Dim sourceModule As ModuleInfo = moduleCtrl.GetModule(ModuleContext.ModuleId, ModuleContext.TabId, False)
+            Select Case Command.CommandName
+                Case ModuleActionType.TranslateModule
+                    moduleCtrl.UpdateTranslationStatus(sourceModule, True)
+                Case ModuleActionType.UnTranslateModule
+                    moduleCtrl.UpdateTranslationStatus(sourceModule, False)
+            End Select
+
+            ' Redirect to the same page to pick up changes
+            Response.Redirect(Request.RawUrl, True)
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' MoveToPane moves the Module to the relevant Pane
@@ -360,6 +389,14 @@ Namespace DotNetNuke.UI.Containers
                     MoveToPane(action)
                 Case ModuleActionType.MoveTop, ModuleActionType.MoveUp, ModuleActionType.MoveDown, ModuleActionType.MoveBottom
                     MoveUpDown(action)
+                Case ModuleActionType.LocalizeModule
+                    Localize(action)
+                Case ModuleActionType.DeLocalizeModule
+                    Localize(action)
+                Case ModuleActionType.TranslateModule
+                    Translate(action)
+                Case ModuleActionType.UnTranslateModule
+                    Translate(action)
                 Case Else       ' custom action
                     If action.Url.Length > 0 AndAlso action.UseActionEvent = False Then
                         DoAction(action)

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SyndicateModule.Action" xml:space="preserve">
     <value>Syndicate</value>
@@ -265,10 +265,13 @@
     <value>Edit Page</value>
   </data>
   <data name="View Folder.Permission" xml:space="preserve">
-    <value>View Folder</value>
+    <value>Open Files in Folder</value>
   </data>
   <data name="Write to Folder.Permission" xml:space="preserve">
     <value>Write to Folder</value>
+  </data>
+  <data name="Browse Folder.Permission" xml:space="preserve">
+    <value>Browse Files in Folder</value>
   </data>
   <data name="EMAIL_SMTP_TEST_SUBJECT.Text" xml:space="preserve">
     <value>[Host:HostTitle] SMTP Configuration Test</value>
@@ -1064,7 +1067,7 @@ Operation Completed:  [Custom:3]
   </data>
   <data name="License.Text" xml:space="preserve">
     <value>DotNetNuke® - http://www.dotnetnuke.com&lt;br/&gt;
-Copyright (c) 2002-2008&lt;br/&gt;
+Copyright (c) 2002-2010&lt;br/&gt;
 by DotNetNuke Corporation
 &lt;br/&gt;&lt;br/&gt;
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1130,10 +1133,31 @@ Password: [Membership:Password]
 Sincerely,
 [Portal:PortalName]</value>
   </data>
-  <data name="EMAIL_USER_UPDATED_OWN_PASSWORD_SUBJECT.Text" xml:space="preserve">
+  <data name="EMAIL_USER_UPDATED_OWN_PASSWOR_SUBJECT.Text" xml:space="preserve">
     <value>[Portal:PortalName] Password Updated</value>
   </data>
   <data name="ViewSource.Action" xml:space="preserve">
     <value>View Source</value>
+  </data>
+  <data name="EnglishName.Text" xml:space="preserve">
+    <value>English Name</value>
+  </data>
+  <data name="NativeName.Text" xml:space="preserve">
+    <value>Native Name</value>
+  </data>
+  <data name="NeutralCulture.Text" xml:space="preserve">
+    <value>Neutral Culture</value>
+  </data>
+  <data name="DeLocalize.Action" xml:space="preserve">
+    <value>DeLocalize</value>
+  </data>
+  <data name="Localize.Action" xml:space="preserve">
+    <value>Localize</value>
+  </data>
+  <data name="Translate.Action" xml:space="preserve">
+    <value>Mark Translated</value>
+  </data>
+  <data name="UnTranslate.Action" xml:space="preserve">
+    <value>Mark Not Translated</value>
   </data>
 </root>

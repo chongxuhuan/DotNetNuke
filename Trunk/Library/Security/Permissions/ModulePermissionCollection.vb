@@ -175,6 +175,10 @@ Namespace DotNetNuke.Security.Permissions
             Return PermissionController.BuildPermissions(List, key)
         End Function
 
+        Public Function Where(ByVal predicate As Func(Of ModulePermissionInfo, Boolean)) As IEnumerable(Of ModulePermissionInfo)
+            Return Me.Cast(Of ModulePermissionInfo).Where(predicate)
+        End Function
+
 #End Region
 
     End Class

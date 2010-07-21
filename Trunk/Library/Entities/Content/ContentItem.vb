@@ -121,7 +121,7 @@ Namespace DotNetNuke.Entities.Content
             End Set
         End Property
 
-        Public ReadOnly Property Terms() As List(Of Term)
+        <XmlIgnore()> Public ReadOnly Property Terms() As List(Of Term)
             Get
                 If _Terms Is Nothing Then
                     _Terms = GetTerms(ContentItemId)

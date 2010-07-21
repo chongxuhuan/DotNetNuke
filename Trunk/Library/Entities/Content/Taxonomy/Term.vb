@@ -83,7 +83,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
 
 #Region "Public Properties"
 
-        Public ReadOnly Property ChildTerms() As List(Of Term)
+        <XmlIgnore()> Public ReadOnly Property ChildTerms() As List(Of Term)
             Get
                 If _ChildTerms Is Nothing Then
                     _ChildTerms = GetChildTerms(_TermId, _VocabularyId)
@@ -92,7 +92,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Get
         End Property
 
-        Public Property Description() As String
+        <XmlIgnore()> Public Property Description() As String
             Get
                 Return _Description
             End Get
@@ -101,19 +101,19 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Set
         End Property
 
-        Public ReadOnly Property IsHeirarchical() As Boolean
+        <XmlIgnore()> Public ReadOnly Property IsHeirarchical() As Boolean
             Get
                 Return (Vocabulary.Type = VocabularyType.Hierarchy)
             End Get
         End Property
 
-        Public ReadOnly Property Left() As Integer
+        <XmlIgnore()> Public ReadOnly Property Left() As Integer
             Get
                 Return _Left
             End Get
         End Property
 
-        Public Property Name() As String
+        <XmlIgnore()> Public Property Name() As String
             Get
                 Return _Name
             End Get
@@ -122,7 +122,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Set
         End Property
 
-        Public Property ParentTermId() As Nullable(Of Integer)
+        <XmlIgnore()> Public Property ParentTermId() As Nullable(Of Integer)
             Get
                 Return _ParentTermId
             End Get
@@ -131,19 +131,19 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Set
         End Property
 
-        Public ReadOnly Property Right() As Integer
+        <XmlIgnore()> Public ReadOnly Property Right() As Integer
             Get
                 Return _Right
             End Get
         End Property
 
-        Public ReadOnly Property Synonyms() As List(Of String)
+        <XmlIgnore()> Public ReadOnly Property Synonyms() As List(Of String)
             Get
                 Return _Synonyms
             End Get
         End Property
 
-        Public Property TermId() As Integer
+        <XmlIgnore()> Public Property TermId() As Integer
             Get
                 Return _TermId
             End Get
@@ -152,7 +152,7 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Set
         End Property
 
-        Public ReadOnly Property Vocabulary() As Vocabulary
+        <XmlIgnore()> Public ReadOnly Property Vocabulary() As Vocabulary
             Get
                 If _Vocabulary Is Nothing AndAlso _VocabularyId > Null.NullInteger Then
                     _Vocabulary = GetVocabulary(_VocabularyId)
@@ -161,13 +161,13 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
             End Get
         End Property
 
-        Public ReadOnly Property VocabularyId() As Integer
+        <XmlIgnore()> Public ReadOnly Property VocabularyId() As Integer
             Get
                 Return _VocabularyId
             End Get
         End Property
 
-        Public Property Weight() As Integer
+        <XmlIgnore()> Public Property Weight() As Integer
             Get
                 Return _Weight
             End Get
@@ -211,6 +211,24 @@ Namespace DotNetNuke.Entities.Content.Taxonomy
         End Property
 
 #End Region
+
+        Public Function GetTermPath() As String
+            Dim path As String = "\\" + Name
+
+            If ParentTermId.HasValue Then
+                Dim ctl As ITermController = Util.GetTermController()
+
+                Dim parentTerm As Term = (From t In ctl.GetTermsByVocabulary(VocabularyId) _
+                                            Where t.TermId = ParentTermId _
+                                            Select t).SingleOrDefault
+
+                If parentTerm IsNot Nothing Then
+                    path = parentTerm.GetTermPath() + path
+                End If
+            End If
+            Return path
+        End Function
+
 
     End Class
 

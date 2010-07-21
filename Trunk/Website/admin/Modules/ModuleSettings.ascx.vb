@@ -27,6 +27,7 @@ Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Services.ModuleCache
 Imports System.Linq
 Imports DotNetNuke.Entities.Content
+Imports DotNetNuke.UI.Utilities
 
 
 Namespace DotNetNuke.Modules.Admin.Modules
@@ -57,9 +58,13 @@ Namespace DotNetNuke.Modules.Admin.Modules
         Private Shadows ModuleId As Integer = -1
         Private Shadows TabModuleId As Integer = -1
         Private _Module As ModuleInfo
+        Private _ModuleCtrl As ModuleController = Nothing
+        Private _TabCtrl As TabController = Nothing
         Private _TabsModulePaneInfo As IDictionary(Of Integer, String) = Nothing
 
 #End Region
+
+#Region "Protected Properties"
 
         Protected ReadOnly Property [Module]() As ModuleInfo
             Get
@@ -70,13 +75,37 @@ Namespace DotNetNuke.Modules.Admin.Modules
             End Get
         End Property
 
+        Protected ReadOnly Property ModuleCtrl() As ModuleController
+            Get
+                If (_ModuleCtrl Is Nothing) Then
+                    _ModuleCtrl = New ModuleController()
+                End If
+                Return _ModuleCtrl
+            End Get
+        End Property
+
         Protected ReadOnly Property SettingsControl() As ISettingsControl
             Get
                 Return TryCast(_Control, ISettingsControl)
             End Get
         End Property
 
+        Protected ReadOnly Property TabCtrl() As TabController
+            Get
+                If (_TabCtrl Is Nothing) Then
+                    _TabCtrl = New TabController()
+                End If
+                Return _TabCtrl
+            End Get
+        End Property
+
+#End Region
+
 #Region "Private Methods"
+
+        Private Sub AddCheckBoxConfirm(ByVal chkBox As CheckBox, ByVal confirmString As String)
+            chkBox.Attributes.Add("onClick", "javascript: if (!confirm('" + ClientAPI.GetSafeJSString(confirmString) + "')) return; else " + Me.Page.ClientScript.GetPostBackEventReference(chkBox, "") + ";")
+        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -185,43 +214,6 @@ Namespace DotNetNuke.Modules.Admin.Modules
             End If
         End Sub
 
-        Private Sub ShowCacheRows()
-            If cboCacheProvider.SelectedValue <> "" Then
-                trCacheDuration.Visible = True
-            Else
-                trCacheDuration.Visible = False
-            End If
-
-        End Sub
-
-#End Region
-
-#Region "Properties"
-
-        Private _ModuleCtrl As ModuleController = Nothing
-        Protected ReadOnly Property ModuleCtrl() As ModuleController
-            Get
-                If (_ModuleCtrl Is Nothing) Then
-                    _ModuleCtrl = New ModuleController()
-                End If
-                Return _ModuleCtrl
-            End Get
-        End Property
-
-        Private _TabCtrl As TabController = Nothing
-        Protected ReadOnly Property TabCtrl() As TabController
-            Get
-                If (_TabCtrl Is Nothing) Then
-                    _TabCtrl = New TabController()
-                End If
-                Return _TabCtrl
-            End Get
-        End Property
-
-#End Region
-
-#Region "Private Methods"
-
         Private Sub BindModuleCacheProviderList()
             cboCacheProvider.DataSource = GetFilteredProviders(ModuleCache.ModuleCachingProvider.GetProviderList(), "ModuleCachingProvider")
             cboCacheProvider.DataBind()
@@ -257,6 +249,15 @@ Namespace DotNetNuke.Modules.Admin.Modules
 
             Return providers
         End Function
+
+        Private Sub ShowCacheRows()
+            If cboCacheProvider.SelectedValue <> "" Then
+                trCacheDuration.Visible = True
+            Else
+                trCacheDuration.Visible = False
+            End If
+
+        End Sub
 
 #End Region
 
@@ -346,6 +347,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                     End If
                 End If
             End If
+
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -436,6 +438,8 @@ Namespace DotNetNuke.Modules.Admin.Modules
                     termsSelector.Terms = [Module].Terms
                     termsSelector.DataBind()
                 End If
+
+                cultureLanguageLabel.Language = [Module].CultureCode
 
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
@@ -644,7 +648,9 @@ Namespace DotNetNuke.Modules.Admin.Modules
                         Dim listTabs As List(Of Entities.Tabs.TabInfo) = TabController.GetPortalTabs(PortalSettings.PortalId, Null.NullInteger, False, True)
                         If chkAllTabs.Checked Then
                             If Not chkNewTabs.Checked Then
-                                objModules.CopyModule(ModuleId, TabId, listTabs, True)
+                                For Each destinationTab In listTabs
+                                    objModules.CopyModule([Module], destinationTab, Null.NullString, True)
+                                Next
                             End If
                         Else
                             objModules.DeleteAllModules(ModuleId, TabId, listTabs)
@@ -668,6 +674,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                 ProcessModuleLoadException(Me, ex)
             End Try
         End Sub
+
 #End Region
 
     End Class

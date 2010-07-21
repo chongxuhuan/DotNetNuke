@@ -23,6 +23,7 @@ Imports System.Configuration
 Imports System.Data
 Imports System.Globalization
 Imports System.IO
+Imports System.Xml
 Imports DotNetNuke.Entities.Host
 
 Namespace DotNetNuke.Services.FileSystem
@@ -38,7 +39,8 @@ Namespace DotNetNuke.Services.FileSystem
     ''' <remarks>
     ''' </remarks>
     ''' <history>
-    ''' 	[DYNST]	2/1/2004	Created
+    ''' 	[DYNST]	   2/1/2004	   Created
+    '''     [vnguyen]  30/04/2010  Modified: Added Guid and VersionG
     ''' </history>
     ''' -----------------------------------------------------------------------------
     Public Class FileController
@@ -57,25 +59,27 @@ Namespace DotNetNuke.Services.FileSystem
         End Function
 
 
+#Region "Private Methods"
+        Private Shared Sub UpdateFileVersion(ByVal fileId As Integer)
+            DataProvider.Instance.UpdateFileVersion(fileId, Guid.NewGuid())
+        End Sub
+#End Region
+
+#Region "Public Methods"
         Public Function AddFile(ByVal file As FileInfo) As Integer
-            Return AddFile(file.PortalId, file.FileName, file.Extension, file.Size, file.Width, file.Height, file.ContentType, file.Folder, file.FolderId, True)
-        End Function
-
-        Public Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal FolderPath As String, ByVal FolderID As Integer, ByVal ClearCache As Boolean) As Integer
-
-            FolderPath = FileSystemUtils.FormatFolderPath(FolderPath)
-            Dim FileId As Integer = DataProvider.Instance().AddFile(PortalId, FileName, Extension, Size, Width, Height, ContentType, FolderPath, FolderID)
+            Dim FileId As Integer = DataProvider.Instance().AddFile(file.PortalId, file.UniqueId, file.VersionGuid, file.FileName, file.Extension, file.Size, file.Width, file.Height, file.ContentType, file.Folder, file.FolderId, UserController.GetCurrentUserInfo.UserID, file.SHA1Hash)
             DataCache.RemoveCache("GetFileById" & FileId.ToString)
-
-            If ClearCache Then
-                GetAllFilesRemoveCache()
-            End If
             Return FileId
-
         End Function
+
+        Public Sub UpdateFile(ByVal file As FileInfo)
+            DataProvider.Instance().UpdateFile(file.FileId, file.VersionGuid, file.FileName, file.Extension, file.Size, file.Width, file.Height, file.ContentType, file.Folder, file.FolderId, UserController.GetCurrentUserInfo.UserID, file.SHA1Hash)
+            DataCache.RemoveCache("GetFileById" & file.FileId.ToString)
+        End Sub
 
         Public Sub ClearFileContent(ByVal FileId As Integer)
             DataProvider.Instance().UpdateFileContent(FileId, Nothing)
+            UpdateFileVersion(FileId)
         End Sub
 
         Public Function ConvertFilePathToFileId(ByVal FilePath As String, ByVal PortalID As Integer) As Integer
@@ -169,6 +173,12 @@ Namespace DotNetNuke.Services.FileSystem
 
         End Function
 
+        Public Function GetFileByUniqueID(ByVal UniqueId As Guid) As FileInfo
+            Dim objFile As FileInfo
+            objFile = CType(CBO.FillObject(DataProvider.Instance().GetFileByUniqueID(UniqueId), GetType(FileInfo)), FileInfo)
+            Return objFile
+        End Function
+
         Public Function GetFileContent(ByVal FileId As Integer, ByVal PortalId As Integer) As Byte()
             Dim objContent() As Byte = Nothing
             Dim dr As IDataReader = Nothing
@@ -189,29 +199,75 @@ Namespace DotNetNuke.Services.FileSystem
             Return DataProvider.Instance().GetFiles(PortalId, FolderID)
         End Function
 
-        Public Sub UpdateFile(ByVal FileId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal DestinationFolder As String, ByVal FolderID As Integer)
-            DataProvider.Instance().UpdateFile(FileId, FileName, Extension, Size, Width, Height, ContentType, FileSystemUtils.FormatFolderPath(DestinationFolder), FolderID)
-
-            DataCache.RemoveCache("GetFileById" & FileId.ToString)
-        End Sub
-
         Public Sub UpdateFileContent(ByVal FileId As Integer, ByVal Content As Stream)
-            Dim objBinaryReader As BinaryReader = New BinaryReader(Content)
-            Dim objContent() As Byte = objBinaryReader.ReadBytes(CType(Content.Length, Integer))
-            objBinaryReader.Close()
-            Content.Close()
-
-            DataProvider.Instance().UpdateFileContent(FileId, objContent)
+            If Content IsNot Stream.Null Then
+                Dim objBinaryReader As BinaryReader = New BinaryReader(Content)
+                Dim objContent() As Byte = objBinaryReader.ReadBytes(CType(Content.Length, Integer))
+                objBinaryReader.Close()
+                Content.Close()
+                DataProvider.Instance().UpdateFileContent(FileId, objContent)
+            Else
+                DataProvider.Instance().UpdateFileContent(FileId, Nothing)
+            End If
+            
+            UpdateFileVersion(FileId)
         End Sub
 
         Public Sub UpdateFileContent(ByVal FileId As Integer, ByVal Content() As Byte)
             DataProvider.Instance().UpdateFileContent(FileId, Content)
+            UpdateFileVersion(FileId)
         End Sub
 
+        Public Shared Function SerializeFile(ByVal xmlFile As XmlDocument, ByVal objFile As FileInfo) As XmlNode
+            Dim nodeTab As XmlNode
+
+            CBO.SerializeObject(objFile, xmlFile)
+
+            nodeTab = xmlFile.SelectSingleNode("file")
+            nodeTab.Attributes.Remove(nodeTab.Attributes.ItemOf("xmlns:xsd"))
+            nodeTab.Attributes.Remove(nodeTab.Attributes.ItemOf("xmlns:xsi"))
+
+            Return nodeTab
+        End Function
+
+        Public Shared Function DeserializeFile(ByVal nodeFile As XmlNode, ByVal portalId As Integer, ByVal folderId As Integer) As FileInfo
+            Dim fileCtrl As New FileController
+            Dim objFile As New FileInfo
+
+            Dim node As XmlNode = nodeFile.SelectSingleNode("file")
+
+            objFile.UniqueId = New Guid(XmlUtils.GetNodeValue(node, "uniqueid"))
+            objFile.VersionGuid = New Guid(XmlUtils.GetNodeValue(node, "versionguid"))
+            objFile.PortalId = portalId
+            objFile.FileName = XmlUtils.GetNodeValue(node, "filename")
+            objFile.Folder = XmlUtils.GetNodeValue(node, "folder")
+            objFile.FolderId = folderId
+            objFile.ContentType = XmlUtils.GetNodeValue(node, "contenttype")
+            objFile.Extension = XmlUtils.GetNodeValue(node, "extension")
+            objFile.StorageLocation = XmlUtils.GetNodeValueInt(node, "storagelocation")
+            objFile.IsCached = XmlUtils.GetNodeValueBoolean(node, "iscached", False)
+            objFile.Size = XmlUtils.GetNodeValueInt(node, "size", Null.NullInteger)
+            objFile.Width = XmlUtils.GetNodeValueInt(node, "width", Null.NullInteger)
+            objFile.Height = XmlUtils.GetNodeValueInt(node, "height", Null.NullInteger)
+
+            ' create/update file
+            Dim objFileOriginal As FileInfo = fileCtrl.GetFileByUniqueID(objFile.UniqueId)
+            If objFileOriginal Is Nothing Then
+                objFile.FileId = fileCtrl.AddFile(objFile)
+            Else
+                objFile.FileId = objFileOriginal.FileId
+                fileCtrl.UpdateFile(objFile)
+                objFile.FileId = fileCtrl.GetFileByUniqueID(objFile.UniqueId).FileId
+            End If
+
+            Return objFile
+        End Function
+
+#End Region
 
 #Region "Obsolete Methods"
 
-        <Obsolete("This function has been replaced by ???")> _
+        <Obsolete("This function has been replaced by AddFile(ByVal file As FileInfo)")> _
         Public Function AddFile(ByVal file As FileInfo, ByVal FolderPath As String) As Integer
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(file.PortalId, FolderPath, False)
@@ -220,18 +276,50 @@ Namespace DotNetNuke.Services.FileSystem
             Return AddFile(file)
         End Function
 
-        <Obsolete("This function has been replaced by AddFile(PortalId, FileName, Extension, Size, Width, Height, ContentType, FolderPath, FolderID, ClearCache)")> _
+        <Obsolete("This function has been replaced by AddFile(ByVal file As FileInfo)")> _
         Public Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal FolderPath As String) As Integer
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, FolderPath, False)
-            Return AddFile(PortalId, FileName, Extension, Size, Width, Height, ContentType, FolderPath, objFolder.FolderID, True)
+            Dim objFile As New FileInfo
+
+            objFile.UniqueId = Guid.NewGuid
+            objFile.VersionGuid = Guid.NewGuid
+
+            objFile.PortalId = PortalId
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = FileSystemUtils.FormatFolderPath(FolderPath)
+            objFile.FolderId = objFolder.FolderID
+            objFile.IsCached = True
+
+            Return AddFile(objFile)
         End Function
 
-        <Obsolete("This function has been replaced by AddFile(PortalId, FileName, Extension, Size, Width, Height, ContentType, FolderPath, FolderID, ClearCache)")> _
+        <Obsolete("This function has been replaced by AddFile(ByVal file As FileInfo)")> _
         Public Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal FolderPath As String, ByVal ClearCache As Boolean) As Integer
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, FolderPath, False)
-            Return AddFile(PortalId, FileName, Extension, Size, Width, Height, ContentType, FolderPath, objFolder.FolderID, ClearCache)
+            Dim objFile As New FileInfo
+
+            objFile.UniqueId = Guid.NewGuid
+            objFile.VersionGuid = Guid.NewGuid
+
+            objFile.PortalId = PortalId
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = FileSystemUtils.FormatFolderPath(FolderPath)
+            objFile.FolderId = objFolder.FolderID
+            objFile.IsCached = ClearCache
+
+            Return AddFile(objFile)
         End Function
 
         <Obsolete("This function has been replaced by DeleteFile(PortalId, FileName, FolderID, ClearCache)")> _
@@ -291,34 +379,103 @@ Namespace DotNetNuke.Services.FileSystem
             Return CBO.FillCollection(GetFiles(PortalId, objFolder.FolderID), GetType(FileInfo))
         End Function
 
-        <Obsolete("This function has been replaced by UpdateFile(FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, FolderID)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by UpdateFile(ByVal file As FileInfo)")> _
         Public Sub UpdateFile(ByVal PortalId As Integer, ByVal OriginalFileName As String, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal SourceFolder As String, ByVal DestinationFolder As String)
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, DestinationFolder, False)
             Dim objFile As FileInfo = GetFile(OriginalFileName, PortalId, objFolder.FolderID)
 
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = DestinationFolder
+
             If Not objFile Is Nothing Then
-                UpdateFile(objFile.FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, objFolder.FolderID)
+                UpdateFile(objFile)
             End If
         End Sub
 
-        <Obsolete("This function has been replaced by UpdateFile(FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, FolderID)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by UpdateFile(ByVal file As FileInfo)")> _
         Public Sub UpdateFile(ByVal PortalId As Integer, ByVal OriginalFileName As String, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal SourceFolder As String, ByVal DestinationFolder As String, ByVal ClearCache As Boolean)
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, DestinationFolder, False)
             Dim objFile As FileInfo = GetFile(OriginalFileName, PortalId, objFolder.FolderID)
 
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = DestinationFolder
+
             If Not objFile Is Nothing Then
-                UpdateFile(objFile.FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, objFolder.FolderID)
+                UpdateFile(objFile)
             End If
         End Sub
 
-        <Obsolete("This function has been replaced by UpdateFile(FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, FolderID)")> _
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by UpdateFile(ByVal file As FileInfo)")> _
         Public Sub UpdateFile(ByVal PortalId As Integer, ByVal OriginalFileName As String, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal SourceFolder As String, ByVal DestinationFolder As String, ByVal FolderID As Integer, ByVal ClearCache As Boolean)
             Dim objFile As FileInfo = GetFile(OriginalFileName, PortalId, FolderID)
+
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = DestinationFolder
+            objFile.FolderId = FolderID
+
             If Not objFile Is Nothing Then
-                UpdateFile(objFile.FileId, FileName, Extension, Size, Width, Height, ContentType, DestinationFolder, FolderID)
+                UpdateFile(objFile)
             End If
+        End Sub
+
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by AddFile(ByVal file As FileInfo)")> _
+        Public Function AddFile(ByVal PortalId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal FolderPath As String, ByVal FolderID As Integer, ByVal ClearCache As Boolean) As Integer
+            Dim objFile As New FileInfo
+
+            objFile.UniqueId = Guid.NewGuid
+            objFile.VersionGuid = Guid.NewGuid
+
+            objFile.PortalId = PortalId
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = FileSystemUtils.FormatFolderPath(FolderPath)
+            objFile.FolderId = FolderID
+
+            If ClearCache Then
+                GetAllFilesRemoveCache()
+            End If
+
+            Return AddFile(objFile)
+        End Function
+
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by UpdateFile(ByVal file As FileInfo)")> _
+        Public Sub UpdateFile(ByVal FileId As Integer, ByVal FileName As String, ByVal Extension As String, ByVal Size As Long, ByVal Width As Integer, ByVal Height As Integer, ByVal ContentType As String, ByVal DestinationFolder As String, ByVal FolderID As Integer)
+            Dim objFile As New FileInfo
+
+            objFile.FileId = FileId
+            objFile.VersionGuid = Guid.NewGuid
+
+            objFile.FileName = FileName
+            objFile.Extension = Extension
+            objFile.Size = CType(Size, Integer)
+            objFile.Width = Width
+            objFile.Height = Height
+            objFile.ContentType = ContentType
+            objFile.Folder = FileSystemUtils.FormatFolderPath(DestinationFolder)
+            objFile.FolderId = FolderID
+
+            UpdateFile(objFile)
         End Sub
 
 #End Region

@@ -1,5 +1,7 @@
 ﻿.le_label {width:200px; float:left}
-.le_newline {clear:both; padding-bottom:4px}
+.le_control { float:right }
+.le_newline {clear:both; padding-bottom:8px}
 .le_languages {min-width:200px}
 .le_changesPending {width: 100%;height: 20px;padding:10px;background-color: #FFFF99;}
+.le_languages {vertical-align: top; }
 .Pending {border-style: solid; border-color: Red;}

@@ -20,6 +20,7 @@
 
 Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Security.Membership
 
@@ -50,13 +51,13 @@ Namespace DotNetNuke.Security.Membership
         '''     [cnurse]	03/02/2006	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <SortOrder(0), Category("Password")> Public Shared Property PasswordExpiry() As Integer
+        <SortOrder(0), Category("Password")> _
+        Public Shared Property PasswordExpiry() As Integer
             Get
                 Return Host.PasswordExpiry
             End Get
             Set(ByVal Value As Integer)
-                Dim objHostSettings As New Entities.Host.HostSettingsController
-                objHostSettings.UpdateHostSetting("PasswordExpiry", Value.ToString)
+                HostController.Instance.Update("PasswordExpiry", Value.ToString)
             End Set
         End Property
 
@@ -70,13 +71,13 @@ Namespace DotNetNuke.Security.Membership
         '''     [cnurse]	03/02/2006	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <SortOrder(1), Category("Password")> Public Shared Property PasswordExpiryReminder() As Integer
+        <SortOrder(1), Category("Password")> _
+        Public Shared Property PasswordExpiryReminder() As Integer
             Get
                 Return Host.PasswordExpiryReminder
             End Get
             Set(ByVal Value As Integer)
-                Dim objHostSettings As New Entities.Host.HostSettingsController
-                objHostSettings.UpdateHostSetting("PasswordExpiryReminder ", Value.ToString)
+                HostController.Instance.Update("PasswordExpiryReminder ", Value.ToString)
             End Set
         End Property
 

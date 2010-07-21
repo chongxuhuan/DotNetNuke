@@ -80,7 +80,7 @@ Namespace DotNetNuke.Services.Installer.Writers
         ''' -----------------------------------------------------------------------------
         Public Sub New(ByVal languagePack As LanguagePackInfo, ByVal basePath As String, ByVal files As Dictionary(Of String, InstallFile), ByVal package As PackageInfo)
             MyBase.New(basePath, files, package)
-            _Language = Localization.Localization.GetLocaleByID(languagePack.LanguageID)
+            _Language = LocaleController.Instance().GetLocale(languagePack.LanguageID)
             _PackageType = languagePack.PackageType
             _DependentPackageID = languagePack.DependentPackageID
         End Sub

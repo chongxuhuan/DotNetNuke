@@ -211,6 +211,14 @@
                             </tr>
                             <tr>
                                 <td class="SubHead" style="width: 250px">
+                                    <dnn:Label ID="plUseCustomModuleCssClass" ControlName="chkUseCustomModuleCssClass" runat="server" />
+                                </td>
+                                <td valign="top">
+                                    <asp:CheckBox ID="chkUseCustomModuleCssClass" CssClass="NormalTextBox" runat="server" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="SubHead" style="width: 250px">
                                     <dnn:Label ID="plHostSkin" Text="Host Skin:" ControlName="ctlHostSkin$cboSkin" runat="server" />
                                 </td>
                                 <td valign="top">
@@ -830,15 +838,6 @@
                                 </td>
                                 <td valign="top">
                                     <asp:CheckBox ID="chkAutoSync" CssClass="NormalTextBox" runat="server" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="SubHead" style="width: 250px">
-                                    <dnn:Label ID="plContentLocalization" Text="Enable Content Localization?" ControlName="chkContentLocalization"
-                                        runat="server" />
-                                </td>
-                                <td valign="top">
-                                    <asp:CheckBox ID="chkContentLocalization" CssClass="NormalTextBox" runat="server" />
                                 </td>
                             </tr>
                             <tr>

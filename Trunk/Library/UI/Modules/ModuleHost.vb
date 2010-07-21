@@ -335,7 +335,7 @@ Namespace DotNetNuke.UI.Modules
             Try
                 Dim cache As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(_ModuleConfiguration.GetEffectiveCacheMethod)
                 Dim varyBy As New System.Collections.Generic.SortedDictionary(Of String, String)
-                varyBy.Add("locale", System.Threading.Thread.CurrentThread.CurrentCulture.ToString)
+                varyBy.Add("locale", System.Threading.Thread.CurrentThread.CurrentUICulture.ToString)
                 Dim cacheKey As String = cache.GenerateCacheKey(_ModuleConfiguration.TabModuleID, varyBy)
                 Dim cachedBytes As Byte() = ModuleCache.ModuleCachingProvider.Instance(_ModuleConfiguration.GetEffectiveCacheMethod).GetModule(_ModuleConfiguration.TabModuleID, cacheKey)
                 If Not cachedBytes Is Nothing AndAlso cachedBytes.Length > 0 Then
@@ -402,11 +402,13 @@ Namespace DotNetNuke.UI.Modules
         Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
             MyBase.OnPreRender(e)
 
-            Dim strModuleName As String = Me.ModuleControl.ModuleContext.Configuration.DesktopModule.ModuleName
-            If Not strModuleName = Nothing Then
-                strModuleName = strModuleName.Replace(".", "_")
+            If Host.EnableCustomModuleCssClass Then
+                Dim strModuleName As String = Me.ModuleControl.ModuleContext.Configuration.DesktopModule.ModuleName
+                If Not strModuleName = Nothing Then
+                    strModuleName = CleanName(strModuleName)
+                End If
+                Me.Attributes.Add("class", String.Format("Mod{0}C", strModuleName))
             End If
-            Me.Attributes.Add("class", strModuleName + "Content")
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -434,7 +436,7 @@ Namespace DotNetNuke.UI.Modules
                         Dim moduleContent As Byte() = System.Text.Encoding.UTF8.GetBytes(_cachedOutput)
                         Dim cache As ModuleCache.ModuleCachingProvider = ModuleCache.ModuleCachingProvider.Instance(_ModuleConfiguration.GetEffectiveCacheMethod)
                         Dim varyBy As New System.Collections.Generic.SortedDictionary(Of String, String)
-                        varyBy.Add("locale", System.Threading.Thread.CurrentThread.CurrentCulture.ToString)
+                        varyBy.Add("locale", System.Threading.Thread.CurrentThread.CurrentUICulture.ToString)
                         Dim cacheKey As String = cache.GenerateCacheKey(_ModuleConfiguration.TabModuleID, varyBy)
                         cache.SetModule(_ModuleConfiguration.TabModuleID, cacheKey, New TimeSpan(0, 0, _ModuleConfiguration.CacheTime), moduleContent)
                     End If

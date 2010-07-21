@@ -120,58 +120,136 @@
   <data name="plEnabled.Text" xml:space="preserve">
     <value>Enabled</value>
   </data>
-  <data name="EnglishName.Text" xml:space="preserve">
-    <value>English Name</value>
-  </data>
   <data name="plLanguage.Text" xml:space="preserve">
     <value>Language</value>
   </data>
-  <data name="lblViewType.Text" xml:space="preserve">
+  <data name="viewTypeLabel.Text" xml:space="preserve">
     <value>Display type:</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;P&gt;A LanguageEnabler module</value>
   </data>
-  <data name="NativeName.Text" xml:space="preserve">
-    <value>Native Name</value>
-  </data>
-  <data name="PortalDefault.Text" xml:space="preserve">
-    <value>&lt;em&gt;[Portal Default Language (cannot disable)]&lt;/em&gt;</value>
+  <data name="PortalDefaultEnabled.Text" xml:space="preserve">
+    <value>- &lt;em&gt;The default site language cannot be disabled&lt;/em&gt;</value>
   </data>
   <data name="Fallback.Text" xml:space="preserve">
     <value>Fallback language</value>
   </data>
-  <data name="lblSiteDefault.Help" xml:space="preserve">
-    <value>You can select the default language for the site here. If the language is not enabled yet, it will be enabled automatically.</value>
+  <data name="siteDefaultLabel.Help" xml:space="preserve">
+    <value>You can select the default language for the site here. If the language is not enabled yet, it will be enabled automatically.  Also, once Content Localization is enabled this can no longer be changed.</value>
   </data>
-  <data name="lblSiteDefault.Text" xml:space="preserve">
-    <value>Site default language</value>
+  <data name="siteDefaultLabel.Text" xml:space="preserve">
+    <value>Site Default:</value>
   </data>
-  <data name="lblViewType.Help" xml:space="preserve">
+  <data name="viewTypeLabel.Help" xml:space="preserve">
     <value>Select the display type for languages on this page</value>
   </data>
   <data name="plEnabled.Help" xml:space="preserve">
     <value>Below you can enable or disable languages for this site</value>
   </data>
-  <data name="plHost.Help" xml:space="preserve">
+  <data name="Host.Help" xml:space="preserve">
     <value>Edit resourcekeys for the host installation</value>
   </data>
-  <data name="plHost.Text" xml:space="preserve">
+  <data name="Host.Text" xml:space="preserve">
     <value>Host</value>
   </data>
   <data name="plLanguage.Help" xml:space="preserve">
     <value>This is a list of all available &lt;br /&gt;languages in the installation.</value>
   </data>
-  <data name="plPortal.Help" xml:space="preserve">
+  <data name="Portal.Help" xml:space="preserve">
     <value>Edit resourcekeys for this portal</value>
   </data>
-  <data name="plPortal.Text" xml:space="preserve">
-    <value>Portal</value>
+  <data name="Portal.Text" xml:space="preserve">
+    <value>Site</value>
   </data>
-  <data name="plSystem.Help" xml:space="preserve">
+  <data name="System.Help" xml:space="preserve">
     <value>Edit system resourcekeys</value>
   </data>
-  <data name="plSystem.Text" xml:space="preserve">
+  <data name="System.Text" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="Culture.Header" xml:space="preserve">
+    <value>Culture</value>
+  </data>
+  <data name="Published.Header" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="Enabled.Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Static.Header" xml:space="preserve">
+    <value>Static Resources</value>
+  </data>
+  <data name="Content.Header" xml:space="preserve">
+    <value>Content Localization</value>
+  </data>
+  <data name="Edit.Text" xml:space="preserve">
+    <value>Edit this language</value>
+  </data>
+  <data name="Available.Text" xml:space="preserve">
+    <value>Available Languages</value>
+  </data>
+  <data name="AddLanguage.Text" xml:space="preserve">
+    <value>Add New Language</value>
+  </data>
+  <data name="Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="CreateLocalizedPages.Text" xml:space="preserve">
+    <value>Create Pages in this Language</value>
+  </data>
+  <data name="CreateLanguage.Text" xml:space="preserve">
+    <value>Create Language Pack</value>
+  </data>
+  <data name="EnabledPublishedMessage.Text" xml:space="preserve">
+    <value>&lt;em&gt;A language must be enabled before it can be published and it must be unpublished before it can be disabled&lt;/em&gt;</value>
+  </data>
+  <data name="EnableLocalization.Text" xml:space="preserve">
+    <value>Enable Localized Content</value>
+  </data>
+  <data name="InstallLanguage.Text" xml:space="preserve">
+    <value>Install Language Pack</value>
+  </data>
+  <data name="PortalDefaultPublished.Text" xml:space="preserve">
+    <value>- &lt;em&gt;The default site language cannot be unpublished or disabled&lt;/em&gt;</value>
+  </data>
+  <data name="Settings.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TranslationStatus.Text" xml:space="preserve">
+    <value>Click the link to go to the Translation Summary Page for this language</value>
+  </data>
+  <data name="Verify.Text" xml:space="preserve">
+    <value>Verify Language Resource Files</value>
+  </data>
+  <data name="LanguageSettings.Text" xml:space="preserve">
+    <value>Language Settings</value>
+  </data>
+  <data name="TimeZones.Text" xml:space="preserve">
+    <value>Time Zone Editor</value>
+  </data>
+  <data name="Localize.Confirm" xml:space="preserve">
+    <value>You are about to create localized copies of all the pages in this site for the "{0}" culture.  These pages will share content with the same page in the default culture - "{1}" until the modules have been localized.</value>
+  </data>
+  <data name="LocalizePages.Text" xml:space="preserve">
+    <value>No of Pages</value>
+  </data>
+  <data name="TranslatedPages.Text" xml:space="preserve">
+    <value>Translated Pages</value>
+  </data>
+  <data name="TranslationSummary.Text" xml:space="preserve">
+    <value>Translation Status</value>
+  </data>
+  <data name="HostOnly.Text" xml:space="preserve">
+    <value>Host User Required</value>
+  </data>
+  <data name="HostOnlyMessage.Text" xml:space="preserve">
+    <value>DotNetNuke's security model requires that host users must create new languages.  As a site administrator you can manage existing languages.  If you would like more languages please contact the Host User for your site.</value>
+  </data>
+  <data name="systemDefaultLabel.Help" xml:space="preserve">
+    <value>The SystemDefault Language is language that the application uses if no other language is available.  It is the ultimate fallback.</value>
+  </data>
+  <data name="systemDefaultLabel.Text" xml:space="preserve">
+    <value>System Default:</value>
   </data>
 </root>

@@ -3,14 +3,21 @@
 <%@ Register TagPrefix="dnn" TagName="TextEditor" Src="~/controls/TextEditor.ascx"%>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+
+<dnn:sectionhead id="dshMaster" cssclass="Head" runat="server" section="tblMaster" resourcekey="dshMaster" includerule="True" isexpanded="True" />
+<table id="tblMaster" cellspacing="2" cellpadding="2" summary="Master Design Table" border="0" runat="server">
+    <tr>
+        <td colspan="2"><asp:label id="lblMaster" runat="server"/></td>
+    </tr>
+</table>
  
-<table id="tblEdit" cellspacing="2" cellpadding="2" summary="Review Design Table" border="0" runat="server">
+<table id="tblEdit" cellspacing="2" cellpadding="2" summary="Review Design Table" border="0" runat="server" width ="100%">
     <tr valign="bottom">
         <td>
             <p>
-            <table width="550" cellspacing="2" cellpadding="2" summary="Edit HTML Design Table" border="0">
+            <table width="100%" cellspacing="2" cellpadding="2" summary="Edit HTML Design Table" border="0">
                 <tr>
-                    <td colspan="2" valign="top"><dnn:texteditor id="txtContent" runat="server" height="400" width="660"/></td>
+                    <td colspan="2" valign="top"><dnn:texteditor id="txtContent" runat="server" height="400" width="100%"/></td>
                 </tr>
                 <tr id="rowPublish" runat="server">
                     <td class="SubHead" width="150" valign="top"><dnn:label id="plPublish" runat="server" controlname="chkPublish" text="Publish" suffix="?"/></td>

@@ -59,23 +59,21 @@ Namespace DotNetNuke.Entities.Profile
         Private _ValidationExpression As String
         Private _ViewOrder As Integer
         Private _Visible As Boolean
+        Private _DefaultVisibility As UserVisibilityMode = UserVisibilityMode.AdminOnly
         Private _Visibility As UserVisibilityMode = UserVisibilityMode.AdminOnly
 
 #End Region
 
-#Region "Contrusctors"
+#Region "Constructors"
 
         Public Sub New()
             'Get the default PortalSettings
             Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings()
             Me.PortalId = _Settings.PortalId
-
-            Initialize()
         End Sub
 
         Public Sub New(ByVal portalId As Integer)
             Me.PortalId = portalId
-            Initialize()
         End Sub
 
 #End Region
@@ -332,6 +330,24 @@ Namespace DotNetNuke.Entities.Profile
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Gets and sets the Default Visibility of the Profile Property
+        ''' </summary>
+        ''' <history>
+        '''     [sbwalker]	06/28/2010	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        <SortOrder(9)> <XmlIgnore()> Public Property DefaultVisibility() As UserVisibilityMode
+            Get
+                Return _DefaultVisibility
+            End Get
+            Set(ByVal Value As UserVisibilityMode)
+                If _DefaultVisibility <> Value Then _IsDirty = True
+                _DefaultVisibility = Value
+            End Set
+        End Property
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Gets and sets whether the property is visible
         ''' </summary>
         ''' <history>
@@ -347,19 +363,6 @@ Namespace DotNetNuke.Entities.Profile
                 _Visibility = Value
             End Set
         End Property
-
-#End Region
-
-#Region "Private Methods"
-
-        Private Sub Initialize()
-            'Set the default Visibility
-            Select Case Null.SetNullInteger(UserModuleBase.GetSetting(PortalId, "Profile_DefaultVisibility"))
-                Case 0 : _Visibility = UserVisibilityMode.AllUsers
-                Case 1 : _Visibility = UserVisibilityMode.MembersOnly
-                Case 2, Null.NullInteger : _Visibility = UserVisibilityMode.AdminOnly
-            End Select
-        End Sub
 
 #End Region
 
@@ -391,6 +394,7 @@ Namespace DotNetNuke.Entities.Profile
             objClone.ValidationExpression = Me.ValidationExpression
             objClone.ViewOrder = Me.ViewOrder
             objClone.Visibility = Me.Visibility
+            objClone.DefaultVisibility = Me.DefaultVisibility
             objClone.Visible = Me.Visible
             objClone.ClearIsDirty()
 

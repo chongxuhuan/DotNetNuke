@@ -24,6 +24,7 @@ Imports System.Collections.Specialized
 Imports System.Xml
 Imports System.Xml.XPath
 
+Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Services.Tokens
 Imports DotNetNuke.UI.Modules
 Imports DotNetNuke.Entities.Host
@@ -164,6 +165,12 @@ Namespace DotNetNuke.Services.Localization
             End Get
         End Property
 
+        Public ReadOnly Property CurrentUICulture() As String
+            Get
+                Return System.Threading.Thread.CurrentThread.CurrentUICulture.ToString    ' _CurrentCulture
+            End Get
+        End Property
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' The KeyName property returns and caches the name of the key attribute used to lookup resources.
@@ -216,29 +223,6 @@ Namespace DotNetNuke.Services.Localization
 #End Region
 
 #Region "Private Shared Methods"
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' GetLocalesCallBack gets a Dictionary of Locales by 
-        ''' Portal from the the Database.
-        ''' </summary>
-        ''' <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
-        ''' needed for the database call</param>
-        ''' <history>
-        ''' 	[cnurse]	01/29/2008   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Shared Function GetLocalesCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
-
-            Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
-            Dim locales As Dictionary(Of String, Locale)
-            If portalID > Null.NullInteger Then
-                locales = CBO.FillDictionary(Of String, Locale)("CultureCode", DataProvider.Instance().GetLanguagesByPortal(portalID), New Dictionary(Of String, Locale))
-            Else
-                locales = CBO.FillDictionary(Of String, Locale)("CultureCode", DataProvider.Instance().GetLanguages(), New Dictionary(Of String, Locale))
-            End If
-            Return locales
-        End Function
 
         Private Shared Function GetResourceFileLookupDictionary(ByVal cacheItemArgs As CacheItemArgs) As Object
             Return New Dictionary(Of String, Boolean)
@@ -653,7 +637,7 @@ Namespace DotNetNuke.Services.Localization
 
             'Set the userLanguage if not passed in
             If String.IsNullOrEmpty(userLanguage) Then
-                userLanguage = Thread.CurrentThread.CurrentCulture.ToString()
+                userLanguage = Thread.CurrentThread.CurrentUICulture.ToString()
             End If
 
             'Default the userLanguage to the defaultLanguage if not set
@@ -662,7 +646,7 @@ Namespace DotNetNuke.Services.Localization
             End If
 
             'Get Fallback language
-            Dim userLocale As Locale = GetLocale(userLanguage)
+            Dim userLocale As Locale = LocaleController.Instance().GetLocale(userLanguage)
             If userLocale IsNot Nothing AndAlso Not String.IsNullOrEmpty(userLocale.Fallback) Then
                 fallbackLanguage = userLocale.Fallback
             End If
@@ -700,27 +684,23 @@ Namespace DotNetNuke.Services.Localization
 #Region "Public Methods"
 
         Public Function GetFixedCurrency(ByVal Expression As Decimal, ByVal Culture As String, Optional ByVal NumDigitsAfterDecimal As Integer = -1, Optional ByVal IncludeLeadingDigit As Microsoft.VisualBasic.TriState = TriState.UseDefault, Optional ByVal UseParensForNegativeNumbers As Microsoft.VisualBasic.TriState = TriState.UseDefault, Optional ByVal GroupDigits As Microsoft.VisualBasic.TriState = TriState.UseDefault) As String
-            Dim oldCurrentCulture As String = CurrentCulture
+            Dim oldCurrentCulture As String = CurrentUICulture
             Dim newCulture As System.Globalization.CultureInfo = New System.Globalization.CultureInfo(Culture)
             System.Threading.Thread.CurrentThread.CurrentUICulture = newCulture
-            System.Threading.Thread.CurrentThread.CurrentCulture = newCulture
             Dim currencyStr As String = FormatCurrency(Expression, NumDigitsAfterDecimal, IncludeLeadingDigit, UseParensForNegativeNumbers, GroupDigits)
             Dim oldCulture As System.Globalization.CultureInfo = New System.Globalization.CultureInfo(oldCurrentCulture)
             System.Threading.Thread.CurrentThread.CurrentUICulture = oldCulture
-            System.Threading.Thread.CurrentThread.CurrentCulture = oldCulture
 
             Return currencyStr
         End Function
 
         Public Function GetFixedDate(ByVal Expression As Date, ByVal Culture As String, Optional ByVal NamedFormat As Microsoft.VisualBasic.DateFormat = DateFormat.GeneralDate, Optional ByVal IncludeLeadingDigit As Microsoft.VisualBasic.TriState = TriState.UseDefault, Optional ByVal UseParensForNegativeNumbers As Microsoft.VisualBasic.TriState = TriState.UseDefault, Optional ByVal GroupDigits As Microsoft.VisualBasic.TriState = TriState.UseDefault) As String
-            Dim oldCurrentCulture As String = CurrentCulture
+            Dim oldCurrentCulture As String = CurrentUICulture
             Dim newCulture As System.Globalization.CultureInfo = New System.Globalization.CultureInfo(Culture)
             System.Threading.Thread.CurrentThread.CurrentUICulture = newCulture
-            System.Threading.Thread.CurrentThread.CurrentCulture = newCulture
             Dim dateStr As String = FormatDateTime(Expression, NamedFormat)
             Dim oldCulture As System.Globalization.CultureInfo = New System.Globalization.CultureInfo(oldCurrentCulture)
             System.Threading.Thread.CurrentThread.CurrentUICulture = oldCulture
-            System.Threading.Thread.CurrentThread.CurrentCulture = oldCulture
 
             Return dateStr
         End Function
@@ -730,27 +710,58 @@ Namespace DotNetNuke.Services.Localization
 #Region "Public Shared Methods"
 
         Public Shared Function ActiveLanguagesByPortalID(ByVal portalID As Integer) As Integer
-            'return count of cached object
-            Return Localization.GetLocales(portalID).Count
+            'Default to 1 (maybe called during portal creation before languages are enabled for portal)
+            Dim count As Integer = 1
+            Dim locales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalID)
+            If locales IsNot Nothing Then
+                count = locales.Count
+            End If
+            Return count
         End Function
 
         Public Shared Sub AddLanguageToPortal(ByVal portalID As Integer, ByVal languageID As Integer, ByVal clearCache As Boolean)
-            DataProvider.Instance().AddPortalLanguage(portalID, languageID, UserController.GetCurrentUserInfo.UserID)
+            'We need to add a translator role for the language
+            Dim language As Locale = LocaleController.Instance().GetLocale(languageID)
+            If language IsNot Nothing Then
+                'Create new Translator Role
+                Dim roleController As New RoleController()
+                Dim roleName As String = String.Format("Translator ({0})", language.Code)
+                Dim role As RoleInfo = roleController.GetRoleByName(portalID, roleName)
+
+                If role Is Nothing Then
+                    role = New RoleInfo
+                    role.RoleGroupID = Null.NullInteger
+                    role.PortalID = portalID
+                    role.RoleName = roleName
+                    role.Description = String.Format("A role for {0} translators", language.EnglishName)
+                    roleController.AddRole(role)
+                End If
+            End If
+
+            DataProvider.Instance().AddPortalLanguage(portalID, languageID, False, UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("portalID/languageID", portalID.ToString & "/" & languageID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_CREATED)
 
+            ''check a valid portal record exists for that language
+            'Dim pc As New DotNetNuke.Entities.Portals.PortalController
+            'pc.GetPortal(portalID, language.Code)
+            'Dim p As PortalInfo = pc.GetPortal(portalID, language.Code)
+            'If p Is Nothing Then
+            '    Dim fallback As PortalInfo = pc.GetPortal(portalID, language.Fallback)
+            '    fallback.CultureCode = language.Code
+            'End If
             If clearCache Then
                 DataCache.ClearPortalCache(portalID, False)
             End If
         End Sub
 
         Public Shared Sub AddLanguagesToPortal(ByVal portalID As Integer)
-            For Each language As Locale In GetLocales(Null.NullInteger).Values
+            For Each language As Locale In LocaleController.Instance().GetLocales(Null.NullInteger).Values
                 'Add Portal/Language to PortalLanguages
-                AddLanguageToPortal(portalID, language.LanguageID, False)
+                AddLanguageToPortal(portalID, language.LanguageId, False)
             Next
 
-            DataCache.ClearPortalCache(portalID, True)
+            DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portalID.ToString()))
         End Sub
 
         Public Shared Sub AddLanguageToPortals(ByVal languageID As Integer)
@@ -758,9 +769,9 @@ Namespace DotNetNuke.Services.Localization
             For Each portal As PortalInfo In controller.GetPortals()
                 'Add Portal/Language to PortalLanguages
                 AddLanguageToPortal(portal.PortalID, languageID, False)
-            Next
 
-            DataCache.ClearHostCache(True)
+                DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portal.PortalID.ToString()))
+            Next
         End Sub
 
         Public Shared Sub DeleteLanguage(ByVal language As Locale)
@@ -787,43 +798,11 @@ Namespace DotNetNuke.Services.Localization
             Return String.Format(GetString(key, ExceptionsResourceFile), params)
         End Function
 
-        Public Shared Function GetLocale(ByVal code As String) As Locale
-            Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(Null.NullInteger)
-            Dim language As Locale = Nothing
-
-            If dicLocales IsNot Nothing Then
-                dicLocales.TryGetValue(code, language)
-            End If
-
-            Return language
-        End Function
-
-        Public Shared Function GetLocaleByID(ByVal languageID As Integer) As Locale
-            Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(Null.NullInteger)
-            Dim language As Locale = Nothing
-
-            For Each kvp As KeyValuePair(Of String, Locale) In dicLocales
-                If kvp.Value.LanguageID = languageID Then
-                    language = kvp.Value
-                    Exit For
-                End If
-            Next
-
-            Return language
-        End Function
-
-
-        Public Shared Function GetLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
-
-            Dim locals As New Dictionary(Of String, Locale)()
-
-            If (Not Status = UpgradeStatus.Install) Then
-                Dim cacheKey As String = String.Format(DataCache.LocalesCacheKey, portalID.ToString())
-                locals = CBO.GetCachedObject(Of Dictionary(Of String, Locale))(New CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), AddressOf GetLocalesCallBack, True)
-            End If
-
-            Return locals
-
+        Public Shared Function GetLanguageDisplayMode(ByVal PortalId As Integer) As String
+            Dim _ViewTypePersonalizationKey As String = "ViewType" & PortalId.ToString
+            Dim _ViewType As String = Convert.ToString(Personalization.Personalization.GetProfile("LanguageDisplayMode", _ViewTypePersonalizationKey))
+            If _ViewType = "" Then _ViewType = "NATIVE"
+            Return _ViewType
         End Function
 
         Public Shared Function GetResourceFileName(ByVal resourceFileName As String, ByVal language As String, ByVal mode As String, ByVal portalId As Integer) As String
@@ -853,7 +832,7 @@ Namespace DotNetNuke.Services.Localization
             Dim enabledLocales As Dictionary(Of String, Locale) = Nothing
 
             If Not portalSettings Is Nothing Then
-                enabledLocales = Localization.GetLocales(portalSettings.PortalId)
+                enabledLocales = LocaleController.Instance().GetLocales(portalSettings.PortalId)
             End If
 
             'used as temporary variable to get info about the preferred locale
@@ -861,12 +840,12 @@ Namespace DotNetNuke.Services.Localization
             'used as temporary variable where the language part of the preferred locale will be saved
             Dim preferredLanguage As String = ""
 
-            'first try if a specific language is requested by cookie, querystring, or form
+            'first try if a specific language is requested by cookie form
             If Not (HttpContext.Current Is Nothing) Then
                 Try
-                    preferredLocale = HttpContext.Current.Request("language")
+                    preferredLocale = HttpContext.Current.Request.Cookies("language").Value
                     If preferredLocale <> "" Then
-                        If Services.Localization.Localization.LocaleIsEnabled(preferredLocale) Then
+                        If LocaleController.Instance().IsEnabled(preferredLocale, portalSettings.PortalId) Then
                             pageCulture = New CultureInfo(preferredLocale)
                         Else
                             preferredLanguage = preferredLocale.Split("-"c)(0)
@@ -881,7 +860,7 @@ Namespace DotNetNuke.Services.Localization
                 Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
                 If objUserInfo.UserID <> -1 Then
                     If objUserInfo.Profile.PreferredLocale <> "" Then
-                        If Localization.LocaleIsEnabled(preferredLocale) Then
+                        If LocaleController.Instance().IsEnabled(preferredLocale, portalSettings.PortalId) Then
                             pageCulture = New CultureInfo(objUserInfo.Profile.PreferredLocale)
                         Else
                             If preferredLanguage = "" Then
@@ -900,7 +879,7 @@ Namespace DotNetNuke.Services.Localization
                             For Each userLang As String In HttpContext.Current.Request.UserLanguages
                                 'split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
                                 Dim userlanguage As String = userLang.Split(";"c)(0)
-                                If Localization.LocaleIsEnabled(userlanguage) Then
+                                If LocaleController.Instance().IsEnabled(userlanguage, portalSettings.PortalId) Then
                                     pageCulture = New CultureInfo(userlanguage)
                                 ElseIf userLang.Split(";"c)(0).IndexOf("-") <> -1 Then
                                     'if userLang is neutral we don't need to do this part since
@@ -1479,7 +1458,6 @@ Namespace DotNetNuke.Services.Localization
             Return timeZones
         End Function    'GetTimeZones
 
-
         ''' <summary>
         ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
         ''' based on the languages defined in the supported locales file, for the current portal</para>
@@ -1506,6 +1484,33 @@ Namespace DotNetNuke.Services.Localization
             LoadCultureDropDownList(list, displayType, selectedValue, "", Host)
         End Sub
 
+        Public Shared Function GetLocaleName(ByVal code As String, ByVal displayType As CultureDropDownTypes) As String
+            Dim name As String
+
+            ' Create a CultureInfo class based on culture
+            Dim info As CultureInfo = CultureInfo.CreateSpecificCulture(code)
+
+            ' Based on the display type desired by the user, select the correct property
+            Select Case displayType
+                Case CultureDropDownTypes.EnglishName
+                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName)
+                Case CultureDropDownTypes.Lcid
+                    name = info.LCID.ToString()
+                Case CultureDropDownTypes.Name
+                    name = info.Name
+                Case CultureDropDownTypes.NativeName
+                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName)
+                Case CultureDropDownTypes.TwoLetterIsoCode
+                    name = info.TwoLetterISOLanguageName
+                Case CultureDropDownTypes.ThreeLetterIsoCode
+                    name = info.ThreeLetterISOLanguageName
+                Case Else
+                    name = info.DisplayName
+            End Select
+
+            Return name
+        End Function
+
         ''' <summary>
         ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
         ''' based on the languages defined in the supported locales file</para>
@@ -1522,9 +1527,9 @@ Namespace DotNetNuke.Services.Localization
             Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
             Dim enabledLanguages As Dictionary(Of String, Locale)
             If Host Then
-                enabledLanguages = Localization.GetLocales(Null.NullInteger)
+                enabledLanguages = LocaleController.Instance().GetLocales(Null.NullInteger)
             Else
-                enabledLanguages = Localization.GetLocales(objPortalSettings.PortalId)
+                enabledLanguages = LocaleController.Instance().GetLocales(objPortalSettings.PortalId)
             End If
 
             Dim _cultureListItems() As ListItem = New ListItem(enabledLanguages.Count - 1) {}
@@ -1533,31 +1538,10 @@ Namespace DotNetNuke.Services.Localization
 
             For Each kvp As KeyValuePair(Of String, Locale) In enabledLanguages
                 If kvp.Value.Code <> Filter Then
-                    'skip filtered locale
-                    ' Create a CultureInfo class based on culture
-                    Dim info As CultureInfo = CultureInfo.CreateSpecificCulture(kvp.Value.Code)
-
                     ' Create and initialize a new ListItem
                     Dim item As New ListItem
                     item.Value = kvp.Value.Code
-
-                    ' Based on the display type desired by the user, select the correct property
-                    Select Case displayType
-                        Case CultureDropDownTypes.EnglishName
-                            item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName)
-                        Case CultureDropDownTypes.Lcid
-                            item.Text = info.LCID.ToString()
-                        Case CultureDropDownTypes.Name
-                            item.Text = info.Name
-                        Case CultureDropDownTypes.NativeName
-                            item.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName)
-                        Case CultureDropDownTypes.TwoLetterIsoCode
-                            item.Text = info.TwoLetterISOLanguageName
-                        Case CultureDropDownTypes.ThreeLetterIsoCode
-                            item.Text = info.ThreeLetterISOLanguageName
-                        Case Else
-                            item.Text = info.DisplayName
-                    End Select
+                    item.Text = GetLocaleName(item.Value, displayType)
                     _cultureListItems(intAdded) = item
                     intAdded += 1
                 End If
@@ -1619,40 +1603,6 @@ Namespace DotNetNuke.Services.Localization
             End If
 
         End Sub    'LoadTimeZoneDropDownList
-
-        Public Overloads Shared Function LocaleIsEnabled(ByVal locale As Locale) As Boolean
-            Return LocaleIsEnabled(locale.Code)
-        End Function
-
-        Public Overloads Shared Function LocaleIsEnabled(ByRef localeCode As String) As Boolean
-            Try
-                Dim isEnabled As Boolean = False
-                Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings()
-                Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(_Settings.PortalId)
-
-                If (Not dicLocales.ContainsKey(localeCode)) Then
-                    isEnabled = False
-                ElseIf dicLocales.Item(localeCode) Is Nothing Then
-                    'if localecode is neutral (en, es,...) try to find a locale that has the same language
-                    If localeCode.IndexOf("-") = -1 Then
-                        For Each strLocale As String In dicLocales.Keys
-                            If strLocale.Split("-"c)(0) = localeCode Then
-                                'set the requested _localecode to the full locale
-                                localeCode = strLocale
-                                isEnabled = True
-                                Exit For
-                            End If
-                        Next
-                    End If
-                Else
-                    isEnabled = True
-                End If
-                Return isEnabled
-            Catch ex As Exception
-                'item could not be retrieved  or error
-                Return False
-            End Try
-        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -1797,24 +1747,43 @@ Namespace DotNetNuke.Services.Localization
         End Function
 
         Public Shared Sub RemoveLanguageFromPortal(ByVal portalID As Integer, ByVal languageID As Integer)
+            'Remove Translator Role from Portal
+            Dim language As Locale = LocaleController.Instance().GetLocale(languageID)
+            If language IsNot Nothing Then
+                'Get Translator Role
+                Dim roleController As New RoleController()
+                Dim roleName As String = String.Format("Translator ({0})", language.Code)
+                Dim role As RoleInfo = roleController.GetRoleByName(portalID, roleName)
+
+                If role IsNot Nothing Then
+                    roleController.DeleteRole(role.RoleID, portalID)
+                End If
+            End If
+
             DataProvider.Instance().DeletePortalLanguages(portalID, languageID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("portalID/languageID", portalID.ToString & "/" & languageID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED)
-            DataCache.ClearPortalCache(portalID, False)
+
+            DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portalID.ToString()))
         End Sub
 
         Public Shared Sub RemoveLanguageFromPortals(ByVal languageID As Integer)
             DataProvider.Instance().DeletePortalLanguages(Null.NullInteger, languageID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("languageID", languageID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED)
-            DataCache.ClearHostCache(True)
+
+            Dim controller As New PortalController
+            For Each portal As PortalInfo In controller.GetPortals()
+                DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portal.PortalID.ToString()))
+            Next
         End Sub
 
         Public Shared Sub RemoveLanguagesFromPortal(ByVal portalID As Integer)
             DataProvider.Instance().DeletePortalLanguages(portalID, Null.NullInteger)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("portalID", portalID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED)
-            DataCache.ClearPortalCache(portalID, False)
+
+            DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portalID.ToString()))
         End Sub
 
         Public Shared Sub SaveLanguage(ByVal locale As Locale)
@@ -1827,6 +1796,7 @@ Namespace DotNetNuke.Services.Localization
                 DataProvider.Instance().UpdateLanguage(locale.LanguageID, locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(locale, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_UPDATED)
             End If
+
             DataCache.ClearHostCache(True)
         End Sub
 
@@ -1863,23 +1833,72 @@ Namespace DotNetNuke.Services.Localization
 
 #Region "Obsolete"
 
-        <Obsolete("Deprecated in DNN 5.0. Replaced by GetLocales().")> _
+        <Obsolete("Deprecated in DNN 5.0. Replaced by LocaleController.GetLocales().")> _
         Public Shared Function GetEnabledLocales() As LocaleCollection
             Dim objPortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
             Dim enabledLocales As New LocaleCollection
-            For Each kvp As KeyValuePair(Of String, Locale) In GetLocales(objPortalSettings.PortalId)
+            For Each kvp As KeyValuePair(Of String, Locale) In LocaleController.Instance().GetLocales(objPortalSettings.PortalId)
                 enabledLocales.Add(kvp.Key, kvp.Value)
             Next
             Return enabledLocales
         End Function
 
-        <Obsolete("Deprecated in DNN 5.0. Replaced by GetLocales().")> _
+        <Obsolete("Deprecated in DNN 5.0. Replaced by LocaleController.GetLocales().")> _
         Public Shared Function GetSupportedLocales() As LocaleCollection
             Dim supportedLocales As New LocaleCollection
-            For Each kvp As KeyValuePair(Of String, Locale) In GetLocales(Null.NullInteger)
+            For Each kvp As KeyValuePair(Of String, Locale) In LocaleController.Instance().GetLocales(Null.NullInteger)
                 supportedLocales.Add(kvp.Key, kvp.Value)
             Next
             Return supportedLocales
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocale(code).")> _
+        Public Shared Function GetLocale(ByVal code As String) As Locale
+            Return GetLocale(Null.NullInteger, code)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocale(portalID, code).")> _
+        Public Shared Function GetLocale(ByVal portalID As Integer, ByVal code As String) As Locale
+            Dim dicLocales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalID)
+            Dim language As Locale = Nothing
+
+            If dicLocales IsNot Nothing Then
+                dicLocales.TryGetValue(code, language)
+            End If
+
+            Return language
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocale(languageID).")> _
+        Public Shared Function GetLocaleByID(ByVal languageID As Integer) As Locale
+            Dim dicLocales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(Null.NullInteger)
+            Dim language As Locale = Nothing
+
+            For Each kvp As KeyValuePair(Of String, Locale) In dicLocales
+                If kvp.Value.LanguageId = languageID Then
+                    language = kvp.Value
+                    Exit For
+                End If
+            Next
+
+            Return language
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocales(portalID).")> _
+        Public Shared Function GetLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
+            Return LocaleController.Instance().GetLocales(portalID)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5.  Replcaed by LocaleController.IsEnabled()")> _
+        Public Overloads Shared Function LocaleIsEnabled(ByVal locale As Locale) As Boolean
+            Return LocaleIsEnabled(locale.Code)
+        End Function
+
+        <Obsolete("Deprecated in DNN 5.5.  Replcaed by LocaleController.IsEnabled()")> _
+        Public Overloads Shared Function LocaleIsEnabled(ByRef localeCode As String) As Boolean
+            Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings()
+
+            Return LocaleController.Instance().IsEnabled(localeCode, _Settings.PortalId)
         End Function
 
         <Obsolete("Deprecated in DNN 5.0. Replaced by LocalizeControlTitle(IModuleControl).")> _

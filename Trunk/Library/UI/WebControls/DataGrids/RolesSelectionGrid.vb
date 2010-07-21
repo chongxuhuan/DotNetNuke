@@ -318,7 +318,7 @@ Namespace DotNetNuke.UI.WebControls
             Dim textCol As New BoundColumn
             textCol.HeaderText = "&nbsp;"
             textCol.DataField = "RoleName"
-            textCol.ItemStyle.Width = Unit.Parse("100px")
+            textCol.ItemStyle.Width = Unit.Parse("150px")
             dgRoleSelection.Columns.Add(textCol)
 
             Dim idCol As New BoundColumn

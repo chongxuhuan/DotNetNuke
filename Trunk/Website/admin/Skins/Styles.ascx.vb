@@ -33,6 +33,7 @@ Namespace DotNetNuke.UI.Skins.Controls
         Private _name As String
         Private _src As String
         Private _useSkinPath As Boolean = True
+        Private _media As String
 #End Region
 
 #Region "Properties"
@@ -81,6 +82,16 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Set
         End Property
 
+        ' NWS: add support for "media" attribute
+        Public Property Media() As String
+            Get
+                Return _media
+            End Get
+            Set(ByVal Value As String)
+                _media = Value
+            End Set
+        End Property
+
 #End Region
 
         Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -108,6 +119,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                     objLink.Attributes("rel") = "stylesheet"
                     objLink.Attributes("type") = "text/css"
                     objLink.Href = skinpath + StyleSheet
+                    If Media <> "" Then objLink.Attributes("media") = Media ' NWS: add support for "media" attribute
 
                     If IsFirst Then
                         'Find the first HtmlLink

@@ -26,6 +26,7 @@ Imports System.Xml
 Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke
 Imports System.Collections.Generic
+Imports DotNetNuke.Web.UI.WebControls
 
 Namespace DotNetNuke.Modules.Admin.Languages
 
@@ -43,28 +44,82 @@ Namespace DotNetNuke.Modules.Admin.Languages
     Partial Class ResourceVerifier
         Inherits DotNetNuke.Entities.Modules.PortalModuleBase
 
-#Region "Event Handlers"
+#Region "Private Methods"
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' Verifies all resource files for all currently supported locales
+        ''' Gets all system default resource files
         ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
+        ''' <param name="fileList">List of found resource files</param>
+        ''' <param name="_path">Folder to search at</param>
         ''' <remarks>
-        ''' For each file and locale it will:
-        ''' - check for file existence: the file is localized for each locale
-        ''' - check for missing keys: all keys is default file are in localized versions
-        ''' - check for obsolete keys: all keys is localized versions are in default file
         ''' </remarks>
         ''' <history>
-        ''' 	[VMasanas]	05/11/2004	Created
+        ''' 	[Vicenç]	05/11/2004	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub cmdVerify_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdVerify.Click
+        Private Sub GetResourceFiles(ByVal fileList As SortedList, ByVal _path As String)
+            Dim folders As String() = Directory.GetDirectories(_path)
+            Dim folder As String
+            Dim objFile As IO.FileInfo
+            Dim objFolder As DirectoryInfo
+
+            For Each folder In folders
+                objFolder = New System.IO.DirectoryInfo(folder)
+
+                If objFolder.Name.ToLowerInvariant = Localization.LocalResourceDirectory.ToLowerInvariant Then
+                    ' found local resource folder, add resources
+                    For Each objFile In objFolder.GetFiles("*.ascx.resx")
+                        fileList.Add(objFile.FullName, objFile)
+                    Next
+                    For Each objFile In objFolder.GetFiles("*.aspx.resx")
+                        fileList.Add(objFile.FullName, objFile)
+                    Next
+                    ' add LocalSharedResources if found
+                    If File.Exists(Path.Combine(folder, Localization.LocalSharedResourceFile)) Then
+                        fileList.Add(Path.Combine(folder, Localization.LocalSharedResourceFile), New System.IO.FileInfo(Path.Combine(folder, Localization.LocalSharedResourceFile)))
+                    End If
+                Else
+                    GetResourceFiles(fileList, folder)
+                End If
+            Next
+
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Returns the resource file name for a given locale
+        ''' </summary>
+        ''' <param name="filename">Resource file</param>
+        ''' <param name="language">Locale</param>
+        ''' <returns></returns>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[Vicenç]	05/11/2004	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Function ResourceFile(ByVal filename As String, ByVal language As String) As String
+            Dim resourcefilename As String = filename
+
+            If language <> Localization.SystemLocale Then
+                resourcefilename = resourcefilename.Replace(".resx", "." + language + ".resx")
+            End If
+
+            Return resourcefilename
+
+        End Function
+
+#End Region
+
+#Region "Event Handlers"
+
+        Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
             Try
                 Dim files As New SortedList
-                Dim locales As Dictionary(Of String, Locale) = Localization.GetLocales(Null.NullInteger)
-                Dim shc, shcTop As UI.UserControls.SectionHeadControl
+                Dim locales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(Null.NullInteger)
+                Dim shc As UI.UserControls.SectionHeadControl
 
                 GetResourceFiles(files, Server.MapPath("~\admin"))
                 GetResourceFiles(files, Server.MapPath("~\controls"))
@@ -78,13 +133,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
 
                 For Each locale As Locale In locales.Values
-                    ' SectionHead for Locale
-                    shcTop = CType(LoadControl("~/controls/sectionheadcontrol.ascx"), UI.UserControls.SectionHeadControl)
-                    shcTop.Section = locale.Code
-                    shcTop.IncludeRule = True
-                    shcTop.IsExpanded = True
-                    shcTop.CssClass = "Head"
-                    shcTop.Text = Localization.GetString("Locale", Me.LocalResourceFile) & locale.Code & " (" & locale.Text & ")"
+                    Dim languageLabel As New DnnLanguageLabel
+                    languageLabel.Language = locale.Code
 
                     Dim tableTop As New HtmlTable
                     tableTop.ID = locale.Code
@@ -284,7 +334,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                     rowTop.Cells.Add(cellTop)
                     tableTop.Rows.Add(rowTop)
-                    PlaceHolder1.Controls.Add(shcTop)
+
+                    PlaceHolder1.Controls.Add(languageLabel)
                     PlaceHolder1.Controls.Add(tableTop)
                     PlaceHolder1.Controls.Add(New LiteralControl("<br>"))
 
@@ -303,73 +354,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
             End Try
 
         End Sub
+
 #End Region
 
-#Region "Private Methods"
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Gets all system default resource files
-        ''' </summary>
-        ''' <param name="fileList">List of found resource files</param>
-        ''' <param name="_path">Folder to search at</param>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[Vicenç]	05/11/2004	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub GetResourceFiles(ByVal fileList As SortedList, ByVal _path As String)
-            Dim folders As String() = Directory.GetDirectories(_path)
-            Dim folder As String
-            Dim objFile As IO.FileInfo
-            Dim objFolder As DirectoryInfo
 
-            For Each folder In folders
-                objFolder = New System.IO.DirectoryInfo(folder)
-
-                If objFolder.Name.ToLowerInvariant = Localization.LocalResourceDirectory.ToLowerInvariant Then
-                    ' found local resource folder, add resources
-                    For Each objFile In objFolder.GetFiles("*.ascx.resx")
-                        fileList.Add(objFile.FullName, objFile)
-                    Next
-                    For Each objFile In objFolder.GetFiles("*.aspx.resx")
-                        fileList.Add(objFile.FullName, objFile)
-                    Next
-                    ' add LocalSharedResources if found
-                    If File.Exists(Path.Combine(folder, Localization.LocalSharedResourceFile)) Then
-                        fileList.Add(Path.Combine(folder, Localization.LocalSharedResourceFile), New System.IO.FileInfo(Path.Combine(folder, Localization.LocalSharedResourceFile)))
-                    End If
-                Else
-                    GetResourceFiles(fileList, folder)
-                End If
-            Next
-
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Returns the resource file name for a given locale
-        ''' </summary>
-        ''' <param name="filename">Resource file</param>
-        ''' <param name="language">Locale</param>
-        ''' <returns></returns>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[Vicenç]	05/11/2004	Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function ResourceFile(ByVal filename As String, ByVal language As String) As String
-            Dim resourcefilename As String = filename
-
-            If language <> Localization.SystemLocale Then
-                resourcefilename = resourcefilename.Replace(".resx", "." + language + ".resx")
-            End If
-
-            Return resourcefilename
-
-        End Function
-#End Region
 
     End Class
 

@@ -37,10 +37,10 @@ Namespace DotNetNuke.Services.Localization
         End Sub
 
         Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements System.Collections.IComparer.Compare
-            Select Case _compare
-                Case "English"
+            Select Case _compare.ToUpperInvariant
+                Case "ENGLISH"
                     Return (CType(x, CultureInfo)).EnglishName.CompareTo((CType(y, CultureInfo)).EnglishName)
-                Case "Native"
+                Case "NATIVE"
                     Return (CType(x, CultureInfo)).NativeName.CompareTo((CType(y, CultureInfo)).NativeName)
                 Case Else
                     Return (CType(x, CultureInfo)).Name.CompareTo((CType(y, CultureInfo)).Name)

@@ -19,10 +19,12 @@
 '
 
 Imports DotNetNuke.Entities.Modules
+Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Services.Installer.Packages
 Imports DotNetNuke.UI.WebControls
 Imports System.Collections.Generic
+Imports DotNetNuke.Security.Roles
 
 Namespace DotNetNuke.Modules.Admin.Languages
 
@@ -39,7 +41,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
     Partial Class EditLanguage
         Inherits PortalModuleBase
 
-#Region "Private Methods"
+#Region "Private Members"
 
         Private _Language As Locale
 
@@ -56,21 +58,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
         Protected ReadOnly Property Language() As Locale
             Get
                 If Not IsAddMode Then
-                    _Language = Localization.GetLocale(Request.QueryString("locale"))
-                Else
-                    _Language = New Locale
+                    _Language = LocaleController.Instance().GetLocale(Integer.Parse(Request.QueryString("locale")))
                 End If
                 Return _Language
-            End Get
-        End Property
-
-        Protected ReadOnly Property ReturnUrl() As String
-            Get
-                If Language Is Nothing OrElse String.IsNullOrEmpty(Language.Code) Then
-                    Return NavigateURL()
-                Else
-                    Return NavigateURL("", "Locale=" & Language.Code)
-                End If
             End Get
         End Property
 
@@ -87,29 +77,54 @@ Namespace DotNetNuke.Modules.Admin.Languages
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub BindLanguage()
-            If (Not Me.UserInfo.IsSuperUser) OrElse (Not IsAddMode) Then
-                ctlLanguage.EditMode = UI.WebControls.PropertyEditorMode.View
-            End If
-            If Not Page.IsPostBack AndAlso Not String.IsNullOrEmpty(Language.Code) Then
-                Dim enabledLanguages As Dictionary(Of String, Locale) = Localization.GetLocales(Me.ModuleContext.PortalId)
-                Dim enabledLanguage As Locale = Nothing
-                chkEnabled.Checked = enabledLanguages.TryGetValue(Language.Code, enabledLanguage)
-            End If
+            languageLanguageLabel.Visible = Not Language Is Nothing
+            languageComboBox.Visible = Language Is Nothing
+            languageComboBox.IncludeNoneSpecified = False
+            languageComboBox.HideLanguagesList = LocaleController.Instance().GetLocales(Null.NullInteger)
+            languageComboBox.DataBind()
 
+            fallbackLanguageLabel.Visible = Not Me.UserInfo.IsSuperUser
+            fallBackComboBox.Visible = Me.UserInfo.IsSuperUser
+            fallBackComboBox.IncludeNoneSpecified = True
             If Language IsNot Nothing Then
-                ctlLanguage.LocalResourceFile = LocalResourceFile
-                ctlLanguage.DataSource = Language
-                ctlLanguage.DataBind()
-
-                Dim attributes(-1) As Object
-                ReDim attributes(0)
-                attributes(0) = New LanguagesListTypeAttribute(LanguagesListType.All)
-                fldCode.Editor.CustomAttributes = attributes
-                fldFallback.Editor.CustomAttributes = attributes
+                Dim hideLanguagesList As New Dictionary(Of String, Locale)
+                hideLanguagesList.Add(Language.Code, Language)
+                fallBackComboBox.HideLanguagesList = hideLanguagesList
+            End If
+            fallBackComboBox.DataBind()
+            If Not IsPostBack AndAlso Language IsNot Nothing Then
+                fallbackLanguageLabel.Language = Language.Fallback
+                languageLanguageLabel.Language = Language.Code
+                languageComboBox.SetLanguage(Language.Code)
+                fallBackComboBox.SetLanguage(Language.Fallback)
             End If
 
-            cmdDelete.Visible = (Not IsAddMode AndAlso Language.Code.ToLowerInvariant <> "en-us")
+            If Language Is Nothing Then
+                translatorsRow.Visible = False
+            Else
+                Dim defaultRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", Language.Code), PortalId, "Administrators")
+
+                translatorRoles.SelectedRoleNames = New ArrayList(defaultRoles.Split(";"c))
+
+                translatorsRow.Visible = True
+            End If
+            localizationEnabled.Visible = Not PortalSettings.ContentLocalizationEnabled
+
+            Dim isEnabled As Boolean = Null.NullBoolean
+            If Not IsAddMode Then
+                Dim enabledLanguage As Locale = Nothing
+                isEnabled = LocaleController.Instance().GetLocales(Me.ModuleContext.PortalId).TryGetValue(Language.Code, enabledLanguage)
+            End If
+
+            cmdDelete.Visible = (Me.UserInfo.IsSuperUser AndAlso Not IsAddMode AndAlso _
+                                 Not isEnabled AndAlso Not Language.IsPublished AndAlso _
+                                 Language.Code.ToLowerInvariant <> "en-us")
         End Sub
+
+        Private Function IsLanguageEnabled(ByVal Code As String) As Boolean
+            Dim enabledLanguage As Locale = Nothing
+            Return LocaleController.Instance().GetLocales(Me.ModuleContext.PortalId).TryGetValue(Code, enabledLanguage)
+        End Function
 
 #End Region
 
@@ -123,7 +138,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
             Try
-                Response.Redirect(ReturnUrl, True)
+                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception           'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
@@ -132,7 +147,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
         Protected Sub cmdDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdDelete.Click
             Try
                 Localization.DeleteLanguage(Language)
-                Response.Redirect(ReturnUrl, True)
+                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception
                 ProcessModuleLoadException(Me, exc)
             End Try
@@ -140,32 +155,44 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
             Try
-                Dim code As String = Language.Code
-                Dim languageId As Integer = Language.LanguageID
                 If Me.UserInfo.IsSuperUser Then
                     'Update Language
-                    If ctlLanguage.IsValid AndAlso ctlLanguage.IsDirty Then
-                        Dim language As Locale = TryCast(ctlLanguage.DataSource, Locale)
-                        If language IsNot Nothing Then
-                            language.Text = CultureInfo.CreateSpecificCulture(language.Code).NativeName
-                            Localization.SaveLanguage(language)
-                            languageId = language.LanguageID
-                            code = language.Code
+                    If Language Is Nothing Then
+                        _Language = LocaleController.Instance().GetLocale(languageComboBox.SelectedValue)
+                        If _Language Is Nothing Then
+                            _Language = New Locale()
+                            Language.Code = languageComboBox.SelectedValue
                         End If
                     End If
+                    Language.Fallback = fallBackComboBox.SelectedValue
+                    Language.Text = CultureInfo.CreateSpecificCulture(Language.Code).NativeName
+                    Localization.SaveLanguage(Language)
                 End If
-                If chkEnabled.Checked Then
-                    Dim enabledLanguages As Dictionary(Of String, Locale) = Localization.GetLocales(Me.ModuleContext.PortalId)
-                    Dim enabledLanguage As Locale = Nothing
-                    If Not enabledLanguages.TryGetValue(code, enabledLanguage) Then
-                        'Add language to portal
-                        Localization.AddLanguageToPortal(Me.ModuleContext.PortalId, languageId, True)
-                    End If
+
+                If Not IsLanguageEnabled(Language.Code) Then
+                    'Add language to portal
+                    Localization.AddLanguageToPortal(PortalId, Language.LanguageId, True)
+                End If
+
+                Dim roles As String = Null.NullString
+                If IsAddMode Then
+                    roles = String.Format("Administrators;{0}", String.Format("Translator ({0})", Language.Code))
                 Else
-                    'remove language from portal
-                    Localization.RemoveLanguageFromPortal(Me.ModuleContext.PortalId, languageId)
+                    For Each role As String In translatorRoles.SelectedRoleNames
+                        roles += role + ";"
+                    Next
                 End If
-                Response.Redirect(ReturnUrl, True)
+
+                PortalController.UpdatePortalSetting(Me.PortalId, String.Format("DefaultTranslatorRoles-{0}", Language.Code), roles)
+
+                Dim tabCtrl As New TabController
+                Dim tabs As TabCollection = tabCtrl.GetTabsByPortal(PortalId).WithCulture(Language.Code, False)
+                If PortalSettings.ContentLocalizationEnabled AndAlso tabs.Count = 0 Then
+                    'Create Localized Pages
+                    tabCtrl.LocalizeTabs(PortalId, Language.Code)
+                End If
+
+                Response.Redirect(NavigateURL(), True)
             Catch exc As Exception           'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try

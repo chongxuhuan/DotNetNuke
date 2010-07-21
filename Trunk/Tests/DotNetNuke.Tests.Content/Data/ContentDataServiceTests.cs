@@ -1,23 +1,22 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -25,6 +24,7 @@ using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities;
+using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Data
@@ -57,11 +57,12 @@ namespace DotNetNuke.Tests.Content.Data
 
         #region Test Database Setup and Teardown
 
-        [SetUp()]
+        [SetUp]
         public void SetUp()
         {
             //Set up Data Provider
-            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner, DataTestHelper.ObjectQualifier);
+            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner,
+                                           DataTestHelper.ObjectQualifier);
 
             //Create Database Tables
             ContentDataTestHelper.CreateDatabaseTables();
@@ -70,11 +71,13 @@ namespace DotNetNuke.Tests.Content.Data
             ContentDataTestHelper.AddDataToTables();
         }
 
-        [TearDown()]
+        [TearDown]
         public void TearDown()
         {
             //Remove all records from Tables
             ContentDataTestHelper.EmptyDatabaseTables();
+
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
@@ -118,7 +121,8 @@ namespace DotNetNuke.Tests.Content.Data
             int contentItemId = ds.AddContentItem(content, Constants.USER_ValidId);
 
             //Assert
-            DatabaseAssert.RecordLastAddedIdEquals(DataTestHelper.ConnectionString, contentItemsTableName, "ContentItemID", contentItemId);
+            DatabaseAssert.RecordLastAddedIdEquals(DataTestHelper.ConnectionString, contentItemsTableName,
+                                                   "ContentItemID", contentItemId);
         }
 
         #endregion
@@ -165,7 +169,8 @@ namespace DotNetNuke.Tests.Content.Data
 
             //Assert
             DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentItemsTableName, rowCount - 1);
-            DatabaseAssert.RecordDoesNotExist(DataTestHelper.ConnectionString, contentItemsTableName, keyField, Constants.CONTENT_ValidContentItemId.ToString());
+            DatabaseAssert.RecordDoesNotExist(DataTestHelper.ConnectionString, contentItemsTableName, keyField,
+                                              Constants.CONTENT_ValidContentItemId.ToString());
         }
 
         #endregion
@@ -205,14 +210,14 @@ namespace DotNetNuke.Tests.Content.Data
             int records = 0;
             while (dataReader.Read())
             {
-                DatabaseAssert.ReaderColumnIsEqual<int>(dataReader, keyField, Constants.CONTENT_ValidContentItemId);
+                DatabaseAssert.ReaderColumnIsEqual(dataReader, keyField, Constants.CONTENT_ValidContentItemId);
                 records += 1;
             }
 
             dataReader.Close();
 
             //Assert that the count is correct
-            Assert.AreEqual<int>(1, records);
+            Assert.AreEqual(1, records);
         }
 
         #endregion
@@ -220,13 +225,13 @@ namespace DotNetNuke.Tests.Content.Data
         #region GetContentItemsByTerm Tests
 
         [Test]
-        [Row("Black", 0)]           //No items tagged as black
-        [Row("Blue", 2)]            //Both items tagged as blue      
-        [Row("LCD", 1)]             //ContentItem 2 tagged as LCD    
-        [Row("MP3 PLayers", 1)]     //ContentItem 1 tagged as MP3 PLayers    
-        [Row("Televisions", 1)]     //ContentItem 2 tagged as LCD (child of Televisions)
-        [Row("Portable Electronics", 1)]     //ContentItem 1 tagged as MP3 (child of Portable Electronics)
-        [Row("Electronics", 2)]     //Both MP3 and LCD are children of Electronics
+        [Row("Black", 0)] //No items tagged as black
+        [Row("Blue", 2)] //Both items tagged as blue      
+        [Row("LCD", 1)] //ContentItem 2 tagged as LCD    
+        [Row("MP3 PLayers", 1)] //ContentItem 1 tagged as MP3 PLayers    
+        [Row("Televisions", 1)] //ContentItem 2 tagged as LCD (child of Televisions)
+        [Row("Portable Electronics", 1)] //ContentItem 1 tagged as MP3 (child of Portable Electronics)
+        [Row("Electronics", 2)] //Both MP3 and LCD are children of Electronics
         public void DataService_GetContentItemsByTerm_Returns_Reader_Of_ContentItems(string term, int count)
         {
             //Arrange
@@ -288,11 +293,16 @@ namespace DotNetNuke.Tests.Content.Data
                 DatabaseAssert.RecordCountIsEqual(connection, contentItemsTableName, rowCount);
 
                 //Check that values have not changed
-                IDataReader dataReader = DataUtil.GetRecordsByField(connection, contentItemsTableName, keyField, Constants.CONTENT_UpdateContentItemId.ToString());
+                IDataReader dataReader = DataUtil.GetRecordsByField(connection, contentItemsTableName, keyField,
+                                                                    Constants.CONTENT_UpdateContentItemId.ToString());
                 while (dataReader.Read())
                 {
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "Content", String.Format(Constants.CONTENT_ValidContentFormat, Constants.CONTENT_UpdateContentItemId));
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "ContentKey", String.Format(Constants.CONTENT_ValidContentKeyFormat, Constants.CONTENT_UpdateContentItemId));
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "Content",
+                                                       String.Format(Constants.CONTENT_ValidContentFormat,
+                                                                     Constants.CONTENT_UpdateContentItemId));
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "ContentKey",
+                                                       String.Format(Constants.CONTENT_ValidContentKeyFormat,
+                                                                     Constants.CONTENT_UpdateContentItemId));
                 }
 
                 dataReader.Close();
@@ -323,11 +333,12 @@ namespace DotNetNuke.Tests.Content.Data
                 DatabaseAssert.RecordCountIsEqual(connection, contentItemsTableName, rowCount);
 
                 //Check Values are updated
-                IDataReader dataReader = DataUtil.GetRecordsByField(connection, contentItemsTableName, keyField, Constants.CONTENT_UpdateContentItemId.ToString());
+                IDataReader dataReader = DataUtil.GetRecordsByField(connection, contentItemsTableName, keyField,
+                                                                    Constants.CONTENT_UpdateContentItemId.ToString());
                 while (dataReader.Read())
                 {
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "Content", Constants.CONTENT_UpdateContent);
-                    DatabaseAssert.ReaderColumnIsEqual<string>(dataReader, "ContentKey", Constants.CONTENT_UpdateContentKey);
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "Content", Constants.CONTENT_UpdateContent);
+                    DatabaseAssert.ReaderColumnIsEqual(dataReader, "ContentKey", Constants.CONTENT_UpdateContentKey);
                 }
 
                 dataReader.Close();
@@ -344,7 +355,8 @@ namespace DotNetNuke.Tests.Content.Data
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
             content.Content = String.Format(Constants.CONTENT_ValidContentFormat, Constants.CONTENT_UpdateContentItemId);
-            content.ContentKey = String.Format(Constants.CONTENT_ValidContentKeyFormat, Constants.CONTENT_UpdateContentItemId);
+            content.ContentKey = String.Format(Constants.CONTENT_ValidContentKeyFormat,
+                                               Constants.CONTENT_UpdateContentItemId);
 
             DataService ds = new DataService();
 
@@ -428,7 +440,8 @@ namespace DotNetNuke.Tests.Content.Data
 
             //Assert
             DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount - 1);
-            DatabaseAssert.RecordDoesNotExist(DataTestHelper.ConnectionString, contentMetaDataTableName, keyField, Constants.CONTENT_ValidContentItemId.ToString());
+            DatabaseAssert.RecordDoesNotExist(DataTestHelper.ConnectionString, contentMetaDataTableName, keyField,
+                                              Constants.CONTENT_ValidContentItemId.ToString());
         }
 
         [Test]
@@ -472,7 +485,6 @@ namespace DotNetNuke.Tests.Content.Data
             //Assert
             DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, contentMetaDataTableName, rowCount);
         }
-
 
         #endregion
 

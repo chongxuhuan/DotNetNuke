@@ -773,9 +773,7 @@ Namespace DotNetNuke.UI.UserControls
                         If Not IncludeActiveTab Then
                             excludeTabId = _settings.ActiveTab.TabID
                         End If
-
                         cboTabs.DataSource = TabController.GetPortalTabs(_settings.PortalId, excludeTabId, Not Required, "none available", True, False, False, True, False)
-
                         cboTabs.DataBind()
                         If Not cboTabs.Items.FindByValue(_Url) Is Nothing Then
                             cboTabs.Items.FindByValue(_Url).Selected = True
@@ -788,7 +786,7 @@ Namespace DotNetNuke.UI.UserControls
                         ImagesRow.Visible = False
 
                         If ViewState("FoldersLoaded") Is Nothing Or Me._doReloadFolders Then
-                            LoadFolders("READ,ADD")
+                            LoadFolders("BROWSE,ADD")
                             ViewState("FoldersLoaded") = "Y"
                         End If
 
@@ -968,7 +966,12 @@ Namespace DotNetNuke.UI.UserControls
 
         Private Sub cboFolders_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboFolders.SelectedIndexChanged
             Dim objFolders As New FolderController
-            Dim objFolder As FolderInfo = objFolders.GetFolder(_objPortal.PortalID, cboFolders.SelectedValue, False)
+            Dim PortalId As Integer = Null.NullInteger
+
+            If (Not IsHostMenu) OrElse (Request.QueryString("pid") IsNot Nothing) Then
+                PortalId = _objPortal.PortalID
+            End If
+            Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, cboFolders.SelectedValue, False)
             If FolderPermissionController.CanAddFolder(objFolder) Then
                 If Not txtFile.Visible Then
                     cmdSave.Visible = False
@@ -1150,7 +1153,7 @@ Namespace DotNetNuke.UI.UserControls
                     cmdCancel.Visible = True
                 Else
                     'reset controls
-                    LoadFolders("READ,ADD")
+                    LoadFolders("BROWSE,ADD")
                     cboFolders.Items.FindByValue(strSaveFolder).Selected = True
                     cboFiles.Visible = True
                     cmdUpload.Visible = False

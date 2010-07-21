@@ -29,6 +29,7 @@
 		<dnn:textcolumn DataField="Length" HeaderText="Length" />
 		<dnn:textcolumn DataField="DefaultValue" HeaderText="DefaultValue" Width="100px" />
 		<dnn:textcolumn DataField="ValidationExpression" HeaderText="ValidationExpression" Width="100px" />
+		<dnn:textcolumn DataField="DefaultVisibility" HeaderText="DefaultVisibility" Width="100px" />
 		<dnn:checkboxcolumn DataField="Required" HeaderText="Required" AutoPostBack="True" />
 		<dnn:checkboxcolumn DataField="Visible" HeaderText="Visible" AutoPostBack="True" />
 	</columns>

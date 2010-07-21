@@ -165,4 +165,10 @@
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About Recycle Bin&lt;/h1&gt;&lt;p&gt;The Recycle Bin provides an interface for restoring or permanently deleting Pages and Modules.&lt;/p&gt;</value>
   </data>
+  <data name="allLocales.Text" xml:space="preserve">
+    <value>Show pages and modules from all languages</value>
+  </data>
+  <data name="singleLocale.Text" xml:space="preserve">
+    <value>Show pages and moudles in current language only</value>
+  </data>
 </root>

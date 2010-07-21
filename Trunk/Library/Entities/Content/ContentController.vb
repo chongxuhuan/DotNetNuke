@@ -95,6 +95,8 @@ Namespace DotNetNuke.Entities.Content
             _DataService.UpdateContentItem(contentItem, UserController.GetCurrentUserInfo.UserID)
         End Sub
 
+
+
         Public Sub AddMetaData(ByVal contentItem As ContentItem, ByVal name As String, ByVal value As String) Implements IContentController.AddMetaData
             'Argument Contract
             Requires.NotNull("contentItem", contentItem)

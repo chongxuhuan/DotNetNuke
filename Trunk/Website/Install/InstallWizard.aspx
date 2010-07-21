@@ -192,7 +192,7 @@
             </table>
         </StepNavigationTemplate>
         <HeaderTemplate>
-            <img src="logo.gif" border="0" alt="DotNetNuke">
+            <img src="../images/branding/logo.gif" border="0" alt="DotNetNuke">
         </HeaderTemplate>
         <WizardSteps>
             <asp:WizardStep ID="Step0" runat="Server" Title="Welcome">

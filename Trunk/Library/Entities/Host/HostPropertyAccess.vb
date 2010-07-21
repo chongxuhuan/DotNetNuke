@@ -19,6 +19,7 @@
 '
 
 Imports DotNetNuke.Services.Tokens
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Host
 
@@ -26,7 +27,9 @@ Namespace DotNetNuke.Entities.Host
         Inherits DictionaryPropertyAccess
 
         Public Sub New()
-            MyBase.New(Host.GetSecureHostSettingsDictionary)
+
+            MyBase.New(HostController.Instance.GetSettingsDictionary)
+
         End Sub
 
         Public Overrides Function GetProperty(ByVal strPropertyName As String, ByVal strFormat As String, ByVal formatProvider As System.Globalization.CultureInfo, ByVal AccessingUser As Users.UserInfo, ByVal CurrentScope As Services.Tokens.Scope, ByRef PropertyNotFound As Boolean) As String

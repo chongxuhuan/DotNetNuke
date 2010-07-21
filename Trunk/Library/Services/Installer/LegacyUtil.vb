@@ -30,6 +30,7 @@ Imports DotNetNuke.Services.Installer.Writers
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Entities.Host
 Imports System.Text
+Imports DotNetNuke.Entities.Controllers
 
 
 Namespace DotNetNuke.Services.Installer
@@ -226,16 +227,15 @@ Namespace DotNetNuke.Services.Installer
                 Dim doc As New XPathDocument(filePath)
 
                 'Check for Browser and Url settings
-                Dim controller As New HostSettingsController
 
                 Dim browserNav As XPathNavigator = doc.CreateNavigator.SelectSingleNode("root/browserDetection")
                 If browserNav IsNot Nothing Then
-                    controller.UpdateHostSetting("EnableBrowserLanguage", Util.ReadAttribute(browserNav, "enabled", False, Nothing, Null.NullString, "true"))
+                    HostController.Instance.Update("EnableBrowserLanguage", Util.ReadAttribute(browserNav, "enabled", False, Nothing, Null.NullString, "true"))
                 End If
 
                 Dim urlNav As XPathNavigator = doc.CreateNavigator.SelectSingleNode("root/languageInUrl")
                 If urlNav IsNot Nothing Then
-                    controller.UpdateHostSetting("EnableUrlLanguage", Util.ReadAttribute(urlNav, "enabled", False, Nothing, Null.NullString, "true"))
+                    HostController.Instance.Update("EnableUrlLanguage", Util.ReadAttribute(urlNav, "enabled", False, Nothing, Null.NullString, "true"))
                 End If
 
                 'Process each language
@@ -245,6 +245,9 @@ Namespace DotNetNuke.Services.Installer
                         language.Text = Util.ReadAttribute(nav, "name")
                         language.Code = Util.ReadAttribute(nav, "key")
                         language.Fallback = Util.ReadAttribute(nav, "fallback")
+
+                        'Save Language
+                        Localization.Localization.SaveLanguage(language)
 
                         If language.Code <> Localization.Localization.SystemLocale Then
 
@@ -266,11 +269,8 @@ Namespace DotNetNuke.Services.Installer
                             'Save Package
                             PackageController.SavePackage(package)
 
-                            'Save Language
-                            Localization.Localization.SaveLanguage(language)
-
                             Dim languagePack As New LanguagePackInfo()
-                            languagePack.LanguageID = language.LanguageID
+                            languagePack.LanguageID = language.LanguageId
                             languagePack.PackageID = package.PackageID
                             languagePack.DependentPackageID = -2
 
@@ -299,7 +299,7 @@ Namespace DotNetNuke.Services.Installer
                         PortalController.UpdatePortalSetting(portalID, "EnableUrlLanguage", Util.ReadAttribute(urlNav, "enabled", False, Nothing, Null.NullString, "true"))
                     End If
 
-                    For Each installedLanguage As Locale In Localization.Localization.GetLocales(Null.NullInteger).Values
+                    For Each installedLanguage As Locale In LocaleController.Instance().GetLocales(Null.NullInteger).Values
                         Dim code As String = installedLanguage.Code
                         Dim bFound As Boolean = False
 
@@ -313,13 +313,13 @@ Namespace DotNetNuke.Services.Installer
 
                         If Not bFound Then
                             'Language is enabled - add to portal
-                            Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageID, False)
+                            Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageId, False)
                         End If
                     Next
                 Else
-                    For Each installedLanguage As Locale In Localization.Localization.GetLocales(Null.NullInteger).Values
+                    For Each installedLanguage As Locale In LocaleController.Instance().GetLocales(Null.NullInteger).Values
                         'Language is enabled - add to portal
-                        Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageID, False)
+                        Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageId, False)
                     Next
                 End If
             Next

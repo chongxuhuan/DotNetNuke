@@ -177,9 +177,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\MembershipProviderPackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">
   </Target>
-  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />

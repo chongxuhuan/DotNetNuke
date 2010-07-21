@@ -121,8 +121,20 @@ Namespace DotNetNuke.Security.Permissions
             Next
         End Sub
 
-        Public Function Contains(ByVal value As FolderPermissionInfo) As Boolean
+        Public Overloads Function Contains(ByVal value As FolderPermissionInfo) As Boolean
             Return List.Contains(value)
+        End Function
+
+        Public Overloads Function Contains(ByVal key As String, ByVal folderId As Integer, ByVal roleId As Integer, ByVal userId As Integer) As Boolean
+            Dim result As Boolean = Null.NullBoolean
+            For Each permission As FolderPermissionInfo In List
+                If permission.PermissionKey = key AndAlso permission.FolderID = folderId _
+                        AndAlso permission.RoleID = roleId AndAlso permission.UserID = userId Then
+                    result = True
+                    Exit For
+                End If
+            Next
+            Return result
         End Function
 
         Public Function CompareTo(ByVal objFolderPermissionCollection As FolderPermissionCollection) As Boolean

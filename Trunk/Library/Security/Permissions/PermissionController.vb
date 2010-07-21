@@ -20,6 +20,8 @@
 Imports System
 Imports System.Text
 Imports System.Collections.Generic
+Imports DotNetNuke.Security.Roles
+
 
 Namespace DotNetNuke.Security.Permissions
 
@@ -119,6 +121,48 @@ Namespace DotNetNuke.Security.Permissions
 
         Public Shared Function GetPermissionsByTab() As ArrayList
             Return CBO.FillCollection(provider.GetPermissionsByTab(), GetType(PermissionInfo))
+        End Function
+
+
+        Public Function RemapPermission(Of T As {PermissionInfoBase})(ByVal permission As T, ByVal portalId As Integer) As T
+
+            Dim permissionInfo As PermissionInfo = GetPermissionByCodeAndKey(permission.PermissionCode, permission.PermissionKey).Cast(Of PermissionInfo)().FirstOrDefault()
+            Dim result As T = Nothing
+
+            If (permissionInfo IsNot Nothing) Then
+                Dim RoleID As Integer = Integer.MinValue
+                Dim UserID As Integer = Integer.MinValue
+
+                If (String.IsNullOrEmpty(permission.RoleName)) Then
+                    Dim _user As UserInfo = UserController.GetUserByName(portalId, permission.Username)
+                    If (_user IsNot Nothing) Then
+                        UserID = _user.UserID
+                    End If
+                Else
+                    Select Case permission.RoleName
+                        Case Common.Globals.glbRoleAllUsersName
+                            RoleID = Convert.ToInt32(Common.Globals.glbRoleAllUsers)
+                        Case Common.Globals.glbRoleUnauthUserName
+                            RoleID = Convert.ToInt32(Common.Globals.glbRoleUnauthUser)
+                        Case Else
+                            Dim _role As RoleInfo = New RoleController().GetRoleByName(portalId, permission.RoleName)
+                            If Not _role Is Nothing Then
+                                RoleID = _role.RoleID
+                            End If
+                    End Select
+                End If
+
+                ' if role was found add, otherwise ignore
+                If RoleID <> Integer.MinValue OrElse UserID <> Integer.MinValue Then
+                    permission.PermissionID = permissionInfo.PermissionID
+                    If (RoleID <> Integer.MinValue) Then permission.RoleID = RoleID
+                    If (UserID <> Integer.MinValue) Then permission.UserID = UserID
+                    result = permission
+                End If
+            End If
+
+            Return result
+
         End Function
 
 #End Region

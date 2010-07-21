@@ -40,9 +40,11 @@ Namespace DotNetNuke.Services.Localization
 #Region "Private Members"
 
         Private _Code As String
-        Private _LanguageID As Integer = Null.NullInteger
-        Private _Text As String
         Private _Fallback As String
+        Private _IsPublished As Boolean = Null.NullBoolean
+        Private _LanguageId As Integer = Null.NullInteger
+        Private _PortalId As Integer = Null.NullInteger
+        Private _Text As String
 
 #End Region
 
@@ -57,12 +59,75 @@ Namespace DotNetNuke.Services.Localization
             End Set
         End Property
 
-        Public Property LanguageID() As Integer
+        Public ReadOnly Property Culture As CultureInfo
             Get
-                Return _LanguageID
+                Return CultureInfo.CreateSpecificCulture(Code)
+            End Get
+        End Property
+
+        Public ReadOnly Property EnglishName As String
+            Get
+                Dim _Name As String = Null.NullString
+                If Culture IsNot Nothing Then
+                    _Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Culture.EnglishName)
+                End If
+                Return _Name
+            End Get
+        End Property
+
+        Public Property Fallback() As String
+            Get
+                Return _Fallback
+            End Get
+            Set(ByVal Value As String)
+                _Fallback = Value
+            End Set
+        End Property
+
+        Public ReadOnly Property FallBackLocale() As Locale
+            Get
+                Dim _FallbackLocale As Locale = Nothing
+                If Not String.IsNullOrEmpty(Fallback) Then
+                    _FallbackLocale = LocaleController.Instance().GetLocale(PortalId, Fallback)
+                End If
+                Return _FallbackLocale
+            End Get
+        End Property
+
+        Public Property IsPublished() As Boolean
+            Get
+                Return _IsPublished
+            End Get
+            Set(ByVal value As Boolean)
+                _IsPublished = value
+            End Set
+        End Property
+
+        Public Property LanguageId() As Integer
+            Get
+                Return _LanguageId
             End Get
             Set(ByVal value As Integer)
-                _LanguageID = value
+                _LanguageId = value
+            End Set
+        End Property
+
+        Public ReadOnly Property NativeName() As String
+            Get
+                Dim _Name As String = Null.NullString
+                If Culture IsNot Nothing Then
+                    _Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Culture.NativeName)
+                End If
+                Return _Name
+            End Get
+        End Property
+
+        Public Property PortalId() As Integer
+            Get
+                Return _PortalId
+            End Get
+            Set(ByVal value As Integer)
+                _PortalId = value
             End Set
         End Property
 
@@ -75,34 +140,33 @@ Namespace DotNetNuke.Services.Localization
             End Set
         End Property
 
-        Public Property Fallback() As String
-            Get
-                Return _Fallback
-            End Get
-            Set(ByVal Value As String)
-                _Fallback = Value
-            End Set
-        End Property
-
 #End Region
 
 #Region "IHydratable Implementation"
 
         Public Sub Fill(ByVal dr As System.Data.IDataReader) Implements IHydratable.Fill
-            LanguageID = Null.SetNullInteger(dr("LanguageID"))
+            LanguageId = Null.SetNullInteger(dr("LanguageID"))
             Code = Null.SetNullString(dr("CultureCode"))
             Text = Null.SetNullString(dr("CultureName"))
             Fallback = Null.SetNullString(dr("FallbackCulture"))
+
+            Try
+                'These fields may not be populated (for Host level locales)
+                IsPublished = Null.SetNullBoolean(dr("IsPublished"))
+                PortalId = Null.SetNullInteger(dr("PortalID"))
+            Catch ex As IndexOutOfRangeException
+            End Try
+
             'Call the base classes fill method to populate base class proeprties
             MyBase.FillInternal(dr)
         End Sub
 
         Public Property KeyID() As Integer Implements IHydratable.KeyID
             Get
-                Return LanguageID
+                Return LanguageId
             End Get
             Set(ByVal value As Integer)
-                LanguageID = value
+                LanguageId = value
             End Set
         End Property
 

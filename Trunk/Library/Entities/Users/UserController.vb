@@ -37,6 +37,8 @@ Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Services.Localization
 Imports System.Collections.Generic
 Imports DotNetNuke.Security.Permissions
+Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Users
 
@@ -870,25 +872,27 @@ Namespace DotNetNuke.Entities.Users
             Dim settingsDictionary As Dictionary(Of String, String)
 
             If portalId = Null.NullInteger Then
-                settingsDictionary = Host.Host.GetHostSettingsDictionary()
+                settingsDictionary = HostController.Instance.GetSettingsDictionary()
             Else
                 settingsDictionary = PortalController.GetPortalSettingsDictionary(portalId)
             End If
 
-            Dim prefix As String
-            Dim index As Integer
-            For Each kvp As KeyValuePair(Of String, String) In settingsDictionary
-                index = kvp.Key.IndexOf("_")
-                If index > 0 Then
-                    'Get the prefix
-                    prefix = kvp.Key.Substring(0, index + 1)
-                    Select Case prefix
-                        Case "Column_", "Display_", "Profile_", "Records_", "Redirect_", "Security_"
-                            'update value or add any new values
-                            settings(kvp.Key) = kvp.Value
-                    End Select
-                End If
-            Next
+            If settingsDictionary IsNot Nothing Then
+                Dim prefix As String
+                Dim index As Integer
+                For Each kvp As KeyValuePair(Of String, String) In settingsDictionary
+                    index = kvp.Key.IndexOf("_")
+                    If index > 0 Then
+                        'Get the prefix
+                        prefix = kvp.Key.Substring(0, index + 1)
+                        Select Case prefix
+                            Case "Column_", "Display_", "Profile_", "Records_", "Redirect_", "Security_"
+                                'update value or add any new values
+                                settings(kvp.Key) = kvp.Value
+                        End Select
+                    End If
+                Next
+            End If
 
             Return settings
         End Function

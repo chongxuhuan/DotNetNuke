@@ -22,6 +22,7 @@ Imports System
 Imports System.Configuration
 Imports System.Data
 Imports System.IO
+Imports DotNetNuke.Entities.Controllers
 Imports ICSharpCode.SharpZipLib.Zip
 Imports System.Xml
 Imports System.Text.RegularExpressions
@@ -201,6 +202,80 @@ Namespace DotNetNuke.UI.Skins
             Return CBO.FillObject(Of SkinPackageInfo)(DataProvider.Instance().GetSkinPackage(portalId, skinName, skinType))
         End Function
 
+        Public Shared Function GetSkins(ByVal portalInfo As PortalInfo, ByVal skingRoot As String) As List(Of KeyValuePair(Of String, String))
+            Dim strRoot As String
+            Dim strLastFolder As String
+            Dim strFolder As String
+            Dim strFile As String
+            Dim Skins As New List(Of KeyValuePair(Of String, String))
+            'If optHost.Checked Then
+            ' load host skins
+            strLastFolder = ""
+            strRoot = Common.Globals.HostMapPath & skingRoot
+            If Directory.Exists(strRoot) Then
+                For Each strFolder In Directory.GetDirectories(strRoot)
+                    If Not strFolder.EndsWith(glbHostSkinFolder) Then
+                        For Each strFile In Directory.GetFiles(strFolder, "*.ascx")
+                            strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
+                            If strLastFolder <> strFolder Then
+                                strLastFolder = strFolder
+                            End If
+
+
+                            Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[G]" & skingRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
+
+                        Next
+                    End If
+                Next
+            End If
+            'End If
+
+            'If optSite.Checked Then
+            ' load portal skins
+            strLastFolder = ""
+            strRoot = portalInfo.HomeDirectoryMapPath & skingRoot
+            If Directory.Exists(strRoot) Then
+                For Each strFolder In Directory.GetDirectories(strRoot)
+                    For Each strFile In Directory.GetFiles(strFolder, "*.ascx")
+                        strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
+                        If strLastFolder <> strFolder Then
+                            strLastFolder = strFolder
+                        End If
+                        Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[L]" & skingRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
+                    Next
+                Next
+            End If
+            'End If
+
+            Return Skins
+        End Function
+
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' format skin name
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="strSkinFolder">The Folder Name</param>
+        ''' <param name="strSkinFile">The File Name without extension</param>
+        ''' <history>
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Shared Function FormatSkinName(ByVal strSkinFolder As String, ByVal strSkinFile As String) As String
+            If strSkinFolder.ToLower = "_default" Then
+                ' host folder
+                Return strSkinFile
+            Else ' portal folder
+                Select Case strSkinFile.ToLower
+                    Case "skin", "container", "default"
+                        Return strSkinFolder
+                    Case Else
+                        Return strSkinFolder & " - " & strSkinFile
+                End Select
+            End If
+        End Function
+
         ''' <summary>
         ''' Determines if a given skin is defined as a global skin
         ''' </summary>
@@ -218,19 +293,18 @@ Namespace DotNetNuke.UI.Skins
         End Function
 
         Public Shared Sub SetSkin(ByVal SkinRoot As String, ByVal PortalId As Integer, ByVal SkinType As UI.Skins.SkinType, ByVal SkinSrc As String)
-            Dim objHostSettings As New Entities.Host.HostSettingsController
 
             Select Case SkinRoot
                 Case "Skins"
                     If SkinType = Skins.SkinType.Admin Then
                         If PortalId = Null.NullInteger Then
-                            objHostSettings.UpdateHostSetting("DefaultAdminSkin", SkinSrc)
+                            HostController.Instance.Update("DefaultAdminSkin", SkinSrc)
                         Else
                             PortalController.UpdatePortalSetting(PortalId, "DefaultAdminSkin", SkinSrc)
                         End If
                     Else
                         If PortalId = Null.NullInteger Then
-                            objHostSettings.UpdateHostSetting("DefaultPortalSkin", SkinSrc)
+                            HostController.Instance.Update("DefaultPortalSkin", SkinSrc)
                         Else
                             PortalController.UpdatePortalSetting(PortalId, "DefaultPortalSkin", SkinSrc)
                         End If
@@ -238,13 +312,13 @@ Namespace DotNetNuke.UI.Skins
                 Case "Containers"
                     If SkinType = Skins.SkinType.Admin Then
                         If PortalId = Null.NullInteger Then
-                            objHostSettings.UpdateHostSetting("DefaultAdminContainer", SkinSrc)
+                            HostController.Instance.Update("DefaultAdminContainer", SkinSrc)
                         Else
                             PortalController.UpdatePortalSetting(PortalId, "DefaultAdminContainer", SkinSrc)
                         End If
                     Else
                         If PortalId = Null.NullInteger Then
-                            objHostSettings.UpdateHostSetting("DefaultPortalContainer", SkinSrc)
+                            HostController.Instance.Update("DefaultPortalContainer", SkinSrc)
                         Else
                             PortalController.UpdatePortalSetting(PortalId, "DefaultPortalContainer", SkinSrc)
                         End If

@@ -1,6 +1,6 @@
 ﻿'
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -27,6 +27,8 @@ Imports System.IO
 Imports DotNetNuke.Common.Globals
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Services.Localization
+Imports DotNetNuke.Entities.Tabs
+Imports DotNetNuke.Entities.Portals
 
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
@@ -42,8 +44,14 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 DataValueField = "FullUrl"
 
                 'check view permissions - Yes?
-                DataSource = DotNetNuke.Entities.Tabs.TabController.GetPortalTabs(DotNetNuke.Entities.Portals.PortalController.GetCurrentPortalSettings().PortalId, _
-                 -1, False, Null.NullString, True, False, True, True, True)
+                Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
+                Dim pageCulture As String = _PortalSettings.ActiveTab.CultureCode
+                If String.IsNullOrEmpty(pageCulture) Then
+                    pageCulture = PortalController.GetActivePortalLanguage(_PortalSettings.PortalId)
+                End If
+
+                Dim tabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(_PortalSettings.PortalId, pageCulture, True)
+                DataSource = TabController.GetPortalTabs(tabs, Null.NullInteger, False, Null.NullString, True, False, True, True, True)
 
                 DataBind()
 

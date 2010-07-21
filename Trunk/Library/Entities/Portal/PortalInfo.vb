@@ -106,6 +106,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _TimeZoneOffset As Integer
         Private _HomeDirectory As String
         Private _Version As String
+        Private _CultureCode As String
 
 #End Region
 
@@ -130,6 +131,15 @@ Namespace DotNetNuke.Entities.Portals
 #End Region
 
 #Region "Public Properties"
+        <XmlElement("cultureCode")> Public Property CultureCode() As String
+            Get
+                Return _CultureCode
+            End Get
+            Set(ByVal value As String)
+                _CultureCode = value
+            End Set
+        End Property
+
         ''' <summary>
         ''' The footer text as specified in the Portal settings
         ''' </summary>
@@ -933,6 +943,8 @@ Namespace DotNetNuke.Entities.Portals
             AdminTabId = Null.SetNullInteger(dr("AdminTabID"))
             HomeDirectory = Null.SetNullString(dr("HomeDirectory"))
             SuperTabId = Null.SetNullInteger(dr("SuperTabId"))
+            CultureCode = Null.SetNullString(dr("CultureCode"))
+
             FillInternal(dr)
             AdministratorRoleName = Null.NullString
             RegisteredRoleName = Null.NullString

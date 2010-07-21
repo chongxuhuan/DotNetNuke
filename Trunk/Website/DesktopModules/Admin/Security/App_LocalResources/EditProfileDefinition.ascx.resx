@@ -153,6 +153,12 @@
   <data name="ProfilePropertyDefinition_ValidationExpression.Help" xml:space="preserve">
     <value>You can provide a Regular Expression to validate the data entered for this property</value>
   </data>
+  <data name="ProfilePropertyDefinition_DefaultVisibility.Text" xml:space="preserve">
+    <value>Default Visibility:</value>
+  </data>
+  <data name="ProfilePropertyDefinition_DefaultVisibility.Help" xml:space="preserve">
+    <value>You can provide a default Visibility setting for this property</value>
+  </data>
   <data name="ProfilePropertyDefinition_ViewOrder.Text" xml:space="preserve">
     <value>View Order:</value>
   </data>
@@ -266,5 +272,8 @@
   </data>
   <data name="AddProperty.Text" xml:space="preserve">
     <value>Add Profile Property Definition</value>
+  </data>
+  <data name="MembersOnly.Text" xml:space="preserve">
+    <value>Members Only</value>
   </data>
 </root>

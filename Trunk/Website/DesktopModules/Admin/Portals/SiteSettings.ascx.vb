@@ -25,6 +25,7 @@ Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Host
 Imports System.Collections.Generic
+Imports DotNetNuke.Entities.Portals.PortalSettings
 
 Namespace DotNetNuke.Modules.Admin.Portals
 
@@ -46,37 +47,21 @@ Namespace DotNetNuke.Modules.Admin.Portals
 #Region "Private Members"
 
         Dim intPortalId As Integer = -1
-        Private _ViewType As String = ""
 
-        Private ReadOnly Property DisplayType() As CultureDropDownTypes
+        Private ReadOnly Property SelectedCultureCode() As String
             Get
-                Select Case ViewType
-                    Case "NATIVE"
-                        Return CultureDropDownTypes.NativeName
-                    Case "ENGLISH"
-                        Return CultureDropDownTypes.EnglishName
-                End Select
+                Return localizedLanguagesComboBox.SelectedValue.ToString
             End Get
         End Property
 
-        Private ReadOnly Property ViewType() As String
-            Get
-                If _ViewType = "" Then
-                    _ViewType = Convert.ToString(Personalization.Personalization.GetProfile("LanguageEnabler", String.Format("ViewType{0}", PortalSettings.PortalId)))
-                End If
-                If _ViewType = "" Then _ViewType = "NATIVE"
-                Return _ViewType
-            End Get
-        End Property
-
-        Private ReadOnly Property CultureCode() As String
-            Get
-                Return ddlPortalDefaultLanguage.SelectedValue.ToString
-            End Get
-        End Property
 #End Region
 
 #Region "Private Methods"
+
+        Private Sub BindLanguageCombos()
+            localizedLanguagesComboBox.DataBind()
+            localizedLanguagesComboBox.SetLanguage(PortalSettings.DefaultLanguage)
+        End Sub
 
         Private Sub BindDesktopModules()
             Dim desktopModule As DesktopModuleInfo = Nothing
@@ -121,29 +106,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             End If
 
         End Sub
-
-        Private Sub BindDefaultLanguageSelector()
-            If Page.IsPostBack = False Then
-                Localization.LoadCultureDropDownList(ddlPortalDefaultLanguage, DisplayType, PortalSettings.DefaultLanguage, True)
-            End If
-        End Sub
-
-
-        Private Sub LoadLocales()
-            Dim item As ListItem
-            item = New ListItem(Services.Localization.Localization.GetString("NativeName.Text", Me.LocalResourceFile), "NATIVE")
-            rbViewType.Items.Add(item)
-            If ViewType = "NATIVE" Then
-                item.Selected = True
-            End If
-            item = New ListItem(Services.Localization.Localization.GetString("EnglishName.Text", Me.LocalResourceFile), "ENGLISH")
-            rbViewType.Items.Add(item)
-            If ViewType = "ENGLISH" Then
-                item.Selected = True
-            End If
-
-        End Sub
-
 
 #End Region
 
@@ -282,15 +244,15 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     cmdCancel.Visible = False
                 End If
 
-                If DotNetNuke.Services.Localization.Localization.ActiveLanguagesByPortalID(PortalId) > 1 Then
+                If DotNetNuke.Services.Localization.Localization.ActiveLanguagesByPortalID(intPortalId) > 1 Then
                     plLocale.Visible = True
                 End If
                 Dim activeLanguage As String = String.Empty
                 If Page.IsPostBack = False Then
-                    activeLanguage = PortalController.GetPortalDefaultLanguage(PortalId)
+                    activeLanguage = PortalController.GetPortalDefaultLanguage(intPortalId)
                 Else
                     If plLocale.Visible = True Then
-                        activeLanguage = ddlPortalDefaultLanguage.SelectedValue.ToString
+                        activeLanguage = SelectedCultureCode.ToString
                     Else
                         activeLanguage = PortalSettings.DefaultLanguage
                     End If
@@ -307,9 +269,8 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 If Page.IsPostBack = False Then
 
                     DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteMessage", Me.LocalResourceFile))
-                    If plLocale.Visible = True Then LoadLocales()
-                    BindDefaultLanguageSelector()
                     Loadportal(activeLanguage)
+                    BindLanguageCombos()
 
 
                     If Not Request.UrlReferrer Is Nothing Then
@@ -376,6 +337,8 @@ Namespace DotNetNuke.Modules.Admin.Portals
             txtFooterText.Text = objPortal.FooterText
             optUserRegistration.SelectedIndex = objPortal.UserRegistration
             ctlAudit.Entity = objPortal
+
+            localizedLanguagesComboBox.PortalId = objPortal.PortalID
 
             Dim objPortalAliasController As New PortalAliasController
             Dim arrPortalAliases As ArrayList
@@ -477,13 +440,13 @@ Namespace DotNetNuke.Modules.Admin.Portals
             txtPassword.Attributes.Add("value", objPortal.ProcessorPassword)
 
             ' use sandbox?
-            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", PortalId, "False"))
+            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", intPortalId, "False"))
             chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
 
             ' return url after payment or on cancel
-            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", PortalId, Null.NullString)
+            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", intPortalId, Null.NullString)
             txtPayPalReturnURL.Text = strPayPalReturnURL
-            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", PortalId, Null.NullString)
+            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", intPortalId, Null.NullString)
             txtPayPalCancelURL.Text = strPayPalCancelURL
 
             ' usability settings
@@ -495,40 +458,47 @@ Namespace DotNetNuke.Modules.Admin.Portals
             Else
                 optControlPanelMode.Items.FindByValue("VIEW").Selected = True
             End If
-            If PortalController.GetPortalSetting("ControlPanelVisibility", PortalId, "MAX") = "MAX" Then
+            If PortalController.GetPortalSetting("ControlPanelVisibility", intPortalId, "MAX") = "MAX" Then
                 optControlPanelVisibility.Items.FindByValue("MAX").Selected = True
             Else
                 optControlPanelVisibility.Items.FindByValue("MIN").Selected = True
             End If
 
-            If PortalSettings.ControlPanelSecurity = PortalSettings.ControlPanelPermission.ModuleEditor Then
+            Dim cPermission As ControlPanelPermission = ControlPanelPermission.ModuleEditor
+            Dim setting As String = Null.NullString
+            If PortalController.GetPortalSettingsDictionary(intPortalId).TryGetValue("ControlPanelSecurity", setting) Then
+                If setting.ToUpperInvariant = "TAB" Then
+                    cPermission = ControlPanelPermission.TabEditor
+                Else
+                    cPermission = ControlPanelPermission.ModuleEditor
+                End If
+            End If
+
+            If cPermission = PortalSettings.ControlPanelPermission.ModuleEditor Then
                 optControlPanelSecurity.Items.FindByValue("MODULE").Selected = True
             Else
                 optControlPanelSecurity.Items.FindByValue("TAB").Selected = True
             End If
-            chkSSLEnabled.Checked = PortalSettings.SSLEnabled
-            chkSSLEnforced.Checked = PortalSettings.SSLEnforced
-            txtSSLURL.Text = PortalSettings.SSLURL
-            txtSTDURL.Text = PortalSettings.STDURL
+            chkSSLEnabled.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnabled", intPortalId, False)
+            chkSSLEnforced.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnforced", intPortalId, False)
+            txtSSLURL.Text = PortalController.GetPortalSetting("SSLURL", intPortalId, Null.NullString)
+            txtSTDURL.Text = PortalController.GetPortalSetting("STDURL", intPortalId, Null.NullString)
 
             lblHomeDirectory.Text = objPortal.HomeDirectory
-
-            'Populate the default language combobox
-            Services.Localization.Localization.LoadCultureDropDownList(cboDefaultLanguage, CultureDropDownTypes.NativeName, objPortal.DefaultLanguage)
 
             'Populate the timezone combobox (look up timezone translations based on currently set culture)
             Services.Localization.Localization.LoadTimeZoneDropDownList(cboTimeZone, CType(Page, PageBase).PageCulture.Name, Convert.ToString(objPortal.TimeZoneOffset))
 
-            chkSkinWidgestEnabled.Checked = PortalSettings.EnableSkinWidgets
+            chkSkinWidgestEnabled.Checked = PortalController.GetPortalSettingAsBoolean("EnableSkinWidgets", intPortalId, True)
 
             ctlPortalSkin.SkinRoot = SkinController.RootSkin
-            ctlPortalSkin.SkinSrc = PortalSettings.DefaultPortalSkin
+            ctlPortalSkin.SkinSrc = PortalController.GetPortalSetting("DefaultPortalSkin", intPortalId, Host.DefaultPortalSkin)
             ctlPortalContainer.SkinRoot = SkinController.RootContainer
-            ctlPortalContainer.SkinSrc = PortalSettings.DefaultPortalContainer
+            ctlPortalContainer.SkinSrc = PortalController.GetPortalSetting("DefaultPortalContainer", intPortalId, Host.DefaultPortalContainer)
             ctlAdminSkin.SkinRoot = SkinController.RootSkin
-            ctlAdminSkin.SkinSrc = PortalSettings.DefaultAdminSkin
+            ctlAdminSkin.SkinSrc = PortalController.GetPortalSetting("DefaultAdminSkin", intPortalId, Host.DefaultAdminSkin)
             ctlAdminContainer.SkinRoot = SkinController.RootContainer
-            ctlAdminContainer.SkinSrc = PortalSettings.DefaultAdminContainer
+            ctlAdminContainer.SkinSrc = PortalController.GetPortalSetting("DefaultAdminContainer", intPortalId, Host.DefaultAdminContainer)
 
             LoadStyleSheet()
         End Sub
@@ -790,9 +760,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
                             Throw New System.Exception
                         End If
                     End If
-                    Dim activeLanguage As String = objPortal.defaultlanguage
+                    Dim activeLanguage As String = objPortal.DefaultLanguage
                     If plLocale.Visible = True Then
-                        activeLanguage = ddlPortalDefaultLanguage.SelectedValue.ToString
+                        activeLanguage = SelectedCultureCode.ToString
                     End If
                     objPortalController.UpdatePortalInfo(intPortalId, txtPortalName.Text, strLogo, _
                         txtFooterText.Text, datExpiryDate, optUserRegistration.SelectedIndex, _
@@ -802,7 +772,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         IIf(cboProcessor.SelectedValue = "", "", cboProcessor.SelectedItem.Text).ToString, _
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
-                        intUserTabId, cboDefaultLanguage.SelectedValue, Convert.ToInt32(cboTimeZone.SelectedValue), _
+                        intUserTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
                         lblHomeDirectory.Text, activeLanguage)
 
                     If Not refreshPage Then
@@ -956,24 +926,14 @@ Namespace DotNetNuke.Modules.Admin.Portals
             BindDesktopModules()
         End Sub
 
-        Private Sub rbViewType_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbViewType.SelectedIndexChanged
-            _ViewType = rbViewType.SelectedValue
+        Protected Sub localizedLanguagesComboBox_ItemChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles localizedLanguagesComboBox.ItemChanged
+            Loadportal(Me.SelectedCultureCode.ToString)
+
         End Sub
 
-        Protected Sub ddlPortalDefaultLanguage_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlPortalDefaultLanguage.SelectedIndexChanged
-            Loadportal(ddlPortalDefaultLanguage.SelectedValue.ToString)
-        End Sub
 
 #End Region
 
-       
-       
-
-
-
-
-
-       
     End Class
 
 End Namespace

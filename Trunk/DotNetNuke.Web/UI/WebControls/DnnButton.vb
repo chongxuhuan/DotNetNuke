@@ -102,6 +102,9 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Public Property Localize() As Boolean Implements ILocalizable.Localize
             Get
+                If (DesignMode) Then
+                    Return False
+                End If
                 Return _Localize
             End Get
             Set(ByVal value As Boolean)

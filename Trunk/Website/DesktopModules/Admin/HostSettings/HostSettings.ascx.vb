@@ -37,6 +37,8 @@ Imports DotNetNuke.Services.Cache
 Imports System.Linq
 Imports DotNetNuke.Services.ModuleCache
 Imports DotNetNuke.Services.OutputCache
+Imports DotNetNuke.Common.Utilities
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Modules.Admin.Host
 
@@ -235,6 +237,7 @@ Namespace DotNetNuke.Modules.Admin.Host
             chkDemoSignup.Checked = Entities.Host.Host.DemoSignup
             chkCopyright.Checked = Entities.Host.Host.DisplayCopyright
             chkUsersOnline.Checked = Entities.Host.Host.EnableUsersOnline
+            chkUseCustomModuleCssClass.Checked = Entities.Host.Host.EnableCustomModuleCssClass
 
             txtUsersOnlineTime.Text = Entities.Host.Host.UsersOnlineTimeWindow.ToString
             txtAutoAccountUnlock.Text = Entities.Host.Host.AutoAccountUnlockDuration.ToString
@@ -267,7 +270,6 @@ Namespace DotNetNuke.Modules.Admin.Host
             txtHelpURL.Text = Entities.Host.Host.HelpURL
             chkEnableHelp.Checked = Entities.Host.Host.EnableModuleOnLineHelp
             chkAutoSync.Checked = Entities.Host.Host.EnableFileAutoSync
-            chkContentLocalization.Checked = Entities.Host.Host.ContentLocalization
 
             chkWebFarm.Checked = CachingProvider.Instance().IsWebFarm
 
@@ -527,30 +529,31 @@ Namespace DotNetNuke.Modules.Admin.Host
         Private Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
             If Page.IsValid Then
                 Try
-                    Dim objHostSettings As New Entities.Host.HostSettingsController
 
-                    objHostSettings.UpdateHostSetting("CheckUpgrade", Convert.ToString(IIf(chkUpgrade.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("DisplayBetaNotice", Convert.ToString(IIf(chkBetaNotice.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("HostPortalId", cboHostPortal.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("HostTitle", txtHostTitle.Text, False, False)
-                    objHostSettings.UpdateHostSetting("HostURL", txtHostURL.Text, False, False)
-                    objHostSettings.UpdateHostSetting("HostEmail", txtHostEmail.Text, False, False)
-                    objHostSettings.UpdateHostSetting("PaymentProcessor", cboProcessor.SelectedItem.Text, False, False)
-                    objHostSettings.UpdateHostSetting("ProcessorUserId", txtUserId.Text, True, False)
-                    objHostSettings.UpdateHostSetting("ProcessorPassword", txtPassword.Text, True, False)
-                    objHostSettings.UpdateHostSetting("HostFee", txtHostFee.Text, False, False)
-                    objHostSettings.UpdateHostSetting("HostCurrency", cboHostCurrency.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("HostSpace", txtHostSpace.Text, False, False)
-                    objHostSettings.UpdateHostSetting("PageQuota", txtPageQuota.Text, False, False)
-                    objHostSettings.UpdateHostSetting("UserQuota", txtUserQuota.Text, False, False)
-                    objHostSettings.UpdateHostSetting("SiteLogStorage", optSiteLogStorage.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("SiteLogBuffer", txtSiteLogBuffer.Text, False, False)
-                    objHostSettings.UpdateHostSetting("SiteLogHistory", txtSiteLogHistory.Text, False, False)
-                    objHostSettings.UpdateHostSetting("DemoPeriod", txtDemoPeriod.Text, False, False)
-                    objHostSettings.UpdateHostSetting("DemoSignup", Convert.ToString(IIf(chkDemoSignup.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("Copyright", Convert.ToString(IIf(chkCopyright.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("DefaultDocType", cboHostDefaultDocType.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("RememberCheckbox", Convert.ToString(IIf(chkRemember.Checked, "Y", "N")), False, False)
+
+                    HostController.Instance.Update("CheckUpgrade", Convert.ToString(IIf(chkUpgrade.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("DisplayBetaNotice", Convert.ToString(IIf(chkBetaNotice.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("HostPortalId", cboHostPortal.SelectedItem.Value)
+                    HostController.Instance.Update("HostTitle", txtHostTitle.Text, False)
+                    HostController.Instance.Update("HostURL", txtHostURL.Text, False)
+                    HostController.Instance.Update("HostEmail", txtHostEmail.Text, False)
+                    HostController.Instance.Update("PaymentProcessor", cboProcessor.SelectedItem.Text, False)
+                    HostController.Instance.Update("ProcessorUserId", txtUserId.Text, False)
+                    HostController.Instance.Update("ProcessorPassword", txtPassword.Text, False)
+                    HostController.Instance.Update("HostFee", txtHostFee.Text, False)
+                    HostController.Instance.Update("HostCurrency", cboHostCurrency.SelectedItem.Value, False)
+                    HostController.Instance.Update("HostSpace", txtHostSpace.Text, False)
+                    HostController.Instance.Update("PageQuota", txtPageQuota.Text, False)
+                    HostController.Instance.Update("UserQuota", txtUserQuota.Text, False)
+                    HostController.Instance.Update("SiteLogStorage", optSiteLogStorage.SelectedItem.Value, False)
+                    HostController.Instance.Update("SiteLogBuffer", txtSiteLogBuffer.Text, False)
+                    HostController.Instance.Update("SiteLogHistory", txtSiteLogHistory.Text, False)
+                    HostController.Instance.Update("DemoPeriod", txtDemoPeriod.Text, False)
+                    HostController.Instance.Update("DemoSignup", Convert.ToString(IIf(chkDemoSignup.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("Copyright", Convert.ToString(IIf(chkCopyright.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("DefaultDocType", cboHostDefaultDocType.SelectedItem.Value, False)
+                    HostController.Instance.Update("RememberCheckbox", Convert.ToString(IIf(chkRemember.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("EnableCustomModuleCssClass", Convert.ToString(IIf(chkUseCustomModuleCssClass.Checked, "Y", "N")), False)
 
                     Dim OriginalUsersOnline As Boolean
                     OriginalUsersOnline = CType(ViewState.Item("SelectedUsersOnlineEnabled"), Boolean)
@@ -577,40 +580,39 @@ Namespace DotNetNuke.Modules.Admin.Host
                             End If
                         End If
                     End If
-                    objHostSettings.UpdateHostSetting("DisableUsersOnline", Convert.ToString(IIf(chkUsersOnline.Checked, "N", "Y")), False, False)
+                    HostController.Instance.Update("DisableUsersOnline", Convert.ToString(IIf(chkUsersOnline.Checked, "N", "Y")), False)
 
 
-                    objHostSettings.UpdateHostSetting("AutoAccountUnlockDuration", txtAutoAccountUnlock.Text, False, False)
-                    objHostSettings.UpdateHostSetting("UsersOnlineTime", txtUsersOnlineTime.Text, False, False)
-                    objHostSettings.UpdateHostSetting("ProxyServer", txtProxyServer.Text, False, False)
-                    objHostSettings.UpdateHostSetting("ProxyPort", txtProxyPort.Text, False, False)
-                    objHostSettings.UpdateHostSetting("ProxyUsername", txtProxyUsername.Text, True, False)
-                    objHostSettings.UpdateHostSetting("ProxyPassword", txtProxyPassword.Text, True, False)
-                    objHostSettings.UpdateHostSetting("WebRequestTimeout", txtWebRequestTimeout.Text, False, False)
-                    objHostSettings.UpdateHostSetting("SMTPServer", txtSMTPServer.Text, False, False)
-                    objHostSettings.UpdateHostSetting("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("SMTPUsername", txtSMTPUsername.Text, True, False)
-                    objHostSettings.UpdateHostSetting("SMTPPassword", txtSMTPPassword.Text, True, False)
-                    objHostSettings.UpdateHostSetting("SMTPEnableSSL", Convert.ToString(IIf(chkSMTPEnableSSL.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("FileExtensions", txtFileExtensions.Text, False, False)
-                    objHostSettings.UpdateHostSetting("UseCustomErrorMessages", Convert.ToString(IIf(chkUseCustomErrorMessages.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("UseFriendlyUrls", Convert.ToString(IIf(chkUseFriendlyUrls.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("EnableRequestFilters", Convert.ToString(IIf(chkEnableRequestFilters.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("ControlPanel", cboControlPanel.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("SchedulerMode", cboSchedulerMode.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("PerformanceSetting", cboPerformance.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("AuthenticatedCacheability", cboCacheability.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("PageStatePersister", cboPageState.SelectedItem.Value)
-                    objHostSettings.UpdateHostSetting("ModuleCaching", cboModuleCacheProvider.SelectedItem.Value, False, False)
+                    HostController.Instance.Update("AutoAccountUnlockDuration", txtAutoAccountUnlock.Text, False)
+                    HostController.Instance.Update("UsersOnlineTime", txtUsersOnlineTime.Text, False)
+                    HostController.Instance.Update("ProxyServer", txtProxyServer.Text, False)
+                    HostController.Instance.Update("ProxyPort", txtProxyPort.Text, False)
+                    HostController.Instance.Update("ProxyUsername", txtProxyUsername.Text, False)
+                    HostController.Instance.Update("ProxyPassword", txtProxyPassword.Text, False)
+                    HostController.Instance.Update("WebRequestTimeout", txtWebRequestTimeout.Text, False)
+                    HostController.Instance.Update("SMTPServer", txtSMTPServer.Text, False)
+                    HostController.Instance.Update("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value, False)
+                    HostController.Instance.Update("SMTPUsername", txtSMTPUsername.Text, False)
+                    HostController.Instance.Update("SMTPPassword", txtSMTPPassword.Text, False)
+                    HostController.Instance.Update("SMTPEnableSSL", Convert.ToString(IIf(chkSMTPEnableSSL.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("FileExtensions", txtFileExtensions.Text, False)
+                    HostController.Instance.Update("UseCustomErrorMessages", Convert.ToString(IIf(chkUseCustomErrorMessages.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("UseFriendlyUrls", Convert.ToString(IIf(chkUseFriendlyUrls.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("EnableRequestFilters", Convert.ToString(IIf(chkEnableRequestFilters.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("ControlPanel", cboControlPanel.SelectedItem.Value, False)
+                    HostController.Instance.Update("SchedulerMode", cboSchedulerMode.SelectedItem.Value, False)
+                    HostController.Instance.Update("PerformanceSetting", cboPerformance.SelectedItem.Value, False)
+                    HostController.Instance.Update("AuthenticatedCacheability", cboCacheability.SelectedItem.Value, False)
+                    HostController.Instance.Update("PageStatePersister", cboPageState.SelectedItem.Value)
+                    HostController.Instance.Update("ModuleCaching", cboModuleCacheProvider.SelectedItem.Value, False)
                     If PageCacheRow.Visible Then
-                        objHostSettings.UpdateHostSetting("PageCaching", cboPageCacheProvider.SelectedItem.Value, False, False)
+                        HostController.Instance.Update("PageCaching", cboPageCacheProvider.SelectedItem.Value, False)
                     End If
-                    objHostSettings.UpdateHostSetting("HttpCompression", cboCompression.SelectedItem.Value, False, False)
-                    objHostSettings.UpdateHostSetting("WhitespaceFilter", Convert.ToString(IIf(chkWhitespace.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("EnableModuleOnLineHelp", Convert.ToString(IIf(chkEnableHelp.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("EnableFileAutoSync", Convert.ToString(IIf(chkAutoSync.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("ContentLocalization", Convert.ToString(IIf(chkContentLocalization.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("HelpURL", txtHelpURL.Text, False, False)
+                    HostController.Instance.Update("HttpCompression", cboCompression.SelectedItem.Value, False)
+                    HostController.Instance.Update("WhitespaceFilter", Convert.ToString(IIf(chkWhitespace.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("EnableModuleOnLineHelp", Convert.ToString(IIf(chkEnableHelp.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("EnableFileAutoSync", Convert.ToString(IIf(chkAutoSync.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("HelpURL", txtHelpURL.Text, False)
 
                     Dim OriginalLogBuffer As Boolean
                     OriginalLogBuffer = CType(ViewState.Item("SelectedLogBufferEnabled"), Boolean)
@@ -637,17 +639,17 @@ Namespace DotNetNuke.Modules.Admin.Host
                             End If
                         End If
                     End If
-                    objHostSettings.UpdateHostSetting("EventLogBuffer", Convert.ToString(IIf(chkLogBuffer.Checked, "Y", "N")), False, False)
+                    HostController.Instance.Update("EventLogBuffer", Convert.ToString(IIf(chkLogBuffer.Checked, "Y", "N")), False)
 
-                    objHostSettings.UpdateHostSetting("DefaultPortalSkin", ctlHostSkin.SkinSrc, False, False)
-                    objHostSettings.UpdateHostSetting("DefaultAdminSkin", ctlAdminSkin.SkinSrc, False, False)
-                    objHostSettings.UpdateHostSetting("DefaultPortalContainer", ctlHostContainer.SkinSrc, False, False)
-                    objHostSettings.UpdateHostSetting("DefaultAdminContainer", ctlAdminContainer.SkinSrc, False, False)
+                    HostController.Instance.Update("DefaultPortalSkin", ctlHostSkin.SkinSrc, False)
+                    HostController.Instance.Update("DefaultAdminSkin", ctlAdminSkin.SkinSrc, False)
+                    HostController.Instance.Update("DefaultPortalContainer", ctlHostContainer.SkinSrc, False)
+                    HostController.Instance.Update("DefaultAdminContainer", ctlAdminContainer.SkinSrc, False)
 
                     'jQuery Settings
-                    objHostSettings.UpdateHostSetting("jQueryDebug", Convert.ToString(IIf(chkJQueryDebugVersion.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("jQueryHosted", Convert.ToString(IIf(chkJQueryUseHosted.Checked, "Y", "N")), False, False)
-                    objHostSettings.UpdateHostSetting("jQueryUrl", txtJQueryHostedUrl.Text, False, False)
+                    HostController.Instance.Update("jQueryDebug", Convert.ToString(IIf(chkJQueryDebugVersion.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("jQueryHosted", Convert.ToString(IIf(chkJQueryUseHosted.Checked, "Y", "N")), False)
+                    HostController.Instance.Update("jQueryUrl", txtJQueryHostedUrl.Text, False)
 
                     Dim OriginalSchedulerMode As Services.Scheduling.SchedulerMode
                     OriginalSchedulerMode = CType(ViewState.Item("SelectedSchedulerMode"), Services.Scheduling.SchedulerMode)

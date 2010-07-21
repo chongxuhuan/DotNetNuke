@@ -393,4 +393,37 @@
   <data name="plAdminBorder.Text" xml:space="preserve">
     <value>Hide Admin Border</value>
   </data>
+  <data name="cultureLabel.Help" xml:space="preserve">
+    <value>The culture for this module</value>
+  </data>
+  <data name="cultureLabel.Text" xml:space="preserve">
+    <value>Module Culture:</value>
+  </data>
+  <data name="defaultCultureLabel.Help" xml:space="preserve">
+    <value>Click this link to view the version of this module in the default culture</value>
+  </data>
+  <data name="defaultCultureLabel.Text" xml:space="preserve">
+    <value>Default Culture:</value>
+  </data>
+  <data name="Bind.Text" xml:space="preserve">
+    <value>Bind</value>
+  </data>
+  <data name="edit.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="UnBind.Text" xml:space="preserve">
+    <value>UnBind</value>
+  </data>
+  <data name="LocalizedModules.Text" xml:space="preserve">
+    <value>Module Localization</value>
+  </data>
+  <data name="Translated.Text" xml:space="preserve">
+    <value>Mark Translated</value>
+  </data>
+  <data name="UnTranslated.Text" xml:space="preserve">
+    <value>Mark UnTranslated</value>
+  </data>
+  <data name="CreateBoundCopies.Text" xml:space="preserve">
+    <value>Create Bound Copies</value>
+  </data>
 </root>

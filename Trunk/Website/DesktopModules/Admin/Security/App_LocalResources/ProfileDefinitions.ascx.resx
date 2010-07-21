@@ -150,6 +150,9 @@
   <data name="ValidationExpression.Header" xml:space="preserve">
     <value>Validation Expression</value>
   </data>
+  <data name="DefaultVisibility.Header" xml:space="preserve">
+    <value>Default Visibility</value>
+  </data>
   <data name="Required.Header" xml:space="preserve">
     <value>Required</value>
   </data>

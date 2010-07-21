@@ -25,6 +25,7 @@ Imports DotNetNuke.Entities.Modules.Definitions
 Imports DotNetNuke.Security.Permissions
 Imports System.Collections.Generic
 Imports DotNetNuke.Entities.Content
+Imports DotNetNuke.Entities.Tabs
 
 Namespace DotNetNuke.Entities.Modules
 
@@ -78,6 +79,9 @@ Namespace DotNetNuke.Entities.Modules
         Private _WebSliceExpiryDate As DateTime
         Private _WebSliceTTL As Integer
 
+        'Tab Properties
+        Private _ParentTab As TabInfo
+
         'DesktopModule Properties
         Private _DesktopModuleID As Integer
         Private _DesktopModule As DesktopModuleInfo
@@ -105,6 +109,15 @@ Namespace DotNetNuke.Entities.Modules
         Private _IsDefaultModule As Boolean
         Private _AllModules As Boolean
 
+        Private _UniqueId As Guid
+        Private _VersionGuid As Guid
+
+        'Localization Properties
+        Private _CultureCode As String
+        Private _DefaultLanguageGuid As Guid
+        Private _LocalizedVersionGuid As Guid
+        Private _DefaultLanguageModule As ModuleInfo
+        Private _LocalizedModules As Dictionary(Of String, ModuleInfo)
 
 #End Region
 
@@ -132,6 +145,13 @@ Namespace DotNetNuke.Entities.Modules
             _DisplayTitle = True
             _DisplayPrint = True
             _DisplaySyndicate = False
+            'Guid, Version Guid, and Localized Version Guid should be initialised to a new value
+            _UniqueId = Guid.NewGuid()
+            _VersionGuid = Guid.NewGuid()
+            _LocalizedVersionGuid = Guid.NewGuid()
+
+            'Default Language Guid should be initialised to a null Guid
+            _DefaultLanguageGuid = Null.NullGuid
         End Sub
 
 #End Region
@@ -401,6 +421,43 @@ Namespace DotNetNuke.Entities.Modules
             End Get
         End Property
 
+        <XmlElement("uniqueId")> Public Property UniqueId() As Guid
+            Get
+                Return _UniqueId
+            End Get
+            Set(ByVal value As Guid)
+                _UniqueId = value
+            End Set
+        End Property
+
+        <XmlElement("versionGuid")> Public Property VersionGuid() As Guid
+            Get
+                Return _VersionGuid
+            End Get
+            Set(ByVal value As Guid)
+                _VersionGuid = value
+            End Set
+        End Property
+
+#End Region
+
+#Region "Tab Properties"
+
+        Public ReadOnly Property ParentTab As TabInfo
+            Get
+                If _ParentTab Is Nothing Then
+                    Dim tabCtrl As New TabController()
+                    If PortalID = Null.NullInteger OrElse String.IsNullOrEmpty(CultureCode) Then
+                        _ParentTab = tabCtrl.GetTab(TabID, PortalID, False)
+                    Else
+                        Dim locale As Locale = LocaleController.Instance().GetLocale(CultureCode)
+                        _ParentTab = tabCtrl.GetTabByCulture(TabID, PortalID, locale)
+                    End If
+                End If
+                Return _ParentTab
+            End Get
+        End Property
+
 #End Region
 
 #Region "Desktop Module Properties"
@@ -554,6 +611,7 @@ Namespace DotNetNuke.Entities.Modules
 #End Region
 
 #Region "TabModule Setting Properties"
+
         <XmlIgnore()> Public ReadOnly Property TabModuleSettings() As Hashtable
             Get
                 If _TabModuleSettings Is Nothing Then
@@ -568,6 +626,103 @@ Namespace DotNetNuke.Entities.Modules
                 Return _TabModuleSettings
             End Get
         End Property
+
+#End Region
+
+#Region "Localization Properties"
+
+        <XmlElement("cultureCode")> Public Property CultureCode() As String
+            Get
+                Return _CultureCode
+            End Get
+            Set(ByVal value As String)
+                _CultureCode = value
+            End Set
+        End Property
+
+        <XmlElement("defaultLanguageGuid")> Public Property DefaultLanguageGuid() As Guid
+            Get
+                Return _DefaultLanguageGuid
+            End Get
+            Set(ByVal value As Guid)
+                _DefaultLanguageGuid = value
+            End Set
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property DefaultLanguageModule As ModuleInfo
+            Get
+                If _DefaultLanguageModule Is Nothing AndAlso (Not DefaultLanguageGuid.Equals(Null.NullGuid)) _
+                        AndAlso ParentTab IsNot Nothing AndAlso ParentTab.DefaultLanguageTab IsNot Nothing _
+                        AndAlso ParentTab.DefaultLanguageTab.ChildModules IsNot Nothing Then
+                    _DefaultLanguageModule = (From kvp As KeyValuePair(Of Integer, ModuleInfo) In ParentTab.DefaultLanguageTab.ChildModules _
+                                                       Where kvp.Value.UniqueId = DefaultLanguageGuid _
+                                                       Select kvp.Value).SingleOrDefault()
+                End If
+                Return _DefaultLanguageModule
+            End Get
+        End Property
+
+        Public ReadOnly Property IsDefaultLanguage As Boolean
+            Get
+                Return (DefaultLanguageGuid = Null.NullGuid)
+            End Get
+        End Property
+
+        Public ReadOnly Property IsLocalized As Boolean
+            Get
+                Dim _IsLocalized As Boolean = True
+                If DefaultLanguageModule IsNot Nothing Then
+                    'Child language
+                    _IsLocalized = Not (ModuleID = DefaultLanguageModule.ModuleID)
+                End If
+                Return _IsLocalized
+            End Get
+        End Property
+
+        Public ReadOnly Property IsNeutralCulture As Boolean
+            Get
+                Return String.IsNullOrEmpty(CultureCode)
+            End Get
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property IsTranslated As Boolean
+            Get
+                Dim _IsTranslated As Boolean = True
+                If DefaultLanguageModule IsNot Nothing Then
+                    'Child language
+                    _IsTranslated = (LocalizedVersionGuid = DefaultLanguageModule.LocalizedVersionGuid)
+                End If
+                Return _IsTranslated
+            End Get
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property LocalizedModules() As Dictionary(Of String, ModuleInfo)
+            Get
+                If _LocalizedModules Is Nothing AndAlso (DefaultLanguageGuid.Equals(Null.NullGuid)) _
+                        AndAlso ParentTab IsNot Nothing AndAlso ParentTab.LocalizedTabs IsNot Nothing Then
+                    'Cycle through all localized tabs looking for this module
+                    _LocalizedModules = New Dictionary(Of String, ModuleInfo)
+                    For Each t As TabInfo In ParentTab.LocalizedTabs.Values
+                        For Each m As ModuleInfo In t.ChildModules.Values
+                            If m.DefaultLanguageGuid = UniqueId AndAlso Not m.IsDeleted Then
+                                _LocalizedModules.Add(m.CultureCode, m)
+                            End If
+                        Next
+                    Next
+                End If
+                Return _LocalizedModules
+            End Get
+        End Property
+
+        <XmlElement("localizedVersionGuid")> Public Property LocalizedVersionGuid() As Guid
+            Get
+                Return _LocalizedVersionGuid
+            End Get
+            Set(ByVal value As Guid)
+                _LocalizedVersionGuid = value
+            End Set
+        End Property
+
 #End Region
 
 #Region "Other Properties"
@@ -624,7 +779,6 @@ Namespace DotNetNuke.Entities.Modules
 #Region "Public Methods"
 
         Public Function Clone() As ModuleInfo
-
             ' create the object
             Dim objModuleInfo As New ModuleInfo
 
@@ -671,10 +825,14 @@ Namespace DotNetNuke.Entities.Modules
             objModuleInfo.IsDefaultModule = Me.IsDefaultModule
             objModuleInfo.AllModules = Me.AllModules
 
-            objModuleInfo._ModulePermissions = Me._ModulePermissions
-            objModuleInfo._TabPermissions = Me._TabPermissions
-
             objModuleInfo.ContentItemId = Me.ContentItemId
+
+            'localized properties
+            objModuleInfo.UniqueId = Guid.NewGuid
+            objModuleInfo.VersionGuid = Guid.NewGuid
+            objModuleInfo.DefaultLanguageGuid = Me.DefaultLanguageGuid
+            objModuleInfo.LocalizedVersionGuid = Me.LocalizedVersionGuid
+            objModuleInfo.CultureCode = Me.CultureCode
 
             Return objModuleInfo
 
@@ -775,6 +933,12 @@ Namespace DotNetNuke.Entities.Modules
         Public Overrides Sub Fill(ByVal dr As System.Data.IDataReader)
             'Call the base classes fill method to populate base class properties
             MyBase.FillInternal(dr)
+
+            UniqueId = Null.SetNullGuid(dr("UniqueId"))
+            VersionGuid = Null.SetNullGuid(dr("VersionGuid"))
+            DefaultLanguageGuid = Null.SetNullGuid(dr("DefaultLanguageGuid"))
+            LocalizedVersionGuid = Null.SetNullGuid(dr("LocalizedVersionGuid"))
+            CultureCode = Null.SetNullString(dr("CultureCode"))
 
             PortalID = Null.SetNullInteger(dr("PortalID"))
             ModuleDefID = Null.SetNullInteger(dr("ModuleDefID"))

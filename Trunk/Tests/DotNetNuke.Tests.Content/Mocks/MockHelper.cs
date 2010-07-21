@@ -1,75 +1,77 @@
-/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
+// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Web;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Web.Validators;
 using Moq;
-using DotNetNuke.ComponentModel;
-using System.Web;
-using DotNetNuke.Entities.Content.Data;
-using DotNetNuke.Entities.Content;
-using DotNetNuke.Common.Utilities;
-using System.Data;
 
 namespace DotNetNuke.Tests.Content.Mocks
 {
     public static class MockHelper
     {
-
         private static void AddBaseEntityColumns(DataTable table)
         {
-            table.Columns.Add("CreatedByUserID", typeof(int));
-            table.Columns.Add("CreatedOnDate", typeof(DateTime));
-            table.Columns.Add("LastModifiedByUserID", typeof(int));
-            table.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            table.Columns.Add("CreatedByUserID", typeof (int));
+            table.Columns.Add("CreatedOnDate", typeof (DateTime));
+            table.Columns.Add("LastModifiedByUserID", typeof (int));
+            table.Columns.Add("LastModifiedOnDate", typeof (DateTime));
         }
 
-        private static void AddContentItemToTable(DataTable table, int id, string content, string contentKey, bool indexed, int userId, string term)
+        private static void AddContentItemToTable(DataTable table, int id, string content, string contentKey,
+                                                  bool indexed, int userId, string term)
         {
-            table.Rows.Add(new object[] { id, content, Null.NullInteger, Null.NullInteger, Null.NullInteger, 
-                                            contentKey, indexed, userId, term });
+            table.Rows.Add(new object[]
+                               {
+                                   id, content, Null.NullInteger, Null.NullInteger, Null.NullInteger,
+                                   contentKey, indexed, userId, term
+                               });
         }
 
         private static void AddContentTypeToTable(DataTable table, int id, string contentType)
         {
-            table.Rows.Add(new object[] { id, contentType });
+            table.Rows.Add(new object[] {id, contentType});
         }
 
         private static void AddScopeTypeToTable(DataTable table, int id, string scopeType)
         {
-            table.Rows.Add(new object[] { id, scopeType });
+            table.Rows.Add(new object[] {id, scopeType});
         }
 
-        private static void AddTermToTable(DataTable table, int id, int contentItemId, int vocabularyId, string name, string description, int weight, int parentId)
+        private static void AddTermToTable(DataTable table, int id, int contentItemId, int vocabularyId, string name,
+                                           string description, int weight, int parentId)
         {
-            table.Rows.Add(new object[] { id, contentItemId, vocabularyId, name, description, weight, parentId });
+            table.Rows.Add(new object[] {id, contentItemId, vocabularyId, name, description, weight, parentId});
         }
 
-        private static void AddVocabularyToTable(DataTable table, int id, int typeId, string name, string description, int scopeId, int scopeTypeId, int weight)
+        private static void AddVocabularyToTable(DataTable table, int id, int typeId, string name, string description,
+                                                 int scopeId, int scopeTypeId, int weight)
         {
-            table.Rows.Add(new object[] { id, typeId, false, name, description, scopeId, scopeTypeId, weight });
+            table.Rows.Add(new object[] {id, typeId, false, name, description, scopeId, scopeTypeId, weight});
         }
 
         private static DataTable CreateContentItemTable()
@@ -78,19 +80,19 @@ namespace DotNetNuke.Tests.Content.Mocks
             DataTable table = new DataTable();
 
             // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("ContentItemID", typeof(int));
-            table.Columns.Add("Content", typeof(string));
-            table.Columns.Add("ContentTypeID", typeof(int));
-            table.Columns.Add("TabID", typeof(int));
-            table.Columns.Add("ModuleID", typeof(int));
-            table.Columns.Add("ContentKey", typeof(string));
-            table.Columns.Add("Indexed", typeof(bool));
-            table.Columns.Add("UserID", typeof(int));
-            table.Columns.Add("Term", typeof(string));
+            DataColumn idColumn = table.Columns.Add("ContentItemID", typeof (int));
+            table.Columns.Add("Content", typeof (string));
+            table.Columns.Add("ContentTypeID", typeof (int));
+            table.Columns.Add("TabID", typeof (int));
+            table.Columns.Add("ModuleID", typeof (int));
+            table.Columns.Add("ContentKey", typeof (string));
+            table.Columns.Add("Indexed", typeof (bool));
+            table.Columns.Add("UserID", typeof (int));
+            table.Columns.Add("Term", typeof (string));
             AddBaseEntityColumns(table);
 
             // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
+            table.PrimaryKey = new[] {idColumn};
 
             return table;
         }
@@ -101,10 +103,10 @@ namespace DotNetNuke.Tests.Content.Mocks
             DataTable table = new DataTable();
 
             // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("ContentTypeID", typeof(int));
-            table.Columns.Add("ContentType", typeof(string));
+            DataColumn idColumn = table.Columns.Add("ContentTypeID", typeof (int));
+            table.Columns.Add("ContentType", typeof (string));
             // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
+            table.PrimaryKey = new[] {idColumn};
 
             return table;
         }
@@ -115,10 +117,10 @@ namespace DotNetNuke.Tests.Content.Mocks
             DataTable table = new DataTable();
 
             // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("ScopeTypeID", typeof(int));
-            table.Columns.Add("ScopeType", typeof(string));
+            DataColumn idColumn = table.Columns.Add("ScopeTypeID", typeof (int));
+            table.Columns.Add("ScopeType", typeof (string));
             // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
+            table.PrimaryKey = new[] {idColumn};
 
             return table;
         }
@@ -129,19 +131,19 @@ namespace DotNetNuke.Tests.Content.Mocks
             DataTable table = new DataTable();
 
             // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("TermID", typeof(int));
-            table.Columns.Add("ContentItemID", typeof(int));
-            table.Columns.Add("VocabularyID", typeof(int));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Description", typeof(string));
-            table.Columns.Add("Weight", typeof(int));
-            table.Columns.Add("ParentTermID", typeof(int));
-            table.Columns.Add("TermLeft", typeof(int));
-            table.Columns.Add("TermRight", typeof(int));
+            DataColumn idColumn = table.Columns.Add("TermID", typeof (int));
+            table.Columns.Add("ContentItemID", typeof (int));
+            table.Columns.Add("VocabularyID", typeof (int));
+            table.Columns.Add("Name", typeof (string));
+            table.Columns.Add("Description", typeof (string));
+            table.Columns.Add("Weight", typeof (int));
+            table.Columns.Add("ParentTermID", typeof (int));
+            table.Columns.Add("TermLeft", typeof (int));
+            table.Columns.Add("TermRight", typeof (int));
             AddBaseEntityColumns(table);
 
             // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
+            table.PrimaryKey = new[] {idColumn};
 
             return table;
         }
@@ -152,18 +154,18 @@ namespace DotNetNuke.Tests.Content.Mocks
             DataTable table = new DataTable();
 
             // Create columns, ID and Name.
-            DataColumn idColumn = table.Columns.Add("VocabularyID", typeof(int));
-            table.Columns.Add("VocabularyTypeID", typeof(int));
-            table.Columns.Add("IsSystem", typeof(bool));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Description", typeof(string));
-            table.Columns.Add("ScopeID", typeof(int));
-            table.Columns.Add("ScopeTypeID", typeof(int));
-            table.Columns.Add("Weight", typeof(int));
+            DataColumn idColumn = table.Columns.Add("VocabularyID", typeof (int));
+            table.Columns.Add("VocabularyTypeID", typeof (int));
+            table.Columns.Add("IsSystem", typeof (bool));
+            table.Columns.Add("Name", typeof (string));
+            table.Columns.Add("Description", typeof (string));
+            table.Columns.Add("ScopeID", typeof (int));
+            table.Columns.Add("ScopeTypeID", typeof (int));
+            table.Columns.Add("Weight", typeof (int));
             AddBaseEntityColumns(table);
 
             // Set the ID column as the primary key column.
-            table.PrimaryKey = new DataColumn[] { idColumn };
+            table.PrimaryKey = new[] {idColumn};
 
             return table;
         }
@@ -224,10 +226,10 @@ namespace DotNetNuke.Tests.Content.Mocks
             // Create the mock
             var mockScopeTypes = new Mock<IScopeTypeController>();
             mockScopeTypes.Setup(s => s.GetScopeTypes())
-                            .Returns(TestScopeTypes);
+                .Returns(TestScopeTypes);
 
             //Register Mock
-            return RegisterMockController<IScopeTypeController>(mockScopeTypes);
+            return RegisterMockController(mockScopeTypes);
         }
 
         internal static Mock<ITermController> CreateMockTermController()
@@ -235,7 +237,7 @@ namespace DotNetNuke.Tests.Content.Mocks
             // Create the mock
             var mockTerms = new Mock<ITermController>();
             mockTerms.Setup(t => t.GetTermsByVocabulary(Constants.VOCABULARY_ValidVocabularyId))
-                        .Returns(TestTerms);
+                .Returns(TestTerms);
 
             //Return Mock
             return mockTerms;
@@ -246,19 +248,19 @@ namespace DotNetNuke.Tests.Content.Mocks
             // Create the mock
             var mockVocabularies = new Mock<IVocabularyController>();
             mockVocabularies.Setup(v => v.GetVocabularies())
-                            .Returns(TestVocabularies);
+                .Returns(TestVocabularies);
 
             //Register Mock
-            return RegisterMockController<IVocabularyController>(mockVocabularies);
+            return RegisterMockController(mockVocabularies);
         }
 
         internal static IDataReader CreateValidContentItemReader()
         {
             DataTable table = CreateContentItemTable();
             AddContentItemToTable(table, Constants.CONTENT_ValidContentItemId,
-                                    ContentTestHelper.GetContent(Constants.CONTENT_ValidContentItemId),
-                                    ContentTestHelper.GetContentKey(Constants.CONTENT_ValidContentItemId),
-                                    true, Constants.USER_ValidId, Null.NullString);
+                                  ContentTestHelper.GetContent(Constants.CONTENT_ValidContentItemId),
+                                  ContentTestHelper.GetContentKey(Constants.CONTENT_ValidContentItemId),
+                                  true, Constants.USER_ValidId, Null.NullString);
 
             return table.CreateDataReader();
         }
@@ -267,11 +269,13 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             DataTable table = CreateContentItemTable();
             for (int i = Constants.CONTENT_ValidContentItemId;
-                       i < Constants.CONTENT_ValidContentItemId + count;
-                       i++)
+                 i < Constants.CONTENT_ValidContentItemId + count;
+                 i++)
             {
                 string content = (count == 1) ? Constants.CONTENT_ValidContent : ContentTestHelper.GetContent(i);
-                string contentKey = (count == 1) ? Constants.CONTENT_ValidContentKey : ContentTestHelper.GetContentKey(i);
+                string contentKey = (count == 1)
+                                        ? Constants.CONTENT_ValidContentKey
+                                        : ContentTestHelper.GetContentKey(i);
                 int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
 
                 AddContentItemToTable(table, i, content, contentKey, indexed, startUserId, term);
@@ -284,10 +288,12 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             DataTable table = CreateContentTypeTable();
             for (int i = Constants.CONTENTTYPE_ValidContentTypeId;
-                       i < Constants.CONTENTTYPE_ValidContentTypeId + count;
-                       i++)
+                 i < Constants.CONTENTTYPE_ValidContentTypeId + count;
+                 i++)
             {
-                string contentType = (count == 1) ? Constants.CONTENTTYPE_ValidContentType : ContentTestHelper.GetContentType(i);
+                string contentType = (count == 1)
+                                         ? Constants.CONTENTTYPE_ValidContentType
+                                         : ContentTestHelper.GetContentType(i);
 
                 AddContentTypeToTable(table, i, contentType);
             }
@@ -299,8 +305,8 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             DataTable table = CreateScopeTypeTable();
             for (int i = Constants.SCOPETYPE_ValidScopeTypeId;
-                       i < Constants.SCOPETYPE_ValidScopeTypeId + count;
-                       i++)
+                 i < Constants.SCOPETYPE_ValidScopeTypeId + count;
+                 i++)
             {
                 string scopeType = (count == 1) ? Constants.SCOPETYPE_ValidScopeType : ContentTestHelper.GetScopeType(i);
 
@@ -316,11 +322,15 @@ namespace DotNetNuke.Tests.Content.Mocks
             using (DataTable table = new DataTable())
             {
                 // Create columns, ID and Name.
-                table.Columns.Add("MetaDataName", typeof(string));
-                table.Columns.Add("MetaDataValue", typeof(string));
+                table.Columns.Add("MetaDataName", typeof (string));
+                table.Columns.Add("MetaDataValue", typeof (string));
                 for (int i = 0; i < Constants.CONTENT_MetaDataCount; i++)
                 {
-                    table.Rows.Add(new object[] { String.Format("{0} {1}", Constants.CONTENT_ValidMetaDataName, i), Constants.CONTENT_ValidMetaDataValue });
+                    table.Rows.Add(new object[]
+                                       {
+                                           String.Format("{0} {1}", Constants.CONTENT_ValidMetaDataName, i),
+                                           Constants.CONTENT_ValidMetaDataValue
+                                       });
                 }
                 return table.CreateDataReader();
             }
@@ -329,31 +339,33 @@ namespace DotNetNuke.Tests.Content.Mocks
         internal static IDataReader CreateValidTermReader()
         {
             DataTable table = CreateTermTable();
-            AddTermToTable(table, 
-                Constants.TERM_ValidTermId, 
-                Constants.TERM_ValidContent1,
-                Constants.TERM_ValidVocabulary1, 
-                Constants.TERM_ValidName, 
-                Constants.TERM_ValidName, 
-                Constants.TERM_ValidWeight, 
-                Constants.TERM_ValidParentTermId);
+            AddTermToTable(table,
+                           Constants.TERM_ValidTermId,
+                           Constants.TERM_ValidContent1,
+                           Constants.TERM_ValidVocabulary1,
+                           Constants.TERM_ValidName,
+                           Constants.TERM_ValidName,
+                           Constants.TERM_ValidWeight,
+                           Constants.TERM_ValidParentTermId);
 
 
             return table.CreateDataReader();
         }
 
-        internal static IDataReader CreateValidTermsReader(int count, Func<int, int> vocabularyIdFunction, Func<int, int> contentIdFunction)
+        internal static IDataReader CreateValidTermsReader(int count, Func<int, int> vocabularyIdFunction,
+                                                           Func<int, int> contentIdFunction)
         {
             DataTable table = CreateTermTable();
             for (int i = Constants.TERM_ValidTermId;
-                       i < Constants.TERM_ValidTermId + count;
-                       i++)
+                 i < Constants.TERM_ValidTermId + count;
+                 i++)
             {
                 string name = (count == 1) ? Constants.TERM_ValidName : ContentTestHelper.GetTermName(i);
                 string description = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetTermName(i);
                 int weight = Constants.TERM_ValidWeight;
                 int parentId = Constants.TERM_ValidParentTermId;
-                AddTermToTable(table, i, contentIdFunction(i), vocabularyIdFunction(i), name, description, weight, parentId);
+                AddTermToTable(table, i, contentIdFunction(i), vocabularyIdFunction(i), name, description, weight,
+                               parentId);
             }
 
             return table.CreateDataReader();
@@ -363,14 +375,17 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             DataTable table = CreateVocabularyTable();
             for (int i = Constants.VOCABULARY_ValidVocabularyId;
-                       i < Constants.VOCABULARY_ValidVocabularyId + count;
-                       i++)
+                 i < Constants.VOCABULARY_ValidVocabularyId + count;
+                 i++)
             {
                 string name = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetVocabularyName(i);
                 int typeId = Constants.VOCABULARY_SimpleTypeId;
-                string description = (count == 1) ? Constants.VOCABULARY_ValidName : ContentTestHelper.GetVocabularyName(i);
+                string description = (count == 1)
+                                         ? Constants.VOCABULARY_ValidName
+                                         : ContentTestHelper.GetVocabularyName(i);
                 int weight = Constants.VOCABULARY_ValidWeight;
-                AddVocabularyToTable(table, i, typeId, name, description, Constants.VOCABULARY_ValidScopeId, Constants.VOCABULARY_ValidScopeTypeId, weight);
+                AddVocabularyToTable(table, i, typeId, name, description, Constants.VOCABULARY_ValidScopeId,
+                                     Constants.VOCABULARY_ValidScopeTypeId, weight);
             }
 
             return table.CreateDataReader();
@@ -381,11 +396,11 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             get
             {
-                List<ScopeType> scopeTypes = new List<ScopeType>()
-                    {
-                        new ScopeType() { ScopeTypeId = 1, ScopeType = "Application" },
-                        new ScopeType() { ScopeTypeId = 2, ScopeType = "Portal" }
-                    };
+                List<ScopeType> scopeTypes = new List<ScopeType>
+                                                 {
+                                                     new ScopeType {ScopeTypeId = 1, ScopeType = "Application"},
+                                                     new ScopeType {ScopeTypeId = 2, ScopeType = "Portal"}
+                                                 };
 
                 return scopeTypes.AsQueryable();
             }
@@ -398,8 +413,8 @@ namespace DotNetNuke.Tests.Content.Mocks
                 List<Term> terms = new List<Term>();
 
                 for (int i = Constants.TERM_ValidTermId;
-                           i < Constants.TERM_ValidTermId + Constants.TERM_ValidCount;
-                           i++)
+                     i < Constants.TERM_ValidTermId + Constants.TERM_ValidCount;
+                     i++)
                 {
                     Term term = new Term(Constants.VOCABULARY_ValidVocabularyId);
                     term.TermId = i;
@@ -413,7 +428,7 @@ namespace DotNetNuke.Tests.Content.Mocks
                 return terms.AsQueryable();
             }
         }
-        
+
         internal static IQueryable<Vocabulary> TestVocabularies
         {
             get
@@ -421,13 +436,15 @@ namespace DotNetNuke.Tests.Content.Mocks
                 List<Vocabulary> vocabularies = new List<Vocabulary>();
 
                 for (int i = Constants.VOCABULARY_ValidVocabularyId;
-                           i < Constants.VOCABULARY_ValidVocabularyId + Constants.VOCABULARY_ValidCount;
-                           i++)
+                     i < Constants.VOCABULARY_ValidVocabularyId + Constants.VOCABULARY_ValidCount;
+                     i++)
                 {
                     Vocabulary vocabulary = new Vocabulary();
                     vocabulary.VocabularyId = i;
                     vocabulary.Name = ContentTestHelper.GetVocabularyName(i);
-                    vocabulary.Type = (i == Constants.VOCABULARY_HierarchyVocabularyId) ? VocabularyType.Hierarchy : VocabularyType.Simple;
+                    vocabulary.Type = (i == Constants.VOCABULARY_HierarchyVocabularyId)
+                                          ? VocabularyType.Hierarchy
+                                          : VocabularyType.Simple;
                     vocabulary.Description = ContentTestHelper.GetVocabularyName(i);
                     vocabulary.ScopeTypeId = Constants.SCOPETYPE_ValidScopeTypeId;
                     vocabulary.Weight = Constants.VOCABULARY_ValidWeight;
@@ -438,20 +455,23 @@ namespace DotNetNuke.Tests.Content.Mocks
                 return vocabularies.AsQueryable();
             }
         }
-        
-        internal static readonly ValidationResult InvalidResult = new ValidationResult(new[] { new ValidationError() { ErrorMessage = "Foo", PropertyName = "Bar" } });
+
+        internal static readonly ValidationResult InvalidResult =
+            new ValidationResult(new[] {new ValidationError {ErrorMessage = "Foo", PropertyName = "Bar"}});
 
         internal static Mock<ObjectValidator> EnableValidMockValidator<T>(Validator validator, T target) where T : class
         {
             return EnableMockValidator(validator, ValidationResult.Successful, target);
         }
 
-        internal static Mock<ObjectValidator> EnableInvalidMockValidator<T>(Validator validator, T target) where T : class
+        internal static Mock<ObjectValidator> EnableInvalidMockValidator<T>(Validator validator, T target)
+            where T : class
         {
-            return EnableMockValidator(validator,InvalidResult, target);
+            return EnableMockValidator(validator, InvalidResult, target);
         }
 
-        internal static Mock<ObjectValidator> EnableMockValidator<T>(Validator validator, ValidationResult result, T target) where T : class
+        internal static Mock<ObjectValidator> EnableMockValidator<T>(Validator validator, ValidationResult result,
+                                                                     T target) where T : class
         {
             Mock<ObjectValidator> mockValidator = new Mock<ObjectValidator>();
 
@@ -470,6 +490,5 @@ namespace DotNetNuke.Tests.Content.Mocks
             validator.Validators.Add(mockValidator.Object);
             return mockValidator;
         }
-
     }
 }

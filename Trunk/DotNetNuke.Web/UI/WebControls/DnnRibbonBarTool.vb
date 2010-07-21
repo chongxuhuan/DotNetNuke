@@ -166,7 +166,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 					_AllTools.Add("Scheduler", New RibbonBarToolInfo("Scheduler", True, False, "", "Scheduler", ""))
 					_AllTools.Add("SearchAdmin", New RibbonBarToolInfo("SearchAdmin", True, False, "", "Search Admin", ""))
 					_AllTools.Add("UserRoles", New RibbonBarToolInfo("UserRoles", False, False, "", "Security Roles", ""))
-					_AllTools.Add("NewRole", New RibbonBarToolInfo("UserRoles", False, False, "", "Security Roles", "Edit"))
+                    _AllTools.Add("NewRole", New RibbonBarToolInfo("NewRole", False, False, "", "Security Roles", "Edit"))
 					_AllTools.Add("SiteLog", New RibbonBarToolInfo("SiteLog", False, False, "", "Site Log", ""))
 					_AllTools.Add("SiteSettings", New RibbonBarToolInfo("SiteSettings", False, False, "", "Site Settings", ""))
 					_AllTools.Add("SiteWizard", New RibbonBarToolInfo("SiteWizard", False, False, "", "Site Wizard", ""))
@@ -216,7 +216,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 			Select Case ToolInfo.ToolName
 				Case "DeletePage"
 					If (HasToolPermissions("DeletePage")) Then
-						Dim url As String = DotNetNuke.Common.Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Tab", "action=delete")
+                        Dim url As String = DotNetNuke.Common.Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Tab", "action=delete")
 						Page.Response.Redirect(url, True)
 					End If
 				Case "CopyPermissionsToChildren"

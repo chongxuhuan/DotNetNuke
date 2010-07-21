@@ -135,14 +135,14 @@ Namespace DotNetNuke.Services.Cache
         Private Sub ClearPortalCacheInternal(ByVal portalId As Integer, ByVal cascade As Boolean, ByVal clearRuntime As Boolean)
             RemoveFormattedCacheKey(DataCache.PortalSettingsCacheKey, clearRuntime, portalId)
 
-            Dim locales As Dictionary(Of String, Locale) = Localization.Localization.GetLocales(portalId)
-            If locales.Count = 0 Then
+            Dim locales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalId)
+            If locales Is Nothing OrElse locales.Count = 0 Then
                 'At least attempt to remove default locale
                 Dim defaultLocale As String = PortalController.GetPortalDefaultLanguage(portalId)
-                RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString() & "-" & defaultLocale), clearRuntime)
+                RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString(), defaultLocale), clearRuntime)
             Else
-                For Each portalLocale As Locale In Localization.Localization.GetLocales(portalId).Values
-                    RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString() & "-" & portalLocale.Code), clearRuntime)
+                For Each portalLocale As Locale In LocaleController.Instance().GetLocales(portalId).Values
+                    RemoveCacheKey(String.Format(DataCache.PortalCacheKey, portalId.ToString(), portalLocale.Code), clearRuntime)
                 Next
             End If
 
@@ -167,8 +167,21 @@ Namespace DotNetNuke.Services.Cache
 
         Private Sub ClearTabCacheInternal(ByVal portalId As Integer, ByVal clearRuntime As Boolean)
             RemoveFormattedCacheKey(DataCache.TabCacheKey, clearRuntime, portalId)
-            RemoveFormattedCacheKey(DataCache.TabPathCacheKey, clearRuntime, portalId)
-            RemoveFormattedCacheKey(DataCache.TabPermissionCacheKey, clearRuntime, portalId)
+             RemoveFormattedCacheKey(DataCache.TabPermissionCacheKey, clearRuntime, portalId)
+
+            Dim locales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalId)
+            If locales Is Nothing OrElse locales.Count = 0 Then
+                'At least attempt to remove default locale
+                Dim defaultLocale As String = PortalController.GetPortalDefaultLanguage(portalId)
+                RemoveCacheKey(String.Format(DataCache.TabPathCacheKey, defaultLocale, portalId.ToString()), clearRuntime)
+            Else
+                For Each portalLocale As Locale In LocaleController.Instance().GetLocales(portalId).Values
+                    RemoveCacheKey(String.Format(DataCache.TabPathCacheKey, portalLocale.Code, portalId.ToString()), clearRuntime)
+                Next
+            End If
+
+            RemoveCacheKey(String.Format(DataCache.TabPathCacheKey, Null.NullString, portalId.ToString()), clearRuntime)
+
         End Sub
 
         Private Sub RemoveCacheKey(ByVal CacheKey As String, ByVal clearRuntime As Boolean)

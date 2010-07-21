@@ -24,7 +24,6 @@ Imports System.Xml
 Imports System.Xml.XPath
 Imports System.Xml.Serialization
 Imports System.Net
-
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Security.Permissions
@@ -71,6 +70,7 @@ Namespace DotNetNuke.Common.Utilities
             objNode.Attributes.Append(attribute)
         End Sub
 
+        <Obsolete("Removed in DotNetNuke 5.5")> _
         Public Shared Function CreateElement(ByVal objDoc As XmlDocument, ByVal NodeName As String) As XmlElement
             Return objDoc.CreateElement(NodeName)
         End Function
@@ -95,6 +95,7 @@ Namespace DotNetNuke.Common.Utilities
             Return obj
         End Function
 
+        <Obsolete("Replaced in DotNetNuke 5.5 with CBO.DeserializeObject")> _
         Public Shared Function Deserialize(ByVal objStream As Stream, ByVal type As System.Type) As Object
 
             Dim obj As Object = Activator.CreateInstance(type)
@@ -463,92 +464,6 @@ Namespace DotNetNuke.Common.Utilities
             Return settings
         End Function
 
-        Public Shared Sub UpdateAttribute(ByVal node As XmlNode, ByVal attName As String, ByVal attValue As String)
-            If Not node Is Nothing Then
-                Dim attrib As XmlAttribute = node.Attributes(attName)
-                attrib.InnerText = attValue
-            End If
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Xml Encodes HTML
-        ''' </summary>
-        ''' <param name="HTML">The HTML to encode</param>
-        ''' <returns></returns>
-        ''' <history>
-        '''		[cnurse]	09/29/2005	moved from Globals
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function XMLEncode(ByVal HTML As String) As String
-            Return "<![CDATA[" & HTML & "]]>"
-        End Function
-
-        Public Shared Sub XSLTransform(ByVal doc As XmlDocument, ByRef writer As StreamWriter, ByVal xsltUrl As String)
-
-            Dim xslt As Xsl.XslCompiledTransform = New Xsl.XslCompiledTransform
-            xslt.Load(xsltUrl)
-            'Transform the file.
-            xslt.Transform(doc, Nothing, writer)
-        End Sub
-
-        '<Obsolete("This method Obsoleted in DotNetNuke 5.0. Use CBO.SerializeObject.")> _
-        Public Shared Function Serialize(ByVal obj As Object) As String
-
-            Dim xmlObject As String
-            Dim dic As IDictionary = TryCast(obj, IDictionary)
-            If Not dic Is Nothing Then
-                xmlObject = SerializeDictionary(dic, "dictionary")
-            Else
-                Dim xmlDoc As New XmlDocument
-                Dim xser As XmlSerializer = New XmlSerializer(obj.GetType)
-                Dim sw As StringWriter = New StringWriter
-
-                xser.Serialize(sw, obj)
-
-                xmlDoc.LoadXml(sw.GetStringBuilder().ToString())
-                Dim xmlDocEl As XmlNode = xmlDoc.DocumentElement
-                xmlDocEl.Attributes.Remove(xmlDocEl.Attributes.ItemOf("xmlns:xsd"))
-                xmlDocEl.Attributes.Remove(xmlDocEl.Attributes.ItemOf("xmlns:xsi"))
-
-                xmlObject = xmlDocEl.OuterXml
-            End If
-            Return xmlObject
-        End Function
-
-        ''' <summary>
-        ''' Iterates items in a hashtable and generates XML nodes
-        ''' </summary>
-        ''' <param name="Hashtable">The Hashtable to iterate</param>
-        ''' <param name="XmlDocument">The XML document being generated</param>
-        ''' <param name="RootNode">The node to append the new nodes to</param>
-        ''' <param name="ElementName">The name of the new element created</param>
-        ''' <param name="KeyField">String representing hashtable Key</param>
-        ''' <param name="ValueField">String representing hashtable Value</param>
-        ''' <remarks></remarks>
-        ''' <history>
-        '''		[jlucarino]	09/18/2009	created
-        ''' </history>
-        Public Shared Sub SerializeHashtable(ByVal Hashtable As Hashtable, ByVal XmlDocument As XmlDocument, ByVal RootNode As XmlNode, ByVal ElementName As String, ByVal KeyField As String, ByVal ValueField As String)
-            Dim sKey As String
-            Dim sOuterElementName As String
-            Dim sInnerElementName As String
-            Dim nodeSetting, nodeSettings, nodeSettingName, nodeSettingValue As XmlNode
-
-            sOuterElementName = ElementName & "s"
-            sInnerElementName = ElementName
-
-            nodeSettings = RootNode.AppendChild(XmlDocument.CreateElement(sOuterElementName))
-            For Each sKey In Hashtable.Keys
-                nodeSetting = nodeSettings.AppendChild(XmlDocument.CreateElement(sInnerElementName))
-                nodeSettingName = nodeSetting.AppendChild(XmlDocument.CreateElement(KeyField))
-                nodeSettingName.InnerText = sKey
-                nodeSettingValue = nodeSetting.AppendChild(XmlDocument.CreateElement(ValueField))
-                nodeSettingValue.InnerText = Hashtable(sKey).ToString
-            Next
-        End Sub
-
-        '<Obsolete("This method Obsoleted in DotNetNuke 5.0. Use CBO.SerializeObject.")> _
         Public Shared Function SerializeDictionary(ByVal Source As IDictionary, ByVal rootName As String) As String
             Dim strString As String
             If Source.Count <> 0 Then
@@ -587,6 +502,59 @@ Namespace DotNetNuke.Common.Utilities
             Return strString
         End Function
 
+        Public Shared Sub UpdateAttribute(ByVal node As XmlNode, ByVal attName As String, ByVal attValue As String)
+            If Not node Is Nothing Then
+                Dim attrib As XmlAttribute = node.Attributes(attName)
+                attrib.InnerText = attValue
+            End If
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Xml Encodes HTML
+        ''' </summary>
+        ''' <param name="HTML">The HTML to encode</param>
+        ''' <returns></returns>
+        ''' <history>
+        '''		[cnurse]	09/29/2005	moved from Globals
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function XMLEncode(ByVal HTML As String) As String
+            Return "<![CDATA[" & HTML & "]]>"
+        End Function
+
+        Public Shared Sub XSLTransform(ByVal doc As XmlDocument, ByRef writer As StreamWriter, ByVal xsltUrl As String)
+
+            Dim xslt As Xsl.XslCompiledTransform = New Xsl.XslCompiledTransform
+            xslt.Load(xsltUrl)
+            'Transform the file.
+            xslt.Transform(doc, Nothing, writer)
+        End Sub
+
+        <Obsolete("This method Obsoleted in DotNetNuke 5.5. Use CBO.SerializeObject.")> _
+        Public Shared Function Serialize(ByVal obj As Object) As String
+
+            Dim xmlObject As String
+            Dim dic As IDictionary = TryCast(obj, IDictionary)
+            If Not dic Is Nothing Then
+                xmlObject = SerializeDictionary(dic, "dictionary")
+            Else
+                Dim xmlDoc As New XmlDocument
+                Dim xser As XmlSerializer = New XmlSerializer(obj.GetType)
+                Dim sw As StringWriter = New StringWriter
+
+                xser.Serialize(sw, obj)
+
+                xmlDoc.LoadXml(sw.GetStringBuilder().ToString())
+                Dim xmlDocEl As XmlNode = xmlDoc.DocumentElement
+                xmlDocEl.Attributes.Remove(xmlDocEl.Attributes.ItemOf("xmlns:xsd"))
+                xmlDocEl.Attributes.Remove(xmlDocEl.Attributes.ItemOf("xmlns:xsi"))
+
+                xmlObject = xmlDocEl.OuterXml
+            End If
+            Return xmlObject
+        End Function
+
         <Obsolete("This method is obsolete.")> _
         Public Shared Function GetXMLContent(ByVal ContentUrl As String) As XmlDocument
             'This function reads an Xml document via a Url and returns it as an XmlDocument object
@@ -599,6 +567,26 @@ Namespace DotNetNuke.Common.Utilities
             GetXMLContent.Load(objXmlReader)
 
         End Function
+
+        <Obsolete("Replaced in DotNetNuke 5.5 with CBO.SerializeSettings")> _
+        Public Shared Sub SerializeHashtable(ByVal Hashtable As Hashtable, ByVal XmlDocument As XmlDocument, ByVal RootNode As XmlNode, ByVal ElementName As String, ByVal KeyField As String, ByVal ValueField As String)
+            Dim sKey As String
+            Dim sOuterElementName As String
+            Dim sInnerElementName As String
+            Dim nodeSetting, nodeSettings, nodeSettingName, nodeSettingValue As XmlNode
+
+            sOuterElementName = ElementName & "s"
+            sInnerElementName = ElementName
+
+            nodeSettings = RootNode.AppendChild(XmlDocument.CreateElement(sOuterElementName))
+            For Each sKey In Hashtable.Keys
+                nodeSetting = nodeSettings.AppendChild(XmlDocument.CreateElement(sInnerElementName))
+                nodeSettingName = nodeSetting.AppendChild(XmlDocument.CreateElement(KeyField))
+                nodeSettingName.InnerText = sKey
+                nodeSettingValue = nodeSetting.AppendChild(XmlDocument.CreateElement(ValueField))
+                nodeSettingValue.InnerText = Hashtable(sKey).ToString
+            Next
+        End Sub
 
     End Class
 

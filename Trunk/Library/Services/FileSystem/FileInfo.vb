@@ -24,6 +24,7 @@ Imports System.Data
 Imports System.Globalization
 Imports System.Xml.Serialization
 Imports System.IO
+Imports System.Security.Cryptography
 
 Namespace DotNetNuke.Services.FileSystem
 
@@ -38,11 +39,13 @@ Namespace DotNetNuke.Services.FileSystem
     ''' <remarks>
     ''' </remarks>
     ''' <history>
-    ''' 	[DYNST]	2/1/2004	Created
+    ''' 	[DYNST]     02/01/2004   Created
+    '''     [vnguyen]   04/28/2010   Modified: Added GUID and Version GUID properties
     ''' </history>
     ''' -----------------------------------------------------------------------------
     <XmlRoot("file", IsNullable:=False)> <Serializable()> Public Class FileInfo
 
+#Region "Private Members"
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' The Primary Key ID of the current File, as represented within the Database table named "Files"
@@ -55,6 +58,8 @@ Namespace DotNetNuke.Services.FileSystem
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private _FileId As Integer
+        Private _UniqueId As Guid
+        Private _VersionGuid As Guid
         Private _PortalId As Integer
         Private _FileName As String
         Private _Extension As String
@@ -66,9 +71,45 @@ Namespace DotNetNuke.Services.FileSystem
         Private _FolderId As Integer
         Private _StorageLocation As Integer
         Private _IsCached As Boolean = False
+        Private _SHA1Hash As String
 
+#End Region
+
+#Region "Constructors"
         Public Sub New()
+            Me.UniqueId = Guid.NewGuid()
+            Me.VersionGuid = Guid.NewGuid()
         End Sub
+
+        Public Sub New(ByVal portalId As Integer, ByVal filename As String, ByVal extension As String, ByVal filesize As Integer, ByVal width As Integer, ByVal height As Integer, ByVal contentType As String, ByVal folder As String, ByVal folderId As Integer, ByVal storageLocation As Integer, ByVal cached As Boolean)
+            Me.New(portalId, filename, extension, filesize, width, height, contentType, folder, folderId, storageLocation, cached, Null.NullString)
+        End Sub
+
+        Public Sub New(ByVal portalId As Integer, ByVal filename As String, ByVal extension As String, ByVal filesize As Integer, ByVal width As Integer, ByVal height As Integer, ByVal contentType As String, ByVal folder As String, ByVal folderId As Integer, ByVal storageLocation As Integer, ByVal cached As Boolean, ByVal hash As String)
+            Me.New(Guid.NewGuid(), Guid.NewGuid(), portalId, filename, extension, filesize, width, height, contentType, folder, folderId, storageLocation, cached, hash)
+        End Sub
+
+        Public Sub New(ByVal uniqueId As Guid, ByVal versionGuid As Guid, ByVal portalId As Integer, ByVal filename As String, ByVal extension As String, ByVal filesize As Integer, ByVal width As Integer, ByVal height As Integer, ByVal contentType As String, ByVal folder As String, ByVal folderId As Integer, ByVal storageLocation As Integer, ByVal cached As Boolean, ByVal hash As String)
+            Me.UniqueId = uniqueId
+            Me.VersionGuid = versionGuid
+            Me.PortalId = portalId
+            Me.FileName = filename
+            Me.Extension = extension
+            Me.Size = filesize
+            Me.Width = width
+            Me.Height = height
+            Me.ContentType = contentType
+            Me.Folder = folder
+            Me.FolderId = folderId
+            Me.StorageLocation = storageLocation
+            Me.IsCached = cached
+            Me.SHA1Hash = hash
+        End Sub
+
+#End Region
+
+
+#Region "Properties"
 
         <XmlElement("contenttype")> Public Property ContentType() As String
             Get
@@ -88,12 +129,30 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property FileId() As Integer
+        <XmlElement("fileid")> Public Property FileId() As Integer
             Get
                 Return _FileId
             End Get
             Set(ByVal Value As Integer)
                 _FileId = Value
+            End Set
+        End Property
+
+        <XmlElement("uniqueid")> Public Property UniqueId() As Guid
+            Get
+                Return _UniqueId
+            End Get
+            Set(ByVal Value As Guid)
+                _UniqueId = Value
+            End Set
+        End Property
+
+        <XmlElement("versionguid")> Public Property VersionGuid() As Guid
+            Get
+                Return _VersionGuid
+            End Get
+            Set(ByVal Value As Guid)
+                _VersionGuid = Value
             End Set
         End Property
 
@@ -106,7 +165,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property Folder() As String
+        <XmlElement("folder")> Public Property Folder() As String
             Get
                 Return _Folder
             End Get
@@ -115,7 +174,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property FolderId() As Integer
+        <XmlElement("folderid")> Public Property FolderId() As Integer
             Get
                 Return _FolderId
             End Get
@@ -133,7 +192,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property IsCached() As Boolean
+        <XmlElement("iscached")> Public Property IsCached() As Boolean
             Get
                 Return _IsCached
             End Get
@@ -142,29 +201,34 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public ReadOnly Property PhysicalPath() As String
+        <XmlElement("physicalpath")> Public ReadOnly Property PhysicalPath() As String
             Get
-                Dim _PhysicalPath As String
+                Dim _PhysicalPath As String = Null.NullString
                 Dim PortalSettings As PortalSettings = Nothing
                 If Not HttpContext.Current Is Nothing Then
                     PortalSettings = PortalController.GetCurrentPortalSettings()
                 End If
 
                 If PortalId = Null.NullInteger Then
-                    _PhysicalPath = DotNetNuke.Common.Globals.HostMapPath + RelativePath
+                    _PhysicalPath = DotNetNuke.Common.Globals.HostMapPath + Me.RelativePath
                 Else
                     If PortalSettings Is Nothing OrElse PortalSettings.PortalId <> PortalId Then
                         'Get the PortalInfo  based on the Portalid
                         Dim objPortals As New PortalController()
                         Dim objPortal As PortalInfo = objPortals.GetPortal(PortalId)
-
-                        _PhysicalPath = objPortal.HomeDirectoryMapPath + RelativePath
+                        If (objPortal IsNot Nothing) Then
+                            _PhysicalPath = objPortal.HomeDirectoryMapPath + Me.RelativePath
+                        End If
                     Else
-                        _PhysicalPath = PortalSettings.HomeDirectoryMapPath + RelativePath
+                        _PhysicalPath = PortalSettings.HomeDirectoryMapPath + Me.RelativePath
                     End If
                 End If
 
-                Return _PhysicalPath.Replace("/", "\")
+                If (Not String.IsNullOrEmpty(_PhysicalPath)) Then
+                    _PhysicalPath = _PhysicalPath.Replace("/", "\")
+                End If
+
+                Return _PhysicalPath
             End Get
         End Property
 
@@ -192,7 +256,7 @@ Namespace DotNetNuke.Services.FileSystem
             End Set
         End Property
 
-        <XmlIgnore()> Public Property StorageLocation() As Integer
+        <XmlElement("storagelocation")> Public Property StorageLocation() As Integer
             Get
                 Return _StorageLocation
             End Get
@@ -209,6 +273,33 @@ Namespace DotNetNuke.Services.FileSystem
                 _Width = Value
             End Set
         End Property
+
+        <XmlElement("sha1hash")> Public Property SHA1Hash() As String
+            Get
+                If _SHA1Hash Is Nothing OrElse _SHA1Hash Is String.Empty Then
+                    Dim fileCtrl As New FileController
+
+                    'Calcuate hash value
+                    Select Case StorageLocation
+                        Case FolderController.StorageLocationTypes.InsecureFileSystem
+                            If File.Exists(Me.PhysicalPath) Then _SHA1Hash = FileSystemUtils.GetHash(File.ReadAllBytes(Me.PhysicalPath))
+                        Case FolderController.StorageLocationTypes.SecureFileSystem
+                            If File.Exists(Me.PhysicalPath + glbProtectedExtension) Then _SHA1Hash = FileSystemUtils.GetHash(File.ReadAllBytes(Me.PhysicalPath + glbProtectedExtension))
+                        Case FolderController.StorageLocationTypes.DatabaseSecure
+                            If fileCtrl.GetFileContent(Me.FileId, Me.PortalId) IsNot Nothing Then
+                                _SHA1Hash = FileSystemUtils.GetHash(fileCtrl.GetFileContent(Me.FileId, Me.PortalId))
+                            End If
+                    End Select
+                End If
+
+                Return _SHA1Hash
+            End Get
+            Set(ByVal value As String)
+                _SHA1Hash = value
+            End Set
+        End Property
+
+#End Region
 
     End Class
 

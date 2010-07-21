@@ -25,7 +25,6 @@ Imports System.Threading
 Imports System.ComponentModel
 Imports DotNetNuke.Entities.Host
 
-
 Namespace DotNetNuke.Services.Messaging.Scheduler
 
     Public Class MessagingScheduler
@@ -36,6 +35,7 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
         Dim _pController As New PortalController()
         Dim _mController As New MessagingController()
         Dim _uController As New UserController()
+        Dim _hController As New DotNetNuke.Entities.Controllers.HostController()
 
 
         Public Sub New(ByVal objScheduleHistoryItem As DotNetNuke.Services.Scheduling.ScheduleHistoryItem)
@@ -51,7 +51,7 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
                 Me.ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Starting " + _schedulerInstance.ToString())
 
                 If (String.IsNullOrEmpty(Host.SMTPServer)) Then
-                    Me.ScheduleHistoryItem.AddLogNote("No SMTP Servers have been configured for this host. Terminating task.")
+                    Me.ScheduleHistoryItem.AddLogNote("No SMTP Servers have been configured for this _hController. Terminating task.")
                     Me.ScheduleHistoryItem.Succeeded = True
                     ''Return
                 Else
@@ -90,7 +90,7 @@ Namespace DotNetNuke.Services.Messaging.Scheduler
         End Sub
 
         Private Sub SendMessage(ByVal objMessage As Message)
-           
+
             Dim senderAddress As String = UserController.GetUserById(objMessage.PortalID, objMessage.FromUserID).Email
             Dim fromAddress As String = _pController.GetPortal(objMessage.PortalID).Email
             Dim toAddress As String = _uController.GetUser(objMessage.PortalID, objMessage.ToUserID).Email

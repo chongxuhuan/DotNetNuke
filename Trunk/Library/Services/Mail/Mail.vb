@@ -297,7 +297,7 @@ Namespace DotNetNuke.Services.Mail
                 objMail.AlternateViews.Add(PlainView)
 
                 'if body contains html, add html part
-                If HtmlUtils.IsHtml(Body) Then
+                If objMail.IsBodyHtml Then
                     Dim HTMLView As System.Net.Mail.AlternateView = System.Net.Mail.AlternateView.CreateAlternateViewFromString(Body, Nothing, "text/html")
                     objMail.AlternateViews.Add(HTMLView)
                 End If
@@ -376,8 +376,11 @@ Namespace DotNetNuke.Services.Mail
                 Return
             End If
 
-
-            Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress, subject, body)
+            Dim emailMessage As New System.Net.Mail.MailMessage(fromAddress, toAddress)
+            emailMessage.SubjectEncoding = System.Text.Encoding.UTF8
+            emailMessage.BodyEncoding = System.Text.Encoding.UTF8
+            emailMessage.Subject = subject
+            emailMessage.Body = body
             emailMessage.Sender = New MailAddress(senderAddress)
 
             If (HtmlUtils.IsHtml(body)) Then

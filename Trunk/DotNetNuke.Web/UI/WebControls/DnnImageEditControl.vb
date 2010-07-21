@@ -23,24 +23,9 @@ Namespace DotNetNuke.Web.UI.WebControls
     Public Class DnnImageEditControl
         Inherits DnnFileEditControl
 
-#Region "Protected Methods"
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Creates the control contained within this control
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	08/01/2006	created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Protected Overloads Overrides Sub CreateChildControls()
+        Public Sub New()
             FileFilter = "jpg,jpeg,gif,png"
-            MyBase.CreateChildControls()
         End Sub
-
-#End Region
 
     End Class
 

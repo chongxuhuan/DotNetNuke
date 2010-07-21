@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -456,6 +456,8 @@ Namespace DotNetNuke.UI.ControlPanel
                 ' clone the module object ( to avoid creating an object reference to the data cache )
                 Dim newModule As ModuleInfo = moduleInfo.Clone()
 
+                newModule.UniqueId = GUID.NewGuid() ' Cloned Module requires a different uniqueID
+
                 newModule.TabID = PortalSettings.Current.ActiveTab.TabID
                 newModule.ModuleOrder = position
                 newModule.PaneName = paneName
@@ -596,6 +598,13 @@ Namespace DotNetNuke.UI.ControlPanel
                         Next
                     End If
                 Next
+
+                If PortalSettings.Current.ContentLocalizationEnabled Then
+                    Dim defaultLocale As Locale = LocaleController.Instance.GetDefaultLocale(PortalSettings.Current.PortalId)
+                    objModule.CultureCode = defaultLocale.Code
+                Else
+                    objModule.CultureCode = Null.NullString
+                End If
 
                 objModule.AllTabs = False
                 objModule.Alignment = align

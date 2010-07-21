@@ -95,7 +95,7 @@ Namespace DotNetNuke.UI.WebControls
         Private _UserText As String = ""
 
         Private Shared _FontFamilies As String() = {"Arial", "Comic Sans MS", "Courier New", _
-                "Georgia", "Lucida Console", "MS Sans Serif", "Stencil", "Tahoma", _
+                "Georgia", "Lucida Console", "MS Sans Serif", "Tahoma", _
                 "Times New Roman", "Trebuchet MS", "Verdana"}
         Private Shared _Rand As New Random
         Private Shared _Separator As String = ":-:"

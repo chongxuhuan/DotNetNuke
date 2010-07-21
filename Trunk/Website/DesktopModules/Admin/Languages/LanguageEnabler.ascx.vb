@@ -24,13 +24,19 @@ Imports DotNetNuke
 Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Services.Localization
 Imports System.Globalization
+Imports System.Linq
 Imports DotNetNuke.Entities.Portals
+Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Modules.Actions
 Imports DotNetNuke.Services.Installer
 Imports DotNetNuke.Security.Permissions
+Imports DotNetNuke.Web.UI.WebControls
+Imports DotNetNuke.Entities.Modules
+Imports Telerik.Web.UI
+Imports DotNetNuke.UI.Utilities
+Imports DotNetNuke.Services.Personalization
 
 Namespace DotNetNuke.Modules.Admin.Languages
-
 
     ''' -----------------------------------------------------------------------------
     ''' <summary>
@@ -44,465 +50,340 @@ Namespace DotNetNuke.Modules.Admin.Languages
     ''' -----------------------------------------------------------------------------
     Partial Class LanguageEnabler
         Inherits Entities.Modules.PortalModuleBase
-        Implements Entities.Modules.IActionable
 
+#Region "Private Members"
 
-#Region "Private members"
-
-        Private _ViewType As String = ""
-
-#End Region
-
-#Region "Private Methods"
-
-        Private Sub BindViewType()
-            rbViewType.SelectedValue = viewType
-        End Sub
-
-        Private Sub bindGrid()
-            Me.dgLanguages.DataSource = Localization.GetLocales(Null.NullInteger).Values
-            Me.dgLanguages.DataBind()
-
-            dgLanguages.Columns(2).Visible = False
-            If Not UserInfo.IsSuperUser Then
-                dgLanguages.Columns(5).Visible = False
-                dgLanguages.Columns(6).Visible = False
-            End If
-
-        End Sub
-
-        Protected Sub DisplayDirtyStatus()
-            If IsDirty Then
-                litStatus.Text = "<div class=""le_changesPending"">There are changes pending to be saved</div>"
-                cmdUpdate.Enabled = True
-                cmdCancel.Enabled = True
-            Else
-                litStatus.Text = ""
-                cmdUpdate.Enabled = False
-                cmdCancel.Enabled = False
-            End If
-        End Sub
-
-
-        Private Sub bindDefaultLanguageSelector()
-            Localization.LoadCultureDropDownList(ddlPortalDefaultLanguage, DisplayType, PortalSettings.DefaultLanguage, True)
-        End Sub
+        Private _PortalDefault As String = ""
+        Private _TabController As New TabController()
 
 #End Region
 
 #Region "Private Properties"
 
-
-        Private ReadOnly Property DisplayType() As CultureDropDownTypes
+        Private ReadOnly Property ViewType() As String
             Get
-                Select Case viewType
-                    Case "NATIVE"
-                        Return CultureDropDownTypes.NativeName
-                    Case "ENGLISH"
-                        Return CultureDropDownTypes.EnglishName
-                End Select
+                Return Localization.GetLanguageDisplayMode(PortalId)
             End Get
-        End Property
-
-        Protected ReadOnly Property GridviewEditMode(ByVal Code As String) As Boolean
-            Get
-                Dim returnvalue As Boolean = False
-                If UserInfo.IsSuperUser OrElse Me.IsEditable Then
-                    If Code = WorkingPortalDefaultLanguage Then
-                        returnvalue = False
-                    Else
-                        returnvalue = True
-                    End If
-                End If
-                Return returnvalue
-            End Get
-        End Property
-
-        Private ReadOnly Property viewType() As String
-            Get
-                If _ViewType = "" Then
-                    _ViewType = Convert.ToString(Personalization.Personalization.GetProfile("LanguageEnabler", "ViewType" & PortalId.ToString))
-                End If
-                If _ViewType = "" Then _ViewType = "NATIVE"
-                Return _ViewType
-            End Get
-        End Property
-
-
-        Private ReadOnly Property DefaultLanguageChanging() As Boolean
-            Get
-                Return PortalSettings.DefaultLanguage <> PortalDefault
-            End Get
-        End Property
-
-        Private ReadOnly Property WorkingPortalDefaultLanguage() As String
-            Get
-                If DefaultLanguageChanging Then
-                    Return PortalDefault
-                Else
-                    Return PortalSettings.DefaultLanguage
-                End If
-            End Get
-        End Property
-
-        ''' <summary>
-        ''' Checks whether or not the page has been edited
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        ''' <history>
-        '''     [erikvb]    20100224  created
-        ''' </history>
-        Private ReadOnly Property IsDirty() As Boolean
-            Get
-                Dim returnValue As Boolean = DefaultLanguageChanging
-                If Not returnValue Then
-                    For Each di As DataGridItem In dgLanguages.Items
-                        If (di.ItemType = ListItemType.Item Or di.ItemType = ListItemType.AlternatingItem) Then
-                            Dim lblLanguageCode As Label = CType(di.Cells(0).FindControl("lblLanguageCode"), Label)
-                            Dim chkEnabled As CheckBox = CType(di.Cells(3).FindControl("chkEnabled"), CheckBox)
-                            If (chkEnabled IsNot Nothing) AndAlso (lblLanguageCode IsNot Nothing) Then
-                                Dim language As Locale = Localization.GetLocale(lblLanguageCode.Text)
-                                If (isLanguageEnabled(language.Code, False) <> chkEnabled.Checked) Or (language.Fallback <> LanguageFallbacks(language.Code)) Then
-                                    returnValue = True
-                                    Exit For
-                                End If
-                            End If
-
-                        End If
-                    Next
-                End If
-                Return returnValue
-            End Get
-        End Property
-
-        Private ReadOnly Property LanguageSettings() As Dictionary(Of String, Boolean)
-            Get
-                Dim returnValue As Dictionary(Of String, Boolean) = Nothing
-                If ViewState("LanguageSettings") Is Nothing Then
-                    returnValue = New Dictionary(Of String, Boolean)
-                    ViewState("LanguageSettings") = returnValue
-                Else
-                    returnValue = CType(ViewState("LanguageSettings"), Dictionary(Of String, Boolean))
-                End If
-                If returnValue.Count = 0 Then
-                    For Each LocaleKVP As KeyValuePair(Of String, Locale) In Localization.GetLocales(Null.NullInteger)
-                        returnValue(LocaleKVP.Key) = isLanguageEnabled(LocaleKVP.Key)
-                    Next
-                End If
-                Return returnValue
-            End Get
-        End Property
-
-        Private ReadOnly Property LanguageFallbacks() As Dictionary(Of String, String)
-            Get
-                Dim returnValue As Dictionary(Of String, String) = Nothing
-                If ViewState("LanguageFallbacks") Is Nothing Then
-                    returnValue = New Dictionary(Of String, String)
-                    ViewState("LanguageFallbacks") = returnValue
-                Else
-                    returnValue = CType(ViewState("LanguageFallbacks"), Dictionary(Of String, String))
-                End If
-                If returnValue.Count = 0 Then
-                    For Each LocaleKVP As KeyValuePair(Of String, Locale) In Localization.GetLocales(Null.NullInteger)
-                        returnValue(LocaleKVP.Key) = LocaleKVP.Value.Fallback
-                    Next
-                End If
-                Return returnValue
-            End Get
-        End Property
-
-        Private Property PortalDefault() As String
-            Get
-                If ViewState("PortalDefault") Is Nothing Then
-                    ViewState("PortalDefault") = ddlPortalDefaultLanguage.SelectedValue
-                End If
-                Return CType(ViewState("PortalDefault"), String)
-            End Get
-            Set(ByVal value As String)
-                ViewState("PortalDefault") = value
-            End Set
         End Property
 
 #End Region
 
-#Region "protected Functions"
+#Region "Protected Properties"
 
-        Protected Function isLanguageEnabled(ByVal Code As String) As Boolean
-            Return isLanguageEnabled(Code, True)
+        Protected ReadOnly Property PortalDefault As String
+            Get
+                Return _PortalDefault
+            End Get
+        End Property
+
+#End Region
+
+#Region "Private Methods"
+
+        Private Sub BindDefaultLanguageSelector()
+            languagesComboBox.DataBind()
+            languagesComboBox.SetLanguage(PortalDefault)
+        End Sub
+
+        Private Sub BindGrid()
+            languagesGrid.DataSource = LocaleController.Instance().GetLocales(Null.NullInteger).Values
+            languagesGrid.DataBind()
+        End Sub
+
+        Private Function GetLocalizedPages(ByVal code As String, ByVal includeNeutral As Boolean) As TabCollection
+            Return _TabController.GetTabsByPortal(PortalId).WithCulture(code, includeNeutral)
         End Function
 
-        Protected Function isLanguageEnabled(ByVal Code As String, ByVal checkDefaultLanguage As Boolean) As Boolean
-            Return isLanguageEnabled(Code, True, False)
-        End Function
+#End Region
 
-        Protected Function isLanguageEnabled(ByVal Code As String, ByVal checkDefaultLanguage As Boolean, ByVal useCache As Boolean) As Boolean
-            Dim returnValue As Boolean = False
-            Dim enabledLanguage As Locale = Nothing
-            If checkDefaultLanguage AndAlso DefaultLanguageChanging AndAlso (Code = WorkingPortalDefaultLanguage) Then
-                returnValue = True
+#Region "Protected Methods"
+
+        Protected Function CanEnableDisable(ByVal code As String) As String
+            Dim canEnable As Boolean = True
+            If IsLanguageEnabled(code) Then
+                canEnable = Not IsDefaultLanguage(code) AndAlso Not IsLanguagePublished(code)
             Else
-                If useCache Then
-                    returnValue = LanguageSettings(Code)
-                Else
-                    returnValue = Localization.GetLocales(Me.ModuleContext.PortalId).TryGetValue(Code, enabledLanguage)
-                End If
+                canEnable = Not IsDefaultLanguage(code)
+            End If
+            Return canEnable
+        End Function
+
+        Protected Function CanLocalize(ByVal code As String) As Boolean
+            Return PortalSettings.ContentLocalizationEnabled AndAlso _
+                IsLanguageEnabled(code) AndAlso _
+                Not IsDefaultLanguage(code)
+        End Function
+
+        Protected Function GetEditUrl(ByVal id As String) As String
+            Return NavigateURL(TabId, "Edit", String.Format("mid={0}", ModuleId), String.Format("locale={0}", id))
+        End Function
+
+        Protected Function GetEditKeysUrl(ByVal code As String, ByVal mode As String) As String
+            Return NavigateURL(TabId, "Editor", String.Format("mid={0}", ModuleId), String.Format("locale={0}", code), String.Format("mode={0}", mode))
+        End Function
+
+        Protected Function GetLocalizedPages(ByVal code As String) As String
+            Dim status As String = ""
+            If Not IsDefaultLanguage(code) AndAlso IsLocalized(code) Then
+                status = GetLocalizedPages(code, False).Where(Function(t) Not t.Value.IsDeleted).Count.ToString()
+            End If
+            Return status
+        End Function
+
+        Protected Function GetLocalizedStatus(ByVal code As String) As String
+            Dim status As String = ""
+            If Not IsDefaultLanguage(code) AndAlso IsLocalized(code) Then
+                Dim defaultPageCount As Integer = GetLocalizedPages(PortalSettings.DefaultLanguage, False).Count
+                Dim currentPageCount As Integer = GetLocalizedPages(code, False).Count
+                status = String.Format("{0:#0%}", currentPageCount / defaultPageCount)
+            End If
+            Return status
+        End Function
+
+        Protected Function GetTranslatedPages(ByVal code As String) As String
+            Dim status As String = ""
+            If Not IsDefaultLanguage(code) AndAlso IsLocalized(code) Then
+                Dim translatedCount As Integer = (From t As TabInfo In New TabController().GetTabsByPortal(PortalId).WithCulture(code, False).Values _
+                                        Where t.IsTranslated AndAlso Not t.IsDeleted _
+                                        Select t).Count
+                status = translatedCount.ToString
+            End If
+            Return status
+        End Function
+
+        Protected Function GetTranslatedStatus(ByVal code As String) As String
+            Dim status As String = ""
+            If Not IsDefaultLanguage(code) AndAlso IsLocalized(code) Then
+                Dim localizedCount As Integer = GetLocalizedPages(code, False).Count
+                Dim translatedCount As Integer = (From t As TabInfo In New TabController().GetTabsByPortal(PortalId).WithCulture(code, False).Values _
+                                        Where t.IsTranslated _
+                                        Select t).Count
+                status = String.Format("{0:#0%}", translatedCount / localizedCount)
+            End If
+            Return status
+        End Function
+
+        Protected Function IsDefaultLanguage(ByVal code As String) As Boolean
+            Dim returnValue As Boolean = False
+            If code = PortalDefault Then
+                returnValue = True
             End If
             Return returnValue
         End Function
 
-        Protected Function isLanguageDefault(ByVal Code As String) As Boolean
-            Return Code = WorkingPortalDefaultLanguage
+        Protected Function IsLanguageEnabled(ByVal Code As String) As Boolean
+            Dim enabledLanguage As Locale = Nothing
+            Return LocaleController.Instance().GetLocales(Me.ModuleContext.PortalId).TryGetValue(Code, enabledLanguage)
         End Function
 
-        Protected Function GetLanguageName(ByVal code As String) As String
-            Dim returnValue As String = "unknown"
-            Dim culture As New CultureInfo(code)
-            If Not culture Is Nothing Then
-                Select Case viewType
-                    Case "NATIVE"
-                        returnValue = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.NativeName)
-                    Case "ENGLISH"
-                        returnValue = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.EnglishName)
-                End Select
+        Protected Function IsLanguagePublished(ByVal Code As String) As Boolean
+            Dim isPublished As Boolean = Null.NullBoolean
+            Dim enabledLanguage As Locale = Nothing
+            If LocaleController.Instance().GetLocales(Me.ModuleContext.PortalId).TryGetValue(Code, enabledLanguage) Then
+                isPublished = enabledLanguage.IsPublished
             End If
-            Return returnValue
+            Return isPublished
         End Function
 
-        Protected Function GetLanguageHint(ByVal code As String) As String
-            Dim returnValue As String = ""
-            If code = WorkingPortalDefaultLanguage Then
-                returnValue = Localization.GetString("PortalDefault", LocalResourceFile)
-            End If
-            Return returnValue
+        Protected Function IsLocalized(ByVal code As String) As Boolean
+            Return GetLocalizedPages(code, False).Count > 0
         End Function
+
 #End Region
 
 #Region "Event Handlers"
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Page_Load runs when the control is loaded
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        '''     [erikvb]    20100224  created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
-                If UserInfo.IsSuperUser Or ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", Me.ModuleConfiguration) Then
-
-                    If Not Page.IsPostBack Then
-                        BindViewType()
-                        bindDefaultLanguageSelector()
-                        bindGrid()
-                        DisplayDirtyStatus()
-                    End If
-                Else
-                    Response.Redirect(NavigateURL("Access Denied"))
+                _PortalDefault = PortalSettings.DefaultLanguage
+                If Not Page.IsPostBack Then
+                    BindDefaultLanguageSelector()
+                    BindGrid()
                 End If
+
+                If Not UserInfo.IsSuperUser Then
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("HostOnlyMessage", LocalResourceFile), _
+                                                              Skins.Controls.ModuleMessage.ModuleMessageType.BlueInfo)
+                End If
+
+                systemDefaultLanguageLabel.Language = Localization.SystemLocale
+                If PortalSettings.ContentLocalizationEnabled Then
+                    defaultLanguageLabel.Language = PortalSettings.DefaultLanguage
+                    defaultLanguageLabel.Visible = True
+                    languagesComboBox.Visible = False
+                    updateButton.Visible = False
+                    enableLocalizedContentButton.Visible = False
+                    defaultPortalMessage.Text = Localization.GetString("PortalDefaultPublished.Text", Me.LocalResourceFile)
+                    enabledPublishedPlaceHolder.Visible = True
+                Else
+                    defaultLanguageLabel.Visible = False
+                    languagesComboBox.Visible = True
+                    updateButton.Visible = True
+                    enableLocalizedContentButton.Visible = True
+                    defaultPortalMessage.Text = Localization.GetString("PortalDefaultEnabled.Text", Me.LocalResourceFile)
+                    enabledPublishedPlaceHolder.Visible = False
+                End If
+
+                addLanguageButton.Visible = UserInfo.IsSuperUser
+                createLanguagePackButton.Visible = UserInfo.IsSuperUser
+                verifyLanguageResourcesButton.Visible = UserInfo.IsSuperUser
+                installLanguagePackButton.Visible = UserInfo.IsSuperUser
+                timeZonesButton.Visible = UserInfo.IsSuperUser
+
+                'Add the enable content Localization Button to the ToolTip Manager
+                toolTipManager.TargetControls.Add(enableLocalizedContentButton.ID)
             Catch exc As Exception        'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
         End Sub
 
-        Private Sub Page_Unload(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Unload
-            If LanguageSettings.Count > 0 Then
-                ViewState("LanguageSettings") = LanguageSettings
-            End If
-            If LanguageFallbacks.Count > 0 Then
-                ViewState("LanguageFallbacks") = LanguageFallbacks
-            End If
+        Protected Sub actionButton_Command(ByVal sender As Object, ByVal e As CommandEventArgs) _
+            Handles addLanguageButton.Command, createLanguagePackButton.Command, verifyLanguageResourcesButton.Command, _
+                    languageSettingsButton.Command, timeZonesButton.Command
+
+            Response.Redirect(ModuleContext.EditUrl(e.CommandName), True)
         End Sub
 
-        ''' <summary>
-        ''' cmdUpdate_Click updates the changed values to the database, using API calls
-        ''' </summary>
-        ''' <param name="sender"></param>
-        ''' <param name="e"></param>
-        ''' <remarks></remarks>
-        ''' <history>
-        '''     [erikvb]    20100224  created
-        ''' </history>
-        Protected Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
+        Protected Sub enabledCheckbox_CheckChanged(ByVal sender As Object, ByVal e As EventArgs)
             Try
+                If TypeOf (sender) Is DnnCheckBox Then
+                    Dim enabledCheckbox As DnnCheckBox = CType(sender, DnnCheckBox)
+                    Dim languageId As Integer = Integer.Parse(enabledCheckbox.CommandArgument)
+                    Dim locale As Locale = LocaleController.Instance().GetLocale(languageId)
 
-                Dim language As Locale
+                    Dim enabledLanguages As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(PortalId)
+                    If enabledCheckbox.Enabled Then
+                        ' do not touch default language
+                        If enabledCheckbox.Checked = True Then
+                            If Not enabledLanguages.ContainsKey(locale.Code) Then
+                                'Add language to portal
+                                Localization.AddLanguageToPortal(PortalId, languageId, True)
 
-                ' first check whether or not portal default language has changed
-                Dim newDefaultLanguage As String = PortalDefault
-                If newDefaultLanguage <> PortalSettings.DefaultLanguage Then
-                    If Not isLanguageEnabled(newDefaultLanguage, False, False) Then
-                        language = Localization.GetLocale(newDefaultLanguage)
-                        Localization.AddLanguageToPortal(Me.ModuleContext.PortalId, language.LanguageID, True)
-                    End If
-
-                    ' update portal default language
-                    Dim objPortalController As New PortalController
-                    Dim objPortal As PortalInfo = objPortalController.GetPortal(PortalId)
-                    objPortal.DefaultLanguage = newDefaultLanguage
-                    objPortalController.UpdatePortalInfo(objPortal)
-                End If
-
-                Dim enabledLanguages As Dictionary(Of String, Locale) = Localization.GetLocales(Me.ModuleContext.PortalId)
-                For Each di As DataGridItem In dgLanguages.Items
-                    If (di.ItemType = ListItemType.Item Or di.ItemType = ListItemType.AlternatingItem) Then
-                        Dim lblLanguageCode As Label = CType(di.Cells(0).FindControl("lblLanguageCode"), Label)
-                        Dim chkEnabled As CheckBox = CType(di.Cells(3).FindControl("chkEnabled"), CheckBox)
-                        Dim ddlFallback As DropDownList = CType(di.Cells(2).FindControl("ddlFallback"), DropDownList)
-                        If (chkEnabled IsNot Nothing) AndAlso (lblLanguageCode IsNot Nothing) AndAlso (ddlFallback IsNot Nothing) Then
-                            language = Localization.GetLocale(lblLanguageCode.Text)
-                            If chkEnabled.Enabled Then
-                                ' do not touch default language
-                                If chkEnabled.Checked = True Then
-                                    Dim enabledLanguage As Locale = Nothing
-                                    If Not enabledLanguages.TryGetValue(lblLanguageCode.Text, enabledLanguage) Then
-                                        'Add language to portal
-                                        Localization.AddLanguageToPortal(Me.ModuleContext.PortalId, language.LanguageID, True)
-                                    End If
-                                Else
-                                    'remove language from portal
-                                    Localization.RemoveLanguageFromPortal(Me.ModuleContext.PortalId, language.LanguageID)
+                                If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(locale.Code, False).Count = 0 Then
+                                    'Create Localized Pages
+                                    _TabController.LocalizeTabs(PortalId, locale.Code)
                                 End If
+
                             End If
-
-                            'If UserInfo.IsSuperUser Then
-                            '    ' update language fallback, only if user = host user
-                            '    If language.Fallback <> ddlFallback.SelectedValue Then
-                            '        language.Fallback = ddlFallback.SelectedValue
-                            '        Localization.SaveLanguage(language)
-                            '    End If
-                            'End If
+                        Else
+                            'remove language from portal
+                            Localization.RemoveLanguageFromPortal(PortalId, languageId)
                         End If
-
                     End If
-                Next
 
-                Response.Redirect(NavigateURL())
-            Catch ex As Exception
-                ProcessModuleLoadException(Me, ex)
-            End Try
-        End Sub
-
-        Protected Sub ddlFallback_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-            Try
-                If TypeOf (sender) Is DropDownList Then
-                    Dim languageCode As String = ""
-                    Dim ddlFallback As DropDownList = CType(sender, DropDownList)
-                    Dim ParentCell As TableCell = CType(ddlFallback.Parent, TableCell)
-                    Dim parentRow As TableRow = CType(ParentCell.Parent, TableRow)
-                    Dim lblLanguageCode As Label = CType(parentRow.Cells(0).FindControl("lblLanguageCode"), Label)
-                    If Not lblLanguageCode Is Nothing Then
-                        languageCode = lblLanguageCode.Text
-                        LanguageFallbacks(languageCode) = ddlFallback.SelectedValue
-                    End If
+                    'Redirect to refresh page (and skinobjects)
+                    Response.Redirect(NavigateURL(), True)
                 End If
-                DisplayDirtyStatus()
             Catch ex As Exception
                 ProcessModuleLoadException(Me, ex)
             End Try
         End Sub
 
-        Protected Sub chkEnabled_CheckedChanged(ByVal sender As Object, ByVal e As EventArgs)
-            Try
-                If TypeOf (sender) Is CheckBox Then
-                    Dim languageCode As String = ""
-                    Dim chkEnabled As CheckBox = CType(sender, CheckBox)
-                    Dim ParentCell As TableCell = CType(chkEnabled.Parent, TableCell)
-                    Dim parentRow As TableRow = CType(ParentCell.Parent, TableRow)
-                    Dim lblLanguageCode As Label = CType(parentRow.Cells(0).FindControl("lblLanguageCode"), Label)
-                    If Not lblLanguageCode Is Nothing Then
-                        languageCode = lblLanguageCode.Text
-                        LanguageSettings(languageCode) = chkEnabled.Checked
-                    End If
-                End If
-                DisplayDirtyStatus()
-            Catch ex As Exception
-                ProcessModuleLoadException(Me, ex)
-            End Try
+        Protected Sub installLanguagePackButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles installLanguagePackButton.Click
+            Response.Redirect(Util.InstallURL(ModuleContext.TabId, ""), True)
         End Sub
 
-        Protected Sub rbViewType_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles rbViewType.SelectedIndexChanged
-            Personalization.Personalization.SetProfile("LanguageEnabler", "ViewType" & PortalSettings.PortalId.ToString, rbViewType.SelectedValue)
-            bindDefaultLanguageSelector()
-            bindGrid()
-            DisplayDirtyStatus()
+        Protected Sub languagesComboBox_ModeChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles languagesComboBox.ModeChanged
+            BindGrid()
         End Sub
 
-        Protected Sub ddlPortalDefaultLanguage_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles ddlPortalDefaultLanguage.SelectedIndexChanged
-            PortalDefault = ddlPortalDefaultLanguage.SelectedValue
-            bindGrid()
-            DisplayDirtyStatus()
-        End Sub
+        Protected Sub languagesGrid_ItemCreated(ByVal sender As Object, ByVal e As Telerik.Web.UI.GridItemEventArgs) Handles languagesGrid.ItemCreated
+            Dim gridItem As GridDataItem = TryCast(e.Item, GridDataItem)
+            If gridItem IsNot Nothing Then
+                Dim languge As Locale = TryCast(gridItem.DataItem, Locale)
+                If languge IsNot Nothing Then
+                    Dim localizeButton As ImageButton = gridItem.FindControl("localizeButton")
+                    If localizeButton IsNot Nothing Then
+                        Dim defaultLocale As Locale = LocaleController.Instance().GetLocale(PortalDefault)
+                        Dim DisplayType As CultureDropDownTypes
+                        Dim _ViewType As String = Convert.ToString(Personalization.GetProfile("LanguageDisplayMode", "ViewType" & PortalId.ToString))
+                        Select Case _ViewType
+                            Case "NATIVE"
+                                DisplayType = CultureDropDownTypes.NativeName
+                            Case "ENGLISH"
+                                DisplayType = CultureDropDownTypes.EnglishName
+                            Case Else
+                                DisplayType = CultureDropDownTypes.DisplayName
+                        End Select
 
-        Private Sub dgLanguages_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles dgLanguages.ItemDataBound
-
-            If e.Item.ItemType = ListItemType.AlternatingItem Or e.Item.ItemType = ListItemType.Item Then
-                Dim ddlfallback As DropDownList = CType(e.Item.FindControl("ddlFallback"), DropDownList)
-                Dim rowLanguage As Locale = CType(e.Item.DataItem, Locale)
-                If (ddlfallback IsNot Nothing) AndAlso (rowLanguage IsNot Nothing) Then
-                    If rowLanguage.Code = Localization.SystemLocale Then
-                        ddlfallback.Visible = False
-                    Else
-                        Localization.LoadCultureDropDownList(ddlfallback, DisplayType, LanguageFallbacks(rowLanguage.Code), rowLanguage.Code, True)
+                        Dim msg As String = String.Format(Localization.GetString("Localize.Confirm", Me.LocalResourceFile), Localization.GetLocaleName(languge.Code, DisplayType), Localization.GetLocaleName(defaultLocale.Code, DisplayType))
+                        localizeButton.OnClientClick = DotNetNuke.Web.UI.Utilities.GetOnClientClickConfirm(localizeButton, msg)
                     End If
                 End If
             End If
         End Sub
 
-        Protected Sub cmdEdit_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
-            If TypeOf (sender) Is ImageButton Then
-                Dim cmdEdit As ImageButton = CType(sender, ImageButton)
-                Dim mode As String = cmdEdit.CommandName
-                Response.Redirect(NavigateURL("Editor", "mid=" + ModuleId.ToString, "locale=" + cmdEdit.CommandArgument, "mode=" + mode))
+        Protected Sub languagesGrid_PreRender(ByVal sender As Object, ByVal e As System.EventArgs) Handles languagesGrid.PreRender
+            For Each column As GridColumn In languagesGrid.Columns
+                If (column.UniqueName = "ContentLocalization") Then
+                    column.Visible = PortalSettings.ContentLocalizationEnabled
+                End If
+            Next
+            languagesGrid.Rebind()
+
+        End Sub
+
+        Protected Sub localizePages(ByVal sender As Object, ByVal e As CommandEventArgs)
+            Dim cultureCode As String = DirectCast(e.CommandArgument, String)
+
+            If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(cultureCode, False).Count = 0 Then
+                'Create Localized Pages
+                _TabController.LocalizeTabs(PortalId, cultureCode)
             End If
+
+            'Redirect to refresh page (and skinobjects)
+            Response.Redirect(NavigateURL(), True)
         End Sub
 
-        Private Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
-            Response.Redirect(NavigateURL())
+        Protected Sub publishedCheckbox_CheckChanged(ByVal sender As Object, ByVal e As EventArgs)
+            Try
+                If TypeOf (sender) Is DnnCheckBox Then
+                    Dim publishedCheckbox As DnnCheckBox = CType(sender, DnnCheckBox)
+                    Dim languageId As Integer = Integer.Parse(publishedCheckbox.CommandArgument)
+                    Dim locale As Locale = LocaleController.Instance().GetLocale(languageId)
+
+                    If publishedCheckbox.Enabled Then
+                        LocaleController.Instance().PublishLanguage(PortalId, locale.Code, publishedCheckbox.Checked)
+                    End If
+
+                    'Redirect to refresh page (and skinobjects)
+                    Response.Redirect(NavigateURL(), True)
+                End If
+            Catch ex As Exception
+                ProcessModuleLoadException(Me, ex)
+            End Try
         End Sub
 
-#End Region
+        Protected Sub toolTipManager_AjaxUpdate(ByVal sender As Object, ByVal e As Telerik.Web.UI.ToolTipUpdateEventArgs) Handles toolTipManager.AjaxUpdate
+            Dim ctrl As Control = Page.LoadControl("~/desktopmodules/admin/languages/EnableLocalizedContent.ascx")
+            e.UpdatePanel.ContentTemplateContainer.Controls.Add(ctrl)
+        End Sub
 
-#Region "Optional Interfaces"
+        Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
+            Dim language As Locale
 
-        ''' ----------------------------------------------------------------------------- 
-        ''' <summary>
-        ''' Registers the module actions required for interfacing with the portal framework
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public ReadOnly Property ModuleActions() As Entities.Modules.Actions.ModuleActionCollection Implements Entities.Modules.IActionable.ModuleActions
-            Get
-                Dim Actions As New ModuleActionCollection
+            ' first check whether or not portal default language has changed
+            Dim newDefaultLanguage As String = languagesComboBox.SelectedValue
+            If newDefaultLanguage <> PortalSettings.DefaultLanguage Then
+                If Not IsLanguageEnabled(newDefaultLanguage) Then
+                    language = LocaleController.Instance().GetLocale(newDefaultLanguage)
+                    Localization.AddLanguageToPortal(Me.ModuleContext.PortalId, language.LanguageId, True)
+                End If
 
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("CreateLanguage.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", ModuleContext.EditUrl("Edit"), False, SecurityAccessLevel.Host, True, False)
+                ' update portal default language
+                Dim objPortalController As New PortalController
+                Dim objPortal As PortalInfo = objPortalController.GetPortal(PortalId)
+                objPortal.DefaultLanguage = newDefaultLanguage
+                objPortalController.UpdatePortalInfo(objPortal)
 
-                '' install new LanguagePack
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("LanguagePackInstall.Action", LocalResourceFile), ModuleActionType.AddContent, "", "action_import.gif", Util.InstallURL(ModuleContext.TabId, ""), False, SecurityAccessLevel.Host, True, False)
+                _PortalDefault = newDefaultLanguage
+            End If
 
-                '' Language Settings
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("LanguageSettings.Action", LocalResourceFile), ModuleActionType.AddContent, "", "settings.gif", ModuleContext.EditUrl("LanguageSettings"), False, SecurityAccessLevel.Edit, True, False)
+            BindDefaultLanguageSelector()
+            BindGrid()
 
-                '' Time Zone Editor
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("TimeZone.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_language_16px.gif", ModuleContext.EditUrl("TimeZone"), False, SecurityAccessLevel.Host, True, False)
+        End Sub
 
-                '' Resource Verifier
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("ResourceVerifier.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_language_16px.gif", ModuleContext.EditUrl("Verify"), False, SecurityAccessLevel.Host, True, False)
-
-                '' Create new LanguagePack
-                Actions.Add(ModuleContext.GetNextActionID, Services.Localization.Localization.GetString("CreateLanguagePack.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", ModuleContext.EditUrl("PackageWriter"), False, SecurityAccessLevel.Host, True, False)
-
-                Return Actions
-            End Get
-        End Property
 
 #End Region
 

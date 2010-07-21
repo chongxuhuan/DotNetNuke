@@ -186,7 +186,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             For Each objProfileProperty As ProfilePropertyDefinition In ProfileController.GetPropertyDefinitionsByPortal(objportal.PortalID, False)
                 writer.WriteStartElement("profiledefinition")
 
-                writer.WriteElementString("length", objProfileProperty.Length.ToString())
                 writer.WriteElementString("propertycategory", objProfileProperty.PropertyCategory)
                 writer.WriteElementString("propertyname", objProfileProperty.PropertyName)
 
@@ -196,6 +195,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 Else
                     writer.WriteElementString("datatype", objList.Value)
                 End If
+
+                writer.WriteElementString("length", objProfileProperty.Length.ToString())
+                writer.WriteElementString("defaultvisibility", Convert.ToInt32(objProfileProperty.DefaultVisibility).ToString())
 
                 writer.WriteEndElement()
             Next

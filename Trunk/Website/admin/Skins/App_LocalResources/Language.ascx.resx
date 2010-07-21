@@ -121,24 +121,27 @@
     <value />
   </data>
   <data name="CommonFooterTemplate.Default" xml:space="preserve">
-    <value />
+    <value>&lt;/div&gt;</value>
   </data>
   <data name="CommonHeaderTemplate.Default" xml:space="preserve">
-    <value />
+    <value>&lt;div class="language-object" &gt;</value>
   </data>
   <data name="FooterTemplate.Default" xml:space="preserve">
     <value />
   </data>
   <data name="HeaderTemplate.Default" xml:space="preserve">
-    <value>&amp;nbsp;</value>
+    <value />
   </data>
   <data name="ItemTemplate.Default" xml:space="preserve">
-    <value>&lt;a href="[URL]" class="Language" title="[CULTURE:NATIVENAME]"&gt;&lt;img src="[I][FLAGSRC]" alt="[CULTURE:NATIVENAME]" border="0" /&gt;&lt;/a&gt;</value>
+    <value>&lt;span class="Language" title="[CULTURE:NATIVENAME]"&gt;&lt;a href="[URL]" &gt;&lt;img src="[I][FLAGSRC]" alt="[CULTURE:NAME]" /&gt;&lt;/a&gt;&lt;/span&gt;</value>
   </data>
   <data name="Label.Text" xml:space="preserve">
     <value>Select Language: </value>
   </data>
+  <data name="SelectedItemTemplate.Default" xml:space="preserve">
+    <value>&lt;span class="Language selected" title="[CULTURE:NATIVENAME]" &gt;&lt;img src="[I][FLAGSRC]" alt="[CULTURE:NAME]" /&gt;&lt;/span&gt;</value>
+  </data>
   <data name="SeparatorTemplate.Default" xml:space="preserve">
-    <value>&amp;nbsp;</value>
+    <value />
   </data>
 </root>

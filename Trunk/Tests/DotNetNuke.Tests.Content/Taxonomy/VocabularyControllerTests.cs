@@ -1,36 +1,33 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Services.Cache;
+using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Services.Cache;
+using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
-using Moq;
 using MbUnit.Framework;
-using DotNetNuke.Entities.Content.Data;
-using DotNetNuke.Tests.Content.Mocks;
+using Moq;
 
 namespace DotNetNuke.Tests.Content.Taxonomy
 {
@@ -48,11 +45,17 @@ namespace DotNetNuke.Tests.Content.Taxonomy
 
         #region Test Initialize
 
-        [SetUp()]
+        [SetUp]
         public void SetUp()
         {
             //Register MockCachingProvider
-            mockCache = MockCachingProvider.CreateMockProvider();
+            mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
@@ -81,7 +84,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.Name = Constants.VOCABULARY_InValidName;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.AddVocabulary(vocabulary));
+            Assert.Throws<ArgumentException>(() => vocabularyController.AddVocabulary(vocabulary));
         }
 
         [Test]
@@ -95,7 +98,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.ScopeTypeId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.AddVocabulary(vocabulary));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.AddVocabulary(vocabulary));
         }
 
         [Test]
@@ -120,7 +123,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
-                          .Returns(Constants.VOCABULARY_AddVocabularyId);
+                .Returns(Constants.VOCABULARY_AddVocabularyId);
             VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
@@ -129,7 +132,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             int vocabularyId = vocabularyController.AddVocabulary(vocabulary);
 
             //Assert
-            Assert.AreEqual<int>(Constants.VOCABULARY_AddVocabularyId, vocabularyId);
+            Assert.AreEqual(Constants.VOCABULARY_AddVocabularyId, vocabularyId);
         }
 
         [Test]
@@ -138,7 +141,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
-                          .Returns(Constants.VOCABULARY_AddVocabularyId);
+                .Returns(Constants.VOCABULARY_AddVocabularyId);
             VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
@@ -147,7 +150,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabularyController.AddVocabulary(vocabulary);
 
             //Assert
-            Assert.AreEqual<int>(Constants.VOCABULARY_AddVocabularyId, vocabulary.VocabularyId);
+            Assert.AreEqual(Constants.VOCABULARY_AddVocabularyId, vocabulary.VocabularyId);
         }
 
         [Test]
@@ -192,7 +195,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.VocabularyId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.DeleteVocabulary(vocabulary));
+            Assert.Throws<ArgumentException>(() => vocabularyController.DeleteVocabulary(vocabulary));
         }
 
         [Test]
@@ -239,7 +242,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetVocabularies())
-                            .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
+                .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
             VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act
@@ -255,14 +258,14 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetVocabularies())
-                            .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
+                .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
             VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act
             IQueryable<Vocabulary> vocabularys = vocabularyController.GetVocabularies();
 
             //Assert
-            Assert.AreEqual<int>(Constants.VOCABULARY_ValidCount, vocabularys.Count());
+            Assert.AreEqual(Constants.VOCABULARY_ValidCount, vocabularys.Count());
         }
 
         #endregion
@@ -291,7 +294,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.VocabularyId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
+            Assert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
         [Test]
@@ -305,7 +308,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.Name = Constants.VOCABULARY_InValidName;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
+            Assert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
         [Test]
@@ -319,7 +322,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.ScopeTypeId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.UpdateVocabulary(vocabulary));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
         [Test]

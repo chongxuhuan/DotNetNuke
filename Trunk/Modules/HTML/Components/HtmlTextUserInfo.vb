@@ -18,6 +18,9 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Common.Utilities
+Imports DotNetNuke.Entities.Modules
+
 Namespace DotNetNuke.Modules.Html
 
     ''' -----------------------------------------------------------------------------
@@ -35,21 +38,22 @@ Namespace DotNetNuke.Modules.Html
     ''' -----------------------------------------------------------------------------
     Public Class HtmlTextUserInfo
 
+#Region "Private Member"
+
         ' local property declarations
         Private _ItemID As Integer
         Private _StateID As Integer
         Private _StateName As String
         Private _ModuleID As Integer
-        Private _ModuleTitle As String
+        Private _Module As ModuleInfo
         Private _TabID As Integer
         Private _UserID As Integer
         Private _CreatedOnDate As Date
 
-        ' initialization
-        Public Sub New()
-        End Sub
+#End Region
 
-        ' public properties
+#Region "Public Properties"
+
         Public Property ItemID() As Integer
             Get
                 Return _ItemID
@@ -86,13 +90,24 @@ Namespace DotNetNuke.Modules.Html
             End Set
         End Property
 
-        Public Property ModuleTitle() As String
+        Public ReadOnly Property ModuleTitle() As String
             Get
+                Dim _ModuleTitle As String = Null.NullString
+                If [Module] IsNot Nothing Then
+                    _ModuleTitle = [Module].ModuleTitle
+                End If
                 Return _ModuleTitle
             End Get
-            Set(ByVal Value As String)
-                _ModuleTitle = Value
-            End Set
+        End Property
+
+        Public ReadOnly Property [Module] As ModuleInfo
+            Get
+                If _Module Is Nothing Then
+                    Dim ctrl As New ModuleController
+                    _Module = ctrl.GetModule(ModuleID, TabID)
+                End If
+                Return _Module
+            End Get
         End Property
 
         Public Property TabID() As Integer
@@ -121,6 +136,8 @@ Namespace DotNetNuke.Modules.Html
                 _CreatedOnDate = Value
             End Set
         End Property
+
+#End Region
 
     End Class
 

@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <LangVersion>9</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -67,15 +70,12 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="Telerik.Web.UI, Version=2009.3.1016.20, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Telerik.Web.UI">
       <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=0.9.7.2, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +197,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
   </Target>
-  <Target Name="DeployModule" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="Views\*.ascx">
       <Output TaskParameter="Include" ItemName="Views" />
     </CreateItem>

@@ -30,6 +30,8 @@ Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Services.Tokens
 Imports DotNetNuke.UI.Skins
+Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Portals
 
@@ -111,6 +113,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _PortalSkin As SkinInfo
         Private _Users As Integer
         Private _Pages As Integer
+        Private _CultureCode As String
 
 #End Region
 
@@ -175,6 +178,15 @@ Namespace DotNetNuke.Entities.Portals
 #Region "Public Properties"
 
 #Region "PortalInfo Properties"
+
+        Public Property CultureCode() As String
+            Get
+                Return _CultureCode
+            End Get
+            Set(ByVal value As String)
+                _CultureCode = value
+            End Set
+        End Property
 
         Public Property FooterText() As String
             Get
@@ -469,7 +481,6 @@ Namespace DotNetNuke.Entities.Portals
             End Set
         End Property
 
-
         Public Property UserTabId() As Integer
             Get
                 Return _UserTabId
@@ -526,17 +537,9 @@ Namespace DotNetNuke.Entities.Portals
             End Set
         End Property
 
-        Public ReadOnly Property DefaultControlPanelMode() As Mode
+        Public ReadOnly Property ContentLocalizationEnabled As Boolean
             Get
-                Dim mode As Mode = mode.Edit
-                Dim setting As String = Null.NullString
-
-                If PortalController.GetPortalSettingsDictionary(PortalId).TryGetValue("ControlPanelMode", setting) Then
-                    If setting.ToUpperInvariant() = "VIEW" Then
-                        mode = PortalSettings.Mode.View
-                    End If
-                End If
-                Return mode
+                Return PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", PortalId, False)
             End Get
         End Property
 
@@ -555,16 +558,6 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
-        Public ReadOnly Property DefaultControlPanelVisibility() As Boolean
-            Get
-                Dim isVisible As Boolean = True
-                Dim setting As String = ""
-                If PortalController.GetPortalSettingsDictionary(PortalId).TryGetValue("ControlPanelVisibility", setting) Then
-                    isVisible = Not (setting.ToUpperInvariant() = "MIN")
-                End If
-                Return isVisible
-            End Get
-        End Property
         Public ReadOnly Property ControlPanelVisible() As Boolean
             Get
                 Dim isVisible As Boolean = True
@@ -587,6 +580,31 @@ Namespace DotNetNuke.Entities.Portals
         Public ReadOnly Property DefaultAdminSkin() As String
             Get
                 Return PortalController.GetPortalSetting("DefaultAdminSkin", PortalId, Host.Host.DefaultAdminSkin)
+            End Get
+        End Property
+
+        Public ReadOnly Property DefaultControlPanelMode() As Mode
+            Get
+                Dim mode As Mode = mode.Edit
+                Dim setting As String = Null.NullString
+
+                If PortalController.GetPortalSettingsDictionary(PortalId).TryGetValue("ControlPanelMode", setting) Then
+                    If setting.ToUpperInvariant() = "VIEW" Then
+                        mode = PortalSettings.Mode.View
+                    End If
+                End If
+                Return mode
+            End Get
+        End Property
+
+        Public ReadOnly Property DefaultControlPanelVisibility() As Boolean
+            Get
+                Dim isVisible As Boolean = True
+                Dim setting As String = ""
+                If PortalController.GetPortalSettingsDictionary(PortalId).TryGetValue("ControlPanelVisibility", setting) Then
+                    isVisible = Not (setting.ToUpperInvariant() = "MIN")
+                End If
+                Return isVisible
             End Get
         End Property
 
@@ -910,6 +928,7 @@ Namespace DotNetNuke.Entities.Portals
             Me.HomeDirectory = portal.HomeDirectory
             Me.Pages = portal.Pages
             Me.Users = portal.Users
+            Me.CultureCode = portal.CultureCode
 
             ' update properties with default values
             If Null.IsNull(Me.HostSpace) Then
@@ -923,7 +942,6 @@ Namespace DotNetNuke.Entities.Portals
             End If
             Me.HomeDirectory = Common.Globals.ApplicationPath + "/" + portal.HomeDirectory + "/"
 
-            'At this point the DesktopTabs Collection contains all the Tabs for the current portal
             'verify tab for portal. This assigns the Active Tab based on the Tab Id/PortalId
             If VerifyPortalTab(PortalId, tabID) Then
                 If Not Me.ActiveTab Is Nothing Then
@@ -963,7 +981,7 @@ Namespace DotNetNuke.Entities.Portals
             If Me.ActiveTab IsNot Nothing Then
                 Dim objPaneModules As New Dictionary(Of String, Integer)
 
-                For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In objModules.GetTabModules(Me.ActiveTab.TabID)
+                For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In Me.ActiveTab.ChildModules
                     ' clone the module object ( to avoid creating an object reference to the data cache )
                     Dim cloneModule As ModuleInfo = kvp.Value.Clone
 
@@ -1226,7 +1244,7 @@ Namespace DotNetNuke.Entities.Portals
         Public ReadOnly Property HostSettings() As Hashtable
             Get
                 Dim h As New Hashtable
-                For Each kvp As KeyValuePair(Of String, String) In Host.Host.GetHostSettingsDictionary()
+                For Each kvp As ConfigurationSetting In HostController.Instance.GetSettings().Values
                     h.Add(kvp.Key, kvp.Value)
                 Next
                 Return h
@@ -1373,7 +1391,7 @@ Namespace DotNetNuke.Entities.Portals
 
                     'Add each portal Tab to DesktopTabs
                     Dim objPortalTab As TabInfo
-                    For Each objTab As TabInfo In TabController.GetTabsBySortOrder(Me.PortalId)
+                    For Each objTab As TabInfo In TabController.GetTabsBySortOrder(Me.PortalId, Me.CultureCode, True)
                         ' clone the tab object ( to avoid creating an object reference to the data cache )
                         objPortalTab = objTab.Clone()
 
@@ -1393,7 +1411,7 @@ Namespace DotNetNuke.Entities.Portals
 
                     'Add each host Tab to DesktopTabs
                     Dim objHostTab As TabInfo
-                    For Each objTab As TabInfo In TabController.GetTabsBySortOrder(Null.NullInteger)
+                    For Each objTab As TabInfo In TabController.GetTabsBySortOrder(Null.NullInteger, Null.NullString, True)
                         ' clone the tab object ( to avoid creating an object reference to the data cache )
                         objHostTab = objTab.Clone()
                         objHostTab.PortalID = Me.PortalId

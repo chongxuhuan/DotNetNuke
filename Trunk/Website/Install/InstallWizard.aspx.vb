@@ -30,6 +30,7 @@ Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Services.Mail
 Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Services.Install
 
@@ -705,12 +706,11 @@ Namespace DotNetNuke.Services.Install
                     Services.Upgrade.Upgrade.InstallFiles(InstallTemplate, False)
 
                     If Not String.IsNullOrEmpty(txtSMTPServer.Text) Then
-                        Dim controller As New Entities.Host.HostSettingsController
-                        controller.UpdateHostSetting("SMTPServer", txtSMTPServer.Text)
-                        controller.UpdateHostSetting("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value)
-                        controller.UpdateHostSetting("SMTPUsername", txtSMTPUsername.Text, True)
-                        controller.UpdateHostSetting("SMTPPassword", txtSMTPPassword.Text, True)
-                        controller.UpdateHostSetting("SMTPEnableSSL", Convert.ToString(IIf(chkSMTPEnableSSL.Checked, "Y", "N")))
+                        HostController.Instance.Update("SMTPServer", txtSMTPServer.Text)
+                        HostController.Instance.Update("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value)
+                        HostController.Instance.Update("SMTPUsername", txtSMTPUsername.Text)
+                        HostController.Instance.Update("SMTPPassword", txtSMTPPassword.Text)
+                        HostController.Instance.Update("SMTPEnableSSL", Convert.ToString(IIf(chkSMTPEnableSSL.Checked, "Y", "N")))
                     End If
 
                     'Clear Host Cache
@@ -1651,13 +1651,13 @@ Namespace DotNetNuke.Services.Install
                         Dim version As System.Version = New System.Version(strVersion)
 
                         If version IsNot Nothing Then
-                            strErrorMessage += Services.Upgrade.Upgrade.UpgradeApplication(version, False)
+                            strErrorMessage += Services.Upgrade.Upgrade.UpgradeApplication(strProviderPath, version, False)
 
                             ' delete files which are no longer used
-                            strErrorMessage += Services.Upgrade.Upgrade.DeleteFiles(version, False)
+                            strErrorMessage += Services.Upgrade.Upgrade.DeleteFiles(strProviderPath, version, False)
 
                             'execute config file updates
-                            strErrorMessage += Services.Upgrade.Upgrade.UpdateConfig(version, False)
+                            strErrorMessage += Services.Upgrade.Upgrade.UpdateConfig(strProviderPath, version, False)
                         End If
                     Next
                     'Complete Installation

@@ -28,7 +28,7 @@ Namespace DotNetNuke.Services.Localization
 
         Public Shared Sub DeleteLanguagePack(ByVal languagePack As LanguagePackInfo)
             If languagePack.PackageType = LanguagePackType.Core Then
-                Dim language As Locale = Localization.GetLocaleByID(languagePack.LanguageID)
+                Dim language As Locale = LocaleController.Instance().GetLocale(languagePack.LanguageID)
                 If language IsNot Nothing Then
                     Localization.DeleteLanguage(language)
                 End If

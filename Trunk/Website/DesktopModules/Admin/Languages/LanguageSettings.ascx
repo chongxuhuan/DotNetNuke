@@ -7,10 +7,6 @@
         <td width="350"><asp:CheckBox ID="chkBrowser" runat="server" /></td>
     </tr>
     <tr>
-        <td width="300" class="SubHead"><dnn:Label ID="plUrl" runat="server" ControlName="chkUrl"/></td>
-        <td width="350"><asp:CheckBox ID="chkUrl" runat="server" /></td>
-    </tr>
-    <tr>
         <td width="300" class="SubHead"><dnn:Label ID="plUsePaging" runat="server" ControlName="chkUsePaging"/></td>
         <td width="350"><asp:CheckBox ID="chkUsePaging" runat="server" /></td>
     </tr>

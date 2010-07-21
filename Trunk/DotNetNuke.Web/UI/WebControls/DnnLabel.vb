@@ -1,6 +1,4 @@
-﻿Imports DotNetNuke.Services.Localization
-
-'
+﻿'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -19,6 +17,10 @@
 ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ' DEALINGS IN THE SOFTWARE.
 '
+
+Imports DotNetNuke.Services.Localization
+Imports Telerik.Web.UI
+Imports System.Web.UI.WebControls
 
 Namespace DotNetNuke.Web.UI.WebControls
 
@@ -59,6 +61,9 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Public Property Localize() As Boolean Implements ILocalizable.Localize
             Get
+                If (DesignMode) Then
+                    Return False
+                End If
                 Return _Localize
             End Get
             Set(ByVal value As Boolean)

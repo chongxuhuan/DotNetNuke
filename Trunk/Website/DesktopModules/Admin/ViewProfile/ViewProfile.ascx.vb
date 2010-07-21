@@ -130,7 +130,7 @@ Namespace DotNetNuke.Modules.Admin.Users
         End Sub
 
         Protected Sub cmdEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdEdit.Click
-            Response.Redirect(NavigateURL(Me.ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" & ProfileUserId.ToString), True)
+            Response.Redirect(NavigateURL(Me.ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" & ProfileUserId.ToString, "pageno=3"), True)
         End Sub
 
 #End Region

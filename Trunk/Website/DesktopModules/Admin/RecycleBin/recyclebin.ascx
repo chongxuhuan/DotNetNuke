@@ -5,7 +5,14 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <table class="Settings" cellspacing="2" cellpadding="2" summary="Recycle Bin Design Table" border="0">
     <tr>
-        <td width="560">
+        <td width="760">
+            <asp:PlaceHolder ID="modePlaceHolder" runat="server" Visible = "false">
+                <asp:RadioButtonList ID="modeButtonList" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" CssClass="SubHead">
+                    <asp:ListItem Value="ALL" Selected="True" resourcekey="allLocales" />
+                    <asp:ListItem Value="SINGLE" resourcekey="singleLocale" />
+                </asp:RadioButtonList>
+                <br />
+            </asp:PlaceHolder>
             <asp:Panel ID="pnlTabs" runat="server" CssClass="WorkPanel" Visible="True">
                 <dnn:SectionHead ID="dshBasic" CssClass="Head" runat="server" IncludeRule="True" ResourceKey="Tabs" Section="tblTabs" Text="Tabs"/>
                 <table id="tblTabs" cellspacing="0" cellpadding="2" width="525" summary="Tbas Design Table" border="0" runat="server">

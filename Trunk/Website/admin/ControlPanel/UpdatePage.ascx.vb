@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -293,10 +293,9 @@ Namespace DotNetNuke.UI.ControlPanel
 		Private _CurrentTab As DotNetNuke.Entities.Tabs.TabInfo = Nothing
 		Private ReadOnly Property CurrentTab() As DotNetNuke.Entities.Tabs.TabInfo
 			Get
-				'Weird - but the activetab has different skin src value than getting from the db
-				If (IsNothing(_CurrentTab)) Then
-					_CurrentTab = New TabController().GetTab(PortalSettings.ActiveTab.TabID, PortalSettings.ActiveTab.PortalID, True)
-				End If
+                If (IsNothing(_CurrentTab)) Then
+                    _CurrentTab = New TabController().GetTab(PortalSettings.ActiveTab.TabID, PortalSettings.ActiveTab.PortalID, False)
+                End If
 				Return _CurrentTab
 			End Get
 		End Property

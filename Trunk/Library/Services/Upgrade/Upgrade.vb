@@ -22,6 +22,7 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Xml
 Imports System.Web
+Imports DotNetNuke.Entities.Controllers
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Entities.Modules
@@ -40,6 +41,8 @@ Imports DotNetNuke.Application
 Imports DotNetNuke.Common.Lists
 Imports DotNetNuke.Entities.Profile
 Imports System.Xml.XPath
+Imports DotNetNuke.Entities
+
 
 Namespace DotNetNuke.Services.Upgrade
 
@@ -598,7 +601,9 @@ Namespace DotNetNuke.Services.Upgrade
 
             Dim objTabController As New TabController
 
-            Dim objTabInfo As TabInfo = objTabController.GetTabByName(TabName, Null.NullInteger)
+            Dim hostTab As TabInfo = objTabController.GetTabByName("Host", Null.NullInteger)
+
+            Dim objTabInfo As TabInfo = objTabController.GetTabByName(TabName, Null.NullInteger, hostTab.TabID)
             If Not objTabInfo Is Nothing Then
                 blnExists = True
             Else
@@ -696,12 +701,13 @@ Namespace DotNetNuke.Services.Upgrade
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Shared Sub ParseFiles(ByVal node As XmlNode, ByVal portalId As Integer)
-
             Dim fileNode As XmlNode
             Dim objController As New DotNetNuke.Services.FileSystem.FileController
+            Dim objFile As DotNetNuke.Services.FileSystem.FileInfo
 
             'Parse the File nodes
             For Each fileNode In node.SelectNodes("file")
+
                 Dim strFileName As String = XmlUtils.GetNodeValue(fileNode, "filename")
                 Dim strExtenstion As String = XmlUtils.GetNodeValue(fileNode, "extension")
                 Dim fileSize As Long = Long.Parse(XmlUtils.GetNodeValue(fileNode, "size"))
@@ -709,10 +715,13 @@ Namespace DotNetNuke.Services.Upgrade
                 Dim iHeight As Integer = XmlUtils.GetNodeValueInt(fileNode, "height")
                 Dim strType As String = XmlUtils.GetNodeValue(fileNode, "contentType")
                 Dim strFolder As String = XmlUtils.GetNodeValue(fileNode, "folder")
-
                 Dim objFolders As New FolderController
-                Dim objFolder As FolderInfo = objFolders.GetFolder(portalId, strFolder, False)
-                objController.AddFile(portalId, strFileName, strExtenstion, fileSize, iWidth, iHeight, strType, strFolder, objFolder.FolderID, True)
+                Dim objFolder As FolderInfo
+
+                objFolder = objFolders.GetFolder(portalId, strFolder, False)
+                objFile = New DotNetNuke.Services.FileSystem.FileInfo(portalId, strFileName, strExtenstion, CType(fileSize, Integer), iWidth, iHeight, strType, strFolder, objFolder.FolderID, objFolder.StorageLocation, True)
+
+                objController.AddFile(objFile)
             Next
 
         End Sub
@@ -1204,7 +1213,7 @@ Namespace DotNetNuke.Services.Upgrade
 
         Private Shared Sub UpgradeToVersion_513()
             'Ensure that default language is present (not neccessarily enabled)
-            Dim defaultLanguage As Locale = Localization.Localization.GetLocale("en-US")
+            Dim defaultLanguage As Locale = LocaleController.Instance().GetLocale("en-US")
             If defaultLanguage Is Nothing Then
                 defaultLanguage = New Locale
             End If
@@ -1299,9 +1308,15 @@ Namespace DotNetNuke.Services.Upgrade
             Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
 
             Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
-            ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
+            ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, UserVisibilityMode.AllUsers, dataTypes)
 
+            Dim strInstallTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", InstallMapPath)
             Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
+            If File.Exists(strInstallTemplateFile) Then
+                If Not File.Exists(strHostTemplateFile) Then
+                    File.Copy(strInstallTemplateFile, strHostTemplateFile)
+                End If
+            End If
             If File.Exists(strHostTemplateFile) Then
                 Dim tabController As New TabController()
                 Dim objPortals As New PortalController
@@ -1310,7 +1325,7 @@ Namespace DotNetNuke.Services.Upgrade
                     properties = ProfileController.GetPropertyDefinitionsByPortal(objPortal.PortalID)
 
                     'Add new Photo Profile field to Portal
-                    ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, dataTypes)
+                    ProfileController.AddDefaultDefinition(objPortal.PortalID, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, UserVisibilityMode.AllUsers, dataTypes)
 
                     'Rename old Default Page template
                     Dim DefaultPageTemplatePath As String = String.Format("{0}Templates\Default.page.template", objPortal.HomeDirectoryMapPath)
@@ -1319,16 +1334,13 @@ Namespace DotNetNuke.Services.Upgrade
                     'Update Default profile template in every portal
                     objPortals.CopyPageTemplate("Default.page.template", objPortal.HomeDirectoryMapPath)
 
-                    'Add User profile template to every portal
-                    objPortals.CopyPageTemplate("UserProfile.page.template", objPortal.HomeDirectoryMapPath)
-
                     'Synchronize the Templates folder to ensure the templates are accessible
                     FileSystemUtils.SynchronizeFolder(objPortal.PortalID, String.Format("{0}Templates\", objPortal.HomeDirectoryMapPath), "Templates/", False, True, True, False)
 
                     Dim xmlDoc As New XmlDocument
                     Try
                         ' open the XML file
-                        xmlDoc.Load(String.Format("{0}Templates\UserProfile.page.template", objPortal.HomeDirectoryMapPath))
+                        xmlDoc.Load(strHostTemplateFile)
                     Catch ex As Exception
                         LogException(ex)
                     End Try
@@ -1355,6 +1367,18 @@ Namespace DotNetNuke.Services.Upgrade
                 Next
             End If
 
+            AddEventQueue_Application_Start_FirstRequest()
+
+            'Change Key for Module Defintions
+            ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
+            RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
+            AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
+
+            'Module was incorrectly assigned as "IsPremium=False"
+            RemoveModuleFromPortals("Users And Roles")
+        End Sub
+
+        Private Shared Sub AddEventQueue_Application_Start_FirstRequest()
             'Add new EventQueue Event
             Dim config As DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration = DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.GetConfig()
             If config IsNot Nothing Then
@@ -1366,13 +1390,6 @@ Namespace DotNetNuke.Services.Upgrade
                     DotNetNuke.Services.EventQueue.Config.EventQueueConfiguration.SaveConfig(config, String.Format("{0}EventQueue\EventQueue.config", HostMapPath))
                 End If
             End If
-            'Change Key for Module Defintions
-            ModuleDefID = GetModuleDefinition("Extensions", "Extensions")
-            RemoveModuleControl(ModuleDefID, "ImportModuleDefinition")
-            AddModuleControl(ModuleDefID, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0)
-
-            'Module was incorrectly assigned as "IsPremium=False"
-            RemoveModuleFromPortals("Users And Roles")
         End Sub
 
         Private Shared Sub UpgradeToVersion_540()
@@ -1381,7 +1398,7 @@ Namespace DotNetNuke.Services.Upgrade
             If configNavigator Is Nothing Then
                 'attempt to remove "System.Web.Extensions" configuration section
                 Dim upgradeFile As String = String.Format("{0}\Config\SystemWebExtensions.config", DotNetNuke.Common.InstallMapPath)
-                Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, "Remove System Web Extensions")
+                Dim strMessage As String = UpdateConfig(upgradeFile, DotNetNukeContext.Current.Application.Version, "Remove System.Web.Extensions")
                 If String.IsNullOrEmpty(strMessage) Then
                     'Log Upgrade
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
@@ -1422,12 +1439,90 @@ Namespace DotNetNuke.Services.Upgrade
             If Directory.Exists(LogFilePath) Then
                 'get log files
                 For Each fileName As String In Directory.GetFiles(LogFilePath, "*.log")
-                    Dim f As New System.IO.FileInfo(fileName)
+                    If File.Exists(fileName & ".resources") Then
+                        File.Delete(fileName & ".resources")
+                    End If
                     'copy requires use of move
                     File.Move(fileName, fileName & ".resources")
                 Next
             End If
         End Sub
+
+        Private Shared Sub UpgradeToVersion_550()
+            Dim ModuleDefID As Integer
+
+            'update languages module
+            ModuleDefID = GetModuleDefinition("Languages", "Languages")
+            AddModuleControl(ModuleDefID, "TranslationStatus", "", "DesktopModules/Admin/Languages/TranslationStatus.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0)
+
+            'due to an error in 5.3.0 we need to recheck and readd Application_Start_FirstRequest
+            AddEventQueue_Application_Start_FirstRequest()
+
+            ' check if UserProfile page template exists in Host folder and if not, copy it from Install folder
+            Dim strInstallTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", InstallMapPath)
+            If File.Exists(strInstallTemplateFile) Then
+                Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
+                If Not File.Exists(strHostTemplateFile) Then
+                    File.Copy(strInstallTemplateFile, strHostTemplateFile)
+                End If
+            End If
+
+            'Fix the permission for User Folders
+            Dim portalCtrl As New PortalController
+            Dim folderCtrl As New FolderController
+            For Each portal As PortalInfo In portalCtrl.GetPortals
+                For Each folder As FolderInfo In folderCtrl.GetFoldersSorted(portal.PortalID).Values
+                    If folder.FolderPath.StartsWith("Users/") Then
+                        For Each permission As PermissionInfo In PermissionController.GetPermissionsByFolder()
+                            If permission.PermissionKey.ToUpper = "READ" Then
+                                'Add All Users Read Access to the folder
+                                Dim roleId As Integer = Int32.Parse(glbRoleAllUsers)
+                                If Not folder.FolderPermissions.Contains(permission.PermissionKey, folder.FolderID, roleId, Null.NullInteger) Then
+                                    Dim folderPermission As New FolderPermissionInfo(permission)
+                                    folderPermission = New FolderPermissionInfo(permission)
+                                    folderPermission.FolderID = folder.FolderID
+                                    folderPermission.UserID = Null.NullInteger
+                                    folderPermission.RoleID = roleId
+                                    folderPermission.AllowAccess = True
+
+                                    folder.FolderPermissions.Add(folderPermission)
+                                End If
+                            End If
+                        Next
+
+                        FolderPermissionController.SaveFolderPermissions(folder)
+                    End If
+                Next
+                'Remove user page template from portal if it exists (from 5.3)
+                If File.Exists(String.Format("{0}Templates\UserProfile.page.template", portal.HomeDirectoryMapPath)) Then
+                    File.Delete(String.Format("{0}Templates\UserProfile.page.template", portal.HomeDirectoryMapPath))
+                End If
+            Next
+
+            'DNN-12894 -   Country Code for "United Kingdom" is incorrect
+            Dim listController As New ListController()
+            Dim listItem As ListEntryInfo = listController.GetListEntryInfo("Country", "UK")
+            If listItem IsNot Nothing Then
+                listItem.Value = "GB"
+                listController.UpdateListEntry(listItem)
+            End If
+
+
+            For Each p As PortalInfo In New PortalController().GetPortals
+                'fix issue where portal default language may be disabled
+                Dim defaultLanguage As String = p.DefaultLanguage
+                If IsLanguageEnabled(p.PortalID, defaultLanguage) = False Then
+                    Dim language As Locale = LocaleController.Instance().GetLocale(defaultLanguage)
+                    DotNetNuke.Services.Localization.Localization.AddLanguageToPortal(p.PortalID, language.LanguageId, True)
+                End If
+                'preemptively create any missing localization records rather than relying on dynamic creation
+                For Each locale As Locale In LocaleController.Instance().GetLocales(p.PortalID).Values
+                    DataProvider.Instance().EnsureLocalizationExists(p.PortalID, locale.Code)
+                Next
+            Next
+
+        End Sub
+
 #End Region
 
 #Region "Public Methods"
@@ -1737,7 +1832,7 @@ Namespace DotNetNuke.Services.Upgrade
                 Return intPortalId
 
             Catch ex As Exception
-                HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "<font color='red'>Error: " + ex.Message + "</font><br>")
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "<font color='red'>Error: " + ex.Message + ex.StackTrace + "</font><br>")
                 Return -1 ' failure
             End Try
         End Function
@@ -1836,7 +1931,7 @@ Namespace DotNetNuke.Services.Upgrade
         ''' 	[swalker]	11/09/2004	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Shared Function DeleteFiles(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
+        Public Shared Function DeleteFiles(ByVal strProviderPath As String, ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
             Dim strExceptions As String = ""
             If writeFeedback Then
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Cleaning Up Files: " + FormatVersion(version))
@@ -1849,8 +1944,16 @@ Namespace DotNetNuke.Services.Upgrade
                     strExceptions = FileSystemUtils.DeleteFiles(FileSystemUtils.ReadFile(strListFile).Split(ControlChars.CrLf.ToCharArray()))
                 End If
             Catch ex As Exception
-                LogException(ex)
-                strExceptions += "Error: " & ex.Message & vbCrLf
+                strExceptions += String.Format("Error: {0}{1}", ex.Message + ex.StackTrace, vbCrLf)
+                ' log the results
+                Try
+                    Dim objStream As StreamWriter
+                    objStream = File.CreateText(strProviderPath + FormatVersion(version) + "_Config.log")
+                    objStream.WriteLine(strExceptions)
+                    objStream.Close()
+                Catch
+                    ' does not have permission to create the log file
+                End Try
             End Try
 
             If writeFeedback Then
@@ -2128,7 +2231,6 @@ Namespace DotNetNuke.Services.Upgrade
                 End If
 
                 Dim settingNode As XmlNode
-                Dim objController As New HostSettingsController
 
                 'Parse the Settings nodes
                 For Each settingNode In node.ChildNodes
@@ -2155,17 +2257,15 @@ Namespace DotNetNuke.Services.Upgrade
 
                                 'Remove any folders
                                 strSettingValue = strSettingValue.Substring(0, strSettingValue.IndexOf("/"))
-
                                 'Remove port number
                                 If Not strSettingValue.IndexOf(":") = -1 Then
                                     strSettingValue = strSettingValue.Substring(0, strSettingValue.IndexOf(":"))
                                 End If
-
                             End If
 
                     End Select
 
-                    objController.UpdateHostSetting(strSettingName, strSettingValue, SettingIsSecure)
+                    HostController.Instance.Update(New ConfigurationSetting() With {.Key = strSettingName, .Value = strSettingValue, .IsSecure = SettingIsSecure})
 
                 Next
                 'Need to clear the cache to pick up new HostSettings from the SQLDataProvider script
@@ -2601,7 +2701,7 @@ Namespace DotNetNuke.Services.Upgrade
 
                 If HostTabExists("Superuser Accounts") = False Then
                     'add SuperUser Accounts module and tab
-                    Dim objDesktopModuleInfo As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName("DNN_Security", Null.NullInteger)
+                    Dim objDesktopModuleInfo As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName("Security", Null.NullInteger)
                     ModuleDefID = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("User Accounts", objDesktopModuleInfo.DesktopModuleID).ModuleDefID
 
                     'Create New Host Page (or get existing one)
@@ -2711,7 +2811,7 @@ Namespace DotNetNuke.Services.Upgrade
         ''' 	[cnurse]	11/6/2004	documented
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Shared Function UpgradeApplication(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
+        Public Shared Function UpgradeApplication(ByVal strProviderPath As String, ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
             Dim strExceptions As String = ""
             If writeFeedback Then
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Executing Application Upgrades: " + FormatVersion(version))
@@ -2746,14 +2846,20 @@ Namespace DotNetNuke.Services.Upgrade
                         UpgradeToVersion_540()
                     Case "5.4.3"
                         UpgradeToVersion_543()
+                    Case "5.5.0"
+                        UpgradeToVersion_550()
                 End Select
 
             Catch ex As Exception
-                strExceptions += String.Format("Error: {0}{1}", ex.Message, vbCrLf)
+                strExceptions += String.Format("Error: {0}{1}", ex.Message + ex.StackTrace, vbCrLf)
+                ' log the results
                 Try
-                    LogException(ex)
+                    Dim objStream As StreamWriter
+                    objStream = File.CreateText(strProviderPath + FormatVersion(version) + "_Application.log.resources")
+                    objStream.WriteLine(strExceptions)
+                    objStream.Close()
                 Catch
-                    ' ignore
+                    ' does not have permission to create the log file
                 End Try
             End Try
 
@@ -2764,11 +2870,11 @@ Namespace DotNetNuke.Services.Upgrade
             Return strExceptions
         End Function
 
-        Public Shared Function UpdateConfig(ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
+        Public Shared Function UpdateConfig(ByVal strProviderPath As String, ByVal version As System.Version, ByVal writeFeedback As Boolean) As String
             If writeFeedback Then
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, String.Format("Updating Config Files: {0}", FormatVersion(version)))
             End If
-            Dim strExceptions As String = UpdateConfig(DotNetNuke.Common.InstallMapPath & "Config\" & GetStringVersion(version) & ".config", version, "Core Upgrade")
+            Dim strExceptions As String = UpdateConfig(strProviderPath, DotNetNuke.Common.InstallMapPath & "Config\" & GetStringVersion(version) & ".config", version, "Core Upgrade")
 
             If writeFeedback Then
                 HtmlUtils.WriteSuccessError(HttpContext.Current.Response, (strExceptions = ""))
@@ -2788,8 +2894,38 @@ Namespace DotNetNuke.Services.Upgrade
                     'Process merge
                     merge.UpdateConfigs()
                 Catch ex As Exception
+                    strExceptions += String.Format("Error: {0}{1}", ex.Message + ex.StackTrace, vbCrLf)
+                    ' log the results
                     LogException(ex)
-                    strExceptions += "Error: " & ex.Message & vbCrLf
+                Finally
+                    'Close stream
+                    stream.Close()
+                End Try
+            End If
+            Return strExceptions
+        End Function
+
+        Public Shared Function UpdateConfig(ByVal strProviderPath As String, ByVal strConfigFile As String, ByVal version As System.Version, ByVal strReason As String) As String
+            Dim strExceptions As String = ""
+            If File.Exists(strConfigFile) Then
+                'Create XmlMerge instance from config file source
+                Dim stream As StreamReader = File.OpenText(strConfigFile)
+                Try
+                    Dim merge As XmlMerge = New XmlMerge(stream, version.ToString(3), strReason)
+
+                    'Process merge
+                    merge.UpdateConfigs()
+                Catch ex As Exception
+                    strExceptions += String.Format("Error: {0}{1}", ex.Message + ex.StackTrace, vbCrLf)
+                    ' log the results
+                    Try
+                        Dim objStream As StreamWriter
+                        objStream = File.CreateText(strProviderPath + FormatVersion(version) + "_Config.log")
+                        objStream.WriteLine(strExceptions)
+                        objStream.Close()
+                    Catch
+                        ' does not have permission to create the log file
+                    End Try
                 Finally
                     'Close stream
                     stream.Close()
@@ -2827,16 +2963,16 @@ Namespace DotNetNuke.Services.Upgrade
 
             For Each version In versions
                 '' perform version specific application upgrades
-                UpgradeApplication(version, True)
+                UpgradeApplication(strProviderPath, version, True)
             Next
 
             For Each version In versions
                 ' delete files which are no longer used
-                DeleteFiles(version, True)
+                DeleteFiles(strProviderPath, version, True)
             Next
             For Each version In versions
                 'execute config file updates
-                UpdateConfig(version, True)
+                UpdateConfig(strProviderPath, version, True)
             Next
 
             ' perform general application upgrades
@@ -2938,6 +3074,10 @@ Namespace DotNetNuke.Services.Upgrade
 
 #End Region
 
+        Protected Shared Function IsLanguageEnabled(ByVal portalid As Integer, ByVal Code As String) As Boolean
+            Dim enabledLanguage As Locale = Nothing
+            Return LocaleController.Instance().GetLocales(portalid).TryGetValue(Code, enabledLanguage)
+        End Function
     End Class
 
 End Namespace

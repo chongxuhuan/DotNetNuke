@@ -54,6 +54,10 @@ Namespace DotNetNuke.Entities.Modules.Actions
         Public Const MovePane As String = "MovePane.Action"
         Public Const MoveRoot As String = "MoveRoot.Action"
         Public Const ViewSource As String = "ViewSource.Action"
+        Public Const LocalizeModule As String = "Localize.Action"
+        Public Const DeLocalizeModule As String = "DeLocalize.Action"
+        Public Const TranslateModule As String = "Translate.Action"
+        Public Const UnTranslateModule As String = "UnTranslate.Action"
 
     End Class
 

@@ -431,7 +431,12 @@ Namespace DotNetNuke.Framework
             If HttpContext.Current.Request IsNot Nothing AndAlso Not HttpContext.Current.Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") Then
                 ' Set the current culture
                 Thread.CurrentThread.CurrentUICulture = PageCulture
-                Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture
+                If PortalSettings IsNot Nothing Then
+                    Dim locale As Locale = LocaleController.Instance().GetCurrentLocale(PortalSettings.PortalId)
+                    Thread.CurrentThread.CurrentCulture = New CultureInfo(locale.Code)
+                Else
+                    Thread.CurrentThread.CurrentCulture = PageCulture
+                End If
             End If
 
             'register page with AJAX

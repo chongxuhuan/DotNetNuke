@@ -1,6 +1,6 @@
 ﻿'
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,6 +22,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Web
 Imports System.Reflection
+Imports DotNetNuke.Services.FileSystem
 Imports Telerik.Web.UI
 Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.Common.Utilities
@@ -67,12 +68,18 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
         End Property
 
         Public Overrides Function CheckWritePermissions(ByVal folderPath As String) As Boolean
-            Return MyBase.CheckWritePermissions(folderPath)
+            Dim folder As FolderInfo = DNNFolderCtrl.GetFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(folderPath), True)
+            Return FolderPermissionController.CanManageFolder(folder)
         End Function
 
         Public Overrides Function GetFile(ByVal url As String) As System.IO.Stream
             'base calls CheckWritePermissions method
             Return TelerikContent.GetFile(FileSystemValidation.ToVirtualPath(url))
+        End Function
+
+        Public Overrides Function CheckDeletePermissions(ByVal folderPath As String) As Boolean
+            Dim folder As FolderInfo = DNNFolderCtrl.GetFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(folderPath), True)
+            Return FolderPermissionController.CanManageFolder(folder)
         End Function
 
         Public Overrides Function GetPath(ByVal url As String) As String
@@ -384,7 +391,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
         Public Overrides Function ResolveDirectory(ByVal path As String) As Widgets.DirectoryItem
             Try
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveDirectory: " + path)
+                'System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveDirectory: " + path)
                 Return GetDirectoryItemWithDNNPermissions(path, True)
             Catch ex As Exception
                 DNNValidator.LogUnknownError(ex, path)
@@ -394,7 +401,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
         Public Overrides Function ResolveRootDirectoryAsTree(ByVal path As String) As Widgets.DirectoryItem
             Try
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveRootDirectoryAsTree: " + path)
+                'System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveRootDirectoryAsTree: " + path)
                 Return GetDirectoryItemWithDNNPermissions(path, False)
             Catch ex As Exception
                 DNNValidator.LogUnknownError(ex, path)
@@ -404,7 +411,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
         Public Overrides Function ResolveRootDirectoryAsList(ByVal path As String) As Telerik.Web.UI.Widgets.DirectoryItem()
             Try
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveRootDirectoryAsList: " + path)
+                'System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + "ResolveRootDirectoryAsList: " + path)
                 Return GetDirectoryItemWithDNNPermissions(path, False).Directories
             Catch ex As Exception
                 DNNValidator.LogUnknownError(ex, path)
@@ -489,7 +496,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             Dim newDirectories As ArrayList = New ArrayList()
 
             For Each radDirectory As Widgets.DirectoryItem In radDirectories
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " AddChildDirectoriesToList " + radDirectory.Name)
+                'System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " AddChildDirectoriesToList " + radDirectory.Name)
 
                 If (radDirectory Is Nothing) Then
                     Continue For

@@ -48,7 +48,6 @@ Namespace DotNetNuke.Services.FileSystem
         ''' 	[cpaterra]	4/19/2006	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        ''' 
         Public Sub ProcessRequest(ByVal context As System.Web.HttpContext) Implements System.Web.IHttpHandler.ProcessRequest
 
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
@@ -79,8 +78,8 @@ Namespace DotNetNuke.Services.FileSystem
                     Language = context.Request.Cookies("language").Value
                 End If
             End If
-            If Localization.Localization.LocaleIsEnabled(Language) Then
-                Threading.Thread.CurrentThread.CurrentCulture = New CultureInfo(Language)
+            If LocaleController.Instance().IsEnabled(Language, _portalSettings.PortalId) Then
+                Threading.Thread.CurrentThread.CurrentUICulture = New CultureInfo(Language)
                 Localization.Localization.SetLanguage(Language)
             End If
             ' get the URL
@@ -153,11 +152,9 @@ Namespace DotNetNuke.Services.FileSystem
                             End If
                         Case Else
                             ' redirect to URL
-
                             context.Response.Redirect(URL, True)
                     End Select
                 Catch ex As ThreadAbortException
-
                 Catch ex As Exception
                     Throw New HttpException(404, "Not Found")
                 End Try

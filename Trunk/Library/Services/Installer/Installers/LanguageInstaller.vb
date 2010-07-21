@@ -126,7 +126,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Dim tempLanguagePack As LanguagePackInfo = LanguagePackController.GetLanguagePackByPackage(Package.PackageID)
 
                 'Attempt to get the Locale
-                Dim language As Locale = Localization.Localization.GetLocaleByID(tempLanguagePack.LanguageID)
+                Dim language As Locale = LocaleController.Instance().GetLocale(tempLanguagePack.LanguageID)
 
                 If tempLanguagePack IsNot Nothing Then
                     LanguagePackController.DeleteLanguagePack(tempLanguagePack)
@@ -224,7 +224,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 End If
 
                 'Attempt to get the Locale
-                TempLanguage = Localization.Localization.GetLocale(Language.Code)
+                TempLanguage = LocaleController.Instance().GetLocale(Language.Code)
 
                 If TempLanguage IsNot Nothing Then
                     Language.LanguageID = TempLanguage.LanguageID
@@ -233,6 +233,15 @@ Namespace DotNetNuke.Services.Installer.Installers
                 If LanguagePack.PackageType = Localization.LanguagePackType.Core Then
                     'Update language
                     Localization.Localization.SaveLanguage(Language)
+                End If
+
+                Dim _settings As PortalSettings = PortalController.GetCurrentPortalSettings()
+                If _settings IsNot Nothing Then
+                    Dim enabledLanguage As Locale = Nothing
+                    If Not LocaleController.Instance().GetLocales(_settings.PortalId).TryGetValue(Language.Code, enabledLanguage) Then
+                        'Add language to portal
+                        Localization.Localization.AddLanguageToPortal(_settings.PortalId, Language.LanguageId, True)
+                    End If
                 End If
 
                 'Set properties for Language Pack

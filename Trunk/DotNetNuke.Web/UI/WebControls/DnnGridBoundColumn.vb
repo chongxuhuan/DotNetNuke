@@ -25,47 +25,33 @@ Namespace DotNetNuke.Web.UI.WebControls
 
     Public Class DnnGridBoundColumn
         Inherits Telerik.Web.UI.GridBoundColumn
-        Implements ILocalizable
 
-#Region "Private Members"
+#Region "Public Properties"
 
-        Private _Localize As Boolean = True
-        Private _LocalResourceFile As String
+        Public ReadOnly Property LocalResourceFile As String
+            Get
+                Return Utilities.GetLocalResourceFile(Me.Owner.OwnerGrid.Parent)
+            End Get
+        End Property
 
 #End Region
-
+ 
 #Region "Public Methods"
+
+        Public Overloads Overrides Function Clone() As GridColumn
+            Dim dnnGridColumn As New DnnGridBoundColumn()
+
+            'you should override CopyBaseProperties if you have some column specific properties
+            dnnGridColumn.CopyBaseProperties(Me)
+
+            Return dnnGridColumn
+        End Function
 
         Public Overrides Sub InitializeCell(ByVal cell As System.Web.UI.WebControls.TableCell, ByVal columnIndex As Integer, ByVal inItem As Telerik.Web.UI.GridItem)
             MyBase.InitializeCell(cell, columnIndex, inItem)
             If TypeOf inItem Is GridHeaderItem Then
                 cell.Text = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
             End If
-        End Sub
-
-#End Region
-
-#Region "ILocalizable Implementation"
-
-        Public Property Localize() As Boolean Implements ILocalizable.Localize
-            Get
-                Return _Localize
-            End Get
-            Set(ByVal value As Boolean)
-                _Localize = value
-            End Set
-        End Property
-
-        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
-            Get
-                Return _LocalResourceFile
-            End Get
-            Set(ByVal value As String)
-                _LocalResourceFile = value
-            End Set
-        End Property
-
-        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
         End Sub
 
 #End Region

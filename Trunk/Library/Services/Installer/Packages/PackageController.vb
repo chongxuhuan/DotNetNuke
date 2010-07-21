@@ -72,7 +72,7 @@ Namespace DotNetNuke.Services.Installer.Packages
                         skinPackage.SkinType = package.PackageType
                         SkinController.AddSkinPackage(skinPackage)
                     Case "CoreLanguagePack"
-                        Dim locale As Locale = Localization.Localization.GetLocale(PortalController.GetCurrentPortalSettings.DefaultLanguage)
+                        Dim locale As Locale = LocaleController.Instance().GetLocale(PortalController.GetCurrentPortalSettings.DefaultLanguage)
 
                         Dim languagePack As New LanguagePackInfo
                         languagePack.PackageID = packageID
@@ -80,7 +80,7 @@ Namespace DotNetNuke.Services.Installer.Packages
                         languagePack.DependentPackageID = -2
                         LanguagePackController.SaveLanguagePack(languagePack)
                     Case "ExtensionLanguagePack"
-                        Dim locale As Locale = Localization.Localization.GetLocale(PortalController.GetCurrentPortalSettings.DefaultLanguage)
+                        Dim locale As Locale = LocaleController.Instance().GetLocale(PortalController.GetCurrentPortalSettings.DefaultLanguage)
 
                         Dim languagePack As New LanguagePackInfo
                         languagePack.PackageID = packageID

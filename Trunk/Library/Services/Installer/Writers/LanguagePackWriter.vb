@@ -58,7 +58,7 @@ Namespace DotNetNuke.Services.Installer.Writers
             MyBase.New(package)
             _LanguagePack = LanguagePackController.GetLanguagePackByPackage(package.PackageID)
             If LanguagePack IsNot Nothing Then
-                _Language = Localization.Localization.GetLocaleByID(_LanguagePack.LanguageID)
+                _Language = LocaleController.Instance().GetLocale(_LanguagePack.LanguageID)
                 If LanguagePack.PackageType = LanguagePackType.Core Then
                     BasePath = Null.NullString
                 Else
@@ -376,7 +376,7 @@ Namespace DotNetNuke.Services.Installer.Writers
                         ' 2. Module packages only include one module
                         If Not _IsCore AndAlso _LanguagePack Is Nothing Then
                             'Check if language is installed
-                            Dim locale As Locale = Localization.Localization.GetLocale(_Language.Code)
+                            Dim locale As Locale = LocaleController.Instance().GetLocale(_Language.Code)
                             If locale Is Nothing Then
                                 LegacyError = "CoreLanguageError"
                             Else

@@ -77,7 +77,9 @@ Namespace DotNetNuke.UI.WebControls
             Dim _portalSettings As PortalSettings = GetPortalSettings()
 
             'Get the Pages
-            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(_portalSettings.PortalId, Null.NullInteger, True, True)
+            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(_portalSettings.PortalId, Null.NullInteger, _
+                                                            True, "<" + Localization.GetString("None_Specified") + ">", _
+                                                            False, False, True, True, False)
 
             'Render the Select Tag
             ControlStyle.AddAttributesToRender(writer)

@@ -22,6 +22,7 @@ Imports System.IO
 Imports System.Net
 Imports System.Collections.Generic
 Imports System.Web.Caching
+Imports System.Security.Cryptography
 Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Security.Permissions
@@ -73,6 +74,7 @@ Namespace DotNetNuke.Common.Utilities
             Dim sourceFileName As String = GetFileName(fileName)
             Dim intFileID As Integer
             Dim retValue As String = ""
+            Dim objFile As DotNetNuke.Services.FileSystem.FileInfo
 
             retValue += CheckValidFileName(fileName)
             If retValue.Length > 0 Then
@@ -84,8 +86,23 @@ Namespace DotNetNuke.Common.Utilities
                 contentType = GetContentType(extension)
             End If
 
+            objFile = New DotNetNuke.Services.FileSystem.FileInfo(PortalId, sourceFileName, extension, CType(length, Integer), Null.NullInteger, Null.NullInteger, contentType, folderName, folder.FolderID, folder.StorageLocation, clearCache)
+
+            'Calcuate hash value
+            Select Case folder.StorageLocation
+                Case FolderController.StorageLocationTypes.InsecureFileSystem
+                    If File.Exists(fileName) Then objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName))
+                Case FolderController.StorageLocationTypes.SecureFileSystem
+                    If File.Exists(fileName + glbProtectedExtension) Then objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName + glbProtectedExtension))
+                Case FolderController.StorageLocationTypes.DatabaseSecure
+                    Dim bytes As Byte() = New Byte(Convert.ToInt32(inStream.Length)) {}
+                    inStream.Read(bytes, 0, Convert.ToInt32(inStream.Length))
+                    inStream.Position = 0
+                    objFile.SHA1Hash = GetHash(bytes)
+            End Select
+
             'Add file to Database
-            intFileID = objFileController.AddFile(PortalId, sourceFileName, extension, length, Null.NullInteger, Null.NullInteger, contentType, folderName, folder.FolderID, clearCache)
+            intFileID = objFileController.AddFile(objFile)
 
             'Save file to File Storage
             If folder.StorageLocation <> FolderController.StorageLocationTypes.InsecureFileSystem Or synchronize = False Then
@@ -93,7 +110,7 @@ Namespace DotNetNuke.Common.Utilities
             End If
 
             'Update the FileData
-            retValue += UpdateFileData(intFileID, folder.FolderID, PortalId, sourceFileName, extension, contentType, length, folderName)
+            retValue += UpdateFileData(intFileID, folder.FolderID, PortalId, sourceFileName, extension, contentType, length, folderName, objFile.StorageLocation, objFile.IsCached, objFile.SHA1Hash)
 
             If folder.StorageLocation <> FolderController.StorageLocationTypes.InsecureFileSystem Then
                 'try and delete the Insecure file
@@ -126,7 +143,39 @@ Namespace DotNetNuke.Common.Utilities
 
             Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
             Dim isProtected As Boolean = FileSystemUtils.DefaultProtectedFolders(relativePath)
-            Dim FolderID As Integer = objFolderController.AddFolder(PortalId, relativePath, StorageLocation, isProtected, False)
+
+            Dim objFolder As FolderInfo = New FolderInfo(PortalId, relativePath, StorageLocation, isProtected, False, Null.NullDate)
+            Dim FolderID As Integer = objFolderController.AddFolder(objFolder)
+
+            If PortalId <> Null.NullInteger Then
+                'Set Folder Permissions to inherit from parent
+                SetFolderPermissions(PortalId, FolderID, relativePath)
+            End If
+
+            Return FolderID
+
+        End Function
+
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Adds a Folder with a specificed unique identifier
+        ''' </summary>
+        ''' <param name="PortalId">The Id of the Portal</param>
+        ''' <param name="relativePath">The relative path of the folder</param>
+        ''' <param name="StorageLocation">The type of storage location</param>
+        ''' <param name="uniqueId">The unique identifier for the folder</param>
+        ''' <history>
+        '''     [vnguyen]    06/04/2010  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Shared Function AddFolder(ByVal PortalId As Integer, ByVal relativePath As String, ByVal StorageLocation As Integer, ByVal uniqueId As Guid) As Integer
+
+            Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
+            Dim isProtected As Boolean = FileSystemUtils.DefaultProtectedFolders(relativePath)
+
+            Dim objFolder As FolderInfo = New FolderInfo(uniqueId, PortalId, relativePath, StorageLocation, isProtected, False, Null.NullDate)
+            Dim FolderID As Integer = objFolderController.AddFolder(objFolder)
 
             If PortalId <> Null.NullInteger Then
                 'Set Folder Permissions to inherit from parent
@@ -277,7 +326,6 @@ Namespace DotNetNuke.Common.Utilities
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Shared Function UpdateFile(ByVal strSourceFile As String, ByVal strDestFile As String, ByVal PortalId As Integer, ByVal isCopy As Boolean, ByVal isNew As Boolean, ByVal ClearCache As Boolean) As String
-
             Dim retValue As String = ""
             retValue += CheckValidFileName(strSourceFile) & " "
             retValue += CheckValidFileName(strDestFile)
@@ -286,7 +334,7 @@ Namespace DotNetNuke.Common.Utilities
             End If
             retValue = ""
 
-			Dim sourceStream As Stream = Nothing
+            Dim sourceStream As Stream = Nothing
 
             Try
                 Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
@@ -298,13 +346,16 @@ Namespace DotNetNuke.Common.Utilities
                 Dim destFileName As String = GetFileName(strDestFile)
                 Dim destFolderName As String = GetSubFolderPath(strDestFile, PortalId)
 
+                Dim sourceFile As DotNetNuke.Services.FileSystem.FileInfo
                 Dim file As DotNetNuke.Services.FileSystem.FileInfo
+                
                 If Not sourceFolder Is Nothing Then
-
+                    sourceFile = objFileController.GetFile(sourceFileName, PortalId, sourceFolder.FolderID)
                     file = objFileController.GetFile(sourceFileName, PortalId, sourceFolder.FolderID)
+
                     If Not file Is Nothing Then
                         'Get the source Content from wherever it is
-						sourceStream = CType(GetFileStream(file), Stream)
+                        sourceStream = CType(GetFileStream(file), Stream)
 
                         If isCopy Then
                             'Add the new File
@@ -315,11 +366,37 @@ Namespace DotNetNuke.Common.Utilities
 
                             'Now move the file
                             If Not destinationFolder Is Nothing Then
-
-                                objFileController.UpdateFile(file.FileId, destFileName, file.Extension, file.Size, file.Width, file.Height, file.ContentType, destFolderName, destinationFolder.FolderID)
+                                file.FileName = destFileName
+                                file.Folder = destFolderName
+                                file.FolderId = destinationFolder.FolderID
 
                                 'Write the content to the Destination
                                 WriteStream(file.FileId, sourceStream, strDestFile, destinationFolder.StorageLocation, True)
+
+                                If destinationFolder.StorageLocation <> FolderController.StorageLocationTypes.DatabaseSecure Then
+                                    Select Case file.StorageLocation
+                                        Case FolderController.StorageLocationTypes.DatabaseSecure
+                                            If objFileController.GetFileById(file.FileId, file.PortalId) IsNot Nothing Then file.SHA1Hash = objFileController.GetFileById(file.FileId, file.PortalId).SHA1Hash
+                                        Case FolderController.StorageLocationTypes.SecureFileSystem
+                                            file.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(file.PhysicalPath + glbProtectedExtension))
+                                        Case FolderController.StorageLocationTypes.InsecureFileSystem
+                                            file.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(file.PhysicalPath))
+                                    End Select
+                                Else
+                                    sourceStream = CType(GetFileStream(sourceFile), Stream)
+                                    Dim bytes As Byte() = New Byte(Convert.ToInt32(sourceStream.Length)) {}
+                                    sourceStream.Read(bytes, 0, Convert.ToInt32(sourceStream.Length))
+                                    sourceStream.Close()
+                                    sourceStream.Dispose()
+                                    file.SHA1Hash = GetHash(bytes)
+                                End If
+
+                                'Update the File
+                                file.VersionGuid = Guid.NewGuid()
+                                objFileController.UpdateFile(file)
+                                If sourceFolder.StorageLocation = FolderController.StorageLocationTypes.DatabaseSecure AndAlso destinationFolder.StorageLocation <> FolderController.StorageLocationTypes.DatabaseSecure Then
+                                    objFileController.UpdateFileContent(file.FileId, Stream.Null)
+                                End If
 
                                 'Now we need to clean up the original files
                                 If sourceFolder.StorageLocation = FolderController.StorageLocationTypes.InsecureFileSystem Then
@@ -336,49 +413,65 @@ Namespace DotNetNuke.Common.Utilities
                 End If
 
             Catch ex As Exception
-				retValue = ex.Message
-			Finally
-				If (Not IsNothing(sourceStream)) Then
-					sourceStream.Close()
-					sourceStream.Dispose()
-				End If
-			End Try
+                retValue = ex.Message
+            Finally
+                If (Not IsNothing(sourceStream)) Then
+                    sourceStream.Close()
+                    sourceStream.Dispose()
+                End If
+            End Try
 
             Return retValue
 
         End Function
 
-        Private Shared Function UpdateFileData(ByVal fileID As Integer, ByVal folderID As Integer, ByVal PortalId As Integer, ByVal fileName As String, ByVal extension As String, ByVal contentType As String, ByVal length As Long, ByVal folderName As String) As String
+        Private Shared Function UpdateFileData(ByVal fileID As Integer, ByVal folderID As Integer, ByVal PortalId As Integer, ByVal fileName As String, ByVal extension As String, ByVal contentType As String, ByVal length As Long, ByVal folderName As String, ByVal storageLocation As Integer, ByVal isCached As Boolean, ByVal hash As String) As String
             Dim retvalue As String = ""
+
             Try
                 Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
-				Dim imageWidth As Integer
-                Dim imageHeight As Integer
+                Dim objFile As New DotNetNuke.Services.FileSystem.FileInfo(PortalId, fileName, extension, CType(length, Integer), Null.NullInteger, Null.NullInteger, contentType, folderName, folderID, storageLocation, isCached, hash)
+                Dim file As New DotNetNuke.Services.FileSystem.FileInfo
 
                 If Convert.ToBoolean(InStr(1, glbImageFileTypes & ",", extension.ToLower & ",")) Then
-					Dim imgImage As System.Drawing.Image = Nothing
-					Dim imageStream As Stream = Nothing
-					Try
-						Dim objFile As DotNetNuke.Services.FileSystem.FileInfo = objFileController.GetFileById(fileID, PortalId)
-						imageStream = GetFileStream(objFile)
-						imgImage = Drawing.Image.FromStream(imageStream)
-						imageHeight = imgImage.Height
-						imageWidth = imgImage.Width
-					Catch
-						' error loading image file
-						contentType = "application/octet-stream"
-					Finally
-						If (Not IsNothing(imgImage)) Then
-							imgImage.Dispose()
-						End If
-						If (Not IsNothing(imageStream)) Then
-							imageStream.Close()
-							imageStream.Dispose()
-						End If
-						'Update the File info
-						objFileController.UpdateFile(fileID, fileName, extension, length, imageWidth, imageHeight, contentType, folderName, folderID)
-					End Try
+                    Dim imgImage As System.Drawing.Image = Nothing
+                    Dim imageStream As Stream = Nothing
+                    Try
+                        file = objFileController.GetFileById(fileID, PortalId)
+                        objFile = file
+                        If System.IO.File.Exists(objFile.PhysicalPath) Then objFile.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(objFile.PhysicalPath))
+                        imageStream = GetFileStream(file)
+                        imgImage = Drawing.Image.FromStream(imageStream)
+                        objFile.Height = imgImage.Height
+                        objFile.Width = imgImage.Width
+                    Catch
+                        ' error loading image file
+                        objFile.ContentType = "application/octet-stream"
+                    Finally
+                        If (Not IsNothing(imgImage)) Then
+                            imgImage.Dispose()
+                        End If
+                        If (Not IsNothing(imageStream)) Then
+                            imageStream.Close()
+                            imageStream.Dispose()
+                        End If
+                        'Update the File info
+                        objFileController.UpdateFile(objFile)
+                    End Try
+                Else
+                    Try
+                        file = objFileController.GetFileById(fileID, PortalId)
+                        objFile = file
+                        If System.IO.File.Exists(objFile.PhysicalPath) Then objFile.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(objFile.PhysicalPath))
+                    Catch
+                        ' error loading image file
+                        objFile.ContentType = "application/octet-stream"
+                    Finally
+                        'Update the File info
+                        objFileController.UpdateFile(objFile)
+                    End Try
                 End If
+                
             Catch ex As Exception
                 retvalue = ex.Message
             End Try
@@ -404,41 +497,41 @@ Namespace DotNetNuke.Common.Utilities
         Private Shared Sub WriteStream(ByVal fileId As Integer, ByVal inStream As Stream, ByVal fileName As String, ByVal storageLocation As Integer, ByVal closeInputStream As Boolean)
 
             Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
-			Dim arrData(2048) As Byte
-			Dim outStream As Stream = Nothing
+            Dim arrData(2048) As Byte
+            Dim outStream As Stream = Nothing
 
-			' Buffer to read 2K bytes in chunk:
-			Try
-				Select Case storageLocation
-					Case FolderController.StorageLocationTypes.DatabaseSecure
-						objFileController.ClearFileContent(fileId)
-						outStream = New MemoryStream
-					Case FolderController.StorageLocationTypes.SecureFileSystem
-						If File.Exists(fileName & glbProtectedExtension) = True Then
-							File.Delete(fileName & glbProtectedExtension)
-						End If
-						outStream = New FileStream(fileName & glbProtectedExtension, FileMode.Create)
-					Case FolderController.StorageLocationTypes.InsecureFileSystem
-						If File.Exists(fileName) = True Then
-							File.Delete(fileName)
-						End If
-						outStream = New FileStream(fileName, FileMode.Create)
-				End Select
-			Catch ex As Exception
-				If IsNothing(inStream) = False And closeInputStream Then
-					' Close the file.
-					inStream.Close()
-					inStream.Dispose()
-				End If
-				If IsNothing(outStream) = False Then
-					' Close the file.
-					outStream.Close()
-					outStream.Dispose()
-				End If
+            ' Buffer to read 2K bytes in chunk:
+            Try
+                Select Case storageLocation
+                    Case FolderController.StorageLocationTypes.DatabaseSecure
+                        objFileController.ClearFileContent(fileId)
+                        outStream = New MemoryStream
+                    Case FolderController.StorageLocationTypes.SecureFileSystem
+                        If file.Exists(fileName & glbProtectedExtension) = True Then
+                            File.Delete(fileName & glbProtectedExtension)
+                        End If
+                        outStream = New FileStream(fileName & glbProtectedExtension, FileMode.Create)
+                    Case FolderController.StorageLocationTypes.InsecureFileSystem
+                        If file.Exists(fileName) = True Then
+                            File.Delete(fileName)
+                        End If
+                        outStream = New FileStream(fileName, FileMode.Create)
+                End Select
+            Catch ex As Exception
+                If IsNothing(inStream) = False And closeInputStream Then
+                    ' Close the file.
+                    inStream.Close()
+                    inStream.Dispose()
+                End If
+                If IsNothing(outStream) = False Then
+                    ' Close the file.
+                    outStream.Close()
+                    outStream.Dispose()
+                End If
 
-				Throw ex
-			End Try
-           
+                Throw ex
+            End Try
+
             Try
                 ' Total bytes to read:
                 Dim intLength As Integer
@@ -461,13 +554,13 @@ Namespace DotNetNuke.Common.Utilities
             Finally
                 If IsNothing(inStream) = False And closeInputStream Then
                     ' Close the file.
-					inStream.Close()
-					inStream.Dispose()
+                    inStream.Close()
+                    inStream.Dispose()
                 End If
                 If IsNothing(outStream) = False Then
                     ' Close the file.
-					outStream.Close()
-					outStream.Dispose()
+                    outStream.Close()
+                    outStream.Dispose()
                 End If
             End Try
 
@@ -516,8 +609,8 @@ Namespace DotNetNuke.Common.Utilities
             Finally
                 If IsNothing(objStream) = False Then
                     ' Close the file.
-					objStream.Close()
-					objStream.Dispose()
+                    objStream.Close()
+                    objStream.Dispose()
                 End If
             End Try
         End Sub
@@ -597,6 +690,30 @@ Namespace DotNetNuke.Common.Utilities
 
 #Region "Public Methods"
 
+        Public Shared Sub AddAllUserReadPermission(ByVal folder As FolderInfo, ByVal permission As PermissionInfo)
+            Dim folderPermission As FolderPermissionInfo
+            Dim roleId As Integer = Int32.Parse(glbRoleAllUsers)
+            folderPermission = (From p In folder.FolderPermissions.Cast(Of FolderPermissionInfo)() _
+                                                            Where p.PermissionKey = "READ" _
+                                                                AndAlso p.FolderID = folder.FolderID _
+                                                                AndAlso p.RoleID = roleId _
+                                                                AndAlso p.UserID = Null.NullInteger _
+                                                            Select p).SingleOrDefault
+            If folderPermission IsNot Nothing Then
+                folderPermission.AllowAccess = True
+            Else
+                'Add new permission
+                folderPermission = New FolderPermissionInfo(permission)
+                folderPermission.FolderID = folder.FolderID
+                folderPermission.UserID = Null.NullInteger
+                folderPermission.RoleID = roleId
+                folderPermission.AllowAccess = True
+
+                folder.FolderPermissions.Add(folderPermission)
+            End If
+
+        End Sub
+
         Public Shared Sub AddFile(ByVal FileName As String, ByVal PortalId As Integer, ByVal Folder As String, ByVal HomeDirectoryMapPath As String, ByVal contentType As String)
             Dim strFile As String = HomeDirectoryMapPath & Folder & FileName
 
@@ -607,10 +724,31 @@ Namespace DotNetNuke.Common.Utilities
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, Folder, False)
             Dim objFile As DotNetNuke.Services.FileSystem.FileInfo
             objFile = objFiles.GetFile(FileName, PortalId, objFolder.FolderID)
+
             If objFile Is Nothing Then
-                objFiles.AddFile(PortalId, FileName, finfo.Extension, finfo.Length, 0, 0, contentType, "", objFolder.FolderID, True)
+                objFile = New DotNetNuke.Services.FileSystem.FileInfo()
+                objFile.UniqueId = Guid.NewGuid
+                objFile.VersionGuid = Guid.NewGuid
+
+                objFile.PortalId = PortalId
+                objFile.FileName = FileName
+                objFile.Extension = finfo.Extension
+                objFile.Size = CType(finfo.Length, Integer)
+                objFile.Width = 0
+                objFile.Height = 0
+                objFile.ContentType = contentType
+                objFile.Folder = FileSystemUtils.FormatFolderPath("")
+                objFile.FolderId = objFolder.FolderID
+
+                objFiles.AddFile(objFile)
             Else
-                objFiles.UpdateFile(objFile.FileId, objFile.FileName, finfo.Extension, finfo.Length, 0, 0, contentType, "", objFolder.FolderID)
+                objFile.Extension = finfo.Extension
+                objFile.Size = CType(finfo.Length, Integer)
+                objFile.Width = 0
+                objFile.Height = 0
+                objFile.ContentType = contentType
+                objFile.SHA1Hash = GetHash(File.ReadAllBytes(strFile))
+                objFiles.UpdateFile(objFile)
             End If
         End Sub
 
@@ -631,8 +769,9 @@ Namespace DotNetNuke.Common.Utilities
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function AddFile(ByVal strFile As String, ByVal PortalId As Integer, ByVal ClearCache As Boolean, ByVal folder As FolderInfo) As String
-
             Dim retValue As String = ""
+            Dim hash As String = ""
+
             Try
                 Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
                 Dim fInfo As System.IO.FileInfo = New System.IO.FileInfo(strFile)
@@ -643,29 +782,31 @@ Namespace DotNetNuke.Common.Utilities
                 If folder.StorageLocation = FolderController.StorageLocationTypes.SecureFileSystem Then
                     sourceFileName = GetFileName(strFile)
                 Else
-                    sourceFileName = strFile
+                    'sourceFileName = strFile
+                    Dim pathItems() As String = strFile.Split(CChar("\"))
+                    sourceFileName = pathItems(pathItems.Length - 1)
                 End If
 
                 Dim file As DotNetNuke.Services.FileSystem.FileInfo = objFileController.GetFile(sourceFileName, PortalId, folder.FolderID)
 
                 If file Is Nothing Then
-					'Add the new File
-					Dim fileStrm As FileStream = Nothing
-					Try
-						fileStrm = fInfo.OpenRead()
-						AddFile(PortalId, fileStrm, strFile, "", fInfo.Length, sourceFolderName, True, ClearCache, True)
-					Finally
-						If (Not IsNothing(fileStrm)) Then
-							fileStrm.Close()
-							fileStrm.Dispose()
-						End If
-					End Try
-				Else
-					If file.Size <> fInfo.Length Then
-						'optimistic assumption for speed: update only if filesize has changed
-						Dim extension As String = Path.GetExtension(strFile).Replace(".", "")
-						UpdateFileData(file.FileId, folder.FolderID, PortalId, sourceFileName, extension, GetContentType(extension), fInfo.Length, sourceFolderName)
-					End If
+                    'Add the new File
+                    Dim fileStrm As FileStream = Nothing
+                    Try
+                        fileStrm = fInfo.OpenRead()
+                        AddFile(PortalId, fileStrm, strFile, "", fInfo.Length, sourceFolderName, True, ClearCache, True)
+                    Finally
+                        If (Not IsNothing(fileStrm)) Then
+                            fileStrm.Close()
+                            fileStrm.Dispose()
+                        End If
+                    End Try
+                Else
+                    If System.IO.File.Exists(strFile) Then hash = GetHash(System.IO.File.ReadAllBytes(strFile))
+                    If file.Size <> fInfo.Length OrElse file.SHA1Hash <> hash Then
+                        Dim extension As String = Path.GetExtension(strFile).Replace(".", "")
+                        UpdateFileData(file.FileId, folder.FolderID, PortalId, sourceFileName, extension, GetContentType(extension), fInfo.Length, sourceFolderName, file.StorageLocation, file.IsCached, hash)
+                    End If
                 End If
             Catch ex As Exception
                 retValue = ex.Message
@@ -706,7 +847,10 @@ Namespace DotNetNuke.Common.Utilities
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Sub AddFolder(ByVal _PortalSettings As PortalSettings, ByVal parentFolder As String, ByVal newFolder As String, ByVal StorageLocation As Integer)
+            AddFolder(_PortalSettings, parentFolder, newFolder, StorageLocation, Guid.NewGuid())
+        End Sub
 
+        Public Shared Sub AddFolder(ByVal _PortalSettings As PortalSettings, ByVal parentFolder As String, ByVal newFolder As String, ByVal StorageLocation As Integer, ByVal uniqueId As Guid)
             Dim PortalId As Integer
             Dim ParentFolderName As String
             Dim dinfo As New System.IO.DirectoryInfo(parentFolder)
@@ -728,8 +872,7 @@ Namespace DotNetNuke.Common.Utilities
             Dim FolderPath As String = dinfoNew.FullName.Substring(ParentFolderName.Length).Replace("\", "/")
 
             'Persist in Database
-            AddFolder(PortalId, FolderPath, StorageLocation)
-
+            AddFolder(PortalId, FolderPath, StorageLocation, uniqueId)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -746,7 +889,7 @@ Namespace DotNetNuke.Common.Utilities
         ''' 	[jlucarino]	02/26/2010	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Shared Function AddUserFolder(ByVal _PortalSettings As PortalSettings, ByVal parentFolder As String, ByVal StorageLocation As Integer, ByVal UserID As Integer) As Integer
+        Public Shared Sub AddUserFolder(ByVal _PortalSettings As PortalSettings, ByVal parentFolder As String, ByVal StorageLocation As Integer, ByVal UserID As Integer)
             Dim PortalId As Integer
             Dim ParentFolderName As String
             Dim dinfoNew As System.IO.DirectoryInfo
@@ -783,24 +926,29 @@ Namespace DotNetNuke.Common.Utilities
                 dinfoNew.Create()
                 Dim folderID As Integer = AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
 
-                'Give user Read Access to this folder
                 Dim folder As FolderInfo = New FolderController().GetFolderInfo(PortalId, folderID)
                 For Each permission As PermissionInfo In PermissionController.GetPermissionsByFolder()
-                    If permission.PermissionKey.ToUpper = "READ" OrElse permission.PermissionKey.ToUpper = "WRITE" Then
+                    If permission.PermissionKey.ToUpper = "READ" OrElse permission.PermissionKey.ToUpper = "WRITE" OrElse permission.PermissionKey.ToUpper = "BROWSE" Then
+                        'Give User Read/Write/Browse Access to this folder
                         Dim folderPermission As New FolderPermissionInfo(permission)
-                        folderPermission.FolderID = folder.FolderID
+                        folderPermission.FolderID = folderID
                         folderPermission.UserID = UserID
                         folderPermission.RoleID = Null.NullInteger
                         folderPermission.AllowAccess = True
 
                         folder.FolderPermissions.Add(folderPermission)
+
+                        If permission.PermissionKey.ToUpper = "READ" Then
+                            'Add All Users Read Access to the folder
+                            AddAllUserReadPermission(folder, permission)
+                        End If
                     End If
                 Next
+
                 FolderPermissionController.SaveFolderPermissions(folder)
 
             End If
-
-        End Function
+        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -840,7 +988,7 @@ Namespace DotNetNuke.Common.Utilities
 
             Select Case Mode
                 Case EnumUserFolderElement.Root
-					Element = (Convert.ToInt32(UserID) And BYTE_OFFSET).ToString("000")
+                    Element = (Convert.ToInt32(UserID) And BYTE_OFFSET).ToString("000")
 
                 Case EnumUserFolderElement.SubFolder
                     Element = UserID.ToString("00").Substring(UserID.ToString("00").Length - SUBFOLDER_SEED_LENGTH, SUBFOLDER_SEED_LENGTH)
@@ -862,34 +1010,34 @@ Namespace DotNetNuke.Common.Utilities
         Public Shared Sub AddToZip(ByRef ZipFile As ZipOutputStream, ByVal filePath As String, ByVal fileName As String, ByVal folder As String)
             Dim crc As Crc32 = New Crc32
 
-			Dim fs As FileStream = Nothing
-			Try
-				'Open File Stream
-				fs = File.OpenRead(filePath)
+            Dim fs As FileStream = Nothing
+            Try
+                'Open File Stream
+                fs = File.OpenRead(filePath)
 
-				'Read file into byte array buffer
-				Dim buffer As Byte()
-				ReDim buffer(Convert.ToInt32(fs.Length) - 1)
-				fs.Read(buffer, 0, buffer.Length)
+                'Read file into byte array buffer
+                Dim buffer As Byte()
+                ReDim buffer(Convert.ToInt32(fs.Length) - 1)
+                fs.Read(buffer, 0, buffer.Length)
 
-				'Create Zip Entry
-				Dim entry As ZipEntry = New ZipEntry(Path.Combine(folder, fileName))
-				entry.DateTime = DateTime.Now
-				entry.Size = fs.Length
-				fs.Close()
-				crc.Reset()
-				crc.Update(buffer)
-				entry.Crc = crc.Value
+                'Create Zip Entry
+                Dim entry As ZipEntry = New ZipEntry(Path.Combine(folder, fileName))
+                entry.DateTime = DateTime.Now
+                entry.Size = fs.Length
+                fs.Close()
+                crc.Reset()
+                crc.Update(buffer)
+                entry.Crc = crc.Value
 
-				'Compress file and add to Zip file
-				ZipFile.PutNextEntry(entry)
-				ZipFile.Write(buffer, 0, buffer.Length)
-			Finally
-				If (Not IsNothing(fs)) Then
-					fs.Close()
-					fs.Dispose()
-				End If
-			End Try
+                'Compress file and add to Zip file
+                ZipFile.PutNextEntry(entry)
+                ZipFile.Write(buffer, 0, buffer.Length)
+            Finally
+                If (Not IsNothing(fs)) Then
+                    fs.Close()
+                    fs.Dispose()
+                End If
+            End Try
 
         End Sub
 
@@ -1029,8 +1177,6 @@ Namespace DotNetNuke.Common.Utilities
             Loop
             Return fileDeleted
         End Function
-
-       
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -1229,7 +1375,7 @@ Namespace DotNetNuke.Common.Utilities
                             If objFileInfo.Exists Then
                                 If objFile.Size <> objFileInfo.Length Then
                                     objFile.Size = CType(objFileInfo.Length, Integer)
-                                    UpdateFileData(FileId, objFile.FolderId, PortalId, objFile.FileName, objFile.Extension, GetContentType(objFile.Extension), objFileInfo.Length, objFile.Folder)
+                                    UpdateFileData(FileId, objFile.FolderId, PortalId, objFile.FileName, objFile.Extension, GetContentType(objFile.Extension), objFileInfo.Length, objFile.Folder, objFile.StorageLocation, objFile.IsCached, objFile.SHA1Hash)
                                 End If
                             Else ' file does not exist
                                 RemoveOrphanedFile(objFile, PortalId)
@@ -1262,20 +1408,20 @@ Namespace DotNetNuke.Common.Utilities
                         objResponse.ContentType = GetContentType(objFile.Extension.Replace(".", ""))
 
                         'Stream the file to the response
-						Dim objStream As IO.Stream = Nothing
-						Try
-							objStream = FileSystemUtils.GetFileStream(objFile)
-							WriteStream(objResponse, objStream)
-						Catch ex As Exception
-							' Trap the error, if any.
-							objResponse.Write("Error : " & ex.Message)
-						Finally
-							If IsNothing(objStream) = False Then
-								' Close the file.
-								objStream.Close()
-								objStream.Dispose()
-							End If
-						End Try
+                        Dim objStream As IO.Stream = Nothing
+                        Try
+                            objStream = FileSystemUtils.GetFileStream(objFile)
+                            WriteStream(objResponse, objStream)
+                        Catch ex As Exception
+                            ' Trap the error, if any.
+                            objResponse.Write("Error : " & ex.Message)
+                        Finally
+                            If IsNothing(objStream) = False Then
+                                ' Close the file.
+                                objStream.Close()
+                                objStream.Dispose()
+                            End If
+                        End Try
 
                         objResponse.Flush()
                         objResponse.End()
@@ -1328,20 +1474,20 @@ Namespace DotNetNuke.Common.Utilities
         End Function
 
         Public Shared Function GetFileContent(ByVal objFile As DotNetNuke.Services.FileSystem.FileInfo) As Byte()
-			Dim objStream As Stream = Nothing
-			Dim objContent As Byte() = Nothing
-			Try
-				objStream = FileSystemUtils.GetFileStream(objFile)
-				Dim objBinaryReader As BinaryReader = New BinaryReader(objStream)
-				objContent = objBinaryReader.ReadBytes(CType(objStream.Length, Integer))
-				objBinaryReader.Close()
-			Finally
-				If (Not IsNothing(objStream)) Then
-					objStream.Close()
-					objStream.Dispose()
-				End If
-			End Try
-			
+            Dim objStream As Stream = Nothing
+            Dim objContent As Byte() = Nothing
+            Try
+                objStream = FileSystemUtils.GetFileStream(objFile)
+                Dim objBinaryReader As BinaryReader = New BinaryReader(objStream)
+                objContent = objBinaryReader.ReadBytes(CType(objStream.Length, Integer))
+                objBinaryReader.Close()
+            Finally
+                If (Not IsNothing(objStream)) Then
+                    objStream.Close()
+                    objStream.Dispose()
+                End If
+            End Try
+
             Return objContent
         End Function
 
@@ -1496,17 +1642,17 @@ Namespace DotNetNuke.Common.Utilities
         End Function
 
         Public Shared Function ReadFile(ByVal filePath As String) As String
-			Dim objStreamReader As StreamReader = Nothing
-			Dim fileContent As String = String.Empty
-			Try
-				objStreamReader = File.OpenText(filePath)
-				fileContent = objStreamReader.ReadToEnd
-			Finally
-				If (Not IsNothing(objStreamReader)) Then
-					objStreamReader.Close()
-					objStreamReader.Dispose()
-				End If
-			End Try
+            Dim objStreamReader As StreamReader = Nothing
+            Dim fileContent As String = String.Empty
+            Try
+                objStreamReader = File.OpenText(filePath)
+                fileContent = objStreamReader.ReadToEnd
+            Finally
+                If (Not IsNothing(objStreamReader)) Then
+                    objStreamReader.Close()
+                    objStreamReader.Dispose()
+                End If
+            End Try
 
             Return fileContent
         End Function
@@ -1528,18 +1674,18 @@ Namespace DotNetNuke.Common.Utilities
         Public Shared Sub SaveFile(ByVal FullFileName As String, ByVal Buffer As Byte())
             If System.IO.File.Exists(FullFileName) Then
                 System.IO.File.SetAttributes(FullFileName, FileAttributes.Normal)
-			End If
+            End If
 
-			Dim fs As FileStream = Nothing
-			Try
-				fs = New FileStream(FullFileName, FileMode.Create, FileAccess.Write)
-				fs.Write(Buffer, 0, Buffer.Length)
-			Finally
-				If (Not IsNothing(fs)) Then
-					fs.Close()
-					fs.Dispose()
-				End If
-			End Try
+            Dim fs As FileStream = Nothing
+            Try
+                fs = New FileStream(FullFileName, FileMode.Create, FileAccess.Write)
+                fs.Write(Buffer, 0, Buffer.Length)
+            Finally
+                If (Not IsNothing(fs)) Then
+                    fs.Close()
+                    fs.Dispose()
+                End If
+            End Try
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -1777,171 +1923,171 @@ Namespace DotNetNuke.Common.Utilities
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function UnzipFile(ByVal fileName As String, ByVal DestFolder As String, ByVal settings As PortalSettings) As String
-			Dim objZipInputStream As ZipInputStream = Nothing
-			Dim strMessage As String = ""
+            Dim objZipInputStream As ZipInputStream = Nothing
+            Dim strMessage As String = ""
 
-			Try
-				Dim FolderPortalId As Integer = GetFolderPortalId(settings)
-				Dim isHost As Boolean = CType(IIf(settings.ActiveTab.ParentId = settings.SuperTabId, True, False), Boolean)
+            Try
+                Dim FolderPortalId As Integer = GetFolderPortalId(settings)
+                Dim isHost As Boolean = CType(IIf(settings.ActiveTab.ParentId = settings.SuperTabId, True, False), Boolean)
 
-				Dim objPortalController As New PortalController
-				Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
-				Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
+                Dim objPortalController As New PortalController
+                Dim objFolderController As New DotNetNuke.Services.FileSystem.FolderController
+                Dim objFileController As New DotNetNuke.Services.FileSystem.FileController
                 Dim sourceFolderName As String = GetSubFolderPath(fileName, FolderPortalId)
-				Dim sourceFileName As String = GetFileName(fileName)
-				Dim folder As FolderInfo = objFolderController.GetFolder(FolderPortalId, sourceFolderName, False)
-				Dim file As DotNetNuke.Services.FileSystem.FileInfo = objFileController.GetFile(sourceFileName, FolderPortalId, folder.FolderID)
-				Dim storageLocation As Integer = folder.StorageLocation
-				Dim objZipEntry As ZipEntry
+                Dim sourceFileName As String = GetFileName(fileName)
+                Dim folder As FolderInfo = objFolderController.GetFolder(FolderPortalId, sourceFolderName, False)
+                Dim file As DotNetNuke.Services.FileSystem.FileInfo = objFileController.GetFile(sourceFileName, FolderPortalId, folder.FolderID)
+                Dim storageLocation As Integer = folder.StorageLocation
+                Dim objZipEntry As ZipEntry
 
-				Dim strFileName As String = ""
-				Dim strExtension As String
+                Dim strFileName As String = ""
+                Dim strExtension As String
 
-				'Get the source Content from wherever it is
+                'Get the source Content from wherever it is
 
-				'Create a Zip Input Stream
-				Try
-					objZipInputStream = New ZipInputStream(GetFileStream(file))
-				Catch ex As Exception
-					Return ex.Message
-				End Try
+                'Create a Zip Input Stream
+                Try
+                    objZipInputStream = New ZipInputStream(GetFileStream(file))
+                Catch ex As Exception
+                    Return ex.Message
+                End Try
 
-				Dim sortedFolders As New ArrayList
+                Dim sortedFolders As New ArrayList
 
-				objZipEntry = objZipInputStream.GetNextEntry
+                objZipEntry = objZipInputStream.GetNextEntry
 
-				'iterate folders
-				While Not objZipEntry Is Nothing
-					If objZipEntry.IsDirectory Then
-						Try
-							sortedFolders.Add(objZipEntry.Name.ToString)
-						Catch ex As Exception
-							objZipInputStream.Close()
-							Return ex.Message
-						End Try
-					End If
-					objZipEntry = objZipInputStream.GetNextEntry
-				End While
+                'iterate folders
+                While Not objZipEntry Is Nothing
+                    If objZipEntry.IsDirectory Then
+                        Try
+                            sortedFolders.Add(objZipEntry.Name.ToString)
+                        Catch ex As Exception
+                            objZipInputStream.Close()
+                            Return ex.Message
+                        End Try
+                    End If
+                    objZipEntry = objZipInputStream.GetNextEntry
+                End While
 
-				sortedFolders.Sort()
+                sortedFolders.Sort()
 
-				For Each s As String In sortedFolders
-					Try
-						AddFolder(settings, DestFolder, s.ToString, storageLocation)
-					Catch ex As Exception
-						Return ex.Message
-					End Try
-				Next
+                For Each s As String In sortedFolders
+                    Try
+                        AddFolder(settings, DestFolder, s.ToString, storageLocation)
+                    Catch ex As Exception
+                        Return ex.Message
+                    End Try
+                Next
 
-				'Recreate the Zip Input Stream and parse it for the files
-				objZipInputStream = New ZipInputStream(GetFileStream(file))
-				objZipEntry = objZipInputStream.GetNextEntry
-				While Not objZipEntry Is Nothing
-					If Not objZipEntry.IsDirectory Then
-						If objPortalController.HasSpaceAvailable(FolderPortalId, objZipEntry.Size) Then
-							strFileName = Path.GetFileName(objZipEntry.Name)
-							If strFileName <> "" Then
-								strExtension = Path.GetExtension(strFileName).Replace(".", "")
-								If InStr(1, "," & Host.FileExtensions.ToLower, "," & strExtension.ToLower) <> 0 Or isHost Then
-									Try
-										Dim folderPath As String = System.IO.Path.GetDirectoryName(DestFolder & Replace(objZipEntry.Name, "/", "\"))
-										Dim Dinfo As New DirectoryInfo(folderPath)
-										If Not Dinfo.Exists Then
-											AddFolder(settings, DestFolder, objZipEntry.Name.Substring(0, Replace(objZipEntry.Name, "/", "\").LastIndexOf("\")))
-										End If
+                'Recreate the Zip Input Stream and parse it for the files
+                objZipInputStream = New ZipInputStream(GetFileStream(file))
+                objZipEntry = objZipInputStream.GetNextEntry
+                While Not objZipEntry Is Nothing
+                    If Not objZipEntry.IsDirectory Then
+                        If objPortalController.HasSpaceAvailable(FolderPortalId, objZipEntry.Size) Then
+                            strFileName = Path.GetFileName(objZipEntry.Name)
+                            If strFileName <> "" Then
+                                strExtension = Path.GetExtension(strFileName).Replace(".", "")
+                                If InStr(1, "," & Host.FileExtensions.ToLower, "," & strExtension.ToLower) <> 0 Or isHost Then
+                                    Try
+                                        Dim folderPath As String = System.IO.Path.GetDirectoryName(DestFolder & Replace(objZipEntry.Name, "/", "\"))
+                                        Dim Dinfo As New DirectoryInfo(folderPath)
+                                        If Not Dinfo.Exists Then
+                                            AddFolder(settings, DestFolder, objZipEntry.Name.Substring(0, Replace(objZipEntry.Name, "/", "\").LastIndexOf("\")))
+                                        End If
 
-										Dim zipEntryFileName As String = DestFolder & Replace(objZipEntry.Name, "/", "\")
-										strMessage += AddFile(FolderPortalId, objZipInputStream, zipEntryFileName, "", objZipEntry.Size, GetSubFolderPath(zipEntryFileName, settings.PortalId), False, False)
-									Catch ex As Exception
-										If Not objZipInputStream Is Nothing Then
-											objZipInputStream.Close()
-										End If
-										Return ex.Message
-									End Try
-								Else
-									' restricted file type
-									strMessage += "<br>" & String.Format(Localization.GetString("RestrictedFileType"), strFileName, Replace(Host.FileExtensions, ",", ", *."))
-								End If
-							End If
-						Else	' file too large
-							strMessage += "<br>" & String.Format(Localization.GetString("DiskSpaceExceeded"), strFileName)
-						End If
+                                        Dim zipEntryFileName As String = DestFolder & Replace(objZipEntry.Name, "/", "\")
+                                        strMessage += AddFile(FolderPortalId, objZipInputStream, zipEntryFileName, "", objZipEntry.Size, GetSubFolderPath(zipEntryFileName, settings.PortalId), False, False)
+                                    Catch ex As Exception
+                                        If Not objZipInputStream Is Nothing Then
+                                            objZipInputStream.Close()
+                                        End If
+                                        Return ex.Message
+                                    End Try
+                                Else
+                                    ' restricted file type
+                                    strMessage += "<br>" & String.Format(Localization.GetString("RestrictedFileType"), strFileName, Replace(Host.FileExtensions, ",", ", *."))
+                                End If
+                            End If
+                        Else    ' file too large
+                            strMessage += "<br>" & String.Format(Localization.GetString("DiskSpaceExceeded"), strFileName)
+                        End If
 
-					End If
+                    End If
 
-					objZipEntry = objZipInputStream.GetNextEntry
-				End While
-			Finally
-				If (Not IsNothing(objZipInputStream)) Then
-					objZipInputStream.Close()
-					objZipInputStream.Dispose()
-				End If
-			End Try
+                    objZipEntry = objZipInputStream.GetNextEntry
+                End While
+            Finally
+                If (Not IsNothing(objZipInputStream)) Then
+                    objZipInputStream.Close()
+                    objZipInputStream.Dispose()
+                End If
+            End Try
 
-			Return strMessage
+            Return strMessage
         End Function
 
         Public Shared Sub UnzipResources(ByVal zipStream As ZipInputStream, ByVal destPath As String)
-			Try
+            Try
 
-			Dim objZipEntry As ZipEntry
-				Dim LocalFileName, RelativeDir, FileNamePath As String
+                Dim objZipEntry As ZipEntry
+                Dim LocalFileName, RelativeDir, FileNamePath As String
 
-				objZipEntry = zipStream.GetNextEntry
-				While Not objZipEntry Is Nothing
-					' This gets the Zipped FileName (including the path)
-					LocalFileName = objZipEntry.Name
+                objZipEntry = zipStream.GetNextEntry
+                While Not objZipEntry Is Nothing
+                    ' This gets the Zipped FileName (including the path)
+                    LocalFileName = objZipEntry.Name
 
-					' This creates the necessary directories if they don't 
-					' already exist.
-					RelativeDir = Path.GetDirectoryName(objZipEntry.Name)
-					If (RelativeDir <> String.Empty) AndAlso (Not Directory.Exists(Path.Combine(destPath, RelativeDir))) Then
-						Directory.CreateDirectory(Path.Combine(destPath, RelativeDir))
-					End If
+                    ' This creates the necessary directories if they don't 
+                    ' already exist.
+                    RelativeDir = Path.GetDirectoryName(objZipEntry.Name)
+                    If (RelativeDir <> String.Empty) AndAlso (Not Directory.Exists(Path.Combine(destPath, RelativeDir))) Then
+                        Directory.CreateDirectory(Path.Combine(destPath, RelativeDir))
+                    End If
 
-					' This block creates the file using buffered reads from the zipfile
-					If (Not objZipEntry.IsDirectory) AndAlso (LocalFileName <> "") Then
-						FileNamePath = Path.Combine(destPath, LocalFileName).Replace("/", "\")
+                    ' This block creates the file using buffered reads from the zipfile
+                    If (Not objZipEntry.IsDirectory) AndAlso (LocalFileName <> "") Then
+                        FileNamePath = Path.Combine(destPath, LocalFileName).Replace("/", "\")
 
-						Try
-							' delete the file if it already exists
-							If File.Exists(FileNamePath) Then
-								File.SetAttributes(FileNamePath, FileAttributes.Normal)
-								File.Delete(FileNamePath)
-							End If
+                        Try
+                            ' delete the file if it already exists
+                            If File.Exists(FileNamePath) Then
+                                File.SetAttributes(FileNamePath, FileAttributes.Normal)
+                                File.Delete(FileNamePath)
+                            End If
 
-							' create the file
-							Dim objFileStream As FileStream = Nothing
+                            ' create the file
+                            Dim objFileStream As FileStream = Nothing
 
-							Try
-								objFileStream = File.Create(FileNamePath)
-								Dim intSize As Integer = 2048
-								Dim arrData(2048) As Byte
+                            Try
+                                objFileStream = File.Create(FileNamePath)
+                                Dim intSize As Integer = 2048
+                                Dim arrData(2048) As Byte
 
-								intSize = zipStream.Read(arrData, 0, arrData.Length)
-								While intSize > 0
-									objFileStream.Write(arrData, 0, intSize)
-									intSize = zipStream.Read(arrData, 0, arrData.Length)
-								End While
-							Finally
-								If (Not IsNothing(objFileStream)) Then
-									objFileStream.Close()
-									objFileStream.Dispose()
-								End If
-							End Try
-						Catch
-							' an error occurred saving a file in the resource file
-						End Try
-					End If
+                                intSize = zipStream.Read(arrData, 0, arrData.Length)
+                                While intSize > 0
+                                    objFileStream.Write(arrData, 0, intSize)
+                                    intSize = zipStream.Read(arrData, 0, arrData.Length)
+                                End While
+                            Finally
+                                If (Not IsNothing(objFileStream)) Then
+                                    objFileStream.Close()
+                                    objFileStream.Dispose()
+                                End If
+                            End Try
+                        Catch
+                            ' an error occurred saving a file in the resource file
+                        End Try
+                    End If
 
-					objZipEntry = zipStream.GetNextEntry
-				End While
-			Finally
-				If (Not IsNothing(zipStream)) Then
-					zipStream.Close()
-					zipStream.Dispose()
-				End If
-			End Try
+                    objZipEntry = zipStream.GetNextEntry
+                End While
+            Finally
+                If (Not IsNothing(zipStream)) Then
+                    zipStream.Close()
+                    zipStream.Dispose()
+                End If
+            End Try
         End Sub
 
         ''' <summary>
@@ -1968,12 +2114,12 @@ Namespace DotNetNuke.Common.Utilities
         '''     [cnurse]        16/9/2004   Updated for localization, Help and 508
         '''     [Philip Beadle] 10/06/2004  Moved to Globals from WebUpload.ascx.vb so can be accessed by URLControl.ascx
         '''     [cnurse]        04/26/2006  Updated for Secure Storage
-		'''     [sleupold]      08/14/2007  Added NewFileName
-		'''     [sdarkis]       10/19/2009  Calls CreateFile
+        '''     [sleupold]      08/14/2007  Added NewFileName
+        '''     [sdarkis]       10/19/2009  Calls CreateFile
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
-			Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, Unzip)
+            Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, Unzip)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -2003,8 +2149,8 @@ Namespace DotNetNuke.Common.Utilities
             Finally
                 If IsNothing(objStream) = False Then
                     ' Close the file.
-					objStream.Close()
-					objStream.Dispose()
+                    objStream.Close()
+                    objStream.Dispose()
                 End If
             End Try
         End Sub
@@ -2083,6 +2229,19 @@ Namespace DotNetNuke.Common.Utilities
             Return strMessage
         End Function
 
+        Public Shared Function GetHash(ByVal bytes As Byte()) As String
+            Dim hashText As String = ""
+            Dim hexValue As String = ""
+
+            Dim hashData As Byte() = SHA1.Create().ComputeHash(bytes) 'SHA1 or MD5
+
+            For Each b As Byte In hashData
+                hexValue = b.ToString("X").ToLower() 'Lowercase for compatibility on case-sensitive systems
+                hashText += (If(hexValue.Length = 1, "0", "")) & hexValue
+            Next
+
+            Return hashText
+        End Function
 #End Region
 
 #Region "Obsoleted Methods, retained for Binary Compatability"

@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2009
+' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -151,9 +151,9 @@ Namespace DotNetNuke.UI.ControlPanels
 								End If
 							Else ' branding
 								If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) AndAlso Host.DisplayCopyright Then
-									hypMessage.ImageUrl = Localization.GetString("hypMessageImage.Text", LocalResourceFile)
-									hypMessage.ToolTip = Localization.GetString("hypMessageTooltip.Text", LocalResourceFile)
-									hypMessage.NavigateUrl = Localization.GetString("hypMessageUrl.Text", LocalResourceFile)
+                                    hypMessage.ImageUrl = "~/images/branding/iconbar_logo.png"
+                                    hypMessage.ToolTip = DotNetNukeContext.Current.Application.Description
+                                    hypMessage.NavigateUrl = Localization.GetString("hypMessageUrl.Text", LocalResourceFile)
 								Else
 									hypMessage.Visible = False
 								End If

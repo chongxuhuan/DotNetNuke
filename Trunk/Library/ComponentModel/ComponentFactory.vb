@@ -54,7 +54,7 @@ Namespace DotNetNuke.ComponentModel
 
         Private Sub VerifyContainer()
             If Container Is Nothing Then
-                Throw New InvalidOperationException("Cannot register or retrieve components until ComponentFactory.Container is set")
+                Container = New SimpleContainer()
             End If
         End Sub
 

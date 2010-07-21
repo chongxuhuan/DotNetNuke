@@ -117,37 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Locale_Code.Help" xml:space="preserve">
-    <value>Enter the code for the Language</value>
-  </data>
-  <data name="Locale_Code.Text" xml:space="preserve">
-    <value>Language:</value>
-  </data>
-  <data name="Locale_Fallback.Help" xml:space="preserve">
-    <value>Enter the fallback language to use if the language does not have the requested resource.</value>
-  </data>
-  <data name="Locale_Fallback.Text" xml:space="preserve">
-    <value>Fallback Language:</value>
-  </data>
-  <data name="Locale_Text.Help" xml:space="preserve">
-    <value>Enter the display name for the Language</value>
-  </data>
-  <data name="Locale_Text.Text" xml:space="preserve">
-    <value>DisplayName:</value>
-  </data>
   <data name="cmdCancel.Text" xml:space="preserve">
     <value>Cancel</value>
-  </data>
-  <data name="plEnabled.Help" xml:space="preserve">
-    <value>Check this box to enable the language in this portal.</value>
-  </data>
-  <data name="plEnabled.Text" xml:space="preserve">
-    <value>Enabled</value>
   </data>
   <data name="cmdUpdate.Text" xml:space="preserve">
     <value>Update</value>
   </data>
   <data name="ControlTitle_edit.Text" xml:space="preserve">
     <value>Edit Language</value>
+  </data>
+  <data name="languageLabel.Help" xml:space="preserve">
+    <value>Select the language</value>
+  </data>
+  <data name="languageLabel.Text" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="fallBackLabel.Help" xml:space="preserve">
+    <value>Select the fallback language</value>
+  </data>
+  <data name="fallBackLabel.Text" xml:space="preserve">
+    <value>Fallback Language:</value>
+  </data>
+  <data name="translatorsLabel.Help" xml:space="preserve">
+    <value>The selected roles will be granted explicit Edit Rights to all new pages and localized modules for this language.</value>
+  </data>
+  <data name="translatorsLabel.Text" xml:space="preserve">
+    <value>Localized Content Translators:</value>
+  </data>
+  <data name="localizationNotEnabled.Text" xml:space="preserve">
+    <value>Localized content is not enabled for this site</value>
   </data>
 </root>

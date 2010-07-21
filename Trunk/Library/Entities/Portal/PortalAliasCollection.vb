@@ -57,10 +57,18 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        Public ReadOnly Property Values() As ICollection
+            Get
+                Return Me.Dictionary.Values
+            End Get
+        End Property
+
+
         ' Adds an entry to the collection.
         Public Sub Add(ByVal key As [String], ByVal value As [PortalAliasInfo])
             Me.Dictionary.Add(key, value)
         End Sub    'Add
+
 
     End Class
 

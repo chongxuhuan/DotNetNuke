@@ -73,6 +73,25 @@ Namespace DotNetNuke.UI.WebControls
             End Get
         End Property
 
+        Protected ReadOnly Property PortalSettings As PortalSettings
+            Get
+                Return PortalController.GetCurrentPortalSettings()
+            End Get
+        End Property
+
+        Private Function IsSelected(ByVal locale As String) As Boolean
+            Dim selected As Boolean = Null.NullBoolean
+            If String.IsNullOrEmpty(StringValue) Then
+                'Profile property is not set - use site default
+                If locale = PortalSettings.DefaultLanguage Then
+                    selected = True
+                End If
+            Else
+                selected = (locale = StringValue)
+            End If
+            Return selected
+        End Function
+
         Private Sub RenderModeButtons(ByVal writer As HtmlTextWriter)
 
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio")
@@ -100,8 +119,6 @@ Namespace DotNetNuke.UI.WebControls
         End Sub
 
         Private Sub RenderOption(ByVal writer As HtmlTextWriter, ByVal culture As CultureInfo)
-            Dim localeValue As String = Convert.ToString(culture.Name)
-            Dim isSelected As Boolean = (localeValue = StringValue)
             Dim localeName As String
 
             If DisplayMode = "Native" Then
@@ -111,9 +128,9 @@ Namespace DotNetNuke.UI.WebControls
             End If
 
             'Add the Value Attribute
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, localeValue)
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, culture.Name)
 
-            If isSelected Then
+            If IsSelected(culture.Name) Then
                 'Add the Selected Attribute
                 writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected")
             End If
@@ -149,7 +166,6 @@ Namespace DotNetNuke.UI.WebControls
             End If
         End Sub
 
-
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' RenderViewMode renders the View (readonly) mode of the control
@@ -160,7 +176,7 @@ Namespace DotNetNuke.UI.WebControls
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Protected Overrides Sub RenderViewMode(ByVal writer As HtmlTextWriter)
-            Dim locale As Locale = Localization.GetLocale(StringValue)
+            Dim locale As Locale = LocaleController.Instance().GetLocale(StringValue)
 
             ControlStyle.AddAttributesToRender(writer)
             writer.RenderBeginTag(HtmlTextWriterTag.Span)
@@ -216,12 +232,11 @@ Namespace DotNetNuke.UI.WebControls
                         RenderOption(writer, culture)
                     Next
                 Case LanguagesListType.Supported
-                    For Each language As Locale In Localization.GetLocales(Null.NullInteger).Values
+                    For Each language As Locale In LocaleController.Instance().GetLocales(Null.NullInteger).Values
                         RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code))
                     Next
                 Case LanguagesListType.Enabled
-                    Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings()
-                    For Each language As Locale In Localization.GetLocales(settings.PortalId).Values
+                    For Each language As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
                         RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code))
                     Next
             End Select

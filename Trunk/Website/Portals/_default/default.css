@@ -49,15 +49,32 @@ A.SkinObject:active
 }
 
 /* styles for LANGUAGE skinobject */
-.Language
+div.language-object
 {
-    vertical-align: middle;
-    margin: 0px;
+	white-space: nowrap;
+	overflow: visible;
+	vertical-align: middle;
+	margin: 0px; 
+	line-height: 0.5;
 }
 
-.Language img
+div.language-object span.Language
 {
-    border: none;
+	display: inline;
+	float: left; 
+	margin: 0 2px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+div.language-object span.Language img
+{
+	border: 2px solid transparent;
+}
+
+div.language-object span.Language.selected img
+{
+	border-color: #333;
 }
 
 

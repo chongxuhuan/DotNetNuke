@@ -249,6 +249,23 @@ Namespace DotNetNuke.Entities.Users
             End Set
         End Property
 
+        Public ReadOnly Property PhotoURL() As String
+            Get
+                Dim strPhotoURL As String = ApplicationPath & "/images/no_avatar.gif"
+                Dim objProperty As ProfilePropertyDefinition = GetProperty(cPhoto)
+                If Not objProperty Is Nothing Then
+                    If objProperty.PropertyValue <> "" AndAlso objProperty.Visibility = UserVisibilityMode.AllUsers Then
+                        Dim objFiles As New DotNetNuke.Services.FileSystem.FileController
+                        Dim objFile As DotNetNuke.Services.FileSystem.FileInfo = objFiles.GetFileById(Integer.Parse(objProperty.PropertyValue), objProperty.PortalId)
+                        If Not objFile Is Nothing Then
+                            strPhotoURL = ApplicationPath & "/" & objFile.RelativePath
+                        End If
+                    End If
+                End If
+                Return strPhotoURL
+            End Get
+        End Property
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets and sets the PostalCode part of the Address

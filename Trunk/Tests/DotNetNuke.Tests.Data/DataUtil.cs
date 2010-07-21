@@ -1,33 +1,33 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Data;
-using DotNetNuke.Data;
-using DotNetNuke.ComponentModel;
-using DotNetNuke.Tests.Utilities.Mocks;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel;
+using DotNetNuke.Data;
+using DotNetNuke.Services.Cache;
+using DotNetNuke.Tests.Utilities.Mocks;
 
 namespace DotNetNuke.Tests.Data
 {
@@ -35,7 +35,9 @@ namespace DotNetNuke.Tests.Data
     {
         #region Private Members
 
-        private static Regex sqlDelimiterRegex = new Regex(@"(?<=(?:[^\w]+|^))GO(?=(?: |\t)*?(?:\r?\n|$))", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static Regex sqlDelimiterRegex = new Regex(@"(?<=(?:[^\w]+|^))GO(?=(?: |\t)*?(?:\r?\n|$))",
+                                                           RegexOptions.Compiled | RegexOptions.IgnoreCase |
+                                                           RegexOptions.Multiline);
 
         #endregion
 
@@ -48,7 +50,7 @@ namespace DotNetNuke.Tests.Data
                 connection.Open();
 
                 //add stored procedure to db
-                CreateObject(connection, DataUtil.GetSqlScript(virtualScriptFilePath, objectName), objectName);
+                CreateObject(connection, GetSqlScript(virtualScriptFilePath, objectName), objectName);
             }
         }
 
@@ -83,7 +85,7 @@ namespace DotNetNuke.Tests.Data
         {
             string clearContentItems = String.Format(RemoveTokens(DataResources.EmptyTable), tableName);
 
-            DataUtil.ExecuteScript(connection, clearContentItems);
+            ExecuteScript(connection, clearContentItems);
 
             // Verify that the table is empty
             DatabaseAssert.TableIsEmpty(connection, tableName);
@@ -112,7 +114,7 @@ namespace DotNetNuke.Tests.Data
             using (SqlCommand cmd = connection.CreateCommand())
             {
                 cmd.CommandText = sqlScript;
-                return (int)cmd.ExecuteScalar();
+                return (int) cmd.ExecuteScalar();
             }
         }
 
@@ -122,7 +124,7 @@ namespace DotNetNuke.Tests.Data
             {
                 string[] scripts = sqlDelimiterRegex.Split(sqlScript);
 
-                foreach(string script in scripts)
+                foreach (string script in scripts)
                 {
                     cmd.CommandText = RemoveTokens(script);
                     cmd.ExecuteNonQuery();
@@ -145,18 +147,19 @@ namespace DotNetNuke.Tests.Data
 
         public static int GetRecordCount(SqlConnection connection, string tableName)
         {
-            string sqlScript = DataUtil.RemoveTokens(DataResources.RecordCountScript);
+            string sqlScript = RemoveTokens(DataResources.RecordCountScript);
             sqlScript = String.Format(sqlScript, tableName);
 
-            return DataUtil.ExecuteScalar(connection, sqlScript);
+            return ExecuteScalar(connection, sqlScript);
         }
 
-        public static IDataReader GetRecordsByField(SqlConnection connection, string tableName, string fieldName, string fieldValue)
+        public static IDataReader GetRecordsByField(SqlConnection connection, string tableName, string fieldName,
+                                                    string fieldValue)
         {
-            string sqlScript = DataUtil.RemoveTokens(DataResources.GetRecordsByField);
+            string sqlScript = RemoveTokens(DataResources.GetRecordsByField);
             sqlScript = String.Format(sqlScript, tableName, fieldName, fieldValue);
 
-            return DataUtil.ExecuteReader(connection, sqlScript);
+            return ExecuteReader(connection, sqlScript);
         }
 
         public static Stream GetTestFileStream(string fileName, string filePath)
@@ -195,10 +198,10 @@ namespace DotNetNuke.Tests.Data
 
         public static void ReseedIdentityColumn(SqlConnection connection, string tableName, int newValue)
         {
-            string sqlScript = DataUtil.RemoveTokens(DataResources.ReSeedIdentityColumn);
+            string sqlScript = RemoveTokens(DataResources.ReSeedIdentityColumn);
             sqlScript = String.Format(sqlScript, tableName, newValue - 1);
 
-            DataUtil.ExecuteNonQuery(connection, sqlScript);
+            ExecuteNonQuery(connection, sqlScript);
         }
 
         public static void SetupDataBaseProvider(string connectionString, string databaseOwner, string objectQualifier)
@@ -225,7 +228,7 @@ namespace DotNetNuke.Tests.Data
                 ComponentFactory.Container.RegisterComponentInstance<DataProvider>(new SqlDataProvider(false));
 
                 //Register MockCachingProvider
-                MockCachingProvider.CreateMockProvider();
+                MockComponentProvider.CreateNew<CachingProvider>();
             }
         }
 

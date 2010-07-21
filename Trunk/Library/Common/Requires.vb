@@ -27,7 +27,7 @@ Namespace DotNetNuke.Common
         Public Sub IsTypeOf(Of T)(ByVal argName As String, ByVal argValue As Object)
             If Not (TypeOf (argValue) Is T) Then
                 Throw New ArgumentException(Localization.GetExceptionMessage("ValueMustBeOfType", _
-                                                                             "The argument {0} must be of type {1}.", _
+                                                                             "The argument '{0}' must be of type '{1}'.", _
                                                                              argName, _
                                                                              GetType(T).FullName))
             End If
@@ -36,7 +36,7 @@ Namespace DotNetNuke.Common
         Public Sub NotNegative(ByVal argName As String, ByVal argValue As Integer)
             If argValue < 0 Then
                 Throw New ArgumentOutOfRangeException(argName, Localization.GetExceptionMessage("ValueCannotBeNegative", _
-                                                                                                "The argument {0} cannot be negative.", _
+                                                                                                "The argument '{0}' cannot be negative.", _
                                                                                                 argName))
             End If
         End Sub
@@ -49,14 +49,16 @@ Namespace DotNetNuke.Common
 
         Public Sub NotNullOrEmpty(ByVal argName As String, ByVal argValue As String)
             If String.IsNullOrEmpty(argValue) Then
-                Throw New ArgumentException(argName)
+                Throw New ArgumentException(Localization.GetExceptionMessage("ArgumentCannotBeNullOrEmpty", _
+                                                                                    "The argument '{0}' cannot be null or empty.", _
+                                                                                    argName), argName)
             End If
         End Sub
 
         Public Sub PropertyNotNullOrEmpty(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As String)
             If String.IsNullOrEmpty(propertyValue) Then
                 Throw New ArgumentException(argName, Localization.GetExceptionMessage("PropertyCannotBeNullOrEmpty", _
-                                                                                      "The property {1} in object {0} cannot be null or empty.", _
+                                                                                      "The property '{1}' in object '{0}' cannot be null or empty.", _
                                                                                       argName, _
                                                                                       argProperty))
             End If
@@ -65,7 +67,7 @@ Namespace DotNetNuke.Common
         Public Sub PropertyNotNegative(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As Integer)
             If propertyValue < 0 Then
                 Throw New ArgumentOutOfRangeException(argName, Localization.GetExceptionMessage("PropertyCannotBeNegative", _
-                                                                                                "The property {1} in object {0} cannot be negative.", _
+                                                                                                "The property '{1}' in object '{0}' cannot be negative.", _
                                                                                                 argName, _
                                                                                                 argProperty))
             End If
@@ -74,7 +76,7 @@ Namespace DotNetNuke.Common
         Public Sub PropertyNotEqualTo(Of TValue As IEquatable(Of TValue))(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As TValue, ByVal testValue As TValue)
             If propertyValue.Equals(testValue) Then
                 Throw New ArgumentException(argName, Localization.GetExceptionMessage("PropertyNotEqualTo", _
-                                                                                      "The property {1} in object {0} is invalid.", _
+                                                                                      "The property '{1}' in object '{0}' is invalid.", _
                                                                                       argName, _
                                                                                       argProperty))
             End If

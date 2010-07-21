@@ -71,15 +71,6 @@ Namespace DotNetNuke.Web.UI.WebControls
             End Set
         End Property
 
-        Public Property IncludePersonalFolder() As Boolean
-            Get
-                Return _IncludePersonalFolder
-            End Get
-            Set(ByVal value As Boolean)
-                _IncludePersonalFolder = value
-            End Set
-        End Property
-
 #End Region
 
 #Region "Protected Methods"
@@ -101,7 +92,9 @@ Namespace DotNetNuke.Web.UI.WebControls
             fileControl.ID = String.Format("{0}FileControl", Me.ID)
             fileControl.FileFilter = FileFilter
             fileControl.FilePath = FilePath
-            fileControl.IncludePersonalFolder = IncludePersonalFolder
+            fileControl.Permissions = "ADD"
+            fileControl.UsePersonalFolder = True
+            fileControl.ShowFolders = False
 
             'Add table to Control
             Me.Controls.Add(fileControl)

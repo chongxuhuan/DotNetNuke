@@ -249,6 +249,27 @@ Namespace DotNetNuke.UI.WebControls
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Gets or sets the "OnClientClick" Property
+        ''' </summary>
+        ''' <value>A String</value>
+        ''' <history>
+        ''' 	[cnurse]	01/06/2006	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Property OnClientClick() As String
+            Get
+                Me.EnsureChildControls()
+                Return link.OnClientClick
+            End Get
+            Set(ByVal Value As String)
+                Me.EnsureChildControls()
+                icon.OnClientClick = Value
+                link.OnClientClick = Value
+            End Set
+        End Property
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Gets or sets the Resource Key used for the Control
         ''' </summary>
         ''' <value>A String</value>

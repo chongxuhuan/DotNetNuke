@@ -66,6 +66,7 @@ Namespace DotNetNuke.Common.Utilities
 
         'Host keys
         Public Const SecureHostSettingsCacheKey As String = "SecureHostSettings"
+        Public Const UnSecureHostSettingsCacheKey As String = "UnsecureHostSettings"
         Public Const HostSettingsCacheKey As String = "HostSettings"
         Public Const HostSettingsCachePriority As CacheItemPriority = CacheItemPriority.NotRemovable
         Public Const HostSettingsCacheTimeOut As Integer = 20
@@ -83,7 +84,7 @@ Namespace DotNetNuke.Common.Utilities
         Public Const PortalDictionaryCachePriority As CacheItemPriority = CacheItemPriority.High
         Public Const PortalDictionaryTimeOut As Integer = 20
 
-        Public Const PortalCacheKey As String = "Portal{0}"
+        Public Const PortalCacheKey As String = "Portal{0}_{1}"
         Public Const PortalCachePriority As CacheItemPriority = CacheItemPriority.High
         Public Const PortalCacheTimeOut As Integer = 20
 
@@ -91,7 +92,7 @@ Namespace DotNetNuke.Common.Utilities
         Public Const TabCacheKey As String = "Tab_Tabs{0}"
         Public Const TabCachePriority As CacheItemPriority = CacheItemPriority.High
         Public Const TabCacheTimeOut As Integer = 20
-        Public Const TabPathCacheKey As String = "Tab_TabPathDictionary{0}"
+        Public Const TabPathCacheKey As String = "Tab_TabPathDictionary{0}_{1}"
         Public Const TabPathCachePriority As CacheItemPriority = CacheItemPriority.High
         Public Const TabPathCacheTimeOut As Integer = 20
         Public Const TabPermissionCacheKey As String = "Tab_TabPermissions{0}"

@@ -27,6 +27,7 @@ Imports System.Threading
 Imports System.Xml
 Imports System.Web
 Imports System.Web.UI
+Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke.Services.Cache
 Imports DotNetNuke.Entities.Modules.Actions
 Imports DotNetNuke.Application
@@ -42,6 +43,8 @@ Imports System.Collections.Generic
 Imports DotNetNuke.Entities.Host
 Imports DotNetNuke.Security.Permissions
 Imports System.Text.RegularExpressions
+Imports DotNetNuke.Entities
+
 
 Namespace DotNetNuke.Common
 
@@ -57,6 +60,7 @@ Namespace DotNetNuke.Common
     ''' </remarks>
     ''' <history>
     '''		[cnurse]	11/16/2004	documented
+    '''     [vnguyen]   30/04/2010  modified: added Guid and VersionGuid to files and folders
     ''' </history>
     ''' -----------------------------------------------------------------------------
     Public Module Globals
@@ -1815,8 +1819,8 @@ Namespace DotNetNuke.Common
                 strURL += "?helpculture="
             End If
 
-            If Thread.CurrentThread.CurrentCulture.ToString.ToLower <> "" Then
-                strURL += Thread.CurrentThread.CurrentCulture.ToString.ToLower
+            If Thread.CurrentThread.CurrentUICulture.ToString.ToLower <> "" Then
+                strURL += Thread.CurrentThread.CurrentUICulture.ToString.ToLower
             Else
                 strURL += objPortalSettings.DefaultLanguage.ToLower
             End If
@@ -2094,11 +2098,18 @@ Namespace DotNetNuke.Common
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean) As String
-
+            Dim cultureCode As String = Null.NullString
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-
-            Return NavigateURL(TabID, IsSuperTab, _portalSettings, Null.NullString, "", Nothing)
-
+            If _portalSettings IsNot Nothing Then
+                Dim linkTab As TabInfo = New TabController().GetTab(TabID, _portalSettings.PortalId, False)
+                If linkTab IsNot Nothing Then
+                    cultureCode = linkTab.CultureCode
+                End If
+                If String.IsNullOrEmpty(cultureCode) Then
+                    cultureCode = _portalSettings.CultureCode
+                End If
+            End If
+            Return NavigateURL(TabID, IsSuperTab, _portalSettings, Null.NullString, cultureCode, Nothing)
         End Function
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
@@ -2152,7 +2163,19 @@ Namespace DotNetNuke.Common
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean, ByVal settings As PortalSettings, ByVal ControlKey As String, ByVal ParamArray AdditionalParameters As String()) As String
 
-            Return NavigateURL(TabID, IsSuperTab, settings, ControlKey, Thread.CurrentThread.CurrentCulture.Name, AdditionalParameters)
+            Dim cultureCode As String = Null.NullString
+
+            If (settings IsNot Nothing) Then
+                Dim linkTab As TabInfo = New TabController().GetTab(TabID, settings.PortalId, False)
+                If linkTab IsNot Nothing Then
+                    cultureCode = linkTab.CultureCode
+                End If
+                If String.IsNullOrEmpty(cultureCode) Then
+                    cultureCode = settings.CultureCode
+                End If
+            End If
+            
+            Return NavigateURL(TabID, IsSuperTab, settings, ControlKey, cultureCode, AdditionalParameters)
 
         End Function
 
@@ -2192,18 +2215,26 @@ Namespace DotNetNuke.Common
                 strURL += "&portalid=" & settings.PortalId.ToString
             End If
 
-            'only add language to url if more than one locale is enabled, and if admin did not turn it off
-            If (settings IsNot Nothing) AndAlso (Localization.GetLocales(settings.PortalId).Count > 1 AndAlso settings.EnableUrlLanguage) Then
+            Dim controller As New TabController()
+            Dim objTab As TabInfo = Nothing
+
+            If (settings IsNot Nothing) Then
+                objTab = controller.GetTab(TabID, settings.PortalId, False)
+            End If
+
+            'only add language to url if more than one locale is enabled
+            If (settings IsNot Nothing) AndAlso (LocaleController.Instance().GetLocales(settings.PortalId).Count > 1) Then
                 If Language = "" Then
-                    strURL += "&language=" & Thread.CurrentThread.CurrentCulture.Name
+                    If objTab IsNot Nothing AndAlso Not String.IsNullOrEmpty(objTab.CultureCode) Then
+                        strURL += "&language=" & objTab.CultureCode
+                    End If
                 Else
                     strURL += "&language=" & Language
                 End If
             End If
 
             If Host.UseFriendlyUrls Then
-                Dim objTab As TabInfo = Nothing
-                If New TabController().GetTabsByPortal(settings.PortalId).TryGetValue(TabID, objTab) Then
+                If objTab IsNot Nothing Then
                     Return FriendlyUrl(objTab, strURL, settings)
                 End If
                 Return FriendlyUrl(Nothing, strURL, settings)
@@ -2376,7 +2407,7 @@ Namespace DotNetNuke.Common
             ElseIf TrackClicks = True OrElse ForceDownload = True OrElse UrlType = TabType.File Then
                 ' format LinkClick wrapper
                 If Link.ToLowerInvariant.StartsWith("fileid=") Then
-                    strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link), portalGuid)
+                    strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(Link))
                 End If
                 If strLink = "" Then
                     strLink = Common.Globals.ApplicationPath & "/LinkClick.aspx?link=" & HttpUtility.UrlEncode(Link)
@@ -2393,7 +2424,7 @@ Namespace DotNetNuke.Common
                 End If
 
                 'only add language to url if more than one locale is enabled, and if admin did not turn it off
-                If Localization.GetLocales(PortalId).Count > 1 AndAlso EnableUrlLanguage Then
+                If LocaleController.Instance().GetLocales(PortalId).Count > 1 AndAlso EnableUrlLanguage Then
                     strLink += "&language=" & Thread.CurrentThread.CurrentCulture.Name
                 End If
 
@@ -2689,8 +2720,10 @@ Namespace DotNetNuke.Common
             Dim objFiles As New FileController
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, FolderPath, False)
+
             If Not objFolder Is Nothing Then
-                objFiles.AddFile(PortalId, strFileName, strExtension, Length, imageWidth, imageHeight, strContentType, FolderPath, objFolder.FolderID, True)
+                Dim objFile As New DotNetNuke.Services.FileSystem.FileInfo(PortalId, strFileName, strExtension, Length, imageWidth, imageHeight, strContentType, FolderPath, objFolder.FolderID, objFolder.StorageLocation, True)
+                objFiles.AddFile(objFile)
             End If
         End Sub
 
@@ -2784,7 +2817,7 @@ Namespace DotNetNuke.Common
         End Function
 
         <Obsolete("This method has been replaced in DotNetNuke 5.0 by TabController.GetPortalTabs().")> _
-      Public Function GetPortalTabs(ByVal intPortalId As Integer, ByVal blnNoneSpecified As Boolean, ByVal blnHidden As Boolean, ByVal blnDeleted As Boolean, ByVal blnURL As Boolean, ByVal bCheckAuthorised As Boolean) As ArrayList
+        Public Function GetPortalTabs(ByVal intPortalId As Integer, ByVal blnNoneSpecified As Boolean, ByVal blnHidden As Boolean, ByVal blnDeleted As Boolean, ByVal blnURL As Boolean, ByVal bCheckAuthorised As Boolean) As ArrayList
             Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(intPortalId, Null.NullInteger, blnNoneSpecified, Null.NullString, blnHidden, blnDeleted, blnURL, False, bCheckAuthorised)
             Dim arrTabs As New ArrayList()
             For Each objTab As TabInfo In listTabs
@@ -2920,7 +2953,7 @@ Namespace DotNetNuke.Common
         Public ReadOnly Property HostSettings() As Hashtable
             Get
                 Dim h As New Hashtable
-                For Each kvp As KeyValuePair(Of String, String) In Host.GetHostSettingsDictionary()
+                For Each kvp As ConfigurationSetting In HostController.Instance.GetSettings().Values
                     h.Add(kvp.Key, kvp.Value)
                 Next
                 Return h

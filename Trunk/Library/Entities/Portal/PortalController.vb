@@ -20,23 +20,18 @@
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Configuration
 Imports System.Data
 Imports System.Xml
 Imports System.IO
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Security.Roles
-Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Entities.Modules
-Imports DotNetNuke.Entities.Modules.Definitions
 Imports DotNetNuke.Entities.Profile
 Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Common.Lists
-Imports DotNetNuke.Services.EventQueue
-
 Imports ICSharpCode.SharpZipLib.Zip
 Imports System.Xml.XPath
 Imports System.Threading
@@ -72,7 +67,7 @@ Namespace DotNetNuke.Entities.Portals
                 If objPortal Is Nothing Then
                     'Get Fallback language
                     Dim fallbackLanguage As String = String.Empty
-                    Dim userLocale As Locale = Localization.GetLocale(cultureCode)
+                    Dim userLocale As Locale = LocaleController.Instance().GetLocale(cultureCode)
                     If userLocale IsNot Nothing AndAlso Not String.IsNullOrEmpty(userLocale.Fallback) Then
                         fallbackLanguage = userLocale.Fallback
                     End If
@@ -107,7 +102,7 @@ Namespace DotNetNuke.Entities.Portals
             If Host.Host.PerformanceSetting <> PerformanceSettings.NoCaching Then
                 ' get all tabs
                 Dim intField As Integer
-                Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(Null.NullInteger)
+                Dim dr As IDataReader = DataProvider.Instance().GetTabPaths(Null.NullInteger, Null.NullString)
                 Try
                     While dr.Read
                         ' add to dictionary
@@ -286,8 +281,6 @@ Namespace DotNetNuke.Entities.Portals
             DataCache.ClearPortalCache(portalID, False)
         End Sub
 
-
-
         Public Shared Sub DeletePortalSettings(ByVal portalID As Integer)
             DataProvider.Instance.DeletePortalSettings(portalID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
@@ -298,7 +291,7 @@ Namespace DotNetNuke.Entities.Portals
         Public Shared Function GetPortalSettingsDictionary(ByVal portalID As Integer) As Dictionary(Of String, String)
             Dim cacheKey As String = String.Format(DataCache.PortalSettingsCacheKey, portalID.ToString())
             Return CBO.GetCachedObject(Of Dictionary(Of String, String))(New CacheItemArgs(cacheKey, DataCache.PortalSettingsCacheTimeOut, DataCache.PortalSettingsCachePriority, portalID), _
-                                                                                        AddressOf GetPortalSettingsDictionaryCallback)
+                                                                                        AddressOf GetPortalSettingsDictionaryCallback, True)
         End Function
 
         Public Shared Function GetPortalSetting(ByVal settingName As String, ByVal portalID As Integer, ByVal defaultValue As String) As String
@@ -325,7 +318,7 @@ Namespace DotNetNuke.Entities.Portals
                 If String.IsNullOrEmpty(setting) Then
                     retValue = defaultValue
                 Else
-                    retValue = (setting.ToUpperInvariant().StartsWith("Y") OrElse setting.ToUpperInvariant = "TRUE")
+                    retValue = (setting.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase) OrElse setting.ToUpperInvariant = "TRUE")
                 End If
             Catch ex As Exception
                 'we just want to trap the error as we may not be installed so there will be no Settings
@@ -375,7 +368,6 @@ Namespace DotNetNuke.Entities.Portals
             End If
         End Sub
 
-
         Public Shared Function CheckDesktopModulesInstalled(ByVal nav As XPathNavigator) As String
             Dim friendlyName As String = Null.NullString
             Dim desktopModule As DesktopModuleInfo = Nothing
@@ -403,22 +395,22 @@ Namespace DotNetNuke.Entities.Portals
         ''' <remarks></remarks>
         Public Shared Function GetActivePortalLanguage(ByVal portalID As Integer) As String
             ' get Language
-            Dim Language As String = "en-US" 'handles case where portalcontroller methods invoked before a language is installed
-
+            Dim Language As String = Localization.SystemLocale 'handles case where portalcontroller methods invoked before a language is installed
             Dim tmpLanguage As String = GetPortalDefaultLanguage(portalID)
             If Not String.IsNullOrEmpty(tmpLanguage) Then
                 Language = tmpLanguage
             End If
-
-            If Status = UpgradeStatus.None AndAlso Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
-                Return GetPortalDefaultLanguage(portalID)
+            If portalID > Null.NullInteger AndAlso Status = UpgradeStatus.None AndAlso _
+                            Localization.ActiveLanguagesByPortalID(portalID) = 1 Then
+                Return Language
             End If
             If HttpContext.Current IsNot Nothing AndAlso Status = UpgradeStatus.None Then
                 If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
                     Language = HttpContext.Current.Request.QueryString("language")
                 Else
-                    If Not HttpContext.Current.Request.Cookies("language") Is Nothing Then
-                        Language = HttpContext.Current.Request.Cookies("language").Value
+                    Dim _PortalSettings As PortalSettings = GetCurrentPortalSettings()
+                    If _PortalSettings IsNot Nothing AndAlso _PortalSettings.ActiveTab IsNot Nothing Then
+                        Language = _PortalSettings.ActiveTab.CultureCode
                     End If
                 End If
             End If
@@ -607,10 +599,7 @@ Namespace DotNetNuke.Entities.Portals
 
                 If objpermission.PermissionKey = "READ" Then
                     ' add READ permissions to the All Users Role
-                    objFolderPermission = New FolderPermissionInfo(objpermission)
-                    objFolderPermission.FolderID = folder.FolderID
-                    objFolderPermission.RoleID = Integer.Parse(glbRoleAllUsers)
-                    folder.FolderPermissions.Add(objFolderPermission)
+                    FileSystemUtils.AddAllUserReadPermission(folder, objpermission)
                 End If
             Next
 
@@ -641,6 +630,7 @@ Namespace DotNetNuke.Entities.Portals
 
             Catch ex As Exception
                 strMessage = Localization.GetString("CreateProfileDefinitions.Error")
+                LogException(ex)
             End Try
 
             Return strMessage
@@ -719,6 +709,7 @@ Namespace DotNetNuke.Entities.Portals
                     objInfo.Width = XmlUtils.GetNodeValueInt(node, "width")
                     objInfo.Height = XmlUtils.GetNodeValueInt(node, "height")
                     objInfo.ContentType = XmlUtils.GetNodeValue(node, "contenttype")
+                    objInfo.SHA1Hash = XmlUtils.GetNodeValue(node, "sha1hash")
                     objInfo.FolderId = objFolder.FolderID
                     objInfo.Folder = objFolder.FolderPath
 
@@ -740,10 +731,10 @@ Namespace DotNetNuke.Entities.Portals
         ''' <param name="PortalId">PortalId of the new portal</param>
         ''' <history>
         ''' 	[cnurse]	11/09/2004	Created
+        '''     [vnguyen]   30/04/2010  Updated: Added Guid's to AddFolder method call
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub ParseFolders(ByVal nodeFolders As XmlNode, ByVal PortalId As Integer)
-
             Dim node As XmlNode
             Dim FolderId As Integer
             Dim objController As New FolderController
@@ -767,12 +758,11 @@ Namespace DotNetNuke.Entities.Portals
                         storageLocation = CType(XmlUtils.GetNodeValue(node, "storagelocation", "0"), Integer)
                         isProtected = CType(XmlUtils.GetNodeValue(node, "isprotected", "0"), Boolean)
                     End If
-                    'Save new folder 
-                    FolderId = objController.AddFolder(PortalId, folderPath, storageLocation, isProtected, False)
+                    'Save new folder
+                    Dim folder As FolderInfo = New FolderInfo(PortalId, folderPath, storageLocation, isProtected, False, Null.NullDate)
+                    FolderId = objController.AddFolder(folder)
                     objInfo = objController.GetFolder(PortalId, folderPath, False)
-                Else
-                    'Get Id from Folder
-                    FolderId = objInfo.FolderID
+
                 End If
 
                 Dim nodeFolderPermissions As XmlNodeList = node.SelectNodes("folderpermissions/permission")
@@ -802,7 +792,6 @@ Namespace DotNetNuke.Entities.Portals
         ''' -----------------------------------------------------------------------------
         Private Sub ParseFolderPermissions(ByVal nodeFolderPermissions As XmlNodeList, ByVal PortalId As Integer, ByVal folder As FolderInfo)
             Dim objPermissionController As New Security.Permissions.PermissionController
-            Dim objFolderPermissionController As New Security.Permissions.FolderPermissionController
             Dim objRoleController As New RoleController
             Dim PermissionID As Integer
 
@@ -814,7 +803,6 @@ Namespace DotNetNuke.Entities.Portals
                 Dim PermissionCode As String = XmlUtils.GetNodeValue(xmlFolderPermission, "permissioncode")
                 Dim RoleName As String = XmlUtils.GetNodeValue(xmlFolderPermission, "rolename")
                 Dim AllowAccess As Boolean = XmlUtils.GetNodeValueBoolean(xmlFolderPermission, "allowaccess")
-                'Dim arrPermissions As ArrayList = objPermissionController.GetPermissionByCodeAndKey(PermissionCode, PermissionKey)
 
                 For Each objPermission As PermissionInfo In objPermissionController.GetPermissionByCodeAndKey(PermissionCode, PermissionKey)
                     PermissionID = objPermission.PermissionID
@@ -1008,6 +996,11 @@ Namespace DotNetNuke.Entities.Portals
                 objProfileDefinition.Visible = True
                 objProfileDefinition.ViewOrder = OrderCounter
                 objProfileDefinition.Length = XmlUtils.GetNodeValueInt(node, "length")
+                Select Case XmlUtils.GetNodeValueInt(node, "defaultvisibility", 2)
+                    Case 0 : objProfileDefinition.DefaultVisibility = UserVisibilityMode.AllUsers
+                    Case 1 : objProfileDefinition.DefaultVisibility = UserVisibilityMode.MembersOnly
+                    Case 2 : objProfileDefinition.DefaultVisibility = UserVisibilityMode.AdminOnly
+                End Select
 
                 ProfileController.AddPropertyDefinition(objProfileDefinition)
             Next
@@ -1173,7 +1166,6 @@ Namespace DotNetNuke.Entities.Portals
                 End Select
             End If
         End Function
-
 
         Private Sub UpdatePortalSetup(ByVal PortalId As Integer, ByVal AdministratorId As Integer, ByVal AdministratorRoleId As Integer, ByVal RegisteredRoleId As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal AdminTabId As Integer, ByVal CultureCode As String)
             DataProvider.Instance().UpdatePortalSetup(PortalId, AdministratorId, AdministratorRoleId, RegisteredRoleId, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, AdminTabId, CultureCode)
@@ -1381,7 +1373,6 @@ Namespace DotNetNuke.Entities.Portals
 
                             'copy the default page template
                             CopyPageTemplate("Default.page.template", MappedHomeDirectory)
-                            CopyPageTemplate("UserProfile.page.template", MappedHomeDirectory)
 
                             ' process zip resource file if present
                             ProcessResourceFile(MappedHomeDirectory, TemplatePath & TemplateFile)
@@ -1410,7 +1401,7 @@ Namespace DotNetNuke.Entities.Portals
                         ' update portal info
                         objportal.Description = Description
                         objportal.KeyWords = KeyWords
-                        objportal.UserTabId = TabController.GetTabByTabPath(objportal.PortalID, "//UserProfile")
+                        objportal.UserTabId = TabController.GetTabByTabPath(objportal.PortalID, "//UserProfile", objportal.CultureCode)
                         UpdatePortalInfo(objportal.PortalID, objportal.PortalName, objportal.LogoFile, objportal.FooterText, _
                          objportal.ExpiryDate, objportal.UserRegistration, objportal.BannerAdvertising, objportal.Currency, objportal.AdministratorId, objportal.HostFee, _
                          objportal.HostSpace, objportal.PageQuota, objportal.UserQuota, objportal.PaymentProcessor, objportal.ProcessorUserId, objportal.ProcessorPassword, objportal.Description, _
@@ -1517,7 +1508,7 @@ Namespace DotNetNuke.Entities.Portals
         End Function
 
         Public Function GetPortal(ByVal PortalId As Integer, ByVal CultureCode As String) As PortalInfo
-            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, PortalId.ToString() & "-" & CultureCode)
+            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, PortalId.ToString(), CultureCode)
             Return CBO.GetCachedObject(Of PortalInfo)(New CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, PortalId, CultureCode), _
                                                                                         AddressOf GetPortalCallback)
         End Function
@@ -1536,9 +1527,19 @@ Namespace DotNetNuke.Entities.Portals
             Return CBO.FillCollection(DataProvider.Instance().GetPortals(), GetType(PortalInfo))
         End Function
 
-        'Public Function GetPortals(ByVal CultureCode As String) As ArrayList
-        '    Return CBO.FillCollection(DataProvider.Instance().GetPortals(CultureCode), GetType(PortalInfo))
-        'End Function
+        Public Function GetPortal(ByVal uniqueId As Guid) As PortalInfo
+            Dim portals As ArrayList = GetPortals()
+            Dim targetPortal As PortalInfo
+
+            For Each currentPortal As PortalInfo In portals
+                If currentPortal.GUID = uniqueId Then
+                    targetPortal = currentPortal
+                    Exit For
+                End If
+            Next
+            Return targetPortal
+        End Function
+
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -1642,6 +1643,7 @@ Namespace DotNetNuke.Entities.Portals
         Public Sub ParseTemplate(ByVal PortalId As Integer, ByVal TemplatePath As String, ByVal TemplateFile As String, ByVal AdministratorId As Integer, ByVal mergeTabs As PortalTemplateModuleAction, ByVal IsNewPortal As Boolean)
             Dim xmlPortal As New XmlDocument
             Dim node As XmlNode
+            Dim objFolder As FolderInfo
 
             ' open the XML file
             Try
@@ -1682,19 +1684,22 @@ Namespace DotNetNuke.Entities.Portals
             ' force creation of root folder if not present on template
             Dim objController As New FolderController
             If objController.GetFolder(PortalId, "", False) Is Nothing Then
-                Dim folderid As Integer = objController.AddFolder(PortalId, "", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False)
+                objFolder = New FolderInfo(PortalId, "", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False, Null.NullDate)
+                Dim folderid As Integer = objController.AddFolder(objFolder)
                 AddFolderPermissions(PortalId, folderid)
             End If
 
             ' force creation of templates folder if not present on template
             If objController.GetFolder(PortalId, "Templates/", False) Is Nothing Then
-                Dim folderid As Integer = objController.AddFolder(PortalId, "Templates/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False)
+                objFolder = New FolderInfo(PortalId, "Templates/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False, Null.NullDate)
+                Dim folderid As Integer = objController.AddFolder(objFolder)
                 AddFolderPermissions(PortalId, folderid)
             End If
 
             ' force creation of templates folder if not present on template
             If objController.GetFolder(PortalId, "Users/", False) Is Nothing Then
-                Dim folderid As Integer = objController.AddFolder(PortalId, "Users/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False)
+                objFolder = New FolderInfo(PortalId, "Users/", Services.FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem, True, False, Null.NullDate)
+                Dim folderid As Integer = objController.AddFolder(objFolder)
                 AddFolderPermissions(PortalId, folderid)
             End If
 
@@ -1826,7 +1831,7 @@ Namespace DotNetNuke.Entities.Portals
              Portal.BackgroundFile, Portal.SiteLogHistory, Portal.SplashTabId, Portal.HomeTabId, _
              Portal.LoginTabId, Portal.RegisterTabId, Portal.UserTabId, Portal.DefaultLanguage, _
              Portal.TimeZoneOffset, Portal.HomeDirectory, PortalController.GetActivePortalLanguage(Portal.PortalID))
-        
+
         End Sub
 
         ''' -----------------------------------------------------------------------------

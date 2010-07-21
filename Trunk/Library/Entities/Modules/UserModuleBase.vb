@@ -28,6 +28,7 @@ Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Services.Mail
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Modules
 
@@ -89,8 +90,7 @@ Namespace DotNetNuke.Entities.Modules
 
         Public Shared Sub UpdateSetting(ByVal portalId As Integer, ByVal key As String, ByVal setting As String)
             If portalId = Null.NullInteger Then
-                Dim controller As New Host.HostSettingsController()
-                controller.UpdateHostSetting(key, setting)
+                HostController.Instance.Update(New ConfigurationSetting() With {.Value = setting, .Key = key})
             Else
                 PortalController.UpdatePortalSetting(portalId, key, setting)
             End If
@@ -357,12 +357,12 @@ Namespace DotNetNuke.Entities.Modules
                 newUser.PortalID = PortalId
             End If
 
-            ''Initialise the ProfileProperties Collection
+            'Initialise the ProfileProperties Collection
+            Dim lc As String = Me.PortalSettings.DefaultLanguage
+            If String.IsNullOrEmpty(lc) Then lc = New DotNetNuke.Services.Localization.Localization().CurrentUICulture
+            
             newUser.Profile.InitialiseProfile(PortalId)
             newUser.Profile.TimeZone = Me.PortalSettings.TimeZoneOffset
-
-            Dim lc As String = New DotNetNuke.Services.Localization.Localization().CurrentCulture
-            If String.IsNullOrEmpty(lc) Then lc = Me.PortalSettings.DefaultLanguage
             newUser.Profile.PreferredLocale = lc
 
             'Set default countr

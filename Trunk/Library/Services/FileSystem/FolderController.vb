@@ -85,42 +85,34 @@ Namespace DotNetNuke.Services.FileSystem
 
         End Sub
 
+        Private Shared Sub UpdateFolderVersion(ByVal folderId As Integer)
+            DataProvider.Instance.UpdateFolderVersion(folderId, Guid.NewGuid())
+        End Sub
 #End Region
 
 #Region "Public Methods"
 
-        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String) As Integer
-            Return AddFolder(PortalID, FolderPath, StorageLocationTypes.InsecureFileSystem, False, False)
-        End Function
+        Public Function AddFolder(ByVal folder As FolderInfo) As Integer
+            If folder.FolderID = Null.NullInteger Then
+                folder.FolderPath = FileSystemUtils.FormatFolderPath(folder.FolderPath)
+                folder.FolderID = DataProvider.Instance().AddFolder(folder.PortalID, folder.UniqueId, folder.VersionGuid, folder.FolderPath, folder.StorageLocation, folder.IsProtected, folder.IsCached, folder.LastUpdated, UserController.GetCurrentUserInfo.UserID)
 
-        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean) As Integer
-            Return AddFolder(PortalID, FolderPath, StorageLocation, IsProtected, IsCached, Null.NullDate)
-        End Function
-
-        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date) As Integer
-            Dim FolderId As Integer
-
-            FolderPath = FileSystemUtils.FormatFolderPath(FolderPath)
-
-            Dim folder As FolderInfo = GetFolder(PortalID, FolderPath, True)
-            If folder Is Nothing Then
-                FolderId = DataProvider.Instance().AddFolder(PortalID, FolderPath, StorageLocation, IsProtected, IsCached, LastUpdated, UserController.GetCurrentUserInfo.UserID)
                 'Refetch folder for logging
-                folder = GetFolder(PortalID, FolderPath, True)
+                folder = GetFolder(folder.PortalID, folder.FolderPath, True)
+
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
                 objEventLog.AddLog(folder, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.FOLDER_CREATED)
-                UpdateParentFolder(PortalID, FolderPath)
+                UpdateParentFolder(folder.PortalID, folder.FolderPath)
             Else
-                FolderId = folder.FolderID
-                DataProvider.Instance().UpdateFolder(PortalID, FolderId, FolderPath, StorageLocation, IsProtected, IsCached, LastUpdated, UserController.GetCurrentUserInfo.UserID)
+                DataProvider.Instance().UpdateFolder(folder.PortalID, folder.VersionGuid, folder.FolderID, folder.FolderPath, folder.StorageLocation, folder.IsProtected, folder.IsCached, folder.LastUpdated, UserController.GetCurrentUserInfo.UserID)
                 Dim objEventLog As New Services.Log.EventLog.EventLogController
-                objEventLog.AddLog("FolderPath", FolderPath, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.FOLDER_UPDATED)
+                objEventLog.AddLog("FolderPath", folder.FolderPath, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.FOLDER_UPDATED)
             End If
 
             'Invalidate Cache
-            DataCache.ClearFolderCache(PortalID)
+            DataCache.ClearFolderCache(folder.PortalID)
 
-            Return FolderId
+            Return folder.FolderID
         End Function
 
         Public Sub DeleteFolder(ByVal PortalID As Integer, ByVal FolderPath As String)
@@ -159,6 +151,12 @@ Namespace DotNetNuke.Services.FileSystem
             Dim cacheKey As String = String.Format(DataCache.FolderCacheKey, PortalID.ToString())
             Return CBO.GetCachedObject(Of SortedList(Of String, FolderInfo))(New CacheItemArgs(cacheKey, DataCache.FolderCacheTimeOut, DataCache.FolderCachePriority, PortalID), _
                                                                                         AddressOf GetFoldersSortedCallBack)
+        End Function
+
+        Public Function GetFolderByUniqueID(ByVal UniqueId As Guid) As FolderInfo
+            Dim objFolder As FolderInfo
+            objFolder = CType(CBO.FillObject(DataProvider.Instance().GetFolderByUniqueID(UniqueId), GetType(FolderInfo)), FolderInfo)
+            Return objFolder
         End Function
 
         Public Function GetMappedDirectory(ByVal VirtualDirectory As String) As String
@@ -204,9 +202,12 @@ Namespace DotNetNuke.Services.FileSystem
         End Sub
 
         Public Sub UpdateFolder(ByVal objFolderInfo As FolderInfo)
-            DataProvider.Instance().UpdateFolder(objFolderInfo.PortalID, objFolderInfo.FolderID, FileSystemUtils.FormatFolderPath(objFolderInfo.FolderPath), objFolderInfo.StorageLocation, objFolderInfo.IsProtected, objFolderInfo.IsCached, objFolderInfo.LastUpdated, UserController.GetCurrentUserInfo.UserID)
+            DataProvider.Instance().UpdateFolder(objFolderInfo.PortalID, objFolderInfo.VersionGuid, objFolderInfo.FolderID, FileSystemUtils.FormatFolderPath(objFolderInfo.FolderPath), objFolderInfo.StorageLocation, objFolderInfo.IsProtected, objFolderInfo.IsCached, objFolderInfo.LastUpdated, UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(objFolderInfo, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.FOLDER_UPDATED)
+
+            'Update folder version guid
+            UpdateFolderVersion(objFolderInfo.FolderID)
 
             'Invalidate Cache
             DataCache.ClearFolderCache(objFolderInfo.PortalID)
@@ -243,6 +244,52 @@ Namespace DotNetNuke.Services.FileSystem
                 arrFolders.Add(folderPair.Value)
             Next
             Return arrFolders
+        End Function
+
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by AddFolder(ByVal folder As FolderInfo)")> _
+        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String) As Integer
+            Dim objFolder As New FolderInfo
+
+            objFolder.UniqueId = Guid.NewGuid()
+            objFolder.VersionGuid = Guid.NewGuid()
+            objFolder.PortalID = PortalID
+            objFolder.FolderPath = FolderPath
+            objFolder.StorageLocation = StorageLocationTypes.InsecureFileSystem
+            objFolder.IsProtected = False
+            objFolder.IsCached = False
+
+            Return AddFolder(objFolder)
+        End Function
+
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by AddFolder(ByVal folder As FolderInfo)")> _
+        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean) As Integer
+            Dim objFolder As New FolderInfo
+
+            objFolder.UniqueId = Guid.NewGuid()
+            objFolder.VersionGuid = Guid.NewGuid()
+            objFolder.PortalID = PortalID
+            objFolder.FolderPath = FolderPath
+            objFolder.StorageLocation = StorageLocation
+            objFolder.IsProtected = IsProtected
+            objFolder.IsCached = IsCached
+
+            Return AddFolder(objFolder)
+        End Function
+
+        <Obsolete("Deprecated in DotNetNuke 5.5. This function has been replaced by AddFolder(ByVal folder As FolderInfo)")> _
+        Public Function AddFolder(ByVal PortalID As Integer, ByVal FolderPath As String, ByVal StorageLocation As Integer, ByVal IsProtected As Boolean, ByVal IsCached As Boolean, ByVal LastUpdated As Date) As Integer
+
+            FolderPath = FileSystemUtils.FormatFolderPath(FolderPath)
+            Dim folder As FolderInfo = GetFolder(PortalID, FolderPath, True)
+
+            folder.StorageLocation = StorageLocation
+            folder.IsProtected = IsProtected
+            folder.IsCached = IsCached
+            folder.LastUpdated = Null.NullDate
+
+            DataCache.ClearFolderCache(PortalID)
+
+            Return AddFolder(folder)
         End Function
 
 #End Region

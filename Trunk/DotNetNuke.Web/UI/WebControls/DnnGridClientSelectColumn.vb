@@ -26,44 +26,34 @@ Namespace DotNetNuke.Web.UI.WebControls
     Public Class DnnGridClientSelectColumn
         Inherits Telerik.Web.UI.GridClientSelectColumn
 
-        Implements ILocalizable
+#Region "Public Properties"
 
-#Region "Private Members"
-
-        Private _Localize As Boolean = True
-        Private _LocalResourceFile As String
+        Public ReadOnly Property LocalResourceFile As String
+            Get
+                Return Utilities.GetLocalResourceFile(Me.Owner.OwnerGrid.Parent)
+            End Get
+        End Property
 
 #End Region
 
-#Region "ILocalizable Implementation"
+#Region "Public Methods"
 
-        Public Property Localize() As Boolean Implements ILocalizable.Localize
-            Get
-                Return _Localize
-            End Get
-            Set(ByVal value As Boolean)
-                _Localize = value
-            End Set
-        End Property
+        Public Overloads Overrides Function Clone() As GridColumn
+            Dim dnnGridColumn As New DnnGridClientSelectColumn()
 
-        Public Property LocalResourceFile() As String Implements ILocalizable.LocalResourceFile
-            Get
-                Return _LocalResourceFile
-            End Get
-            Set(ByVal value As String)
-                _LocalResourceFile = value
-            End Set
-        End Property
+            'you should override CopyBaseProperties if you have some column specific properties
+            dnnGridColumn.CopyBaseProperties(Me)
 
-        Protected Overridable Sub LocalizeStrings() Implements ILocalizable.LocalizeStrings
-            If Localize Then
-                If (Not String.IsNullOrEmpty(HeaderText)) Then
-                    HeaderText = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
+            Return dnnGridColumn
+        End Function
+
+        Public Overrides Sub InitializeCell(ByVal cell As System.Web.UI.WebControls.TableCell, ByVal columnIndex As Integer, ByVal inItem As Telerik.Web.UI.GridItem)
+            MyBase.InitializeCell(cell, columnIndex, inItem)
+            If TypeOf inItem Is GridHeaderItem Then
+                If Not inItem.OwnerTableView.OwnerGrid.AllowMultiRowSelection Then
+                    cell.Text = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
                 End If
-                If (Not String.IsNullOrEmpty(Text)) Then
-                    Text = Localization.GetString(String.Format("{0}.Text", Me.Text), LocalResourceFile)
-                End If
-            End If
+             End If
         End Sub
 
 #End Region

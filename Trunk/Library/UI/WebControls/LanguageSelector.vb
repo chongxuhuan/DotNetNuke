@@ -176,7 +176,7 @@ Namespace DotNetNuke.UI.WebControls
                 If GetCultures(SelectionObject = LanguageSelectionObject.SpecificCulture).Length < 2 Then
                     'return single language
                     Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings
-                    For Each strLocale As String In Localization.GetLocales(_Settings.PortalID).Keys
+                    For Each strLocale As String In LocaleController.Instance().GetLocales(_Settings.PortalId).Keys
                         a.Add(strLocale)
                     Next
                 Else
@@ -274,7 +274,7 @@ Namespace DotNetNuke.UI.WebControls
         Private Function GetCultures(ByVal specific As Boolean) As System.Globalization.CultureInfo()
             Dim a As New ArrayList
             Dim _Settings As PortalSettings = PortalController.GetCurrentPortalSettings
-            For Each strLocale As String In Localization.GetLocales(_Settings.PortalId).Keys
+            For Each strLocale As String In LocaleController.Instance().GetLocales(_Settings.PortalId).Keys
                 Dim c As New System.Globalization.CultureInfo(strLocale)
                 If specific Then
                     a.Add(c)

@@ -543,8 +543,8 @@ Namespace DotNetNuke.UI
             Next
 
             Dim objTabController As New TabController()
-            Dim portalTabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(objPortalSettings.PortalId)
-            Dim hostTabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(Null.NullInteger)
+            Dim portalTabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(objPortalSettings.PortalId, objPortalSettings.CultureCode, True)
+            Dim hostTabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(Null.NullInteger, Localization.SystemLocale, True)
             For Each objTab As TabInfo In portalTabs
                 objTabLookup.Add(objTab.TabID, objTab)
             Next

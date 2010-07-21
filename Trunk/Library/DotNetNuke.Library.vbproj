@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <LangVersion>9</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -32,7 +35,7 @@
     <MyType>Windows</MyType>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>4.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -71,6 +74,7 @@
     <DebugType>full</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
@@ -175,12 +179,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Assembly.vb" />
+    <Compile Include="Common\Utilities\JsonExtensions.vb" />
+    <Compile Include="Entities\ConfigurationSetting.vb" />
     <Compile Include="Common\Guard.vb" />
     <Compile Include="Common\Requires.vb" />
     <Compile Include="Common\Utilities\CacheItemArgs.vb" />
     <Compile Include="Common\Utilities\CacheItemExpiredCallback.vb" />
-    <Compile Include="Common\Utilities\JsonExtensions.vb" />
-    <Compile Include="Entities\Content\Common\Extensions.vb" />
+    <Compile Include="Entities\Content\Common\ContentExtensions.vb" />
     <Compile Include="Entities\Content\Common\Util.vb" />
     <Compile Include="Entities\Content\ContentController.vb" />
     <Compile Include="Entities\Content\ContentItem.vb" />
@@ -200,8 +205,15 @@
     <Compile Include="Entities\Content\Taxonomy\Vocabulary.vb" />
     <Compile Include="Entities\Content\Taxonomy\VocabularyController.vb" />
     <Compile Include="Entities\Content\Taxonomy\VocabularyType.vb" />
+    <Compile Include="ComponentModel\ComponentBase.vb" />
+    <Compile Include="Entities\Controllers\HostController.vb" />
+    <Compile Include="Entities\Controllers\IHostController.vb" />
+    <Compile Include="Entities\Controllers\ITabManager.vb" />
+    <Compile Include="Entities\Controllers\TabManager.vb" />
     <Compile Include="Entities\Tabs\TabExistsException.vb" />
     <Compile Include="Framework\BaseHttpHandler.vb" />
+    <Compile Include="Services\Localization\ILocaleController.vb" />
+    <Compile Include="Services\Localization\LocaleController.vb" />
     <Compile Include="Services\Messaging\Data\IMessagingDataService.vb" />
     <Compile Include="Services\Messaging\Data\MessageStatusType.vb" />
     <Compile Include="Services\Messaging\Data\MessagingDataService.vb" />
@@ -782,9 +794,6 @@
     </Compile>
     <Compile Include="Common\Utilities\Calendar.vb">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\UserControls\LocaleSelectorControl.vb">
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="UI\Utilities\ClientAPI.vb">
       <SubType>Code</SubType>

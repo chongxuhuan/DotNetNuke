@@ -22,9 +22,18 @@ Imports WebFormsMvp
 Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 
 Namespace DotNetNuke.Web.Mvp
-    Public Interface IModuleView(Of T As {Class, New})
-        Inherits IView(Of T)
 
+    Public Interface IModuleView(Of TModel As {Class, New})
+        Inherits IModuleViewBase, IView(Of TModel)
+
+    End Interface
+
+    Public Interface IModuleView
+        Inherits IModuleViewBase
+    End Interface
+
+    Public Interface IModuleViewBase
+        Inherits IView
         Event Initialize As EventHandler
 
         Sub ProcessModuleLoadException(ByVal ex As Exception)

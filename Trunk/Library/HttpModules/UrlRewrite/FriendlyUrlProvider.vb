@@ -28,6 +28,8 @@ Imports DotNetNuke.Services.Url.FriendlyUrl
 Imports DotNetNuke.Framework.Providers
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.HttpModules
+Imports System.Collections.Generic
+
 
 Namespace DotNetNuke.Services.Url.FriendlyUrl
 
@@ -49,8 +51,7 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
         Private _regexMatch As String
         Private _fileExtension As String
         Private _urlFormat As UrlFormatType = UrlFormatType.SearchFriendly
-        Private Shared _friendlyPathRegex As New Regex("[^?]*/Tab[Ii]d/(\d+)/default.aspx$", RegexOptions.IgnoreCase Or RegexOptions.Compiled)
-        Private Shared _friendlyReturn As New Regex("[^?]*/Tab[Ii]d/(\d+)/ctl/([A-Z][a-z]+)/default.aspx(\?returnurl=([^>]+))?$", RegexOptions.IgnoreCase Or RegexOptions.Compiled)
+
 #End Region
 
 #Region " Constructors "
@@ -143,62 +144,77 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
 
         End Function
 
-        Public Overloads Overrides Function FriendlyUrl(ByVal tab As TabInfo, ByVal path As String, ByVal pageName As String, ByVal portalAlias As String) As String
 
+        Private Function GetQueryStringDictionary(ByVal path As String) As Dictionary(Of String, String)
+            Dim parts As String() = path.ToLowerInvariant().Split("?"c)
+            Dim results As New Dictionary(Of String, String)
+
+            If (parts.Count = 2) Then
+
+                For Each part As String In parts(1).Split("&"c)
+                    Dim keyvalue As String() = part.Split("="c)
+                    If (keyvalue.Length = 2) Then
+                        results(keyvalue(0)) = keyvalue(1)
+                    End If
+                Next part
+
+            End If
+
+            Return results
+
+        End Function
+
+
+        Public Overloads Overrides Function FriendlyUrl(ByVal tab As TabInfo, ByVal path As String, ByVal pageName As String, ByVal portalAlias As String) As String
+            
             Dim friendlyPath As String = path
             Dim matchString As String = ""
             Dim isPagePath As Boolean = tab IsNot Nothing
-
-            'Call GetFriendlyAlias to get the Alias part of the url
-            friendlyPath = GetFriendlyAlias(path, portalAlias, isPagePath)
-            'Call GetFriendlyQueryString to get the QueryString part of the url
-            friendlyPath = GetFriendlyQueryString(tab, friendlyPath, pageName)
-
+            
             If (UrlFormat = UrlFormatType.HumanFriendly) Then
                 If (tab IsNot Nothing) Then
-                    If (_friendlyPathRegex.IsMatch(friendlyPath)) Then
+                    Dim queryStringDic As Dictionary(Of String, String) = GetQueryStringDictionary(path)
+                    If (queryStringDic.Count = 0 OrElse (queryStringDic.Count = 1 AndAlso queryStringDic.ContainsKey("tabid"))) Then
                         'Return AddHTTP(portalAlias & "/" & tab.TabPath.Replace("//", "/").TrimStart(Convert.ToChar("/")) + ".aspx")
                         friendlyPath = GetFriendlyAlias("~/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath)
                     Else
-
-                        If (_friendlyReturn.IsMatch(friendlyPath)) Then
-                            Dim sesMatch As Match = _friendlyReturn.Match(friendlyPath)
-                            If (sesMatch.Groups.Count > 2) Then
-                                Select Case sesMatch.Groups(2).Value.ToLower
-                                    Case "terms"
+                        If (queryStringDic.ContainsKey("ctl")) Then
+                            Select Case queryStringDic("ctl")
+                                Case "terms"
+                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
+                                    friendlyPath = GetFriendlyAlias("~/terms.aspx", portalAlias, isPagePath)
+                                Case "privacy"
+                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
+                                    friendlyPath = GetFriendlyAlias("~/privacy.aspx", portalAlias, isPagePath)
+                                Case "login"
+                                    If (queryStringDic.ContainsKey("returnurl")) Then
+                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
+                                        friendlyPath = GetFriendlyAlias("~/login.aspx?ReturnUrl=" & queryStringDic("returnurl"), portalAlias, isPagePath)
+                                    Else
                                         'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                        friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                    Case "privacy"
+                                        friendlyPath = GetFriendlyAlias("~/login.aspx", portalAlias, isPagePath)
+                                    End If
+                                Case "register"
+                                    If (queryStringDic.ContainsKey("returnurl")) Then
+                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
+                                        friendlyPath = GetFriendlyAlias("~/register.aspx?returnurl=" & queryStringDic("returnurl"), portalAlias, isPagePath)
+                                    Else
                                         'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                        friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                    Case "login"
-                                        If (sesMatch.Groups(4).Value.ToLower() <> "") Then
-                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
-                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
-                                        Else
-                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                        End If
-                                    Case "register"
-                                        If (sesMatch.Groups(4).Value.ToLower() <> "") Then
-                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
-                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value, portalAlias, isPagePath)
-                                        Else
-                                            'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
-                                            friendlyPath = GetFriendlyAlias("~/" & sesMatch.Groups(2).Value & ".aspx", portalAlias, isPagePath)
-                                        End If
-                                    Case Else
-                                        Return friendlyPath
-                                End Select
-                            Else
-                                Return friendlyPath
-                            End If
+                                        friendlyPath = GetFriendlyAlias("~/register.aspx", portalAlias, isPagePath)
+                                    End If
+                                Case Else
+                                    'Return Search engine friendly version
+                                    Return GetFriendlyQueryString(tab, GetFriendlyAlias(path, portalAlias, isPagePath), pageName)
+                            End Select
                         Else
-                            'Debug.Print("B=>" + friendlyPath)
-                            Return friendlyPath
+                            'Return Search engine friendly version
+                            Return GetFriendlyQueryString(tab, GetFriendlyAlias(path, portalAlias, isPagePath), pageName)
                         End If
                     End If
                 End If
+            Else
+                'Return Search engine friendly version
+                friendlyPath = GetFriendlyQueryString(tab, GetFriendlyAlias(path, portalAlias, isPagePath), pageName)
             End If
 
             friendlyPath = CheckPathLength(friendlyPath, path)
@@ -263,22 +279,25 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             Dim friendlyPath As String = path
             Dim matchString As String = ""
 
-            If Not (portalAlias = Null.NullString) Then
-                If Not (HttpContext.Current.Items("UrlRewrite:OriginalUrl") Is Nothing) Then
-                    Dim originalUrl As String = HttpContext.Current.Items("UrlRewrite:OriginalUrl").ToString()
 
-                    'For Each entry As String In arrAlias
-                    Dim portalMatch As Match = Regex.Match(originalUrl, "^" & AddHTTP(portalAlias), RegexOptions.IgnoreCase)
-                    If Not (portalMatch Is Match.Empty) Then
-                        matchString = AddHTTP(portalAlias)
+
+            If Not (portalAlias = Null.NullString) Then
+                Dim httpAlies As String = AddHTTP(portalAlias).ToLowerInvariant()
+
+                If Not (HttpContext.Current.Items("UrlRewrite:OriginalUrl") Is Nothing) Then
+                    Dim originalUrl As String = HttpContext.Current.Items("UrlRewrite:OriginalUrl").ToString().ToLowerInvariant()
+
+
+                    If (originalUrl.StartsWith(httpAlies)) Then
+                        matchString = httpAlies
                     End If
 
                     If (matchString = "") Then
                         'Manage the special case where original url contains the alias as
                         'http://www.domain.com/Default.aspx?alias=www.domain.com/child"
-                        portalMatch = Regex.Match(originalUrl, "^?alias=" & portalAlias, RegexOptions.IgnoreCase)
+                        Dim portalMatch As Match = Regex.Match(originalUrl, "^?alias=" & portalAlias, RegexOptions.IgnoreCase)
                         If Not (portalMatch Is Match.Empty) Then
-                            matchString = AddHTTP(portalAlias)
+                            matchString = httpAlies
                         End If
                     End If
 
@@ -287,18 +306,19 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                         'http://www.domain.com/child/default.aspx
                         Dim tempurl As String = HttpContext.Current.Request.Url.Host & ResolveUrl(friendlyPath)
                         If Not tempurl.Contains(portalAlias) Then
-                            matchString = AddHTTP(portalAlias)
+                            matchString = httpAlies
                         End If
                     End If
 
                     If (matchString = "") Then
                         ' manage the case where the current hostname is www.domain.com and the portalalias is domain.com
                         ' (this occurs when www.domain.com is not listed as portal alias for the portal, but domain.com is)
-                        portalMatch = Regex.Match(originalUrl, "^" & AddHTTP("www." & portalAlias), RegexOptions.IgnoreCase)
-                        If Not (portalMatch Is Match.Empty) Then
-                            matchString = AddHTTP("www." & portalAlias)
+                        Dim wwwHttpAlias As String = AddHTTP("www." & portalAlias)
+                        If (originalUrl.StartsWith(wwwHttpAlias)) Then
+                            matchString = wwwHttpAlias
                         End If
                     End If
+
                 End If
             End If
 

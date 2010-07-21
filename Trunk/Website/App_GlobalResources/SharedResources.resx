@@ -1355,7 +1355,7 @@
   </data>
   <data name="ModuleVisibleAdministrator.Text" xml:space="preserve">
     <value>Visible By Administrators Only</value>
-  </data>  
+  </data>
   <data name="PortalRoot.Text" xml:space="preserve">
     <value>Portal Root</value>
   </data>
@@ -1373,5 +1373,32 @@
   </data>
   <data name="File.Text" xml:space="preserve">
     <value />
+  </data>
+  <data name="Localization_NotLocalized.Text" xml:space="preserve">
+    <value>Not localized</value>
+  </data>
+  <data name="Localization_NotTranslated.Text" xml:space="preserve">
+    <value>Not translated</value>
+  </data>
+  <data name="Localization_OutOfDate.Text" xml:space="preserve">
+    <value>Out of date</value>
+  </data>
+  <data name="Localization_Translated.Text" xml:space="preserve">
+    <value>Translated</value>
+  </data>
+  <data name="DeLocalizeModule.Confirm" xml:space="preserve">
+    <value>Are you sure you want to delocalize this module?</value>
+  </data>
+  <data name="LocalizeModule.Confirm" xml:space="preserve">
+    <value>Are you sure you want to localize this module?</value>
+  </data>
+  <data name="TranslateModule.Confirm" xml:space="preserve">
+    <value>Are yu sure you want to mark this module as translated?</value>
+  </data>
+  <data name="UnTranslateModule.Confirm" xml:space="preserve">
+    <value>Are you sure you want to mark this module as not translated?</value>
+  </data>
+  <data name="System_Default.Text" xml:space="preserve">
+    <value>System Default</value>
   </data>
 </root>

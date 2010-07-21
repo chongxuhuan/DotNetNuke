@@ -1,6 +1,6 @@
 /*
   DotNetNuke® - http://www.dotnetnuke.com
-  Copyright (c) 2002-2007
+  Copyright (c) 2002-2010
   by DotNetNuke Corporation
  
   Attribution for getElementsByClassName():

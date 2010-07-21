@@ -22,50 +22,36 @@ Imports System
 Imports System.Configuration
 Imports System.Data
 Imports System.Globalization
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Entities.Host
 
-	Public Class HostSettingsController
-
-		Public Function GetHostSetting(ByVal SettingName As String) As IDataReader
+    <Obsolete("Replaced in DotNetNuke 5.5 by HostController")> _
+    Public Class HostSettingsController
+        
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetHostSetting()")> _
+        Public Function GetHostSetting(ByVal SettingName As String) As IDataReader
             Return DataProvider.Instance().GetHostSetting(SettingName)
         End Function
 
-		Public Function GetHostSettings() As IDataReader
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.GetHostSettings()")> _
+        Public Function GetHostSettings() As IDataReader
             Return DataProvider.Instance().GetHostSettings()
         End Function
 
-		Public Sub UpdateHostSetting(ByVal SettingName As String, ByVal SettingValue As String)
-            UpdateHostSetting(SettingName, SettingValue, False, True)
-		End Sub
-
-        Public Sub UpdateHostSetting(ByVal SettingName As String, ByVal SettingValue As String, ByVal SettingIsSecure As Boolean)
-            UpdateHostSetting(SettingName, SettingValue, SettingIsSecure, True)
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.UpdateHostSetting()")> _
+        Public Sub UpdateHostSetting(ByVal SettingName As String, ByVal SettingValue As String)
+            HostController.Instance.Update(New ConfigurationSetting() With {.Key = SettingName, .Value = SettingValue, .IsSecure = False})
         End Sub
 
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.UpdateHostSetting()")> _
+        Public Sub UpdateHostSetting(ByVal SettingName As String, ByVal SettingValue As String, ByVal SettingIsSecure As Boolean)
+            HostController.Instance.Update(New ConfigurationSetting() With {.Key = SettingName, .Value = SettingValue, .IsSecure = SettingIsSecure})
+        End Sub
+
+        <Obsolete("Replaced in DotNetNuke 5.5 by HostController.UpdateHostSetting()")> _
         Public Sub UpdateHostSetting(ByVal SettingName As String, ByVal SettingValue As String, ByVal SettingIsSecure As Boolean, ByVal clearCache As Boolean)
-
-            Dim dr As IDataReader = Nothing
-            Try
-                dr = DataProvider.Instance().GetHostSetting(SettingName)
-                Dim objEventLog As New Services.Log.EventLog.EventLogController
-                If dr.Read Then
-                    DataProvider.Instance().UpdateHostSetting(SettingName, SettingValue, SettingIsSecure, UserController.GetCurrentUserInfo.UserID)
-                    objEventLog.AddLog(SettingName.ToString, SettingValue.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_SETTING_UPDATED)
-                Else
-                    DataProvider.Instance().AddHostSetting(SettingName, SettingValue, SettingIsSecure, UserController.GetCurrentUserInfo.UserID)
-                    objEventLog.AddLog(SettingName.ToString, SettingValue.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.HOST_SETTING_CREATED)
-                End If
-            Catch ex As Exception
-                LogException(ex)
-            Finally
-                CBO.CloseDataReader(dr, True)
-            End Try
-
-            ' clear host cache
-            If clearCache Then
-                DataCache.ClearHostCache(False)
-            End If
+            HostController.Instance.Update(New ConfigurationSetting() With {.Key = SettingName, .Value = SettingValue, .IsSecure = SettingIsSecure})
         End Sub
 
     End Class

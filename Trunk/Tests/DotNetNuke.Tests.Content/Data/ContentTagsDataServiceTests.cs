@@ -1,30 +1,29 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System.Data.SqlClient;
 using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities;
+using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Data
@@ -35,7 +34,6 @@ namespace DotNetNuke.Tests.Content.Data
     [TestFixture]
     public class ContentTagsDataServiceTests
     {
-
         #region Private Members
 
         private static string addTermToContent = "AddTermToContent";
@@ -50,7 +48,8 @@ namespace DotNetNuke.Tests.Content.Data
         public void SetUp()
         {
             //Set up Data Provider
-            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner, DataTestHelper.ObjectQualifier);
+            DataUtil.SetupDataBaseProvider(DataTestHelper.ConnectionString, DataTestHelper.DatabaseOwner,
+                                           DataTestHelper.ObjectQualifier);
 
             //Create Database Tables
             ContentDataTestHelper.CreateDatabaseTables();
@@ -64,17 +63,19 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Remove all records from Tables
             ContentDataTestHelper.EmptyDatabaseTables();
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
 
         #region AddTermToContent Tests
 
-       [Test]
+        [Test]
         public void DataService_AddTermToContent_Adds_Record_If_Valid()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ContentTagsTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, addTermToContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
@@ -84,16 +85,18 @@ namespace DotNetNuke.Tests.Content.Data
 
             //Act
             ds.AddTermToContent(term, content);
-            
+
             //Assert
-            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName, rowCount + 1);
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString,
+                                              ContentDataTestHelper.ContentTagsTableName, rowCount + 1);
         }
 
-       [Test]
+        [Test]
         public void DataService_AddTermToContent_Throws_If_Duplicate()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ContentTagsTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, addTermToContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
@@ -104,18 +107,19 @@ namespace DotNetNuke.Tests.Content.Data
             DataService ds = new DataService();
 
             //Act/Assert
-            ExceptionAssert.Throws<SqlException>(() => ds.AddTermToContent(term, content));
+            Assert.Throws<SqlException>(() => ds.AddTermToContent(term, content));
         }
 
         #endregion
 
         #region RemoveTermsFromContent Tests
 
-       [Test]
+        [Test]
         public void DataService_RemoveTermsFromContent_Removes_Does_Nothing_If_ContentItem_Has_No_Terms()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ContentTagsTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, removeTermsFromContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
@@ -127,14 +131,16 @@ namespace DotNetNuke.Tests.Content.Data
             ds.RemoveTermsFromContent(content);
 
             //Assert
-            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName, rowCount);
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString,
+                                              ContentDataTestHelper.ContentTagsTableName, rowCount);
         }
 
-       [Test]
+        [Test]
         public void DataService_RemoveTermsFromContent_Removes_Terms_If_Valid()
         {
             //Arrange
-            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName);
+            int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
+                                                   ContentDataTestHelper.ContentTagsTableName);
             DataUtil.AddDatabaseObject(virtualScriptFilePath, removeTermsFromContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
@@ -146,10 +152,11 @@ namespace DotNetNuke.Tests.Content.Data
             ds.RemoveTermsFromContent(content);
 
             //Assert
-            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString, ContentDataTestHelper.ContentTagsTableName, rowCount - Constants.TAG_ValidContentCount);
+            DatabaseAssert.RecordCountIsEqual(DataTestHelper.ConnectionString,
+                                              ContentDataTestHelper.ContentTagsTableName,
+                                              rowCount - Constants.TAG_ValidContentCount);
         }
 
         #endregion
-
     }
 }

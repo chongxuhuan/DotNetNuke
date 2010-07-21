@@ -551,6 +551,7 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQua
 	BEGIN
 		/* Delete unused entries in PortalLocalization */
 		DELETE FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE portalID not In (SELECT PortalID from {databaseOwner}{objectQualifier}Portals)
+
 		/* add key and cascade delete rule */
 		ALTER TABLE {databaseOwner}{objectQualifier}PortalLocalization 
 			ADD CONSTRAINT FK_{objectQualifier}PortalLocalization_{objectQualifier}Portals 
@@ -673,7 +674,7 @@ ELSE
 		DECLARE @AdminTabId int
 		SET @AdminTabId = (SELECT AdminTabId 
 								FROM {databaseOwner}{objectQualifier}PortalLocalization 
-								WHERE PortalID = @PortalID and CultureCode='en-us')
+								WHERE PortalID = @PortalID and CultureCode='en-US')
 
 		INSERT INTO {databaseOwner}[{objectQualifier}PortalLocalization] (
 			[PortalID],

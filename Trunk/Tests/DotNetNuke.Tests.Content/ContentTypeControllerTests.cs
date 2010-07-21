@@ -1,36 +1,33 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Content;
+using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Services.Cache;
+using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;
 using Moq;
-using DotNetNuke.Entities.Content.Data;
-using DotNetNuke.Tests.Content.Mocks;
 
 namespace DotNetNuke.Tests.Content
 {
@@ -40,7 +37,6 @@ namespace DotNetNuke.Tests.Content
     [TestFixture]
     public class ContentTypeControllerTests
     {
-
         #region Private Members
 
         private Mock<CachingProvider> mockCache;
@@ -49,11 +45,17 @@ namespace DotNetNuke.Tests.Content
 
         #region Test Initialize
 
-        [SetUp()]
+        [SetUp]
         public void SetUp()
         {
             //Register MockCachingProvider
-            mockCache = MockCachingProvider.CreateMockProvider();
+            mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
@@ -93,7 +95,7 @@ namespace DotNetNuke.Tests.Content
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddContentType(It.IsAny<ContentType>()))
-                           .Returns(Constants.CONTENTTYPE_AddContentTypeId);
+                .Returns(Constants.CONTENTTYPE_AddContentTypeId);
             ContentTypeController contentTypeController = new ContentTypeController(mockDataService.Object);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
@@ -102,7 +104,7 @@ namespace DotNetNuke.Tests.Content
             int contentTypeId = contentTypeController.AddContentType(contentType);
 
             //Assert
-            Assert.AreEqual<int>(Constants.CONTENTTYPE_AddContentTypeId, contentTypeId);
+            Assert.AreEqual(Constants.CONTENTTYPE_AddContentTypeId, contentTypeId);
         }
 
         [Test]
@@ -111,7 +113,7 @@ namespace DotNetNuke.Tests.Content
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddContentType(It.IsAny<ContentType>()))
-                           .Returns(Constants.CONTENTTYPE_AddContentTypeId);
+                .Returns(Constants.CONTENTTYPE_AddContentTypeId);
             ContentTypeController contentTypeController = new ContentTypeController(mockDataService.Object);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
@@ -149,7 +151,7 @@ namespace DotNetNuke.Tests.Content
             contentType.ContentTypeId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => contentTypeController.DeleteContentType(contentType));
+            Assert.Throws<ArgumentException>(() => contentTypeController.DeleteContentType(contentType));
         }
 
         [Test]
@@ -179,7 +181,7 @@ namespace DotNetNuke.Tests.Content
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetContentTypes())
-                            .Returns(MockHelper.CreateValidContentTypesReader(Constants.CONTENTTYPE_ValidContentTypeCount));
+                .Returns(MockHelper.CreateValidContentTypesReader(Constants.CONTENTTYPE_ValidContentTypeCount));
             ContentTypeController contentTypeController = new ContentTypeController(mockDataService.Object);
 
             //Act
@@ -195,7 +197,7 @@ namespace DotNetNuke.Tests.Content
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetContentTypes())
-                            .Returns(MockHelper.CreateEmptyContentTypeReader());
+                .Returns(MockHelper.CreateEmptyContentTypeReader());
             ContentTypeController contentTypeController = new ContentTypeController(mockDataService.Object);
 
             //Act
@@ -203,7 +205,7 @@ namespace DotNetNuke.Tests.Content
 
             //Assert
             Assert.IsNotNull(contentTypes);
-            Assert.AreEqual<int>(0, contentTypes.Count());
+            Assert.AreEqual(0, contentTypes.Count());
         }
 
         [Test]
@@ -212,14 +214,14 @@ namespace DotNetNuke.Tests.Content
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetContentTypes())
-                            .Returns(MockHelper.CreateValidContentTypesReader(Constants.CONTENTTYPE_ValidContentTypeCount));
+                .Returns(MockHelper.CreateValidContentTypesReader(Constants.CONTENTTYPE_ValidContentTypeCount));
             ContentTypeController contentTypeController = new ContentTypeController(mockDataService.Object);
 
             //Act
             IQueryable<ContentType> contentTypes = contentTypeController.GetContentTypes();
 
             //Assert
-            Assert.AreEqual<int>(Constants.CONTENTTYPE_ValidContentTypeCount, contentTypes.Count());
+            Assert.AreEqual(Constants.CONTENTTYPE_ValidContentTypeCount, contentTypes.Count());
         }
 
         #endregion
@@ -247,7 +249,7 @@ namespace DotNetNuke.Tests.Content
             ContentType contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentType = Constants.CONTENTTYPE_InValidContentType;
 
-            ExceptionAssert.Throws<ArgumentException>(() => contentTypeController.UpdateContentType(contentType));
+            Assert.Throws<ArgumentException>(() => contentTypeController.UpdateContentType(contentType));
         }
 
         [Test]
@@ -269,6 +271,5 @@ namespace DotNetNuke.Tests.Content
         }
 
         #endregion
-
     }
 }

@@ -59,10 +59,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
-    <Reference Include="Telerik.Web.UI, Version=2009.2.826.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Telerik.Web.UI">
+      <HintPath>..\..\..\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -202,9 +200,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\TelerikProviderPackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProvider;PackageProvider">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">
   </Target>
-  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <CreateItem Include="$(DNNFileName).dnn">
       <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
     </CreateItem>

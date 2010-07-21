@@ -288,7 +288,11 @@ Namespace DotNetNuke.Modules.Admin.Users
                 End If
 
                 If Not Page.IsPostBack Then
-                    PageNo = 0
+                    If Not Request.QueryString("pageno") Is Nothing Then
+                        PageNo = Integer.Parse(Request.QueryString("pageno"))
+                    Else
+                        PageNo = 0
+                    End If
                 End If
 
                 ShowPanel()

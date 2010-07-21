@@ -31,6 +31,7 @@ Imports DotNetNuke.ComponentModel
 Imports DotNetNuke.Services.Cache
 Imports System.Globalization
 Imports DotNetNuke.Entities.Portals
+Imports DotNetNuke.Entities.Modules
 
 Namespace DotNetNuke.Services.ModuleCache
 
@@ -120,7 +121,6 @@ Namespace DotNetNuke.Services.ModuleCache
                 Throw New IOException(String.Format("Deleted {0} files, however, some files are locked.  Could not delete the following files: {1}", i, filesNotDeleted))
             End If
         End Sub
-
         Private Shared Function IsPathInApplication(ByVal cacheFolder As String) As Boolean
             Return cacheFolder.Contains(DotNetNuke.Common.ApplicationMapPath)
         End Function
@@ -225,9 +225,12 @@ Namespace DotNetNuke.Services.ModuleCache
         End Sub
 
         Public Overrides Sub Remove(ByVal tabModuleId As Integer)
+            Dim controller As New ModuleController
+            Dim tabModule As ModuleInfo = controller.GetTabModule(tabModuleId)
+            Dim cacheFolder As String = GetCacheFolder(tabModule.PortalID)
             Dim filesNotDeleted As New System.Text.StringBuilder()
             Dim i As Integer = 0
-            For Each File As String In Directory.GetFiles(GetCacheFolder(), tabModuleId.ToString & "_*.*")
+            For Each File As String In Directory.GetFiles(cacheFolder, tabModuleId.ToString & "_*.*")
                 If Not DotNetNuke.Common.Utilities.FileSystemUtils.DeleteFileWithWait(File, 100, 200) Then
                     filesNotDeleted.Append(File + ";")
                 Else

@@ -19,6 +19,7 @@
 '
 
 Imports DotNetNuke.Common
+Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Security.Permissions
@@ -42,6 +43,13 @@ Namespace DotNetNuke.Modules.Html
         Private ItemID As Integer = -1
 
 #Region "Private Methods"
+
+        Private Function FormatContent(ByVal objContent As HtmlTextInfo) As String
+            Dim strContent As String = HttpUtility.HtmlDecode(objContent.Content)
+            strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "src", PortalId)
+            strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "background", PortalId)
+            Return HttpUtility.HtmlEncode(strContent)
+        End Function
 
         Private Sub DisplayHistory(ByVal objContent As HtmlTextInfo)
             Dim objLog As New HtmlTextLogController
@@ -126,12 +134,18 @@ Namespace DotNetNuke.Modules.Html
 
                     If ItemID <> -1 Then
                         ' load content
-                        Dim strContent As String = HttpUtility.HtmlDecode(objContent.Content)
-                        strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "src", PortalId)
-                        strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "background", PortalId)
-                        txtContent.Text = HttpUtility.HtmlEncode(strContent)
+                        txtContent.Text = FormatContent(objContent)
                         DisplayHistory(objContent)
                         DisplayPreview(objContent.Content)
+
+                        'Get master language
+                        Dim objModule As ModuleInfo = New ModuleController().GetModule(ModuleId, TabId)
+                        If objModule.DefaultLanguageModule IsNot Nothing Then
+                            Dim masterContent As HtmlTextInfo = objHTML.GetTopHtmlText(objModule.DefaultLanguageModule.ModuleID, False, WorkflowID)
+                            lblMaster.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(objModule.DefaultLanguageModule.ModuleID, FormatContent(masterContent), Settings)))
+                        End If
+                        dshMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
+                        tblMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
                     Else
                         ' initialize content
                         txtContent.Text = Localization.GetString("AddContent", LocalResourceFile)

@@ -103,7 +103,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             Try
                 If Not Page.IsPostBack Then
                     'cboFolders.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString("None_Specified") + ">", "-"))
-                    Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalId, False, False, "READ, WRITE")
+                    Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalId, False, False, "ADD")
                     For Each folder As FolderInfo In folders
                         Dim FolderItem As New ListItem
                         If folder.FolderPath = Null.NullString Then

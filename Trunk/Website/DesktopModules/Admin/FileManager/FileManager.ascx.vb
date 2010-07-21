@@ -1410,6 +1410,11 @@ Namespace DotNetNuke.Modules.Admin.FileManager
             strSourcePath = UnMaskPath(DestPath)
 
             Try
+
+                If (DNNTree.TreeNodes(0).DNNNodes.Count = 0) Then
+                    PopulateTree(DNNTree.TreeNodes(0).TreeNodes, RootFolderPath)
+                End If
+
                 Dim colNodes As Collection = DNNTree.SelectedTreeNodes()
                 If colNodes.Count > 0 Then
                     Dim parentNode As DNNTreeNode = CType(colNodes(1), DNNTreeNode)
@@ -1418,7 +1423,9 @@ Namespace DotNetNuke.Modules.Admin.FileManager
                     filterFolderName = txtNewFolder.Text.Replace(".", "_")
                     'Add Folder to Database
                     FileSystemUtils.AddFolder(PortalSettings, strSourcePath, filterFolderName, Integer.Parse(ddlStorageLocation.SelectedValue))
-                    DestPath = MaskPath(FileSystemUtils.AddTrailingSlash(strSourcePath) & filterFolderName)
+
+                    DestPath = MaskPath(FileSystemUtils.AddTrailingSlash(strSourcePath) + filterFolderName + "\")
+                    LastFolderPath = DestPath
 
                     'Add new folder to folders tree
                     parentNode.Selected = False

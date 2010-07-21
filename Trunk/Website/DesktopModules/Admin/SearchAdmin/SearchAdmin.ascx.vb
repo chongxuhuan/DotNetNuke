@@ -18,6 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
+Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Modules.Actions
 Imports DotNetNuke
@@ -98,11 +99,10 @@ Namespace DotNetNuke.Modules.Admin.Search
             Try
 
                 If ModuleContext.PortalSettings.ActiveTab.ParentId = ModuleContext.PortalSettings.SuperTabId Then
-                    Dim objHostSettings As New Entities.Host.HostSettingsController
-                    objHostSettings.UpdateHostSetting("MaxSearchWordLength", txtMaxWordLength.Text)
-                    objHostSettings.UpdateHostSetting("MinSearchWordLength", txtMinWordLength.Text)
-                    objHostSettings.UpdateHostSetting("SearchIncludeCommon", CType(IIf(chkIncludeCommon.Checked, "Y", "N"), String))
-                    objHostSettings.UpdateHostSetting("SearchIncludeNumeric", CType(IIf(chkIncludeNumeric.Checked, "Y", "N"), String))
+                    HostController.Instance.Update("MaxSearchWordLength", txtMaxWordLength.Text)
+                    HostController.Instance.Update("MinSearchWordLength", txtMinWordLength.Text)
+                    HostController.Instance.Update("SearchIncludeCommon", CType(IIf(chkIncludeCommon.Checked, "Y", "N"), String))
+                    HostController.Instance.Update("SearchIncludeNumeric", CType(IIf(chkIncludeNumeric.Checked, "Y", "N"), String))
 
                     ' clear host settings cache
                     DataCache.ClearHostCache(False)

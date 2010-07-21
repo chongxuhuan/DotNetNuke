@@ -117,19 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ArgumentCannotBeNullOrEmpty.Text" xml:space="preserve">
+    <value>The argument '{0}' cannot be null or empty.</value>
+  </data>
   <data name="PropertyCannotBeNegative.Text" xml:space="preserve">
-    <value>The property {1} in object {0} cannot be negative.</value>
+    <value>The property '{1}' in object '{0}' cannot be negative.</value>
   </data>
   <data name="PropertyCannotBeNull.Text" xml:space="preserve">
-    <value>The property {1} in object {0} cannot be null.</value>
+    <value>The property '{1}' in object '{0}' cannot be null.</value>
   </data>
   <data name="PropertyCannotBeNullOrEmpty.Text" xml:space="preserve">
-    <value>The property {1} in object {0} cannot be null or empty.</value>
+    <value>The property '{1}' in object '{0}' cannot be null or empty.</value>
   </data>
   <data name="ValueCannotBeNegative.Text" xml:space="preserve">
-    <value>The argument {0} cannot be negative.</value>
+    <value>The argument '{0}' cannot be negative.</value>
   </data>
   <data name="ValueMustBeOfType.Text" xml:space="preserve">
-    <value>The argument {0} must be of type {1}.</value>
+    <value>The argument '{0}' must be of type '{1}'.</value>
   </data>
 </root>

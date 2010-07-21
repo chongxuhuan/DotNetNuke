@@ -20,11 +20,17 @@
     <CreateItem Include="$(MSBuildProjectDirectory)\..\Website\signatures\*.*">
       <Output TaskParameter="Include" ItemName="PackageSignatureFiles" />
     </CreateItem>
-    <CreateItem Include="$(MSBuildProjectDirectory)\..\Website\DesktopModules\DNNCorp\GoogleAnalytics\**\**">
-      <Output TaskParameter="Include" ItemName="GoogleAnalyticsModuleFiles" />
-    </CreateItem>
     <CreateItem Include="images\*.*">
-      <Output TaskParameter="Include" ItemName="MyImages" />
+      <Output TaskParameter="Include" ItemName="PackageImages" />
+    </CreateItem>
+    <CreateItem Include="Templates\*.*">
+      <Output TaskParameter="Include" ItemName="PackageTemplates" />
+    </CreateItem>
+    <CreateItem Include="App_LocalResources\*.*">
+      <Output TaskParameter="Include" ItemName="PackageLocalResources" />
+    </CreateItem>
+    <CreateItem Include="Signatures\*.*">
+      <Output TaskParameter="Include" ItemName="PackageSignatures" />
     </CreateItem>
 
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../Website\bin" />
@@ -35,15 +41,10 @@
     <Copy SourceFiles="@(PackageScriptFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Scripts" />
     <Copy SourceFiles="@(PackageSignatureFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\signatures" />
     <Copy SourceFiles="@(PackageDocumentationFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Documentation" />
-    <Copy SourceFiles="@(GoogleAnalyticsModuleFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\DNNCorp\GoogleAnalytics\%(RecursiveDir)" />
-    <Copy SourceFiles="@(MyImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package\images" />
-
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Website\Providers\PermissionProviders\GranularPermissionProvider\App_LocalResources\SharedResources.resx" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Website\admin\ControlPanel\App_LocalResources\IconBar.ascx.resx" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Website\Config\SiteAnalytics.config" DestinationFolder="$(MSBuildProjectDirectory)\Package\Config" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Website\Portals\_default\Default Website.template" DestinationFolder="$(MSBuildProjectDirectory)\Package\Templates" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Website\Portals\_default\Default Website.template.resources" DestinationFolder="$(MSBuildProjectDirectory)\Package\Templates" />
-
+    <Copy SourceFiles="@(PackageImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package\images" />
+    <Copy SourceFiles="@(PackageTemplates)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Templates" />
+    <Copy SourceFiles="@(PackageLocalResources)" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
+    <Copy SourceFiles="@(PackageSignatures)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Signatures" />
 
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />

@@ -1,38 +1,36 @@
-﻿/*
-' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
-' by DotNetNuke Corporation
-'
-' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-'
-' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-' of the Software.
-'
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-' DEALINGS IN THE SOFTWARE.
-*/
-
+﻿// '
+// ' DotNetNuke® - http://www.dotnetnuke.com
+// ' Copyright (c) 2002-2010
+// ' by DotNetNuke Corporation
+// '
+// ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// ' documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// ' the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// ' to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// '
+// ' The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// ' of the Software.
+// '
+// ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// ' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// ' DEALINGS IN THE SOFTWARE.
+// '
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Services.Cache;
 using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Cache;
+using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
-using Moq;
 using MbUnit.Framework;
-using DotNetNuke.ComponentModel;
-using DotNetNuke.Tests.Content.Mocks;
+using Moq;
 
 namespace DotNetNuke.Tests.Content.Taxonomy
 {
@@ -50,13 +48,19 @@ namespace DotNetNuke.Tests.Content.Taxonomy
 
         #region Test Initialize
 
-        [SetUp()]
+        [SetUp]
         public void SetUp()
         {
             Mock<IVocabularyController> vocabularyController = MockHelper.CreateMockVocabularyController();
 
             //Register MockCachingProvider
-            mockCache = MockCachingProvider.CreateMockProvider();
+            mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            MockComponentProvider.ResetContainer();
         }
 
         #endregion
@@ -85,7 +89,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             term.Name = Constants.TERM_InValidName;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.AddTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.AddTerm(term));
         }
 
         [Test]
@@ -98,7 +102,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.AddTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.AddTerm(term));
         }
 
         [Test]
@@ -124,7 +128,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
 
-            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId, Constants.TERM_ValidParentTermId);
+            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId,
+                                                                      Constants.TERM_ValidParentTermId);
 
             // Act
             int termId = termController.AddTerm(term);
@@ -140,7 +145,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
             mockDataService.Setup(ds => ds.AddSimpleTerm(It.IsAny<Term>(), It.IsAny<int>()))
-                            .Returns(Constants.TERM_AddTermId);
+                .Returns(Constants.TERM_AddTermId);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
 
@@ -148,7 +153,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             int termId = termController.AddTerm(term);
 
             //Assert
-            Assert.AreEqual<int>(Constants.TERM_AddTermId, termId);
+            Assert.AreEqual(Constants.TERM_AddTermId, termId);
         }
 
         [Test]
@@ -158,7 +163,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
             mockDataService.Setup(ds => ds.AddSimpleTerm(It.IsAny<Term>(), It.IsAny<int>()))
-                            .Returns(Constants.TERM_AddTermId);
+                .Returns(Constants.TERM_AddTermId);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
 
@@ -166,7 +171,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             termController.AddTerm(term);
 
             //Assert
-            Assert.AreEqual<int>(Constants.TERM_AddTermId, term.TermId);
+            Assert.AreEqual(Constants.TERM_AddTermId, term.TermId);
         }
 
         [Test]
@@ -176,15 +181,16 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
             mockDataService.Setup(ds => ds.AddHeirarchicalTerm(It.IsAny<Term>(), It.IsAny<int>()))
-                            .Returns(Constants.TERM_AddTermId);
+                .Returns(Constants.TERM_AddTermId);
 
-            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId, Constants.TERM_ValidParentTermId);
+            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId,
+                                                                      Constants.TERM_ValidParentTermId);
 
             //Act
             int termId = termController.AddTerm(term);
 
             //Assert
-            Assert.AreEqual<int>(Constants.TERM_AddTermId, termId);
+            Assert.AreEqual(Constants.TERM_AddTermId, termId);
         }
 
         [Test]
@@ -194,15 +200,16 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
             mockDataService.Setup(ds => ds.AddHeirarchicalTerm(It.IsAny<Term>(), It.IsAny<int>()))
-                            .Returns(Constants.TERM_AddTermId);
+                .Returns(Constants.TERM_AddTermId);
 
-            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId, Constants.TERM_ValidParentTermId);
+            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId,
+                                                                      Constants.TERM_ValidParentTermId);
 
             //Act
             termController.AddTerm(term);
 
             //Assert
-            Assert.AreEqual<int>(Constants.TERM_AddTermId, term.TermId);
+            Assert.AreEqual(Constants.TERM_AddTermId, term.TermId);
         }
 
         [Test]
@@ -218,7 +225,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             termController.AddTerm(term);
 
             //Assert
-            mockCache.Verify(cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
+            mockCache.Verify(
+                cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
         }
 
         #endregion
@@ -294,7 +302,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             term.TermId = Null.NullInteger;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.DeleteTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.DeleteTerm(term));
         }
 
         [Test]
@@ -315,13 +323,15 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         }
 
         [Test]
-        public void TermController_DeleteTerm_Should_Call_DataService_DeleteHeirarchicalTerm_If_Term_Is_Heirarchical_Term()
+        public void
+            TermController_DeleteTerm_Should_Call_DataService_DeleteHeirarchicalTerm_If_Term_Is_Heirarchical_Term()
         {
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
 
-            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId, Constants.TERM_ValidParentTermId);
+            Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId,
+                                                                      Constants.TERM_ValidParentTermId);
             term.TermId = Constants.TERM_DeleteTermId;
 
             // Act
@@ -338,13 +348,14 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
 
-            Term term = new Term(Constants.VOCABULARY_ValidVocabularyId) { TermId = Constants.TERM_DeleteTermId };
+            Term term = new Term(Constants.VOCABULARY_ValidVocabularyId) {TermId = Constants.TERM_DeleteTermId};
 
             //Act
             termController.DeleteTerm(term);
 
             //Assert
-            mockCache.Verify(cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
+            mockCache.Verify(
+                cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
         }
 
         #endregion
@@ -359,7 +370,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             TermController termController = new TermController(mockDataService.Object);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => termController.GetTerm(Null.NullInteger));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.GetTerm(Null.NullInteger));
         }
 
         [Test]
@@ -368,7 +379,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetTerm(Constants.TERM_InValidTermId))
-                           .Returns(MockHelper.CreateEmptyTermReader());
+                .Returns(MockHelper.CreateEmptyTermReader());
 
             TermController termController = new TermController(mockDataService.Object);
 
@@ -385,7 +396,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetTerm(Constants.TERM_ValidTermId))
-                            .Returns(MockHelper.CreateValidTermReader());
+                .Returns(MockHelper.CreateValidTermReader());
             TermController termController = new TermController(mockDataService.Object);
 
             //Act
@@ -401,16 +412,16 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetTerm(Constants.TERM_ValidTermId))
-                            .Returns(MockHelper.CreateValidTermReader());
-                        
+                .Returns(MockHelper.CreateValidTermReader());
+
             TermController termController = new TermController(mockDataService.Object);
 
             //Act
             Term term = termController.GetTerm(Constants.TERM_ValidTermId);
 
             //Assert
-            Assert.AreEqual<int>(Constants.TERM_ValidTermId, term.TermId);
-            Assert.AreEqual<string>(Constants.TERM_ValidName, term.Name);
+            Assert.AreEqual(Constants.TERM_ValidTermId, term.TermId);
+            Assert.AreEqual(Constants.TERM_ValidName, term.Name);
         }
 
         #endregion
@@ -425,26 +436,26 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             TermController termController = new TermController(mockDataService.Object);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => termController.GetTermsByContent(Null.NullInteger));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.GetTermsByContent(Null.NullInteger));
         }
 
         [Test]
         public void TermController_GetTermsByContent_Calls_DataService()
-       {
-           //Arrange
-           Mock<IDataService> mockDataService = new Mock<IDataService>();
-           mockDataService.Setup(ds => ds.GetTermsByContent(Constants.TERM_ValidContent1))
-                          .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForContent1,
-                             v => Constants.TERM_ValidVocabularyId,
-                             c => Constants.TERM_ValidContent1));
-           TermController termController = new TermController(mockDataService.Object);
+        {
+            //Arrange
+            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(ds => ds.GetTermsByContent(Constants.TERM_ValidContent1))
+                .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForContent1,
+                                                           v => Constants.TERM_ValidVocabularyId,
+                                                           c => Constants.TERM_ValidContent1));
+            TermController termController = new TermController(mockDataService.Object);
 
-           //Act
-           IQueryable<Term> terms = termController.GetTermsByContent(Constants.TERM_ValidContent1);
+            //Act
+            IQueryable<Term> terms = termController.GetTermsByContent(Constants.TERM_ValidContent1);
 
-           //Assert
-           mockDataService.Verify(ds => ds.GetTermsByContent(Constants.TERM_ValidContent1));
-       }
+            //Assert
+            mockDataService.Verify(ds => ds.GetTermsByContent(Constants.TERM_ValidContent1));
+        }
 
         [Test]
         public void TermController_GetTermsByContent_Returns_Terms_On_Valid_ContentItemId()
@@ -452,9 +463,9 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetTermsByContent(Constants.TERM_ValidContent1))
-                           .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForContent1,
-                             v => Constants.TERM_ValidVocabularyId,
-                             c => Constants.TERM_ValidContent1));
+                .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForContent1,
+                                                           v => Constants.TERM_ValidVocabularyId,
+                                                           c => Constants.TERM_ValidContent1));
 
             TermController termController = new TermController(mockDataService.Object);
 
@@ -467,7 +478,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             for (int i = 0; i < Constants.TERM_ValidCountForContent1; i++)
             {
                 Assert.AreEqual(i + Constants.TERM_ValidTermId, terms[i].TermId);
-                Assert.AreEqual<string>(ContentTestHelper.GetTermName(i + Constants.TERM_ValidTermId), terms[i].Name);
+                Assert.AreEqual(ContentTestHelper.GetTermName(i + Constants.TERM_ValidTermId), terms[i].Name);
             }
         }
 
@@ -483,7 +494,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             TermController termController = new TermController(mockDataService.Object);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentOutOfRangeException>(() => termController.GetTermsByVocabulary(Null.NullInteger));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.GetTermsByVocabulary(Null.NullInteger));
         }
 
         [Test]
@@ -492,9 +503,9 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetTermsByVocabulary(Constants.TERM_ValidVocabulary1))
-                           .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForVocabulary1,
-                             v => Constants.TERM_ValidVocabulary1,
-                             c => Constants.TERM_ValidContent1));
+                .Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForVocabulary1,
+                                                           v => Constants.TERM_ValidVocabulary1,
+                                                           c => Constants.TERM_ValidContent1));
             TermController termController = new TermController(mockDataService.Object);
 
             //Act
@@ -506,7 +517,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             for (int i = 0; i < Constants.TERM_ValidCountForVocabulary1; i++)
             {
                 Assert.AreEqual(i + Constants.TERM_ValidTermId, terms[i].TermId);
-                Assert.AreEqual<string>(ContentTestHelper.GetTermName(i + Constants.TERM_ValidTermId), terms[i].Name);
+                Assert.AreEqual(ContentTestHelper.GetTermName(i + Constants.TERM_ValidTermId), terms[i].Name);
             }
         }
 
@@ -566,7 +577,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
         }
 
         [Test]
@@ -580,7 +591,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             term.Name = Constants.TERM_InValidName;
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
         }
 
         [Test]
@@ -593,7 +604,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            ExceptionAssert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
         }
 
         [Test]
@@ -616,14 +627,15 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         }
 
         [Test]
-        public void TermController_UpdateTerm_Should_Call_DataService_UpdateHeirarchicalTerm_If_Term_Is_Heirarchical_Term()
+        public void
+            TermController_UpdateTerm_Should_Call_DataService_UpdateHeirarchicalTerm_If_Term_Is_Heirarchical_Term()
         {
             //Arrange
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             TermController termController = new TermController(mockDataService.Object);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_HierarchyVocabularyId,
-                                                                    Constants.TERM_ValidParentTermId);
+                                                                      Constants.TERM_ValidParentTermId);
             term.TermId = Constants.TERM_UpdateTermId;
             term.Name = Constants.TERM_UpdateName;
             term.Weight = Constants.TERM_UpdateWeight;
@@ -651,7 +663,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             termController.UpdateTerm(term);
 
             //Assert
-            mockCache.Verify(cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
+            mockCache.Verify(
+                cache => cache.Remove(String.Format(Constants.TERM_CacheKey, Constants.VOCABULARY_ValidVocabularyId)));
         }
 
         #endregion

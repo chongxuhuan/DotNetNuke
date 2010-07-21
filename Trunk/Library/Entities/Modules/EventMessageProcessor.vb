@@ -32,7 +32,7 @@ Namespace DotNetNuke.Entities.Modules
                 Dim objController As Object = Framework.Reflection.CreateObject(BusinessControllerClass, "")
                 If TypeOf objController Is IPortable Then
                     Dim ModuleId As Integer = CType(message.Attributes.Item("ModuleId"), Integer)
-                    Dim Content As String = HttpContext.Current.Server.HtmlDecode(message.Attributes.Item("Content"))
+                    Dim Content As String = HttpUtility.HtmlDecode(message.Attributes.Item("Content"))
                     Dim Version As String = message.Attributes.Item("Version")
                     Dim UserID As Integer = CType(message.Attributes.Item("UserId"), Integer)
 
@@ -106,6 +106,26 @@ Namespace DotNetNuke.Entities.Modules
         End Sub
 
 #End Region
+
+        Public Shared Sub CreateImportModuleMessage(ByVal objModule As ModuleInfo, ByVal content As String, ByVal version As String, ByVal userID As Integer)
+            Dim oAppStartMessage As New EventQueue.EventMessage
+            oAppStartMessage.Priority = MessagePriority.High
+            oAppStartMessage.ExpirationDate = Now.AddYears(-1)
+            oAppStartMessage.SentDate = System.DateTime.Now
+            oAppStartMessage.Body = ""
+            oAppStartMessage.ProcessorType = "DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke"
+            oAppStartMessage.ProcessorCommand = "ImportModule"
+
+            'Add custom Attributes for this message
+            oAppStartMessage.Attributes.Add("BusinessControllerClass", objModule.DesktopModule.BusinessControllerClass)
+            oAppStartMessage.Attributes.Add("ModuleId", objModule.ModuleID.ToString())
+            oAppStartMessage.Attributes.Add("Content", content)
+            oAppStartMessage.Attributes.Add("Version", version)
+            oAppStartMessage.Attributes.Add("UserID", userID.ToString)
+
+            'send it to occur on next App_Start Event
+            EventQueueController.SendMessage(oAppStartMessage, "Application_Start_FirstRequest")
+        End Sub
 
 #Region "Public Methods"
 

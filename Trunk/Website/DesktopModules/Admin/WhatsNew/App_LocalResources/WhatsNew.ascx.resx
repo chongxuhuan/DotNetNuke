@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1202,5 +1202,64 @@ corrected with each release. &lt;/p&gt;
 &lt;ul&gt;
 	&lt;li&gt;None&lt;/li&gt;
 &lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.05.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;
+    Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Improved logging during upgrades.&lt;/li&gt;
+    &lt;li&gt;Increased Visibility of PresenterBase's public properties' Setters to Public.&lt;/li&gt;
+    &lt;li&gt;Added new Default Visibility setting for Profile Properties.&lt;/li&gt;
+    &lt;li&gt;Added ability to suppress auto-injected Module css class.&lt;/li&gt;
+    &lt;li&gt;Added new Settings and Configuration properties to base Presenter class.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Event Log Email Notifications.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with UsePortNumber.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with portals not being created after upgrade.&lt;/li&gt;
+    &lt;li&gt;Fixed portal creation so User profile page is set correctly.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with welcome emails not being sent if system is set to use a double
+        byte langugage.&lt;/li&gt;
+    &lt;li&gt;Fixed broken link to verify language resources.&lt;/li&gt;
+    &lt;li&gt;Fixed issue. with Host updating Site Settings.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with HTML module's database level dependency on the Modules.ModuleTitle
+        field.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Host/Admin being able to disable all languages.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with User Profile Image not showing.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Event Queue causing exception if none present.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with GetTabPaths Stored procedure to handle null culture pages correctly.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with case insensitive fonts in Captcha control.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with exception thrown when creating new languages.&lt;/li&gt;
+    &lt;li&gt;fixed issue where host vendors did not allow selection of an image from a host folder&lt;/li&gt;
+    &lt;li&gt;Ensured that the Language Combo is resorted when changed from Native&lt;--&gt;English&lt;/li&gt;
+    &lt;li&gt;Updated Portal.template.xsd to allow isProtected node.&lt;/li&gt;
+    &lt;li&gt;If a particular file is moving from a Secure Database type folder to a File System
+        folder, the file content ("Content" field in the Files table) is updated and set
+        to "NULL".&lt;/li&gt;
+    &lt;li&gt;Fixed UI of Resource Verifier and Language Editor to be consistent with updated
+        Language Module.&lt;/li&gt;
+    &lt;li&gt;Verify Language Resources to Verify Language Resource Files to match the wireframes
+        for the Content Localization project.&lt;/li&gt;
+    &lt;li&gt;Added support for Media element in styles skin object.&lt;/li&gt;
+    &lt;li&gt;Updated CoreSitemapProvider to use the ModifiedDate of the Tab for the LastModified
+        date for the PageUrl.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;
+    Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;
+    The following modules and providers have been updated in the 5.5.0 packages. Please
+    see the specific project pages for notes on what bugs or enhancements were corrected
+    with each release.
+&lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Modules&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;IFrame 04.04.00&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;
+    Providers&lt;/h4&gt;
+&lt;ul&gt;
+    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
 </root>

@@ -1196,7 +1196,60 @@ Namespace DotNetNuke.Common.Utilities
             End If
         End Sub
 
+
+
 #End Region
+
+        Public Shared Sub DeserializeSettings(ByVal dictionary As IDictionary, ByVal rootNode As XmlNode, ByVal elementName As String)
+            Dim sKey As String
+            Dim sValue As String
+
+            For Each settingNode As XmlNode In rootNode.SelectNodes(elementName)
+                sKey = XmlUtils.GetNodeValue(settingNode, "settingname")
+                sValue = XmlUtils.GetNodeValue(settingNode, "settingvalue")
+
+                dictionary(sKey) = sValue
+            Next
+        End Sub
+
+        ''' <summary>
+        ''' Iterates items in a IDictionary object and generates XML nodes
+        ''' </summary>
+        ''' <param name="dictionary">The IDictionary to iterate</param>
+        ''' <param name="xmlDocument">The XML document the node should be added to</param>
+        ''' <param name="rootNode">The node to append the new nodes to</param>
+        ''' <param name="elementName">The name of the new element created</param>
+        ''' <param name="keyElementName">Element name for Keys</param>
+        ''' <param name="valueElementName">Element name for Value</param>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''		[jlucarino]	09/18/2009	created
+        '''     [kbeigi] updated to IDictionary
+        ''' </history>
+        Public Shared Sub SerializeSettings(ByVal dictionary As IDictionary, ByVal document As XmlDocument, ByVal targetPath As String, ByVal elementName As String)
+            Dim sKey As String
+            Dim sOuterElementName As String = elementName & "s"
+            Dim sInnerElementName As String = elementName
+            Dim nodeSetting, nodeSettings, nodeSettingName, nodeSettingValue As XmlNode
+
+            Dim targetNode As XmlNode = document.SelectSingleNode(targetPath)
+
+            If targetNode IsNot Nothing Then
+                nodeSettings = targetNode.AppendChild(document.CreateElement(sOuterElementName))
+                For Each sKey In dictionary.Keys
+                    nodeSetting = nodeSettings.AppendChild(document.CreateElement(sInnerElementName))
+
+                    nodeSettingName = nodeSetting.AppendChild(document.CreateElement("settingname"))
+                    nodeSettingName.InnerText = sKey
+
+                    nodeSettingValue = nodeSetting.AppendChild(document.CreateElement("settingvalue"))
+                    nodeSettingValue.InnerText = dictionary(sKey).ToString
+                Next
+            Else
+                Throw New ArgumentException("Invalid Target Path")
+            End If
+
+        End Sub
 
 #End Region
 

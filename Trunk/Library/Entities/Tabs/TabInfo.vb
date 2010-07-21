@@ -64,12 +64,21 @@ Namespace DotNetNuke.Entities.Tabs
         Private _PermanentRedirect As Boolean
         Private _SiteMapPriority As Single = 0.5
 
+        Private _UniqueId As Guid
+        Private _VersionGuid As Guid
+        Private _DefaultLanguageGuid As Guid
+        Private _LocalizedVersionGuid As Guid
+
         Private _SuperTabIdSet As Boolean = Null.NullBoolean
 
         Private _TabPermissions As Security.Permissions.TabPermissionCollection
         Private _TabSettings As Hashtable
         Private _AuthorizedRoles As String
         Private _AdministratorRoles As String
+
+        Private _CultureCode As String
+        Private _DefaultLanguageTab As TabInfo
+        Private _LocalizedTabs As Dictionary(Of String, TabInfo)
 
         ' properties loaded in PortalSettings
         Private _SkinPath As String
@@ -105,6 +114,14 @@ Namespace DotNetNuke.Entities.Tabs
             _RefreshInterval = Null.NullInteger
             _PageHeadText = Null.NullString
 
+            'UniqueId, Version Guid, and Localized Version Guid should be initialised to a new value
+            _UniqueId = Guid.NewGuid()
+            _VersionGuid = Guid.NewGuid()
+            _LocalizedVersionGuid = Guid.NewGuid()
+
+            'Default Language Guid should be initialised to a null Guid
+            _DefaultLanguageGuid = Null.NullGuid
+
             _SiteMapPriority = 0.5F
             _IsVisible = True
             _DisableLink = False
@@ -114,7 +131,25 @@ Namespace DotNetNuke.Entities.Tabs
 
 #Region "Public Properties"
 
-#Region "Tab Properties"
+#Region "General Tab Properties"
+
+        <XmlElement("uniqueid")> Public Property UniqueId() As Guid
+            Get
+                Return _UniqueId
+            End Get
+            Set(ByVal value As Guid)
+                _UniqueId = value
+            End Set
+        End Property
+
+        <XmlElement("versionguid")> Public Property VersionGuid() As Guid
+            Get
+                Return _VersionGuid
+            End Get
+            Set(ByVal value As Guid)
+                _VersionGuid = value
+            End Set
+        End Property
 
         <XmlElement("taborder")> Public Property TabOrder() As Integer
             Get
@@ -353,6 +388,12 @@ Namespace DotNetNuke.Entities.Tabs
             End Set
         End Property
 
+        <XmlIgnore()> Public ReadOnly Property ChildModules As Dictionary(Of Integer, ModuleInfo)
+            Get
+                Return New ModuleController().GetTabModules(TabID)
+            End Get
+        End Property
+
 #End Region
 
 #Region "Tab Permission Properties"
@@ -369,6 +410,7 @@ Namespace DotNetNuke.Entities.Tabs
 #End Region
 
 #Region "Tab Setting Properties"
+
         <XmlIgnore()> Public ReadOnly Property TabSettings() As Hashtable
             Get
                 If _TabSettings Is Nothing Then
@@ -383,10 +425,91 @@ Namespace DotNetNuke.Entities.Tabs
                 Return _TabSettings
             End Get
         End Property
+
 #End Region
 
+#Region "Tab Localization Properties"
 
-#Region "Other Properties"
+        <XmlElement("cultureCode")> Public Property CultureCode() As String
+            Get
+                Return _CultureCode
+            End Get
+            Set(ByVal value As String)
+                _CultureCode = value
+            End Set
+        End Property
+
+        <XmlElement("defaultLanguageGuid")> Public Property DefaultLanguageGuid() As Guid
+            Get
+                Return _DefaultLanguageGuid
+            End Get
+            Set(ByVal value As Guid)
+                _DefaultLanguageGuid = value
+            End Set
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property DefaultLanguageTab As TabInfo
+            Get
+                If _DefaultLanguageTab Is Nothing AndAlso (Not DefaultLanguageGuid.Equals(Null.NullGuid)) Then
+                    Dim tabCtrl As New TabController()
+                    _DefaultLanguageTab = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(PortalID) _
+                                                       Where kvp.Value.UniqueId = DefaultLanguageGuid _
+                                                       AndAlso Not kvp.Value.IsDeleted _
+                                                       Select kvp.Value).SingleOrDefault()
+                End If
+                Return _DefaultLanguageTab
+            End Get
+        End Property
+
+        Public ReadOnly Property IsDefaultLanguage As Boolean
+            Get
+                Return (DefaultLanguageGuid = Null.NullGuid)
+            End Get
+        End Property
+
+        Public ReadOnly Property IsNeutralCulture As Boolean
+            Get
+                Return String.IsNullOrEmpty(CultureCode)
+            End Get
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property IsTranslated As Boolean
+            Get
+                Dim _IsTranslated As Boolean = True
+                If DefaultLanguageTab IsNot Nothing Then
+                    'Child language
+                    _IsTranslated = (LocalizedVersionGuid = DefaultLanguageTab.LocalizedVersionGuid)
+                End If
+                Return _IsTranslated
+            End Get
+        End Property
+
+        <XmlIgnore()> Public ReadOnly Property LocalizedTabs() As Dictionary(Of String, TabInfo)
+            Get
+                If _LocalizedTabs Is Nothing Then
+                    Dim tabCtrl As New TabController()
+                    _LocalizedTabs = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(PortalID) _
+                                            Where kvp.Value.DefaultLanguageGuid = UniqueId _
+                                            AndAlso LocaleController.Instance.GetLocale(PortalID, kvp.Value.CultureCode) IsNot Nothing _
+                                            Select kvp.Value). _
+                                        ToDictionary(Function(t) t.CultureCode)
+                End If
+                Return _LocalizedTabs
+            End Get
+        End Property
+
+        <XmlElement("localizedVersionGuid")> Public Property LocalizedVersionGuid() As Guid
+            Get
+                Return _LocalizedVersionGuid
+            End Get
+            Set(ByVal value As Guid)
+                _LocalizedVersionGuid = value
+            End Set
+        End Property
+
+#End Region
+
+#Region "Other Properties (used by Portal Settings)"
 
         <XmlIgnore()> Public Property BreadCrumbs() As ArrayList
             Get
@@ -481,8 +604,6 @@ Namespace DotNetNuke.Entities.Tabs
                 _Panes = Value
             End Set
         End Property
-
-
 
         <XmlIgnore()> Public Property SkinPath() As String
             Get
@@ -583,6 +704,7 @@ Namespace DotNetNuke.Entities.Tabs
             objTabInfo.PageHeadText = Me.PageHeadText
             objTabInfo.IsSecure = Me.IsSecure
             objTabInfo.PermanentRedirect = Me.PermanentRedirect
+
             If Not Me.BreadCrumbs Is Nothing Then
                 objTabInfo.BreadCrumbs = New ArrayList
                 For Each t As TabInfo In Me.BreadCrumbs
@@ -591,6 +713,13 @@ Namespace DotNetNuke.Entities.Tabs
             End If
 
             objTabInfo.ContentItemId = Me.ContentItemId
+
+            'localized properties
+            objTabInfo.UniqueId = Me.UniqueId
+            objTabInfo.VersionGuid = Me.VersionGuid
+            objTabInfo.DefaultLanguageGuid = Me.DefaultLanguageGuid
+            objTabInfo.LocalizedVersionGuid = Me.LocalizedVersionGuid
+            objTabInfo.CultureCode = Me.CultureCode
 
             ' initialize collections which are populated later
             objTabInfo.Panes = New ArrayList
@@ -708,6 +837,12 @@ Namespace DotNetNuke.Entities.Tabs
             'Call the base classes fill method to populate base class proeprties
             MyBase.FillInternal(dr)
 
+            UniqueId = Null.SetNullGuid(dr("UniqueId"))
+            VersionGuid = Null.SetNullGuid(dr("VersionGuid"))
+            DefaultLanguageGuid = Null.SetNullGuid(dr("DefaultLanguageGuid"))
+            LocalizedVersionGuid = Null.SetNullGuid(dr("LocalizedVersionGuid"))
+            CultureCode = Null.SetNullString(dr("CultureCode"))
+
             TabOrder = Null.SetNullInteger(dr("TabOrder"))
             PortalID = Null.SetNullInteger(dr("PortalID"))
             TabName = Null.SetNullString(dr("TabName"))
@@ -759,7 +894,7 @@ Namespace DotNetNuke.Entities.Tabs
 
 #End Region
 
-#Region "Obsolete Methods"
+#Region "Obsolete Members"
 
         <Obsolete("Deprecated in DNN 5.0. The artificial differences between Regular and Admin pages was removed.")> _
         Public ReadOnly Property IsAdminTab() As Boolean
@@ -800,9 +935,7 @@ Namespace DotNetNuke.Entities.Tabs
             End Set
         End Property
 
-
 #End Region
-
 
     End Class
 

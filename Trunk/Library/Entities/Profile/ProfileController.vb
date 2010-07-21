@@ -53,11 +53,11 @@ Namespace DotNetNuke.Entities.Profile
 
 #Region "Private Shared Methods"
 
-        Private Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal types As ListEntryInfoCollection)
+        Private Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal defaultVisibility As UserVisibilityMode, ByVal types As ListEntryInfoCollection)
 
             _orderCounter += 2
 
-            AddDefaultDefinition(PortalId, category, name, strType, length, _orderCounter, types)
+            AddDefaultDefinition(PortalId, category, name, strType, length, _orderCounter, defaultVisibility, types)
         End Sub
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -70,7 +70,7 @@ Namespace DotNetNuke.Entities.Profile
         '''     [cnurse]	02/22/2006	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Friend Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal viewOrder As Integer, ByVal types As ListEntryInfoCollection)
+        Friend Shared Sub AddDefaultDefinition(ByVal PortalId As Integer, ByVal category As String, ByVal name As String, ByVal strType As String, ByVal length As Integer, ByVal viewOrder As Integer, ByVal defaultVisibility As UserVisibilityMode, ByVal types As ListEntryInfoCollection)
             Dim typeInfo As ListEntryInfo = types.Item("DataType:" + strType)
             If typeInfo Is Nothing Then
                 typeInfo = types.Item("DataType:Unknown")
@@ -83,10 +83,10 @@ Namespace DotNetNuke.Entities.Profile
             propertyDefinition.PropertyCategory = category
             propertyDefinition.PropertyName = name
             propertyDefinition.Required = False
+            propertyDefinition.ViewOrder = viewOrder
             propertyDefinition.Visible = True
             propertyDefinition.Length = length
-
-            propertyDefinition.ViewOrder = viewOrder
+            propertyDefinition.DefaultVisibility = defaultVisibility
 
             AddPropertyDefinition(propertyDefinition)
 
@@ -110,10 +110,7 @@ Namespace DotNetNuke.Entities.Profile
                 definition.ClearIsDirty()
 
                 'Initialise the Visibility
-                Dim setting As Object = UserModuleBase.GetSetting(definition.PortalId, "Profile_DefaultVisibility")
-                If Not setting Is Nothing Then
-                    definition.Visibility = CType(setting, UserVisibilityMode)
-                End If
+                definition.Visibility = definition.DefaultVisibility
 
                 'Add to collection
                 definitionsCollection.Add(definition)
@@ -159,6 +156,8 @@ Namespace DotNetNuke.Entities.Profile
                 definition.ValidationExpression = Convert.ToString(Null.SetNull(dr("ValidationExpression"), definition.ValidationExpression))
                 definition.ViewOrder = Convert.ToInt32(Null.SetNull(dr("ViewOrder"), definition.ViewOrder))
                 definition.Visible = Convert.ToBoolean(Null.SetNull(dr("Visible"), definition.Visible))
+                definition.DefaultVisibility = CType(Convert.ToInt32(Null.SetNull(dr("DefaultVisibility"), definition.DefaultVisibility)), UserVisibilityMode)
+                definition.Visibility = definition.DefaultVisibility
             End If
 
             Return definition
@@ -339,26 +338,26 @@ Namespace DotNetNuke.Entities.Profile
             Dim objListController As New ListController
             Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
 
-            AddDefaultDefinition(PortalId, "Name", "Prefix", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Name", "FirstName", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Name", "MiddleName", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Name", "LastName", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Name", "Suffix", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "Unit", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "Street", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "City", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "Region", "Region", 0, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "Country", "Country", 0, dataTypes)
-            AddDefaultDefinition(PortalId, "Address", "PostalCode", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Contact Info", "Telephone", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Contact Info", "Cell", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Contact Info", "Fax", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Contact Info", "Website", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Contact Info", "IM", "Text", 50, dataTypes)
-            AddDefaultDefinition(PortalId, "Preferences", "Photo", "Image", 0, dataTypes)
-            AddDefaultDefinition(PortalId, "Preferences", "Biography", "RichText", 0, dataTypes)
-            AddDefaultDefinition(PortalId, "Preferences", "TimeZone", "TimeZone", 0, dataTypes)
-            AddDefaultDefinition(PortalId, "Preferences", "PreferredLocale", "Locale", 0, dataTypes)
+            AddDefaultDefinition(PortalId, "Name", "Prefix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Name", "FirstName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Name", "MiddleName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Name", "LastName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Name", "Suffix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "Unit", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "Street", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "City", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "Region", "Region", 0, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "Country", "Country", 0, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Address", "PostalCode", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Contact Info", "Telephone", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Contact Info", "Cell", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Contact Info", "Fax", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Contact Info", "Website", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Contact Info", "IM", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes)
+            AddDefaultDefinition(PortalId, "Preferences", "Biography", "RichText", 0, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Preferences", "TimeZone", "TimeZone", 0, UserVisibilityMode.AdminOnly, dataTypes)
+            AddDefaultDefinition(PortalId, "Preferences", "PreferredLocale", "Locale", 0, UserVisibilityMode.AdminOnly, dataTypes)
 
         End Sub
 
@@ -380,7 +379,7 @@ Namespace DotNetNuke.Entities.Profile
             Dim intDefinition As Integer = provider.AddPropertyDefinition(definition.PortalId, definition.ModuleDefId, _
                 definition.DataType, definition.DefaultValue, _
                 definition.PropertyCategory, definition.PropertyName, definition.Required, _
-                definition.ValidationExpression, definition.ViewOrder, definition.Visible, definition.Length, UserController.GetCurrentUserInfo.UserID)
+                definition.ValidationExpression, definition.ViewOrder, definition.Visible, definition.Length, definition.DefaultVisibility, UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.PROFILEPROPERTY_CREATED)
             ClearProfileDefinitionCache(definition.PortalId)
@@ -544,7 +543,7 @@ Namespace DotNetNuke.Entities.Profile
             provider.UpdatePropertyDefinition(definition.PropertyDefinitionId, _
                 definition.DataType, definition.DefaultValue, definition.PropertyCategory, _
                 definition.PropertyName, definition.Required, definition.ValidationExpression, _
-                definition.ViewOrder, definition.Visible, definition.Length, UserController.GetCurrentUserInfo.UserID)
+                definition.ViewOrder, definition.Visible, definition.Length, definition.DefaultVisibility, UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.PROFILEPROPERTY_UPDATED)
             ClearProfileDefinitionCache(definition.PortalId)
