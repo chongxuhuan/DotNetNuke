@@ -1,5 +1,5 @@
 '
-' DotNetNuke - http://www.dotnetnuke.com
+' DotNetNuke® - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
@@ -19,31 +19,19 @@
 '
 
 Imports System
-Imports System.Reflection
-Imports System.Runtime.InteropServices
+Imports System.Configuration
+Imports System.Data
+Imports System.IO
+Imports ICSharpCode.SharpZipLib.Zip
+Imports System.Xml
+Imports System.Text.RegularExpressions
 
-' General Information about an assembly is controlled through the following 
-' set of attributes. Change these attribute values to modify the information
-' associated with an assembly.
+Namespace DotNetNuke.UI.Skins
 
-' Review the values of the assembly attributes
+    Public Enum SkinScope
+        All = 0
+        Host = 1
+        Site = 2
+    End Enum
 
-<Assembly: AssemblyTitle("DotNetNuke")> 
-<Assembly: AssemblyDescription("Open Source Web Application Framework")> 
-<Assembly: AssemblyCompany("DotNetNuke Corporation")> 
-<Assembly: AssemblyProduct("http://www.dotnetnuke.com")> 
-<Assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2009 by DotNetNuke Corporation. All Rights Reserved.")> 
-<Assembly: AssemblyTrademark("DotNetNuke")> 
-<Assembly: CLSCompliant(True)> 
-
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-
-<Assembly: AssemblyVersion("5.5.0.649")> 
+End Namespace

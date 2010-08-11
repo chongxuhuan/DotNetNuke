@@ -72,10 +72,12 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="Telerik.Web.UI">
       <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=0.9.7.2, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -137,9 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\EditMessage.ascx.resx" />
-    <Content Include="App_LocalResources\SharedResources.resx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="App_LocalResources\SharedResources.resx" />
     <Content Include="App_LocalResources\ViewMessage.ascx.resx" />
     <Content Include="license.txt" />
     <Content Include="releaseNotes.txt" />

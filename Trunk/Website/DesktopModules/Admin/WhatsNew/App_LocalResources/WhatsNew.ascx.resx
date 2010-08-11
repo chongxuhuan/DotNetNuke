@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1207,45 +1207,81 @@ corrected with each release. &lt;/p&gt;
     <value>&lt;h3 class="SubSubHead"&gt;
     Major Highlights&lt;/h3&gt;
 &lt;ul&gt;
-    &lt;li&gt;Improved logging during upgrades.&lt;/li&gt;
-    &lt;li&gt;Increased Visibility of PresenterBase's public properties' Setters to Public.&lt;/li&gt;
-    &lt;li&gt;Added new Default Visibility setting for Profile Properties.&lt;/li&gt;
-    &lt;li&gt;Added ability to suppress auto-injected Module css class.&lt;/li&gt;
-    &lt;li&gt;Added new Settings and Configuration properties to base Presenter class.&lt;/li&gt;
-    &lt;li&gt;Fixed issue with Event Log Email Notifications.&lt;/li&gt;
     &lt;li&gt;Fixed issue with UsePortNumber.&lt;/li&gt;
     &lt;li&gt;Fixed issue with portals not being created after upgrade.&lt;/li&gt;
+    &lt;li&gt;fixed issue where incorrect AdministratorRoleId could be added leading to UI incorrectly
+        showing "padlock" icons in permissions grid&lt;/li&gt;
     &lt;li&gt;Fixed portal creation so User profile page is set correctly.&lt;/li&gt;
     &lt;li&gt;Fixed issue with welcome emails not being sent if system is set to use a double
         byte langugage.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with viewing Profile picture.&lt;/li&gt;
     &lt;li&gt;Fixed broken link to verify language resources.&lt;/li&gt;
     &lt;li&gt;Fixed issue. with Host updating Site Settings.&lt;/li&gt;
     &lt;li&gt;Fixed issue with HTML module's database level dependency on the Modules.ModuleTitle
         field.&lt;/li&gt;
     &lt;li&gt;Fixed issue with Host/Admin being able to disable all languages.&lt;/li&gt;
     &lt;li&gt;Fixed issue with User Profile Image not showing.&lt;/li&gt;
-    &lt;li&gt;Fixed issue with Event Queue causing exception if none present.&lt;/li&gt;
+    &lt;li&gt;fixed issue where it was possible to have a disabled portal default language by
+        enabling the applicable values on upgrade.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Tab Order starting at -1 when hard deleted from Recycle Bin.&lt;/li&gt;
+    &lt;li&gt;Improved performance by updating Data Access Block.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with File Manager when adding new folders, no longer have to Click the
+        root folder first.&lt;/li&gt;
+    &lt;li&gt;Fixed parent drop down in edit page settings so that users who have edit rights,
+        bt are not Administrators get None Specified option.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Profile Image Control.&lt;/li&gt;
+    &lt;li&gt;fixed issue where wrong portalid was used if accessing site settings via host-&gt;portals
+        menu. This could display the wrong set of languages for a portal and lead to portal
+        display language being incorrectly updated.&lt;/li&gt;
+    &lt;li&gt;Increased Visibility of PresenterBase's public properties' Setters to Public.&lt;/li&gt;
+    &lt;li&gt;Ensured that the Language Combo is resorted when changed from Native&lt;--&gt;English&lt;/li&gt;
     &lt;li&gt;Fixed issue with GetTabPaths Stored procedure to handle null culture pages correctly.&lt;/li&gt;
     &lt;li&gt;Fixed issue with case insensitive fonts in Captcha control.&lt;/li&gt;
+    &lt;li&gt;For ribbon bar control panel - NewRole icon was already present in package - reference
+        was incorrect.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with Telerik editor file management.&lt;/li&gt;
     &lt;li&gt;Fixed issue with exception thrown when creating new languages.&lt;/li&gt;
-    &lt;li&gt;fixed issue where host vendors did not allow selection of an image from a host folder&lt;/li&gt;
-    &lt;li&gt;Ensured that the Language Combo is resorted when changed from Native&lt;--&gt;English&lt;/li&gt;
+    &lt;li&gt;Fixed issue with upgrades when there are deleted portals.&lt;/li&gt;
+    &lt;li&gt;Fixed issue where host vendors did not allow selection of an image from a host folder.&lt;/li&gt;
     &lt;li&gt;Updated Portal.template.xsd to allow isProtected node.&lt;/li&gt;
     &lt;li&gt;If a particular file is moving from a Secure Database type folder to a File System
         folder, the file content ("Content" field in the Files table) is updated and set
         to "NULL".&lt;/li&gt;
-    &lt;li&gt;Fixed UI of Resource Verifier and Language Editor to be consistent with updated
-        Language Module.&lt;/li&gt;
+    &lt;li&gt;The Edit Profile link in the View Profile should redirect to the Manage Profile
+        page.&lt;/li&gt;
+    &lt;li&gt;fixed issue where language editor page size was not defaulting to 10 as required.&lt;/li&gt;
+    &lt;li&gt;Fixed issue with SendMail removing HTML formatting.&lt;/li&gt;
+    &lt;li&gt;Updated Telerik components to latest release.&lt;/li&gt;&lt;li&gt;Packages now support Unit
+        Testing as well as users who do not want to load the Unit Tests.&lt;/li&gt;
+    &lt;li&gt;Added new Default Visibility setting for Profile Properties.&lt;/li&gt;
+    &lt;li&gt;Added ability to suppress auto-injected Module css class.&lt;/li&gt;
+    &lt;li&gt;Added new Settings and Configuration properties to base Presenter class.&lt;/li&gt;
+    &lt;li&gt;Improved logging during upgrades.&lt;/li&gt;
+    &lt;li&gt;DotNetNuke currently has 2 types of folder permissions in the open core, READ and
+        WRITE. The READ permission actually serves 2 purposes. First, it defines whether
+        a role or user is able to open/view the files located in a folder. Second, it defines
+        whether a role or user is able to browse the list of files within a folder. Sometimes
+        these 2 purposes are not in alignment with one another. For example, it is possible
+        that you may want All Users to be able to open files in folder if they have the
+        full URL; however, you may not want All Users to be able to browse a listing of
+        all the files in the folder ( beecause exposing the full paths to all files may
+        be a security concern ). Windows IIS deals with this issue by including 3 types
+        of permissions for folders: Read, Write, and Browse Directory. DotNetNuke could
+        benefit by having a browse directory permission on folders as well.&lt;/li&gt;
+    &lt;li&gt;Improved GetResourceFile method.&lt;/li&gt;
     &lt;li&gt;Verify Language Resources to Verify Language Resource Files to match the wireframes
         for the Content Localization project.&lt;/li&gt;
+    &lt;li&gt;Fixed UI of Resource Verifier and Language Editor to be consistent with updated
+        Language Module.&lt;/li&gt;
     &lt;li&gt;Added support for Media element in styles skin object.&lt;/li&gt;
-    &lt;li&gt;Updated CoreSitemapProvider to use the ModifiedDate of the Tab for the LastModified
-        date for the PageUrl.&lt;/li&gt;
+    &lt;li&gt;Updated CoreSitemapProvider to use the ModifiedDate of the Tab and Modules on the
+        Tab for the LastModified date for the PageUrl.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 class="SubSubHead"&gt;
     Security Fixes&lt;/h3&gt;
 &lt;ul&gt;
-    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;
+    &lt;li&gt;&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/Securitybulletinno43/tabid/1612/Default.aspx"&gt;
+        Potential resource exhaustion&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;h3 class="SubSubHead"&gt;
     Updated Modules/Providers&lt;/h3&gt;
 &lt;p&gt;
@@ -1256,10 +1292,12 @@ corrected with each release. &lt;/p&gt;
 &lt;h4 class="SubSubHead"&gt;
     Modules&lt;/h4&gt;
 &lt;ul&gt;
-    &lt;li&gt;IFrame 04.04.00&lt;/li&gt;&lt;/ul&gt;
+    &lt;li&gt;Media Module 03.03.00&lt;/li&gt;
+    &lt;li&gt;Events Module 05.01.04&lt;/li&gt;
+    &lt;li&gt;IFrame Module 04.04.00&lt;/li&gt;&lt;/ul&gt;
 &lt;h4 class="SubSubHead"&gt;
     Providers&lt;/h4&gt;
 &lt;ul&gt;
-    &lt;li&gt;* None&lt;/li&gt;&lt;/ul&gt;</value>
+    &lt;li&gt;Solpart Menu Navigation Provider 05.01.00&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
 </root>

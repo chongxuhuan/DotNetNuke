@@ -166,7 +166,8 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
         Protected Function CanView(ByVal viewTabId As Integer, ByVal cultureCode As String) As Boolean
             Dim locale As Locale = LocaleController.Instance.GetLocale(cultureCode)
-            Return TabPermissionController.CanViewPage(New TabController().GetTabByCulture(viewTabId, PortalSettings.PortalId, locale))
+            Dim viewTab As TabInfo = New TabController().GetTabByCulture(viewTabId, PortalSettings.PortalId, locale)
+            Return CanEdit(viewTabId, cultureCode) OrElse (Not viewTab.DisableLink AndAlso TabPermissionController.CanViewPage(New TabController().GetTabByCulture(viewTabId, PortalSettings.PortalId, locale)))
         End Function
 
         Protected Function GetLocalizedModules(ByVal tabId As Integer, ByVal cultureCode As String) As String

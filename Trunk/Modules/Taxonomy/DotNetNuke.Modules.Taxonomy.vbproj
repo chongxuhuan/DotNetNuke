@@ -70,6 +70,7 @@
     <Reference Include="Telerik.Web.UI">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=0.9.7.2, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -215,9 +216,9 @@
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DeployModule;PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
   </Target>
-  <Target Name="DeployModule" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="Views\*.ascx">
       <Output TaskParameter="Include" ItemName="Views" />
     </CreateItem>

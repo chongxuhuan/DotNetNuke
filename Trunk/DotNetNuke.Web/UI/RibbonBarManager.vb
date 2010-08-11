@@ -178,7 +178,7 @@ Namespace DotNetNuke.Web.UI
             End If
 
 
-            Dim usingDefaultLanguage As Boolean = (tab.CultureCode = PortalSettings.Current.DefaultLanguage)
+            Dim usingDefaultLanguage As Boolean = (tab.CultureCode = PortalSettings.Current.DefaultLanguage OrElse tab.CultureCode = Nothing)
             If PortalSettings.Current.ContentLocalizationEnabled Then
 
                 If (Not usingDefaultLanguage) Then

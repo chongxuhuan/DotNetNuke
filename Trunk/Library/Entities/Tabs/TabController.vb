@@ -870,7 +870,7 @@ Namespace DotNetNuke.Entities.Tabs
         End Sub
 
         Public Sub UpdateTab(ByVal updatedTab As TabInfo)
-            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, False)
+            Dim originalTab As TabInfo = GetTab(updatedTab.TabID, updatedTab.PortalID, True)
             Dim updateOrder As Boolean = (originalTab.ParentId <> updatedTab.ParentId)
             Dim levelDelta As Integer = (updatedTab.Level - originalTab.Level)
             Dim updateChildren As Boolean = (originalTab.TabName <> updatedTab.TabName OrElse updateOrder)
@@ -913,8 +913,7 @@ Namespace DotNetNuke.Entities.Tabs
             'Updated Tab Level
             If levelDelta <> 0 Then
                 'Get the descendents
-                Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID)
-
+                Dim descendantTabs As List(Of TabInfo) = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID, originalTab.Level)
                 'Update the Descendents of this tab
                 UpdateDescendantLevel(descendantTabs, levelDelta)
             End If
@@ -1117,31 +1116,6 @@ Namespace DotNetNuke.Entities.Tabs
             Dim portal As PortalInfo = portalCtrl.GetPortal(originalTab.PortalID)
             localizedCopy.TabPermissions.AddRange(originalTab.TabPermissions.Where(Function(p) p.RoleID = portal.AdministratorRoleId))
 
-            'Give default translators for this language and administrators permissions
-            Dim permissionCtrl As New PermissionController
-            Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", locale.Code), originalTab.PortalID, "")
-            Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
-            If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
-                Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
-                For Each translatorRole As String In translatorRoles.Split(";"c)
-                    Dim roleName As String = translatorRole
-                    Dim role As RoleInfo = New RoleController().GetRoleByName(originalTab.PortalID, roleName)
-                    If role IsNot Nothing Then
-                        Dim perm As TabPermissionInfo = localizedCopy.TabPermissions.Where( _
-                                                            Function(tp) tp.RoleID = role.RoleID _
-                                                                AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
-                        If perm Is Nothing Then
-                            'Create Permission
-                            Dim tabTranslatePermission As New TabPermissionInfo(translatePermisison)
-                            tabTranslatePermission.RoleID = role.RoleID
-                            tabTranslatePermission.AllowAccess = True
-
-                            localizedCopy.TabPermissions.Add(tabTranslatePermission)
-                        End If
-                    End If
-                Next
-            End If
-
             'Get the original Tabs Parent
             Dim originalParent As TabInfo = GetTab(originalTab.ParentId, originalTab.PortalID, False)
 
@@ -1173,36 +1147,20 @@ Namespace DotNetNuke.Entities.Tabs
 
         End Sub
 
-        Public Sub LocalizeTabs(ByVal portalid As Integer, ByVal cultureCode As String)
-            Dim tabCtrl As New TabController()
-            Dim locale As Locale = LocaleController.Instance.GetLocale(cultureCode)
+        Public Function GetDefaultCultureTabList(ByVal portalid As Integer) As List(Of TabInfo)
+            Return (From kvp As KeyValuePair(Of Integer, TabInfo) In GetTabsByPortal(portalid) _
+                                                Where Not kvp.Value.TabPath.StartsWith("//Admin") _
+                                                AndAlso kvp.Value.IsDeleted = False _
+                                                Select kvp.Value).ToList()
+        End Function
 
-            If LocaleController.Instance().IsDefaultLanguage(cultureCode) Then
-                'Convert tabs to culture
-                Dim tabList As List(Of TabInfo) = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(portalid) _
-                                                    Where Not kvp.Value.TabPath.StartsWith("//Admin") _
-                                                    AndAlso kvp.Value.IsDeleted = False _
-                                                    Select kvp.Value).ToList()
-
-                tabCtrl.LocalizeTabs(tabList, locale)
-            Else
-                'Create localized copy
-                Dim tabList As List(Of TabInfo) = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(portalid) _
-                                                    Where Not kvp.Value.TabPath.StartsWith("//Admin") _
-                                                    AndAlso kvp.Value.CultureCode = PortalController.GetCurrentPortalSettings.DefaultLanguage _
-                                                    AndAlso kvp.Value.IsDeleted = False _
-                                                    Select kvp.Value).ToList()
-
-                tabCtrl.CreateLocalizedCopy(tabList, locale)
-
-            End If
-        End Sub
-
-        Public Sub LocalizeTabs(ByVal tabs As List(Of TabInfo), ByVal locale As Locale)
-            For Each t As TabInfo In tabs
-                LocalizeTab(t, locale)
-            Next
-        End Sub
+        Public Function GetCultureTabList(ByVal portalid As Integer) As List(Of TabInfo)
+            Return (From kvp As KeyValuePair(Of Integer, TabInfo) In GetTabsByPortal(portalid) _
+                                                Where Not kvp.Value.TabPath.StartsWith("//Admin") _
+                                                AndAlso kvp.Value.CultureCode = PortalController.GetCurrentPortalSettings.DefaultLanguage _
+                                                AndAlso kvp.Value.IsDeleted = False _
+                                                Select kvp.Value).ToList()
+        End Function
 
         Public Sub LocalizeTab(ByVal originalTab As TabInfo, ByVal locale As Locale)
             originalTab.CultureCode = locale.Code
@@ -1488,6 +1446,11 @@ Namespace DotNetNuke.Entities.Tabs
 
             Dim objTab As TabInfo = objController.GetTab(tabId, PortalSettings.PortalId, False)
             If objTab IsNot Nothing Then
+                If objTab.DefaultLanguageTab IsNot Nothing Then
+                    'We are trying to delete the child, so recall this function with the master language's tab id
+                    Return DeleteTab(objTab.DefaultLanguageTab.TabID, PortalSettings, UserId)
+                End If
+
                 'Delete Tab
                 bDeleted = DeleteTab(objTab, PortalSettings, UserId)
 
@@ -1725,6 +1688,12 @@ Namespace DotNetNuke.Entities.Tabs
         Public Shared Sub RestoreTab(ByVal objTab As TabInfo, ByVal PortalSettings As PortalSettings, ByVal UserId As Integer)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             Dim objController As New TabController
+
+            If objTab.DefaultLanguageTab IsNot Nothing Then
+                'We are trying to restore the child, so recall this function with the master language's tab id
+                RestoreTab(objTab.DefaultLanguageTab, PortalSettings, UserId)
+                Exit Sub
+            End If
 
             objTab.IsDeleted = False
             objController.UpdateTab(objTab)

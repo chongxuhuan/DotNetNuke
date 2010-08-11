@@ -76,6 +76,7 @@
     <Compile Include="ComponentModel\ComponentFactoryTests.cs" />
     <Compile Include="Controllers\ConfigurationSettingsComparer.cs" />
     <Compile Include="Controllers\HostControllerTest.cs" />
+    <Compile Include="CBOTest.cs" />
     <Compile Include="TestSetup.cs" />
     <Compile Include="Providers\Caching\DataCacheTests.cs" />
     <Compile Include="Providers\Caching\MoqExtensions.cs">

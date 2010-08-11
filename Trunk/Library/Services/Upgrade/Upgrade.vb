@@ -1310,7 +1310,7 @@ Namespace DotNetNuke.Services.Upgrade
             Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
             ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, UserVisibilityMode.AllUsers, dataTypes)
 
-            Dim strInstallTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", InstallMapPath)
+            Dim strInstallTemplateFile As String = String.Format("{0}Template\UserProfile.page.template", InstallMapPath)
             Dim strHostTemplateFile As String = String.Format("{0}Templates\UserProfile.page.template", HostMapPath)
             If File.Exists(strInstallTemplateFile) Then
                 If Not File.Exists(strHostTemplateFile) Then
@@ -1350,7 +1350,9 @@ Namespace DotNetNuke.Services.Upgrade
                     tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
 
                     'Update SiteSettings to point to the new page
-                    objPortal.RegisterTabId = objPortal.UserTabId
+                    If objPortal.RegisterTabId > Null.NullInteger Then
+                        objPortal.RegisterTabId = objPortal.UserTabId
+                    End If
                     objPortal.UserTabId = newTab.TabID
                     objPortals.UpdatePortalInfo(objPortal)
 
@@ -1421,7 +1423,7 @@ Namespace DotNetNuke.Services.Upgrade
             Dim objPortals As New PortalController
             Dim arrPortals As ArrayList = objPortals.GetPortals
             For Each objPortal As PortalInfo In arrPortals
-                objPortal.RegisterTabId = objPortal.UserTabId
+                'objPortal.RegisterTabId = objPortal.UserTabId
                 objPortals.UpdatePortalInfo(objPortal)
 
                 'Add ContentList to Search Results Page

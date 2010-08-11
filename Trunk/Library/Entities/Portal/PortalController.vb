@@ -409,7 +409,7 @@ Namespace DotNetNuke.Entities.Portals
                     Language = HttpContext.Current.Request.QueryString("language")
                 Else
                     Dim _PortalSettings As PortalSettings = GetCurrentPortalSettings()
-                    If _PortalSettings IsNot Nothing AndAlso _PortalSettings.ActiveTab IsNot Nothing Then
+                    If _PortalSettings IsNot Nothing AndAlso _PortalSettings.ActiveTab IsNot Nothing AndAlso Not String.IsNullOrEmpty(_PortalSettings.ActiveTab.CultureCode) Then
                         Language = _PortalSettings.ActiveTab.CultureCode
                     End If
                 End If

@@ -182,7 +182,7 @@ Namespace DotNetNuke.UI.WebControls
             End If
 
             If Not presentValue.Equals(postedValue) Then
-                Value = postedValue
+                Value = postedValue.ToString(CultureInfo.InvariantCulture)
                 dataChanged = True
             End If
             Return dataChanged

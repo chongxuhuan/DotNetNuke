@@ -4,6 +4,7 @@ Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.Entities.Tabs
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
     ''' <summary>
@@ -37,10 +38,24 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                                 params.LinkUrl = params.LinkUrl.Replace(portalAlias.HTTPAlias, "")
                             Next
                             Dim tabPath As String = params.LinkUrl.Replace("http://", "").Replace("/", "//").Replace(".aspx", "")
-                            link = TabController.GetTabByTabPath(params.PortalId, tabPath)
+                            Dim cultureCode As String = Localization.SystemLocale
+
+                            'Try HumanFriendlyUrl TabPath
+                            link = TabController.GetTabByTabPath(params.PortalId, tabPath, cultureCode)
                             If link = Null.NullInteger Then
-                                link = params.LinkUrl
+                                'Try getting the tabId from the querystring
+                                Dim arrParams As String() = params.LinkUrl.Split("/"c)
+                                For i As Integer = 0 To arrParams.Length - 1
+                                    If arrParams(i).ToLowerInvariant() = "tabid" Then
+                                        link = arrParams(i + 1)
+                                        Exit For
+                                    End If
+                                Next
+                                If link = Null.NullInteger Then
+                                    link = params.LinkUrl
+                                End If
                             End If
+
                         End If
                         params.LinkClickUrl = DotNetNuke.Common.Globals.LinkClick(link, params.TabId, params.ModuleId, True, False, params.PortalId, params.EnableUrlLanguage, params.PortalGuid)
                     End If

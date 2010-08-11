@@ -1210,14 +1210,18 @@ Namespace DotNetNuke.Entities.Modules
                                              newModule.LocalizedVersionGuid, newModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
 
                 If newModule.DesktopModule.BusinessControllerClass <> "" Then
-                    Dim objObject As Object = Framework.Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass)
-                    Dim portableModule As IPortable = TryCast(objObject, IPortable)
-                    If portableModule IsNot Nothing Then
-                        Dim Content As String = portableModule.ExportModule(sourceModule.ModuleID)
-                        If Content <> "" Then
-                            portableModule.ImportModule(newModule.ModuleID, Content, newModule.DesktopModule.Version, UserController.GetCurrentUserInfo.UserID)
+                    Try
+                        Dim objObject As Object = Framework.Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass)
+                        Dim portableModule As IPortable = TryCast(objObject, IPortable)
+                        If portableModule IsNot Nothing Then
+                            Dim Content As String = portableModule.ExportModule(sourceModule.ModuleID)
+                            If Content <> "" Then
+                                portableModule.ImportModule(newModule.ModuleID, Content, newModule.DesktopModule.Version, UserController.GetCurrentUserInfo.UserID)
+                            End If
                         End If
-                    End If
+                    Catch ex As Exception
+
+                    End Try
                 End If
 
                 moduleId = newModule.ModuleID

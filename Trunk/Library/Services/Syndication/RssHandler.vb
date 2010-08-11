@@ -17,7 +17,7 @@ Namespace DotNetNuke.Services.Syndication
             Dim objModules As New ModuleController
             Dim objModule As ModuleInfo
 
-            If Request Is Nothing OrElse Settings Is Nothing OrElse Settings.ActiveTab Is Nothing Then
+            If Request Is Nothing OrElse Settings Is Nothing OrElse Settings.ActiveTab Is Nothing OrElse ModuleId = Null.NullInteger Then
                 Exit Sub
             End If
             Channel("title") = Settings.PortalName

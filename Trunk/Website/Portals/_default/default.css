@@ -193,6 +193,36 @@ div.language-object span.Language.selected img
     font-weight: normal;
 }
 
+/* stlyes used by DNNGrids */
+
+/* eliminate all padding and margins on nested tables and their cells */
+.DnnGridNestedTable
+{
+    /* NOTE: to support IE 6 & 7, still need to use 'cellspacing="0"' in <table> XHTML markup */
+    border-collapse: collapse !important;
+    border: 0px;
+    margin: 0px auto !important;
+    text-align: center;
+}
+
+.DnnGridNestedTable tbody td,
+.DnnGridNestedTable thead th 
+{
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.DnnGridNestedTable tbody td
+{
+    border-left: 0 !important;
+}
+
+.DnnGridNestedTable caption
+{
+    border-bottom: 1px dashed #C3C3C3;
+    margin-bottom: 3px;
+}
+
 /* styles used by TreeMenu Skin Object */
 .TreeMenu_Node
 {

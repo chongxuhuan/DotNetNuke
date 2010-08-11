@@ -22,6 +22,7 @@ Namespace DotNetNuke.Services.Localization
 
     Public Interface ILocaleController
 
+        Function CanDeleteLanguage(ByVal languageId As Integer) As Boolean
         Function GetCultures(ByVal locales As Dictionary(Of String, Locale)) As List(Of CultureInfo)
 
         Function GetCurrentLocale(ByVal PortalId As Integer) As Locale

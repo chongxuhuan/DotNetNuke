@@ -34,6 +34,7 @@ Imports DotNetNuke.Entities.Modules
 Imports Telerik.Web.UI
 Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Services.Personalization
+Imports Telerik.Web.UI.Upload
 
 Namespace DotNetNuke.Modules.Admin.Languages
 
@@ -59,11 +60,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
 #Region "Private Methods"
 
-        Private Function GetLocalizedPageCount(ByVal code As String, ByVal includeNeutral As Boolean) As Integer
-            Dim tabCtrl As New TabController
-            Return tabCtrl.GetTabsByPortal(PortalId).WithCulture(code, includeNeutral).Count
-        End Function
-
         Protected Function IsDefaultLanguage(ByVal code As String) As Boolean
             Dim returnValue As Boolean = False
             If code = PortalDefault Then
@@ -86,18 +82,72 @@ Namespace DotNetNuke.Modules.Admin.Languages
             End If
         End Sub
 
+        Private Sub ProcessLanguage(ByVal pageList As List(Of TabInfo), ByVal locale As Locale, ByVal languageCount As Integer, ByVal totalLanguages As Integer)
+            Dim tabCtrl As New TabController
+            Dim progress As RadProgressContext = RadProgressContext.Current
+
+            progress.Speed = "N/A"
+            progress.PrimaryTotal = totalLanguages
+            progress.PrimaryValue = languageCount
+
+            Dim total As Integer = pageList.Count
+            For i As Integer = 0 To total - 1
+                Dim currentTab As TabInfo = pageList(i)
+                Dim stepNo As Integer = i + 1
+
+                progress.SecondaryTotal = total
+                progress.SecondaryValue = stepNo
+                progress.SecondaryPercent = (stepNo * 100) \ total
+                progress.PrimaryPercent = (((languageCount * total) + stepNo) * 100) \ (total * totalLanguages)
+
+                progress.CurrentOperationText = String.Format(Localization.GetString("ProcessingPage", Me.LocalResourceFile), locale.Code, stepNo, total, currentTab.TabName)
+
+                If Not Response.IsClientConnected Then
+                    'Cancel button was clicked or the browser was closed, so stop processing
+                    Exit For
+                End If
+
+                progress.TimeEstimated = (total - stepNo) * 100
+
+                If locale.Code = PortalDefault Then
+                    tabCtrl.LocalizeTab(currentTab, locale)
+                Else
+                    tabCtrl.CreateLocalizedCopy(currentTab, locale)
+                End If
+
+                'Add a delay for debug testing
+                'Threading.Thread.Sleep(500)
+            Next
+        End Sub
 #End Region
 
 #Region "Event Handlers"
 
         Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
             Me.LocalResourceFile = Services.Localization.Localization.GetResourceFile(Me, "EnableLocalizedContent.ascx")
+
+            'Set AJAX timeout to 1 hr for large sites
+            AJAX.GetScriptManager(Me.Page).AsyncPostBackTimeout = "3600"
+
         End Sub
 
         Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
             _PortalDefault = PortalSettings.DefaultLanguage
             defaultLanguageLabel.Language = PortalSettings.DefaultLanguage
             defaultLanguageLabel.Visible = True
+
+            If Not IsPostBack Then
+                'Do not display SelectedFilesCount progress indicator.
+                pageCreationProgressArea.ProgressIndicators = pageCreationProgressArea.ProgressIndicators And Not ProgressIndicators.SelectedFilesCount
+            End If
+            pageCreationProgressArea.ProgressIndicators = pageCreationProgressArea.ProgressIndicators And Not ProgressIndicators.TimeEstimated
+            pageCreationProgressArea.ProgressIndicators = pageCreationProgressArea.ProgressIndicators And Not ProgressIndicators.TransferSpeed
+
+            pageCreationProgressArea.Localization.Total = Localization.GetString("TotalLanguages", Me.LocalResourceFile)
+            pageCreationProgressArea.Localization.TotalFiles = Localization.GetString("TotalPages", Me.LocalResourceFile)
+            pageCreationProgressArea.Localization.Uploaded = Localization.GetString("TotalProgress", Me.LocalResourceFile)
+            pageCreationProgressArea.Localization.UploadedFiles = Localization.GetString("Progress", Me.LocalResourceFile)
+            pageCreationProgressArea.Localization.CurrentFileName = Localization.GetString("Processing", Me.LocalResourceFile)
         End Sub
 
         Protected Sub cancelButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cancelButton.Click
@@ -106,24 +156,37 @@ Namespace DotNetNuke.Modules.Admin.Languages
         End Sub
 
         Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
-            PortalController.UpdatePortalSetting(PortalId, "ContentLocalizationEnabled", "True")
-
             Dim tabCtrl As New TabController
-            If GetLocalizedPageCount(PortalDefault, False) = 0 Then
-                tabCtrl.LocalizeTabs(PortalId, PortalDefault)
-            End If
+            Dim languageCount As Integer = LocaleController.Instance().GetLocales(PortalSettings.PortalId).Count
+            Dim pageList As List(Of TabInfo) = tabCtrl.GetDefaultCultureTabList(PortalId)
+
+            Dim languageCounter As Integer = 0
+            ProcessLanguage(pageList, _
+                            LocaleController.Instance.GetLocale(PortalDefault), _
+                            languageCounter, _
+                            languageCount)
             PublishLanguage(PortalDefault, True)
 
             ' populate other languages
             For Each locale As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
-                If LocaleController.Instance.IsEnabled(locale.Code, PortalId) _
-                        AndAlso Not IsDefaultLanguage(locale.Code) _
-                        AndAlso GetLocalizedPageCount(locale.Code, False) = 0 Then
-                    tabCtrl.LocalizeTabs(PortalId, locale.Code)
+                If Not IsDefaultLanguage(locale.Code) Then
+                    languageCounter += 1
+                    pageList = tabCtrl.GetCultureTabList(PortalId)
+
+                    'populate pages
+                    ProcessLanguage(pageList, _
+                                    locale, _
+                                    languageCounter, _
+                                    languageCount)
+
+                    'add translator role
+                    Localization.AddTranslatorRole(PortalId, locale)
                 End If
             Next
 
-            'Redirect to refresh page (and skinobjects)
+            PortalController.UpdatePortalSetting(PortalId, "ContentLocalizationEnabled", "True")
+
+            ''Redirect to refresh page (and skinobjects)
             Response.Redirect(NavigateURL(), True)
         End Sub
 

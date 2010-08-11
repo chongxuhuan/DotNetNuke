@@ -454,7 +454,6 @@ Namespace DotNetNuke.Entities.Tabs
                     Dim tabCtrl As New TabController()
                     _DefaultLanguageTab = (From kvp As KeyValuePair(Of Integer, TabInfo) In tabCtrl.GetTabsByPortal(PortalID) _
                                                        Where kvp.Value.UniqueId = DefaultLanguageGuid _
-                                                       AndAlso Not kvp.Value.IsDeleted _
                                                        Select kvp.Value).SingleOrDefault()
                 End If
                 Return _DefaultLanguageTab

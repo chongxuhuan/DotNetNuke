@@ -621,6 +621,17 @@ Namespace DotNetNuke.Common
 
 #Region "GetDomainName"
 
+        Public Function AddPort(ByVal httpAlias As String, ByVal originalUrl As String) As String
+            Dim uri As New Uri(originalUrl)
+            Dim aliasUri As New Uri(httpAlias)
+
+            If uri.Port <> 80 Then
+                httpAlias = AddHTTP(aliasUri.Host & ":" & uri.Port & aliasUri.LocalPath)
+            End If
+
+            Return httpAlias
+        End Function
+
         Public Function GetDomainName(ByVal Request As HttpRequest) As String
             Return GetDomainName(Request, False)
         End Function
@@ -682,11 +693,7 @@ Namespace DotNetNuke.Common
             ' handle port specification
             If ParsePortNumber Then
                 If DomainName.ToString.IndexOf(":") <> -1 Then
-                    Dim usePortNumber As Boolean = (Not Request.IsLocal)
-                    If Not Utilities.Config.GetSetting("UsePortNumber") Is Nothing Then
-                        usePortNumber = Boolean.Parse(Utilities.Config.GetSetting("UsePortNumber"))
-                    End If
-                    If usePortNumber = False Then
+                    If UsePortNumber() = False Then
                         DomainName = DomainName.Replace(":" & Request.Url.Port.ToString(), "")
                     End If
                 End If
@@ -694,6 +701,14 @@ Namespace DotNetNuke.Common
 
             Return DomainName.ToString
 
+        End Function
+
+        Public Function UsePortNumber() As Boolean
+            Dim usePort As Boolean = True
+            If Not Utilities.Config.GetSetting("UsePortNumber") Is Nothing Then
+                usePort = Boolean.Parse(Utilities.Config.GetSetting("UsePortNumber"))
+            End If
+            Return usePort
         End Function
 
 #End Region
@@ -2106,7 +2121,7 @@ Namespace DotNetNuke.Common
                     cultureCode = linkTab.CultureCode
                 End If
                 If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = _portalSettings.CultureCode
+                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
                 End If
             End If
             Return NavigateURL(TabID, IsSuperTab, _portalSettings, Null.NullString, cultureCode, Nothing)
@@ -2171,7 +2186,7 @@ Namespace DotNetNuke.Common
                     cultureCode = linkTab.CultureCode
                 End If
                 If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = settings.CultureCode
+                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
                 End If
             End If
             

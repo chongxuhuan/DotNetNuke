@@ -99,7 +99,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
                 fallBackComboBox.SetLanguage(Language.Fallback)
             End If
 
-            If Language Is Nothing Then
+            If Language Is Nothing OrElse Language.Code = PortalSettings.DefaultLanguage Then
                 translatorsRow.Visible = False
             Else
                 Dim defaultRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", Language.Code), PortalId, "Administrators")
@@ -108,7 +108,6 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                 translatorsRow.Visible = True
             End If
-            localizationEnabled.Visible = Not PortalSettings.ContentLocalizationEnabled
 
             Dim isEnabled As Boolean = Null.NullBoolean
             If Not IsAddMode Then
@@ -118,6 +117,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
             cmdDelete.Visible = (Me.UserInfo.IsSuperUser AndAlso Not IsAddMode AndAlso _
                                  Not isEnabled AndAlso Not Language.IsPublished AndAlso _
+                                 LocaleController.Instance().CanDeleteLanguage(Language.LanguageId) AndAlso _
                                  Language.Code.ToLowerInvariant <> "en-us")
         End Sub
 
@@ -189,7 +189,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
                 Dim tabs As TabCollection = tabCtrl.GetTabsByPortal(PortalId).WithCulture(Language.Code, False)
                 If PortalSettings.ContentLocalizationEnabled AndAlso tabs.Count = 0 Then
                     'Create Localized Pages
-                    tabCtrl.LocalizeTabs(PortalId, Language.Code)
+                    For Each t As TabInfo In tabCtrl.GetCultureTabList(PortalId)
+                        tabCtrl.CreateLocalizedCopy(t, Language)
+                    Next
                 End If
 
                 Response.Redirect(NavigateURL(), True)

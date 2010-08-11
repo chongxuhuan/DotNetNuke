@@ -117,8 +117,34 @@ Namespace DotNetNuke.Entities.Tabs
             Return PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", PortalId, False)
         End Function
 
-#End Region
+        Private Function GetDescendants(ByVal tabId As Integer, ByVal tabLevel As Integer) As List(Of TabInfo)
+            Dim descendantTabs As New List(Of TabInfo)
+            For index As Integer = 0 To list.Count - 1
+                Dim parentTab As TabInfo = list(index)
+                If parentTab.TabID = tabId Then
+                    'Found Parent - so add descendents
+                    For descendantIndex As Integer = index + 1 To list.Count - 1
+                        Dim descendantTab As TabInfo = list(descendantIndex)
 
+                        If (tabLevel = Null.NullInteger) Then
+                            tabLevel = parentTab.Level
+                        End If
+
+                        If descendantTab.Level > tabLevel Then
+                            'Descendant so add to collection
+                            descendantTabs.Add(descendantTab)
+                        Else
+                            Exit For
+                        End If
+                    Next
+                    Exit For
+                End If
+            Next
+            Return descendantTabs
+        End Function
+
+
+#End Region
 
 #Region "Public Methods"
 
@@ -162,24 +188,11 @@ Namespace DotNetNuke.Entities.Tabs
         End Function
 
         Public Function DescendentsOf(ByVal tabId As Integer) As List(Of TabInfo)
-            Dim descendantTabs As New List(Of TabInfo)
-            For index As Integer = 0 To list.Count - 1
-                Dim parentTab As TabInfo = list(index)
-                If parentTab.TabID = tabId Then
-                    'Found Parent - so add descendents
-                    For descendantIndex As Integer = index + 1 To list.Count - 1
-                        Dim descendantTab As TabInfo = list(descendantIndex)
-                        If descendantTab.Level > parentTab.Level Then
-                            'Descendant so add to collection
-                            descendantTabs.Add(descendantTab)
-                        Else
-                            Exit For
-                        End If
-                    Next
-                    Exit For
-                End If
-            Next
-            Return descendantTabs
+            Return GetDescendants(tabId, Null.NullInteger)
+        End Function
+
+        Public Function DescendentsOf(ByVal tabId As Integer, ByVal originalTabLevel As Integer) As List(Of TabInfo)
+            Return GetDescendants(tabId, originalTabLevel)
         End Function
 
         Public Function ToArrayList() As ArrayList
@@ -196,7 +209,7 @@ Namespace DotNetNuke.Entities.Tabs
             If IsLocalizationEnabled() Then
                 If String.IsNullOrEmpty(cultureCode) Then
                     'No culture passed in - so return all tabs
-                    collection = New TabCollection(list)
+                    collection = Me
                 ElseIf Not localizedTabs.TryGetValue(cultureCode.ToLowerInvariant(), tabs) Then
                     collection = New TabCollection(New List(Of TabInfo))
                 Else
@@ -210,7 +223,8 @@ Namespace DotNetNuke.Entities.Tabs
                     End If
                 End If
             Else
-                collection = New TabCollection(list)
+                'Return all tabs
+                collection = Me
             End If
             Return collection
         End Function

@@ -358,6 +358,7 @@
     <Compile Include="UI\Modules\ProfileModuleUserControlBase.vb">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="UI\Skins\SkinScope.vb" />
     <Compile Include="UI\Skins\EventListeners\SkinEventType.vb" />
     <Compile Include="UI\Skins\EventListeners\SkinEventArgs.vb" />
     <Compile Include="UI\Skins\EventListeners\SkinEventHandler.vb" />
@@ -1181,9 +1182,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild" DependsOnTargets="CopyExternalsToWebsiteBin">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>
-  <Target Name="CopyExternalsToWebsiteBin">
+  <Target Name="DebugProject">
     <Copy SourceFiles="Components\SharpZipLib\bin\SharpZipLib.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="..\Website\bin\" />

@@ -270,6 +270,7 @@ Namespace DotNetNuke.Modules.Admin.Host
             txtHelpURL.Text = Entities.Host.Host.HelpURL
             chkEnableHelp.Checked = Entities.Host.Host.EnableModuleOnLineHelp
             chkAutoSync.Checked = Entities.Host.Host.EnableFileAutoSync
+            chkEnableContentLocalization.Checked = Entities.Host.Host.EnableContentLocalization
 
             chkWebFarm.Checked = CachingProvider.Instance().IsWebFarm
 
@@ -613,6 +614,7 @@ Namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("EnableModuleOnLineHelp", Convert.ToString(IIf(chkEnableHelp.Checked, "Y", "N")), False)
                     HostController.Instance.Update("EnableFileAutoSync", Convert.ToString(IIf(chkAutoSync.Checked, "Y", "N")), False)
                     HostController.Instance.Update("HelpURL", txtHelpURL.Text, False)
+                    HostController.Instance.Update("EnableContentLocalization", Convert.ToString(IIf(chkEnableContentLocalization.Checked, "Y", "N")), False)
 
                     Dim OriginalLogBuffer As Boolean
                     OriginalLogBuffer = CType(ViewState.Item("SelectedLogBufferEnabled"), Boolean)

@@ -20,6 +20,7 @@
 
 Imports DotNetNuke.ComponentModel
 Imports DotNetNuke.Entities.Tabs
+Imports DotNetNuke.Services.Installer.Packages
 
 Namespace DotNetNuke.Services.Localization
 
@@ -43,6 +44,18 @@ Namespace DotNetNuke.Services.Localization
 #End Region
 
 #Region "Public Methods"
+
+        Public Function CanDeleteLanguage(ByVal languageId As Integer) As Boolean Implements ILocaleController.CanDeleteLanguage
+            Dim canDelete As Boolean = True
+            For Each package As PackageInfo In PackageController.GetPackagesByType("CoreLanguagePack")
+                Dim languagePack As LanguagePackInfo = LanguagePackController.GetLanguagePackByPackage(package.PackageID)
+                If languagePack.LanguageID = languageId Then
+                    canDelete = False
+                    Exit For
+                End If
+            Next
+            Return canDelete
+        End Function
 
         Public Function GetCultures(ByVal locales As Dictionary(Of String, Locale)) As List(Of CultureInfo) Implements ILocaleController.GetCultures
             Dim cultures As New List(Of CultureInfo)

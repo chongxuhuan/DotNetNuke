@@ -268,7 +268,10 @@ Namespace DotNetNuke.UI.Skins.Controls
                     Dim locales As  New Dictionary(Of String, Locale)
                     For Each loc As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
                         Dim defaultRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", loc.Code), PortalSettings.PortalId, "Administrators")
-                        If PortalSecurity.IsInRoles(PortalSettings.AdministratorRoleName) OrElse loc.IsPublished OrElse PortalSecurity.IsInRoles(defaultRoles) Then
+                        If (Not PortalSettings.ContentLocalizationEnabled) OrElse _
+                            PortalSecurity.IsInRoles(PortalSettings.AdministratorRoleName) OrElse _
+                            loc.IsPublished OrElse _
+                            PortalSecurity.IsInRoles(defaultRoles) Then
                             locales.Add(loc.Code, loc)
                         End If
                     Next

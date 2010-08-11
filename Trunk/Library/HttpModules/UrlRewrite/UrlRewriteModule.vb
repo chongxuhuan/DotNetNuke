@@ -165,7 +165,12 @@ Namespace DotNetNuke.HttpModules
 
                 ' Try to rewrite by TabPath
                 Dim domain As String = ""
-                Dim url As String = app.Request.Url.GetComponents(CType(UriComponents.Host + UriComponents.Port + UriComponents.Path, UriComponents), UriFormat.Unescaped) 'app.Request.Url.Host & app.Request.Url.LocalPath
+                 Dim url As String
+                If UsePortNumber() AndAlso app.Request.Url.Port <> 80 Then
+                    url = app.Request.Url.Host + ":" + app.Request.Url.Port.ToString + app.Request.Url.LocalPath
+                Else
+                    url = app.Request.Url.Host + app.Request.Url.LocalPath
+                End If
 
                 Dim splitUrl() As String = url.Split(Convert.ToChar("/"))
 
@@ -379,13 +384,17 @@ Namespace DotNetNuke.HttpModules
                 ' alias parameter can be used to switch portals
                 If Not (Request.QueryString("alias") Is Nothing) Then
                     ' check if the alias is valid
-                    If Not PortalAliasController.GetPortalAliasInfo(Request.QueryString("alias")) Is Nothing Then
+                    Dim childAlias As String = Request.QueryString("alias")
+                    If Not UsePortNumber() Then
+                        childAlias = childAlias.Replace(":" & Request.Url.Port.ToString(), "")
+                    End If
+                    If Not PortalAliasController.GetPortalAliasInfo(childAlias) Is Nothing Then
                         ' check if the domain name contains the alias
-                        If InStr(1, Request.QueryString("alias"), DomainName, CompareMethod.Text) = 0 Then
+                        If InStr(1, childAlias, DomainName, CompareMethod.Text) = 0 Then
                             ' redirect to the url defined in the alias
-                            Response.Redirect(GetPortalDomainName(Request.QueryString("alias"), Request), True)
+                            Response.Redirect(GetPortalDomainName(childAlias, Request), True)
                         Else ' the alias is the same as the current domain
-                            PortalAlias = Request.QueryString("alias")
+                            PortalAlias = childAlias
                         End If
                     End If
                 End If

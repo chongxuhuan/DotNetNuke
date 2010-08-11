@@ -88,26 +88,32 @@ Namespace DotNetNuke.Common.Utilities
 
             objFile = New DotNetNuke.Services.FileSystem.FileInfo(PortalId, sourceFileName, extension, CType(length, Integer), Null.NullInteger, Null.NullInteger, contentType, folderName, folder.FolderID, folder.StorageLocation, clearCache)
 
-            'Calcuate hash value
+            'Calculate hash/save file to db/save file to filesys
             Select Case folder.StorageLocation
-                Case FolderController.StorageLocationTypes.InsecureFileSystem
-                    If File.Exists(fileName) Then objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName))
-                Case FolderController.StorageLocationTypes.SecureFileSystem
-                    If File.Exists(fileName + glbProtectedExtension) Then objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName + glbProtectedExtension))
+                Case FolderController.StorageLocationTypes.InsecureFileSystem, FolderController.StorageLocationTypes.SecureFileSystem
+                    'Save file to File Storage
+                    If folder.StorageLocation <> FolderController.StorageLocationTypes.InsecureFileSystem Or synchronize = False Then
+                        WriteStream(intFileID, inStream, fileName, folder.StorageLocation, closeInputStream)
+                    End If
+
+                    If folder.StorageLocation = FolderController.StorageLocationTypes.InsecureFileSystem AndAlso File.Exists(fileName) Then
+                        objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName))
+                    ElseIf folder.StorageLocation = FolderController.StorageLocationTypes.SecureFileSystem AndAlso File.Exists(fileName + glbProtectedExtension) Then
+                        objFile.SHA1Hash = GetHash(File.ReadAllBytes(fileName + glbProtectedExtension))
+                    End If
+                    'Add file to Database
+                    intFileID = objFileController.AddFile(objFile)
+
                 Case FolderController.StorageLocationTypes.DatabaseSecure
                     Dim bytes As Byte() = New Byte(Convert.ToInt32(inStream.Length)) {}
                     inStream.Read(bytes, 0, Convert.ToInt32(inStream.Length))
                     inStream.Position = 0
                     objFile.SHA1Hash = GetHash(bytes)
+                    'Add file to Database
+                    intFileID = objFileController.AddFile(objFile)
+                    'Save file to File Storage
+                    If synchronize = False Then WriteStream(intFileID, inStream, fileName, folder.StorageLocation, closeInputStream)                    
             End Select
-
-            'Add file to Database
-            intFileID = objFileController.AddFile(objFile)
-
-            'Save file to File Storage
-            If folder.StorageLocation <> FolderController.StorageLocationTypes.InsecureFileSystem Or synchronize = False Then
-                WriteStream(intFileID, inStream, fileName, folder.StorageLocation, closeInputStream)
-            End If
 
             'Update the FileData
             retValue += UpdateFileData(intFileID, folder.FolderID, PortalId, sourceFileName, extension, contentType, length, folderName, objFile.StorageLocation, objFile.IsCached, objFile.SHA1Hash)
@@ -348,7 +354,7 @@ Namespace DotNetNuke.Common.Utilities
 
                 Dim sourceFile As DotNetNuke.Services.FileSystem.FileInfo
                 Dim file As DotNetNuke.Services.FileSystem.FileInfo
-                
+
                 If Not sourceFolder Is Nothing Then
                     sourceFile = objFileController.GetFile(sourceFileName, PortalId, sourceFolder.FolderID)
                     file = objFileController.GetFile(sourceFileName, PortalId, sourceFolder.FolderID)
@@ -462,7 +468,17 @@ Namespace DotNetNuke.Common.Utilities
                     Try
                         file = objFileController.GetFileById(fileID, PortalId)
                         objFile = file
-                        If System.IO.File.Exists(objFile.PhysicalPath) Then objFile.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(objFile.PhysicalPath))
+
+                        'Calcuate hash value
+                        Select Case file.StorageLocation
+                            Case FolderController.StorageLocationTypes.InsecureFileSystem
+                                If System.IO.File.Exists(objFile.PhysicalPath) Then objFile.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(objFile.PhysicalPath))
+                            Case FolderController.StorageLocationTypes.SecureFileSystem
+                                If System.IO.File.Exists(objFile.PhysicalPath + glbProtectedExtension) Then objFile.SHA1Hash = GetHash(System.IO.File.ReadAllBytes(objFile.PhysicalPath + glbProtectedExtension))
+                            Case FolderController.StorageLocationTypes.DatabaseSecure
+                                'Do nothing -- uneccessary to calc hash for non physical file.
+                        End Select
+
                     Catch
                         ' error loading image file
                         objFile.ContentType = "application/octet-stream"
@@ -471,7 +487,7 @@ Namespace DotNetNuke.Common.Utilities
                         objFileController.UpdateFile(objFile)
                     End Try
                 End If
-                
+
             Catch ex As Exception
                 retvalue = ex.Message
             End Try
@@ -803,7 +819,7 @@ Namespace DotNetNuke.Common.Utilities
                     End Try
                 Else
                     If System.IO.File.Exists(strFile) Then hash = GetHash(System.IO.File.ReadAllBytes(strFile))
-                    If file.Size <> fInfo.Length OrElse file.SHA1Hash <> hash Then
+                    If file.SHA1Hash <> hash OrElse file.Size <> fInfo.Length Then
                         Dim extension As String = Path.GetExtension(strFile).Replace(".", "")
                         UpdateFileData(file.FileId, folder.FolderID, PortalId, sourceFileName, extension, GetContentType(extension), fInfo.Length, sourceFolderName, file.StorageLocation, file.IsCached, hash)
                     End If
@@ -1863,15 +1879,35 @@ Namespace DotNetNuke.Common.Utilities
 
                 If Not folder Is Nothing Then
                     If syncFiles = True And (isInSync = False Or forceFolderSync = True) Then
-                        'Get Physical Files in this Folder and sync them
-                        Dim strFiles As String() = Directory.GetFiles(physicalPath)
-                        For Each strFileName As String In strFiles
-                            'Add the File if it doesn't exist, Update it if the file size has changed
-                            AddFile(strFileName, PortalId, False, folder)
-                        Next
 
-                        'Removed orphaned files
-                        RemoveOrphanedFiles(folder, PortalId)
+                        Select Case folder.StorageLocation
+                            Case FolderController.StorageLocationTypes.InsecureFileSystem, FolderController.StorageLocationTypes.SecureFileSystem
+                                'Get Physical Files in this Folder and sync them
+                                Dim strFiles As String() = Directory.GetFiles(physicalPath)
+                                For Each strFileName As String In strFiles
+                                    'Add the File if it doesn't exist, Update it if the file size has changed
+                                    AddFile(strFileName, PortalId, False, folder)
+                                Next
+                                'Removed orphaned files
+                                RemoveOrphanedFiles(folder, PortalId)
+
+                            Case FolderController.StorageLocationTypes.DatabaseSecure
+                                'Get DB Files in this Folder and sync them
+                                For Each finfo As DotNetNuke.Services.FileSystem.FileInfo In GetFilesByFolder(PortalId, folder.FolderID)
+                                    'Add the File if it doesn't exist, Update it if the file size has changed
+                                    Dim fctrl As New FileController
+                                    Dim memStream As New MemoryStream()
+                                    Dim bytes() As Byte = fctrl.GetFileContent(finfo.FileId, PortalId)
+
+                                    If bytes IsNot Nothing AndAlso bytes.Length > 0 Then
+                                        memStream.Write(bytes, 0, bytes.Length)
+                                        memStream.Flush()
+                                        memStream.Position = 0
+                                    End If
+
+                                    AddFile(PortalId, memStream, finfo.PhysicalPath, finfo.ContentType, finfo.Size, folder.FolderPath, True, True)
+                                Next
+                        End Select
 
                         'Update the folder with the LastWriteTime of the directory
                         folder.LastUpdated = dirInfo.LastWriteTime

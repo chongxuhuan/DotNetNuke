@@ -141,4 +141,22 @@
   <data name="Update.Text" xml:space="preserve">
     <value>Enable Localized Content</value>
   </data>
+  <data name="Processing.Text" xml:space="preserve">
+    <value>Processing:</value>
+  </data>
+  <data name="ProcessingPage.Text" xml:space="preserve">
+    <value>{0}: Page {1} of {2} - {3}</value>
+  </data>
+  <data name="Progress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="TotalProgress.Text" xml:space="preserve">
+    <value>Total Progress</value>
+  </data>
+  <data name="TotalLanguages.Text" xml:space="preserve">
+    <value>Total Languages</value>
+  </data>
+  <data name="TotalPages.Text" xml:space="preserve">
+    <value>Total Pages</value>
+  </data>
 </root>

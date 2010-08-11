@@ -98,11 +98,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                     hypPrivacy.Text = Services.Localization.Localization.GetString("Privacy", Services.Localization.Localization.GetResourceFile(Me, MyFileName))
                 End If
 
-                If PortalSettings.HomeTabId <> -1 Then
-                    hypPrivacy.NavigateUrl = NavigateURL(PortalSettings.HomeTabId, "Privacy")
-                Else
-                    hypPrivacy.NavigateUrl = NavigateURL("Privacy")
-                End If
+                hypPrivacy.NavigateUrl = NavigateURL(PortalSettings.ActiveTab.TabID, "Privacy")
 
                 hypPrivacy.Attributes("rel") = "nofollow"
 

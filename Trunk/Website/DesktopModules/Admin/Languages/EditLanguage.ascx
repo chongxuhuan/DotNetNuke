@@ -27,9 +27,6 @@
     <tr style="height:10px">
         <td colspan="2"></td>
     </tr>
-    <tr id="localizationEnabled" runat="server">
-        <td class="SubHead" colspan="2" style="vertical-align:top;width:200px"><asp:Label ID="localizationNotEnabledLabel" runat="server" CssClass="NormalRed" resourcekey="localizationNotEnabled" /></td>
-    </tr>
 </table>
 <p style="text-align:center">
     <dnn:commandbutton id="cmdUpdate" runat="server" class="CommandButton" ImageUrl="~/images/save.gif"  ResourceKey="cmdUpdate" />

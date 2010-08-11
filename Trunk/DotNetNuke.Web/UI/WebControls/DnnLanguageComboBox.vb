@@ -47,7 +47,7 @@ Namespace DotNetNuke.Web.UI.WebControls
         Private _NativeCombo As DnnComboBox
         Private _EnglishCombo As DnnComboBox
 
-
+        Private _OriginalValue As String
 
 #End Region
 
@@ -183,7 +183,6 @@ Namespace DotNetNuke.Web.UI.WebControls
                 _EnglishCombo.DataSource = cultures.OrderBy(Function(c As CultureInfo) c.EnglishName)
             End If
 
-
             _NativeCombo.DataBind()
             _EnglishCombo.DataBind()
 
@@ -191,6 +190,7 @@ Namespace DotNetNuke.Web.UI.WebControls
                 _EnglishCombo.Items.Insert(0, New RadComboBoxItem(Localization.GetString("System_Default", Localization.SharedResourceFile), "None"))
                 _NativeCombo.Items.Insert(0, New RadComboBoxItem(Localization.GetString("System_Default", Localization.SharedResourceFile), "None"))
             End If
+
         End Sub
 
 #End Region
@@ -218,7 +218,15 @@ Namespace DotNetNuke.Web.UI.WebControls
             _ModeRadioButtonList.Items.Add(New ListItem(Localization.GetString("EnglishName", Localization.GlobalResourceFile), "ENGLISH"))
             AddHandler _ModeRadioButtonList.SelectedIndexChanged, AddressOf Mode_Changed
             Controls.Add(_ModeRadioButtonList)
+
         End Sub
+
+        Protected Overrides Sub OnLoad(ByVal e As System.EventArgs)
+            MyBase.OnLoad(e)
+
+            _OriginalValue = SelectedValue
+        End Sub
+
 
         Protected Overridable Sub OnItemChanged()
             RaiseEvent ItemChanged(Me, New EventArgs)
@@ -229,6 +237,16 @@ Namespace DotNetNuke.Web.UI.WebControls
         End Sub
 
         Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+
+            If DisplayMode.ToUpperInvariant = "ENGLISH" Then
+                If Not _EnglishCombo.Items.FindItemByValue(_OriginalValue) Is Nothing Then
+                    _EnglishCombo.Items.FindItemByValue(_OriginalValue).Selected = True
+                End If
+            Else
+                If Not _NativeCombo.Items.FindItemByValue(_OriginalValue) Is Nothing Then
+                    _NativeCombo.Items.FindItemByValue(_OriginalValue).Selected = True
+                End If
+            End If
 
             _ModeRadioButtonList.Items.FindByValue(DisplayMode).Selected = True
 

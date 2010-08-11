@@ -276,25 +276,25 @@ Namespace DotNetNuke.Common.Utilities
         ''' <summary>
         ''' HydrateObject uses reflection to hydrate an object.
         ''' </summary>
-        ''' <param name="objObject">The object to Hydrate</param>
+        ''' <param name="hydratedObject">The object to Hydrate</param>
         ''' <param name="dr">The IDataReader that contains the columns of data for the object</param>
         ''' <history>
         ''' 	[cnurse]	11/29/2007	Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Shared Sub HydrateObject(ByVal objObject As Object, ByVal dr As IDataReader)
+        Private Shared Sub HydrateObject(ByVal hydratedObject As Object, ByVal dr As IDataReader)
             Dim objPropertyInfo As PropertyInfo = Nothing
-            Dim objPropertyType As Type = Nothing
-            Dim objDataValue As Object
+            Dim propType As Type = Nothing
+            Dim coloumnValue As Object
             Dim objDataType As Type
             Dim intIndex As Integer
 
             ' get cached object mapping for type
-            Dim objMappingInfo As ObjectMappingInfo = GetObjectMapping(objObject.GetType)
+            Dim objMappingInfo As ObjectMappingInfo = GetObjectMapping(hydratedObject.GetType)
 
-            If TypeOf objObject Is DotNetNuke.Entities.BaseEntityInfo AndAlso Not TypeOf objObject Is DotNetNuke.Services.Scheduling.ScheduleItem Then
+            If TypeOf hydratedObject Is DotNetNuke.Entities.BaseEntityInfo AndAlso Not TypeOf hydratedObject Is DotNetNuke.Services.Scheduling.ScheduleItem Then
                 'Call the base classes fill method to populate base class properties
-                CType(objObject, DotNetNuke.Entities.BaseEntityInfo).FillBaseProperties(dr)
+                CType(hydratedObject, DotNetNuke.Entities.BaseEntityInfo).FillBaseProperties(dr)
             End If
 
             ' fill object with values from datareader
@@ -302,43 +302,43 @@ Namespace DotNetNuke.Common.Utilities
                 'If the Column matches a Property in the Object Map's PropertyInfo Dictionary
                 If objMappingInfo.Properties.TryGetValue(dr.GetName(intIndex).ToUpperInvariant, objPropertyInfo) Then
                     'Get its type
-                    objPropertyType = objPropertyInfo.PropertyType
+                    propType = objPropertyInfo.PropertyType
 
                     'If property can be set
                     If objPropertyInfo.CanWrite Then
                         'Get the Data Value from the data reader
-                        objDataValue = dr.GetValue(intIndex)
+                        coloumnValue = dr.GetValue(intIndex)
 
                         'Get the Data Value's type
-                        objDataType = objDataValue.GetType
+                        objDataType = coloumnValue.GetType
 
-                        If IsDBNull(objDataValue) Then
+                        If IsDBNull(coloumnValue) Then
                             ' set property value to Null
-                            objPropertyInfo.SetValue(objObject, Null.SetNull(objPropertyInfo), Nothing)
-                        ElseIf objPropertyType.Equals(objDataType) Then
+                            objPropertyInfo.SetValue(hydratedObject, Null.SetNull(objPropertyInfo), Nothing)
+                        ElseIf propType.Equals(objDataType) Then
                             'Property and data objects are the same type
-                            objPropertyInfo.SetValue(objObject, objDataValue, Nothing)
+                            objPropertyInfo.SetValue(hydratedObject, coloumnValue, Nothing)
                         Else
                             ' business object info class member data type does not match datareader member data type
 
                             'need to handle enumeration conversions differently than other base types
-                            If objPropertyType.BaseType.Equals(GetType(System.Enum)) Then
+                            If propType.BaseType.Equals(GetType(System.Enum)) Then
                                 ' check if value is numeric and if not convert to integer ( supports databases like Oracle )
-                                If IsNumeric(objDataValue) Then
-                                    objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, Convert.ToInt32(objDataValue)), Nothing)
+                                If IsNumeric(coloumnValue) Then
+                                    objPropertyInfo.SetValue(hydratedObject, System.Enum.ToObject(propType, Convert.ToInt32(coloumnValue)), Nothing)
                                 Else
-                                    objPropertyInfo.SetValue(objObject, System.Enum.ToObject(objPropertyType, objDataValue), Nothing)
+                                    objPropertyInfo.SetValue(hydratedObject, System.Enum.ToObject(propType, coloumnValue), Nothing)
                                 End If
-                            ElseIf objPropertyType Is GetType(Guid) Then
+                            ElseIf propType Is GetType(Guid) Then
                                 ' guid is not a datatype common across all databases ( ie. Oracle )
-                                objPropertyInfo.SetValue(objObject, Convert.ChangeType(New Guid(objDataValue.ToString()), objPropertyType), Nothing)
-                            ElseIf objPropertyType Is GetType(System.Version) Then
-                                objPropertyInfo.SetValue(objObject, New Version(objDataValue.ToString()), Nothing)
-                            ElseIf (objPropertyType Is objDataType) Then
-                                ' try explicit conversion
-                                objPropertyInfo.SetValue(objObject, objDataValue, Nothing)
+                                objPropertyInfo.SetValue(hydratedObject, Convert.ChangeType(New Guid(coloumnValue.ToString()), propType), Nothing)
+                            ElseIf propType Is GetType(System.Version) Then
+                                objPropertyInfo.SetValue(hydratedObject, New Version(coloumnValue.ToString()), Nothing)
+                            ElseIf (TypeOf coloumnValue Is IConvertible) Then
+                                objPropertyInfo.SetValue(hydratedObject, Convert.ChangeType(coloumnValue, propType), Nothing)
                             Else
-                                objPropertyInfo.SetValue(objObject, Convert.ChangeType(objDataValue, objPropertyType), Nothing)
+                                ' try explicit conversion
+                                objPropertyInfo.SetValue(hydratedObject, coloumnValue, Nothing)
                             End If
 
                         End If

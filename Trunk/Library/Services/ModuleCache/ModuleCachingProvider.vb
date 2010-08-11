@@ -57,10 +57,30 @@ Namespace DotNetNuke.Services.ModuleCache
         Public MustOverride Function GenerateCacheKey(ByVal tabModuleId As Integer, ByVal varyBy As SortedDictionary(Of String, String)) As String
         Public MustOverride Function GetItemCount(ByVal tabModuleId As Integer) As Integer
         Public MustOverride Function GetModule(ByVal tabModuleId As Integer, ByVal cacheKey As String) As Byte()
-        Public MustOverride Sub PurgeCache(ByVal portalId As Integer)
-        Public MustOverride Sub PurgeExpiredItems(ByVal portalId As Integer)
         Public MustOverride Sub Remove(ByVal tabModuleId As Integer)
         Public MustOverride Overloads Sub SetModule(ByVal tabModuleId As Integer, ByVal cacheKey As String, ByVal duration As TimeSpan, ByVal moduleOutput As Byte())
+
+#End Region
+
+#Region "Virtual Methods"
+
+        Public Overridable Sub PurgeCache(ByVal portalId As Integer)
+        End Sub
+
+        Public Overridable Sub PurgeExpiredItems(ByVal portalId As Integer)
+        End Sub
+
+#End Region
+
+#Region "Obsolete Methods"
+
+        <Obsolete("This method was deprecated in 5.2.1")> _
+        Public Overridable Sub PurgeCache()
+        End Sub
+
+        <Obsolete("This method was deprecated in 5.2.1")> _
+        Public Overridable Sub PurgeExpiredItems()
+        End Sub
 
 #End Region
 

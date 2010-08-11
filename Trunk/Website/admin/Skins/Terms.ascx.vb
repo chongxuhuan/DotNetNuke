@@ -96,11 +96,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                     hypTerms.Text = Services.Localization.Localization.GetString("Terms", Services.Localization.Localization.GetResourceFile(Me, MyFileName))
                 End If
 
-                If PortalSettings.HomeTabId <> -1 Then
-                    hypTerms.NavigateUrl = NavigateURL(PortalSettings.HomeTabId, "Terms")
-                Else
-                    hypTerms.NavigateUrl = NavigateURL("Terms")
-                End If
+                hypTerms.NavigateUrl = NavigateURL(PortalSettings.ActiveTab.TabID, "Terms")
 
                 hypTerms.Attributes("rel") = "nofollow"
 

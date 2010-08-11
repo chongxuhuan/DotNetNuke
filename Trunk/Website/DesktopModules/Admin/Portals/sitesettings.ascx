@@ -12,20 +12,6 @@
     <tr>
         <td style="vertical-align:top; width:725px">
             <asp:Panel ID="pnlSettings" runat="server" CssClass="WorkPanel" Visible="True">
-                <asp:panel ID="plLocale" runat="server" Visible="false">
-                <table>
-                    <tr>
-                        <td class="SubHead" valign="top" style="width:275px"><dnn:Label ID="plLanguageSelector" runat="server" ControlName="ddlPortalDefaultLanguage" /></td>
-                        <td class="NormalTextBox" valign="top" style="width:450px">
-                           <dnn:DnnLanguageComboBox ID="localizedLanguagesComboBox" runat="server"
-                                    AutoPostback = "true" 
-                                    LanguagesListType="Enabled" 
-                                    CssClass="NormalTextBox le_languages" 
-                                    Width="250px" />
-                       </td>
-                    </tr>
-                </table>
-                </asp:panel>
                 <dnn:SectionHead ID="dshBasic" CssClass="Head" runat="server" Text="Basic Settings" Section="tblBasic" ResourceKey="BasicSettings" IncludeRule="True" />
                 <table id="tblBasic" cellspacing="0" cellpadding="2" style="width:100%" summary="Basic Settings Design Table" border="0" runat="server">
                     <tr>

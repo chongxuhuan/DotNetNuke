@@ -214,7 +214,7 @@
     <value>Resources:</value>
   </data>
   <data name="cmdEdit.Text" xml:space="preserve">
-    <value>Edit Language</value>
+    <value>Edit Value in Text Editor</value>
   </data>
   <data name="FileSaved.Text" xml:space="preserve">
     <value>Resource File updated successfully</value>

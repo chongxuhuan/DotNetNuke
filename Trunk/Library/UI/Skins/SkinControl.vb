@@ -109,17 +109,21 @@ Namespace DotNetNuke.UI.Skins
 
             cboSkin.Items.Clear()
 
+            If optHost.Checked Then
+                ' load host skins
+                For Each Skin As KeyValuePair(Of String, String) In SkinController.GetSkins(_objPortal, SkinRoot, SkinScope.Host)
+                    cboSkin.Items.Add(New ListItem(Skin.Key, Skin.Value))
+                Next
+            End If
+
+            If optSite.Checked Then
+                ' load portal skins
+                For Each Skin As KeyValuePair(Of String, String) In SkinController.GetSkins(_objPortal, SkinRoot, SkinScope.Site)
+                    cboSkin.Items.Add(New ListItem(Skin.Key, Skin.Value))
+                Next
+            End If
 
             cboSkin.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString(DefaultKey, LocalResourceFile) + ">", ""))
-
-            Dim skins As List(Of KeyValuePair(Of String, String)) = SkinController.GetSkins(_objPortal, _SkinRoot)
-
-            For Each Skin As KeyValuePair(Of String, String) In skins
-
-                cboSkin.Items.Add(New ListItem(Skin.Key, Skin.Value))
-
-            Next
-
 
             ' select current skin
             Dim intIndex As Integer

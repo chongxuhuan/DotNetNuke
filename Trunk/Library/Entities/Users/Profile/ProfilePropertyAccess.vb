@@ -70,7 +70,7 @@ Namespace DotNetNuke.Entities.Users
                         result = PropertyAccess.Boolean2LocalizedYesNo(CBool(prop.PropertyValue), formatProvider)
                     Case "date", "datetime"
                         If strFormat = String.Empty Then strFormat = "g"
-                        result = DateTime.Parse(prop.PropertyValue).ToString(strFormat, formatProvider)
+                        result = DateTime.Parse(prop.PropertyValue, CultureInfo.InvariantCulture).ToString(strFormat, formatProvider)
                     Case "integer"
                         If strFormat = String.Empty Then strFormat = "g"
                         result = Integer.Parse(prop.PropertyValue).ToString(strFormat, formatProvider)

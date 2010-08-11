@@ -35,6 +35,7 @@ Imports DotNetNuke.Entities.Modules
 Imports Telerik.Web.UI
 Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Services.Personalization
+Imports DotNetNuke.Entities.Host
 
 Namespace DotNetNuke.Modules.Admin.Languages
 
@@ -219,7 +220,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     defaultLanguageLabel.Visible = False
                     languagesComboBox.Visible = True
                     updateButton.Visible = True
-                    enableLocalizedContentButton.Visible = True
+                    enableLocalizedContentButton.Visible = Host.EnableContentLocalization
                     defaultPortalMessage.Text = Localization.GetString("PortalDefaultEnabled.Text", Me.LocalResourceFile)
                     enabledPublishedPlaceHolder.Visible = False
                 End If
@@ -261,7 +262,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                                 If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(locale.Code, False).Count = 0 Then
                                     'Create Localized Pages
-                                    _TabController.LocalizeTabs(PortalId, locale.Code)
+                                    For Each t As TabInfo In _TabController.GetCultureTabList(PortalId)
+                                        _TabController.CreateLocalizedCopy(t, locale)
+                                    Next
                                 End If
 
                             End If
@@ -328,7 +331,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
             If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(cultureCode, False).Count = 0 Then
                 'Create Localized Pages
-                _TabController.LocalizeTabs(PortalId, cultureCode)
+                Dim locale As Locale = LocaleController.Instance.GetLocale(cultureCode)
+                For Each t As TabInfo In _TabController.GetCultureTabList(PortalId)
+                    _TabController.CreateLocalizedCopy(t, locale)
+                Next
             End If
 
             'Redirect to refresh page (and skinobjects)

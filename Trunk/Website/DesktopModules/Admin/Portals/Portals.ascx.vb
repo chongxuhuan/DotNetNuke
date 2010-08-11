@@ -279,7 +279,13 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 Dim i As Integer
                 For i = 0 To arr.Count - 1
                     objPortalAliasInfo = CType(arr(i), PortalAliasInfo)
-                    str.Append("<a href=""" + AddHTTP(objPortalAliasInfo.HTTPAlias) + """>" + objPortalAliasInfo.HTTPAlias + "</a>" + "<BR>")
+
+                    Dim httpAlias As String = AddHTTP(objPortalAliasInfo.HTTPAlias)
+                    Dim originalUrl As String = HttpContext.Current.Items("UrlRewrite:OriginalUrl").ToString().ToLowerInvariant()
+
+                    httpAlias = AddPort(httpAlias, originalUrl)
+
+                    str.Append("<a href=""" + httpAlias + """>" + objPortalAliasInfo.HTTPAlias + "</a>" + "<br/>")
                 Next
             Catch exc As Exception           'Module failed to load
                 ProcessModuleLoadException(Me, exc)

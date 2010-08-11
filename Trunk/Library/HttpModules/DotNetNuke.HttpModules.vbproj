@@ -183,7 +183,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  </Target>
+  <Target Name="DebugProject">
     <Copy SourceFiles="bin\DotNetNuke.HttpModules.dll" DestinationFolder="..\..\Website\bin" />
     <Copy SourceFiles="bin\DotNetNuke.HttpModules.pdb" DestinationFolder="..\..\Website\bin" />
     <Copy SourceFiles="bin\DotNetNuke.HttpModules.xml" DestinationFolder="..\..\Website\bin" />

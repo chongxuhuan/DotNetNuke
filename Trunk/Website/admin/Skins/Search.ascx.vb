@@ -20,6 +20,7 @@
 Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Entities.Modules.Definitions
 
 Namespace DotNetNuke.UI.Skins.Controls
     Partial Class Search
@@ -304,13 +305,22 @@ Namespace DotNetNuke.UI.Skins.Controls
                             End If
                         Else
                             Dim objModules As New ModuleController
-                            Dim searchTabId As Integer
-                            Dim SearchModule As ModuleInfo = objModules.GetModuleByDefinition(PortalSettings.PortalId, "Search Results")
-                            If SearchModule Is Nothing Then
-                                Exit Sub
-                            Else
-                                searchTabId = SearchModule.TabID
+                            Dim searchTabId As Integer = Null.NullInteger
+                            Dim arrModules As ArrayList = objModules.GetModulesByDefinition(PortalSettings.PortalId, "Search Results")
+                            If arrModules.Count > 1 Then
+                                For Each SearchModule As ModuleInfo In arrModules
+                                    If SearchModule.CultureCode = PortalSettings.CultureCode Then
+                                        searchTabId = SearchModule.TabID
+                                    End If
+                                Next
+                            ElseIf arrModules.Count = 1 Then
+                                searchTabId = DirectCast(arrModules(0), ModuleInfo).TabID
                             End If
+
+                            If searchTabId = Null.NullInteger Then
+                                Exit Sub
+                            End If
+
                             If Host.UseFriendlyUrls Then
                                 Response.Redirect(NavigateURL(searchTabId) & "?Search=" & Server.UrlEncode(searchText))
                             Else

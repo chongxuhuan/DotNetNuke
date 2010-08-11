@@ -276,22 +276,6 @@ Namespace DotNetNuke.Services.FileSystem
 
         <XmlElement("sha1hash")> Public Property SHA1Hash() As String
             Get
-                If _SHA1Hash Is Nothing OrElse _SHA1Hash Is String.Empty Then
-                    Dim fileCtrl As New FileController
-
-                    'Calcuate hash value
-                    Select Case StorageLocation
-                        Case FolderController.StorageLocationTypes.InsecureFileSystem
-                            If File.Exists(Me.PhysicalPath) Then _SHA1Hash = FileSystemUtils.GetHash(File.ReadAllBytes(Me.PhysicalPath))
-                        Case FolderController.StorageLocationTypes.SecureFileSystem
-                            If File.Exists(Me.PhysicalPath + glbProtectedExtension) Then _SHA1Hash = FileSystemUtils.GetHash(File.ReadAllBytes(Me.PhysicalPath + glbProtectedExtension))
-                        Case FolderController.StorageLocationTypes.DatabaseSecure
-                            If fileCtrl.GetFileContent(Me.FileId, Me.PortalId) IsNot Nothing Then
-                                _SHA1Hash = FileSystemUtils.GetHash(fileCtrl.GetFileContent(Me.FileId, Me.PortalId))
-                            End If
-                    End Select
-                End If
-
                 Return _SHA1Hash
             End Get
             Set(ByVal value As String)

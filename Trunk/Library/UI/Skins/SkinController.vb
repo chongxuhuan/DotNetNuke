@@ -202,50 +202,50 @@ Namespace DotNetNuke.UI.Skins
             Return CBO.FillObject(Of SkinPackageInfo)(DataProvider.Instance().GetSkinPackage(portalId, skinName, skinType))
         End Function
 
-        Public Shared Function GetSkins(ByVal portalInfo As PortalInfo, ByVal skingRoot As String) As List(Of KeyValuePair(Of String, String))
+        Public Shared Function GetSkins(ByVal portalInfo As PortalInfo, ByVal skinRoot As String, ByVal scope As SkinScope) As List(Of KeyValuePair(Of String, String))
             Dim strRoot As String
             Dim strLastFolder As String
             Dim strFolder As String
             Dim strFile As String
             Dim Skins As New List(Of KeyValuePair(Of String, String))
-            'If optHost.Checked Then
-            ' load host skins
-            strLastFolder = ""
-            strRoot = Common.Globals.HostMapPath & skingRoot
-            If Directory.Exists(strRoot) Then
-                For Each strFolder In Directory.GetDirectories(strRoot)
-                    If Not strFolder.EndsWith(glbHostSkinFolder) Then
+
+            If scope <> SkinScope.Site Then
+                ' load host skins
+                strLastFolder = ""
+                strRoot = Common.Globals.HostMapPath & skinRoot
+                If Directory.Exists(strRoot) Then
+                    For Each strFolder In Directory.GetDirectories(strRoot)
+                        If Not strFolder.EndsWith(glbHostSkinFolder) Then
+                            For Each strFile In Directory.GetFiles(strFolder, "*.ascx")
+                                strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
+                                If strLastFolder <> strFolder Then
+                                    strLastFolder = strFolder
+                                End If
+
+                                Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[G]" & skinRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
+                            Next
+                        End If
+                    Next
+                End If
+            End If
+
+            If scope <> SkinScope.Host Then
+                ' load portal skins
+                strLastFolder = ""
+                strRoot = portalInfo.HomeDirectoryMapPath & skinRoot
+                If Directory.Exists(strRoot) Then
+                    For Each strFolder In Directory.GetDirectories(strRoot)
                         For Each strFile In Directory.GetFiles(strFolder, "*.ascx")
                             strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
                             If strLastFolder <> strFolder Then
                                 strLastFolder = strFolder
                             End If
-
-
-                            Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[G]" & skingRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
-
+                            Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[L]" & skinRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
                         Next
-                    End If
-                Next
-            End If
-            'End If
-
-            'If optSite.Checked Then
-            ' load portal skins
-            strLastFolder = ""
-            strRoot = portalInfo.HomeDirectoryMapPath & skingRoot
-            If Directory.Exists(strRoot) Then
-                For Each strFolder In Directory.GetDirectories(strRoot)
-                    For Each strFile In Directory.GetFiles(strFolder, "*.ascx")
-                        strFolder = Mid(strFolder, InStrRev(strFolder, "\") + 1)
-                        If strLastFolder <> strFolder Then
-                            strLastFolder = strFolder
-                        End If
-                        Skins.Add(New KeyValuePair(Of String, String)(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)), "[L]" & skingRoot & "/" & strFolder & "/" & Path.GetFileName(strFile)))
                     Next
-                Next
+                End If
+
             End If
-            'End If
 
             Return Skins
         End Function

@@ -841,6 +841,14 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td class="SubHead" style="width: 250px">
+                                    <dnn:Label ID="plEnableContentLocalization" ControlName="chkEnableContentLocalization" runat="server" />
+                                </td>
+                                <td valign="top">
+                                    <asp:CheckBox ID="chkEnableContentLocalization" CssClass="NormalTextBox" runat="server" />
+                                </td>
+                            </tr>
+                            <tr>
                                 <td colspan="2">
                                 </td>
                             </tr>

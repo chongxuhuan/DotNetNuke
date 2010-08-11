@@ -4,16 +4,16 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <table cellspacing="5" border="0">
     <tr>
-        <td valign="top" nowrap="nowrap" width="250px">
+        <td style="vertical-align: top; white-space: nowrap; width: 250px">
             <dnn:Label ID="plResources" runat="server" ControlName="DNNTree" />
             <br />
             <dnn:DnnTreeView ID="resourceFiles" runat="server">
             </dnn:DnnTreeView>
         </td>
-        <td style="vertical-align: top; width: 600px">
-            <table border="0">
+        <td style="vertical-align: top; width: 650px">
+            <table style="border: 0;">
                 <tr id="rowMode" runat="server">
-                    <td class="SubHead" style="width:200px">
+                    <td class="SubHead" style="width:250px">
                         <dnn:Label ID="plMode" runat="server" Text="Available Locales" ControlName="cboLocales" />
                     </td>
                     <td style="width:400px">
@@ -34,7 +34,7 @@
                     <td colspan="2"></td>
                 </tr>
                 <tr>
-                    <td class="SubHead" style="width:200px">
+                    <td class="SubHead" style="width:250px">
                         <dnn:Label ID="plEditingLanguage" runat="server" ControlName="lblEditingLanguage" />
                     </td>
                     <td valign="top" style="width:400px">
@@ -42,7 +42,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="SubHead" style="width:200px">
+                    <td class="SubHead" style="width:250px">
                         <dnn:Label ID="plFolder" runat="server" ControlName="lblFolder" />
                     </td>
                     <td valign="top" style="width:400px">
@@ -50,7 +50,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="SubHead" style="width:200px">
+                    <td class="SubHead" style="width:250px">
                         <dnn:Label ID="plSelected" runat="server" ControlName="lblResourceFile" />
                     </td>
                     <td valign="top" style="width:400px">
@@ -59,43 +59,49 @@
                 </tr>
             </table>
             <br />
-            <dnn:DnnGrid ID="resourcesGrid" runat="server" AutoGenerateColumns="false" 
-                Width="600px">
+            <dnn:DnnGrid ID="resourcesGrid" runat="server" AutoGenerateColumns="false" Width="650px">
                 <MasterTableView>
+                    <ItemStyle VerticalAlign="Top" HorizontalAlign="Center" Width="630px" />
+                    <AlternatingItemStyle  VerticalAlign="Top" HorizontalAlign="Center" Width="630px" />
+                    <HeaderStyle VerticalAlign="Bottom" HorizontalAlign="Left" Wrap="false" Width="630px" />
                     <Columns>
                         <dnn:DnnGridTemplateColumn>
                             <HeaderTemplate>
-                                <table cellpadding="0" cellspacing="2" style="width:100%">
+                                <table cellpadding="0" class="DnnGridNestedTable">
                                     <tr>
-                                        <td style="width:50%">
-                                            <asp:Label ID="Label4" runat="server" CssClass="NormalBold" resourcekey="Value" />
-                                        </td>
-                                        <td style="width:50%">
+                                        <td style="width: 315px;">
                                             <asp:Label ID="Label5" runat="server" CssClass="NormalBold" resourcekey="DefaultValue" />
+                                        </td>
+                                        <td style="width: 315px;">
+                                            <asp:Label ID="Label4" runat="server" CssClass="NormalBold" resourcekey="Value" />
                                         </td>
                                     </tr>
                                 </table>
                             </HeaderTemplate>
                             <ItemTemplate>
-                                <table cellpadding="0" cellspacing="2" style="width:100%">
+                                <table cellpadding="0" class="DnnGridNestedTable">
                                     <tr>
-                                        <td colspan="2" style="border-width:0px;background-color:#f7f7f7">
-                                            <asp:Label ID="resourceKeyLabel" runat="server" CssClass="NormalBold" resourcekey="ResourceName" />
-                                            <asp:Label ID="resourceKey" runat="server" CssClass="Normal" Text='<%# Eval("key") %>' />
-                                       </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="border-width:0px;width:50%">
-                                            <asp:TextBox ID="txtValue" runat="server" Width="90%" />
-                                            <asp:HyperLink ID="lnkEdit" runat="server" CssClass="CommandButton" NavigateUrl='<%# OpenFullEditor(DataBinder.Eval(Container, "DataItem.key")) %>'>
-                                                <asp:Image runat="server" AlternateText="Edit" ID="imgEdit" ImageUrl="~/images/edit.gif"
-                                                    resourcekey="cmdEdit" Style="vertical-align: top"></asp:Image>
-                                            </asp:HyperLink>
+                                        <td colspan="2" style="text-align: left;">
+                                            <asp:Label ID="resourceKeyLabel" runat="server"
+                                                    CssClass="NormalBold"
+                                                    resourcekey="ResourceName" />
+                                            <asp:Label ID="resourceKey" runat="server"
+                                                    CssClass="Normal"
+                                                    Text='<%# Eval("key") %>' />
                                         </td>
-                                        <td style="width:50%">
-                                            <asp:TextBox ID="txtDefault" runat="server" Width="90%" Enabled="false" />
-                                            <asp:Image runat="server" AlternateText="View" ID="imgView" ImageUrl="~/images/view.gif"
-                                                resourcekey="cmdView" Style="vertical-align: top" Visible="false"></asp:Image>
+                                    </tr>
+                                    <tr style="vertical-align: top;">
+                                        <td style="width: 315px;">
+                                            <asp:TextBox ID="txtDefault" runat="server" Width="290px" Enabled="false" />
+                                        </td>
+                                        <td style="width: 315px;">
+                                            <span style="white-space:nowrap;">
+                                                <asp:TextBox ID="txtValue" runat="server" Width="290px" />
+                                                <asp:HyperLink ID="lnkEdit" runat="server" CssClass="CommandButton" NavigateUrl='<%# OpenFullEditor(DataBinder.Eval(Container, "DataItem.key")) %>'>
+                                                    <asp:Image runat="server" AlternateText="Edit" ID="imgEdit" ImageUrl="~/images/edit.gif"
+                                                        resourcekey="cmdEdit" Style="vertical-align: top"></asp:Image>
+                                                </asp:HyperLink>
+                                            </span>
                                         </td>
                                     </tr>
                                 </table>

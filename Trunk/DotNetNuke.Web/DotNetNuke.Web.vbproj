@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="Telerik.Web.UI">
       <HintPath>..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=0.9.6.0, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -127,6 +128,8 @@
     <Compile Include="UI\MessageWindowParameters.vb" />
     <Compile Include="UI\RibbonBarManager.vb" />
     <Compile Include="UI\Utilities.vb" />
+    <Compile Include="UI\WebControls\DnnProgressManager.vb" />
+    <Compile Include="UI\WebControls\DnnProgressArea.vb" />
     <Compile Include="UI\WebControls\DnnGridTableView.vb" />
     <Compile Include="UI\WebControls\DnnLanguageLabel.vb" />
     <Compile Include="UI\WebControls\DnnCheckBox.vb" />
@@ -216,9 +219,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="AfterBuild" DependsOnTargets="CopyExternalsToWebsiteBin">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>
-  <Target Name="CopyExternalsToWebsiteBin">
+  <Target Name="DebugProject">
     <Copy SourceFiles="bin\DotNetNuke.Web.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="..\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll" DestinationFolder="..\Website\bin\" />
   </Target>

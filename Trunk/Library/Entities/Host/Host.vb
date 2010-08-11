@@ -274,39 +274,6 @@ Namespace DotNetNuke.Entities.Host
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' Gets whether File AutoSync is Enabled
-        ''' </summary>
-        ''' <remarks>Defaults to False</remarks>
-        ''' <history>
-        ''' 	[cnurse]	01/28/2008   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared ReadOnly Property EnableFileAutoSync() As Boolean
-            Get
-                Return HostController.Instance.GetBoolean("EnableFileAutoSync", False)
-            End Get
-        End Property
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Gets the content locale used by dynamic localisation
-        ''' </summary>
-        ''' <remarks>If content localization is not enabled, defaults to portal default language</remarks>
-        ''' <history>
-        ''' 	[cathal]	20/10/2009   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        <Obsolete("property obsoleted in 5.4.0 - code updated to use portalcontroller method")> _
-        Public Shared ReadOnly Property ContentLocale() As String
-            Get
-                Return "en-us"
-
-            End Get
-
-        End Property
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
         ''' Gets whether Browser Language Detection is Enabled
         ''' </summary>
         ''' <remarks>Defaults to True</remarks>
@@ -317,6 +284,12 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property EnableBrowserLanguage() As Boolean
             Get
                 Return HostController.Instance.GetBoolean("EnableBrowserLanguage", True)
+            End Get
+        End Property
+
+        Public Shared ReadOnly Property EnableContentLocalization() As Boolean
+            Get
+                Return HostController.Instance.GetBoolean("EnableContentLocalization", True)
             End Get
         End Property
 
@@ -332,6 +305,21 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property EnableCustomModuleCssClass() As Boolean
             Get
                 Return HostController.Instance.GetBoolean("EnableCustomModuleCssClass", True)
+            End Get
+        End Property
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets whether File AutoSync is Enabled
+        ''' </summary>
+        ''' <remarks>Defaults to False</remarks>
+        ''' <history>
+        ''' 	[cnurse]	01/28/2008   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared ReadOnly Property EnableFileAutoSync() As Boolean
+            Get
+                Return HostController.Instance.GetBoolean("EnableFileAutoSync", False)
             End Get
         End Property
 
@@ -1264,6 +1252,14 @@ Namespace DotNetNuke.Entities.Host
         Public Shared ReadOnly Property ContentLocalization() As Boolean
             Get
                 Return HostController.Instance.GetBoolean("ContentLocalization", False)
+            End Get
+        End Property
+
+        <Obsolete("property obsoleted in 5.4.0 - code updated to use portalcontroller method")> _
+        Public Shared ReadOnly Property ContentLocale() As String
+            Get
+                Return "en-us"
+
             End Get
         End Property
 

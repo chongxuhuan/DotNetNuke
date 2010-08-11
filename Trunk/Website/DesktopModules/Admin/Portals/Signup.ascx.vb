@@ -248,7 +248,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                                 strMessage = Localization.GetString("ChildExists", Me.LocalResourceFile)
                             Else
                                 If PortalSettings.ActiveTab.ParentId <> PortalSettings.SuperTabId Then
-                                    strPortalAlias = GetDomainName(Request) & "/" & strPortalAlias
+                                    strPortalAlias = GetDomainName(Request, True) & "/" & strPortalAlias
                                 Else
                                     strPortalAlias = txtPortalName.Text
                                 End If

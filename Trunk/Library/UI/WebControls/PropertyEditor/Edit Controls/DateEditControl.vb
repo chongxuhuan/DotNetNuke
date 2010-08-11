@@ -64,7 +64,8 @@ Public Class DateEditControl
                 Dim dteValue As DateTime = Null.NullDate
                 Try
                     'Try and cast the value to an DateTime
-                    dteValue = CType(Value, DateTime)
+                    Dim dteString As String = CType(Value, String)
+                    dteValue = DateTime.Parse(dteString, CultureInfo.InvariantCulture)
                 Catch ex As Exception
                 End Try
                 Return dteValue
@@ -128,7 +129,8 @@ Public Class DateEditControl
                 Dim dteValue As DateTime = Null.NullDate
                 Try
                     'Try and cast the value to an DateTime
-                    dteValue = CType(OldValue, DateTime)
+                    Dim dteString As String = CType(OldValue, String)
+                    dteValue = DateTime.Parse(dteString, CultureInfo.InvariantCulture)
                 Catch ex As Exception
                 End Try
                 Return dteValue
@@ -179,7 +181,16 @@ Public Class DateEditControl
         Public Overrides Function LoadPostData(ByVal postDataKey As String, ByVal postCollection As System.Collections.Specialized.NameValueCollection) As Boolean
 
             Me.EnsureChildControls()
-            Return MyBase.LoadPostData(postDataKey + "date", postCollection)
+
+            Dim dataChanged As Boolean = False
+            Dim presentValue As String = StringValue
+            Dim postedValue As String = postCollection(postDataKey + "date")
+            If Not presentValue.Equals(postedValue) Then
+                Value = DateTime.Parse(postedValue).ToString(CultureInfo.InvariantCulture)
+                dataChanged = True
+            End If
+
+            Return dataChanged
 
         End Function
 
@@ -191,7 +202,7 @@ Public Class DateEditControl
             Dim args As New PropertyEditorEventArgs(Name)
             args.Value = DateValue
             args.OldValue = OldDateValue
-            args.StringValue = StringValue
+            args.StringValue = DateValue.ToString(CultureInfo.InvariantCulture)
             MyBase.OnValueChanged(args)
         End Sub
 

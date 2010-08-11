@@ -50,18 +50,13 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         Private ReadOnly Property SelectedCultureCode() As String
             Get
-                Return localizedLanguagesComboBox.SelectedValue.ToString
+                Return LocaleController.Instance.GetCurrentLocale(PortalId).Code
             End Get
         End Property
 
 #End Region
 
 #Region "Private Methods"
-
-        Private Sub BindLanguageCombos()
-            localizedLanguagesComboBox.DataBind()
-            localizedLanguagesComboBox.SetLanguage(PortalSettings.DefaultLanguage)
-        End Sub
 
         Private Sub BindDesktopModules()
             Dim desktopModule As DesktopModuleInfo = Nothing
@@ -244,21 +239,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     cmdCancel.Visible = False
                 End If
 
-                If DotNetNuke.Services.Localization.Localization.ActiveLanguagesByPortalID(intPortalId) > 1 Then
-                    plLocale.Visible = True
-                End If
-                Dim activeLanguage As String = String.Empty
-                If Page.IsPostBack = False Then
-                    activeLanguage = PortalController.GetPortalDefaultLanguage(intPortalId)
-                Else
-                    If plLocale.Visible = True Then
-                        activeLanguage = SelectedCultureCode.ToString
-                    Else
-                        activeLanguage = PortalSettings.DefaultLanguage
-                    End If
-
-                End If
-
                 'this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdExpiryCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtExpiryDate)
                 DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdRestore, Services.Localization.Localization.GetString("RestoreCCSMessage", Me.LocalResourceFile))
@@ -269,8 +249,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 If Page.IsPostBack = False Then
 
                     DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteMessage", Me.LocalResourceFile))
-                    Loadportal(activeLanguage)
-                    BindLanguageCombos()
+                    Loadportal(SelectedCultureCode)
 
 
                     If Not Request.UrlReferrer Is Nothing Then
@@ -338,8 +317,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             optUserRegistration.SelectedIndex = objPortal.UserRegistration
             ctlAudit.Entity = objPortal
 
-            localizedLanguagesComboBox.PortalId = objPortal.PortalID
-
             Dim objPortalAliasController As New PortalAliasController
             Dim arrPortalAliases As ArrayList
             arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(intPortalId)
@@ -364,7 +341,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
             End If
 
             'Set up special page lists
-            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(intPortalId, Null.NullInteger, True, True)
+            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(TabController.GetTabsBySortOrder(intPortalId, activeLanguage, True), Null.NullInteger, True, "<" + Localization.GetString("None_Specified") + ">", True, False, False, False, False)
             cboSplashTabId.DataSource = listTabs
             cboSplashTabId.DataBind()
             If Not cboSplashTabId.Items.FindByValue(objPortal.SplashTabId.ToString) Is Nothing Then
@@ -760,10 +737,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                             Throw New System.Exception
                         End If
                     End If
-                    Dim activeLanguage As String = objPortal.DefaultLanguage
-                    If plLocale.Visible = True Then
-                        activeLanguage = SelectedCultureCode.ToString
-                    End If
                     objPortalController.UpdatePortalInfo(intPortalId, txtPortalName.Text, strLogo, _
                         txtFooterText.Text, datExpiryDate, optUserRegistration.SelectedIndex, _
                         optBanners.SelectedIndex, cboCurrency.SelectedItem.Value, _
@@ -773,7 +746,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
                         intUserTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
-                        lblHomeDirectory.Text, activeLanguage)
+                        lblHomeDirectory.Text, SelectedCultureCode)
 
                     If Not refreshPage Then
                         refreshPage = (PortalSettings.DefaultAdminSkin = ctlAdminSkin.SkinSrc) OrElse (PortalSettings.DefaultAdminContainer = ctlAdminContainer.SkinSrc)
@@ -804,7 +777,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
                     ' Redirect to this site to refresh only if admin skin changed or either of the images have changed
                     If refreshPage Then Response.Redirect(Request.RawUrl, True)
-                    Loadportal(activeLanguage)
+                    Loadportal(SelectedCultureCode)
                 Catch exc As Exception    'Module failed to load
                     ProcessModuleLoadException(Me, exc)
                 Finally
@@ -925,12 +898,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
             BindDesktopModules()
         End Sub
-
-        Protected Sub localizedLanguagesComboBox_ItemChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles localizedLanguagesComboBox.ItemChanged
-            Loadportal(Me.SelectedCultureCode.ToString)
-
-        End Sub
-
 
 #End Region
 

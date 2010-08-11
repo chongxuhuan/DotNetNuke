@@ -1,4 +1,4 @@
-'
+﻿'
 ' DotNetNuke - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
@@ -18,32 +18,13 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Imports System
-Imports System.Reflection
-Imports System.Runtime.InteropServices
+Imports System.Web.UI
+Imports System.ComponentModel
+Imports Telerik.Web.UI
 
-' General Information about an assembly is controlled through the following 
-' set of attributes. Change these attribute values to modify the information
-' associated with an assembly.
+Namespace DotNetNuke.Web.UI.WebControls
+    Public Class DnnProgressManager
+        Inherits RadProgressManager
 
-' Review the values of the assembly attributes
-
-<Assembly: AssemblyTitle("DotNetNuke")> 
-<Assembly: AssemblyDescription("Open Source Web Application Framework")> 
-<Assembly: AssemblyCompany("DotNetNuke Corporation")> 
-<Assembly: AssemblyProduct("http://www.dotnetnuke.com")> 
-<Assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2009 by DotNetNuke Corporation. All Rights Reserved.")> 
-<Assembly: AssemblyTrademark("DotNetNuke")> 
-<Assembly: CLSCompliant(True)> 
-
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-
-<Assembly: AssemblyVersion("5.5.0.649")> 
+    End Class
+End Namespace

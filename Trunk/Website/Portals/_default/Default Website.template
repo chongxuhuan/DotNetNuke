@@ -468,21 +468,6 @@
           <iconfile />
           <roletype>subscriberrole</roletype>
         </role>
-        <role>
-          <rolename>Translator (en-US)</rolename>
-          <description>A role for English (United States) translators</description>
-          <billingfrequency />
-          <billingperiod>-1</billingperiod>
-          <servicefee>-3.402823E+38</servicefee>
-          <trialfrequency />
-          <trialperiod>-1</trialperiod>
-          <trialfee>-3.402823E+38</trialfee>
-          <ispublic>false</ispublic>
-          <autoassignment>false</autoassignment>
-          <rsvpcode />
-          <iconfile />
-          <roletype>none</roletype>
-        </role>
       </roles>
     </rolegroup>
   </rolegroups>

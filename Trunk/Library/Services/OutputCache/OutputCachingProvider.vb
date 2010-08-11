@@ -49,11 +49,32 @@ Namespace DotNetNuke.Services.OutputCache
         Public MustOverride Function GetItemCount(ByVal tabId As Integer) As Integer
         Public MustOverride Function GetOutput(ByVal tabId As Integer, ByVal cacheKey As String) As Byte()
         Public MustOverride Function GetResponseFilter(ByVal tabId As Integer, ByVal maxVaryByCount As Integer, ByVal responseFilter As Stream, ByVal cacheKey As String, ByVal cacheDuration As TimeSpan) As OutputCacheResponseFilter
-        Public MustOverride Sub PurgeCache(ByVal portalId As Integer)
-        Public MustOverride Sub PurgeExpiredItems(ByVal portalId As Integer)
         Public MustOverride Sub Remove(ByVal tabId As Integer)
         Public MustOverride Overloads Sub SetOutput(ByVal tabId As Integer, ByVal cacheKey As String, ByVal duration As TimeSpan, ByVal output As Byte())
         Public MustOverride Function StreamOutput(ByVal tabId As Integer, ByVal cacheKey As String, ByVal context As HttpContext) As Boolean
+
+#End Region
+
+
+#Region "Virtual Methods"
+
+        Public Overridable Sub PurgeCache(ByVal portalId As Integer)
+        End Sub
+
+        Public Overridable Sub PurgeExpiredItems(ByVal portalId As Integer)
+        End Sub
+
+#End Region
+
+#Region "Obsolete Methods"
+
+        <Obsolete("This method was deprecated in 5.2.1")> _
+        Public Overridable Sub PurgeCache()
+        End Sub
+
+        <Obsolete("This method was deprecated in 5.2.1")> _
+        Public Overridable Sub PurgeExpiredItems()
+        End Sub
 
 #End Region
 

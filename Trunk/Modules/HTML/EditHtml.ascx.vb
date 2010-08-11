@@ -142,7 +142,9 @@ Namespace DotNetNuke.Modules.Html
                         Dim objModule As ModuleInfo = New ModuleController().GetModule(ModuleId, TabId)
                         If objModule.DefaultLanguageModule IsNot Nothing Then
                             Dim masterContent As HtmlTextInfo = objHTML.GetTopHtmlText(objModule.DefaultLanguageModule.ModuleID, False, WorkflowID)
-                            lblMaster.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(objModule.DefaultLanguageModule.ModuleID, FormatContent(masterContent), Settings)))
+                            If masterContent IsNot Nothing Then
+                                lblMaster.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(objModule.DefaultLanguageModule.ModuleID, FormatContent(masterContent), Settings)))
+                            End If
                         End If
                         dshMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
                         tblMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing

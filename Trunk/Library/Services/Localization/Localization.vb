@@ -722,20 +722,10 @@ Namespace DotNetNuke.Services.Localization
         Public Shared Sub AddLanguageToPortal(ByVal portalID As Integer, ByVal languageID As Integer, ByVal clearCache As Boolean)
             'We need to add a translator role for the language
             Dim language As Locale = LocaleController.Instance().GetLocale(languageID)
-            If language IsNot Nothing Then
+            Dim contentLocalizationEnabled As Boolean = PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", portalID, False)
+            If language IsNot Nothing AndAlso contentLocalizationEnabled Then
                 'Create new Translator Role
-                Dim roleController As New RoleController()
-                Dim roleName As String = String.Format("Translator ({0})", language.Code)
-                Dim role As RoleInfo = roleController.GetRoleByName(portalID, roleName)
-
-                If role Is Nothing Then
-                    role = New RoleInfo
-                    role.RoleGroupID = Null.NullInteger
-                    role.PortalID = portalID
-                    role.RoleName = roleName
-                    role.Description = String.Format("A role for {0} translators", language.EnglishName)
-                    roleController.AddRole(role)
-                End If
+                AddTranslatorRole(portalID, language)
             End If
 
             DataProvider.Instance().AddPortalLanguage(portalID, languageID, False, UserController.GetCurrentUserInfo.UserID)
@@ -774,8 +764,29 @@ Namespace DotNetNuke.Services.Localization
             Next
         End Sub
 
+        Public Shared Sub AddTranslatorRole(ByVal portalID As Integer, ByVal language As Locale)
+            'Create new Translator Role
+            Dim roleController As New RoleController()
+            Dim roleName As String = String.Format("Translator ({0})", language.Code)
+            Dim role As RoleInfo = roleController.GetRoleByName(portalID, roleName)
+
+            If role Is Nothing Then
+                role = New RoleInfo
+                role.RoleGroupID = Null.NullInteger
+                role.PortalID = portalID
+                role.RoleName = roleName
+                role.Description = String.Format("A role for {0} translators", language.EnglishName)
+                roleController.AddRole(role)
+            End If
+
+            Dim roles As String = String.Format("Administrators;{0}", String.Format("Translator ({0})", language.Code))
+
+            PortalController.UpdatePortalSetting(portalID, String.Format("DefaultTranslatorRoles-{0}", language.Code), roles)
+
+        End Sub
+
         Public Shared Sub DeleteLanguage(ByVal language As Locale)
-            DataProvider.Instance().DeleteLanguage(language.LanguageID)
+            DataProvider.Instance().DeleteLanguage(language.LanguageId)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(language, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_DELETED)
             DataCache.ClearHostCache(True)
@@ -1768,22 +1779,16 @@ Namespace DotNetNuke.Services.Localization
         End Sub
 
         Public Shared Sub RemoveLanguageFromPortals(ByVal languageID As Integer)
-            DataProvider.Instance().DeletePortalLanguages(Null.NullInteger, languageID)
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            objEventLog.AddLog("languageID", languageID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED)
-
             Dim controller As New PortalController
             For Each portal As PortalInfo In controller.GetPortals()
-                DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portal.PortalID.ToString()))
+                RemoveLanguageFromPortal(portal.PortalID, languageID)
             Next
         End Sub
 
         Public Shared Sub RemoveLanguagesFromPortal(ByVal portalID As Integer)
-            DataProvider.Instance().DeletePortalLanguages(portalID, Null.NullInteger)
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            objEventLog.AddLog("portalID", portalID.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED)
-
-            DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portalID.ToString()))
+            For Each locale As Locale In LocaleController.Instance().GetLocales(portalID).Values
+                RemoveLanguageFromPortal(portalID, locale.LanguageId)
+            Next
         End Sub
 
         Public Shared Sub SaveLanguage(ByVal locale As Locale)

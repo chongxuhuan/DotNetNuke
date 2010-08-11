@@ -179,7 +179,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  </Target>
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Copy SourceFiles="..\..\..\Controls\SolpartMenu\bin\SolpartWebControls.dll" DestinationFolder="..\..\..\Website\bin\Providers\" />
   </Target>
 </Project>

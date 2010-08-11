@@ -175,7 +175,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  </Target>
+  <Target Name="DebugProject">
     <Copy SourceFiles="..\..\..\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll" DestinationFolder="..\..\..\..\Website\bin\" />
     <Copy SourceFiles="bin\DotNetNuke.SqlDataProvider.dll" DestinationFolder="..\..\..\..\Website\bin\" />
   </Target>

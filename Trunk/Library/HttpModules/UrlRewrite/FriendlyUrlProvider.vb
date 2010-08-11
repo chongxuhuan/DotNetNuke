@@ -144,33 +144,12 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
 
         End Function
 
-
-        Private Function GetQueryStringDictionary(ByVal path As String) As Dictionary(Of String, String)
-            Dim parts As String() = path.ToLowerInvariant().Split("?"c)
-            Dim results As New Dictionary(Of String, String)
-
-            If (parts.Count = 2) Then
-
-                For Each part As String In parts(1).Split("&"c)
-                    Dim keyvalue As String() = part.Split("="c)
-                    If (keyvalue.Length = 2) Then
-                        results(keyvalue(0)) = keyvalue(1)
-                    End If
-                Next part
-
-            End If
-
-            Return results
-
-        End Function
-
-
         Public Overloads Overrides Function FriendlyUrl(ByVal tab As TabInfo, ByVal path As String, ByVal pageName As String, ByVal portalAlias As String) As String
-            
+
             Dim friendlyPath As String = path
             Dim matchString As String = ""
             Dim isPagePath As Boolean = tab IsNot Nothing
-            
+
             If (UrlFormat = UrlFormatType.HumanFriendly) Then
                 If (tab IsNot Nothing) Then
                     Dim queryStringDic As Dictionary(Of String, String) = GetQueryStringDictionary(path)
@@ -178,28 +157,22 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                         'Return AddHTTP(portalAlias & "/" & tab.TabPath.Replace("//", "/").TrimStart(Convert.ToChar("/")) + ".aspx")
                         friendlyPath = GetFriendlyAlias("~/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath)
                     Else
-                        If (queryStringDic.ContainsKey("ctl")) Then
+                        If (queryStringDic.ContainsKey("ctl")) AndAlso Not (queryStringDic.ContainsKey("language")) Then
                             Select Case queryStringDic("ctl")
                                 Case "terms"
-                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                     friendlyPath = GetFriendlyAlias("~/terms.aspx", portalAlias, isPagePath)
                                 Case "privacy"
-                                    'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                     friendlyPath = GetFriendlyAlias("~/privacy.aspx", portalAlias, isPagePath)
                                 Case "login"
                                     If (queryStringDic.ContainsKey("returnurl")) Then
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
                                         friendlyPath = GetFriendlyAlias("~/login.aspx?ReturnUrl=" & queryStringDic("returnurl"), portalAlias, isPagePath)
                                     Else
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                         friendlyPath = GetFriendlyAlias("~/login.aspx", portalAlias, isPagePath)
                                     End If
                                 Case "register"
                                     If (queryStringDic.ContainsKey("returnurl")) Then
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx?ReturnUrl=" & sesMatch.Groups(4).Value)
                                         friendlyPath = GetFriendlyAlias("~/register.aspx?returnurl=" & queryStringDic("returnurl"), portalAlias, isPagePath)
                                     Else
-                                        'Return AddHTTP(portalAlias & "/" & sesMatch.Groups(2).Value & ".aspx")
                                         friendlyPath = GetFriendlyAlias("~/register.aspx", portalAlias, isPagePath)
                                     End If
                                 Case Else
@@ -222,20 +195,10 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             Return friendlyPath
 
         End Function
+
 #End Region
 
 #Region " Private Methods "
-
-
-        Private Function CheckPathLength(ByVal friendlyPath As String, ByVal originalpath As String) As String
-
-            If friendlyPath.Length >= 260 Then '248 + "/default.aspx"
-                Return ResolveUrl(originalpath)
-            Else
-                Return friendlyPath
-            End If
-
-        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -262,6 +225,16 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             Return friendlyPath
         End Function
 
+        Private Function CheckPathLength(ByVal friendlyPath As String, ByVal originalpath As String) As String
+
+            If friendlyPath.Length >= 260 Then '248 + "/default.aspx"
+                Return ResolveUrl(originalpath)
+            Else
+                Return friendlyPath
+            End If
+
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' GetFriendlyAlias gets the Alias root of the friendly url
@@ -279,17 +252,16 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
             Dim friendlyPath As String = path
             Dim matchString As String = ""
 
-
-
             If Not (portalAlias = Null.NullString) Then
-                Dim httpAlies As String = AddHTTP(portalAlias).ToLowerInvariant()
 
                 If Not (HttpContext.Current.Items("UrlRewrite:OriginalUrl") Is Nothing) Then
+                    Dim httpAlias As String = AddHTTP(portalAlias).ToLowerInvariant()
                     Dim originalUrl As String = HttpContext.Current.Items("UrlRewrite:OriginalUrl").ToString().ToLowerInvariant()
 
+                    httpAlias = AddPort(httpAlias, originalUrl)
 
-                    If (originalUrl.StartsWith(httpAlies)) Then
-                        matchString = httpAlies
+                    If (originalUrl.StartsWith(httpAlias)) Then
+                        matchString = httpAlias
                     End If
 
                     If (matchString = "") Then
@@ -297,7 +269,7 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                         'http://www.domain.com/Default.aspx?alias=www.domain.com/child"
                         Dim portalMatch As Match = Regex.Match(originalUrl, "^?alias=" & portalAlias, RegexOptions.IgnoreCase)
                         If Not (portalMatch Is Match.Empty) Then
-                            matchString = httpAlies
+                            matchString = httpAlias
                         End If
                     End If
 
@@ -306,7 +278,7 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                         'http://www.domain.com/child/default.aspx
                         Dim tempurl As String = HttpContext.Current.Request.Url.Host & ResolveUrl(friendlyPath)
                         If Not tempurl.Contains(portalAlias) Then
-                            matchString = httpAlies
+                            matchString = httpAlias
                         End If
                     End If
 
@@ -324,7 +296,11 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
 
             If (matchString <> "") Then
                 If (path.IndexOf("~") <> -1) Then
-                    friendlyPath = friendlyPath.Replace("~", matchString)
+                    If matchString.EndsWith("/") Then
+                        friendlyPath = friendlyPath.Replace("~/", matchString)
+                    Else
+                        friendlyPath = friendlyPath.Replace("~", matchString)
+                    End If
                 Else
                     friendlyPath = matchString & friendlyPath
                 End If
@@ -426,6 +402,26 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                 Return AddPage(friendlyPath, pageName)
             End If
         End Function
+
+        Private Function GetQueryStringDictionary(ByVal path As String) As Dictionary(Of String, String)
+            Dim parts As String() = path.ToLowerInvariant().Split("?"c)
+            Dim results As New Dictionary(Of String, String)
+
+            If (parts.Count = 2) Then
+
+                For Each part As String In parts(1).Split("&"c)
+                    Dim keyvalue As String() = part.Split("="c)
+                    If (keyvalue.Length = 2) Then
+                        results(keyvalue(0)) = keyvalue(1)
+                    End If
+                Next part
+
+            End If
+
+            Return results
+
+        End Function
+
 
 #End Region
 

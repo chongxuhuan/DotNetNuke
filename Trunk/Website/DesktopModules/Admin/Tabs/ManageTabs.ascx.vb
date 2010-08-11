@@ -154,7 +154,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 moduleLocalization.ShowLanguageColumn = False
 
                 Dim locale As Locale = LocaleController.Instance().GetLocale(PortalId, Tab.CultureCode)
-                If locale.IsPublished Then
+                If Not locale Is Nothing AndAlso locale.IsPublished Then
                     'Dim msg As String = Localization.GetString("Publish.Confirm", Me.LocalResourceFile)
                     'publishPageButton.OnClientClick = DotNetNuke.Web.UI.Utilities.GetOnClientClickConfirm(publishPageButton, msg)
                     publishRow.Visible = True
@@ -736,6 +736,11 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
                 UpdateTabSettings(Tab.TabID)
 
+                'Create Localized versions
+                If PortalSettings.ContentLocalizationEnabled AndAlso cultureTypeList.SelectedValue = "Localized" Then
+                    objTabs.CreateLocalizedCopies(Tab)
+                End If
+
                 Dim copyTabId As Integer = Int32.Parse(cboCopyPage.SelectedItem.Value)
                 If copyTabId <> -1 Then
                     Dim objDataGridItem As DataGridItem
@@ -812,11 +817,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             Dim tempTab As TabInfo = Nothing
             If New TabController().GetTabsByPortal(PortalId).TryGetValue(Tab.TabID, tempTab) Then
                 tempTab.TabPath = Tab.TabPath
-            End If
-
-            'Create Localized versions
-            If PortalSettings.ContentLocalizationEnabled AndAlso cultureTypeList.SelectedValue = "Localized" Then
-                objTabs.CreateLocalizedCopies(Tab)
             End If
 
             'Update Translation Status
@@ -1307,11 +1307,38 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 'Send Messages to all the translators of new content
                 Dim roleCtrl As New RoleController
                 Dim users As New Dictionary(Of Integer, UserInfo)
-                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", localizedTab.CultureCode), PortalId, "Administrators")
+
+                'Give default translators for this language and administrators permissions
+                Dim tabCtrl As New TabController
+                Dim permissionCtrl As New PermissionController
+                Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
+
+                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", localizedTab.CultureCode), PortalId, "")
                 For Each translatorRole As String In translatorRoles.Split(";"c)
                     For Each translator As UserInfo In roleCtrl.GetUsersByRoleName(PortalId, translatorRole)
                         users(translator.UserID) = translator
                     Next
+
+                    If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
+                        Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
+                        Dim roleName As String = translatorRole
+                        Dim role As RoleInfo = New RoleController().GetRoleByName(Tab.PortalID, roleName)
+                        If role IsNot Nothing Then
+                            Dim perm As TabPermissionInfo = localizedTab.TabPermissions.Where( _
+                                                                Function(tp) tp.RoleID = role.RoleID _
+                                                                    AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
+                            If perm Is Nothing Then
+                                'Create Permission
+                                Dim tabTranslatePermission As New TabPermissionInfo(translatePermisison)
+                                tabTranslatePermission.RoleID = role.RoleID
+                                tabTranslatePermission.AllowAccess = True
+                                tabTranslatePermission.RoleName = roleName
+                                localizedTab.TabPermissions.Add(tabTranslatePermission)
+                                tabCtrl.UpdateTab(localizedTab)
+                            End If
+                        End If
+                    End If
+
                 Next
 
                 For Each translator As UserInfo In users.Values
