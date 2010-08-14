@@ -2949,7 +2949,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
           <rolename>All Users</rolename>
-          <allowaccess>false</allowaccess>
+          <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
