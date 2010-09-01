@@ -198,4 +198,7 @@
   <data name="NotAuthorized.Text" xml:space="preserve">
     <value>You are not authorized to edit this role.</value>
   </data>
+  <data name="DeleteUsersFromRole.Text" xml:space="preserve">
+    <value>Are you sure you want to remove '{0}' from the '{1}' role?</value>
+  </data>
 </root>

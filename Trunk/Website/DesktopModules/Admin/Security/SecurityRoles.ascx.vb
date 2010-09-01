@@ -24,7 +24,6 @@ Imports DotNetNuke.Entities.Modules.Actions
 Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.UI.Utilities
-Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Security.Permissions
 
 Namespace DotNetNuke.Modules.Admin.Security
@@ -49,9 +48,9 @@ Namespace DotNetNuke.Modules.Admin.Security
 
         Private _ParentModule As PortalModuleBase
 
-        Private RoleId As Integer = -1
-        Private _SelectedUserID As Integer = -1
-        Private Shadows UserId As Integer = -1
+        Private RoleId As Integer = Null.NullInteger
+        Private _SelectedUserID As Integer = Null.NullInteger
+        Private Shadows UserId As Integer = Null.NullInteger
 
         Private _Role As RoleInfo
         Private _User As UserInfo
@@ -188,7 +187,7 @@ Namespace DotNetNuke.Modules.Admin.Security
             Dim objRoles As New RoleController
 
             ' bind all portal roles to dropdownlist
-            If RoleId = -1 Then
+            If RoleId = Null.NullInteger Then
                 If cboRoles.Items.Count = 0 Then
                     Dim arrRoles As ArrayList = objRoles.GetPortalRoles(PortalId)
 
@@ -273,7 +272,7 @@ Namespace DotNetNuke.Modules.Admin.Security
         Private Sub BindGrid()
             Dim objRoleController As New RoleController
 
-            If RoleId <> -1 Then
+            If RoleId <> Null.NullInteger Then
                 cmdAdd.Text = Localization.GetString("AddUser.Text", LocalResourceFile)
                 grdUserRoles.DataKeyField = "UserId"
                 grdUserRoles.Columns(2).Visible = False
@@ -588,43 +587,25 @@ Namespace DotNetNuke.Modules.Admin.Security
             End Try
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' grdUserRoles_Delete runs when one of the Delete Buttons in the UserRoles Grid
-        ''' is clicked
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
-        '''                       and localisation
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Sub grdUserRoles_Delete(ByVal sender As Object, ByVal e As DataGridCommandEventArgs)
-            Try
-                Dim strMessage As String = ""
-                If RoleId <> Null.NullInteger Then
-                    If Not RoleController.DeleteUserRole(Integer.Parse(Convert.ToString(grdUserRoles.DataKeys(e.Item.ItemIndex))), Role, PortalSettings, chkNotify.Checked) Then
-                        strMessage = Services.Localization.Localization.GetString("RoleRemoveError", Me.LocalResourceFile)
-                    End If
-                End If
-                If UserId <> Null.NullInteger Then
-                    If Not RoleController.DeleteUserRole(Integer.Parse(Convert.ToString(grdUserRoles.DataKeys(e.Item.ItemIndex))), User, PortalSettings, chkNotify.Checked) Then
-                        strMessage = Services.Localization.Localization.GetString("RoleRemoveError", Me.LocalResourceFile)
-                    End If
-                End If
 
-                grdUserRoles.EditItemIndex = -1
+        Public Sub cmdDeleteUserRole_click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+            Try
+                Dim cmdDeleteUserRole As ImageButton = DirectCast(sender, ImageButton)
+                Dim roleId As Integer = Convert.ToInt32(cmdDeleteUserRole.Attributes("roleId"))
+                Dim userId As Integer = Convert.ToInt32(cmdDeleteUserRole.Attributes("userId"))
+                
+                If Not RoleController.DeleteUserRole(roleId, UserController.GetUserById(PortalId, userId), PortalSettings, chkNotify.Checked) Then
+                    UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("RoleRemoveError", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.RedError)
+                End If
                 BindGrid()
 
-                If strMessage <> "" Then
-                    UI.Skins.Skin.AddModuleMessage(Me, strMessage, UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
-                End If
-
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
+            Catch exc As Exception
+                LogException(exc)
+                UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("RoleRemoveError", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.RedError)
             End Try
         End Sub
+
+
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -639,11 +620,17 @@ Namespace DotNetNuke.Modules.Admin.Security
         ''' -----------------------------------------------------------------------------
         Private Sub grdUserRoles_ItemCreated(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdUserRoles.ItemCreated
             Try
+                Dim item As DataGridItem = e.Item
 
-                Dim cmdDeleteUserRole As Control = e.Item.FindControl("cmdDeleteUserRole")
+                Dim cmdDeleteUserRole As ImageButton = e.Item.FindControl("cmdDeleteUserRole")
+                Dim role As UserRoleInfo = DirectCast(e.Item.DataItem, UserRoleInfo)
 
                 If Not cmdDeleteUserRole Is Nothing Then
-                    ClientAPI.AddButtonConfirm(CType(cmdDeleteUserRole, ImageButton), Services.Localization.Localization.GetString("DeleteItem"))
+
+                    ClientAPI.AddButtonConfirm(cmdDeleteUserRole, String.Format(Localization.GetString("DeleteUsersFromRole.Text", LocalResourceFile), role.FullName, role.RoleName))
+                    cmdDeleteUserRole.Attributes.Add("roleId", role.RoleID)
+                    cmdDeleteUserRole.Attributes.Add("userId", role.UserID)
+
                 End If
 
             Catch exc As Exception    'Module failed to load
