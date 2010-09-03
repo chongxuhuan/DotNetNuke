@@ -165,8 +165,8 @@ Namespace DotNetNuke.HttpModules
 
                 ' Try to rewrite by TabPath
                 Dim domain As String = ""
-                 Dim url As String
-                If UsePortNumber() AndAlso app.Request.Url.Port <> 80 Then
+                Dim url As String
+                If UsePortNumber() AndAlso ((app.Request.Url.Port <> 80 AndAlso Not app.Request.IsSecureConnection) OrElse (app.Request.Url.Port <> 443 AndAlso app.Request.IsSecureConnection)) Then
                     url = app.Request.Url.Host + ":" + app.Request.Url.Port.ToString + app.Request.Url.LocalPath
                 Else
                     url = app.Request.Url.Host + app.Request.Url.LocalPath

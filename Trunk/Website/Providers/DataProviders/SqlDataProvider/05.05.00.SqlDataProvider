@@ -1917,7 +1917,7 @@ WHILE @@FETCH_STATUS = 0
    BEGIN
    if @AdministratorRoleId=-1 or @AdministratorRoleId not in (select roleid from {databaseOwner}{objectQualifier}userroles as ur inner join {databaseOwner}{objectQualifier}userportals as up on ur.userid=up.userid where up.portalid=@portalid)
    
-   update portals set AdministratorRoleId = 
+   update {databaseOwner}{objectQualifier}portals set AdministratorRoleId = 
 (select roleid from {databaseOwner}{objectQualifier}Roles as r where 
 r.PortalID ={databaseOwner}{objectQualifier}Portals.PortalID and RoleName = 'Administrators' and {databaseOwner}{objectQualifier}Portals.portalid=@portalid) where portalid=@portalid
 
@@ -1926,7 +1926,7 @@ r.PortalID ={databaseOwner}{objectQualifier}Portals.PortalID and RoleName = 'Adm
 
    END
 CLOSE Portals_Cursor
-
+DEALLOCATE Portals_Cursor
 GO
 
 /* Cleanup code Add Foreign Key to PortalLocalization Table for previous failed 5.4.0 versions */

@@ -43,7 +43,11 @@ Namespace DotNetNuke.Framework
             If GetScriptManager(objPage) Is Nothing Then
                 Using objScriptManager As ScriptManager = New ScriptManager() With {.ID = "ScriptManager", .EnableScriptGlobalization = True}
                     If objPage.Form IsNot Nothing Then
-                        objPage.Form.Controls.AddAt(0, objScriptManager)
+                        Try
+                            objPage.Form.Controls.AddAt(0, objScriptManager)
+                        Catch ex As HttpException
+                            'suppress error adding script manager to support edge-case of module developers custom aspx pages that inherit from basepage and use code blocks
+                        End Try
                         If HttpContext.Current.Items("System.Web.UI.ScriptManager") Is Nothing Then
                             HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", True)
                         End If

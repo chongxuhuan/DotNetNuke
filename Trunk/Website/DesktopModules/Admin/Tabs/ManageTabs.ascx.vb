@@ -616,13 +616,12 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 Tab.ParentId = parentTab.TabID
                 Tab.Level = parentTab.Level + 1
             Else
-                If strAction = "edit" AndAlso TabId = PortalSettings.SuperTabId Then
-                    Tab.PortalID = Null.NullInteger
-                Else
+                If strAction <> "edit" Then
                     Tab.PortalID = PortalId
+                    Tab.ParentId = Null.NullInteger
+                    Tab.Level = 0
                 End If
-                Tab.ParentId = Null.NullInteger
-                Tab.Level = 0
+          
             End If
             Tab.IconFile = strIcon
             Tab.IconFileLarge = strIconLarge
@@ -1181,10 +1180,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
                     If intTabId <> Null.NullInteger Then
                         'Get tab
-                        Dim locale As Locale = LocaleController.Instance().GetCurrentLocale(PortalId)
-                        Dim tab As TabInfo = New TabController().GetTabByCulture(intTabId, PortalId, locale)
-
-                        Dim strURL As String = NavigateURL(tab.TabID)
+                        Dim strURL As String = NavigateURL(intTabId)
 
                         If Not Request.QueryString("returntabid") Is Nothing Then
                             ' return to admin tab
