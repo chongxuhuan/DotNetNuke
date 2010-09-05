@@ -253,8 +253,8 @@ Namespace DotNetNuke.Entities.Tabs
         End Function
 
         Public Function WithTabName(ByVal tabName As String) As TabInfo
-            Return (From t As TabInfo In list _
-                   Where t.TabName.Equals(tabName, StringComparison.InvariantCultureIgnoreCase) _
+               Return (From t As TabInfo In list _
+                   Where Not String.IsNullOrEmpty(t.TabName) AndAlso t.TabName.Equals(tabName, StringComparison.InvariantCultureIgnoreCase) _
                    Select t).FirstOrDefault()
         End Function
 

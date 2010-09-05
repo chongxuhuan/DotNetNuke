@@ -535,7 +535,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                         If (loadFiles) Then
                             Dim dnnFiles As IDictionary(Of String, FileSystem.FileInfo) = GetDNNFiles(dnnFolder.FolderID)
 
-                            If (dnnFolder.StorageLocation = FileSystem.FolderController.StorageLocationTypes.SecureFileSystem) Then
+                            If (dnnFolder.StorageLocation = FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem) Then
                                 'check Telerik search patterns to filter out files
                                 For Each dnnFile As FileSystem.FileInfo In dnnFiles.Values
                                     If (CheckSearchPatterns(dnnFile.FileName, MyBase.SearchPatterns)) Then
