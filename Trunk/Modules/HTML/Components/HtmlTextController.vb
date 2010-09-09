@@ -156,7 +156,7 @@ Namespace DotNetNuke.Modules.Html
                                 message.Status = Services.Messaging.Data.MessageStatusType.Unread
                                 '_messagingController.SaveMessage(message)
 
-                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body)
+                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objUser.Email, message.Subject, message.Body)
 
                             End If
                         End If

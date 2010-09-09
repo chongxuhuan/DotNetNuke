@@ -1611,7 +1611,7 @@ Namespace DotNetNuke.Entities.Portals
                 hostSpace = 0
             Else
                 Dim ps As PortalSettings = GetCurrentPortalSettings()
-                If Not ps Is Nothing And ps.PortalId = portalId Then
+                If Not ps Is Nothing AndAlso ps.PortalId = portalId Then
                     hostSpace = ps.HostSpace
                 Else
                     Dim portal As PortalInfo = GetPortal(portalId)
