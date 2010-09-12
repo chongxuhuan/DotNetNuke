@@ -90,6 +90,15 @@ Namespace DotNetNuke.UI.Skins.Controls
                 End If
             Next
 
+            Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
+            If (Not settings.ContentLocalizationEnabled) AndAlso _
+                    LocaleController.Instance.GetLocales(settings.PortalId).Count > 1 AndAlso _
+                    (settings.EnableUrlLanguage = False) Then
+                'because useLanguageInUrl is false, navigateUrl won't add a language param, so we need to do that ourselves
+                If returnValue <> "" Then returnValue += "&"
+                returnValue += "language=" + newLanguage
+            End If
+
             'return the new querystring as a string array
             Return returnValue.Split("&"c)
         End Function

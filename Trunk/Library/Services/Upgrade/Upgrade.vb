@@ -1345,15 +1345,15 @@ Namespace DotNetNuke.Services.Upgrade
                         LogException(ex)
                     End Try
 
-                    Dim newTab As New TabInfo()
-                    newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
-                    tabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), newTab.PortalID, newTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
-
                     'Update SiteSettings to point to the new page
-                    If objPortal.RegisterTabId > Null.NullInteger Then
+                    If objPortal.UserTabId > Null.NullInteger Then
                         objPortal.RegisterTabId = objPortal.UserTabId
+                    Else
+                        Dim newTab As New TabInfo()
+                        newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
+                        objPortal.UserTabId = newTab.TabID
                     End If
-                    objPortal.UserTabId = newTab.TabID
+
                     objPortals.UpdatePortalInfo(objPortal)
 
                     'Add Users folder to every portal

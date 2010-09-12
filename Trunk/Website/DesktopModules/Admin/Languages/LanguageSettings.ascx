@@ -2,6 +2,10 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <table cellspacing="1" cellpadding="1" border="0">
+    <tr id="urlRow" runat="server">
+        <td width="300" class="SubHead"><dnn:Label ID="plUrl" runat="server" ControlName="chkUrl"/></td>
+        <td width="350"><asp:CheckBox ID="chkUrl" runat="server" /></td>
+    </tr>
     <tr>
         <td width="300" class="SubHead"><dnn:Label ID="plBrowser" runat="server" ControlName="chkBrowser"/></td>
         <td width="350"><asp:CheckBox ID="chkBrowser" runat="server" /></td>

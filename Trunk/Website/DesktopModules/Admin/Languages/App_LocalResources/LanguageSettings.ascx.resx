@@ -150,4 +150,7 @@
   <data name="PageSize.Error" xml:space="preserve">
     <value>&lt;br&gt;Page Size must be an integer value &gt; 0</value>
   </data>
+  <data name="plBrowser.Help" xml:space="preserve">
+    <value>Check this box to enable browser language detection</value>
+  </data>
 </root>

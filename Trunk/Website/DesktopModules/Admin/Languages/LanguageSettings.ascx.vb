@@ -56,17 +56,22 @@ Namespace DotNetNuke.Modules.Admin.Languages
             If Not Page.IsPostBack Then
                 If Me.ModuleContext.PortalSettings.ActiveTab.IsSuperTab Then
                     chkBrowser.Checked = DotNetNuke.Entities.Host.Host.EnableBrowserLanguage
+                    chkUrl.Checked = DotNetNuke.Entities.Host.Host.EnableUrlLanguage
                 Else
                     chkBrowser.Checked = Me.ModuleContext.PortalSettings.EnableBrowserLanguage
+                    chkUrl.Checked = Me.ModuleContext.PortalSettings.EnableUrlLanguage
                 End If
                 chkUsePaging.Checked = CType(Me.ModuleContext.Settings("UsePaging"), Boolean)
                 Dim _PageSize As Integer = 10 'default page size
-                    If CType(Me.ModuleContext.Settings("PageSize"), Integer) = 0 Then
-                        txtPageSize.Text = _PageSize
-                    Else
-                        txtPageSize.Text = CType(Me.ModuleContext.Settings("PageSize"), Integer)
-                    End If
+                If CType(Me.ModuleContext.Settings("PageSize"), Integer) = 0 Then
+                    txtPageSize.Text = _PageSize
+                Else
+                    txtPageSize.Text = CType(Me.ModuleContext.Settings("PageSize"), Integer)
                 End If
+            End If
+
+            urlRow.Visible = Not PortalSettings.Current.ContentLocalizationEnabled
+
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -86,8 +91,10 @@ Namespace DotNetNuke.Modules.Admin.Languages
                 If Page.IsValid Then
                     If Me.ModuleContext.PortalSettings.ActiveTab.IsSuperTab Then
                         HostController.Instance.Update("EnableBrowserLanguage", chkBrowser.Checked.ToString())
+                        HostController.Instance.Update("EnableUrlLanguage", chkUrl.Checked.ToString())
                     Else
                         PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableBrowserLanguage", chkBrowser.Checked.ToString())
+                        PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableUrlLanguage", chkUrl.Checked.ToString())
                     End If
                     Dim modController As New ModuleController
                     modController.UpdateModuleSetting(Me.ModuleContext.ModuleId, "UsePaging", chkUsePaging.Checked)

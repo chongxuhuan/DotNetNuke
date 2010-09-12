@@ -411,6 +411,14 @@ Namespace DotNetNuke.Entities.Portals
                     Dim _PortalSettings As PortalSettings = GetCurrentPortalSettings()
                     If _PortalSettings IsNot Nothing AndAlso _PortalSettings.ActiveTab IsNot Nothing AndAlso Not String.IsNullOrEmpty(_PortalSettings.ActiveTab.CultureCode) Then
                         Language = _PortalSettings.ActiveTab.CultureCode
+                    Else
+                        'PortalSettings IS Nothing - probably means we haven't set it yet (in Begin Request)
+                        'so try detecting the user's browser
+                        Dim Culture As CultureInfo = Localization.GetBrowserCulture(portalID)
+
+                        If Culture IsNot Nothing Then
+                            Language = Culture.Name
+                        End If
                     End If
                 End If
             End If

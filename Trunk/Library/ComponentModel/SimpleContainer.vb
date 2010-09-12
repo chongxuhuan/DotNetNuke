@@ -50,10 +50,10 @@ Namespace DotNetNuke.ComponentModel
 
         Private Sub AddBuilder(ByVal contractType As System.Type, ByVal builder As IComponentBuilder)
             SyncLock componentLock
-                If Not componentTypes.Item(contractType).ComponentBuilders.Contains(builder) Then
+                If Not componentTypes.Item(contractType).ComponentBuilders.Contains(builder.Name) Then
                     componentTypes.Item(contractType).ComponentBuilders.Add(builder)
                 End If
-                If Not componentBuilders.Contains(builder) Then
+                If Not componentBuilders.Contains(builder.Name) Then
                     componentBuilders.Add(builder)
                 End If
             End SyncLock

@@ -235,6 +235,11 @@ Namespace DotNetNuke.Common.Utilities
             Return _objectQualifier
         End Function
 
+        ''' <summary>
+        ''' Get's optional persistent cookie timeout value from web.config
+        ''' </summary>
+        ''' <returns>persistent cookie value</returns>
+        ''' <remarks>allows users to override default asp.net values</remarks>
         Public Shared Function GetPersistentCookieTimeout() As Integer
             Dim configNav As XPathNavigator = Load().CreateNavigator()
             'Select the location node
@@ -255,7 +260,11 @@ Namespace DotNetNuke.Common.Utilities
             End If
 
             If PersistentCookieTimeout = 0 Then
-                PersistentCookieTimeout = XmlUtils.GetAttributeValueAsInteger(formsNav, "timeout", 30)
+                If Not formsNav Is Nothing Then
+                    PersistentCookieTimeout = XmlUtils.GetAttributeValueAsInteger(formsNav, "timeout", 30)
+                Else
+                    PersistentCookieTimeout = 30
+                End If
             End If
 
             Return PersistentCookieTimeout

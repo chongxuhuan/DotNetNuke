@@ -354,7 +354,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                             Dim locale As Locale = TryCast(e.Item.DataItem, Locale)
                             If locale IsNot Nothing AndAlso (e.Item.ItemType = ListItemType.Item OrElse _
                                                              e.Item.ItemType = ListItemType.AlternatingItem) Then
-                                If locale.Code = PortalSettings.CultureCode AndAlso Not String.IsNullOrEmpty(SelectedItemTemplate) Then
+                                If locale.Code = CurrentCulture AndAlso Not String.IsNullOrEmpty(SelectedItemTemplate) Then
                                     strTemplate = SelectedItemTemplate
                                 End If
                                 litTemplate.Text = parseTemplate(strTemplate, locale.Code)

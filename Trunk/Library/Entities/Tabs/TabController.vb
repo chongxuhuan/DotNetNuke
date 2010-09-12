@@ -1141,6 +1141,9 @@ Namespace DotNetNuke.Entities.Tabs
                 moduleCtrl.LocalizeModule(kvp.Value)
             Next
 
+            'Add Translator Role
+            GiveTranslatorRoleEditRights(localizedCopy, Nothing)
+
             'Clear the Cache
             ClearCache(originalTab.PortalID)
             DataCache.RemoveCache(DataCache.PortalDictionaryCacheKey)
@@ -1161,6 +1164,42 @@ Namespace DotNetNuke.Entities.Tabs
                                                 AndAlso kvp.Value.IsDeleted = False _
                                                 Select kvp.Value).ToList()
         End Function
+
+        Public Sub GiveTranslatorRoleEditRights(ByVal localizedTab As TabInfo, ByVal users As Dictionary(Of Integer, UserInfo))
+            Dim roleCtrl As New RoleController
+            Dim permissionCtrl As New PermissionController
+            Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
+
+            Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", localizedTab.CultureCode), localizedTab.PortalID, "")
+            For Each translatorRole As String In translatorRoles.Split(";"c)
+                If users IsNot Nothing Then
+                    For Each translator As UserInfo In roleCtrl.GetUsersByRoleName(localizedTab.PortalID, translatorRole)
+                        users(translator.UserID) = translator
+                    Next
+                End If
+
+                If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
+                    Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
+                    Dim roleName As String = translatorRole
+                    Dim role As RoleInfo = New RoleController().GetRoleByName(localizedTab.PortalID, roleName)
+                    If role IsNot Nothing Then
+                        Dim perm As TabPermissionInfo = localizedTab.TabPermissions.Where( _
+                                                            Function(tp) tp.RoleID = role.RoleID _
+                                                                AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
+                        If perm Is Nothing Then
+                            'Create Permission
+                            Dim tabTranslatePermission As New TabPermissionInfo(translatePermisison)
+                            tabTranslatePermission.RoleID = role.RoleID
+                            tabTranslatePermission.AllowAccess = True
+                            tabTranslatePermission.RoleName = roleName
+                            localizedTab.TabPermissions.Add(tabTranslatePermission)
+                            UpdateTab(localizedTab)
+                        End If
+                    End If
+                End If
+
+            Next
+        End Sub
 
         Public Sub LocalizeTab(ByVal originalTab As TabInfo, ByVal locale As Locale)
             originalTab.CultureCode = locale.Code

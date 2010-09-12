@@ -792,6 +792,47 @@ Namespace DotNetNuke.Services.Localization
             DataCache.ClearHostCache(True)
         End Sub
 
+        Public Shared Function GetBrowserCulture(ByVal portalId As Integer) As CultureInfo
+            Dim browserCulture As CultureInfo = Nothing
+            Dim enabledLocales As Dictionary(Of String, Locale) = Nothing
+            If portalId > Null.NullInteger Then
+                enabledLocales = LocaleController.Instance().GetLocales(portalId)
+            End If
+
+            ' use Request.UserLanguages to get the preferred language
+            If Not (HttpContext.Current Is Nothing) Then
+                If Not (HttpContext.Current.Request.UserLanguages Is Nothing) Then
+                    Try
+                        For Each userLang As String In HttpContext.Current.Request.UserLanguages
+                            'split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
+                            Dim userlanguage As String = userLang.Split(";"c)(0)
+                            If LocaleController.Instance().IsEnabled(userlanguage, portalId) Then
+                                browserCulture = New CultureInfo(userlanguage)
+                            ElseIf userLang.Split(";"c)(0).IndexOf("-") <> -1 Then
+                                'if userLang is neutral we don't need to do this part since
+                                'it has already been done in LocaleIsEnabled( )
+                                Dim templang As String = userLang.Split(";"c)(0)
+                                For Each _localeCode As String In enabledLocales.Keys
+                                    If _localeCode.Split("-"c)(0) = templang.Split("-"c)(0) Then
+                                        'the preferredLanguage was found in the enabled locales collection, so we are going to use this one
+                                        'eg, requested locale is en-GB, requested language is en, enabled locale is en-US, so en is a match for en-US
+                                        browserCulture = New CultureInfo(_localeCode)
+                                        Exit For
+                                    End If
+                                Next
+                            End If
+                            If Not browserCulture Is Nothing Then
+                                Exit For
+                            End If
+                        Next
+                    Catch
+                    End Try
+                End If
+            End If
+
+            Return browserCulture
+        End Function
+
         Public Shared Function GetExceptionMessage(ByVal key As String, ByVal defaultValue As String) As String
             If HttpContext.Current Is Nothing Then
                 Return defaultValue
@@ -851,10 +892,18 @@ Namespace DotNetNuke.Services.Localization
             'used as temporary variable where the language part of the preferred locale will be saved
             Dim preferredLanguage As String = ""
 
-            'first try if a specific language is requested by cookie form
+            'first try if a specific language is requested by cookie or qs param
             If Not (HttpContext.Current Is Nothing) Then
                 Try
-                    preferredLocale = HttpContext.Current.Request.Cookies("language").Value
+                    If portalSettings.ContentLocalizationEnabled AndAlso _
+                            HttpContext.Current.Request.IsAuthenticated AndAlso _
+                            portalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
+                        'Check Cookie only
+                        preferredLocale = HttpContext.Current.Request.Cookies("language").Value
+                    Else
+                        'Check Cookie or Qs
+                        preferredLocale = HttpContext.Current.Request("language")
+                    End If
                     If preferredLocale <> "" Then
                         If LocaleController.Instance().IsEnabled(preferredLocale, portalSettings.PortalId) Then
                             pageCulture = New CultureInfo(preferredLocale)
@@ -883,36 +932,7 @@ Namespace DotNetNuke.Services.Localization
             End If
 
             If pageCulture Is Nothing AndAlso portalSettings.EnableBrowserLanguage Then
-                ' use Request.UserLanguages to get the preferred language
-                If Not (HttpContext.Current Is Nothing) Then
-                    If Not (HttpContext.Current.Request.UserLanguages Is Nothing) Then
-                        Try
-                            For Each userLang As String In HttpContext.Current.Request.UserLanguages
-                                'split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
-                                Dim userlanguage As String = userLang.Split(";"c)(0)
-                                If LocaleController.Instance().IsEnabled(userlanguage, portalSettings.PortalId) Then
-                                    pageCulture = New CultureInfo(userlanguage)
-                                ElseIf userLang.Split(";"c)(0).IndexOf("-") <> -1 Then
-                                    'if userLang is neutral we don't need to do this part since
-                                    'it has already been done in LocaleIsEnabled( )
-                                    Dim templang As String = userLang.Split(";"c)(0)
-                                    For Each _localeCode As String In enabledLocales.Keys
-                                        If _localeCode.Split("-"c)(0) = templang.Split("-"c)(0) Then
-                                            'the preferredLanguage was found in the enabled locales collection, so we are going to use this one
-                                            'eg, requested locale is en-GB, requested language is en, enabled locale is en-US, so en is a match for en-US
-                                            pageCulture = New CultureInfo(_localeCode)
-                                            Exit For
-                                        End If
-                                    Next
-                                End If
-                                If Not pageCulture Is Nothing Then
-                                    Exit For
-                                End If
-                            Next
-                        Catch
-                        End Try
-                    End If
-                End If
+                pageCulture = GetBrowserCulture(portalSettings.PortalId)
             End If
 
             If pageCulture Is Nothing And preferredLanguage <> "" Then
@@ -1794,11 +1814,11 @@ Namespace DotNetNuke.Services.Localization
         Public Shared Sub SaveLanguage(ByVal locale As Locale)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
 
-            If locale.LanguageID = Null.NullInteger Then
-                locale.LanguageID = DataProvider.Instance().AddLanguage(locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
+            If locale.LanguageId = Null.NullInteger Then
+                locale.LanguageId = DataProvider.Instance().AddLanguage(locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(locale, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_CREATED)
             Else
-                DataProvider.Instance().UpdateLanguage(locale.LanguageID, locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
+                DataProvider.Instance().UpdateLanguage(locale.LanguageId, locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(locale, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_UPDATED)
             End If
 

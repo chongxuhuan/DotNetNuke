@@ -173,14 +173,15 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     languageCounter += 1
                     pageList = tabCtrl.GetCultureTabList(PortalId)
 
+                    'add translator role
+                    Localization.AddTranslatorRole(PortalId, locale)
+
                     'populate pages
                     ProcessLanguage(pageList, _
                                     locale, _
                                     languageCounter, _
                                     languageCount)
 
-                    'add translator role
-                    Localization.AddTranslatorRole(PortalId, locale)
                 End If
             Next
 

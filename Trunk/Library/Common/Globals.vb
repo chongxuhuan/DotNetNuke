@@ -2239,12 +2239,21 @@ Namespace DotNetNuke.Common
 
             'only add language to url if more than one locale is enabled
             If (settings IsNot Nothing) AndAlso (LocaleController.Instance().GetLocales(settings.PortalId).Count > 1) Then
-                If Language = "" Then
-                    If objTab IsNot Nothing AndAlso Not String.IsNullOrEmpty(objTab.CultureCode) Then
-                        strURL += "&language=" & objTab.CultureCode
+                If settings.ContentLocalizationEnabled Then
+                    If Language = "" Then
+                        If objTab IsNot Nothing AndAlso Not String.IsNullOrEmpty(objTab.CultureCode) Then
+                            strURL += "&language=" & objTab.CultureCode
+                        End If
+                    Else
+                        strURL += "&language=" & Language
                     End If
-                Else
-                    strURL += "&language=" & Language
+                ElseIf settings.EnableUrlLanguage Then
+                    'legacy pre 5.5 behavior
+                    If Language = "" Then
+                        strURL += "&language=" & Thread.CurrentThread.CurrentCulture.Name
+                    Else
+                        strURL += "&language=" & Language
+                    End If
                 End If
             End If
 

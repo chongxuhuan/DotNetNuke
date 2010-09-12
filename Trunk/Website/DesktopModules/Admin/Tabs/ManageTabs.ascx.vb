@@ -1300,43 +1300,13 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
                 Next
 
-                'Send Messages to all the translators of new content
-                Dim roleCtrl As New RoleController
                 Dim users As New Dictionary(Of Integer, UserInfo)
 
                 'Give default translators for this language and administrators permissions
                 Dim tabCtrl As New TabController
-                Dim permissionCtrl As New PermissionController
-                Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT")
+                tabCtrl.GiveTranslatorRoleEditRights(localizedTab, users)
 
-                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", localizedTab.CultureCode), PortalId, "")
-                For Each translatorRole As String In translatorRoles.Split(";"c)
-                    For Each translator As UserInfo In roleCtrl.GetUsersByRoleName(PortalId, translatorRole)
-                        users(translator.UserID) = translator
-                    Next
-
-                    If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
-                        Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
-                        Dim roleName As String = translatorRole
-                        Dim role As RoleInfo = New RoleController().GetRoleByName(Tab.PortalID, roleName)
-                        If role IsNot Nothing Then
-                            Dim perm As TabPermissionInfo = localizedTab.TabPermissions.Where( _
-                                                                Function(tp) tp.RoleID = role.RoleID _
-                                                                    AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
-                            If perm Is Nothing Then
-                                'Create Permission
-                                Dim tabTranslatePermission As New TabPermissionInfo(translatePermisison)
-                                tabTranslatePermission.RoleID = role.RoleID
-                                tabTranslatePermission.AllowAccess = True
-                                tabTranslatePermission.RoleName = roleName
-                                localizedTab.TabPermissions.Add(tabTranslatePermission)
-                                tabCtrl.UpdateTab(localizedTab)
-                            End If
-                        End If
-                    End If
-
-                Next
-
+                'Send Messages to all the translators of new content
                 For Each translator As UserInfo In users.Values
                     If translator.UserID <> PortalSettings.AdministratorId Then
                         Dim message As New Message
