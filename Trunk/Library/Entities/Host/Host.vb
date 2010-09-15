@@ -289,7 +289,7 @@ Namespace DotNetNuke.Entities.Host
 
         Public Shared ReadOnly Property EnableContentLocalization() As Boolean
             Get
-                Return HostController.Instance.GetBoolean("EnableContentLocalization", True)
+                Return HostController.Instance.GetBoolean("EnableContentLocalization", False)
             End Get
         End Property
 
