@@ -287,9 +287,7 @@ Namespace DotNetNuke.Entities.Tabs
                 UpdateTab(objTab)
 
                 'Update the current tabs level and tabpath
-                Dim tabLevel As Integer = objTab.Level - 1
-                If tabLevel < 0 Then tabLevel = 0
-                objTab.Level = tabLevel
+                If objTab.Level < 0 Then objTab.Level = 0
                 UpdateTabOrder(objTab, True)
 
                 'Update the Descendents of this tab
