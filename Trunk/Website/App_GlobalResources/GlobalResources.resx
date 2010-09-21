@@ -1160,4 +1160,10 @@ Sincerely,
   <data name="UnTranslate.Action" xml:space="preserve">
     <value>Mark Not Translated</value>
   </data>
+  <data name="PaddingOracleNotProtected_Body.Text" xml:space="preserve">
+    <value>Site Insecure</value>
+  </data>
+  <data name="PaddingOracleNotProtected_Subject.Text" xml:space="preserve">
+    <value>Site Insecure</value>
+  </data>
 </root>

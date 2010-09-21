@@ -192,6 +192,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     For Each t As TabInfo In tabCtrl.GetCultureTabList(PortalId)
                         tabCtrl.CreateLocalizedCopy(t, Language)
                     Next
+
+                    Dim portalCtl As New PortalController()
+                    portalCtl.MapLocalizedSpecialPages(PortalId, Language.Code)
                 End If
 
                 Response.Redirect(NavigateURL(), True)

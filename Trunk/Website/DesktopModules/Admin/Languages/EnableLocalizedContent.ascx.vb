@@ -157,6 +157,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
             Dim tabCtrl As New TabController
+            Dim portalCtrl As New PortalController
             Dim languageCount As Integer = LocaleController.Instance().GetLocales(PortalSettings.PortalId).Count
             Dim pageList As List(Of TabInfo) = tabCtrl.GetDefaultCultureTabList(PortalId)
 
@@ -166,6 +167,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
                             languageCounter, _
                             languageCount)
             PublishLanguage(PortalDefault, True)
+
+            PortalController.UpdatePortalSetting(PortalId, "ContentLocalizationEnabled", "True")
 
             ' populate other languages
             For Each locale As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
@@ -181,12 +184,12 @@ Namespace DotNetNuke.Modules.Admin.Languages
                                     locale, _
                                     languageCounter, _
                                     languageCount)
+                    'Map special pages
+                    portalCtrl.MapLocalizedSpecialPages(PortalSettings.PortalId, locale.Code)
 
                 End If
             Next
-
-            PortalController.UpdatePortalSetting(PortalId, "ContentLocalizationEnabled", "True")
-
+            
             ''Redirect to refresh page (and skinobjects)
             Response.Redirect(NavigateURL(), True)
         End Sub

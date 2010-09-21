@@ -26,6 +26,7 @@ Imports System.Web.Security
 Imports System.IO
 Imports DotNetNuke.Services.Log.EventLog
 Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Services.Messaging
 
 Namespace DotNetNuke.Common
 
@@ -174,6 +175,23 @@ Namespace DotNetNuke.Common
 
                     'Try and Upgrade to .NET 3.5
                     Upgrade.Upgrade.TryUpgradeNETFramework()
+
+                    'Check if protected
+                    If Not Upgrade.Upgrade.IsSiteProtectedAgainstPaddingOracleAttack Then
+                        Dim hostUsers As ArrayList = UserController.GetUsers(Null.NullInteger)
+
+                        For Each hostUser As UserInfo In hostUsers
+                            'Send message to Host
+                            Dim hostMessage As New Services.Messaging.Data.Message
+                            hostMessage.Body = Localization.GetString("PaddingOracleNotProtected_Body", Localization.GlobalResourceFile)
+                            hostMessage.Subject = Localization.GetString("PaddingOracleNotProtected_Subject", Localization.GlobalResourceFile)
+                            hostMessage.FromUserID = Null.NullInteger
+                            hostMessage.ToUserID = hostUser.UserID
+                            hostMessage.Status = Services.Messaging.Data.MessageStatusType.Unread
+                            Dim controller As New MessagingController
+                            controller.SaveMessage(hostMessage)
+                        Next
+                    End If
 
                     'Start Scheduler
                     StartScheduler()

@@ -22,6 +22,8 @@ Imports System.IO
 Imports DotNetNuke.Security
 
 Imports DotNetNuke.Services.Localization
+Imports System.Threading
+Imports System.Security.Cryptography
 
 Namespace DotNetNuke.Services.Exceptions
 	''' -----------------------------------------------------------------------------
@@ -91,11 +93,23 @@ Namespace DotNetNuke.Services.Exceptions
         End Function
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-
+            'add short delay to obfuscate oracle padding attacks
+            AddOraclePaddingDelay()
             Me.StyleSheet.Attributes("href") = ResolveUrl("~/Install/Install.css")
 
         End Sub
 
+        Private Sub AddOraclePaddingDelay()
+            Dim delay As Byte() = New Byte(0) {}
+            Dim prng As RandomNumberGenerator = New RNGCryptoServiceProvider()
+            prng.GetBytes(delay)
+            Thread.Sleep(CType(delay(0), Integer))
+
+            Dim disposable As IDisposable = TryCast(prng, IDisposable)
+            If Not disposable Is Nothing Then
+                disposable.Dispose()
+            End If
+        End Sub
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 

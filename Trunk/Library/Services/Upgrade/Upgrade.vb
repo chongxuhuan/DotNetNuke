@@ -2508,6 +2508,56 @@ Namespace DotNetNuke.Services.Upgrade
             End If
         End Sub
 
+        ''' <summary>
+        ''' IsSiteProtectedAgainstPaddingOracleAttack ensures that the website is protected
+        ''' from the Padding Oracle Encryption Attack.  
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks>This will no longer be needed once Microsoft release an update to ASP.NET</remarks>
+        Friend Shared Function IsSiteProtectedAgainstPaddingOracleAttack() As Boolean
+            Dim isSiteProtected As Boolean = True
+
+            'Look for customErrors attribute
+            Dim configFile As XmlDocument = Config.Load()
+            If configFile IsNot Nothing Then
+                Dim navigator As XPathNavigator = configFile.CreateNavigator()
+                If navigator IsNot Nothing Then
+                    Dim configNavigator As XPathNavigator = navigator.SelectSingleNode("//configuration/system.web/customErrors")
+                    If configNavigator IsNot Nothing Then
+                        'Check mode
+                        Dim attributeString As String = configNavigator.GetAttribute("mode", "")
+                        If String.IsNullOrEmpty(attributeString) OrElse attributeString.ToLowerInvariant = "off" Then
+                            isSiteProtected = False
+                        End If
+
+                        'Check redirectMode
+                        If isSiteProtected Then
+                            attributeString = configNavigator.GetAttribute("redirectMode", "")
+                            If String.IsNullOrEmpty(attributeString) OrElse attributeString <> "ResponseRewrite" Then
+                                isSiteProtected = False
+                            End If
+
+                            'Check defaultRedirect
+                            If isSiteProtected Then
+                                attributeString = configNavigator.GetAttribute("defaultRedirect", "")
+                                If String.IsNullOrEmpty(attributeString) OrElse attributeString.ToLowerInvariant <> "~/errorpage.aspx" Then
+                                    isSiteProtected = False
+                                End If
+                            End If
+                        End If
+                    Else
+                        isSiteProtected = False
+                    End If
+                Else
+                    isSiteProtected = False
+                End If
+            Else
+                isSiteProtected = False
+            End If
+
+            Return isSiteProtected
+        End Function
+
         Public Shared Function IsNETFrameworkCurrent(ByVal version As String) As Boolean
             Dim isCurrent As Boolean = Null.NullBoolean
             Select Case version

@@ -23,6 +23,7 @@ Imports System.Collections.Generic
 Imports System.Data
 Imports System.Xml
 Imports System.IO
+Imports System.Diagnostics
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Entities.Modules
@@ -1887,6 +1888,50 @@ Namespace DotNetNuke.Entities.Portals
             DataProvider.Instance().EnsureLocalizationExists(PortalId, DefaultLanguage)
             ' clear portal cache
             DataCache.ClearPortalCache(PortalId, False)
+        End Sub
+
+
+        ''' <summary>
+        ''' Remaps the Special Pages such as Home, Profile, Search
+        ''' to their localized versions
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Sub MapLocalizedSpecialPages(ByVal portalId As Integer, ByVal cultureCode As String)
+
+            Dim tabCont As TabController = New TabController()
+
+            DataCache.ClearPortalCache(portalId, True)
+            DataProvider.Instance().EnsureLocalizationExists(portalId, cultureCode)
+
+            Dim defaultPortal As PortalInfo = GetPortal(portalId, GetPortalDefaultLanguage(portalId))
+            Dim targetPortal As PortalInfo = GetPortal(portalId, cultureCode)
+
+            Dim targetLocale As Locale = LocaleController.Instance().GetLocale(cultureCode)
+            If (defaultPortal.HomeTabId <> Null.NullInteger) Then
+                targetPortal.HomeTabId = tabCont.GetTabByCulture(defaultPortal.HomeTabId, portalId, targetLocale).TabID
+            End If
+            If (defaultPortal.LoginTabId <> Null.NullInteger) Then
+                targetPortal.LoginTabId = tabCont.GetTabByCulture(defaultPortal.LoginTabId, portalId, targetLocale).TabID
+            End If
+            If (defaultPortal.RegisterTabId <> Null.NullInteger) Then
+                targetPortal.RegisterTabId = tabCont.GetTabByCulture(defaultPortal.RegisterTabId, portalId, targetLocale).TabID
+            End If
+            If (defaultPortal.SplashTabId <> Null.NullInteger) Then
+                targetPortal.SplashTabId = tabCont.GetTabByCulture(defaultPortal.SplashTabId, portalId, targetLocale).TabID
+            End If
+            If (defaultPortal.UserTabId <> Null.NullInteger) Then
+                targetPortal.UserTabId = tabCont.GetTabByCulture(defaultPortal.UserTabId, portalId, targetLocale).TabID
+            End If
+
+            UpdatePortalInfo(targetPortal.PortalID, targetPortal.PortalName, _
+ targetPortal.LogoFile, targetPortal.FooterText, targetPortal.ExpiryDate, targetPortal.UserRegistration, _
+ targetPortal.BannerAdvertising, targetPortal.Currency, targetPortal.AdministratorId, _
+ targetPortal.HostFee, targetPortal.HostSpace, targetPortal.PageQuota, targetPortal.UserQuota, targetPortal.PaymentProcessor, targetPortal.ProcessorUserId, _
+ targetPortal.ProcessorPassword, targetPortal.Description, targetPortal.KeyWords, _
+ targetPortal.BackgroundFile, targetPortal.SiteLogHistory, targetPortal.SplashTabId, targetPortal.HomeTabId, _
+ targetPortal.LoginTabId, targetPortal.RegisterTabId, targetPortal.UserTabId, targetPortal.DefaultLanguage, _
+ targetPortal.TimeZoneOffset, targetPortal.HomeDirectory, targetPortal.CultureCode)
+
         End Sub
 
 #End Region
