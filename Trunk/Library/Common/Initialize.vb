@@ -178,19 +178,7 @@ Namespace DotNetNuke.Common
 
                     'Check if protected
                     If Not Upgrade.Upgrade.IsSiteProtectedAgainstPaddingOracleAttack Then
-                        Dim hostUsers As ArrayList = UserController.GetUsers(Null.NullInteger)
-
-                        For Each hostUser As UserInfo In hostUsers
-                            'Send message to Host
-                            Dim hostMessage As New Services.Messaging.Data.Message
-                            hostMessage.Body = Localization.GetString("PaddingOracleNotProtected_Body", Localization.GlobalResourceFile)
-                            hostMessage.Subject = Localization.GetString("PaddingOracleNotProtected_Subject", Localization.GlobalResourceFile)
-                            hostMessage.FromUserID = Null.NullInteger
-                            hostMessage.ToUserID = hostUser.UserID
-                            hostMessage.Status = Services.Messaging.Data.MessageStatusType.Unread
-                            Dim controller As New MessagingController
-                            controller.SaveMessage(hostMessage)
-                        Next
+                        LogException(New SecurityException(Localization.GetString("PaddingOracleNotProtected", Localization.GlobalResourceFile)))
                     End If
 
                     'Start Scheduler
