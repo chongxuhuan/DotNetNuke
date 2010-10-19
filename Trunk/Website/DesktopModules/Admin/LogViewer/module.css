@@ -1,0 +1,11 @@
+/* Event Viewer Styles */
+.Exception{color:#fff;background-color:#ff1414;}
+.ItemCreated{color:#fff;background-color:#009900;}
+.ItemUpdated{color:#fff;background-color:#009999;}
+.ItemDeleted{color:#000;background-color:#14ffff;}
+.OperationSuccess{color:#fff;background-color:#999900;}
+.OperationFailure{color:#fff;background-color:#990000;}
+.GeneralAdminOperation{color:#fff;background-color:#4d0099;}
+.AdminAlert{color:#fff;background-color:#148aff;}
+.HostAlert{color:#fff;background-color:#ff8a14;}
+.SecurityException{color:#fff;background-color:#000;}

@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdminConnectionString" xml:space="preserve">
-    <value>Data Source={0};Integrated Security=True</value>
+    <value>Data Source={0};User ID=sa;Password=DotNetNuke</value>
   </data>
   <data name="ConnectionString" xml:space="preserve">
-    <value>Data Source={0};Integrated Security=True;Initial Catalog={1}</value>
+    <value>Data Source={0};User ID=sa;Password=DotNetNuke;Initial Catalog={1}</value>
   </data>
   <data name="CreateDatabase" xml:space="preserve">
     <value>IF (SELECT COUNT(*) FROM sys.databases WHERE [name] = '{0}') &gt; 0

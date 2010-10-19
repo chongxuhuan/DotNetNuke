@@ -47,8 +47,8 @@ Imports System.Runtime.CompilerServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("5.5.1.24")> 
-<Assembly: AssemblyStatus(ReleaseMode.Stable)> 
+<Assembly: AssemblyVersion("5.6.0.284")> 
+<Assembly: AssemblyStatus(ReleaseMode.Beta)> 
 
 'Allow internal variables to be visible to testing projects
 <Assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")> 

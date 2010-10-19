@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.AspNetMembershipProvider" type="Provider" version="05.02.00">
+    <package name="DotNetNuke.AspNetMembershipProvider" type="Provider" version="05.06.00">
       <friendlyName>DotNetNuke ASP.NET Membership Provider</friendlyName>
       <description>DotNetNuke ASP.NET Membership Provider Project provides a membership service based on the core ASP.NET Membership components.</description>
       <dependencies/>
@@ -18,12 +18,12 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Provider.AspNetProvider.dll</name>
-              <version>05.02.00</version>
+              <version>05.06.00</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Membership.DataProvider.dll</name>
-              <version>05.01.03</version>
+              <version>05.06.00</version>
             </assembly>
           </assemblies>
         </component>

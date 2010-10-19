@@ -17,16 +17,10 @@
 ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ' DEALINGS IN THE SOFTWARE.
 '
-Imports System
-Imports System.Drawing
-Imports System.Reflection
-Imports System.Web.UI
-Imports System.Web.UI.WebControls
-Imports System.IO
 
-Imports DotNetNuke.Common.Globals
+Imports System.Web.UI.WebControls
+
 Imports DotNetNuke.Common.Utilities
-Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Portals
 

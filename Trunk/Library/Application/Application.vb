@@ -27,7 +27,7 @@ Namespace DotNetNuke.Application
     ''' Module:     Application
     ''' -----------------------------------------------------------------------------
     ''' <summary>
-    ''' The Application class contains properties that describe the Application.
+    ''' The Application class contains properties that describe the DotNetNuke Application.
     ''' </summary>
     ''' <remarks>
     ''' </remarks>
@@ -53,42 +53,78 @@ Namespace DotNetNuke.Application
 
 #Region "Public Properties"
 
+        ''' <summary>
+        ''' Gets the company to which the DotNetNuke application is related.
+        ''' </summary>
+        ''' <value>Fixed result: DotNetNuke Corporation</value>
         Public ReadOnly Property Company() As String
             Get
                 Return "DotNetNuke Corporation"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the description of the application
+        ''' </summary>
+        ''' <value>Fixed result: DotNetNuke Community Edition</value>
         Public Overridable ReadOnly Property Description() As String
             Get
                 Return "DotNetNuke Community Edition"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the help URL related to the DotNetNuke application
+        ''' </summary>
+        ''' <value>Fixed result: http://www.dotnetnuke.com/default.aspx?tabid=787 </value>
         Public ReadOnly Property HelpUrl() As String
             Get
                 Return "http://www.dotnetnuke.com/default.aspx?tabid=787"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the legal copyright.
+        ''' </summary>
+        ''' <value>Dynamic: DotNetNuke® is copyright 2002-todays year by DotNetNuke Corporation"</value>
         Public ReadOnly Property LegalCopyright() As String
             Get
                 Return "DotNetNuke® is copyright 2002-" + DateTime.Today.ToString("yyyy") + " by DotNetNuke Corporation"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the name of the application
+        ''' </summary>
+        ''' <value>Fixed result: DNNCORP.CE</value>
         Public Overridable ReadOnly Property Name() As String
             Get
                 Return "DNNCORP.CE"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the SKU (Stock Keeping Unit)
+        ''' </summary>
+        ''' <value>Fixed result: DNN</value>
         Public Overridable ReadOnly Property SKU() As String
             Get
                 Return "DNN"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the status of the DotnetNuke application
+        ''' </summary>
+        ''' <value>The status. This can be (enumeration)
+        '''<code>Enum ReleaseMode
+        '''    None
+        '''    Alpha
+        '''    Beta
+        '''    RC
+        '''   Stable
+        ''' End Enum</code>
+        ''' </value>
         Public ReadOnly Property Status() As ReleaseMode
             Get
                 If _status = ReleaseMode.None Then
@@ -105,36 +141,60 @@ Namespace DotNetNuke.Application
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the title of the application
+        ''' </summary>
+        ''' <value>Fixed value "DotNetNuke".</value>
         Public ReadOnly Property Title() As String
             Get
                 Return "DotNetNuke"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the trademark.
+        ''' </summary>
+        ''' <value>Fixed value: DotNetNuke,DNN</value>
         Public ReadOnly Property Trademark() As String
             Get
                 Return "DotNetNuke,DNN"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the type of the application
+        ''' </summary>
+        ''' <value>Fixed value: Framework</value>
         Public ReadOnly Property Type() As String
             Get
                 Return "Framework"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the upgrade URL.
+        ''' </summary>
+        ''' <value>Fixed value: http://update.dotnetnuke.com </value>
         Public ReadOnly Property UpgradeUrl() As String
             Get
                 Return "http://update.dotnetnuke.com"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the URL of the application
+        ''' </summary>
+        ''' <value>Fixed value: http://www.dotnetnuke.com </value>
         Public ReadOnly Property Url() As String
             Get
                 Return "http://www.dotnetnuke.com"
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the version of the DotNetNuke framework/application
+        ''' </summary>
+        ''' <value>The version as retreieved from the Executing assembly.</value>
         Public ReadOnly Property Version() As System.Version
             Get
                 Return System.Reflection.Assembly.GetExecutingAssembly().GetName.Version
@@ -143,6 +203,18 @@ Namespace DotNetNuke.Application
 
 #End Region
 
+#Region "Public Functions"
+        ''' <summary>
+        ''' Determine whether a product specific change is to be applied
+        ''' </summary>
+        ''' <param name="productNames">list of product names</param>
+        ''' <returns>true if product is within list of names</returns>
+        ''' <remarks></remarks>
+        Public Function ApplyToProduct(ByVal productNames As String) As Boolean
+            Return productNames.Contains(Me.Name)
+        End Function
+
+#End Region
     End Class
 
 End Namespace

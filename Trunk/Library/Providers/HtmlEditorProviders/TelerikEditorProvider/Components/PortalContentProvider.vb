@@ -53,14 +53,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
 #Region "Overrides"
 
-        'Protected Overrides Function IsValid(ByVal directory As System.IO.DirectoryInfo) As Boolean
-        '    Return MyBase.IsValid(directory)
-        'End Function
-
-        'Protected Overrides Function IsValid(ByVal file As System.IO.FileInfo) As Boolean
-        '    Return MyBase.IsValid(file)
-        'End Function
-
         Public Overrides ReadOnly Property CanCreateDirectory() As Boolean
             Get
                 Return MyBase.CanCreateDirectory
@@ -327,24 +319,9 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             Try
                 Dim virtualPath As String = FileSystemValidation.ToVirtualPath(path)
 
-                Dim returnValue As String = DNNValidator.OnCreateFile(FileSystemValidation.CombineVirtualPath(virtualPath, name), file.ContentLength)
-                If (Not String.IsNullOrEmpty(returnValue)) Then
-                    Return returnValue
-                End If
+                Dim physicalPath As String = DotNetNuke.Common.ApplicationMapPath + virtualPath.Replace("/", "\")
 
-                returnValue = TelerikContent.StoreFile(file, virtualPath, name, arguments)
-
-                Dim dnnFileInfo As FileSystem.FileInfo = New FileSystem.FileInfo()
-                FillFileInfo(file, dnnFileInfo)
-
-                'Add or update file
-                Dim dnnFolder As FileSystem.FolderInfo = DNNValidator.GetUserFolder(virtualPath)
-                Dim dnnFile As FileSystem.FileInfo = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, dnnFolder.FolderID)
-                If (Not IsNothing(dnnFile)) Then
-                    DNNFileCtrl.UpdateFile(dnnFile.FileId, dnnFileInfo.FileName, dnnFileInfo.Extension, file.ContentLength, dnnFileInfo.Width, dnnFileInfo.Height, dnnFileInfo.ContentType, dnnFolder.FolderPath, dnnFolder.FolderID)
-                Else
-                    DNNFileCtrl.AddFile(PortalSettings.PortalId, dnnFileInfo.FileName, dnnFileInfo.Extension, file.ContentLength, dnnFileInfo.Width, dnnFileInfo.Height, dnnFileInfo.ContentType, dnnFolder.FolderPath, dnnFolder.FolderID, True)
-                End If
+                Dim returnValue As String = FileSystemUtils.UploadFile(physicalPath, file, Null.NullString)
 
                 Return returnValue
             Catch ex As Exception
@@ -540,7 +517,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                                 For Each dnnFile As FileSystem.FileInfo In dnnFiles.Values
                                     If (CheckSearchPatterns(dnnFile.FileName, MyBase.SearchPatterns)) Then
                                         Dim url As String = DotNetNuke.Common.Globals.LinkClick("fileid=" + dnnFile.FileId.ToString(), Null.NullInteger, Null.NullInteger)
-                                        '= DotNetNuke.Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(dnnFile.FileId)
 
                                         Dim fileItem As Widgets.FileItem = New Widgets.FileItem( _
                                          dnnFile.FileName, dnnFile.Extension, dnnFile.Size, endUserPath, _

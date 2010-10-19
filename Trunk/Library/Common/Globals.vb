@@ -334,6 +334,27 @@ Namespace DotNetNuke.Common
 
 #End Region
 
+        Private Function GetCultureCode(ByVal TabID As Integer, ByVal IsSuperTab As Boolean, ByVal settings As PortalSettings) As String
+            Dim cultureCode As String = Null.NullString
+            If settings IsNot Nothing Then
+                Dim linkTab As TabInfo
+                Dim controller As New TabController()
+                If IsSuperTab Then
+                    linkTab = controller.GetTab(TabID, Null.NullInteger, False)
+                Else
+                    linkTab = controller.GetTab(TabID, settings.PortalId, False)
+                End If
+                If linkTab IsNot Nothing Then
+                    cultureCode = linkTab.CultureCode
+                End If
+                If String.IsNullOrEmpty(cultureCode) Then
+                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
+                End If
+            End If
+
+            Return cultureCode
+        End Function
+
 #Region "Public Methods"
 
         Public Function BuildCrossTabDataSet(ByVal DataSetName As String, ByVal result As IDataReader, ByVal FixedColumns As String, ByVal VariableColumns As String, ByVal KeyColumn As String, ByVal FieldColumn As String, ByVal FieldTypeColumn As String, ByVal StringValueColumn As String, ByVal NumericValueColumn As String) As DataSet
@@ -2113,17 +2134,8 @@ Namespace DotNetNuke.Common
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean) As String
-            Dim cultureCode As String = Null.NullString
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-            If _portalSettings IsNot Nothing Then
-                Dim linkTab As TabInfo = New TabController().GetTab(TabID, _portalSettings.PortalId, False)
-                If linkTab IsNot Nothing Then
-                    cultureCode = linkTab.CultureCode
-                End If
-                If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
-                End If
-            End If
+            Dim cultureCode As String = GetCultureCode(TabID, IsSuperTab, _portalSettings)
             Return NavigateURL(TabID, IsSuperTab, _portalSettings, Null.NullString, cultureCode, Nothing)
         End Function
 
@@ -2177,21 +2189,8 @@ Namespace DotNetNuke.Common
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean, ByVal settings As PortalSettings, ByVal ControlKey As String, ByVal ParamArray AdditionalParameters As String()) As String
-
-            Dim cultureCode As String = Null.NullString
-
-            If (settings IsNot Nothing) Then
-                Dim linkTab As TabInfo = New TabController().GetTab(TabID, settings.PortalId, False)
-                If linkTab IsNot Nothing Then
-                    cultureCode = linkTab.CultureCode
-                End If
-                If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
-                End If
-            End If
-            
+            Dim cultureCode As String = GetCultureCode(TabID, IsSuperTab, settings)
             Return NavigateURL(TabID, IsSuperTab, settings, ControlKey, cultureCode, AdditionalParameters)
-
         End Function
 
         ''' <summary>
@@ -2234,7 +2233,11 @@ Namespace DotNetNuke.Common
             Dim objTab As TabInfo = Nothing
 
             If (settings IsNot Nothing) Then
-                objTab = controller.GetTab(TabID, settings.PortalId, False)
+                If IsSuperTab Then
+                    objTab = controller.GetTab(TabID, Null.NullInteger, False)
+                Else
+                    objTab = controller.GetTab(TabID, settings.PortalId, False)
+                End If
             End If
 
             'only add language to url if more than one locale is enabled

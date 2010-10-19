@@ -19,6 +19,7 @@
 '
 
 Imports System.Collections.Generic
+Imports System.Text.RegularExpressions
 
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Security.Permissions
@@ -46,6 +47,7 @@ Namespace DotNetNuke.UI.Skins
         Private _containers As Dictionary(Of String, DotNetNuke.UI.Containers.Container)
         Private _name As String
         Private _paneControl As HtmlContainerControl
+        Private _ContainerWrapperControl As HtmlGenericControl
         Private Const c_PaneOutline As String = "paneOutline"
 
 #End Region
@@ -185,7 +187,7 @@ Namespace DotNetNuke.UI.Skins
                 Dim lex As New ModuleLoadException(Skin.MODULELOAD_ERROR, exc)
                 If TabPermissionController.CanAdminPage() Then
                     ' only display the error to administrators
-                    PaneControl.Controls.Add(New ErrorContainer(PortalSettings, String.Format(Skin.CONTAINERLOAD_ERROR, ContainerPath), lex).Container)
+                    _ContainerWrapperControl.Controls.Add(New ErrorContainer(PortalSettings, String.Format(Skin.CONTAINERLOAD_ERROR, ContainerPath), lex).Container)
                 End If
                 LogException(lex)
             End Try
@@ -357,11 +359,26 @@ Namespace DotNetNuke.UI.Skins
         ''' -----------------------------------------------------------------------------
         Public Sub InjectModule(ByVal objModule As ModuleInfo)
             Dim bSuccess As Boolean = True
+            _ContainerWrapperControl = New HtmlGenericControl("div")
+            PaneControl.Controls.Add(_ContainerWrapperControl)
+
+            Dim classFormatString As String = "Module Module-{0} ModuleID-{1} ModuleTabID-{2}"
+
+            ' sanitize the module friendly name for use in a class attribute value
+            Dim invalidCharactersPattern As String = "[^a-zA-Z0-9_-]" ' every character that is NOT an alphanumeric, an underscore or a dash
+
+            Dim sanitizedFriendlyName As String = Null.NullString
+
+            If (Not String.IsNullOrEmpty(objModule.ModuleDefinition.FriendlyName)) Then
+                sanitizedFriendlyName = Regex.Replace(objModule.ModuleDefinition.FriendlyName.Trim(), invalidCharactersPattern, String.Empty)
+            End If
+
+            _ContainerWrapperControl.Attributes.Item("class") = String.Format(classFormatString, sanitizedFriendlyName, objModule.ModuleID, objModule.TabModuleID)
 
             Try
                 If Not IsAdminControl() Then
                     ' inject an anchor tag to allow navigation to the module content
-                    PaneControl.Controls.Add(New LiteralControl("<a name=""" & objModule.ModuleID.ToString & """></a>"))
+                    _ContainerWrapperControl.Controls.Add(New LiteralControl("<a id=""" & objModule.ModuleID.ToString & """ name=""" & objModule.ModuleID.ToString & """></a>"))
                 End If
 
                 'Load container control
@@ -376,7 +393,7 @@ Namespace DotNetNuke.UI.Skins
                     Dim ctlTitle As System.Web.UI.Control = ctlContainer.FindControl("dnnTitle")
                     ''Assume that the title control is named dnnTitle.  If this becomes an issue we could loop through the controls looking for the title type of skin object
                     ctlDragDropContainer.ID = ctlContainer.ID & "_DD"
-                    PaneControl.Controls.Add(ctlDragDropContainer)
+                    _ContainerWrapperControl.Controls.Add(ctlDragDropContainer)
 
                     ' inject the container into the page pane - this triggers the Pre_Init() event for the user control
                     ctlDragDropContainer.Controls.Add(ctlContainer)
@@ -395,7 +412,7 @@ Namespace DotNetNuke.UI.Skins
                         DotNetNuke.UI.Utilities.ClientAPI.RegisterPostBackEventHandler(PaneControl, "MoveToPane", AddressOf ModuleMoveToPanePostBack, False)
                     End If
                 Else
-                    PaneControl.Controls.Add(ctlContainer)
+                    _ContainerWrapperControl.Controls.Add(ctlContainer)
                 End If
 
                 'Attach Module to Container
@@ -411,7 +428,7 @@ Namespace DotNetNuke.UI.Skins
                 lex = New ModuleLoadException(String.Format(Skin.MODULEADD_ERROR, PaneControl.ID.ToString), exc)
                 If TabPermissionController.CanAdminPage() Then
                     ' only display the error to administrators
-                    PaneControl.Controls.Add(New ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container)
+                    _ContainerWrapperControl.Controls.Add(New ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container)
                 End If
                 LogException(exc)
                 bSuccess = False

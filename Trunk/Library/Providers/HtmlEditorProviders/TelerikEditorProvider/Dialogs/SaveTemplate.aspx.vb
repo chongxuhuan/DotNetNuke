@@ -71,7 +71,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider.Dialogs
                     Else
                         FolderList.Items.Clear()
 
-                        FolderList.DataTextField = "FolderPath"
+                        FolderList.DataTextField = "DisplayPath"
                         FolderList.DataValueField = "FolderPath"
                         FolderList.DataSource = folders
                         FolderList.DataBind()

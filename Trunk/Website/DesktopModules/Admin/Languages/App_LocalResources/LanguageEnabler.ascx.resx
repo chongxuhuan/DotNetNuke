@@ -252,4 +252,10 @@
   <data name="systemDefaultLabel.Text" xml:space="preserve">
     <value>System Default:</value>
   </data>
+  <data name="detectBrowserLable.Help" xml:space="preserve">
+    <value>Should the user's browser language be used to detect the user's prefered language?</value>
+  </data>
+  <data name="detectBrowserLable.Text" xml:space="preserve">
+    <value>Enable Browser Language Detection?</value>
+  </data>
 </root>

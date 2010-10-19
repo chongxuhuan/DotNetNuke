@@ -20,6 +20,10 @@
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -88,6 +92,7 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.vb" />
     <Compile Include="Components\DialogParams.vb" />
     <Compile Include="Components\EditorProvider.vb">
       <SubType>ASPXCodeBehind</SubType>
@@ -116,7 +121,6 @@
     <Compile Include="LinkClickUrlHandler.ashx.vb">
       <DependentUpon>LinkClickUrlHandler.ashx</DependentUpon>
     </Compile>
-    <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dialogs\App_LocalResources\SaveTemplate.resx">
@@ -126,6 +130,36 @@
     <Content Include="Dialogs\LinkManager.ascx" />
     <Content Include="Dialogs\SaveTemplate.aspx" />
     <Content Include="Dialogs\TemplateManager.ascx" />
+    <Content Include="images\Emoticons\angel_smile.gif" />
+    <Content Include="images\Emoticons\angry_smile.gif" />
+    <Content Include="images\Emoticons\broken_heart.gif" />
+    <Content Include="images\Emoticons\cake.gif" />
+    <Content Include="images\Emoticons\confused_smile.gif" />
+    <Content Include="images\Emoticons\cry_smile.gif" />
+    <Content Include="images\Emoticons\devil_smile.gif" />
+    <Content Include="images\Emoticons\embaressed_smile.gif" />
+    <Content Include="images\Emoticons\envelope.gif" />
+    <Content Include="images\Emoticons\heart.gif" />
+    <Content Include="images\Emoticons\kiss.gif" />
+    <Content Include="images\Emoticons\lightbulb.gif" />
+    <Content Include="images\Emoticons\omg_smile.gif" />
+    <Content Include="images\Emoticons\regular_smile.gif" />
+    <Content Include="images\Emoticons\sad_smile.gif" />
+    <Content Include="images\Emoticons\shades_smile.gif" />
+    <Content Include="images\Emoticons\teeth_smile.gif" />
+    <Content Include="images\Emoticons\thumbs_down.gif" />
+    <Content Include="images\Emoticons\thumbs_up.gif" />
+    <Content Include="images\Emoticons\tounge_smile.gif" />
+    <Content Include="images\Emoticons\whatchutalkingabout_smile.gif" />
+    <Content Include="images\Emoticons\wink_smile.gif" />
+    <Content Include="js\CustomFunctions.js" />
+    <Content Include="templates\htmlEditorTemplates.css" />
+    <Content Include="templates\ImageAndTitle.css" />
+    <Content Include="templates\ImageAndTitle.htmtemplate" />
+    <Content Include="templates\SimpleTableAndHeader.css" />
+    <Content Include="templates\SimpleTableAndHeader.htmtemplate" />
+    <Content Include="templates\TwoColumnAndTitle.css" />
+    <Content Include="templates\TwoColumnAndTitle.htmtemplate" />
     <Content Include="license.txt" />
     <Content Include="releaseNotes.txt" />
     <Content Include="images\SaveTemplate.gif" />
@@ -190,6 +224,9 @@
     <Content Include="EditorOverride.css" />
     <Content Include="Telerik.Web.UI.DialogHandler.aspx" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="My Project\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <PropertyGroup>
@@ -228,6 +265,12 @@
     <CreateItem Include="images\*.*">
       <Output TaskParameter="Include" ItemName="MyImages" />
     </CreateItem>
+    <CreateItem Include="images\Emoticons\*.*">
+      <Output TaskParameter="Include" ItemName="MyEmoticons" />
+    </CreateItem>
+    <CreateItem Include="templates\*.*">
+      <Output TaskParameter="Include" ItemName="MyTemplates" />
+    </CreateItem>
     <CreateItem Include="js\*.js">
       <Output TaskParameter="Include" ItemName="MyJsFiles" />
     </CreateItem>
@@ -244,6 +287,8 @@
     <Copy SourceFiles="@(PackageDialogFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/Dialogs" />
     <Copy SourceFiles="@(PackageDialogLocalResourceFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/Dialogs/App_LocalResources" />
     <Copy SourceFiles="@(MyImages)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/images" />
+    <Copy SourceFiles="@(MyEmoticons)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/images/Emoticons" />
+    <Copy SourceFiles="@(MyTemplates)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/templates" />
     <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/js" />
     <Copy SourceFiles="@(MyConfigFiles)" DestinationFolder="../../../../Website/Providers/HtmlEditorProviders/Telerik/config" />
   </Target>

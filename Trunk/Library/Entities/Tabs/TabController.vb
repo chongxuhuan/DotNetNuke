@@ -326,18 +326,23 @@ Namespace DotNetNuke.Entities.Tabs
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub UpdateChildTabPath(ByVal intTabid As Integer, ByVal portalId As Integer)
-            For Each objtab As TabInfo In GetTabsByPortal(portalId).DescendentsOf(intTabid)
-                Dim oldTabPath As String = objtab.TabPath
-                objtab.TabPath = GenerateTabPath(objtab.ParentId, objtab.TabName)
-                If oldTabPath <> objtab.TabPath Then
-                    provider.UpdateTab(objtab.TabID, objtab.ContentItemId, objtab.PortalID, objtab.VersionGuid, objtab.DefaultLanguageGuid, objtab.LocalizedVersionGuid, _
-                            objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
-                            objtab.ParentId, objtab.IconFile, objtab.IconFileLarge, objtab.Title, objtab.Description, _
-                            objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
-                            objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
-                            objtab.PageHeadText, objtab.IsSecure, objtab.PermanentRedirect, _
-                            objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objtab.CultureCode)
-                    UpdateTabVersion(objtab.TabID)
+            For Each childTab As TabInfo In GetTabsByPortal(portalId).DescendentsOf(intTabid)
+                Dim oldTabPath As String = childTab.TabPath
+                childTab.TabPath = GenerateTabPath(childTab.ParentId, childTab.TabName)
+                If oldTabPath <> childTab.TabPath Then
+
+                    If childTab.ContentItemId = Null.NullInteger AndAlso childTab.TabID <> Null.NullInteger Then
+                        CreateContentItem(childTab)
+                    End If
+
+                    provider.UpdateTab(childTab.TabID, childTab.ContentItemId, childTab.PortalID, childTab.VersionGuid, childTab.DefaultLanguageGuid, childTab.LocalizedVersionGuid, _
+                            childTab.TabName, childTab.IsVisible, childTab.DisableLink, _
+                            childTab.ParentId, childTab.IconFile, childTab.IconFileLarge, childTab.Title, childTab.Description, _
+                            childTab.KeyWords, childTab.IsDeleted, childTab.Url, childTab.SkinSrc, childTab.ContainerSrc, _
+                            childTab.TabPath, childTab.StartDate, childTab.EndDate, childTab.RefreshInterval, _
+                            childTab.PageHeadText, childTab.IsSecure, childTab.PermanentRedirect, _
+                            childTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, childTab.CultureCode)
+                    UpdateTabVersion(childTab.TabID)
 
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("TabID", intTabid.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)

@@ -498,7 +498,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 If folder.FolderPath = Null.NullString Then
                     FolderItem.Text = Localization.GetString("Root", Me.LocalResourceFile)
                 Else
-                    FolderItem.Text = folder.FolderPath
+                    FolderItem.Text = folder.DisplayPath
                 End If
                 FolderItem.Value = folder.FolderPath
                 cboFolders.Items.Add(FolderItem)
@@ -621,7 +621,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     Tab.ParentId = Null.NullInteger
                     Tab.Level = 0
                 End If
-          
+
             End If
             Tab.IconFile = strIcon
             Tab.IconFileLarge = strIconLarge

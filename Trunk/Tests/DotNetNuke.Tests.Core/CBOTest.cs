@@ -19,16 +19,10 @@
 // '
 using System;
 using System.Data;
-using System.Data.SqlTypes;
-using System.Web.Caching;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
-using DotNetNuke.Services.Cache;
-using DotNetNuke.Tests.Providers.Caching;
-using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 using MbUnit.Framework;
-using Moq;
 
 namespace DotNetNuke.Tests.Core.Providers.Caching
 {

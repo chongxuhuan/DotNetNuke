@@ -188,7 +188,7 @@ Namespace DotNetNuke.Modules.Admin.FileManager
                         FolderItem.Text = Localization.GetString("PortalRoot", Me.LocalResourceFile)
                     End If
                 Else
-                    FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.FolderPath)
+                    FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.DisplayPath)
                 End If
                 FolderItem.Value = folder.FolderPath
                 ddlFolders.Items.Add(FolderItem)

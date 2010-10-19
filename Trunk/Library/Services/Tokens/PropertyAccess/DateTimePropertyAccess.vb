@@ -35,6 +35,12 @@ Namespace DotNetNuke.Services.Tokens
                 Case "now"
                     If strFormat = String.Empty Then strFormat = "g"
                     Return now.ToString(strFormat, formatProvider)
+                Case "system"
+                    If strFormat = String.Empty Then strFormat = "g"
+                    Return DateTime.Now.ToString(strFormat, formatProvider)
+                Case "utc"
+                    If strFormat = String.Empty Then strFormat = "g"
+                    Return DateTime.Now.ToUniversalTime.ToString(strFormat, formatProvider)
                 Case Else
                     PropertyNotFound = True : Return String.Empty
             End Select
