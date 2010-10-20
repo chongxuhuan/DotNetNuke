@@ -94,7 +94,7 @@ Namespace DotNetNuke.Modules.Admin.Modules
                         If folder.FolderPath = Null.NullString Then
                             FolderItem.Text = Localization.GetString("Root", Me.LocalResourceFile)
                         Else
-                            FolderItem.Text = folder.DisplayPath
+                            FolderItem.Text = folder.FolderPath
                         End If
                         FolderItem.Value = folder.FolderPath
                         cboFolders.Items.Add(FolderItem)

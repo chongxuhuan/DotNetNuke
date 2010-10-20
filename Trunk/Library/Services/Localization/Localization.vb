@@ -1814,11 +1814,11 @@ Namespace DotNetNuke.Services.Localization
         Public Shared Sub SaveLanguage(ByVal locale As Locale)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
 
-            If locale.LanguageID = Null.NullInteger Then
-                locale.LanguageID = DataProvider.Instance().AddLanguage(locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
+            If locale.LanguageId = Null.NullInteger Then
+                locale.LanguageId = DataProvider.Instance().AddLanguage(locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(locale, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_CREATED)
             Else
-                DataProvider.Instance().UpdateLanguage(locale.LanguageID, locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
+                DataProvider.Instance().UpdateLanguage(locale.LanguageId, locale.Code, locale.Text, locale.Fallback, UserController.GetCurrentUserInfo.UserID)
                 objEventLog.AddLog(locale, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.LANGUAGE_UPDATED)
             End If
 

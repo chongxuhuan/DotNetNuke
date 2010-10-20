@@ -94,7 +94,6 @@
 		<tool name="ModuleManager" />
 		<tool name="ToggleScreenMode" shortcut="F11"/>
 		<tool name="TrackChangesDialog" />
-        <tool name="Emoticons" type="SplitButton" ItemsPerRow="5" PopupWidth="170px" PopupHeight="117px"/>
 		<tool name="AboutDialog" />
 	</tools>
 </root>

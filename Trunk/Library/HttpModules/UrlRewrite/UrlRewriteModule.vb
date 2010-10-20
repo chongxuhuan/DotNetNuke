@@ -455,15 +455,20 @@ Namespace DotNetNuke.HttpModules
                         If PortalId > Null.NullInteger Then
                             ' use the host portal
                             Dim objPortalAliasController As New PortalAliasController
+                            Dim arrPortalAliases As ArrayList
+                            arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
 
-                            If New PortalController().GetPortals().Count = 1 Then
+                            If arrPortalAliases.Count = 0 Then
                                 objPortalAliasInfo = New PortalAliasInfo()
                                 objPortalAliasInfo.PortalID = PortalId
                                 objPortalAliasInfo.HTTPAlias = PortalAlias
                                 objPortalAliasController.AddPortalAlias(objPortalAliasInfo)
-                            Else
+                                arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
+                            End If
+
+                            If arrPortalAliases.Count > 0 Then
                                 'Get the first Alias
-                                objPortalAliasInfo = CType(objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)(0), PortalAliasInfo)
+                                objPortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
                                 If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
                                     strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
                                 Else

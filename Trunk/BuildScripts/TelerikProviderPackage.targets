@@ -32,12 +32,6 @@
     <CreateItem Include="images\*.*">
       <Output TaskParameter="Include" ItemName="MyImages" />
     </CreateItem>
-    <CreateItem Include="images\Emoticons\*.*">
-        <Output TaskParameter="Include" ItemName="MyEmoticons" />
-    </CreateItem>
-    <CreateItem Include="templates\*.*">
-        <Output TaskParameter="Include" ItemName="MyTemplates" />
-    </CreateItem>
     <CreateItem Include="js\*.js">
       <Output TaskParameter="Include" ItemName="MyJsFiles" />
     </CreateItem>
@@ -55,8 +49,6 @@
     <Copy SourceFiles="@(PackageDialogFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageDialogLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(MyImages)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
-    <Copy SourceFiles="@(MyEmoticons)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
-    <Copy SourceFiles="@(MyTemplates)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(MyJsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(MyConfigFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">

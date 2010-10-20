@@ -22,7 +22,6 @@ Imports System.IO
 Imports System.Xml
 Imports System.Web
 Imports System.Reflection
-Imports DotNetNuke.Services.FileSystem
 Imports Telerik.Web.UI
 Imports DotNetNuke
 Imports DotNetNuke.Framework.Providers
@@ -500,9 +499,9 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 Return False
             End If
 
-            'If (dnnFolder.StorageLocation <> FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem) Then
-            '    Return False
-            'End If
+            If (dnnFolder.StorageLocation <> FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem) Then
+                Return False
+            End If
 
             Return True
         End Function
@@ -697,45 +696,43 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 If (_UserFolders Is Nothing) Then
                     _UserFolders = New Dictionary(Of String, FileSystem.FolderInfo)
 
-                    For Each folder As FolderInfo In FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, True, True, "READ")
+                    Dim folders As ArrayList = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, True, True, "BROWSE, ADD")
 
-                        Dim folderPath As String = folder.FolderPath
+                    For Each folder In folders
+                        Dim dnnFolder As FileSystem.FolderInfo = DirectCast(folder, FileSystem.FolderInfo)
+                        Dim folderPath As String = dnnFolder.FolderPath
 
-                        If (Not String.IsNullOrEmpty(folderPath)) Then
+                        If (Not String.IsNullOrEmpty(folderPath) AndAlso folderPath.Substring(folderPath.Length - 1, 1) = "/") Then
+                            folderPath = folderPath.Remove(folderPath.Length - 1, 1)
+                        End If
 
-                            folderPath = folderPath.TrimEnd("/")
+                        If (Not String.IsNullOrEmpty(folderPath) AndAlso folderPath.Contains("/")) Then
+                            Dim folderPaths As String() = folderPath.Split("/")
+                            'If (folderPaths.Length > 0) Then
+                            Dim addPath As String = String.Empty
+                            For Each addFolderPath In folderPaths
+                                If (addPath = String.Empty) Then
+                                    addPath = addFolderPath + "/"
+                                Else
+                                    addPath = addPath + addFolderPath + "/"
+                                End If
 
-                            If (folderPath.Contains("/")) Then
-                                Dim folderPaths As String() = folderPath.Split("/")
-                                'If (folderPaths.Length > 0) Then
-                                Dim addPath As String = String.Empty
-                                For Each addFolderPath In folderPaths
-                                    If (addPath = String.Empty) Then
-                                        addPath = addFolderPath + "/"
-                                    Else
-                                        addPath = addPath + addFolderPath + "/"
-                                    End If
+                                If (_UserFolders.ContainsKey(addPath)) Then
+                                    Continue For
+                                End If
 
-                                    If (_UserFolders.ContainsKey(addPath)) Then
-                                        Continue For
-                                    End If
+                                Dim addFolder As FileSystem.FolderInfo = GetDNNFolder(addPath)
+                                If (addFolder Is Nothing) Then
+                                    Exit For
+                                End If
 
-                                    Dim addFolder As FileSystem.FolderInfo = GetDNNFolder(addPath)
-                                    If (addFolder Is Nothing) Then
-                                        Exit For
-                                    End If
-
-                                    _UserFolders.Add(addFolder.FolderPath, addFolder)
-                                Next
-                            Else
-                                _UserFolders.Add(folder.FolderPath, folder)
-                            End If
+                                _UserFolders.Add(addFolder.FolderPath, addFolder)
+                            Next
                         Else
-                            _UserFolders.Add(folder.FolderPath, folder)
+                            _UserFolders.Add(dnnFolder.FolderPath, dnnFolder)
                         End If
                     Next
                 End If
-
                 Return _UserFolders
             End Get
         End Property

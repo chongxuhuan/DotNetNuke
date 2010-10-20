@@ -25,6 +25,8 @@ Imports System.Web.UI.WebControls
 Imports System.IO
 Imports System.Xml
 
+Imports DotNetNuke.Services.Exceptions
+Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.UI.Utilities
 Imports System.Reflection
 Imports DotNetNuke.Entities.Modules
@@ -58,9 +60,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
         Private objProvider As DotNetNuke.Framework.Providers.Provider = CType(_providerConfiguration.Providers(_providerConfiguration.DefaultProvider), DotNetNuke.Framework.Providers.Provider)
 
         Private _TrackException As Exception = Nothing
-
-        Private customStyles As List(Of String) = New List(Of String)
-
 #End Region
 
 #Region "Properties"
@@ -209,8 +208,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 _editor.EnableViewState = False
                 _editor.ExternalDialogsPath = ProviderPath + "Dialogs/"
 
-                _editor.OnClientCommandExecuting = "OnClientCommandExecuting" 'this can be further extended we can hardcode all the client events here and reference them in the CustomFunctions.js file
-
                 If (Not String.IsNullOrEmpty(ToolsFile)) Then
                     'this will check if the file exists
                     GetFilePath(ToolsFile, "tools file")
@@ -229,15 +226,8 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 If (IsNothing(_TrackException)) Then
                     'Add save template js and gif
                     _panel.Controls.Add(New LiteralControl("<script type=""text/javascript"" src=""" + _panel.Page.ResolveUrl(ProviderPath + "js/RegisterDialogs.js") + """></script>"))
-                    _panel.Controls.Add(New LiteralControl("<script type=""text/javascript"" src=""" + _panel.Page.ResolveUrl(ProviderPath + "js/CustomFunctions.js") + """></script>"))
                     _panel.Controls.Add(New LiteralControl("<script type=""text/javascript"">var __textEditorSaveTemplateDialog = """ + _panel.Page.ResolveUrl(ProviderPath + "Dialogs/SaveTemplate.aspx") + """;</script>"))
-
-                    customStyles.Add(".reTool .SaveTemplate { background-image: url('" + _panel.Page.ResolveUrl(ProviderPath + "images/SaveTemplate.gif") + "'); }")
-
-                    AddEmoticonsTool()
-                    AddHtmlTemplates()
-                    
-                    SetCustomStyles()
+                    _panel.Controls.Add(New LiteralControl("<style type=""text/css"">.reTool .SaveTemplate { background-image: url('" + _panel.Page.ResolveUrl(ProviderPath + "images/SaveTemplate.gif") + "'); }</style>"))
 
                     _panel.Controls.Add(_editor)
                 End If
@@ -251,27 +241,18 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             Try
                 If (IsNothing(_TrackException)) Then
                     'register the override CSS file to take care of the DNN default skin problems
-                    Const AlreadyLoadedKey As String = "TelerikEditorProvider-EditorOverrideLoaded"
-                    Dim alreadyLoaded As Boolean = HttpContext.Current IsNot Nothing AndAlso HttpContext.Current.Items(AlreadyLoadedKey) IsNot Nothing
-                    If alreadyLoaded Then
-                        Return
-                    End If
-
                     Dim cssOverrideUrl As String = _panel.Page.ResolveUrl(ProviderPath & "EditorOverride.css")
-                    Dim cssOverrideLink As HtmlLink = New HtmlLink()
-                    cssOverrideLink.Href = cssOverrideUrl
-                    cssOverrideLink.Attributes.Add("type", "text/css")
-                    cssOverrideLink.Attributes.Add("rel", "stylesheet")
-                    cssOverrideLink.Attributes.Add("class", "Telerik_stylesheet")
-
                     Dim pageScriptManager As ScriptManager = ScriptManager.GetCurrent(_panel.Page)
                     If (Not (pageScriptManager Is Nothing)) AndAlso (pageScriptManager.IsInAsyncPostBack) Then
-                        _panel.Controls.Add(cssOverrideLink)
+                        _panel.Controls.Add(New LiteralControl(String.Format("<link title='Telerik stylesheet' type='text/css' rel='stylesheet' href='{0}'></link>", _panel.Page.Server.HtmlEncode(cssOverrideUrl))))
                     ElseIf Not (_panel.Page.Header Is Nothing) Then
-                        _panel.Page.Header.Controls.Add(cssOverrideLink)
+                        Dim link As HtmlLink = New HtmlLink()
+                        link.Href = cssOverrideUrl
+                        link.Attributes.Add("type", "text/css")
+                        link.Attributes.Add("rel", "stylesheet")
+                        link.Attributes.Add("title", "Telerik stylesheet")
+                        _panel.Page.Header.Controls.Add(link)
                     End If
-
-                    HttpContext.Current.Items(AlreadyLoadedKey) = True
                 End If
             Catch ex As Exception
                 _TrackException = New Exception("Could not load RadEditor." & Environment.NewLine & ex.Message, ex)
@@ -297,7 +278,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorHomeDirectory", PortalSettings.HomeDirectory, True)
                 ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorPortalGuid", PortalSettings.GUID.ToString, True)
                 ClientAPI.RegisterClientVariable(HtmlEditorControl.Page, "editorEnableUrlLanguage", PortalSettings.EnableUrlLanguage, True)
-
             Catch ex As Exception
                 Throw ex
             End Try
@@ -313,8 +293,8 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                     SetContentPaths(_editor.FlashManager)
                     SetContentPaths(_editor.MediaManager)
                     SetContentPaths(_editor.DocumentManager)
-                    SetContentPaths(_editor.SilverlightManager)
                     SetContentPaths(_editor.TemplateManager)
+                    SetContentPaths(_editor.SilverlightManager)
 
                     'set content provider type
                     Dim providerType As Type = GetType(PortalContentProvider)
@@ -542,181 +522,20 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             _editor.LocalizationPath = ProviderPath + "App_LocalResources/"
 
             If (Not _languageSet) Then
-                Dim language As String = PortalSettings.CultureCode
-                If (language <> String.Empty AndAlso ResourceFilesExist(_editor.LocalizationPath, language)) Then
-                    _editor.Language = language
+                Dim localizationLang As String = String.Empty
+                'first check portal settings
+                localizationLang = PortalSettings.DefaultLanguage
+                'then check if language cookie is present
+                If Not (_panel.Page.Request.Cookies("language") Is Nothing) Then
+                    Dim cookieValue As String = _panel.Page.Request.Cookies.Get("language").Value
+                    localizationLang = cookieValue
+                End If
+                'set new value
+                If (localizationLang <> String.Empty) Then
+                    _editor.Language = localizationLang
                 End If
             End If
         End Sub
-
-        
-        ''' <summary>
-        ''' Adds the emoticons tool button to the html toolbar
-        ''' </summary>
-        Private Sub AddEmoticonsTool()
-            If (_editor.Tools.Count < 1) Then Return
-
-            Dim toolbar As EditorToolGroup = _editor.Tools(_editor.Tools.Count - 1)
-            Dim tool As Object = toolbar.FindTool("Emoticons")
-
-            If (tool) Is Nothing Then Return
-            If (Not TypeOf (tool) Is EditorSplitButton) Then Return
-
-            Dim sp As EditorSplitButton = tool
-
-            Dim filePath As String = HttpContext.Current.Server.MapPath(ProviderPath) + "images\Emoticons"
-            Dim virtualPath As String = _panel.Page.ResolveUrl(ProviderPath + "images/Emoticons/")
-            Dim extensions() As String = New String() {"*.jpg", "*.png", "*.gif"}
-
-            If (Not Directory.Exists(filePath)) Then Return
-
-            Dim dir As DirectoryInfo = New DirectoryInfo(filePath)
-            Dim dirFiles As List(Of FileInfo)
-
-            dirFiles = GetFilesByExtension(dir, extensions)
-
-            customStyles.Add("span.Emoticons { background-image: url('" + virtualPath + dirFiles(0).Name + "'); }")
-
-            For Each dirFile As FileInfo In dirFiles
-                Dim fname As String = dirFile.Name
-                sp.Items.Add("<img src='" + virtualPath + dirFile.Name + "' title='" + fname.Replace(dirFile.Extension, "") + "' />", virtualPath + dirFile.Name)
-            Next
-
-        End Sub
-
-        ''' <summary>
-        ''' Adds the HTML default templates to the template folder in the current portal
-        ''' </summary>
-        Private Sub AddHtmlTemplates()
-
-            Dim defaultPath As String = HttpContext.Current.Server.MapPath(ProviderPath) + "templates"
-            Dim portalPath As String = PortalSettings.HomeDirectoryMapPath + "Templates"
-            Dim extensions() As String = New String() {"*.htm", "*.htmtemplate", "*.html", "*.css"}
-
-            EnsurePortalFiles(portalPath, defaultPath, extensions)
-
-        End Sub
-
-        ''' <summary>
-        ''' Ensures that the portal has the default files from the provider folder and copies them if they're not present.
-        ''' </summary>
-        ''' <param name="portalPath">The portal path.</param>
-        ''' <param name="defaultPath">The providerdefault path.</param>
-        ''' <param name="extensions">The extensions.</param>
-        ''' <returns></returns>
-        Private Function EnsurePortalFiles(ByVal portalPath As String, ByVal defaultPath As String, ByVal extensions() As String) As Boolean
-            Dim dir As DirectoryInfo
-            Dim dirFiles As List(Of FileInfo) = New List(Of FileInfo)
-
-            'first check if the portal has the files
-            If (Not Directory.Exists(portalPath)) Then
-                If (Not Directory.Exists(defaultPath)) Then
-                    Return False ' no emoticons available even in providers folder so exit
-                Else
-                    If (Not CopyFilesToPortal(defaultPath, portalPath, extensions)) Then Return False ' try copying the files to current portal
-                End If
-            Else
-                'try get existing files from the providers folder
-                dir = New DirectoryInfo(portalPath)
-                dirFiles = GetFilesByExtension(dir, extensions)
-
-                If (dirFiles.Count < 1) Then 'if no files then try copying from providers folder
-                    If (Not CopyFilesToPortal(defaultPath, portalPath, extensions)) Then Return False
-                End If
-            End If
-
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Copies default files from provider folder to portal folder.
-        ''' </summary>
-        ''' <param name="defaultPath">The provider default path.</param>
-        ''' <param name="portalPath">The portal path.</param>
-        ''' <param name="extensions">The extensions.</param>
-        ''' <returns></returns>
-        Private Function CopyFilesToPortal(ByVal defaultPath As String, ByVal portalPath As String, ByVal extensions() As String)
-            If (Not Directory.Exists(defaultPath)) Then Return False
-
-            Dim dir As DirectoryInfo = New DirectoryInfo(defaultPath)
-            Dim dirFiles As List(Of FileInfo)
-
-            dirFiles = GetFilesByExtension(dir, extensions)
-
-            If (dirFiles.Count < 1) Then Return False ' no files available so exit
-
-            'copy all files to portal's folder
-            Dim portalDir As DirectoryInfo = IIf(Directory.Exists(portalPath), New DirectoryInfo(portalPath), Directory.CreateDirectory(portalPath))
-
-            For Each finfo In dirFiles
-                File.Copy(finfo.FullName, portalDir.FullName + "\" + finfo.Name)
-            Next
-
-            Return True
-        End Function
-
-        ''' <summary>
-        ''' Gets a list of files by extension.
-        ''' </summary>
-        ''' <param name="directory">The direcotory to look in</param>
-        ''' <param name="extensions">The extensions.</param>
-        ''' <returns></returns>
-        Private Function GetFilesByExtension(ByVal directory As DirectoryInfo, ByVal extensions() As String) As List(Of FileInfo)
-            Dim dirFiles As List(Of FileInfo) = New List(Of FileInfo)
-            For Each extension In extensions
-                Dim innerList As List(Of FileInfo) = New List(Of FileInfo)
-                innerList = directory.GetFiles(extension, SearchOption.TopDirectoryOnly).ToList
-                For Each fi In innerList
-                    If (Not dirFiles.Exists(Function(f As FileInfo) f.FullName = fi.FullName)) Then
-                        dirFiles.Add(fi)
-                    End If
-                Next
-            Next
-
-            Return dirFiles
-        End Function
-
-        ''' <summary>
-        ''' Adds additional css styles to the editor that are required by tools such as emoticons, templatemanager etc.
-        ''' </summary>
-        Private Sub SetCustomStyles()
-            Dim styleTag As StringBuilder = New StringBuilder()
-            styleTag.Append("<style type=""text/css"">")
-
-            For Each style As String In customStyles
-                styleTag.Append(style)
-            Next
-
-            styleTag.Append("</style>")
-
-            _panel.Controls.Add(New LiteralControl(styleTag.ToString()))
-        End Sub
-
-        
-
-        ''' <summary>
-        ''' Check if resources files exist for the language specified.
-        ''' </summary>
-        ''' <param name="path">The path.</param>
-        ''' <param name="language">The language.</param>
-        ''' <returns></returns>
-        Private Function ResourceFilesExist(ByVal path As String, ByVal language As String) As Boolean
-            Dim dir As DirectoryInfo = New DirectoryInfo(HttpContext.Current.Server.MapPath(path))
-            Dim resFiles As FileInfo() = dir.GetFiles("*.resx", SearchOption.TopDirectoryOnly)
-
-            Dim result As Boolean
-
-            For Each resFile As FileInfo In resFiles
-                Dim name As String = resFile.Name
-                If name.Substring(name.IndexOf(".resx") - language.Length, language.Length) = language Then
-                    result = True
-                End If
-
-                If result = False Then Exit For
-            Next
-            Return result
-        End Function
 
         Private Sub SetContentPaths(ByVal manager As FileManagerDialogConfiguration)
             If (IsNothing(manager.ViewPaths) OrElse manager.ViewPaths.Length < 1) Then

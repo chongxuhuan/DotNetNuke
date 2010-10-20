@@ -61,7 +61,7 @@ namespace DotNetNuke.Tests.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Source={0};User ID=sa;Password=DotNetNuke.
+        ///   Looks up a localized string similar to Data Source={0};Integrated Security=True.
         /// </summary>
         internal static string AdminConnectionString {
             get {
@@ -70,7 +70,7 @@ namespace DotNetNuke.Tests.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data Source={0};User ID=sa;Password=DotNetNuke;Initial Catalog={1}.
+        ///   Looks up a localized string similar to Data Source={0};Integrated Security=True;Initial Catalog={1}.
         /// </summary>
         internal static string ConnectionString {
             get {

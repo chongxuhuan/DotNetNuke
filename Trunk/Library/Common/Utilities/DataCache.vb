@@ -339,9 +339,6 @@ Namespace DotNetNuke.Common.Utilities
         Friend Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback, ByVal storeInDictionary As Boolean) As TObject
             ' declare local object and try and retrieve item from the cache
 
-            'DNN-14087 - Temprorarily suppress Dictionary usage as it is not Thread safe
-            storeInDictionary = (cacheItemArgs.CacheKey = DataCache.HostSettingsCacheKey)
-
             Dim objObject As Object = Nothing
 
             If (Not storeInDictionary) Then

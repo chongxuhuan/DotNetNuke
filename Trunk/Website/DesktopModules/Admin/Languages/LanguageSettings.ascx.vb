@@ -39,40 +39,93 @@ Namespace DotNetNuke.Modules.Admin.Languages
     ''' </history>
     ''' -----------------------------------------------------------------------------
     Partial Class LanguageSettings
-        Inherits ModuleSettingsBase
+        Inherits ModuleUserControlBase
 
-
-        Public Overrides Sub UpdateSettings()
-            MyBase.UpdateSettings()
-
-            PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableUrlLanguage", chkUrl.Checked.ToString())
-            Dim modController As New ModuleController
-            modController.UpdateModuleSetting(Me.ModuleContext.ModuleId, "UsePaging", chkUsePaging.Checked)
-            modController.UpdateModuleSetting(Me.ModuleContext.ModuleId, "PageSize", txtPageSize.Text)
-
-
-        End Sub
-
-        Public Overrides Sub LoadSettings()
-            MyBase.LoadSettings()
+        Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
+            If Me.ModuleContext.PortalSettings.ActiveTab.IsSuperTab Then
+                Me.ModuleContext.Configuration.ModuleTitle = Services.Localization.Localization.GetString("HostSettings.Title", Me.LocalResourceFile)
+            Else
+                Me.ModuleContext.Configuration.ModuleTitle = Services.Localization.Localization.GetString("PortalSettings.Title", Me.LocalResourceFile)
+            End If
 
             valPageSize.MinimumValue = 1
             valPageSize.MaximumValue = Int32.MaxValue
+        End Sub
 
-            chkUrl.Checked = Me.ModuleContext.PortalSettings.EnableUrlLanguage
-            chkUsePaging.Checked = CType(Me.ModuleContext.Settings("UsePaging"), Boolean)
-
-            Dim _PageSize As Integer = 10 'default page size
-            If CType(Me.ModuleContext.Settings("PageSize"), Integer) = 0 Then
-                txtPageSize.Text = _PageSize
-            Else
-                txtPageSize.Text = CType(Me.ModuleContext.Settings("PageSize"), Integer)
+        Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+            If Not Page.IsPostBack Then
+                If Me.ModuleContext.PortalSettings.ActiveTab.IsSuperTab Then
+                    chkBrowser.Checked = DotNetNuke.Entities.Host.Host.EnableBrowserLanguage
+                    chkUrl.Checked = DotNetNuke.Entities.Host.Host.EnableUrlLanguage
+                Else
+                    chkBrowser.Checked = Me.ModuleContext.PortalSettings.EnableBrowserLanguage
+                    chkUrl.Checked = Me.ModuleContext.PortalSettings.EnableUrlLanguage
+                End If
+                chkUsePaging.Checked = CType(Me.ModuleContext.Settings("UsePaging"), Boolean)
+                Dim _PageSize As Integer = 10 'default page size
+                If CType(Me.ModuleContext.Settings("PageSize"), Integer) = 0 Then
+                    txtPageSize.Text = _PageSize
+                Else
+                    txtPageSize.Text = CType(Me.ModuleContext.Settings("PageSize"), Integer)
+                End If
             End If
 
             urlRow.Visible = Not PortalSettings.Current.ContentLocalizationEnabled
 
         End Sub
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Updates the settings
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[cnurse]	05/09/2008	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
+            Try
+                If Page.IsValid Then
+                    If Me.ModuleContext.PortalSettings.ActiveTab.IsSuperTab Then
+                        HostController.Instance.Update("EnableBrowserLanguage", chkBrowser.Checked.ToString())
+                        HostController.Instance.Update("EnableUrlLanguage", chkUrl.Checked.ToString())
+                    Else
+                        PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableBrowserLanguage", chkBrowser.Checked.ToString())
+                        PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableUrlLanguage", chkUrl.Checked.ToString())
+                    End If
+                    Dim modController As New ModuleController
+                    modController.UpdateModuleSetting(Me.ModuleContext.ModuleId, "UsePaging", chkUsePaging.Checked)
+                    modController.UpdateModuleSetting(Me.ModuleContext.ModuleId, "PageSize", txtPageSize.Text)
+
+                    Response.Redirect(NavigateURL())
+                End If
+            Catch exc As Exception           'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Returns to main control
+        ''' </summary>
+        ''' <param name="sender"></param>
+        ''' <param name="e"></param>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[cnurse]	05/09/2008	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
+            Try
+                Response.Redirect(NavigateURL())
+            Catch exc As Exception           'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
 
     End Class
 

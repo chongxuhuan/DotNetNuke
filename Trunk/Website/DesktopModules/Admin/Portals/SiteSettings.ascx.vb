@@ -293,7 +293,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </summary>
         ''' <param name="activeLanguage"></param>
         ''' <remarks></remarks>
-        Private Sub LoadPortal(ByVal activeLanguage As String)
+        Private Sub Loadportal(ByVal activeLanguage As String)
             Dim objPortalController As New PortalController
             Dim objModules As New ModuleController
             Dim objUsers As New UserController
@@ -361,11 +361,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             cboRegisterTabId.DataBind()
             If Not cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString) Is Nothing Then
                 cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString).Selected = True
-            End If
-            cboSearchTabId.DataSource = listTabs
-            cboSearchTabId.DataBind()
-            If Not cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString) Is Nothing Then
-                cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString).Selected = True
             End If
 
             listTabs = TabController.GetPortalTabs(intPortalId, Null.NullInteger, False, True)
@@ -725,11 +720,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         intUserTabId = Integer.Parse(cboUserTabId.SelectedItem.Value)
                     End If
 
-                    Dim intSearchTabId As Integer = Null.NullInteger
-                    If Not cboSearchTabId.SelectedItem Is Nothing Then
-                        intSearchTabId = Integer.Parse(cboSearchTabId.SelectedItem.Value)
-                    End If
-
                     If Not txtPassword.Attributes.Item("value") Is Nothing Then
                         txtPassword.Attributes.Item("value") = txtPassword.Text
                     End If
@@ -755,7 +745,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         IIf(cboProcessor.SelectedValue = "", "", cboProcessor.SelectedItem.Text).ToString, _
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
-                        intUserTabId, intSearchTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
+                        intUserTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
                         lblHomeDirectory.Text, SelectedCultureCode)
 
                     If Not refreshPage Then
