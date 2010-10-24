@@ -155,6 +155,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Response.Redirect(NavigateURL(), True)
         End Sub
 
+
         Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
             Dim tabCtrl As New TabController
             Dim portalCtrl As New PortalController
@@ -189,7 +190,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                 End If
             Next
-            
+
             ''Redirect to refresh page (and skinobjects)
             Response.Redirect(NavigateURL(), True)
         End Sub

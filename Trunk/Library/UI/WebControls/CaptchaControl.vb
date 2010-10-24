@@ -907,6 +907,7 @@ Namespace DotNetNuke.UI.WebControls
                 _IsValid = False
             End If
             RaiseEvent UserValidated(Me, New ServerValidateEventArgs(_CaptchaText, _IsValid))
+            Return _IsValid
         End Function
 
 #End Region

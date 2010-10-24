@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1299,56 +1299,5 @@ corrected with each release. &lt;/p&gt;
     Providers&lt;/h4&gt;
 &lt;ul&gt;
     &lt;li&gt;Solpart Menu Navigation Provider 05.01.00&lt;/li&gt;&lt;/ul&gt;</value>
-  </data>
-  <data name="WhatsNew.05.05.01" xml:space="preserve">
-    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
-&lt;ul&gt;
-	&lt;li&gt;Added feature to detect if a site is not running the suggested customErrors 
-	configuration to mitigate the ASP.Net POET Vulnerability.&lt;/li&gt;
-	&lt;li&gt;Updated the default web.config to use the recommended customerrors settings 
-	to mitigate the ASP.Net POET Vulnerability.&lt;/li&gt;
-	&lt;li&gt;Fixed Sitemap Provider so it only returns one page when multiple languages 
-	are enabled and Content Localization is not enabled.&lt;/li&gt;
-	&lt;li&gt;Fixed Telerik File Manager to make files stored using database folders visible 
-	to the user.&lt;/li&gt;
-	&lt;li&gt;Fixed issue where module developers using custom aspx pages that inherit 
-	from basepage and use codeblocks get an exception&lt;/li&gt;
-	&lt;li&gt;Fixed issue where the locale was not properly reflecting the querystring 
-	and the users browser or portal settings.&lt;/li&gt;
-	&lt;li&gt;Fixed issue where users were not granted proper permissions for the Templates 
-	folder on install.&lt;/li&gt;
-	&lt;li&gt;Fixed issue where missing objectqualifier would cause upgrade script to 
-	fail.&lt;/li&gt;
-	&lt;li&gt;Updated the url parser to take port 443 and ssl into consideration. its 
-	no longer necessary to turn off human friendly or use-port number in web.config&lt;/li&gt;
-	&lt;li&gt;Fixed behavior of Language detection when Content Localization is not enabled.&lt;/li&gt;
-	&lt;li&gt;Updated update tab logic to take host tabs into consideration.&lt;/li&gt;
-	&lt;li&gt;Fixed install template to ensure content localization is defaulted to off 
-	for new installs&lt;/li&gt;
-	&lt;li&gt;Updated the warnning dialog confirmation box to show the user name and the 
-	role that the user is being removed from.&lt;/li&gt;
-	&lt;li&gt;Fixed issue where tab hierarchy was not displayed properly when the tab 
-	level was changed in the tab hierarchy.&lt;/li&gt;
-	&lt;li&gt;Fixed issue where translators were not given the proper edit permissions 
-	when content localization was enabled.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
-&lt;ul&gt;
-	&lt;li&gt;
-	&lt;a href="http://www.dotnetnuke.com/aspnetpoet.aspx"&gt;Added enhancements to 
-	patch ASP.Net POET Vulnerability&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
-&lt;p&gt;The following modules and providers have been updated in the 5.5.1 packages. 
-Please see the specific project pages for notes on what bugs or enhancements were 
-corrected with each release. &lt;/p&gt;
-&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
-&lt;ul&gt;
-	&lt;li&gt;Feedback Module 05.00.02&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
-&lt;ul&gt;
-	&lt;li&gt;none&lt;/li&gt;
-&lt;/ul&gt;</value>
   </data>
 </root>

@@ -258,7 +258,11 @@ Namespace DotNetNuke.Entities.Users
                         Dim objFiles As New DotNetNuke.Services.FileSystem.FileController
                         Dim objFile As DotNetNuke.Services.FileSystem.FileInfo = objFiles.GetFileById(Integer.Parse(objProperty.PropertyValue), objProperty.PortalId)
                         If Not objFile Is Nothing Then
-                            strPhotoURL = ApplicationPath & "/" & objFile.RelativePath
+                            Dim objPortal As PortalInfo = New PortalController().GetPortal(objFile.PortalId)
+                            If Not objPortal Is Nothing Then
+                                strPhotoURL = ApplicationPath & "/" & objFile.RelativePath
+                            End If
+
                         End If
                     End If
                 End If

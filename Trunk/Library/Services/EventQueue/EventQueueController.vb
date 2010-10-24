@@ -95,7 +95,7 @@ Namespace DotNetNuke.Services.EventQueue
         Private Shared Function GetSubscribers(ByVal eventName As String) As String()
             'Get the subscribers to this event
             Dim subscribers(-1) As String
-            Dim publishedEvent As PublishedEvent
+            Dim publishedEvent As PublishedEvent = Nothing
             If Config.EventQueueConfiguration.GetConfig().PublishedEvents.TryGetValue(eventName, publishedEvent) Then
                 subscribers = publishedEvent.Subscribers().Split(";".ToCharArray())
             Else
@@ -128,7 +128,7 @@ Namespace DotNetNuke.Services.EventQueue
         End Function
 
         Public Shared Function ProcessMessages(ByVal eventMessages As EventMessageCollection) As Boolean
-
+            Dim success As Boolean = Null.NullBoolean
             Dim message As EventMessage
             For messageNo As Integer = 0 To eventMessages.Count - 1
                 message = eventMessages(messageNo)
@@ -140,6 +140,7 @@ Namespace DotNetNuke.Services.EventQueue
 
                     'Set Message comlete so it is not run a second time
                     DataProvider.Instance.SetEventMessageComplete(message.EventMessageID)
+                    success = True
                 Catch
                     'log if message could not be processed
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
@@ -163,6 +164,7 @@ Namespace DotNetNuke.Services.EventQueue
                     End If
                 End Try
             Next
+            Return success
         End Function
 
         Public Shared Function SendMessage(ByVal message As EventMessage, ByVal eventName As String) As Boolean

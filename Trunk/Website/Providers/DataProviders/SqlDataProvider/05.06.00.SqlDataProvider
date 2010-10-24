@@ -203,10 +203,8 @@ if  exists (select * FROM sys.indexes where object_id = OBJECT_ID(N'{databaseOwn
 	drop index [IX_{objectQualifier}ScheduleHistory_StartDate] ON {databaseOwner}[{objectQualifier}ScheduleHistory] WITH ( ONLINE = OFF )
 go
 
-if exists (select * from dbo.sysindexes where name='IX_{objectQualifier}TabPermission_Tabs')
-	begin
-		drop index {databaseOwner}[{objectQualifier}TabPermission].IX_{objectQualifier}TabPermission_Tabs   
-	end
+create nonclustered index [IX_{objectQualifier}ScheduleHistory_StartDate] 
+	ON {databaseOwner}[{objectQualifier}ScheduleHistory] ( [ScheduleID] ASC, [StartDate] DESC ) ON [PRIMARY]
 go
 
 /* DNN-13328 - Nonclustered indexes needed on table [Portals]  */
@@ -1052,13 +1050,6 @@ AS
       WHERE portalID = @PortalID
 GO
 
-/* Make language settings the module settings action */
-/****************************************************/
-
-UPDATE {databaseOwner}[{objectQualifier}ModuleControls] SET ControlKey = 'Settings' WHERE ControlSrc = 'DesktopModules/Admin/Languages/LanguageSettings.ascx'
-
-GO
-
 /* DNN-13599 - Indexes on Lists needs work  */
 /********************************************/
 
@@ -1073,41 +1064,98 @@ if not exists (select * from dbo.sysobjects where id = object_id(N'PK_{databaseO
 	end
 go
 
-IF  EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Lists]') AND name = N'IX_{objectQualifier}Lists_ListName_Value_Text_ParentID')
-	BEGIN
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			DROP CONSTRAINT [IX_{objectQualifier}Lists_ListName_Value_Text_ParentID]
-
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			ADD  CONSTRAINT [IX_{objectQualifier}Lists_ListName_Value_Text_ParentID] UNIQUE NONCLUSTERED 
-				( [ListName] ASC,
-				[Value] ASC,
-				[Text] ASC,
-				[ParentID] ASC
-				) WITH (FILLFACTOR = 90, PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-	END
+IF  EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}Lists_ListName_Value_Text_ParentID')
+	ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
+		DROP CONSTRAINT [IX_{objectQualifier}Lists_ListName_Value_Text_ParentID]
 GO
 
-IF  EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Lists]') AND name = N'IX_{objectQualifier}Lists_ParentID')
-	BEGIN
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			DROP CONSTRAINT [IX_{objectQualifier}Lists_ParentID]
-
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			ADD  CONSTRAINT [IX_{objectQualifier}Lists_ParentID] UNIQUE NONCLUSTERED 
-				( [ParentID] ASC ) on [PRIMARY]
-	END
+ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
+	ADD  CONSTRAINT [IX_{objectQualifier}Lists_ListName_Value_Text_ParentID] UNIQUE NONCLUSTERED 
+		( [ListName] ASC,
+		[Value] ASC,
+		[Text] ASC,
+		[ParentID] ASC
+		) WITH (FILLFACTOR = 90, PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-IF  EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Lists]') AND name = N'IX_{objectQualifier}Lists_ListName_ParentID')
-	BEGIN
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			DROP CONSTRAINT [IX_{objectQualifier}Lists_ListName_ParentID]
+IF  EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}Lists_ParentID')
+	ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
+		DROP CONSTRAINT [IX_{objectQualifier}Lists_ParentID]
+GO
 
-		ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
-			ADD  CONSTRAINT [IX_{objectQualifier}Lists_ListName_ParentID] UNIQUE NONCLUSTERED 
-				( ListName ASC, ParentID ASC ) on [PRIMARY]
-	END
+CREATE INDEX IX_{objectQualifier}Lists_ParentID on [{objectQualifier}Lists] (ParentID ASC) on [PRIMARY]
+GO
+
+IF  EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}Lists_ListName_ParentID')
+	ALTER TABLE {databaseOwner}[{objectQualifier}Lists] 
+		DROP CONSTRAINT [IX_{objectQualifier}Lists_ListName_ParentID]
+GO
+
+CREATE INDEX IX_{objectQualifier}Lists_ListName_ParentID on [{objectQualifier}Lists] (ListName ASC, ParentID ASC) on [PRIMARY]
+GO
+
+/*DNN-13736 -  Missing FKs in DB */
+/*********************************/
+
+/*SkinPackages<-->Package*/
+IF NOT EXISTS (select * from sys.foreign_keys where name ='FK_{objectQualifier}SkinPackages_{objectQualifier}Packages')
+BEGIN
+		ALTER TABLE {databaseOwner}{objectQualifier}SkinPackages WITH NOCHECK ADD CONSTRAINT
+			FK_{objectQualifier}SkinPackages_{objectQualifier}Packages FOREIGN KEY (PackageID) REFERENCES {databaseOwner}{objectQualifier}Packages(PackageID) 
+			ON UPDATE  CASCADE 
+			ON DELETE  CASCADE 
+END
+GO
+
+/*Dashboard_Controls<-->Package*/
+IF NOT EXISTS (select * from sys.foreign_keys where name ='FK_{objectQualifier}Dashboard_Controls_{objectQualifier}Packages')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Dashboard_Controls WITH NOCHECK ADD CONSTRAINT
+		FK_{objectQualifier}Dashboard_Controls_{objectQualifier}Packages FOREIGN KEY(PackageID) REFERENCES {databaseOwner}{objectQualifier}Packages(PackageID) 
+		ON UPDATE  CASCADE 
+		ON DELETE  CASCADE 
+END
+GO
+
+/*Authentication<-->Package*/
+IF NOT EXISTS (select * from sys.foreign_keys where name ='FK_{objectQualifier}Authentication_{objectQualifier}Packages')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Authentication WITH NOCHECK ADD CONSTRAINT
+		FK_{objectQualifier}Authentication_{objectQualifier}Packages FOREIGN KEY(PackageID) REFERENCES {databaseOwner}{objectQualifier}Packages(PackageID) 
+		ON UPDATE  CASCADE 
+		ON DELETE  CASCADE 
+END
+GO
+
+/*SkinControls<-->Package*/
+IF NOT EXISTS (select * from sys.foreign_keys where name ='FK_{objectQualifier}SkinControls_{objectQualifier}Packages')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}SkinControls WITH NOCHECK ADD CONSTRAINT
+		FK_{objectQualifier}SkinControls_{objectQualifier}Packages FOREIGN KEY(PackageID) REFERENCES {databaseOwner}{objectQualifier}Packages(PackageID) 
+		ON UPDATE  CASCADE 
+		ON DELETE  CASCADE 
+END
+GO
+
+/*Package<-->PackageTypes*/
+IF NOT EXISTS (select * from sys.foreign_keys where name ='FK_{objectQualifier}Packages_{objectQualifier}PackageTypes')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Packages WITH NOCHECK ADD CONSTRAINT
+		FK_{objectQualifier}Packages_{objectQualifier}PackageTypes FOREIGN KEY(PackageType) REFERENCES {databaseOwner}{objectQualifier}PackageTypes(PackageType) 
+		ON UPDATE  CASCADE 
+		ON DELETE  CASCADE 
+END
+GO
+
+/* Fix title of Login control */
+/******************************/
+
+UPDATE {databaseOwner}[{objectQualifier}ModuleControls] 
+	SET ControlTitle = 'Account Login' 
+	WHERE ModuleDefID is NULL AND
+	ControlKey = 'Login' AND
+	ControlSrc = 'DesktopModules/Admin/Authentication/Login.ascx'
+
 GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/

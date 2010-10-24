@@ -56,7 +56,7 @@ Namespace DotNetNuke.Services.Log.EventLog
                         Return Date.Now.AddHours(NotificationThresholdTime * -1)
                     Case NotificationThresholdTimeTypes.Days
                         Return Date.Now.AddDays(NotificationThresholdTime * -1)
-                    Case NotificationThresholdTimeTypes.None
+                    Case Else
                         Return Null.NullDate
                 End Select
             End Get

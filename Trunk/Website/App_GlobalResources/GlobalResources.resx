@@ -1160,7 +1160,4 @@ Sincerely,
   <data name="UnTranslate.Action" xml:space="preserve">
     <value>Mark Not Translated</value>
   </data>
-  <data name="PaddingOracleNotProtected.Text" xml:space="preserve">
-    <value>A critical ASP.NET Oracle Padding vulnerability has been identified in your website. We recommend that you patch your site immediately.  For more information on this issue and instructions on how to patch your site refer to http://www.dotnetnuke.com/aspnetpoet.aspx</value>
-  </data>
 </root>

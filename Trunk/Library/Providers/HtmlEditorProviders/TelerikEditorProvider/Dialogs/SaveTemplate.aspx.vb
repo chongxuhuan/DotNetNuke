@@ -71,7 +71,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider.Dialogs
                     Else
                         FolderList.Items.Clear()
 
-                        FolderList.DataTextField = "FolderPath"
+                        FolderList.DataTextField = "DisplayPath"
                         FolderList.DataValueField = "FolderPath"
                         FolderList.DataSource = folders
                         FolderList.DataBind()
@@ -158,9 +158,9 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider.Dialogs
                 End If
 
                 If (newFile.FileId <> Null.NullInteger) Then
-                    fileCtrl.UpdateFile(newFile.FileId, newFile.FileName, newFile.Extension, newFile.Size, newFile.Width, newFile.Height, newFile.ContentType, folder.FolderPath, folder.FolderID)
+                    fileCtrl.UpdateFile(newFile)
                 Else
-                    fileCtrl.AddFile(portalSettings.PortalId, newFile.FileName, newFile.Extension, newFile.Size, newFile.Width, newFile.Height, newFile.ContentType, folder.FolderPath, folder.FolderID, True)
+                    fileCtrl.AddFile(newFile)
                 End If
 
                 ShowSaveTemplateMessage(String.Empty)

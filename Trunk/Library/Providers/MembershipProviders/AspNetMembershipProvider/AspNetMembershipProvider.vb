@@ -270,6 +270,16 @@ Namespace DotNetNuke.Security.Membership
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Function GetMembershipUser(ByVal userName As String) As AspNetSecurity.MembershipUser
+            Dim cacheKey As String = String.Format("MembershipUser_{0}", userName.ToString())
+            Return CBO.GetCachedObject(Of AspNetSecurity.MembershipUser)(New CacheItemArgs(cacheKey, _
+                                                                                DataCache.UserCacheTimeOut, _
+                                                                                DataCache.UserCachePriority, _
+                                                                                userName), _
+                                                                                AddressOf GetMembershipUserCallBack)
+        End Function
+
+        Private Shared Function GetMembershipUserCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
+            Dim userName As String = DirectCast(cacheItemArgs.ParamList(0), String)
             Return AspNetSecurity.Membership.GetUser(userName)
         End Function
 
@@ -472,12 +482,12 @@ Namespace DotNetNuke.Security.Membership
         Public Overrides Property PasswordFormat() As PasswordFormat
             Get
                 Select Case AspNetSecurity.Membership.Provider.PasswordFormat
-                    Case Web.Security.MembershipPasswordFormat.Clear
-                        Return PasswordFormat.Clear
                     Case Web.Security.MembershipPasswordFormat.Encrypted
                         Return PasswordFormat.Encrypted
                     Case Web.Security.MembershipPasswordFormat.Hashed
                         Return PasswordFormat.Hashed
+                    Case Else
+                        Return PasswordFormat.Clear
                 End Select
             End Get
             Set(ByVal Value As PasswordFormat)

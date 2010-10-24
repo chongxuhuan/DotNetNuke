@@ -209,6 +209,10 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
                 ClientAPI.AddButtonConfirm(cmdDeleteModule, Services.Localization.Localization.GetString("DeleteModule", ResourceFileRoot))
                 ClientAPI.AddButtonConfirm(cmdEmpty, Services.Localization.Localization.GetString("DeleteAll", ResourceFileRoot))
 
+                If PortalSettings.ContentLocalizationEnabled Then
+                    ClientAPI.AddButtonConfirm(cmdRestoreTab, Services.Localization.Localization.GetString("RestoreTab", ResourceFileRoot))
+                End If
+
                 tblModuleButtons.Visible = Me.IsEditable
                 tblTabButtons.Visible = Me.IsEditable
                 cmdEmpty.Visible = Me.IsEditable

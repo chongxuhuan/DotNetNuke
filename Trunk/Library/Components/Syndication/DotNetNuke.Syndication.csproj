@@ -31,6 +31,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,9 +43,8 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\DotNetNuke.Services.Syndication.XML</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -50,9 +53,8 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\DotNetNuke.Services.Syndication.XML</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -112,5 +114,7 @@
   </Target>
   <Target Name="DebugProject">
     <Copy SourceFiles="bin\DotNetNuke.Services.Syndication.dll" DestinationFolder="..\..\..\Website\bin" />
+    <Copy SourceFiles="bin\DotNetNuke.Services.Syndication.pdb" DestinationFolder="..\..\..\Website\bin" />
+    <Copy SourceFiles="bin\DotNetNuke.Services.Syndication.xml" DestinationFolder="..\..\..\Website\bin" />
   </Target>
 </Project>

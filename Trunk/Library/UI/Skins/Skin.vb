@@ -234,7 +234,7 @@ Namespace DotNetNuke.UI.Skins
         '''     [cnurse]    04/17/2009  Refactored from Skin
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Function InjectControlPanel() As Boolean
+        Private Sub InjectControlPanel()
             'if querystring dnnprintmode=true, controlpanel will not be shown
             If Request.QueryString("dnnprintmode") <> "true" Then
                 ' ControlPanel processing
@@ -253,7 +253,7 @@ Namespace DotNetNuke.UI.Skins
                     ControlPanel.Controls.Add(objControlPanel)
                 End If
             End If
-        End Function
+        End Sub
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

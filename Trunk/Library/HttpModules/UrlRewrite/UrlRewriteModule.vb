@@ -188,7 +188,10 @@ Namespace DotNetNuke.HttpModules
                         If Not objPortalAlias Is Nothing Then
                             Dim portalID As Integer = objPortalAlias.PortalID
                             ' Identify Tab Name 
-                            Dim tabPath As String = url.Replace(myAlias, "")
+                            Dim tabPath As String = url
+                            If (tabPath.StartsWith(myAlias)) Then
+                                tabPath = url.Remove(0, myAlias.Length)
+                            End If
 
                             ' Default Page has been Requested
                             If (tabPath = "/" & glbDefaultPage.ToLower()) Then
@@ -196,7 +199,7 @@ Namespace DotNetNuke.HttpModules
                             End If
 
                             ' Check to see if the tab exists
-                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""))
+                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""), Null.NullString)
 
                             If (tabID <> Null.NullInteger) Then
                                 If (app.Request.Url.Query <> "") Then
@@ -455,20 +458,15 @@ Namespace DotNetNuke.HttpModules
                         If PortalId > Null.NullInteger Then
                             ' use the host portal
                             Dim objPortalAliasController As New PortalAliasController
-                            Dim arrPortalAliases As ArrayList
-                            arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
 
-                            If arrPortalAliases.Count = 0 Then
+                            If New PortalController().GetPortals().Count = 1 Then
                                 objPortalAliasInfo = New PortalAliasInfo()
                                 objPortalAliasInfo.PortalID = PortalId
                                 objPortalAliasInfo.HTTPAlias = PortalAlias
                                 objPortalAliasController.AddPortalAlias(objPortalAliasInfo)
-                                arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
-                            End If
-
-                            If arrPortalAliases.Count > 0 Then
+                            Else
                                 'Get the first Alias
-                                objPortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
+                                objPortalAliasInfo = CType(objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)(0), PortalAliasInfo)
                                 If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
                                     strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
                                 Else

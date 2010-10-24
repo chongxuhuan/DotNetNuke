@@ -882,6 +882,21 @@ Namespace DotNetNuke.Entities.Host
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Gets the filter used for inclusion of tag info
+        ''' </summary>
+        ''' <remarks>Defaults to ""</remarks>
+        ''' <history>
+        '''    [vnguyen]   09/03/2010   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared ReadOnly Property SearchIncludedTagInfoFilter() As String
+            Get
+                Return HostController.Instance.GetString("SearchIncludedTagInfoFilter", "")
+            End Get
+        End Property
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Gets the Site Log Buffer size
         ''' </summary>
         ''' <remarks>Defaults to 1</remarks>

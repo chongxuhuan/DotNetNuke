@@ -125,7 +125,7 @@ Namespace DotNetNuke.UI.WebControls
         End Function
 
         Public Function UpdateVisibility(ByVal e As PropertyEditorEventArgs) As Boolean Implements IEditorInfoAdapter.UpdateVisibility
-
+            Return Null.NullBoolean
         End Function
     End Class
 

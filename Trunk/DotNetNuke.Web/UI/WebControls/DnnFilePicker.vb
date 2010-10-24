@@ -712,7 +712,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 
             'Add Personal Folder
             If UsePersonalFolder Then
-                Dim userFolder As String = String.Format("Users/{0}/", FileSystemUtils.GetUserFolderPath(UserController.GetCurrentUserInfo().UserID).Replace("\", "/"))
+                Dim userFolder As String = FileSystemUtils.GetUserFolderPath(UserController.GetCurrentUserInfo().UserID)
                 Dim userFolderItem As ListItem = cboFolders.Items.FindByValue(userFolder)
                 If userFolderItem IsNot Nothing Then
                     userFolderItem.Text = Utilities.GetLocalizedString("MyFolder")
@@ -727,7 +727,7 @@ Namespace DotNetNuke.Web.UI.WebControls
                     If folder.FolderPath = Null.NullString Then
                         folderItem.Text = Utilities.GetLocalizedString("PortalRoot")
                     Else
-                        folderItem.Text = folder.FolderPath
+                        folderItem.Text = folder.DisplayPath
                     End If
                     folderItem.Value = folder.FolderPath
                     cboFolders.Items.Add(folderItem)

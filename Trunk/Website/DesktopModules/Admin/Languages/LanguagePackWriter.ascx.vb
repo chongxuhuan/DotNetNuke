@@ -41,6 +41,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Private _Files As Dictionary(Of String, InstallFile)
         Private _Manifest As String = Null.NullString
+        Private _IsPackCreated As Boolean = True
 
         Private Sub CreateAuthSystemPackage(ByVal authPackage As PackageInfo, ByVal createZip As Boolean)
 
@@ -140,7 +141,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
             packageWriter.LanguagePack = languagePack
             packageWriter.BasePath = basePath
             packageWriter.GetFiles(False)
+
             If packageWriter.Files.Count > 0 Then
+                _IsPackCreated = True
                 If createZip Then
                     'Create Zip for this package
                     manifest = packageWriter.WriteManifest(True)
@@ -151,9 +154,11 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     packageWriter.BasePath = ""
                     _Manifest += packageWriter.WriteManifest(True)
                     For Each kvp As KeyValuePair(Of String, InstallFile) In packageWriter.Files
-                        _Files.Add(kvp.Key, kvp.Value)
+                        _Files(kvp.Key) = kvp.Value
                     Next
                 End If
+            Else
+                _IsPackCreated = False
             End If
         End Sub
 
@@ -258,6 +263,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
         End Sub
 
         Private Sub cmdCreate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCreate.Click
+            _IsPackCreated = True
             Try
                 Select Case rbPackType.SelectedValue
                     Case "Core"
@@ -289,7 +295,11 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     Case "Full"
                         CreateFullPackage()
                 End Select
-                Skins.Skin.AddModuleMessage(Me, String.Format(Localization.GetString("Success", Me.LocalResourceFile), PortalSettings.PortalAlias.HTTPAlias), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
+                If _IsPackCreated = True Then
+                    Skins.Skin.AddModuleMessage(Me, String.Format(Localization.GetString("Success", Me.LocalResourceFile), PortalSettings.PortalAlias.HTTPAlias), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
+                Else
+                    Skins.Skin.AddModuleMessage(Me, Localization.GetString("Failure", Me.LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning)
+                End If
             Catch ex As Exception
                 ProcessModuleLoadException(Me, ex)
             End Try

@@ -502,6 +502,25 @@ Namespace DotNetNuke.Common.Utilities
             Return strString
         End Function
 
+        Public Shared Sub SerializeHashtable(ByVal Hashtable As Hashtable, ByVal XmlDocument As XmlDocument, ByVal RootNode As XmlNode, ByVal ElementName As String, ByVal KeyField As String, ByVal ValueField As String)
+            Dim sKey As String
+            Dim sOuterElementName As String
+            Dim sInnerElementName As String
+            Dim nodeSetting, nodeSettings, nodeSettingName, nodeSettingValue As XmlNode
+
+            sOuterElementName = ElementName & "s"
+            sInnerElementName = ElementName
+
+            nodeSettings = RootNode.AppendChild(XmlDocument.CreateElement(sOuterElementName))
+            For Each sKey In Hashtable.Keys
+                nodeSetting = nodeSettings.AppendChild(XmlDocument.CreateElement(sInnerElementName))
+                nodeSettingName = nodeSetting.AppendChild(XmlDocument.CreateElement(KeyField))
+                nodeSettingName.InnerText = sKey
+                nodeSettingValue = nodeSetting.AppendChild(XmlDocument.CreateElement(ValueField))
+                nodeSettingValue.InnerText = Hashtable(sKey).ToString
+            Next
+        End Sub
+
         Public Shared Sub UpdateAttribute(ByVal node As XmlNode, ByVal attName As String, ByVal attValue As String)
             If Not node Is Nothing Then
                 Dim attrib As XmlAttribute = node.Attributes(attName)
@@ -531,7 +550,6 @@ Namespace DotNetNuke.Common.Utilities
             xslt.Transform(doc, Nothing, writer)
         End Sub
 
-        <Obsolete("This method Obsoleted in DotNetNuke 5.5. Use CBO.SerializeObject.")> _
         Public Shared Function Serialize(ByVal obj As Object) As String
 
             Dim xmlObject As String
@@ -567,26 +585,6 @@ Namespace DotNetNuke.Common.Utilities
             GetXMLContent.Load(objXmlReader)
 
         End Function
-
-        <Obsolete("Replaced in DotNetNuke 5.5 with CBO.SerializeSettings")> _
-        Public Shared Sub SerializeHashtable(ByVal Hashtable As Hashtable, ByVal XmlDocument As XmlDocument, ByVal RootNode As XmlNode, ByVal ElementName As String, ByVal KeyField As String, ByVal ValueField As String)
-            Dim sKey As String
-            Dim sOuterElementName As String
-            Dim sInnerElementName As String
-            Dim nodeSetting, nodeSettings, nodeSettingName, nodeSettingValue As XmlNode
-
-            sOuterElementName = ElementName & "s"
-            sInnerElementName = ElementName
-
-            nodeSettings = RootNode.AppendChild(XmlDocument.CreateElement(sOuterElementName))
-            For Each sKey In Hashtable.Keys
-                nodeSetting = nodeSettings.AppendChild(XmlDocument.CreateElement(sInnerElementName))
-                nodeSettingName = nodeSetting.AppendChild(XmlDocument.CreateElement(KeyField))
-                nodeSettingName.InnerText = sKey
-                nodeSettingValue = nodeSetting.AppendChild(XmlDocument.CreateElement(ValueField))
-                nodeSettingValue.InnerText = Hashtable(sKey).ToString
-            Next
-        End Sub
 
     End Class
 

@@ -171,4 +171,7 @@
   <data name="singleLocale.Text" xml:space="preserve">
     <value>Show pages and modules in current language only</value>
   </data>
+  <data name="RestoreTab.Text" xml:space="preserve">
+    <value>Restoring a page will restore all language versions of the page as well.  Continue?</value>
+  </data>
 </root>

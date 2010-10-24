@@ -158,9 +158,9 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             SubmitMessage(MessageStatusType.Draft)
         End Sub
 
-        Public Function SendMessage(ByVal sender As Object, ByVal e As EventArgs) As Boolean
+        Public Sub SendMessage(ByVal sender As Object, ByVal e As EventArgs)
             SubmitMessage(MessageStatusType.Unread)
-        End Function
+        End Sub
 
         Private Sub SubmitMessage(ByVal status As MessageStatusType)
 
@@ -188,12 +188,12 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             End If
         End Sub
 
-        Public Function ValidateUser(ByVal sender As Object, ByVal e As EventArgs) As Boolean
+        Public Sub ValidateUser(ByVal sender As Object, ByVal e As EventArgs)
             ' validate username
             If (ValidateUserName(View.Model.UserName) > 0) Then
                 View.ShowValidUserMessage()
             End If
-        End Function
+        End Sub
 
 #End Region
 

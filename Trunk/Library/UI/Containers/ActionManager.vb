@@ -169,7 +169,7 @@ Namespace DotNetNuke.UI.Containers
 
             Select Case Command.CommandName
                 Case ModuleActionType.LocalizeModule
-                    moduleCtrl.LocalizeModule(sourceModule)
+                    moduleCtrl.LocalizeModule(sourceModule, LocaleController.Instance.GetCurrentLocale(ModuleContext.PortalId))
                 Case ModuleActionType.DeLocalizeModule
                     moduleCtrl.DeLocalizeModule(sourceModule)
             End Select

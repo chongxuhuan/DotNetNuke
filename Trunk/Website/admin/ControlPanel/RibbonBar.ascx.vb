@@ -101,7 +101,6 @@ Namespace DotNetNuke.UI.ControlPanels
 
 		Protected Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 			Try
-				DotNetNuke.Web.UI.Utilities.ApplySkin(Me.RibbonBarTabs, "", "", "RibbonBar")
 
 				RibbonBarTabs.Tabs(2).Visible = False
 				Pages.PageViews(2).Visible = False
@@ -129,7 +128,9 @@ Namespace DotNetNuke.UI.ControlPanels
 				End If
 
 				If IsPageAdmin() Then
-					RB.Visible = True
+                    DotNetNuke.Web.UI.Utilities.ApplySkin(Me.RibbonBarTabs, "", "", "RibbonBar")
+
+                    RB.Visible = True
 					cmdVisibility.Visible = True
                     RB_RibbonBar.Visible = True
 

@@ -883,7 +883,7 @@ Namespace DotNetNuke.Entities.Modules
             _StartDate = Null.NullDate
             _EndDate = Null.NullDate
             _DisplayTitle = True
-            _DisplayPrint = True
+            _DisplayPrint = False
             _DisplaySyndicate = Null.NullBoolean
             _IsWebSlice = Null.NullBoolean
             _WebSliceTitle = ""
