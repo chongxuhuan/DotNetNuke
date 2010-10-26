@@ -72,9 +72,8 @@ Namespace DotNetNuke.Security.Permissions
         End Function
 
         Public Function Add(ByVal value As FolderPermissionInfo, ByVal checkForDuplicates As Boolean) As Integer
-            Dim id As Integer = Null.NullInteger
             If Not checkForDuplicates Then
-                id = Add(value)
+                Add(value)
             Else
                 Dim isMatch As Boolean = False
                 For Each permission As PermissionInfoBase In Me.List
@@ -84,10 +83,9 @@ Namespace DotNetNuke.Security.Permissions
                     End If
                 Next
                 If Not isMatch Then
-                    id = Add(value)
+                    Add(value)
                 End If
             End If
-            Return id
         End Function
 
         Public Sub AddRange(ByVal folderPermissions As ArrayList)

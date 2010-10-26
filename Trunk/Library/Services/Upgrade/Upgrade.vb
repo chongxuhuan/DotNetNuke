@@ -112,7 +112,7 @@ Namespace DotNetNuke.Services.Upgrade
             Dim tab As TabInfo
 
             For Each portal As PortalInfo In portalCtrl.GetPortals()
-                tabID = TabController.GetTabByTabPath(portal.PortalID, tabPath, Null.NullString)
+                tabID = TabController.GetTabByTabPath(portal.PortalID, tabPath)
                 If (tabID <> Null.NullInteger) Then
                     tab = tabCtrl.GetTab(tabID, portal.PortalID, True)
 
@@ -1175,7 +1175,7 @@ Namespace DotNetNuke.Services.Upgrade
 
             'add console module to host page
             ModuleID = AddModuleToPage("//Host", Null.NullInteger, ModuleDefID, "Basic Features", "", True)
-            Dim tabID As Integer = TabController.GetTabByTabPath(Null.NullInteger, "//Host", Null.NullString)
+            Dim tabID As Integer = TabController.GetTabByTabPath(Null.NullInteger, "//Host")
             Dim tab As TabInfo = Nothing
 
             'add console settings for host page
@@ -1188,7 +1188,7 @@ Namespace DotNetNuke.Services.Upgrade
 
             'add module to all admin pages
             For Each portal As PortalInfo In objPortalController.GetPortals()
-                tabID = TabController.GetTabByTabPath(portal.PortalID, "//Admin", Null.NullString)
+                tabID = TabController.GetTabByTabPath(portal.PortalID, "//Admin")
                 If (tabID <> Null.NullInteger) Then
                     tab = objTabController.GetTab(tabID, portal.PortalID, True)
                     If (Not tab Is Nothing) Then
@@ -1345,20 +1345,13 @@ Namespace DotNetNuke.Services.Upgrade
                         LogException(ex)
                     End Try
 
-                    Dim userTabNode As XmlNode = xmlDoc.SelectSingleNode("//portal/tabs/tab")
-                    Dim tabName As String = XmlUtils.GetNodeValue(userTabNode, "name")
-
-                    Dim userTab As TabInfo = tabController.GetTabByName(tabName, objPortal.PortalID)
-                    If userTab Is Nothing Then
-                        userTab = tabController.DeserializeTab(userTabNode, Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
-                        tabController.DeserializePanes(userTabNode.SelectSingleNode("panes"), userTab.PortalID, userTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
-                    End If
-
                     'Update SiteSettings to point to the new page
                     If objPortal.UserTabId > Null.NullInteger Then
                         objPortal.RegisterTabId = objPortal.UserTabId
                     Else
-                        objPortal.UserTabId = userTab.TabID
+                        Dim newTab As New TabInfo()
+                        newTab = tabController.DeserializeTab(xmlDoc.SelectSingleNode("//portal/tabs/tab"), Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
+                        objPortal.UserTabId = newTab.TabID
                     End If
 
                     objPortals.UpdatePortalInfo(objPortal)
@@ -1435,7 +1428,7 @@ Namespace DotNetNuke.Services.Upgrade
 
                 'Add ContentList to Search Results Page
                 Dim tabController As New TabController()
-                Dim tabId As Integer = tabController.GetTabByTabPath(objPortal.PortalID, "//SearchResults", Null.NullString)
+                Dim tabId As Integer = tabController.GetTabByTabPath(objPortal.PortalID, "//SearchResults")
                 Dim searchPage As TabInfo = tabController.GetTab(tabId, objPortal.PortalID, False)
                 AddModuleToPage(searchPage, moduleDefID, "Results", "")
             Next
@@ -1529,35 +1522,6 @@ Namespace DotNetNuke.Services.Upgrade
                     DataProvider.Instance().EnsureLocalizationExists(p.PortalID, locale.Code)
                 Next
             Next
-
-        End Sub
-
-        Private Shared Sub UpgradeToVersion_560()
-            'Add .htmtemplate file extension
-            Dim extensions As String = Host.FileExtensions
-
-            If (Not extensions.Contains("htmtemplate")) Then
-                extensions = extensions + ",htmtemplate"
-            End If
-            HostController.Instance.Update("FileExtensions", extensions)
-
-            'Add new Xml Merge module
-            Dim ModuleDefID As Integer = AddModuleDefinition("Configuration Manager", "", "Configuration Manager", False, False)
-            AddModuleControl(ModuleDefID, "", "", "DesktopModules/Admin/XmlMerge/XmlMerge.ascx", "~/images/icon_configuration_32px.png", SecurityAccessLevel.Host, 0)
-
-            'Add Module To Page
-            Dim hostPage As TabInfo = AddHostPage("Configuration Manager", "Modify configuration settings for your site", "~/images/icon_configuration_16px.png", "~/images/icon_configuration_32px.png", True)
-            AddModuleToPage(hostPage, ModuleDefID, "Configuration Manager", "~/images/icon_configuration_32px.png")
-
-            'Update Google Analytics Script in SiteAnalysis.config
-            Dim gaCtrl As New DotNetNuke.Services.Analytics.GoogleAnalyticsController()
-            gaCtrl.UpgradeModule("05.06.00")
-
-            'Updated LanguageSettings.ascx control to be a Settings control
-            Dim languageModule As ModuleDefinitionInfo = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("Languages")
-            Dim moduleControl As ModuleControlInfo = ModuleControlController.GetModuleControlsByModuleDefinitionID(languageModule.ModuleDefID)("LanguageSettings")
-            moduleControl.ControlKey = "Settings"
-            ModuleControlController.UpdateModuleControl(moduleControl)
 
         End Sub
 
@@ -1758,7 +1722,7 @@ Namespace DotNetNuke.Services.Upgrade
             Dim objTabController As New TabController
             Dim moduleId As Integer = Null.NullInteger
 
-            Dim tabID As Integer = TabController.GetTabByTabPath(portalId, tabPath, Null.NullString)
+            Dim tabID As Integer = TabController.GetTabByTabPath(portalId, tabPath)
             If (tabID <> Null.NullInteger) Then
                 Dim tab As TabInfo = objTabController.GetTab(tabID, portalId, True)
                 If (tab IsNot Nothing) Then
@@ -1774,7 +1738,7 @@ Namespace DotNetNuke.Services.Upgrade
 
             Dim portals As ArrayList = objPortalController.GetPortals()
             For Each portal As PortalInfo In portals
-                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, tabPath, Null.NullString)
+                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, tabPath)
                 If (tabID <> Null.NullInteger) Then
                     Dim tab As TabInfo = objTabController.GetTab(tabID, portal.PortalID, True)
                     If (tab IsNot Nothing) Then
@@ -2544,6 +2508,56 @@ Namespace DotNetNuke.Services.Upgrade
             End If
         End Sub
 
+        ''' <summary>
+        ''' IsSiteProtectedAgainstPaddingOracleAttack ensures that the website is protected
+        ''' from the Padding Oracle Encryption Attack.  
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks>This will no longer be needed once Microsoft release an update to ASP.NET</remarks>
+        Friend Shared Function IsSiteProtectedAgainstPaddingOracleAttack() As Boolean
+            Dim isSiteProtected As Boolean = True
+
+            'Look for customErrors attribute
+            Dim configFile As XmlDocument = Config.Load()
+            If configFile IsNot Nothing Then
+                Dim navigator As XPathNavigator = configFile.CreateNavigator()
+                If navigator IsNot Nothing Then
+                    Dim configNavigator As XPathNavigator = navigator.SelectSingleNode("//configuration/system.web/customErrors")
+                    If configNavigator IsNot Nothing Then
+                        'Check mode
+                        Dim attributeString As String = configNavigator.GetAttribute("mode", "")
+                        If String.IsNullOrEmpty(attributeString) OrElse attributeString.ToLowerInvariant = "off" Then
+                            isSiteProtected = False
+                        End If
+
+                        'Check redirectMode
+                        If isSiteProtected Then
+                            attributeString = configNavigator.GetAttribute("redirectMode", "")
+                            If String.IsNullOrEmpty(attributeString) OrElse attributeString <> "ResponseRewrite" Then
+                                isSiteProtected = False
+                            End If
+
+                            'Check defaultRedirect
+                            If isSiteProtected Then
+                                attributeString = configNavigator.GetAttribute("defaultRedirect", "")
+                                If String.IsNullOrEmpty(attributeString) OrElse attributeString.ToLowerInvariant <> "~/errorpage.aspx" Then
+                                    isSiteProtected = False
+                                End If
+                            End If
+                        End If
+                    Else
+                        isSiteProtected = False
+                    End If
+                Else
+                    isSiteProtected = False
+                End If
+            Else
+                isSiteProtected = False
+            End If
+
+            Return isSiteProtected
+        End Function
+
         Public Shared Function IsNETFrameworkCurrent(ByVal version As String) As Boolean
             Dim isCurrent As Boolean = Null.NullBoolean
             Select Case version
@@ -2570,7 +2584,7 @@ Namespace DotNetNuke.Services.Upgrade
 
             Dim portals As ArrayList = objPortalController.GetPortals()
             For Each portal As PortalInfo In portals
-                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, tabPath, Null.NullString)
+                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, tabPath)
                 If (tabID <> Null.NullInteger) Then
                     objTabController.DeleteTab(tabID, portal.PortalID)
                 End If
@@ -2886,8 +2900,6 @@ Namespace DotNetNuke.Services.Upgrade
                         UpgradeToVersion_543()
                     Case "5.5.0"
                         UpgradeToVersion_550()
-                    Case "5.6.0"
-                        UpgradeToVersion_560()
                 End Select
 
             Catch ex As Exception
@@ -3028,7 +3040,7 @@ Namespace DotNetNuke.Services.Upgrade
 
         Public Shared Function UpgradeIndicator(ByVal Version As System.Version, ByVal PackageType As String, ByVal PackageName As String, ByVal Culture As String, ByVal IsLocal As Boolean, ByVal IsSecureConnection As Boolean) As String
             Dim strURL As String = ""
-            If Host.CheckUpgrade AndAlso Version <> New System.Version(0, 0, 0) AndAlso (IsLocal = False OrElse Config.GetSetting("ForceUpdateService") = "Y") Then
+            If Host.CheckUpgrade AndAlso Version <> New System.Version(0, 0, 0) AndAlso (IsLocal = False Or Config.GetSetting("ForceUpdateService") = "Y") Then
                 strURL = DotNetNukeContext.Current.Application.UpgradeUrl & "/update.aspx"
                 If IsSecureConnection Then
                     strURL = strURL.Replace("http://", "https://")
@@ -3037,15 +3049,6 @@ Namespace DotNetNuke.Services.Upgrade
                 strURL += "&version=" & FormatVersion(Version, "00", 3, "")
                 strURL += "&type=" & PackageType
                 strURL += "&name=" & PackageName
-                If PackageType.ToLowerInvariant = "module" Then
-                    Dim moduleType As DotNetNuke.Modules.Dashboard.Components.Modules.ModuleInfo
-                    moduleType = (From m In DotNetNuke.Modules.Dashboard.Components.Modules.ModulesController.GetInstalledModules() _
-                                  Where m.ModuleName = PackageName _
-                                  Select m).SingleOrDefault()
-                    If moduleType IsNot Nothing Then
-                        strURL += "&no=" & moduleType.Instances.ToString
-                    End If
-                End If
                 If Culture <> "" Then
                     strURL += "&culture=" & Culture
                 End If

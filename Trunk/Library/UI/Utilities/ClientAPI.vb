@@ -289,6 +289,8 @@ Namespace DotNetNuke.UI.Utilities
                             Else
                                 Return True
                             End If
+                        Case MinMaxPersistanceType.None
+                            Return Not blnDefaultMin
                         Case MinMaxPersistanceType.Personalization
                             Dim strVisible As String = Convert.ToString(Personalization.Personalization.GetProfile(Globals.GetAttribute(objButton, "userctr"), Globals.GetAttribute(objButton, "userkey")))
                             If String.IsNullOrEmpty(strVisible) Then
@@ -296,11 +298,8 @@ Namespace DotNetNuke.UI.Utilities
                             Else
                                 Return Convert.ToBoolean(strVisible)
                             End If
-                        Case Else
-                            Return Not blnDefaultMin
                     End Select
                 End If
-                Return Null.NullBoolean
             End Get
             Set(ByVal Value As Boolean)
                 If Not System.Web.HttpContext.Current Is Nothing Then

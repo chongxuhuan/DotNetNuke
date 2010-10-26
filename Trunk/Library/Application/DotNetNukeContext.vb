@@ -24,9 +24,6 @@ Imports DotNetNuke.UI.Containers.EventListeners
 
 Namespace DotNetNuke.Application
 
-    ''' <summary>
-    ''' Defines the context for the environment of the DotNetNuke application
-    ''' </summary>
     Public Class DotNetNukeContext
 
 #Region "Private Members"
@@ -45,17 +42,10 @@ Namespace DotNetNuke.Application
 
 #Region "Constructors"
 
-        ''' <summary>
-        ''' Initializes a new instance of the <see cref="DotNetNukeContext" /> class.
-        ''' </summary>
         Protected Sub New()
             Me.New(New Application())
         End Sub
 
-        ''' <summary>
-        ''' Initializes a new instance of the <see cref="DotNetNukeContext" /> class using the provided application as base.
-        ''' </summary>
-        ''' <param name="application">The application.</param>
         Protected Sub New(ByVal application As Application)
             _Application = application
             _ContainerEventListeners = New List(Of ContainerEventListener)()
@@ -66,30 +56,18 @@ Namespace DotNetNuke.Application
 
 #Region "Public Properties"
 
-        ''' <summary>
-        ''' Gets the application object
-        ''' </summary>
-        ''' <value>The application.</value>
         Public ReadOnly Property Application() As Application
             Get
                 Return _Application
             End Get
         End Property
 
-        ''' <summary>
-        ''' Gets the container event listeners.
-        ''' </summary>
-        ''' <value>The container event listeners.</value>
         Public ReadOnly Property ContainerEventListeners() As List(Of ContainerEventListener)
             Get
                 Return _ContainerEventListeners
             End Get
         End Property
 
-        ''' <summary>
-        ''' Gets the skin event listeners.
-        ''' </summary>
-        ''' <value>The skin event listeners.</value>
         Public ReadOnly Property SkinEventListeners() As List(Of SkinEventListener)
             Get
                 Return _SkinEventListeners
@@ -100,17 +78,6 @@ Namespace DotNetNuke.Application
 
 #Region "Public Shared Properties"
 
-        ''' <summary>
-        ''' Gets or sets the current <seealso cref="DotNetNukeContext"/>. Creates a new context if it does not exist
-        ''' <value>The current DotNetNukeContext.</value>
-        ''' <remarks>
-        ''' <example> This example shows the use of the current Application context
-        ''' <code lang="vbnet">
-        ''' Return DotNetNukeContext.Current.Application.Version.ToString(3)
-        ''' </code>
-        ''' </example>
-        ''' </remarks>
-        ''' </summary>
         Public Shared Property Current() As DotNetNukeContext
             Get
                 If _Current Is Nothing Then

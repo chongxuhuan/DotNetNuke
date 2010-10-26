@@ -32,7 +32,6 @@ Namespace DotNetNuke.Services.Search
     ''' </remarks>
     ''' <history>
     '''		[cnurse]	11/15/2004	documented
-    '''     [vnguyen]   09/07/2010  Modified: added TabId property
     ''' </history>
     ''' -----------------------------------------------------------------------------
     <Serializable()> Public Class SearchItemInfo
@@ -50,7 +49,6 @@ Namespace DotNetNuke.Services.Search
         Private _GUID As String
         Private _ImageFileId As Integer
         Private _HitCount As Integer
-        Private _TabId As Integer
 
 #End Region
 
@@ -82,20 +80,6 @@ Namespace DotNetNuke.Services.Search
             _GUID = Guid
             _ImageFileId = Image
             _HitCount = 0
-        End Sub
-
-        Public Sub New(ByVal Title As String, ByVal Description As String, ByVal Author As Integer, ByVal PubDate As Date, ByVal ModuleID As Integer, ByVal SearchKey As String, ByVal Content As String, ByVal Guid As String, ByVal Image As Integer, ByVal TabID As Integer)
-            _Title = Title
-            _Description = Description
-            _Author = Author
-            _PubDate = PubDate
-            _ModuleId = ModuleID
-            _SearchKey = SearchKey
-            _Content = Content
-            _GUID = Guid
-            _ImageFileId = Image
-            _HitCount = 0
-            _TabId = TabID
         End Sub
 
 #End Region
@@ -201,14 +185,6 @@ Namespace DotNetNuke.Services.Search
             End Set
         End Property
 
-        Public Property TabId() As Integer
-            Get
-                Return _TabId
-            End Get
-            Set(ByVal Value As Integer)
-                _TabId = Value
-            End Set
-        End Property
 #End Region
 
     End Class

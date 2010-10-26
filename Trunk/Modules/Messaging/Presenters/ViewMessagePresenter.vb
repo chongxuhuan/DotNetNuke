@@ -81,9 +81,9 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
 
 #Region "Public Methods"
 
-        Public Sub Cancel()
+        Public Function Cancel() As Boolean
             Response.Redirect(GetInboxUrl())
-        End Sub
+        End Function
 
         Public Sub DeleteMessage(ByVal sender As Object, ByVal e As EventArgs)
             View.BindMessage(View.Model.Message)
@@ -110,9 +110,9 @@ Namespace DotNetNuke.Modules.Messaging.Presenters
             End If
         End Sub
 
-        Public Sub Reply()
+        Public Function Reply() As Boolean
             Response.Redirect(NavigateURL(TabId, "EditMessage", String.Format("mid={0}", ModuleId), String.Format("MessageId={0}", View.Model.Message.MessageID), "IsReply=true"))
-        End Sub
+        End Function
 
 #End Region
 

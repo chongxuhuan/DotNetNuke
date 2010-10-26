@@ -218,9 +218,9 @@ Namespace DotNetNuke.Web.UI.WebControls
             If Not String.IsNullOrEmpty(tags) Then
                 For Each tag As String In tags.Split(","c)
                     If Not String.IsNullOrEmpty(tag) Then
-                        Dim tagName As String = tag.Trim(" "c)
+                        tag = tag.Trim(" "c)
                         Dim existingTerm As Term = (From t As Term In ContentItem.Terms.AsQueryable _
-                                                    Where t.Name.Equals(tagName, StringComparison.CurrentCultureIgnoreCase) _
+                                                    Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
                                                     Select t) _
                                                     .SingleOrDefault()
 
@@ -228,13 +228,13 @@ Namespace DotNetNuke.Web.UI.WebControls
                             'Not tagged
                             Dim termController As New TermController()
                             Dim term As Term = (From t As Term In termController.GetTermsByVocabulary(TagVocabulary.VocabularyId) _
-                                                    Where t.Name.Equals(tagName, StringComparison.CurrentCultureIgnoreCase) _
+                                                    Where t.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase) _
                                                     Select t) _
                                                     .SingleOrDefault()
                             If term Is Nothing Then
                                 'Add term
                                 term = New Term(TagVocabulary.VocabularyId)
-                                term.Name = tagName
+                                term.Name = tag
                                 termController.AddTerm(term)
                             End If
 

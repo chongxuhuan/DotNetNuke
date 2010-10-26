@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.SolpartMenuNavigationProvider" type="Provider" version="05.06.00">
+    <package name="DotNetNuke.SolpartMenuNavigationProvider" type="Provider" version="05.01.00">
       <friendlyName>DotNetNuke Solpart Menu Navigation Provider</friendlyName>
       <description>DotNetNuke Solpart Menu Navigation Provider Project provides a navigation system based on the SolpartMenu Control.</description>
       <dependencies/>
@@ -18,6 +18,7 @@
             <assembly>
               <path>bin\Providers</path>
               <name>DotNetNuke.SolpartMenuNavigationProvider.dll</name>
+              <version>05.01.00</version>
             </assembly>
             <assembly>
               <path>bin\Providers</path>

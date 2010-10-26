@@ -591,10 +591,4 @@
   <data name="plLanguageSelector.Text" xml:space="preserve">
     <value>Select Language:</value>
   </data>
-  <data name="plSearchTabId.Help" xml:space="preserve">
-    <value>The search results page for your site</value>
-  </data>
-  <data name="plSearchTabId.Text" xml:space="preserve">
-    <value>Search Results Page:</value>
-  </data>
 </root>

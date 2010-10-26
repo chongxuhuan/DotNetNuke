@@ -17,7 +17,6 @@
 // ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // ' DEALINGS IN THE SOFTWARE.
 // '
-using System.Collections;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
@@ -45,7 +44,7 @@ namespace DotNetNuke.Tests.Core.ComponentModel
         {
             IContainer container = CreateMockContainer();
 
-            ComponentFactory.InstallComponents(new IComponentInstaller[0] { });
+            ComponentFactory.InstallComponents(new IComponentInstaller[0] {});
         }
 
         [Test]
@@ -66,25 +65,6 @@ namespace DotNetNuke.Tests.Core.ComponentModel
 
             AutoTester.ArgumentNull<IComponentInstaller>(
                 marker => ComponentFactory.InstallComponents(mockInstaller.Object, marker));
-        }
-
-        [Test]
-        public void DNNPRO_13443_ComponentFactory_DuplicatedInsert()
-        {
-            //Setup
-            var testComp1 = new ArrayList();
-            var testComp2 = new ArrayList();
-
-            testComp1.Add("testComp1");
-            testComp2.Add("testComp2");
-
-            //Act
-            ComponentFactory.RegisterComponentInstance<IList>(testComp1);
-            ComponentFactory.RegisterComponentInstance<IList>(testComp2);
-
-            //Assert
-            var retreivedComponent = ComponentFactory.GetComponent<IList>();
-            Assert.AreEqual(testComp1, retreivedComponent);
         }
 
         #endregion

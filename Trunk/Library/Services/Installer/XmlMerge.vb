@@ -22,7 +22,6 @@ Imports System
 Imports System.Collections
 Imports System.IO
 Imports System.Xml
-Imports DotNetNuke.Application
 
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Localization
@@ -47,7 +46,6 @@ Namespace DotNetNuke.Services.Installer
         Private _SourceConfig As XmlDocument
         Private _TargetConfig As XmlDocument
         Private _TargetFileName As String
-        Private _TargetProductName As String
         Private _Version As String
 
 #End Region
@@ -440,18 +438,10 @@ Namespace DotNetNuke.Services.Installer
             For Each configNode As XmlNode In SourceConfig.SelectNodes("/configuration/nodes")
                 'Attempt to load TargetFile property from configFile Atribute
                 _TargetFileName = configNode.Attributes("configfile").Value
-                If Not IsNothing(configNode.Attributes("productName")) Then
-                    _TargetProductName = configNode.Attributes("productName").Value
-                End If
-                Dim IsAppliedToProduct As Boolean = False
                 TargetConfig = Config.Load(TargetFileName)
-                If String.IsNullOrEmpty(_TargetProductName) Or _TargetProductName = "All" Then
-                    IsAppliedToProduct = True
-                Else
-                    IsAppliedToProduct = DotNetNukeContext.Current.Application.ApplyToProduct(_TargetProductName)
-                End If
+
                 'The nodes definition is not correct so skip changes
-                If TargetConfig IsNot Nothing AndAlso IsAppliedToProduct = True Then
+                If TargetConfig IsNot Nothing Then
                     ProcessNodes(configNode.SelectNodes("node"), True)
                 End If
             Next

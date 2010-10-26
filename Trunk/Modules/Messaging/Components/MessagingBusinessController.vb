@@ -46,7 +46,7 @@ Namespace DotNetNuke.Modules.Messaging
 
                             Dim portals As ArrayList = objPortalController.GetPortals()
                             For Each portal As PortalInfo In portals
-                                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, "//UserProfile", Null.NullString)
+                                Dim tabID As Integer = TabController.GetTabByTabPath(portal.PortalID, "//UserProfile")
                                 If (tabID <> Null.NullInteger) Then
                                     Dim tab As TabInfo = objTabController.GetTab(tabID, portal.PortalID, True)
                                     If (tab IsNot Nothing) Then
@@ -54,7 +54,7 @@ Namespace DotNetNuke.Modules.Messaging
                                         Dim objModule As ModuleInfo = objModuleController.GetModule(moduleId, tabID, False)
 
                                         Dim permissions As ArrayList = New PermissionController().GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT")
-                                        Dim permission As PermissionInfo = Nothing
+                                        Dim permission As PermissionInfo
                                         If permissions.Count = 1 Then
                                             permission = TryCast(permissions(0), PermissionInfo)
                                         End If

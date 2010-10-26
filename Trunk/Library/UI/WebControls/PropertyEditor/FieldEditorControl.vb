@@ -604,14 +604,6 @@ Namespace DotNetNuke.UI.WebControls
                 visibility.Attributes.Add("style", "float: right;")
                 divEdit.Controls.Add(visibility)
             End If
-
-            Dim lb As New System.Web.UI.LiteralControl()
-            lb.Text = "<p>&nbsp;</p>"
-            'if injecting a texteditcontrol add a paragraph for spacing (clumsy hack to be removed when UX overhaul occurs)
-            If TypeOf (propEditor) Is DotNetNuke.UI.WebControls.DNNRichTextEditControl Then
-                divEdit.Controls.Add(lb)
-            End If
-
             divEdit.Controls.Add(propEditor)
             Dim requiredIcon As System.Web.UI.WebControls.Image = BuildRequiredIcon(editInfo)
             If Not requiredIcon Is Nothing Then

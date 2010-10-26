@@ -171,8 +171,8 @@
   <data name="Culture.Header" xml:space="preserve">
     <value>Culture</value>
   </data>
-  <data name="Active.Header" xml:space="preserve">
-    <value>Active</value>
+  <data name="Published.Header" xml:space="preserve">
+    <value>Published</value>
   </data>
   <data name="Enabled.Header" xml:space="preserve">
     <value>Enabled</value>
@@ -202,7 +202,7 @@
     <value>Create Language Pack</value>
   </data>
   <data name="EnabledPublishedMessage.Text" xml:space="preserve">
-    <value>&lt;em&gt;A language must be enabled before it can be activated and it must be deactivated before it can be disabled&lt;/em&gt;</value>
+    <value>&lt;em&gt;A language must be enabled before it can be published and it must be unpublished before it can be disabled&lt;/em&gt;</value>
   </data>
   <data name="EnableLocalization.Text" xml:space="preserve">
     <value>Enable Localized Content</value>
@@ -211,7 +211,7 @@
     <value>Install Language Pack</value>
   </data>
   <data name="PortalDefaultPublished.Text" xml:space="preserve">
-    <value>- &lt;em&gt;The default site language cannot be deactivated or disabled&lt;/em&gt;</value>
+    <value>- &lt;em&gt;The default site language cannot be unpublished or disabled&lt;/em&gt;</value>
   </data>
   <data name="Settings.Text" xml:space="preserve">
     <value>Edit</value>
@@ -229,7 +229,7 @@
     <value>Time Zone Editor</value>
   </data>
   <data name="Localize.Confirm" xml:space="preserve">
-    <value>You are about to create localized copies of all the pages in this site for the "{0}" culture.&lt;br/&gt;&lt;br/&gt;These pages will share content with the same page in the default culture - "{1}" until the modules have been localized.</value>
+    <value>You are about to create localized copies of all the pages in this site for the "{0}" culture.  These pages will share content with the same page in the default culture - "{1}" until the modules have been localized.</value>
   </data>
   <data name="LocalizePages.Text" xml:space="preserve">
     <value>No of Pages</value>
@@ -251,17 +251,5 @@
   </data>
   <data name="systemDefaultLabel.Text" xml:space="preserve">
     <value>System Default:</value>
-  </data>
-  <data name="detectBrowserLable.Help" xml:space="preserve">
-    <value>Should the user's browser language be used to detect the user's prefered language?</value>
-  </data>
-  <data name="detectBrowserLable.Text" xml:space="preserve">
-    <value>Enable Browser Language Detection?</value>
-  </data>
-  <data name="Publish.Header" xml:space="preserve">
-    <value>Publish</value>
-  </data>
-  <data name="PublishTranslatedPages.Text" xml:space="preserve">
-    <value>Publish Pages in this Language that are marked as Translated</value>
   </data>
 </root>

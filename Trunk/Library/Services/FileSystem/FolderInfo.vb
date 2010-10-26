@@ -38,13 +38,11 @@ Namespace DotNetNuke.Services.FileSystem
         Private _uniqueID As Guid
         Private _versionGuid As Guid
         Private _folderPath As String
-        Private _displayName As String
         Private _storageLocation As Integer
         Private _isProtected As Boolean
         Private _isCached As Boolean = False
         Private _lastUpdated As Date
         Private _FolderPermissions As Security.Permissions.FolderPermissionCollection
-        Private _displayPath As String
 
 #End Region
 
@@ -53,7 +51,7 @@ Namespace DotNetNuke.Services.FileSystem
         Public Sub New()
         End Sub
 
-        Public Sub New(ByVal portalId As Integer, ByVal folderpath As String, ByVal storageLocation As Integer, ByVal isProtected As Boolean, ByVal isCached As Boolean, ByVal lastUpdated As Date)
+        Public Sub New(ByVal portalId As Integer, ByVal folderpath As String, ByVal storageLocation As Integer, ByVal isProtected As Boolean, ByVal isCached As Boolean, ByVal lastUpdated As Date)       
             Me.New(Guid.NewGuid(), portalId, folderpath, storageLocation, isProtected, isCached, lastUpdated)
         End Sub
 
@@ -110,36 +108,12 @@ Namespace DotNetNuke.Services.FileSystem
             End Get
         End Property
 
-        <XmlElement("displayname")> Public Property DisplayName() As String
-            Get
-                If (Not String.IsNullOrEmpty(_displayName)) Then
-                    _displayName = FolderName
-                End If
-                Return _displayName
-            End Get
-            Set(ByVal value As String)
-                _displayName = value
-            End Set
-        End Property
-
         <XmlElement("folderpath")> Public Property FolderPath() As String
             Get
                 Return _folderPath
             End Get
             Set(ByVal Value As String)
                 _folderPath = Value
-            End Set
-        End Property
-
-        <XmlElement("displaypath")> Public Property DisplayPath() As String
-            Get
-                If (String.IsNullOrEmpty(_displayPath)) Then
-                    _displayPath = FolderPath
-                End If
-                Return _displayPath
-            End Get
-            Set(ByVal value As String)
-                _displayPath = value
             End Set
         End Property
 

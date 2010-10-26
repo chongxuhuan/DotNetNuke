@@ -98,17 +98,17 @@ Namespace DotNetNuke.Framework
                             Case AspNetHostingPermission
                                 If HasAspNetHostingPermission() = False Then
                                     _HasPermission = False
-                                    Exit For
+                                    Exit Function
                                 End If
                             Case ReflectionPermission
                                 If HasReflectionPermission() = False Then
                                     _HasPermission = False
-                                    Exit For
+                                    Exit Function
                                 End If
                             Case WebPermission
                                 If HasWebPermission() = False Then
                                     _HasPermission = False
-                                    Exit For
+                                    Exit Function
                                 End If
                         End Select
                     End If

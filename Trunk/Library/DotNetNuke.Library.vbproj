@@ -2,10 +2,6 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <LangVersion>9</LangVersion>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -144,9 +140,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="Telerik.Web.UI">
-      <HintPath>Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="DotNetNuke" />
@@ -217,16 +210,8 @@
     <Compile Include="Entities\Controllers\IHostController.vb" />
     <Compile Include="Entities\Controllers\ITabManager.vb" />
     <Compile Include="Entities\Controllers\TabManager.vb" />
-    <Compile Include="Entities\Modules\Communications\ModuleListeners.vb" />
-    <Compile Include="Entities\Modules\Communications\ModuleCommunicators.vb" />
-    <Compile Include="Entities\Modules\Communications\ModuleCommunicationEventArgs.vb" />
-    <Compile Include="Entities\Modules\Communications\RoleChangeEventArgs.vb" />
-    <Compile Include="Entities\Modules\Communications\ModuleCommunicationEventHandler.vb" />
-    <Compile Include="Entities\Modules\Communications\IModuleListener.vb" />
-    <Compile Include="Entities\Modules\Communications\IModuleCommunicator.vb" />
     <Compile Include="Entities\Tabs\TabExistsException.vb" />
     <Compile Include="Framework\BaseHttpHandler.vb" />
-    <Compile Include="Services\Analytics\GoogleAnalyticsController.vb" />
     <Compile Include="Services\Localization\ILocaleController.vb" />
     <Compile Include="Services\Localization\LocaleController.vb" />
     <Compile Include="Services\Messaging\Data\IMessagingDataService.vb" />
@@ -601,7 +586,7 @@
     <Compile Include="Entities\Modules\Actions\ModuleActionEventListener.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Entities\Modules\Communications\ModuleCommunicate.vb">
+    <Compile Include="Entities\Modules\Communications\ModuleCommunication.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\Modules\ModuleControlController.vb">
@@ -1203,6 +1188,7 @@
     <Copy SourceFiles="Components\SharpZipLib\bin\SharpZipLib.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="..\Website\bin\" />
+    <Copy SourceFiles="Providers\HtmlEditorProviders\FCKEditorProvider\bin\DotNetNuke.FckHtmlEditorProvider.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="bin\DotNetNuke.dll" DestinationFolder="..\Website\bin" />
     <Copy SourceFiles="bin\DotNetNuke.pdb" DestinationFolder="..\Website\bin" />
     <Copy SourceFiles="bin\DotNetNuke.xml" DestinationFolder="..\Website\bin" />
