@@ -741,7 +741,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
                             e.Node.Nodes.Add(node)
                         End If
                     Next
-                    For Each file In Directory.GetFiles(e.Node.Value, "*.as?x.resx")
+                    For Each file In Directory.GetFiles(e.Node.Value, "*.resx")
                         Dim fileInfo As New System.IO.FileInfo(file)
                         node = New RadTreeNode()
                         node.Value = fileInfo.FullName
@@ -749,14 +749,14 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                         e.Node.Nodes.Add(node)
                     Next
-                    For Each file In Directory.GetFiles(e.Node.Value, "SharedResources.resx")
-                        Dim fileInfo As New System.IO.FileInfo(file)
-                        node = New RadTreeNode()
-                        node.Value = fileInfo.FullName
-                        node.Text = fileInfo.Name.Replace(".resx", "")
+                    'For Each file In Directory.GetFiles(e.Node.Value, "SharedResources.resx")
+                    '    Dim fileInfo As New System.IO.FileInfo(file)
+                    '    node = New RadTreeNode()
+                    '    node.Value = fileInfo.FullName
+                    '    node.Text = fileInfo.Name.Replace(".resx", "")
 
-                        e.Node.Nodes.Add(node)
-                    Next
+                    '    e.Node.Nodes.Add(node)
+                    'Next
             End Select
 
             e.Node.Expanded = True

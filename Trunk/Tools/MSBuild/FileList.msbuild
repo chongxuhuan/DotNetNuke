@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="BlankTarget">
+  <!-- Default excludes (excluded from all packages) -->
+  <ItemGroup>
+    <DefaultExclude Include="$(SourceFolder)Starter Kit\**" />
+    <DefaultExclude Include="$(SourceFolder)Deploy\**" />
+    <DefaultExclude Include="$(SourceFolder)Symbols\**" />
+    <DefaultExclude Include="$(SourceFolder)BuildScripts\**" />
+    <DefaultExclude Include="$(SourceFolder)Tools\**" />
+    <DefaultExclude Include="$(SourceFolder)Tests\**\bin\**" />
+    <DefaultExclude Include="$(SourceFolder)Containers\**" />
+    <DefaultExclude Include="$(SourceFolder)Skins\**" />
+    <DefaultExclude Include="$(SourceFolder)Library\**\bin\**" Exclude="$(SourceFolder)**\MSAJAX\bin\**; $(SourceFolder)**\DataAccessBlock\bin\**; $(SourceFolder)**\SharpZipLib\bin\**; $(SourceFolder)**\DotNetNuke.WebControls\bin\**; $(SourceFolder)**\DotNetNuke.WebUtility\bin\**; $(SourceFolder)**\SolpartMenu\bin\**; $(SourceFolder)Library\Providers\**\bin\*.*; $(SourceFolder)**\TelerikEditorProvider\bin\**; $(SourceFolder)**\Telerik\bin\**; $(SourceFolder)**\WebFormsMvp\bin\**" />
+    <DefaultExclude Include="$(SourceFolder)Website\bin\**\*.xml" />
+    <DefaultExclude Include="$(SourceFolder)Website\Documentation\*.doc" />
+    <DefaultExclude Include="$(SourceFolder)Website\bin\dotnetnuke.modules.*" />
+    <DefaultExclude Include="$(SourceFolder)Website\desktopmodules\html\**" />
+    <DefaultExclude Include="$(SourceFolder)**\obj\**" />
+    <DefaultExclude Include="$(SourceFolder)**\Release\**" Exclude="$(SourceFolder)**\*.js;" />
+    <DefaultExclude Include="$(SourceFolder)**\Debug\**" />
+    <DefaultExclude Include="$(SourceFolder)**\*.user" />
+    <DefaultExclude Include="$(SourceFolder)**\*.suo" />
+    <DefaultExclude Include="$(SourceFolder)**\*.cache" />
+    <DefaultExclude Include="$(SourceFolder)**\thumbs.db" />
+    <DefaultExclude Include="$(SourceFolder)**\*.pdb" />
+    <DefaultExclude Include="$(SourceFolder)**\_sgvault\**" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for source package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <SourceExclude Include="$(RootFolder)\Starter Kit\**" />
+    <SourceExclude Include="$(RootFolder)\Deploy\**" />
+    <SourceExclude Include="$(RootFolder)\Symbols\**" />
+    <SourceExclude Include="$(RootFolder)\BuildScripts\**" />
+    <SourceExclude Include="$(RootFolder)\Tools\**" />
+    <SourceExclude Include="$(RootFolder)\Tests\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Containers\**" />
+    <SourceExclude Include="$(RootFolder)\Skins\**" />
+    <SourceExclude Include="$(RootFolder)\Library\**\bin\**" Exclude="$(RootFolder)\**\MSAJAX\bin\**; $(RootFolder)\**\DataAccessBlock\bin\**; $(RootFolder)\**\SharpZipLib\bin\**; $(RootFolder)\**\DotNetNuke.WebControls\bin\**; $(RootFolder)\**\DotNetNuke.WebUtility\bin\**; $(RootFolder)\**\SolpartMenu\bin\**; $(RootFolder)\Library\Providers\**\bin\*.*; $(RootFolder)\**\TelerikEditorProvider\bin\**; $(RootFolder)\**\Telerik\bin\**; $(RootFolder)\**\WebFormsMvp\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\**\*.xml" />
+    <SourceExclude Include="$(RootFolder)\Website\Documentation\*.doc" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\dotnetnuke.modules.*" />
+    <SourceExclude Include="$(RootFolder)\Website\desktopmodules\html\**" />
+    <SourceExclude Include="$(RootFolder)\**\obj\**" />
+    <SourceExclude Include="$(RootFolder)\**\Release\**" Exclude="$(RootFolder)\**\*.js;" />
+    <SourceExclude Include="$(RootFolder)\**\Debug\**" />
+    <SourceExclude Include="$(RootFolder)\**\*.user" />
+    <SourceExclude Include="$(RootFolder)\**\*.suo" />
+    <SourceExclude Include="$(RootFolder)\**\*.cache" />
+    <SourceExclude Include="$(RootFolder)\**\thumbs.db" />
+    <SourceExclude Include="$(RootFolder)\**\*.pdb" />
+    <SourceExclude Include="$(RootFolder)\**\_sgvault\**" />
+    <SourceExclude Include="$(RootFolder)\Website\web.config" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\telerik.*" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for install package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <InstallExclude Include="$(SourceFolder)BuildScripts\**" />
+    <InstallExclude Include="$(SourceFolder)Modules\**" />
+    <InstallExclude Include="$(SourceFolder)DotNetNuke.Web\**" />
+    <InstallExclude Include="$(SourceFolder)*.*" />
+    <InstallExclude Include="$(SourceFolder)Library\**" />
+    <InstallExclude Include="$(SourceFolder)**\*.build" />
+    <InstallExclude Include="$(SourceFolder)Tests\**" />
+  </ItemGroup>
+
+  <!-- Extra excluded files for upgrade package (Default excludes are already excluded from zip !) -->
+  <ItemGroup>
+    <UpgradeExclude Include="$(SourceFolder)BuildScripts\**" />
+    <UpgradeExclude Include="$(SourceFolder)Modules\**" />
+    <UpgradeExclude Include="$(SourceFolder)Tests\**" />
+    <UpgradeExclude Include="$(SourceFolder)*.*" />
+    <UpgradeExclude Include="$(SourceFolder)**\System.Web.Extensions.dll;" />
+    <UpgradeExclude Include="$(SourceFolder)Library\**" />
+    <UpgradeExclude Include="$(SourceFolder)DotNetNuke.Web\**" />
+    <UpgradeExclude Include="$(SourceFolder)**\*.build" />
+    <UpgradeExclude Include="$(SourceFolder)Website\App_Data\Database.mdf" />
+    <UpgradeExclude Include="$(SourceFolder)Website\bin\Telerik.Web.UI.dll" />
+    <UpgradeExclude Include="$(SourceFolder)Website\Install\Skin\*.zip" />
+    <UpgradeExclude Include="$(SourceFolder)Website\Install\Container\*.zip" />
+    <UpgradeExclude Include="$(SourceFolder)Website\web.config" />
+    <UpgradeExclude Include="$(SourceFolder)Website\favicon.ico" />
+  </ItemGroup>
+
+  <Target Name="BlankTarget">
+    <!-- Blank Target just to satisfy MSBuild requirements. -->
+  </Target>
+</Project>

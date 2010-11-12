@@ -75,29 +75,6 @@ if not exists (select * from dbo.sysobjects where id = object_id(N'PK_{objectQua
 	end
 go
 
-/*  DNN-13278 - Clustered Primary Key for Roles  */
-/*************************************************/
-
-if not exists (select * from dbo.sysobjects where id = object_id(N'PK_{objectQualifier}Roles') and OBJECTPROPERTY(id, N'CnstIsClustKey') = 1)
-	begin
-		alter table {databaseOwner}[{objectQualifier}UserRoles] 
-			drop constraint FK_{objectQualifier}UserRoles_{objectQualifier}Roles
-
-		alter table {databaseOwner}[{objectQualifier}Roles] 
-			drop constraint PK_{objectQualifier}Roles
-
-		alter table {databaseOwner}[{objectQualifier}Roles] 
-			add constraint PK_{objectQualifier}Roles 
-				primary key clustered ( RoleID ) on [PRIMARY]
-		
-		alter table {databaseOwner}[{objectQualifier}UserRoles] 
-			add constraint FK_{objectQualifier}UserRoles_{objectQualifier}Roles 
-				foreign key ( RoleID ) references {databaseOwner}[{objectQualifier}Roles] ( RoleID ) 
-				on update no action 
-				on delete cascade 
-	end
-go
-
 /*  DNN-14444 - Add new Search Setting for Tag Info Filter*/
 /*********************************************************/
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}HostSettings] WHERE SettingName = 'SearchIncludedTagInfoFilter')

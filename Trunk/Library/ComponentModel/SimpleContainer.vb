@@ -27,7 +27,9 @@ Namespace DotNetNuke.ComponentModel
 
         Private componentBuilders As New ComponentBuilderCollection()
         Private componentDependencies As New Dictionary(Of String, IDictionary)
-        Private componentLock As New Object
+        Private builderLock As New Object
+        Private registerInstanceLock As New Object
+        Private registerComponentLock As New Object
         Private componentTypes As New ComponentTypeCollection()
         Private registeredComponents As New Dictionary(Of System.Type, String)
 
@@ -49,7 +51,7 @@ Namespace DotNetNuke.ComponentModel
         End Sub
 
         Private Sub AddBuilder(ByVal contractType As System.Type, ByVal builder As IComponentBuilder)
-            SyncLock componentLock
+            SyncLock builderLock
                 If Not componentTypes.Item(contractType).ComponentBuilders.Contains(builder.Name) Then
                     componentTypes.Item(contractType).ComponentBuilders.Add(builder)
                 End If
@@ -120,26 +122,30 @@ Namespace DotNetNuke.ComponentModel
         End Property
 
         Public Overloads Overrides Sub RegisterComponent(ByVal name As String, ByVal contractType As System.Type, ByVal componentType As System.Type, ByVal lifestyle As ComponentLifeStyleType)
-            If Not componentTypes.Contains(contractType) Then
-                componentTypes.Add(New ComponentType(contractType))
-            End If
-            Dim builder As IComponentBuilder = Nothing
-            Select Case lifestyle
-                Case ComponentLifeStyleType.Transient
-                    builder = New TransientComponentBuilder(name, componentType)
-                Case ComponentLifeStyleType.Singleton
-                    builder = New SingletonComponentBuilder(name, componentType)
-            End Select
-            AddBuilder(contractType, builder)
+            SyncLock (registerComponentLock)
+                If Not componentTypes.Contains(contractType) Then
+                    componentTypes.Add(New ComponentType(contractType))
+                End If
+                Dim builder As IComponentBuilder = Nothing
+                Select Case lifestyle
+                    Case ComponentLifeStyleType.Transient
+                        builder = New TransientComponentBuilder(name, componentType)
+                    Case ComponentLifeStyleType.Singleton
+                        builder = New SingletonComponentBuilder(name, componentType)
+                End Select
+                AddBuilder(contractType, builder)
 
-            registeredComponents(componentType) = name
+                registeredComponents(componentType) = name
+            End SyncLock
         End Sub
 
         Public Overloads Overrides Sub RegisterComponentInstance(ByVal name As String, ByVal contractType As System.Type, ByVal instance As Object)
-            If Not componentTypes.Contains(contractType) Then
-                componentTypes.Add(New ComponentType(contractType))
-            End If
-            AddBuilder(contractType, New InstanceComponentBuilder(name, instance))
+            SyncLock (registerInstanceLock)
+                If Not componentTypes.Contains(contractType) Then
+                    componentTypes.Add(New ComponentType(contractType))
+                End If
+                AddBuilder(contractType, New InstanceComponentBuilder(name, instance))
+            End SyncLock
         End Sub
 
         Public Overrides Sub RegisterComponentSettings(ByVal name As String, ByVal dependencies As System.Collections.IDictionary)

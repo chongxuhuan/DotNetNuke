@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.TelerikEditorProvider" type="Provider" version="05.04.02">
+    <package name="DotNetNuke.TelerikEditorProvider" type="Provider" version="05.06.00">
       <friendlyName>Telerik Editor Provider</friendlyName>
       <description>DotNetNuke Html Editor Provider for Telerik Text Editor.</description>
       <dependencies />
@@ -18,7 +18,6 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.HtmlEditor.TelerikEditorProvider.dll</name>
-              <version>05.04.02</version>
             </assembly>
           </assemblies>
         </component>
@@ -207,9 +206,109 @@
         </component>
         <component type="File">
           <files>
+            <basePath>Providers\HtmlEditorProviders\Telerik\images\Emoticons</basePath>
+            <file>
+              <name>angel_smile.gif</name>
+            </file>
+            <file>
+              <name>angry_smile.gif</name>
+            </file>
+            <file>
+              <name>broken_heart.gif</name>
+            </file>
+            <file>
+              <name>cake.gif</name>
+            </file>
+            <file>
+              <name>confused_smile.gif</name>
+            </file>
+            <file>
+              <name>cry_smile.gif</name>
+            </file>
+            <file>
+              <name>devil_smile.gif</name>
+            </file>
+            <file>
+              <name>embaressed_smile.gif</name>
+            </file>
+            <file>
+              <name>envelope.gif</name>
+            </file>
+            <file>
+              <name>heart.gif</name>
+            </file>
+            <file>
+              <name>kiss.gif</name>
+            </file>
+            <file>
+              <name>lightbulb.gif</name>
+            </file>
+            <file>
+              <name>omg_smile.gif</name>
+            </file>
+            <file>
+              <name>regular_smile.gif</name>
+            </file>
+            <file>
+              <name>sad_smile.gif</name>
+            </file>
+            <file>
+              <name>shades_smile.gif</name>
+            </file>
+            <file>
+              <name>teeth_smile.gif</name>
+            </file>
+            <file>
+              <name>thumbs_down.gif</name>
+            </file>
+            <file>
+              <name>thumbs_up.gif</name>
+            </file>
+            <file>
+              <name>tounge_smile.gif</name>
+            </file>
+            <file>
+              <name>whatchutalkingabout_smile.gif</name>
+            </file>
+            <file>
+              <name>wink_smile.gif</name>
+            </file>
+          </files>
+        </component>
+        <component type="File">
+          <files>
             <basePath>Providers\HtmlEditorProviders\Telerik\js</basePath>
             <file>
               <name>RegisterDialogs.js</name>
+            </file>
+            <file>
+              <name>CustomFunctions.js</name>
+            </file>
+          </files>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>Providers\HtmlEditorProviders\Telerik\templates</basePath>
+            <file>
+              <name>htmlEditorTemplates.css</name>
+            </file>
+            <file>
+              <name>ImageAndTitle.css</name>
+            </file>
+            <file>
+              <name>ImageAndTitle.htmtemplate</name>
+            </file>
+            <file>
+              <name>SimpleTableAndHeader.css</name>
+            </file>
+            <file>
+              <name>SimpleTableAndHeader.htmtemplate</name>
+            </file>
+            <file>
+              <name>TwoColumnAndTitle.css</name>
+            </file>
+            <file>
+              <name>TwoColumnAndTitle.htmtemplate</name>
             </file>
           </files>
         </component>

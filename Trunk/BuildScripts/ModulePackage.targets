@@ -14,7 +14,10 @@
     <CreateItem Include="*.txt">
       <Output TaskParameter="Include" ItemName="PackageTextFiles" />
     </CreateItem>
-    <CreateItem Include="*.asmx;*.ascx;*.css;*.xsl;*.svc">
+    <CreateItem Include="Components\**\*.dll">
+      <Output TaskParameter="Include" ItemName="ComponentReferences" />
+    </CreateItem>
+    <CreateItem Include="*.asmx;*.ascx;*.css;*.xsl;*.svc;*.xml">
       <Output TaskParameter="Include" ItemName="PackageSourceFiles" />
     </CreateItem>
     <CreateItem Include="*.config">
@@ -29,7 +32,7 @@
     <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
       <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
     </CreateItem>
-	    <CreateItem Include="Data\*.SqlDataProvider">
+    <CreateItem Include="Data\*.SqlDataProvider">
       <Output TaskParameter="Include" ItemName="PackageDataFiles" />
     </CreateItem>
     <CreateItem Include="images\*.*">
@@ -53,8 +56,9 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
     <Copy SourceFiles="@(PackageSourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
+    <Copy SourceFiles="@(ComponentReferences)" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
     <Copy SourceFiles="@(PackageSqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Providers\DataProviders\SqlDataProvider" />
-	<Copy SourceFiles="@(PackageDataFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Data" />
+    <Copy SourceFiles="@(PackageDataFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Data" />
     <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageTextFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageConfigFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
@@ -64,7 +68,6 @@
     <Copy SourceFiles="@(MyKeys)" DestinationFolder="$(MSBuildProjectDirectory)\Package\keys" />
     <Copy SourceFiles="@(MyViews)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(MyViewControls)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Controls" />
-	<Copy SourceFiles="@(MyViewControls)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Controls" />
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
     </CreateItem>

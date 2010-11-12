@@ -124,7 +124,6 @@ Namespace DotNetNuke.Framework
         ''' (supplying a real filename).
         ''' </p>
         ''' <p>
-        ''' </p>
         ''' <code>Response.AddHeader("Content-Disposition"
         ''' , "attachment; filename=\"" + Filename + "\"");</code>
         ''' </p>

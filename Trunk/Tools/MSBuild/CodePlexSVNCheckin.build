@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Checkin" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variables.build" />
+  <Import Project="AT.MSBuild.Tasks.Targets" />
+  <PropertyGroup>
+    <DotNetNukeMSBuildTasksPath Condition="'$(DotNetNukeMSBuildTasksPath)' == ''">$(MSBuildExtensionsPath)\DotNetNuke.MSBuild.Tasks</DotNetNukeMSBuildTasksPath>
+    <DotNetNukeMSBuildTasksLib>$(DotNetNukeMSBuildTasksPath)\DotNetNuke.MSBuild.Tasks.dll</DotNetNukeMSBuildTasksLib>
+  </PropertyGroup>
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.CodePlexDelete" />
+
+  <Target Name="Checkin">
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\CodePlexSync.txt C:\Builds\Update_CodePlex\TFS C:\Builds\Update_CodePlex\WorkingDirectory C:\Builds\Update_CodePlex\compare.html /closescript" WaitCompletion="True" />
+    <CodePlexDelete FileName="C:\Builds\Update_CodePlex\compare.html" SvnLocation="$(SVNClientPath)" FileRootPath="C:\Builds\Update_CodePlex\WorkingDirectory\" />
+    <ItemGroup>
+      <CurrentFiles Include="C:\Builds\Update_CodePlex\TFS\**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(CurrentFiles)" DestinationFolder="C:\Builds\Update_CodePlex\WorkingDirectory\%(RecursiveDir)" />
+    <Exec Command="svn cleanup C:\Builds\Update_CodePlex\WorkingDirectory" />
+    <Exec Command="svn add C:\Builds\Update_CodePlex\WorkingDirectory\*.* --force" />
+    <!--<Exec Command="svn commit -m TFS_Update C:\Builds\Update_CodePlex\WorkingDirectory  --username dnnsvn --password DNN$v#" />-->
+  </Target>
+</Project>

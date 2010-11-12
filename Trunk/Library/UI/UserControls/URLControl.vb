@@ -497,7 +497,7 @@ Namespace DotNetNuke.UI.UserControls
                 If folder.FolderPath = Null.NullString Then
                     FolderItem.Text = Localization.GetString("Root", Me.LocalResourceFile)
                 Else
-                    FolderItem.Text = folder.FolderPath
+                    FolderItem.Text = folder.DisplayPath
                 End If
                 FolderItem.Value = folder.FolderPath
                 cboFolders.Items.Add(FolderItem)

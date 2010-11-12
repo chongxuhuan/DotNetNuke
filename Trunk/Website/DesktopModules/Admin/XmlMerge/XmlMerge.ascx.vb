@@ -58,29 +58,63 @@ Namespace DotNetNuke.Modules.XmlMerge
             Dim fileList = From file In files Select System.IO.Path.GetFileName(file)
             ddlConfig.DataSource = fileList
             ddlConfig.DataBind()
-            ddlConfig.SelectedValue = "web.config"
+
+            Dim selectItem As New Telerik.Web.UI.RadComboBoxItem(Localization.GetString("SelectConfig", LocalResourceFile), "-1")
+            ddlConfig.Items.Insert(0, selectItem)
+            ddlConfig.SelectedIndex = 0
         End Sub
 
         Private Sub ValidateSuperUser()
-        ' Verify that the current user has access to access this page
+            ' Verify that the current user has access to access this page
             If Not UserInfo.IsSuperUser Then
                 Response.Redirect(NavigateURL("Access Denied"), True)
             End If
         End Sub
+
+        Private Sub LoadConfig(ByVal configFile As String)
+            Dim configDoc As System.Xml.XmlDocument = Config.Load(configFile)
+            Using txtWriter As New System.IO.StringWriter()
+                Using writer As New XmlTextWriter(txtWriter)
+                    writer.Formatting = Formatting.Indented
+                    configDoc.WriteTo(writer)
+                End Using
+                txtConfiguration.Text = txtWriter.ToString
+            End Using
+        End Sub
+
 #End Region
 
 #Region "Event Handlers"
 
         Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
             ValidateSuperUser()
-
             If Not Page.IsPostBack Then
                 BindConfigList()
-            End If
-            If ddlConfig.SelectedValue.ToLowerInvariant = "web.config" Then
-                DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveWarning", LocalResourceFile))
+            Else
+                If ddlConfig.SelectedIndex <> 0 Then
+                    ddlConfig.Attributes.Add("onClick", "javascript: alert('" + Localization.GetString("LoadConfigWarning", LocalResourceFile) + "');")
+                    txtConfiguration.Enabled = True
+                    cmdSave.Enabled = True
+                    cmdExecute.Enabled = True
+                Else
+                    ddlConfig.Attributes.Remove("onClick")
+                    txtConfiguration.Text = String.Empty
+                    txtConfiguration.Enabled = True
+                    cmdSave.Enabled = False
+                    cmdExecute.Enabled = False
+                End If
             End If
 
+            If ddlConfig.SelectedValue.ToLowerInvariant = "web.config" Then
+                DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveWarning", LocalResourceFile))
+                DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("SaveWarning", LocalResourceFile))
+            ElseIf ddlConfig.SelectedIndex = 0 Then
+                cmdSave.Attributes.Remove("onClick")
+                cmdExecute.Attributes.Remove("onClick")
+            Else
+                DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveConfirm", LocalResourceFile))
+                DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("MergeConfirm", LocalResourceFile))
+            End If
         End Sub
 
         Protected Sub cmdExecute_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExecute.Click
@@ -92,6 +126,7 @@ Namespace DotNetNuke.Modules.XmlMerge
                     Dim app As DotNetNuke.Application.Application = DotNetNukeContext.Current.Application
                     Dim merge As New DotNetNuke.Services.Installer.XmlMerge(doc, FormatVersion(app.Version), app.Description)
                     merge.UpdateConfigs()
+                    LoadConfig(ddlConfig.SelectedValue)
                 Catch ex As Exception
                     Skins.Skin.AddModuleMessage(Me, Localization.GetString("ERROR_Merge", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.RedError)
                     LogException(ex)
@@ -107,19 +142,6 @@ Namespace DotNetNuke.Modules.XmlMerge
             End If
         End Sub
 
-        Protected Sub cmdLoad_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdLoad.Click
-            ValidateSuperUser()
-            Dim configDoc As System.Xml.XmlDocument = Config.Load(ddlConfig.SelectedValue)
-            Using txtWriter As New System.IO.StringWriter()
-                Using writer As New XmlTextWriter(txtWriter)
-                    writer.Formatting = Formatting.Indented
-                    configDoc.WriteTo(writer)
-                End Using
-                txtConfiguration.Text = txtWriter.ToString
-            End Using
-
-        End Sub
-
         Protected Sub cmdSave_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdSave.Click
             ValidateSuperUser()
             Dim configDoc As New System.Xml.XmlDocument
@@ -129,8 +151,12 @@ Namespace DotNetNuke.Modules.XmlMerge
                 Skin.AddModuleMessage(Me, String.Format(Localization.GetString("ERROR_ConfigurationFormat", LocalResourceFile), ex.Message), ModuleMessage.ModuleMessageType.RedError)
                 Exit Sub
             End Try
-
             Config.Save(configDoc, ddlConfig.SelectedValue)
+            LoadConfig(ddlConfig.SelectedValue)
+        End Sub
+
+        Protected Sub ddlConfig_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlConfig.SelectedIndexChanged
+            If ddlConfig.SelectedIndex <> 0 Then LoadConfig(ddlConfig.SelectedValue.ToLowerInvariant)
         End Sub
 
 #End Region

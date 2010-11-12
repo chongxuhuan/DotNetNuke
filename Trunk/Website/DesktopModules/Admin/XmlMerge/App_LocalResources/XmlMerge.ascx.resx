@@ -153,4 +153,16 @@
   <data name="ERROR_ConfigurationFormat.Text" xml:space="preserve">
     <value>Your configuration file is not a valid XML file.  Please correct the formatting issue and re-save the file.  Error: {0}</value>
   </data>
+  <data name="LoadConfigWarning.Text" xml:space="preserve">
+    <value>You will lose your current changes if you load a new config file!</value>
+  </data>
+  <data name="MergeConfirm.Text" xml:space="preserve">
+    <value>Are you sure you want to merge these changes to this config file?</value>
+  </data>
+  <data name="SaveConfirm.Text" xml:space="preserve">
+    <value>Are you sure you want to save changes this config file?</value>
+  </data>
+  <data name="SelectConfig.Text" xml:space="preserve">
+    <value>Select a config file...</value>
+  </data>
 </root>

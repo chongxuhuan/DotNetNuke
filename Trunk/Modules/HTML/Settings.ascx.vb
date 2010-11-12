@@ -26,6 +26,7 @@ Imports DotNetNuke.Common.Utilities
 
 Namespace DotNetNuke.Modules.Html
 
+
     ''' -----------------------------------------------------------------------------
     ''' <summary>
     ''' The Settings ModuleSettingsBase is used to manage the 
@@ -40,11 +41,16 @@ Namespace DotNetNuke.Modules.Html
     Partial Public Class Settings
         Inherits DotNetNuke.Entities.Modules.ModuleSettingsBase
 
-        Protected Sub cboWorkflow_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboWorkflow.SelectedIndexChanged
-            DisplayWorkflow()
-        End Sub
+#Region "Event handling"
 
-        Private Sub DisplayWorkflow()
+        Protected Sub cboWorkflow_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboWorkflow.SelectedIndexChanged
+            DisplayWorkflowDetails()
+        End Sub
+#End Region
+
+#Region "Private methods"
+
+        Private Sub DisplayWorkflowDetails()
             If Not cboWorkflow.SelectedValue Is Nothing Then
                 Dim objWorkflow As New WorkflowStateController
                 Dim strDescription As String = ""
@@ -59,57 +65,49 @@ Namespace DotNetNuke.Modules.Html
             End If
         End Sub
 
+#End Region
+
+#Region "Private Functions"
+#End Region
+
 #Region "Base Method Implementations"
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' LoadSettings loads the settings from the Database and displays them
         ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Sub LoadSettings()
             Try
                 If Not Page.IsPostBack Then
-                    Dim objHtml As New HtmlTextController
-                    Dim objWorkflow As New WorkflowStateController
+                    Dim _htmlTextController As New HtmlTextController
+                    Dim _workflowStateController As New WorkflowStateController
 
                     ' get replace token settings
                     If CType(ModuleSettings("HtmlText_ReplaceTokens"), String) <> "" Then
                         chkReplaceTokens.Checked = CType(ModuleSettings("HtmlText_ReplaceTokens"), Boolean)
                     End If
 
-                    ' expose workflow management option if available and user is administrator
-                    If Not ModuleControlController.GetModuleControlByControlKey("WorkFlow", ModuleConfiguration.ModuleDefID) Is Nothing Then
-                        If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                            rowWorkflow.Visible = True
-                        End If
-                    End If
-
                     ' get workflow/version settings
                     Dim arrWorkflows As New ArrayList
-                    For Each objState As WorkflowStateInfo In objWorkflow.GetWorkflows(PortalId)
+                    For Each objState As WorkflowStateInfo In _workflowStateController.GetWorkflows(PortalId)
                         If Not objState.IsDeleted Then
                             arrWorkflows.Add(objState)
                         End If
                     Next
+
                     cboWorkflow.DataSource = arrWorkflows
                     cboWorkflow.DataBind()
 
-                    Dim workflow As KeyValuePair(Of String, Integer) = objHtml.GetWorkflow(ModuleId, TabId, PortalId)
+                    Dim workflow As KeyValuePair(Of String, Integer) = _htmlTextController.GetWorkflow(ModuleId, TabId, PortalId)
                     If Not cboWorkflow.Items.FindByValue(workflow.Value.ToString()) Is Nothing Then
                         cboWorkflow.Items.FindByValue(workflow.Value.ToString()).Selected = True
                     End If
-                    DisplayWorkflow()
 
-                    ' expose default option if user is administrator
-                    If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                        rowApplyTo.Visible = True
-                        If Not rblApplyTo.Items.FindByValue(workflow.Key) Is Nothing Then
-                            rblApplyTo.Items.FindByValue(workflow.Key).Selected = True
-                        End If
+                    DisplayWorkflowDetails()
+
+                    If Not rblApplyTo.Items.FindByValue(workflow.Key) Is Nothing Then
+                        rblApplyTo.Items.FindByValue(workflow.Key).Selected = True
                     End If
 
                 End If
@@ -118,19 +116,14 @@ Namespace DotNetNuke.Modules.Html
             End Try
         End Sub
 
-        ''' -----------------------------------------------------------------------------
+
         ''' <summary>
-        ''' UpdateSettings saves the modified settings to the Database
+        ''' Updates the module settings.
         ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
         Public Overrides Sub UpdateSettings()
             Try
 
-                Dim objHtml As New HtmlTextController
+                Dim _htmlTextController As New HtmlTextController
                 Dim objWorkflow As New WorkflowStateController
 
                 ' update replace token setting
@@ -149,22 +142,16 @@ Namespace DotNetNuke.Modules.Html
                 ' update workflow/version settings
                 Select Case rblApplyTo.SelectedValue
                     Case "Module"
-                        objHtml.UpdateWorkflow(ModuleId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                        _htmlTextController.UpdateWorkflow(ModuleId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
                     Case "Page"
-                        objHtml.UpdateWorkflow(TabId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                        _htmlTextController.UpdateWorkflow(TabId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
                     Case "Site"
-                        objHtml.UpdateWorkflow(PortalId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
+                        _htmlTextController.UpdateWorkflow(PortalId, rblApplyTo.SelectedValue, Integer.Parse(cboWorkflow.SelectedValue), chkReplace.Checked)
                 End Select
 
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
-        End Sub
-
-        Protected Sub cmdWorkflow_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdWorkflow.Click
-            If PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Then
-                Response.Redirect(EditUrl("Workflow"))
-            End If
         End Sub
 
 #End Region

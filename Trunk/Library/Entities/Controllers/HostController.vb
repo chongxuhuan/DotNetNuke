@@ -151,7 +151,7 @@ Namespace DotNetNuke.Entities.Controllers
 
         Private Function GetSettingsDictionaryCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
             Dim dicSettings As New Dictionary(Of String, ConfigurationSetting)
-            Dim dr As IDataReader
+            Dim dr As IDataReader = Nothing
             Try
                 dr = DataProvider.Instance().GetHostSettings
                 While dr.Read()

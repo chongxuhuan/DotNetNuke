@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="CreateInstall" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variables.build" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.IIS.WebDirectoryCreate" />
+  <UsingTask AssemblyFile="C:\Program Files\Gallio\bin\Gallio.MSBuildTasks.dll" TaskName="Gallio" />
+
+  <PropertyGroup>
+    <VersionType></VersionType>
+    <TestFilesPath>C:\Tests\Source\</TestFilesPath>
+    <TestRoot>C:\Tests</TestRoot>
+  </PropertyGroup>
+  <Target Name="BuildTests">
+    <XmlRead Prefix="n"
+                Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+                XPath="/package/@value"
+                XmlFileName="$(PackagesFolder)\LastPackage.xml">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    <Exec Command="%22$(SVNClientPath)svn%22 checkout https://dotnetnukeautomation.svn.codeplex.com/svn C:\Tests\Source" />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='TestVersion']/@value"
+      Value="$(Version)"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='VersionType']/@value"
+      Value="Community"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='TestFilesPath']/@value"
+      Value="$(TestFilesPath)"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='TestRoot']/@value"
+      Value="$(TestRoot)"  />
+
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines="Version, Type" Overwrite="true" />
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines='"04.09.05", "3"' Overwrite="false" />
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines='"05.05.00", "3"' Overwrite="false" />
+
+    <MSBuild Projects="$(TestsFolder)\Source\DotNetNuke_WatiN_Tests.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\DotNetZipLib\bin\Ionic.Zip.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\Controls\CountryListBox\obj\Release\CountryListBox.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\bin\DotNetNuke.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Syndication\bin\DotNetNuke.Services.Syndication.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(RootFolder)\Library\Components\SharpZipLib\bin\SharpZipLib.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\Interop.SHDocVw.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\Microsoft.mshtml.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\WatiN.Core.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\WatiN.Core.UnitTests.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\WatiN.Core.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\WatiN.Core.xml" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\WatiN\2.0.20.1089\bin\WatiN.Core.UnitTests.dll.config" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\MbUnit\3.2.432.0\MBUnit.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\Externals\MbUnit\3.2.432.0\Gallio.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+
+
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.pdb" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll.config" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.Common\bin\Release\DotNetNuke.Tests.UI.WatiN.Common.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.Common\bin\Release\DotNetNuke.Tests.UI.WatiN.Common.pdb" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.Utilities\bin\Release\DotNetNuke.Tests.UI.WatiN.Utilities.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.Utilities\bin\Release\DotNetNuke.Tests.UI.WatiN.Utilities.pdb" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+  </Target>
+
+  <ItemGroup>
+    <TestFile Include="$(TestsFolder)\TestFixtures\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll" />
+  </ItemGroup>
+
+  <Target Name="TestCommunity">
+    <XmlRead Prefix="n"
+               Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+               XPath="/package/@value"
+               XmlFileName="$(PackagesFolder)\LastPackage.xml">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    <!--Uses the build from BuilTests task above.-->
+    <Copy SourceFiles="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Install.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Copy SourceFiles="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Upgrade.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Gallio IgnoreFailures="true"
+            Files="$(TestsFolder)\TestFixtures\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll"
+            ReportDirectory="C:\Builds\Maintenance\Reports"
+            ReportNameFormat="test-report-buildverification-community"
+            ReportTypes="Xml"
+            ShowReports="false"  >
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode"/>
+    </Gallio>
+  </Target>
+
+  <Target Name="TestProfessional">
+    <XmlRead Prefix="n"
+               Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+               XPath="/package/@value"
+               XmlFileName="$(PackagesFolder)\LastPackage.xml">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='VersionType']/@value"
+      Value="Professional"  />
+    <!-- Have to update the csv file so needs to be rebuilt-->
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines="Version, Type" Overwrite="true" />
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines='"04.09.05", "3"' Overwrite="false" />
+    <WriteLinesToFile File="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\TestData\UpgradeList.csv" Lines='"05.05.00", "3_Pro"' Overwrite="false" />
+
+    <MSBuild Projects="$(TestsFolder)\Source\DotNetNuke_WatiN_Tests.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.pdb" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+    <Copy SourceFiles="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\bin\Release\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll.config" DestinationFolder="$(TestsFolder)\TestFixtures"/>
+
+    <Copy SourceFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Install.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Copy SourceFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Upgrade.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Gallio IgnoreFailures="true"
+            Files="$(TestsFolder)\TestFixtures\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll"
+            ReportDirectory="C:\Builds\Maintenance\Reports"
+            ReportNameFormat="test-report-buildverification-professional"
+            ReportTypes="Xml"
+            ShowReports="false"  >
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode"/>
+    </Gallio>
+  </Target>
+
+  <Target Name="TestEnterprise">
+    <XmlRead Prefix="n"
+               Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+               XPath="/package/@value"
+               XmlFileName="$(PackagesFolder)\LastPackage.xml">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(TestsFolder)\Source\DotNetNuke.Tests.UI.WatiN.BuildVerification\app.config"
+      Xpath="/configuration/appSettings/add[@key='VersionType']/@value"
+      Value="Enterprise"  />
+    <!-- Uses the same csv file as Pro so not rebuilt.-->
+    <Copy SourceFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Install.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Copy SourceFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Upgrade.zip" DestinationFolder="$(TestsFolder)\Packages" />
+    <Gallio IgnoreFailures="true"
+            Files="$(TestsFolder)\TestFixtures\DotNetNuke.Tests.UI.WatiN.BuildVerification.dll"
+            ReportDirectory="C:\Builds\Maintenance\Reports"
+            ReportNameFormat="test-report-buildverification-enterprise"
+            ReportTypes="Xml"
+            ShowReports="false"  >
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode"/>
+    </Gallio>
+  </Target>
+
+</Project>

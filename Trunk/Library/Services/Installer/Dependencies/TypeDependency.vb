@@ -56,7 +56,7 @@ Namespace DotNetNuke.Services.Installer.Dependencies
                         If DependentType.Trim <> "" Then
                             If Framework.Reflection.CreateType(DependentType, True) Is Nothing Then
                                 _IsValid = False
-                                Exit Property
+                                Exit For
                             End If
                         End If
                     Next

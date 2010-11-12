@@ -43,7 +43,7 @@ Namespace DotNetNuke.Services.Log.EventLog
         End Function
 
         Public Function Add(ByVal objLogInfo As Object) As Integer Implements System.Collections.IList.Add
-            arrLogs.Add(objLogInfo)
+            Return arrLogs.Add(objLogInfo)
         End Function
 
         Public Sub Remove(ByVal objLogInfo As Object) Implements System.Collections.IList.Remove

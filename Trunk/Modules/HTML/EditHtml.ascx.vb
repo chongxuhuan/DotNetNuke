@@ -20,190 +20,360 @@
 
 Imports DotNetNuke.Common
 Imports DotNetNuke.Entities.Modules
-Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Services.Exceptions
+Imports DotNetNuke.Web.UI.WebControls
+
+Imports DotNetNuke.Entities.Users
+Imports DotNetNuke.Security
+Imports Telerik.Web.UI
 
 Namespace DotNetNuke.Modules.Html
 
     ''' -----------------------------------------------------------------------------
     ''' <summary>
-	''' The EditHtml PortalModuleBase is used to manage Html
-	''' </summary>
-	''' <remarks>
-	''' </remarks>
-	''' <history>
+    ''' The EditHtml PortalModuleBase is used to manage Html
+    ''' </summary>
+    ''' <remarks>
+    ''' </remarks>
+    ''' <history>
     ''' </history>
-	''' -----------------------------------------------------------------------------
-	Public Partial Class EditHtml
-		Inherits Entities.Modules.PortalModuleBase
+    ''' -----------------------------------------------------------------------------
+    Partial Public Class EditHtml
+        Inherits Entities.Modules.PortalModuleBase
 
-        Private WorkflowID As Integer = -1
-        Private ItemID As Integer = -1
+        Private _htmlTextController As New HtmlTextController
+        Private _workflowStateController As New WorkflowStateController
+        Private _htmlTextLogController As New HtmlTextLogController
+        Private _moduleController As New ModuleController
+
+        Private Enum WorkflowType
+            DirectPublish = 1
+            ContentStaging = 2
+        End Enum
+
+#Region "Private Properties"
+
+        Private ReadOnly Property WorkflowID() As Integer
+            Get
+                Dim _workflowID As Integer = -1
+
+                If ViewState("WorkflowID") Is Nothing Then
+                    _workflowID = _htmlTextController.GetWorkflow(ModuleId, TabId, PortalId).Value
+                    ViewState.Add("WorkflowID", _workflowID)
+                Else
+                    _workflowID = Integer.Parse(ViewState("WorkflowID"))
+                End If
+
+                Return _workflowID
+            End Get
+        End Property
+
+      Private Property LockedByUserID() As Integer
+            Get
+                Dim _userID As Integer = -1
+                If (Me.Settings("Content_LockedBy")) IsNot Nothing Then
+                    _userID = Integer.Parse(Me.Settings("Content_LockedBy"))
+                End If
+
+                Return _userID
+            End Get
+            Set(ByVal value As Integer)
+                Me.Settings("Content_LockedBy") = value
+            End Set
+        End Property
+
+        Private Property TempContent() As String
+            Get
+                Dim _content As String = ""
+                If Not ViewState("TempContent") Is Nothing Then _content = ViewState("TempContent")
+                Return _content
+            End Get
+            Set(ByVal value As String)
+                ViewState("TempContent") = value
+            End Set
+        End Property
+
+        Private Property CurrentWorkflowType() As WorkflowType
+            Get
+                Dim _currentWorkflowType As WorkflowType
+                If Not ViewState("_currentWorkflowType") Is Nothing Then
+                    _currentWorkflowType = [Enum].Parse(_currentWorkflowType.GetType(), ViewState("_currentWorkflowType"))
+                End If
+
+                Return _currentWorkflowType
+            End Get
+            Set(ByVal value As WorkflowType)
+                ViewState("_currentWorkflowType") = value
+            End Set
+        End Property
+
+
+#End Region
 
 #Region "Private Methods"
 
-        Private Function FormatContent(ByVal objContent As HtmlTextInfo) As String
-            Dim strContent As String = HttpUtility.HtmlDecode(objContent.Content)
+        ''' <summary>
+        ''' Displays the history of an html content item in a grid in the preview section.
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        Private Sub DisplayHistory(ByVal htmlContent As HtmlTextInfo)
+            tblHistory.Visible = Not (CurrentWorkflowType = WorkflowType.DirectPublish)
+            dshHistory.Visible = Not (CurrentWorkflowType = WorkflowType.DirectPublish)
+
+            If ((CurrentWorkflowType = WorkflowType.DirectPublish)) Then
+                Return
+            Else
+                Dim htmlLogging As ArrayList = _htmlTextLogController.GetHtmlTextLog(htmlContent.ItemID)
+                grdLog.DataSource = htmlLogging
+                grdLog.DataBind()
+
+                tblHistory.Visible = Not (htmlLogging.Count = 0)
+                dshHistory.Visible = Not (htmlLogging.Count = 0)
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Displays the versions of the html content in the versions section
+        ''' </summary>
+        Private Sub DisplayVersions()
+            grdVersions.DataSource = _htmlTextController.GetAllHtmlText(ModuleId)
+            grdVersions.DataBind()
+        End Sub
+
+        ''' <summary>
+        ''' Displays the content of the master language if localized content is enabled.
+        ''' </summary>
+        Private Sub DisplayMasterLanguageContent()
+            'Get master language
+            Dim objModule As ModuleInfo = New ModuleController().GetModule(ModuleId, TabId)
+            If objModule.DefaultLanguageModule IsNot Nothing Then
+                Dim masterContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(objModule.DefaultLanguageModule.ModuleID, False, WorkflowID)
+                If masterContent IsNot Nothing Then
+                    placeMasterContent.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(objModule.DefaultLanguageModule.ModuleID, FormatContent(masterContent.Content), Settings)))
+                End If
+            End If
+
+            dshMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
+            tblMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
+        End Sub
+
+        ''' <summary>
+        ''' Displays the html content in the preview section.
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        Private Sub DisplayContent(ByVal htmlContent As HtmlTextInfo)
+            lblCurrentWorkflowInUse.Text = GetLocalizedString(htmlContent.WorkflowName)
+            lblCurrentWorkflowState.Text = GetLocalizedString(htmlContent.StateName)
+            lblCurrentVersion.Text = htmlContent.Version
+            txtContent.Text = FormatContent(htmlContent.Content)
+
+            DisplayMasterLanguageContent()
+        End Sub
+
+        ''' <summary>
+        ''' Displays the content preview in the preview section
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        Private Sub DisplayPreview(ByVal htmlContent As HtmlTextInfo)
+            lblPreviewVersion.Text = htmlContent.Version.ToString()
+            lblPreviewWorkflowInUse.Text = GetLocalizedString(htmlContent.WorkflowName)
+            lblPreviewWorkflowState.Text = GetLocalizedString(htmlContent.StateName)
+            litPreview.Text = HtmlTextController.FormatHtmlText(ModuleId, htmlContent.Content, Settings)
+            DisplayHistory(htmlContent)
+
+        End Sub
+
+        ''' <summary>
+        ''' Displays the preview in the preview section
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        Private Sub DisplayPreview(ByVal htmlContent As String)
+            litPreview.Text = HtmlTextController.FormatHtmlText(ModuleId, htmlContent, Settings)
+            rowPreviewVersion.Visible = False
+            rowPreviewWorlflow.Visible = False
+
+            rowPreviewWorkflowState.Visible = True
+            lblPreviewWorkflowState.Text = GetLocalizedString("EditPreviewState")
+            dshPreview.IsExpanded = True
+        End Sub
+
+        ''' <summary>
+        ''' Displays the content but hide the editor if editing is locked from the current user
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        ''' <param name="lastPublishedContent">Last content of the published.</param>
+        Private Sub DisplayLockedContent(ByVal htmlContent As HtmlTextInfo, ByVal lastPublishedContent As HtmlTextInfo)
+
+            txtContent.Visible = False
+            cmdSave.Visible = False
+            cmdPreview.Visible = False
+            rowPublish.Visible = False
+
+            rowSubmittedContent.Visible = True
+            dshPreview.IsExpanded = True
+
+            lblCurrentWorkflowInUse.Text = GetLocalizedString(htmlContent.WorkflowName)
+            lblCurrentWorkflowState.Text = GetLocalizedString(htmlContent.StateName)
+
+            litCurrentContentPreview.Text = HtmlTextController.FormatHtmlText(ModuleId, htmlContent.Content, Settings)
+            lblCurrentVersion.Text = htmlContent.Version
+            DisplayVersions()
+
+            If Not lastPublishedContent Is Nothing Then
+                DisplayPreview(lastPublishedContent)
+                DisplayHistory(lastPublishedContent)
+            Else
+                tblHistory.Visible = False
+                dshHistory.Visible = False
+                DisplayPreview(htmlContent.Content)
+            End If
+
+
+
+        End Sub
+
+        ''' <summary>
+        ''' Displays the initial content when a module is first added to the page.
+        ''' </summary>
+        ''' <param name="firstState">The first state.</param>
+        Private Sub DisplayInitialContent(ByVal firstState As WorkflowStateInfo)
+            txtContent.Text = GetLocalizedString("AddContent")
+            litPreview.Text = GetLocalizedString("AddContent")
+            lblCurrentWorkflowInUse.Text = firstState.WorkflowName
+            lblPreviewWorkflowInUse.Text = firstState.WorkflowName
+            rowPreviewVersion.Visible = False
+
+            dshVersions.Visible = False
+            tblVersions.Visible = False
+
+            dshHistory.Visible = False
+            tblHistory.Visible = False
+
+            rowCurrentWorkflowState.Visible = False
+            rowCurrentVersion.Visible = False
+            rowPreviewWorkflowState.Visible = False
+
+            lblPreviewWorkflowState.Text = firstState.StateName
+        End Sub
+
+#End Region
+
+#Region "Private Functions"
+
+        ''' <summary>
+        ''' Formats the content to make it html safe.
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        ''' <returns></returns>
+        Private Function FormatContent(ByVal htmlContent As String) As String
+            Dim strContent As String = HttpUtility.HtmlDecode(htmlContent)
             strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "src", PortalId)
             strContent = HtmlTextController.ManageRelativePaths(strContent, PortalSettings.HomeDirectory, "background", PortalId)
             Return HttpUtility.HtmlEncode(strContent)
         End Function
 
-        Private Sub DisplayHistory(ByVal objContent As HtmlTextInfo)
-            Dim objLog As New HtmlTextLogController
-            lblVersion.Text = objContent.Version.ToString()
-            lblWorkflow.Text = Localization.GetString(objContent.WorkflowName, Me.LocalResourceFile)
-            lblState.Text = Localization.GetString(objContent.StateName, Me.LocalResourceFile)
-            grdLog.DataSource = objLog.GetHtmlTextLog(objContent.ItemID)
-            grdLog.DataBind()
-        End Sub
+        ''' <summary>
+        ''' Gets the localized string from a resource file if it exists.
+        ''' </summary>
+        ''' <param name="str">The STR.</param>
+        ''' <returns></returns>
+        Private Function GetLocalizedString(ByVal str As String) As String
+            Dim localizedString As String = Localization.GetString(str, Me.LocalResourceFile)
+            Return IIf(String.IsNullOrEmpty(localizedString), str, localizedString)
+        End Function
 
-        Private Sub DisplayPreview(ByVal strContent As String)
-            lblPreview.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(ModuleId, strContent, Settings)))
-        End Sub
+        ''' <summary>
+        ''' Gets the latest html content of the module
+        ''' </summary>
+        ''' <returns></returns>
+        Private Function GetLatestHTMLContent() As HtmlTextInfo
+            Dim htmlContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
+            If htmlContent Is Nothing Then
+                htmlContent = New HtmlTextInfo
+                htmlContent.ItemID = -1
+                htmlContent.StateID = _workflowStateController.GetFirstWorkflowStateID(WorkflowID)
+                htmlContent.WorkflowID = WorkflowID
+                htmlContent.ModuleID = ModuleId
+            End If
+
+            Return htmlContent
+        End Function
+
+        ''' <summary>
+        ''' Returns whether or not the user has review permissions to this module
+        ''' </summary>
+        ''' <param name="htmlContent">Content of the HTML.</param>
+        ''' <returns></returns>
+        Private Function UserCanReview(ByVal htmlContent As HtmlTextInfo) As Boolean
+
+            If Not htmlContent Is Nothing Then
+                Return WorkflowStatePermissionController.HasWorkflowStatePermission(WorkflowStatePermissionController.GetWorkflowStatePermissions(htmlContent.StateID), "REVIEW")
+            Else
+                Return False
+            End If
+
+        End Function
+
+        ''' <summary>
+        ''' Gets the last published version of this module
+        ''' </summary>
+        ''' <param name="publishedStateID">The published state ID.</param>
+        ''' <returns></returns>
+        Private Function GetLastPublishedVersion(ByVal publishedStateID As Integer) As HtmlTextInfo
+            Return (From version In _htmlTextController.GetAllHtmlText(ModuleId) Where version.StateID = publishedStateID Order By version.Version Descending Select version)(0)
+        End Function
+
 
 #End Region
 
 #Region "Event Handlers"
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Page_Init runs when the control is initialized
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
-
-            For Each column As DataGridColumn In grdVersions.Columns
-                If column.GetType Is GetType(ImageCommandColumn) Then
-                    ' localize image column text
-                    Dim imageColumn As ImageCommandColumn = CType(column, ImageCommandColumn)
-                    If imageColumn.CommandName <> "" Then
-                        imageColumn.Text = Localization.GetString(imageColumn.CommandName, Me.LocalResourceFile)
-                    End If
-                End If
-            Next
-
-            ' localize datagrids
-            DotNetNuke.Services.Localization.Localization.LocalizeDataGrid(grdLog, Me.LocalResourceFile)
-            DotNetNuke.Services.Localization.Localization.LocalizeDataGrid(grdVersions, Me.LocalResourceFile)
-
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Page_Load runs when the control is loaded
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
             Try
-                Dim objHTML As New HtmlTextController
 
-                WorkflowID = objHTML.GetWorkflow(ModuleId, TabId, PortalId).Value
+                Dim htmlContentItemID As Integer = -1
+                Dim htmlContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
 
-                ' get content
-                Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
-                If Not objContent Is Nothing Then
-                    ItemID = objContent.ItemID
-                End If
-
-                ' check review security
-                If Request.QueryString("ctl").ToUpper = "REVIEW" AndAlso WorkflowStatePermissionController.HasWorkflowStatePermission(WorkflowStatePermissionController.GetWorkflowStatePermissions(objContent.StateID), "REVIEW") = False Then
-                    Response.Redirect(AccessDeniedURL(), True)
+                If Not htmlContent Is Nothing Then
+                    htmlContentItemID = htmlContent.ItemID
                 End If
 
                 If Not Page.IsPostBack Then
+                    Dim WorkflowStates As ArrayList = _workflowStateController.GetWorkflowStates(WorkflowID)
+                    Dim MaxVersions As Integer = _htmlTextController.GetMaximumVersionHistory(PortalId)
+                    Dim UserCanEdit As Boolean = UserInfo.IsSuperUser Or PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Or UserInfo.UserID = LockedByUserID
 
-                    ' load states for workflow
-                    Dim objWorkflow As New WorkflowStateController
-                    Dim arrStates As ArrayList = objWorkflow.GetWorkflowStates(WorkflowID)
+                    lblMaxVersions.Text = MaxVersions
+                    grdVersions.PageSize = IIf(MaxVersions < 10, MaxVersions, 10)
 
-                    ' load versions
-                    grdVersions.DataSource = objHTML.GetAllHtmlText(ModuleId)
-                    grdVersions.DataBind()
-
-                    If ItemID <> -1 Then
-                        ' load content
-                        txtContent.Text = FormatContent(objContent)
-                        DisplayHistory(objContent)
-                        DisplayPreview(objContent.Content)
-
-                        'Get master language
-                        Dim objModule As ModuleInfo = New ModuleController().GetModule(ModuleId, TabId)
-                        If objModule.DefaultLanguageModule IsNot Nothing Then
-                            Dim masterContent As HtmlTextInfo = objHTML.GetTopHtmlText(objModule.DefaultLanguageModule.ModuleID, False, WorkflowID)
-                            If masterContent IsNot Nothing Then
-                                lblMaster.Controls.Add(New LiteralControl(HtmlTextController.FormatHtmlText(objModule.DefaultLanguageModule.ModuleID, FormatContent(masterContent), Settings)))
-                            End If
-                        End If
-                        dshMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
-                        tblMaster.Visible = objModule.DefaultLanguageModule IsNot Nothing
-                    Else
-                        ' initialize content
-                        txtContent.Text = Localization.GetString("AddContent", LocalResourceFile)
-                        lblWorkflow.Text = CType(arrStates(0), WorkflowStateInfo).WorkflowName
-                        dshVersions.Visible = False
-                        tblVersions.Visible = False
-                        Select Case arrStates.Count
-                            Case 0, 1
-                                plState.Visible = False
-                                lblState.Visible = False
-                            Case Else
-                                lblState.Text = CType(arrStates(0), WorkflowStateInfo).StateName
-                        End Select
-                    End If
-
-                    ' direct publish workflows do not need the Publish checkbox option
-                    If arrStates.Count = 1 Then
-                        rowPublish.Visible = False
-                    Else
-                        rowPublish.Visible = True
-                    End If
-
-                    ' handle Edit and Review actions
-                    Select Case Request.QueryString("ctl").ToUpper
-                        Case "EDIT"
-                            dshReview.Visible = False
-                            tblReview.Visible = False
-                        Case "REVIEW"
-                            tblEdit.Visible = False
-                            dshVersions.Visible = False
-                            tblVersions.Visible = False
-                            dshPreview.IsExpanded = True
-                            If Request.QueryString("action").ToUpper = "APPROVE" Then
-                                cmdReview.Text = Localization.GetString("ApproveContent.Action", LocalResourceFile)
-                            Else
-                                cmdReview.Text = Localization.GetString("RejectContent.Action", LocalResourceFile)
-                            End If
+                    Select Case WorkflowStates.Count
+                        Case 1
+                            CurrentWorkflowType = WorkflowType.DirectPublish
+                        Case 2
+                            CurrentWorkflowType = WorkflowType.ContentStaging
                     End Select
 
+                    If htmlContentItemID <> -1 Then
+                        DisplayContent(htmlContent)
+                        DisplayPreview(htmlContent)
+                    Else
+                        DisplayInitialContent(WorkflowStates(0))
+                    End If
+
+                    rowPublish.Visible = Not (CurrentWorkflowType = WorkflowType.DirectPublish)
+                    DisplayVersions()
                 End If
 
             Catch exc As Exception
                 ProcessModuleLoadException(Me, exc)
             End Try
+
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' cmdCancel_Click runs when the cancel button is clicked
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdCancel_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdCancel.Click, cmdCancel2.Click
+        Private Sub cmdCancel_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdCancel.Click
             Try
                 Response.Redirect(NavigateURL(), True)
             Catch exc As Exception
@@ -211,124 +381,67 @@ Namespace DotNetNuke.Modules.Html
             End Try
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' cmdSave_Click runs when the Save button is clicked
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
         Private Sub cmdSave_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdSave.Click
+            Dim redirect As Boolean = True
+
             Try
                 ' get content
-                Dim objHTML As HtmlTextController = New HtmlTextController
-                Dim objWorkflow As New WorkflowStateController
-                Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
-                If objContent Is Nothing Then
-                    objContent = New HtmlTextInfo
-                    objContent.ItemID = -1
-                End If
+                Dim htmlContent As HtmlTextInfo = GetLatestHTMLContent()
+                htmlContent.Content = txtContent.Text
 
-                ' set content attributes
-                objContent.ModuleID = ModuleId
-                objContent.Content = txtContent.Text
-                objContent.WorkflowID = WorkflowID
-                objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID)
+                Dim draftStateID As Integer = _workflowStateController.GetFirstWorkflowStateID(WorkflowID)
+                Dim nextWorkflowStateID As Integer = _workflowStateController.GetNextWorkflowStateID(WorkflowID, htmlContent.StateID)
+                Dim publishedStateID As Integer = _workflowStateController.GetLastWorkflowStateID(WorkflowID)
 
-                ' publish content
-                If rowPublish.Visible = True AndAlso chkPublish.Checked Then
-                    objContent.StateID = objWorkflow.GetNextWorkflowStateID(WorkflowID, objContent.StateID)
-                End If
+                Dim UserCanUpdate As Boolean = UserInfo.IsSuperUser Or PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) Or UserInfo.UserID = LockedByUserID
 
-                ' save content
-                objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
+                Select Case CurrentWorkflowType
+                    Case WorkflowType.DirectPublish
+                        _htmlTextController.UpdateHtmlText(htmlContent, _htmlTextController.GetMaximumVersionHistory(PortalId))
 
-                ' redirect back to portal
-                Response.Redirect(NavigateURL(), True)
-            Catch exc As Exception
-                ProcessModuleLoadException(Me, exc)
-            End Try
-        End Sub
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' cmdReview_Click runs when the Review button is clicked
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub cmdReview_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdReview.Click
-            Try
-                Dim blnIsApproved As Boolean = (Request.QueryString("action").ToUpper = "APPROVE")
-
-                ' approve content
-                Dim objHTML As New HtmlTextController
-                Dim objWorkflow As New WorkflowStateController
-                Dim objContent As HtmlTextInfo = objHTML.GetHtmlText(ModuleId, ItemID)
-
-                ' if the user has permissions to review the content
-                If WorkflowStatePermissionController.HasWorkflowStatePermission(WorkflowStatePermissionController.GetWorkflowStatePermissions(objContent.StateID), "REVIEW") Then
-                    If blnIsApproved Then
-                        ' promote to next state
-                        objContent.ModuleID = ModuleId
-                        objContent.WorkflowID = WorkflowID
-                        objContent.StateID = objWorkflow.GetNextWorkflowStateID(WorkflowID, objContent.StateID)
-                        objContent.Comment = txtComment.Text
-                        objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
-
-                        ' redirect back to portal
-                        Response.Redirect(NavigateURL(), True)
-                    Else
-                        ' rejections must have a comment
-                        If txtComment.Text <> "" Then
-                            ' reset to first state
-                            objContent.ModuleID = ModuleId
-                            objContent.WorkflowID = WorkflowID
-                            objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID)
-                            objContent.Comment = txtComment.Text
-                            objContent.Approved = False
-                            objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
-
-                            ' redirect back to portal
-                            Response.Redirect(NavigateURL(), True)
+                    Case WorkflowType.ContentStaging
+                        If chkPublish.Checked Then
+                            If htmlContent.StateID = publishedStateID Then 'if it's already published set it to draft
+                                htmlContent.StateID = draftStateID
+                            Else
+                                htmlContent.StateID = publishedStateID 'here it's in published mode
+                            End If
                         Else
-                            UI.Skins.Skin.AddModuleMessage(Me, Services.Localization.Localization.GetString("RejectMessage", Me.LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                            If (htmlContent.StateID <> draftStateID) Then 'if it's already published set it back to draft
+                                htmlContent.StateID = draftStateID
+                            End If
                         End If
-                    End If
-                End If
+
+                        _htmlTextController.UpdateHtmlText(htmlContent, _htmlTextController.GetMaximumVersionHistory(PortalId))
+                End Select
+
             Catch exc As Exception
-                ProcessModuleLoadException(Me, exc)
+                Exceptions.LogException(exc)
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me.Page, "Error occurred: ", exc.Message, UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                Return
             End Try
+
+            ' redirect back to portal
+            If redirect Then
+                Response.Redirect(NavigateURL(), True)
+            End If
+
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' cmdPreview_Click runs when the Preview button is clicked
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
         Private Sub cmdPreview_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdPreview.Click
             Try
                 DisplayPreview(txtContent.Text)
-                dshPreview.IsExpanded = True
             Catch exc As Exception
                 ProcessModuleLoadException(Me, exc)
             End Try
         End Sub
 
-        Protected Sub grdLog_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdLog.ItemDataBound
-            Dim item As DataGridItem = e.Item
+        Protected Sub grdLog_ItemDataBound(ByVal sender As Object, ByVal e As GridItemEventArgs) Handles grdLog.ItemDataBound
+            Dim item As GridItem = e.Item
 
             If item.ItemType = ListItemType.Item Or _
-                    item.ItemType = ListItemType.AlternatingItem Or _
-                    item.ItemType = ListItemType.SelectedItem Then
+              item.ItemType = ListItemType.AlternatingItem Or _
+              item.ItemType = ListItemType.SelectedItem Then
 
                 'Localize columns
                 item.Cells(2).Text = Localization.GetString(item.Cells(2).Text, Me.LocalResourceFile)
@@ -337,81 +450,97 @@ Namespace DotNetNuke.Modules.Html
 
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' grdVersions_ItemCommand is executed when the Preview button is selected in the Versions datagrid
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub grdVersions_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdVersions.ItemCommand
+        Private Sub grdVersions_ItemCommand(ByVal source As Object, ByVal e As GridCommandEventArgs) Handles grdVersions.ItemCommand
             Try
-                Dim objHTML As New HtmlTextController
-                Dim objContent As HtmlTextInfo = objHTML.GetHtmlText(ModuleId, Integer.Parse(e.CommandArgument.ToString))
-                DisplayHistory(objContent)
-                dshHistory.IsExpanded = True
-                DisplayPreview(objContent.Content)
-                dshPreview.IsExpanded = True
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-        End Sub
+                Dim htmlContent As HtmlTextInfo = _htmlTextController.GetHtmlText(ModuleId, Integer.Parse(e.CommandArgument.ToString))
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' grdVersions_EditCommand is executed when the Rollback button is selected in the Versions datagrid
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Sub grdVersions_EditCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdVersions.EditCommand
-            Try
-                Dim objHTML As New HtmlTextController
-                Dim objWorkflow As New WorkflowStateController
+                Select Case e.CommandName.ToLower()
+                    Case "remove"
+                        _htmlTextController.DeleteHtmlText(ModuleId, htmlContent.ItemID)
+                    Case "rollback"
+                        htmlContent.ItemID = -1
+                        htmlContent.ModuleID = ModuleId
+                        htmlContent.WorkflowID = WorkflowID
+                        htmlContent.StateID = _workflowStateController.GetFirstWorkflowStateID(WorkflowID)
+                        _htmlTextController.UpdateHtmlText(htmlContent, _htmlTextController.GetMaximumVersionHistory(PortalId))
+                    Case "preview"
+                        DisplayPreview(htmlContent)
+                        dshHistory.IsExpanded = True
+                        dshPreview.IsExpanded = True
+                End Select
 
-                Dim objContent As HtmlTextInfo = objHTML.GetHtmlText(ModuleId, Integer.Parse(e.CommandArgument.ToString))
-                objContent.ModuleID = ModuleId
-                objContent.WorkflowID = WorkflowID
-                objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID)
-                objContent.StateID = objWorkflow.GetNextWorkflowStateID(WorkflowID, objContent.StateID)
-                objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
-
-                ' redirect back to portal
-                Response.Redirect(NavigateURL(), True)
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
-        End Sub
-
-        Protected Sub grdVersions_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdVersions.ItemDataBound
-
-            Dim item As DataGridItem = e.Item
-
-            If item.ItemType = ListItemType.Item Or _
-                    item.ItemType = ListItemType.AlternatingItem Or _
-                    item.ItemType = ListItemType.SelectedItem Then
-
-                Dim objColumnControl As Control
-                Dim objImage As ImageButton
-
-                objColumnControl = item.Controls(1).Controls(0)
-                If TypeOf objColumnControl Is ImageButton Then
-                    objImage = CType(objColumnControl, ImageButton)
-                    objImage.Visible = (item.ItemIndex <> 0)
+                If (e.CommandName.ToLower() <> "preview") Then
+                    Dim latestContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
+                    If latestContent Is Nothing Then
+                        DisplayInitialContent(_workflowStateController.GetWorkflowStates(WorkflowID)(0))
+                    Else
+                        DisplayContent(latestContent)
+                        DisplayPreview(latestContent)
+                        DisplayVersions()
+                    End If
                 End If
 
-                'Localize columns
-                item.Cells(5).Text = Localization.GetString(item.Cells(5).Text, Me.LocalResourceFile)
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
 
+        Protected Sub grdVersions_ItemDataBound(ByVal sender As Object, ByVal e As GridItemEventArgs) Handles grdVersions.ItemDataBound
+            If (e.Item.ItemType = GridItemType.Item Or e.Item.ItemType = GridItemType.AlternatingItem Or _
+                e.Item.ItemType = GridItemType.SelectedItem) Then
+
+                Dim item As GridDataItem = e.Item
+                Dim htmlContent As HtmlTextInfo = item.DataItem
+
+                Dim createdBy As String = "Default"
+                If (htmlContent.CreatedByUserID <> -1) Then
+                    createdBy = UserController.GetUserById(PortalId, htmlContent.CreatedByUserID).DisplayName
+                End If
+
+                For Each cell As TableCell In item.Cells
+                    For Each cellControl As Control In cell.Controls
+                        If TypeOf cellControl Is ImageButton Then
+                            Dim _imageButton As ImageButton = cellControl
+                            _imageButton.CommandArgument = htmlContent.ItemID
+                            Select Case _imageButton.CommandName.ToLower()
+                                Case "rollback"
+                                    If grdVersions.CurrentPageIndex = 0 Then 'hide rollback for the first item
+                                        If (item.ItemIndex = 0) Then
+                                            _imageButton.Visible = False
+                                            Exit Select
+                                        End If
+                                    End If
+
+                                    _imageButton.Visible = True
+
+                                Case "remove"
+                                    Dim msg As String = GetLocalizedString("DeleteVersion.Confirm")
+                                    msg = msg.Replace("[VERSION]", htmlContent.Version).Replace("[STATE]", htmlContent.StateName).Replace("[DATECREATED]", htmlContent.CreatedOnDate.ToString()).Replace("[USERNAME]", createdBy)
+                                    _imageButton.OnClientClick = "return confirm(" + Chr(34) + msg + Chr(34) + ");"
+                                    'hide the delete button
+                                    Dim showDelete As Boolean = UserInfo.IsSuperUser Or PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)
+
+                                    If Not showDelete Then
+                                            showDelete = htmlContent.IsPublished = False
+                                    End If
+
+                                    _imageButton.Visible = showDelete
+                            End Select
+                        End If
+                    Next
+                Next
             End If
 
         End Sub
 
+        Private Sub grdVersions_PageIndexChanged(ByVal source As Object, ByVal e As GridPageChangedEventArgs) Handles grdVersions.PageIndexChanged
+            DisplayVersions()
+        End Sub
+
 #End Region
+
+
+
 
     End Class
 

@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="CreateInstall" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variables.build" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.IIS.WebDirectoryCreate" />
+
+  <ItemGroup>
+    <InstallExclude Include="$(RootFolder)\Website\development.config"/>
+    <InstallExclude Include="$(RootFolder)\Website\release.config"/>
+    <InstallExclude Include="$(RootFolder)\Website\dotnetnuke.vstemplate"/>
+    <InstallExclude Include="$(RootFolder)\Website\dotnetnuke.webproj"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\*.pdb"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\*.xml"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\DotNetNuke.Enterprise.*"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\DotNetNuke.Professional.*"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\Providers\*.pdb"/>
+    <InstallExclude Include="$(RootFolder)\Website\bin\Providers\*.xml"/>
+    <InstallExclude Include="$(RootFolder)\Website\js\Debug\**"/>
+    <InstallExclude Include="$(RootFolder)\Website\Install\Module\DNNXE*"/>
+    <InstallExclude Include="$(RootFolder)\Website\Install\Module\DNNPro*"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpgradeExclude Include="$(RootFolder)\**\System.Web.Extensions.dll" />
+    <UpgradeExclude Include="$(RootFolder)\Website\App_Data\Database.mdf" />
+    <UpgradeExclude Include="$(RootFolder)\Website\bin\Telerik.Web.UI.dll" />
+    <UpgradeExclude Include="$(RootFolder)\Website\bin\DotNetNuke.Modules.Html.dll" />
+    <UpgradeExclude Include="$(RootFolder)\Website\Install\Container\*.zip" />
+    <UpgradeExclude Include="$(RootFolder)\Website\Install\Skin\*.zip" />
+    <UpgradeExclude Include="$(RootFolder)\Website\web.config" />
+    <UpgradeExclude Include="$(RootFolder)\Website\favicon.ico" />
+    <UpgradeExclude Include="@(InstallExclude)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SymbolsExclude Include="$(RootFolder)\Website\bin\DotNetNuke.Professional.*"/>
+    <SymbolsExclude Include="$(RootFolder)\Website\bin\DotNetNuke.Enterprise.*"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <SourceExclude Include="$(RootFolder)\CORE ONLY PERMISSIONS.txt" />
+    <SourceExclude Include="$(RootFolder)\Starter Kit\**" />
+    <SourceExclude Include="$(RootFolder)\TestResults\**" />
+    <SourceExclude Include="$(RootFolder)\Enterprise\**" />
+    <SourceExclude Include="$(RootFolder)\Deploy\**" />
+    <SourceExclude Include="$(RootFolder)\DeployPackage\**" />
+    <SourceExclude Include="$(RootFolder)\Sandcastle\**" />
+    <SourceExclude Include="$(RootFolder)\Symbols\**" />
+    <SourceExclude Include="$(RootFolder)\BuildScripts\**" />
+    <SourceExclude Include="$(RootFolder)\Tools\**" />
+    <SourceExclude Include="$(RootFolder)\Tests\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Tests\TestFixtures\**" />
+    <SourceExclude Include="$(RootFolder)\Tests\DotNetNuke.Tests.ContentStaging\**" />
+    <SourceExclude Include="$(RootFolder)\Modules\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke.Web\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Professional\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Containers\**" />
+    <SourceExclude Include="$(RootFolder)\Skins\**" />
+    <SourceExclude Include="$(RootFolder)\Library\**\bin\**" Exclude="$(RootFolder)\**\DataAccessBlock\bin\**; $(RootFolder)\**\SharpZipLib\bin\**; $(RootFolder)\**\DotNetNuke.WebControls\bin\**; $(RootFolder)\**\DotNetNuke.WebUtility\bin\**; $(RootFolder)\**\SolpartMenu\bin\**; $(RootFolder)\Library\Providers\**\bin\*.*; $(RootFolder)\**\TelerikEditorProvider\bin\**; $(RootFolder)\**\Telerik\bin\Telerik.Web.UI.dll;$(RootFolder)\**\WebFormsMvp\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Library\Components\Telerik\DotNetNuke.Telerik.Web.Design.dnn"/>
+    <SourceExclude Include="$(RootFolder)\Library\Providers\**\**\bin\**" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\*.*" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\Providers\*.*" />
+    <SourceExclude Include="$(RootFolder)\Website\Documentation\*.doc" />
+    <SourceExclude Include="$(RootFolder)\Website\desktopmodules\html\**" />
+    <SourceExclude Include="$(RootFolder)\Website\web.config" />
+    <SourceExclude Include="$(RootFolder)\**\obj\**" />
+    <SourceExclude Include="$(RootFolder)\**\Release\**" Exclude="$(RootFolder)\**\*.js;" />
+    <SourceExclude Include="$(RootFolder)\**\Debug\**" />
+    <SourceExclude Include="$(RootFolder)\**\*.user" />
+    <SourceExclude Include="$(RootFolder)\**\*.suo" />
+    <SourceExclude Include="$(RootFolder)\**\*.vssscc" />
+    <SourceExclude Include="$(RootFolder)\**\*.vspscc" />
+    <SourceExclude Include="$(RootFolder)\**\*.cache" />
+    <SourceExclude Include="$(RootFolder)\**\thumbs.db" />
+    <SourceExclude Include="$(RootFolder)\**\*.pdb" />
+    <SourceExclude Include="$(RootFolder)\Branded\**" />
+    <SourceExclude Include="$(RootFolder)\**\_sgvault\**" />
+    <SourceExclude Include="$(RootFolder)\Website\bin\telerik.*" />
+    <SourceExclude Include="$(RootFolder)\Website\Install\Module\DNNXE*"/>
+    <SourceExclude Include="$(RootFolder)\Website\Install\Module\DNNPro*"/>
+    <SourceExclude Include="$(RootFolder)\Modules\ContentStaging\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\DocumentLibrary\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\GoogleAnalyticsPro\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\HealthMonitoring\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\HTMLPro\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\IntegrityChecker\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\LicenseActivation\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\MyModules\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\Providers\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\SearchInput\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\SearchInputSkinObject\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\SearchResults\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\SearchSpider\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\SecurityCenter\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\UserSwitcher\**"/>
+    <SourceExclude Include="$(RootFolder)\Modules\WebServerManager\**"/>
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_UnitTests.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional.VS2008.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise.VS2008.sln" />
+    <SourceExclude Include="$(RootFolder)\Professional\**" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprises_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_VS2008.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_VS2008_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Enterprise_UnitTests_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_VS2008.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_UnitTests.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_VS2008_Source.sln" />
+    <SourceExclude Include="$(RootFolder)\DotNetNuke_Professional_UnitTests_Source.sln" />
+  </ItemGroup>
+
+  <!-- properties for the VSTemplateTask -->
+  <PropertyGroup>
+    <RootPath>
+    </RootPath>
+    <OutputPath>
+    </OutputPath>
+    <Name>DotNetNuke Web Application Framework</Name>
+    <Description>This template creates a DotNetNuke Web Application</Description>
+    <ProjectType>Web</ProjectType>
+    <ProjectSubType>VisualBasic</ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>DotNetNuke Website</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <EnableEditOfLocationField>true</EnableEditOfLocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <LocationField>Hidden</LocationField>
+    <Icon>DotNetNuke.ico</Icon>
+  </PropertyGroup>
+
+  <Target Name="CopyBrandedFiles" DependsOnTargets="VersionCheck">
+    <Copy SourceFiles="$(RootFolder)\Branded\CE\Website\Images\Branding\iconbar_logo.png" DestinationFolder="$(RootFolder)\Website\Images\Branding" />
+    <Copy SourceFiles="$(RootFolder)\Branded\CE\Website\Images\Branding\logo.gif" DestinationFolder="$(RootFolder)\Website\Images\Branding" />
+  </Target>
+
+  <Target Name="CreateInstall" DependsOnTargets="CopyBrandedFiles">
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(PackagesFolder)\LastPackage.xml"
+      Xpath="package[@key='PackageVersion']/@value"
+      Value="$(BuildVersion)"  />
+
+    <MakeDir Directories="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\" />
+    <ItemGroup>
+      <InstallPackage Include="$(RootFolder)\Website\**\*.*" Exclude="@(InstallExclude)" />
+    </ItemGroup>
+    <Zip Files="@(InstallPackage)" WorkingDirectory="$(RootFolder)\Website\"
+			 ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Install.zip" />
+    <Copy SourceFiles="@(InstallPackage)" DestinationFolder="\\dev-rc5-wiki\DNNDeploy\DNNBuilds\$(BuildVersion)_CE\%(RecursiveDir)" />
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\ComparisonReport.txt $(ReleasesFolder)\CE\$(LastReleasedVersion)\DotNetNuke_Community_$(LastReleasedVersion)_Install.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Install.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\InstallComparison.html /closescript" WaitCompletion="True" />
+  </Target>
+  <Target Name="CreateDeploy" DependsOnTargets="VersionCheck">
+    <MakeDir Directories="$(RootFolder)\DeployPackage\" />
+    <RemoveDir Directories="$(RootFolder)\DeployPackage\" />
+    <ItemGroup>
+      <DeploySupportFiles Include="$(RootFolder)\Deploy\*.*" />
+      <DeploySiteFiles Include="$(RootFolder)\Website\**\*.*" Exclude="@(InstallExclude)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeploySupportFiles)" DestinationFolder="$(RootFolder)\DeployPackage\" />
+    <Copy SourceFiles="@(DeploySiteFiles)" DestinationFiles="@(DeploySiteFiles->'$(RootFolder)\DeployPackage\DotNetNuke\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <ItemGroup>
+      <DeployPackage Include="$(RootFolder)\DeployPackage\**\*.*" />
+    </ItemGroup>
+    <Zip Files="@(DeployPackage)" WorkingDirectory="$(RootFolder)\DeployPackage\"
+			 ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Deploy.zip" />
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\ComparisonReport.txt $(ReleasesFolder)\CE\$(LastReleasedVersion)\DotNetNuke_Community_$(LastReleasedVersion)_Deploy.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Deploy.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DeployComparison.html /closescript" WaitCompletion="True" />
+  </Target>
+  <Target Name="CreateUpgrade" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <UpgradePackage Include="$(RootFolder)\Website\**\*.*" Exclude="@(UpgradeExclude);" />
+    </ItemGroup>
+    <Zip Files="@(UpgradePackage)" WorkingDirectory="$(RootFolder)\Website\"
+			 ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Upgrade.zip" />
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\ComparisonReport.txt $(ReleasesFolder)\CE\$(LastReleasedVersion)\DotNetNuke_Community_$(LastReleasedVersion)_Upgrade.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Upgrade.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\UpgradeComparison.html /closescript" WaitCompletion="True" />
+  </Target>
+  <Target Name="CreateSymbols" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <SymbolsFiles Include="$(RootFolder)\Website\bin\*.pdb" Exclude="@(SymbolsExclude)"/>
+      <SymbolsFiles Include="$(RootFolder)\Website\bin\*.xml" Exclude="@(SymbolsExclude)"/>
+      <SymbolsFiles Include="$(RootFolder)\Website\bin\Providers\*.pdb" Exclude="@(SymbolsExclude)"/>
+      <SymbolsFiles Include="$(RootFolder)\Website\bin\Providers\*.xml" Exclude="@(SymbolsExclude)"/>
+    </ItemGroup>
+    <Zip Files="@(SymbolsFiles)" WorkingDirectory="$(RootFolder)\Website\bin\"
+			 ZipFileName="$(RootFolder)\Symbols\Resources.zip" />
+    <ItemGroup>
+      <SymbolsPackage Include="$(RootFolder)\Symbols\*.*;" />
+    </ItemGroup>
+    <Zip Files="@(SymbolsPackage)" WorkingDirectory="$(RootFolder)\Symbols\"
+       ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Symbols.zip" />
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\ComparisonReport.txt $(ReleasesFolder)\CE\$(LastReleasedVersion)\DotNetNuke_Community_$(LastReleasedVersion)_Symbols.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Symbols.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\SymbolsComparison.html /closescript" WaitCompletion="True" />
+  </Target>
+  <Target Name="CreateSource" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <SourcePackage Include="$(RootFolder)\**\*.*" Exclude="@(SourceExclude)"/>
+    </ItemGroup>
+    <Zip Files="@(SourcePackage)" WorkingDirectory="$(RootFolder)\"
+			 ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Source.zip" />
+    <ShellCommand Command="$(BeyondCompare) @$(RootFolder)\Tools\MSBuild\ComparisonReport.txt $(ReleasesFolder)\CE\$(LastReleasedVersion)\DotNetNuke_Community_$(LastReleasedVersion)_Source.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Source.zip $(PackagesFolder)\CommunityPackages\$(BuildVersion)\SourceComparison.html /closescript" WaitCompletion="True" />
+  </Target>
+  <Target Name="CreateStarterKit" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <StarterKitFiles Include="$(RootFolder)\Website\**\*.*" Exclude="@(InstallExclude)"/>
+    </ItemGroup>
+    <RemoveDir Directories="$(RootFolder)\Starter Kit\Project" />
+    <Copy SourceFiles="@(StarterKitFiles)" DestinationFolder="$(RootFolder)\Starter Kit\Project\%(RecursiveDir)" />
+    <CreateVSTemplate RootPath="$(RootFolder)\Starter Kit\Project" OutputPath="$(RootFolder)\Starter Kit" Name="$(Name)" ProjectType="$(ProjectType)" ProjectSubType="$(ProjectSubType)" SortOrder="$(SortOrder)" DefaultName="$(DefaultName)" ProvideDefaultName="$(ProvideDefaultName)" PromptForSaveOnCreation="$(PromptForSaveOnCreation)" EnableEditOfLocationField="$(EnableEditOfLocationField)" EnableLocationBrowseButton="$(EnableLocationBrowseButton)" LocationField="$(LocationField)" Icon="$(Icon)" />
+    <Copy SourceFiles="$(RootFolder)\Starter Kit\DotNetNuke.vstemplate" DestinationFolder="$(RootFolder)\Website" />
+    <ItemGroup>
+      <InstallPackage Include="$(RootFolder)\Website\**\*.*" Exclude="@(InstallExclude)" />
+      <InstallPackage Include="$(RootFolder)\Website\dotnetnuke.webproj"/>
+      <InstallPackage Include="$(RootFolder)\Website\DotNetNuke.vstemplate" />
+    </ItemGroup>
+    <Zip Files="@(InstallPackage)" WorkingDirectory="$(RootFolder)\Website\" ZipFileName="$(RootFolder)\Starter Kit\DotNetNuke.zip" />
+    <ItemGroup>
+      <StarterKitPackage Include="$(RootFolder)\Starter Kit\*.zip"/>
+      <StarterKitPackage Include="$(RootFolder)\Starter Kit\DotNetNuke.vscontent"/>
+    </ItemGroup>
+    <Zip Files="@(StarterKitPackage)" WorkingDirectory="$(RootFolder)\Starter Kit\"
+			 ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_StarterKit.vsi" />
+  </Target>
+  <Target Name="CreateDocs" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <DocsPackage Include="$(RootFolder)\Sandcastle\*.chm" />
+    </ItemGroup>
+    <Zip Files="@(DocsPackage)" WorkingDirectory="$(RootFolder)\Sandcastle\"
+       ZipFileName="$(PackagesFolder)\CommunityPackages\$(BuildVersion)\DotNetNuke_Community_$(BuildVersion)_Docs.zip" />
+  </Target>
+</Project>

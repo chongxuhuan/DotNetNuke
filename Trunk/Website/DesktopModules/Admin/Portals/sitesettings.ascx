@@ -168,6 +168,10 @@
                                     <td class="NormalTextBox" valign="top" style="width:450px"><asp:DropDownList ID="cboUserTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId" /></td>
                                 </tr>
                                 <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plSearchTabId" runat="server" ControlName="cboSearchTabId" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:DropDownList ID="cboSearchTabId" CssClass="NormalTextBox" runat="server" style="width:450px" DataTextField="IndentedTabName" DataValueField="TabId" /></td>
+                                </tr>
+                                <tr>
                                     <td class="SubHead" valign="top" style="width:250px"><dnn:Label ID="plHomeDirectory" runat="server" ControlName="lblHomeDirectory" /></td>
                                     <td class="NormalTextBox" style="width:450px"><asp:Label ID="lblHomeDirectory" CssClass="NormalTextBox" runat="server" /></td>
                                 </tr>

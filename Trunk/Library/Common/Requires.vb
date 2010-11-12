@@ -20,10 +20,19 @@
 
 Namespace DotNetNuke.Common
 
+    ''' <summary>
+    ''' Supporting methods for checking argments
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Module Requires
 
 #Region "Public Methods"
-
+        ''' <summary>
+        ''' Determines whether the parameter argValue is of the type of the specified argName.
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="argName">Name of the argument.</param>
+        ''' <param name="argValue">The arg value.</param>
         Public Sub IsTypeOf(Of T)(ByVal argName As String, ByVal argValue As Object)
             If Not (TypeOf (argValue) Is T) Then
                 Throw New ArgumentException(Localization.GetExceptionMessage("ValueMustBeOfType", _
@@ -33,6 +42,11 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the parameter argValue is not negative
+        ''' </summary>
+        ''' <param name="argName">Name of the argument.</param>
+        ''' <param name="argValue">The arg value.</param>
         Public Sub NotNegative(ByVal argName As String, ByVal argValue As Integer)
             If argValue < 0 Then
                 Throw New ArgumentOutOfRangeException(argName, Localization.GetExceptionMessage("ValueCannotBeNegative", _
@@ -41,12 +55,22 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the parameter argValue is not Null.
+        ''' </summary>
+        ''' <param name="argName">Name of the argument.</param>
+        ''' <param name="argValue">The arg value.</param>
         Public Sub NotNull(ByVal argName As String, ByVal argValue As Object)
             If argValue Is Nothing Then
                 Throw New ArgumentNullException(argName)
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the parameter argValue is not Null or Empyt
+        ''' </summary>
+        ''' <param name="argName">Name of the argument.</param>
+        ''' <param name="argValue">The arg value.</param>
         Public Sub NotNullOrEmpty(ByVal argName As String, ByVal argValue As String)
             If String.IsNullOrEmpty(argValue) Then
                 Throw New ArgumentException(Localization.GetExceptionMessage("ArgumentCannotBeNullOrEmpty", _
@@ -55,6 +79,12 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the Property argProperty is not Null or Empty.
+        ''' </summary>
+        ''' <param name="argName">Name of the argument</param>
+        ''' <param name="argProperty">The property name.</param>
+        ''' <param name="propertyValue">The property value.</param>
         Public Sub PropertyNotNullOrEmpty(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As String)
             If String.IsNullOrEmpty(propertyValue) Then
                 Throw New ArgumentException(argName, Localization.GetExceptionMessage("PropertyCannotBeNullOrEmpty", _
@@ -64,6 +94,12 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the Property argProperty is not negative.
+        ''' </summary>
+        ''' <param name="argName">Name of the argument</param>
+        ''' <param name="argProperty">The property name.</param>
+        ''' <param name="propertyValue">The property value.</param>
         Public Sub PropertyNotNegative(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As Integer)
             If propertyValue < 0 Then
                 Throw New ArgumentOutOfRangeException(argName, Localization.GetExceptionMessage("PropertyCannotBeNegative", _
@@ -73,6 +109,14 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Determines whether the Property argProperty is not equal to the test value.
+        ''' </summary>
+        ''' <typeparam name="TValue">The type of the value.</typeparam>
+        ''' <param name="argName">Name of the argument</param>
+        ''' <param name="argProperty">The property name.</param>
+        ''' <param name="propertyValue">The property value.</param>
+        ''' <param name="testValue">The test value.</param>
         Public Sub PropertyNotEqualTo(Of TValue As IEquatable(Of TValue))(ByVal argName As String, ByVal argProperty As String, ByVal propertyValue As TValue, ByVal testValue As TValue)
             If propertyValue.Equals(testValue) Then
                 Throw New ArgumentException(argName, Localization.GetExceptionMessage("PropertyNotEqualTo", _

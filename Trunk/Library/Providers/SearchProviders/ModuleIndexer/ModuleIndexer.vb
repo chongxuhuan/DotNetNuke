@@ -53,6 +53,7 @@ Namespace DotNetNuke.Services.Search
         ''' <param name="PortalID">The Id of the Portal</param>
         ''' <history>
         '''		[cnurse]	11/15/2004	documented
+        '''     [vnguyen]   09/07/2010  Modified: Included logic to add TabId to searchItems
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Function GetSearchIndexItems(ByVal PortalID As Integer) As SearchItemInfoCollection
@@ -64,7 +65,12 @@ Namespace DotNetNuke.Services.Search
                 Try
                     Dim myCollection As SearchItemInfoCollection
                     myCollection = ScModInfo.ModControllerType.GetSearchItems(ScModInfo.ModInfo)
+
                     If Not myCollection Is Nothing Then
+                        For Each searchItem As SearchItemInfo In myCollection
+                            searchItem.TabId = ScModInfo.ModInfo.TabID
+                        Next
+
                         SearchItems.AddRange(myCollection)
                     End If
                 Catch ex As Exception

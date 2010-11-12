@@ -22,7 +22,7 @@
               <containersrc>
               </containersrc>
               <displaytitle>true</displaytitle>
-              <displayprint>true</displayprint>
+              <displayprint>false</displayprint>
               <displaysyndicate>false</displaysyndicate>
               <inheritviewpermissions>true</inheritviewpermissions>
               <modulepermissions>

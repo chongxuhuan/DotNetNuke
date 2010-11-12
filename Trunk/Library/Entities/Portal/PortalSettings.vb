@@ -102,6 +102,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _LoginTabId As Integer
         Private _RegisterTabId As Integer
         Private _UserTabId As Integer
+        Private _SearchTabId As Integer
         Private _DefaultLanguage As String
         Private _TimeZoneOffset As Integer
         Private _Version As String
@@ -490,6 +491,15 @@ Namespace DotNetNuke.Entities.Portals
             End Set
         End Property
 
+        Public Property SearchTabId() As Integer
+            Get
+                Return _SearchTabId
+            End Get
+            Set(ByVal Value As Integer)
+                _SearchTabId = Value
+            End Set
+        End Property
+
         Public Property DefaultLanguage() As String
             Get
                 Return _DefaultLanguage
@@ -795,6 +805,21 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets the filter used for inclusion of tag info
+        ''' </summary>
+        ''' <remarks>Defaults to ""</remarks>
+        ''' <history>
+        '''    [vnguyen]   09/03/2010   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public ReadOnly Property SearchIncludedTagInfoFilter() As String
+            Get
+                Return PortalController.GetPortalSetting("SearchIncludedTagInfoFilter", PortalId, Host.Host.SearchIncludedTagInfoFilter)
+            End Get
+        End Property
+
         Public ReadOnly Property SSLEnabled() As Boolean
             Get
                 Return PortalController.GetPortalSettingAsBoolean("SSLEnabled", PortalId, False)
@@ -923,6 +948,7 @@ Namespace DotNetNuke.Entities.Portals
             Me.LoginTabId = portal.LoginTabId
             Me.RegisterTabId = portal.RegisterTabId
             Me.UserTabId = portal.UserTabId
+            Me.SearchTabId = portal.SearchTabId
             Me.DefaultLanguage = portal.DefaultLanguage
             Me.TimeZoneOffset = portal.TimeZoneOffset
             Me.HomeDirectory = portal.HomeDirectory

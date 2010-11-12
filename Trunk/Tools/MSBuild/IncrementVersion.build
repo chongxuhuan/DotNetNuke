@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="IncrementVersion" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <Import Project="AT.MSBuild.Tasks.Targets" />
+
+  <ItemGroup>
+    <SourceFiles Include="$(RootFolder)\**\*.*" />
+  </ItemGroup>
+  <Import Project="Variables.build" />
+
+  <!-- Various Tasks Starts From Here-->
+  <Target Name="IncrementVersion">
+    <ShellCommand Command="$(tf) checkout /lock:Checkout $(RootFolder)\Library\AssemblyInfo.vb /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <ShellCommand Command="$(tf) checkout /lock:Checkout $(RootFolder)\Website\App_Code\AssemblyInfo.vb /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <IncrementBuildNumber Condition="'$(VersionType)'!= 'DefaultVersion'" FilePath="$(RootFolder)\Library\AssemblyInfo.vb">
+      <Output TaskParameter="BuildVersion" PropertyName="BuildVersion">
+      </Output>
+      <Output TaskParameter="ReleaseVersion" PropertyName="ReleaseVersion">
+      </Output>
+    </IncrementBuildNumber>
+    <IncrementBuildNumber Condition="'$(VersionType)'== 'DefaultVersion'" FilePath="$(RootFolder)\Library\AssemblyInfo.vb" UseVersion="$(DefaultVersion)">
+      <Output TaskParameter="BuildVersion" PropertyName="BuildVersion">
+      </Output>
+      <Output TaskParameter="ReleaseVersion" PropertyName="ReleaseVersion">
+      </Output>
+    </IncrementBuildNumber>
+    <IncrementBuildNumber FilePath="$(RootFolder)\Website\App_Code\AssemblyInfo.vb" UseVersion="$(BuildVersion)" />
+    <ShellCommand Command="$(tf) checkin $(RootFolder)\Library\AssemblyInfo.vb /comment:CIBuild /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <ShellCommand Command="$(tf) checkin $(RootFolder)\Website\App_Code\AssemblyInfo.vb /comment:CIBuild /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <Attrib Files="@(SourceFiles)" Normal="true"/>
+    <Message Text="New version : $(BuildVersion)" />
+  </Target>
+</Project>

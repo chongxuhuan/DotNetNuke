@@ -98,6 +98,8 @@ Namespace DotNetNuke.Entities.Modules.Definitions
                                     Return ModuleDefinitionVersion.V2
                                 Case "3.0"
                                     Return ModuleDefinitionVersion.V3
+                                Case Else
+                                    Return ModuleDefinitionVersion.VUnknown
                             End Select
                         Case "SkinObject"
                             Return ModuleDefinitionVersion.V2_Skin

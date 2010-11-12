@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Compile" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variables.build" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <Target Name="Compile" DependsOnTargets="VersionCheck">
+    <Message Text="DotNetNuke Compile started" />
+    <!--Pacakge the Telerik zip-->
+    <XmlRead Prefix="n"
+                Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+                XPath="dotnetnuke/packages/package/@version"
+                XmlFileName="$(RootFolder)\Library\Components\Telerik\DotNetNuke.Telerik.Web.dnn">
+      <Output TaskParameter="Value" PropertyName="TelerikVersion" />
+    </XmlRead>
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="$(RootFolder)\Library\Components\Telerik\Package\bin" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\DotNetNuke.Telerik.Web.dnn" DestinationFolder="$(RootFolder)\Library\Components\Telerik\Package" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\Documentation\Telerik_EULA.pdf" DestinationFolder="$(RootFolder)\Library\Components\Telerik\Package\Documentation" />
+    <CreateItem Include="$(RootFolder)\Library\Components\Telerik\Package\**\*.*">
+      <Output TaskParameter="Include" ItemName="TelerikContent" />
+    </CreateItem>
+    <Zip Files="@(TelerikContent)" WorkingDirectory="$(RootFolder)\Library\Components\Telerik\Package" ZipFileName="Telerik_$(TelerikVersion)_Install.zip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Telerik_$(TelerikVersion)_Install.zip" DestinationFolder="$(RootFolder)\Website\Install\Module" />
+    <RemoveDir Directories ="$(RootFolder)\Library\Components\Telerik\Package" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFiles="$(RootFolder)\Website\bin\Telerik.Web.UI.dll" />
+
+    <!-- Copy development.config to web.config check in to keep configs in synch. -->
+    <ShellCommand Command="$(tf) checkout $(RootFolder)\Website\web.config /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <Copy SourceFiles="$(RootFolder)\Website\development.config" DestinationFiles="$(RootFolder)\Website\web.config" />
+    <ShellCommand Command="$(tf) checkin $(RootFolder)\Website\web.config /comment:CIBuild /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass /force" WaitCompletion="True" />
+    <Attrib Files="$(RootFolder)\Website\web.config" Normal="true"/>
+
+    <!-- Copy release.config to web.config for Precompiling to work -->
+    <Copy SourceFiles="$(RootFolder)\Website\release.config" DestinationFiles="$(RootFolder)\Website\web.config" />
+    <!--Remove any exisiting built zip files from Install folder-->
+    <ItemGroup>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Modules\*.zip"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\*.zip"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\ASP2MenuNavigationProvider*"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\DNNDropDownNavigationProvider*"/>
+    </ItemGroup>
+    <Delete Files="@(ExtensionZips)" />
+    <!--Update the resx files in Tests for build server creds-->
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx"
+      Xpath="/root/data[@name='AdminConnectionString']/value"
+      Value="Data Source={0};User ID=sa;Password=DotNetNuke;"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx"
+      Xpath="/root/data[@name='ConnectionString']/value"
+      Value="Data Source={0};User ID=sa;Password=DotNetNuke;Initial Catalog={1}"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Content\app.config"
+      Xpath="/configuration/appSettings/add[@key='VirtualScriptRootPath']/@value"
+      Value="Maintenance\\WorkingDirectory\\"  />
+
+    <!-- Do the build thing -->
+    <MSBuild Projects="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+
+    <!--Remove PreCompiled directory it is of no use.-->
+    <RemoveDir Directories="$(RootFolder)\PreCompiled" ContinueOnError="true" />
+    <RemoveDir Directories="$(RootFolder)\PrecompiledWeb" ContinueOnError="true" />
+
+    <!--Copy the Test dlls to common location for execution-->
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Core\bin\Release\DotNetNuke.Tests.Core.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Content\bin\Release\DotNetNuke.Tests.Content.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Content\bin\Release\DotNetNuke.Tests.Content.dll.config" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\Externals\Moq\Moq.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Utilities\bin\Release\TestUtilities.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.UI\bin\Release\DotNetNuke.Tests.UI.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Data\bin\Release\DotNetNuke.Tests.Data.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.ContentStaging\bin\DotNetNuke.Tests.ContentStaging.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Copy SourceFiles="$(RootFolder)\Library\Providers\DataProviders\SqlDataProvider\bin\DotNetNuke.SqlDataProvider.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Library\bin\DotNetNuke.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\DotNetNuke.Web\bin\DotNetNuke.Web.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Modules\Taxonomy\bin\DotNetNuke.Modules.Taxonomy.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Modules\ContentStaging\bin\DotNetNuke.Enterprise.ContentStaging.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Message Text="DotNetNuke Compile Complete" />
+  </Target>
+  
+</Project>

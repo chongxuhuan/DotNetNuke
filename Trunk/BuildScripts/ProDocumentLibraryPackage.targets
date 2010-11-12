@@ -32,6 +32,9 @@
     <CreateItem Include="Components\UserPicker\*.ascx;Components\UserPicker\*.aspx">
       <Output TaskParameter="Include" ItemName="PackageUserPickerFiles" />
     </CreateItem>
+    <CreateItem Include="Components\FileUploader\NeatUpload\*.*">
+      <Output TaskParameter="Include" ItemName="PackageNeatUploadFiles" />
+    </CreateItem>
     <CreateItem Include="swf\*.*">
       <Output TaskParameter="Include" ItemName="PackageSwfs" />
     </CreateItem>
@@ -55,6 +58,7 @@
     <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageFileDownloaderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\FileDownloader" />
     <Copy SourceFiles="@(PackageFileUploaderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\FileUploader" />
+    <Copy SourceFiles="@(PackageNeatUploadFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\FileUploader\NeatUpload" />
     <Copy SourceFiles="@(PackageThumbnailsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\Thumbnails" />
     <Copy SourceFiles="@(PackageUserPickerFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\UserPicker" />
     <Copy SourceFiles="@(PackageSwfs)" DestinationFolder="$(MSBuildProjectDirectory)\Package\swf" />
@@ -63,8 +67,13 @@
     <CreateItem Include="Images\**\*.*">
       <Output TaskParameter="Include" ItemName="ImageResources" />
     </CreateItem>
-    <Zip Files="@(ImageResources)" WorkingDirectory="$(MSBuildProjectDirectory)\Images" ZipFileName="Resources.zip" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\Resources.zip" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Zip Files="@(ImageResources)" WorkingDirectory="$(MSBuildProjectDirectory)\Images" ZipFileName="ImageResources.zip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\ImageResources.zip" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <CreateItem Include="Components\HTMLEditor\**\*.*">
+      <Output TaskParameter="Include" ItemName="HTMLEditorResources" />
+    </CreateItem>
+    <Zip Files="@(HTMLEditorResources)" WorkingDirectory="$(MSBuildProjectDirectory)\Components\HTMLEditor" ZipFileName="HTMLEditorResources.zip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\HTMLEditorResources.zip" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
 
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
