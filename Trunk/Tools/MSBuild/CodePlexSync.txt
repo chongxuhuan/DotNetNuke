@@ -1,6 +1,0 @@
-load %1 %2
-expand all
-filter "-*.svn-base;-.svn\" 
-folder-report layout:summary options:display-orphans output-to:%3 output-options:html-color
-
-

@@ -1,1 +1,0 @@
-﻿"C:\Windows\Microsoft.NET\Framework\v3.5\MSBuild.exe" "C:\DotNetNuke\Team Foundation Server Projects\DotNetNuke\src\DotNetNuke\Tools\MSBuild\MSBuildTester\MSBuildTester\Debug.build"
