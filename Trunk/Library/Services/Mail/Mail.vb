@@ -98,7 +98,7 @@ Namespace DotNetNuke.Services.Mail
                 Case MessageType.ProfileUpdated
                     subject = "EMAIL_PROFILE_UPDATED_SUBJECT"
                     body = "EMAIL_PROFILE_UPDATED_BODY"
-                Case Else
+                Case MessageType.UserUpdatedOwnPassword
                     subject = "EMAIL_USER_UPDATED_OWN_PASSWORD_SUBJECT"
                     body = "EMAIL_USER_UPDATED_OWN_PASSWORD_BODY"
             End Select
@@ -110,7 +110,6 @@ Namespace DotNetNuke.Services.Mail
         
             SendEmail(settings.Email, UserController.GetUserById(settings.PortalId, toUser).Email, subject, body)
 
-            Return Null.NullString
         End Function
 
         ''' -----------------------------------------------------------------------------

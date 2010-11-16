@@ -174,9 +174,6 @@
   <data name="Success.Text" xml:space="preserve">
     <value>The Language Pack(s) were created and can be found in the {0}/Install/Language folder</value>
   </data>
-  <data name="Failure.Text" xml:space="preserve">
-    <value>You must create resource files before you can create a language pack</value>
-  </data>
   <data name="AuthSystem.LangPackType" xml:space="preserve">
     <value>Authentication System</value>
   </data>

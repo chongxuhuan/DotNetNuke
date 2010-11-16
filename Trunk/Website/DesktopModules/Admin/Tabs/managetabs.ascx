@@ -223,11 +223,13 @@
                     <tr id="readyForTranslationRow" runat="server" visible="false">
                         <td style="width:25px;">
                         </td>
-                      <td colspan="3">
-                            <asp:Label ID="readyToTranslateLabel" runat="server" resourceKey="readyToTranslateLabel" />
-                            <br />
+                        <td class="SubHead" style="width:200px;">
+                             <dnn:Label ID="readyToTranslateLabel" runat="server" ControlName="readyForTranslationButton"></dnn:Label>
+                       </td>
+                       <td colspan="2">
                             <dnn:CommandButton ID="readyForTranslationButton" runat="server" 
                                         ImageUrl="~/images/icon_language_16px.gif" 
+                                        DisplayLink = "false"
                                         ResourceKey="ReadyForTranslation" />
                        </td>
                     </tr>

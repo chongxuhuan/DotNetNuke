@@ -80,7 +80,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addContentType);
 
             ContentType contentType = new ContentType();
             contentType.ContentType = Constants.CONTENTTYPE_ValidContentType;
@@ -101,7 +101,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addContentType);
 
             ContentType contentType = new ContentType();
             contentType.ContentType = Constants.CONTENTTYPE_ValidContentType;
@@ -127,7 +127,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteContentType);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentTypeId = Constants.CONTENTTYPE_InValidContentTypeId;
@@ -148,7 +148,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteContentType);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentTypeId = Constants.CONTENTTYPE_ValidContentTypeId;
@@ -178,7 +178,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getContentTypes);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, getContentTypes);
 
             DataService ds = new DataService();
 
@@ -199,7 +199,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateContentType);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentTypeId = Constants.CONTENTTYPE_InValidContentTypeId;
@@ -237,7 +237,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateContentType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateContentType);
 
             ContentType contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentTypeId = Constants.CONTENTTYPE_UpdateContentTypeId;

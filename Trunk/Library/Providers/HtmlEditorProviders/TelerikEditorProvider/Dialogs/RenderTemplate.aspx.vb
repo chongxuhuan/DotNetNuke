@@ -59,18 +59,11 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider.Dialogs
                         'File URL
                         Dim dbPath As String = FileSystemValidation.ToDBPath(renderUrl)
                         Dim fileName As String = System.IO.Path.GetFileName(renderUrl)
-                        Dim cssUrl As String = System.IO.Path.ChangeExtension(renderUrl, ".css")
 
                         If (Not String.IsNullOrEmpty(fileName)) Then
                             Dim dnnFolder As FileSystem.FolderInfo = GetDNNFolder(dbPath)
-
                             If (Not IsNothing(dnnFolder)) Then
                                 fileInfo = fileCtrl.GetFile(fileName, portalID, dnnFolder.FolderID)
-                            End If
-
-                            ' Add the CSS file with a matching name to the TemplateCSS HtmlLink Control 
-                            If (Not IsNothing(fileInfo)) Then
-                                TemplateCSS.Href = cssUrl
                             End If
                         End If
                     End If

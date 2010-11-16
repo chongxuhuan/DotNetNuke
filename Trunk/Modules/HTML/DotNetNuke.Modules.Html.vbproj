@@ -21,10 +21,6 @@
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -80,9 +76,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="Telerik.Web.UI">
-      <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -176,10 +169,7 @@
     <None Include="Providers\DataProviders\SqlDataProvider\05.01.03.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\05.01.04.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\05.02.00.SqlDataProvider" />
-    <None Include="Providers\DataProviders\SqlDataProvider\05.02.01.SqlDataProvider" />
-    <None Include="Providers\DataProviders\SqlDataProvider\05.05.00.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
-    <None Include="Providers\DataProviders\SqlDataProvider\Upgrade.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="04.05.00.txt" />
@@ -201,10 +191,6 @@
     <Content Include="Settings.ascx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.vbproj">
-      <Project>{B1699614-39D4-468A-AB1D-A2FBA97CADDF}</Project>
-      <Name>DotNetNuke.Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.vbproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>

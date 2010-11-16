@@ -586,14 +586,12 @@ Namespace DotNetNuke.UI.WebControls
 #Region "IPostBackDataHandler Implementation"
 
         Public Function LoadPostData(ByVal postDataKey As String, ByVal postCollection As System.Collections.Specialized.NameValueCollection) As Boolean Implements System.Web.UI.IPostBackDataHandler.LoadPostData
-            Dim retValue As Boolean = Null.NullBoolean
             Dim addItems As String = postCollection(postDataKey + "_Available")
             If Not String.IsNullOrEmpty(addItems) Then
                 _AddValues = New List(Of String)
                 For Each addItem As String In addItems.Split(","c)
                     _AddValues.Add(addItem)
                 Next
-                retValue = True
             End If
 
             Dim removeItems As String = postCollection(postDataKey + "_Selected")
@@ -602,9 +600,8 @@ Namespace DotNetNuke.UI.WebControls
                 For Each removeItem As String In removeItems.Split(","c)
                     _RemoveValues.Add(removeItem)
                 Next
-                retValue = True
             End If
-            Return retValue
+
         End Function
 
         Public Sub RaisePostDataChangedEvent() Implements System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent

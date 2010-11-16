@@ -74,12 +74,12 @@ Namespace DotNetNuke.Modules.Html
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub CreateUserNotifications(ByVal objHtmlText As HtmlTextInfo)
-            Dim _htmlTextUserController As New HtmlTextUserController
-            Dim _htmlTextUser As HtmlTextUserInfo
-            Dim _user As UserInfo
+            Dim objHTMLTextUsers As New HtmlTextUserController
+            Dim objHtmlTextUser As HtmlTextUserInfo
+            Dim objUser As UserInfo
 
             ' clean up old user notification records
-            _htmlTextUserController.DeleteHtmlTextUsers()
+            objHTMLTextUsers.DeleteHtmlTextUsers()
 
             ' ensure we have latest htmltext object loaded
             objHtmlText = GetHtmlText(objHtmlText.ModuleID, objHtmlText.ItemID)
@@ -90,17 +90,18 @@ Namespace DotNetNuke.Modules.Html
 
             ' if not published
             If objHtmlText.IsPublished = False Then
-                arrUsers.Add(objHtmlText.CreatedByUserID) ' include content owner 
+                ' include content owner 
+                arrUsers.Add(objHtmlText.CreatedByUserID)
             End If
 
             ' if not draft and not published
             If objHtmlText.StateID <> objWorkflow.GetFirstWorkflowStateID(objHtmlText.WorkflowID) And objHtmlText.IsPublished = False Then
                 ' get users from permissions for state
                 Dim objRoles As New RoleController
-                For Each permission As WorkflowStatePermissionInfo In WorkflowStatePermissionController.GetWorkflowStatePermissions(objHtmlText.StateID)
-                    If permission.AllowAccess Then
-                        If Null.IsNull(permission.UserID) Then
-                            Dim objRole As RoleInfo = New RoleController().GetRole(permission.RoleID, objHtmlText.PortalID)
+                For Each objWorkFlowStatePermission As WorkflowStatePermissionInfo In WorkflowStatePermissionController.GetWorkflowStatePermissions(objHtmlText.StateID)
+                    If objWorkFlowStatePermission.AllowAccess Then
+                        If Null.IsNull(objWorkFlowStatePermission.UserID) Then
+                            Dim objRole As RoleInfo = New RoleController().GetRole(objWorkFlowStatePermission.RoleID, objHtmlText.PortalID)
                             If Not objRole Is Nothing Then
                                 For Each objUserRole As UserRoleInfo In objRoles.GetUserRolesByRoleName(objHtmlText.PortalID, objRole.RoleName)
                                     If Not arrUsers.Contains(objUserRole.UserID) Then
@@ -109,8 +110,8 @@ Namespace DotNetNuke.Modules.Html
                                 Next
                             End If
                         Else
-                            If Not arrUsers.Contains(permission.UserID) Then
-                                arrUsers.Add(permission.UserID)
+                            If Not arrUsers.Contains(objWorkFlowStatePermission.UserID) Then
+                                arrUsers.Add(objWorkFlowStatePermission.UserID)
                             End If
                         End If
                     End If
@@ -135,28 +136,27 @@ Namespace DotNetNuke.Modules.Html
                     For Each intUserID As Integer In arrUsers
 
                         ' create user notification record 
-                        _htmlTextUser = New HtmlTextUserInfo
-                        _htmlTextUser.ItemID = objHtmlText.ItemID
-                        _htmlTextUser.StateID = objHtmlText.StateID
-                        _htmlTextUser.ModuleID = objHtmlText.ModuleID
-                        _htmlTextUser.TabID = objModule.TabID
-                        _htmlTextUser.UserID = intUserID
-                        _htmlTextUserController.AddHtmlTextUser(_htmlTextUser)
+                        objHtmlTextUser = New HtmlTextUserInfo
+                        objHtmlTextUser.ItemID = objHtmlText.ItemID
+                        objHtmlTextUser.StateID = objHtmlText.StateID
+                        objHtmlTextUser.ModuleID = objHtmlText.ModuleID
+                        objHtmlTextUser.TabID = objModule.TabID
+                        objHtmlTextUser.UserID = intUserID
+                        objHTMLTextUsers.AddHtmlTextUser(objHtmlTextUser)
 
                         ' send an email notification to a user if the state indicates to do so
                         If objHtmlText.Notify Then
-                            _user = UserController.GetUserById(objHtmlText.PortalID, intUserID)
-
-                            If Not _user Is Nothing Then
+                            objUser = UserController.GetUserById(objHtmlText.PortalID, intUserID)
+                            If Not objUser Is Nothing Then
                                 Dim message As New Services.Messaging.Data.Message()
                                 message.FromUserID = objPortalSettings.AdministratorId
-                                message.ToUserID = _user.UserID
+                                message.ToUserID = objUser.UserID
                                 message.Subject = strSubject
                                 message.Body = strBody
                                 message.Status = Services.Messaging.Data.MessageStatusType.Unread
-                                _messagingController.SaveMessage(message)
+                                '_messagingController.SaveMessage(message)
 
-                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, _user.Email, message.Subject, message.Body)
+                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objUser.Email, message.Subject, message.Body)
 
                             End If
                         End If
@@ -166,11 +166,11 @@ Namespace DotNetNuke.Modules.Html
                     ' if published and the published state specifies to notify members of the workflow
                     If objHtmlText.IsPublished = True And objHtmlText.Notify = True Then
                         ' send email notification to the author
-                        _user = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
-                        If Not _user Is Nothing Then
+                        objUser = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID)
+                        If Not objUser Is Nothing Then
                             Dim message As New Services.Messaging.Data.Message()
                             message.FromUserID = objPortalSettings.AdministratorId
-                            message.ToUserID = _user.UserID
+                            message.ToUserID = objUser.UserID
                             message.Subject = strSubject
                             message.Body = strBody
                             message.Status = Services.Messaging.Data.MessageStatusType.Unread
@@ -408,21 +408,21 @@ Namespace DotNetNuke.Modules.Html
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
-        ''' <param name="htmlContent">An HtmlTextInfo object</param>
+        ''' <param name="objHtmlText">An HtmlTextInfo object</param>
         ''' <param name="MaximumVersionHistory">The maximum number of versions to retain</param>
         ''' <history>
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub UpdateHtmlText(ByVal htmlContent As HtmlTextInfo, ByVal MaximumVersionHistory As Integer)
-            Dim _workflowStateController As New WorkflowStateController
+        Public Sub UpdateHtmlText(ByVal objHtmlText As HtmlTextInfo, ByVal MaximumVersionHistory As Integer)
+            Dim objWorkflow As New WorkflowStateController
             Dim blnCreateNewVersion As Boolean = False
 
             ' determine if we are creating a new version of content or updating an existing version
-            If htmlContent.ItemID <> -1 Then
-                If htmlContent.WorkflowName <> "[REPAIR_WORKFLOW]" Then
-                    Dim objContent As HtmlTextInfo = GetTopHtmlText(htmlContent.ModuleID, False, htmlContent.WorkflowID)
+            If objHtmlText.ItemID <> -1 Then
+                If objHtmlText.WorkflowName <> "[REPAIR_WORKFLOW]" Then
+                    Dim objContent As HtmlTextInfo = GetTopHtmlText(objHtmlText.ModuleID, False, objHtmlText.WorkflowID)
                     If Not objContent Is Nothing Then
-                        If objContent.StateID = _workflowStateController.GetLastWorkflowStateID(htmlContent.WorkflowID) Then
+                        If objContent.StateID = objWorkflow.GetLastWorkflowStateID(objHtmlText.WorkflowID) Then
                             blnCreateNewVersion = True
                         End If
                     End If
@@ -432,35 +432,34 @@ Namespace DotNetNuke.Modules.Html
             End If
 
             ' determine if content is published
-            If htmlContent.StateID = _workflowStateController.GetLastWorkflowStateID(htmlContent.WorkflowID) Then
-                htmlContent.IsPublished = True
+            If objHtmlText.StateID = objWorkflow.GetLastWorkflowStateID(objHtmlText.WorkflowID) Then
+                objHtmlText.IsPublished = True
             Else
-                htmlContent.IsPublished = False
+                objHtmlText.IsPublished = False
             End If
 
             If blnCreateNewVersion Then
                 ' add content
-                htmlContent.ItemID = DataProvider.Instance().AddHtmlText(htmlContent.ModuleID, htmlContent.Content, htmlContent.StateID, htmlContent.IsPublished, UserController.GetCurrentUserInfo.UserID, MaximumVersionHistory)
+                objHtmlText.ItemID = DataProvider.Instance().AddHtmlText(objHtmlText.ModuleID, objHtmlText.Content, objHtmlText.StateID, objHtmlText.IsPublished, UserController.GetCurrentUserInfo.UserID, MaximumVersionHistory)
             Else
                 ' update content
-                DataProvider.Instance().UpdateHtmlText(htmlContent.ItemID, htmlContent.Content, htmlContent.StateID, htmlContent.IsPublished, UserController.GetCurrentUserInfo.UserID)
+                DataProvider.Instance().UpdateHtmlText(objHtmlText.ItemID, objHtmlText.Content, objHtmlText.StateID, objHtmlText.IsPublished, UserController.GetCurrentUserInfo.UserID)
             End If
 
             ' add log history
-            Dim logInfo As New HtmlTextLogInfo
-            logInfo.ItemID = htmlContent.ItemID
-            logInfo.StateID = htmlContent.StateID
-            logInfo.Approved = htmlContent.Approved
-            logInfo.Comment = htmlContent.Comment
-
-            Dim _htmlTextLogController As New HtmlTextLogController
-            _htmlTextLogController.AddHtmlTextLog(logInfo)
+            Dim objLog As New HtmlTextLogInfo
+            objLog.ItemID = objHtmlText.ItemID
+            objLog.StateID = objHtmlText.StateID
+            objLog.Approved = objHtmlText.Approved
+            objLog.Comment = objHtmlText.Comment
+            Dim objLogs As New HtmlTextLogController
+            objLogs.AddHtmlTextLog(objLog)
 
             ' create user notifications
-            CreateUserNotifications(htmlContent)
+            CreateUserNotifications(objHtmlText)
 
             ' refresh output cache
-            ModuleController.SynchronizeModule(htmlContent.ModuleID)
+            ModuleController.SynchronizeModule(objHtmlText.ModuleID)
         End Sub
 
         ''' -----------------------------------------------------------------------------

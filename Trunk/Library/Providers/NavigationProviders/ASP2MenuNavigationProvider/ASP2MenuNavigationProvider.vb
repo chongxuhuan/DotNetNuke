@@ -112,11 +112,10 @@ Namespace DotNetNuke.NavigationControl
 
         Public Overrides Property ControlOrientation() As Modules.NavigationProvider.NavigationProvider.Orientation
             Get
-
                 Select Case Menu.Orientation
                     Case Web.UI.WebControls.Orientation.Horizontal
                         Return Modules.NavigationProvider.NavigationProvider.Orientation.Horizontal
-                    Case Else
+                    Case Web.UI.WebControls.Orientation.Vertical
                         Return Modules.NavigationProvider.NavigationProvider.Orientation.Vertical
                 End Select
             End Get

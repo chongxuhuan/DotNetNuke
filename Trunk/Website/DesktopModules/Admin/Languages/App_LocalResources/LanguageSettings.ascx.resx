@@ -123,13 +123,16 @@
   <data name="HostSettings.Title" xml:space="preserve">
     <value>Application Language Settings</value>
   </data>
+  <data name="plBrowser.Text" xml:space="preserve">
+    <value>Enable Browser Language Detection?</value>
+  </data>
   <data name="plUrl.Help" xml:space="preserve">
     <value>Check this box to enable the Language Parameter in the Url.</value>
   </data>
   <data name="plUrl.Text" xml:space="preserve">
     <value>Enable Language Parameter in URLs?</value>
   </data>
-  <data name="ControlTitle_settings.Text" xml:space="preserve">
+  <data name="PortalSettings.Title" xml:space="preserve">
     <value>Portal Language Settings</value>
   </data>
   <data name="plPageSize.Help" xml:space="preserve">

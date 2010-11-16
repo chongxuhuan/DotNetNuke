@@ -80,7 +80,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addScopeType);
 
             ScopeType scopeType = new ScopeType();
             scopeType.ScopeType = Constants.SCOPETYPE_ValidScopeType;
@@ -101,7 +101,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addScopeType);
 
             ScopeType scopeType = new ScopeType();
             scopeType.ScopeType = Constants.SCOPETYPE_ValidScopeType;
@@ -127,7 +127,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_InValidScopeTypeId;
@@ -148,7 +148,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_ValidScopeTypeId;
@@ -178,7 +178,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getScopeTypes);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, getScopeTypes);
 
             DataService ds = new DataService();
 
@@ -199,7 +199,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_InValidScopeTypeId;
@@ -236,7 +236,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ScopeTypesTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateScopeType);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateScopeType);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_UpdateScopeTypeId;

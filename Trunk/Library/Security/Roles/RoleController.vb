@@ -960,7 +960,7 @@ Namespace DotNetNuke.Security.Roles
 
         <Obsolete("This function has been replaced by AddRole(objRoleInfo)")> _
         Public Function AddRole(ByVal objRoleInfo As RoleInfo, ByVal SynchronizationMode As Boolean) As Integer
-            Return AddRole(objRoleInfo)
+            AddRole(objRoleInfo)
         End Function
 
         <Obsolete("This function has been replaced by GetPortalRoles(PortalId)")> _

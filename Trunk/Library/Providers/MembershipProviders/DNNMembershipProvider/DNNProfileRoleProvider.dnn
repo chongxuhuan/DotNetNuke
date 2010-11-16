@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.DNNProfileProvider" type="Provider" version="05.06.00">
+    <package name="DotNetNuke.DNNProfileProvider" type="Provider" version="05.01.03">
       <friendlyName>DotNetNuke Profile Provider</friendlyName>
       <description>DotNetNuke Profile Provider Project provides an extensible profile service.</description>
       <dependencies/>
@@ -18,12 +18,12 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Provider.DNNProvider.dll</name>
-              <version>05.06.00</version>
+              <version>05.01.03</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Membership.DataProvider.dll</name>
-              <version>05.06.00</version>
+              <version>05.01.03</version>
             </assembly>
           </assemblies>
         </component>
