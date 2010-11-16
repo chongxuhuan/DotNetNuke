@@ -1,4 +1,0 @@
-<MSDeploy.iisApp>
-  <iisapp path="DotNetNuke" />
-  <setAcl path="DotNetNuke" setAclAccess="Modify" />
-</MSDeploy.iisApp>
