@@ -112,7 +112,7 @@ Namespace DotNetNuke.Common.Utilities
                     'Add file to Database
                     intFileID = objFileController.AddFile(objFile)
                     'Save file to File Storage
-                    If synchronize = False Then WriteStream(intFileID, inStream, fileName, folder.StorageLocation, closeInputStream)                    
+                    If synchronize = False Then WriteStream(intFileID, inStream, fileName, folder.StorageLocation, closeInputStream)
             End Select
 
             'Update the FileData
@@ -236,7 +236,7 @@ Namespace DotNetNuke.Common.Utilities
             Dim objFolders As New FolderController
             Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, strFolderpath, False)
 
-            If FolderPermissionController.CanAdminFolder(objFolder) Then
+            If FolderPermissionController.CanAddFolder(objFolder) Then
                 If objPortalController.HasSpaceAvailable(PortalId, ContentLength) Then
                     If InStr(1, "," & Host.FileExtensions.ToUpper, "," & strExtension.ToUpper) <> 0 Or isHost Then
                         'Save Uploaded file to server
@@ -523,12 +523,12 @@ Namespace DotNetNuke.Common.Utilities
                         objFileController.ClearFileContent(fileId)
                         outStream = New MemoryStream
                     Case FolderController.StorageLocationTypes.SecureFileSystem
-                        If file.Exists(fileName & glbProtectedExtension) = True Then
+                        If File.Exists(fileName & glbProtectedExtension) = True Then
                             File.Delete(fileName & glbProtectedExtension)
                         End If
                         outStream = New FileStream(fileName & glbProtectedExtension, FileMode.Create)
                     Case FolderController.StorageLocationTypes.InsecureFileSystem
-                        If file.Exists(fileName) = True Then
+                        If File.Exists(fileName) = True Then
                             File.Delete(fileName)
                         End If
                         outStream = New FileStream(fileName, FileMode.Create)
@@ -985,7 +985,7 @@ Namespace DotNetNuke.Common.Utilities
             FullPath = System.IO.Path.Combine(RootFolder, SubFolder)
             FullPath = System.IO.Path.Combine(FullPath, UserID.ToString)
 
-            Return FullPath
+            Return String.Format("Users/{0}/", FullPath.Replace("\", "/"))
 
         End Function
 
@@ -1615,25 +1615,46 @@ Namespace DotNetNuke.Common.Utilities
             Dim objFolderController As New FolderController
             Dim arrFolders As New ArrayList
 
+            'Create Home folder if it doesn't exist
+            Dim userFolderPath As String = GetUserFolderPath(UserController.GetCurrentUserInfo().UserID)
+            Dim userFolder As FolderInfo = New FolderController().GetFolder(PortalID, userFolderPath, False)
+            If userFolder Is Nothing Then
+                'Add User folder
+                FileSystemUtils.AddUserFolder(PortalSettings.Current, PortalController.GetCurrentPortalSettings().HomeDirectoryMapPath, FolderController.StorageLocationTypes.InsecureFileSystem, UserController.GetCurrentUserInfo().UserID)
+                userFolder = New FolderController().GetFolder(PortalID, userFolderPath, False)
+            End If
+
             'Get all the folders for the Portal
             For Each folder As FolderInfo In objFolderController.GetFoldersSorted(PortalID).Values
-                Dim canAdd As Boolean = True
 
-                Select Case folder.StorageLocation
-                    Case FolderController.StorageLocationTypes.DatabaseSecure
-                        canAdd = IncludeDatabase
-                    Case FolderController.StorageLocationTypes.SecureFileSystem
-                        canAdd = IncludeSecure
-                End Select
-
-                If canAdd AndAlso PortalID > Null.NullInteger Then
-                    'Check Folder Permissions for Portal Folders
-                    canAdd = FolderPermissionController.HasFolderPermission(folder.FolderPermissions, Permissions)
+                'Skip if database is ignored
+                If (Not IncludeDatabase And folder.StorageLocation = FolderController.StorageLocationTypes.DatabaseSecure) Then
+                    Continue For
                 End If
 
-                If canAdd Then
-                    arrFolders.Add(folder)
+                'Skip if secure is ignored
+                If (Not IncludeSecure And folder.StorageLocation = FolderController.StorageLocationTypes.SecureFileSystem) Then
+                    Continue For
                 End If
+
+                If (folder.FolderPath.StartsWith("users/", StringComparison.InvariantCultureIgnoreCase)) Then
+                    If (folder.FolderID = userFolder.FolderID) Then
+                        folder.DisplayPath = "My Folder/"
+                        folder.DisplayName = "My Folder"
+                    Else
+                        Continue For
+                    End If
+                End If
+
+                'Skip if portal is null or user doesn't have permission to folder
+                If PortalID > Null.NullInteger AndAlso Not FolderPermissionController.HasFolderPermission(folder.FolderPermissions, Permissions) Then
+                    Continue For
+                End If
+
+
+
+                arrFolders.Add(folder)
+
             Next
 
             Return arrFolders
@@ -1651,7 +1672,8 @@ Namespace DotNetNuke.Common.Utilities
         ''' </remarks>
         ''' <history>
         ''' 	[cnurse]	12/2/2004	Created
-        ''' </history>
+        ''' </history>host  dnnhost
+        ''' 
         ''' -----------------------------------------------------------------------------
         Public Shared Function MoveFile(ByVal strSourceFile As String, ByVal strDestFile As String, ByVal settings As PortalSettings) As String
             Return UpdateFile(strSourceFile, strDestFile, GetFolderPortalId(settings), False, False, True)
@@ -2131,9 +2153,39 @@ Namespace DotNetNuke.Common.Utilities
         ''' </summary>
         ''' <param name="RootPath">The folder wherr the file will be put</param>
         ''' <param name="objHtmlInputFile">The file to upload</param>
+        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile) As String
+            Return UploadFile(RootPath, objHtmlInputFile, Null.NullString, False)
+        End Function
+
+        ''' <summary>
+        ''' UploadFile pocesses a single file 
+        ''' </summary>
+        ''' <param name="RootPath">The folder wherr the file will be put</param>
+        ''' <param name="objHtmlInputFile">The file to upload</param>
         ''' <param name="Unzip"></param> 
-        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, Optional ByVal Unzip As Boolean = False) As String
+        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, ByVal Unzip As Boolean) As String
             Return UploadFile(RootPath, objHtmlInputFile, Null.NullString, Unzip)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' UploadFile pocesses a single file 
+        ''' </summary>
+        ''' <param name="RootPath">The folder wherr the file will be put</param>
+        ''' <param name="objHtmlInputFile">The file to upload</param>
+        ''' <param name="NewFileName"></param>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        '''     [cnurse]        16/9/2004   Updated for localization, Help and 508
+        '''     [Philip Beadle] 10/06/2004  Moved to Globals from WebUpload.ascx.vb so can be accessed by URLControl.ascx
+        '''     [cnurse]        04/26/2006  Updated for Secure Storage
+        '''     [sleupold]      08/14/2007  Added NewFileName
+        '''     [sdarkis]       10/19/2009  Calls CreateFile
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, ByVal NewFileName As String) As String
+            Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, False)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -2154,8 +2206,12 @@ Namespace DotNetNuke.Common.Utilities
         '''     [sdarkis]       10/19/2009  Calls CreateFile
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, ByVal NewFileName As String, Optional ByVal Unzip As Boolean = False) As String
+        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As HttpPostedFile, ByVal NewFileName As String, ByVal Unzip As Boolean) As String
             Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, Unzip)
+        End Function
+
+        Public Shared Function UploadFile(ByVal RootPath As String, ByVal objHtmlInputFile As Telerik.Web.UI.UploadedFile, ByVal NewFileName As String) As String
+            Return CreateFile(RootPath, objHtmlInputFile.FileName, objHtmlInputFile.ContentLength, objHtmlInputFile.ContentType, objHtmlInputFile.InputStream, NewFileName, False)
         End Function
 
         ''' -----------------------------------------------------------------------------

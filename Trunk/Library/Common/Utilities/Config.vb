@@ -376,9 +376,9 @@ Namespace DotNetNuke.Common.Utilities
             End Try
         End Function
 
-        Public Shared Function Touch() As Boolean
+        Public Shared Sub Touch()
             File.SetLastWriteTime(Common.Globals.ApplicationMapPath & "\web.config", System.DateTime.Now)
-        End Function
+        End Sub
 
         Public Shared Sub UpdateConnectionString(ByVal conn As String)
 

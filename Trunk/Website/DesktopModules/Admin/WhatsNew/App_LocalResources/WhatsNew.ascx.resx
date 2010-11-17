@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
-    <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
+    <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/Project.aspx?Tab=Changelog&amp;PROJID=2"&gt;official change log&lt;/a&gt;.</value>
   </data>
   <data name="header.text" xml:space="preserve">
-    <value>Below is a summary of the major features for each release. For more information about a specific issue please refer to the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/ChangeLog.aspx?PROJID=2"&gt;official change log&lt;/a&gt;.</value>
+    <value>Below is a summary of the major features for each release. For more information about a specific issue please refer to the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/Project.aspx?Tab=Changelog&amp;PROJID=2"&gt;official change log&lt;/a&gt;.</value>
   </data>
   <data name="WhatsNew.04.09.00" xml:space="preserve">
     <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
@@ -1345,6 +1345,60 @@ corrected with each release. &lt;/p&gt;
 &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
 &lt;ul&gt;
 	&lt;li&gt;Feedback Module 05.00.02&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.06.00" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Added Configuration Manager to allow host user to modify application configuration 
+	files&lt;/li&gt;
+	&lt;li&gt;Added automatic portal alias creation for single portal installs&lt;/li&gt;
+	&lt;li&gt;Updated the file manager upload page to allow user to upload multiple files 
+	without returning to the file manager page.&lt;/li&gt;
+	&lt;li&gt;Updated Google Analytics script to support asynchronous mode&lt;/li&gt;
+	&lt;li&gt;Updated default indexes on multiple tables to improve application performance&lt;/li&gt;
+	&lt;li&gt;Fixed issue with Event Log Email Notifications.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Telerik HTML Editor was unable to upload files to secure 
+	or database folder.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where registration page is not set correctly during an upgrade.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Sendmail stripped HTML and Links from emails.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Ribbon Bar CSS was included on the page even when Ribbon 
+	Bar was not visible.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where &amp;quot;My Folder&amp;quot; was not available in the URL control and the 
+	Telerik HTML Editor&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the language skinobject dropdown does not maintain state 
+	between postbacks&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the UserProfile PhotoURL property not set properly&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Data Caching code could result in race condition&lt;/li&gt;
+	&lt;li&gt;Fixed issue where a portalalias with a trailing &amp;quot;/&amp;quot; would cause a 404 error&lt;/li&gt;
+	&lt;li&gt;Fixed issue where reference copies of modules are not copied from the primary 
+	to secondary language pages.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where a disabled language can result in orphaned pages which 
+	are not localized with Content Localization&lt;/li&gt;
+	&lt;li&gt;Fixed issue where content item wasn&amp;#39;t being assigned to host tabs resulting 
+	in error when changing the host page title&lt;/li&gt;
+	&lt;li&gt;Fixed issue where localized grid header columns did not sort&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the ribbonbar control panel was not properly moving pages 
+	when localization was enabled.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/News/SecurityPolicy/securitybulletinno44/tabid/2035/Default.aspx"&gt;
+	Exception details may leak if logging provider unavailable&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.6.0 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements were 
+corrected with each release. &lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Events Module 05.01.05&lt;/li&gt;
+	&lt;li&gt;Forums Module 05.00.00&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
 &lt;ul&gt;

@@ -172,7 +172,7 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Public Sub ClearSelectedTerm()
             _ListBox.SelectedIndex = Null.NullInteger
-            _TreeView.ClearSelectedNodes()
+            _TreeView.UnselectAllNodes()
         End Sub
 
 #End Region

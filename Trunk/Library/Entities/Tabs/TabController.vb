@@ -61,21 +61,23 @@ Namespace DotNetNuke.Entities.Tabs
             Dim objmodules As New ModuleController
 
             For Each allTabsModule As ModuleInfo In objmodules.GetAllTabsModules(objTab.PortalID, True)
-                '[DNN-6276]We need to check that the Module is not implicitly deleted.  ie If all instances are on Pages
-                'that are all "deleted" then even if the Module itself is not deleted, we would not expect the 
-                'Module to be added
-                Dim canAdd As Boolean = False
-                For Each allTabsInstance As ModuleInfo In objmodules.GetModuleTabs(allTabsModule.ModuleID)
-                    'Get Tab
-                    Dim tab As TabInfo = New TabController().GetTab(allTabsInstance.TabID, objTab.PortalID, False)
-                    If Not tab.IsDeleted Then
-                        canAdd = True
-                        Exit For
-                    End If
-                Next
+                If objTab.CultureCode = allTabsModule.CultureCode Then
+                    '[DNN-6276]We need to check that the Module is not implicitly deleted.  ie If all instances are on Pages
+                    'that are all "deleted" then even if the Module itself is not deleted, we would not expect the 
+                    'Module to be added
+                    Dim canAdd As Boolean = False
+                    For Each allTabsInstance As ModuleInfo In objmodules.GetModuleTabs(allTabsModule.ModuleID)
+                        'Get Tab
+                        Dim tab As TabInfo = New TabController().GetTab(allTabsInstance.TabID, objTab.PortalID, False)
+                        If Not tab.IsDeleted Then
+                            canAdd = True
+                            Exit For
+                        End If
+                    Next
 
-                If canAdd Then
-                    objmodules.CopyModule(allTabsModule, objTab, Null.NullString, True)
+                    If canAdd Then
+                        objmodules.CopyModule(allTabsModule, objTab, Null.NullString, True)
+                    End If
                 End If
             Next
         End Sub
@@ -326,18 +328,23 @@ Namespace DotNetNuke.Entities.Tabs
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub UpdateChildTabPath(ByVal intTabid As Integer, ByVal portalId As Integer)
-            For Each objtab As TabInfo In GetTabsByPortal(portalId).DescendentsOf(intTabid)
-                Dim oldTabPath As String = objtab.TabPath
-                objtab.TabPath = GenerateTabPath(objtab.ParentId, objtab.TabName)
-                If oldTabPath <> objtab.TabPath Then
-                    provider.UpdateTab(objtab.TabID, objtab.ContentItemId, objtab.PortalID, objtab.VersionGuid, objtab.DefaultLanguageGuid, objtab.LocalizedVersionGuid, _
-                            objtab.TabName, objtab.IsVisible, objtab.DisableLink, _
-                            objtab.ParentId, objtab.IconFile, objtab.IconFileLarge, objtab.Title, objtab.Description, _
-                            objtab.KeyWords, objtab.IsDeleted, objtab.Url, objtab.SkinSrc, objtab.ContainerSrc, _
-                            objtab.TabPath, objtab.StartDate, objtab.EndDate, objtab.RefreshInterval, _
-                            objtab.PageHeadText, objtab.IsSecure, objtab.PermanentRedirect, _
-                            objtab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, objtab.CultureCode)
-                    UpdateTabVersion(objtab.TabID)
+            For Each childTab As TabInfo In GetTabsByPortal(portalId).DescendentsOf(intTabid)
+                Dim oldTabPath As String = childTab.TabPath
+                childTab.TabPath = GenerateTabPath(childTab.ParentId, childTab.TabName)
+                If oldTabPath <> childTab.TabPath Then
+
+                    If childTab.ContentItemId = Null.NullInteger AndAlso childTab.TabID <> Null.NullInteger Then
+                        CreateContentItem(childTab)
+                    End If
+
+                    provider.UpdateTab(childTab.TabID, childTab.ContentItemId, childTab.PortalID, childTab.VersionGuid, childTab.DefaultLanguageGuid, childTab.LocalizedVersionGuid, _
+                            childTab.TabName, childTab.IsVisible, childTab.DisableLink, _
+                            childTab.ParentId, childTab.IconFile, childTab.IconFileLarge, childTab.Title, childTab.Description, _
+                            childTab.KeyWords, childTab.IsDeleted, childTab.Url, childTab.SkinSrc, childTab.ContainerSrc, _
+                            childTab.TabPath, childTab.StartDate, childTab.EndDate, childTab.RefreshInterval, _
+                            childTab.PageHeadText, childTab.IsSecure, childTab.PermanentRedirect, _
+                            childTab.SiteMapPriority, UserController.GetCurrentUserInfo.UserID, childTab.CultureCode)
+                    UpdateTabVersion(childTab.TabID)
 
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("TabID", intTabid.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Services.Log.EventLog.EventLogController.EventLogType.TAB_UPDATED)
@@ -805,6 +812,10 @@ Namespace DotNetNuke.Entities.Tabs
             objTab.Level = afterTab.Level
             objTab.TabOrder = afterTab.TabOrder + 1 ' tabs will be 1,3(afterTabId),4(moveTab),5
 
+            If siblingTabs.Find(Function(t) t.TabID = objTab.TabID) IsNot Nothing Then
+                siblingTabs.Remove(siblingTabs.Find(Function(t) t.TabID = objTab.TabID))
+            End If
+
             siblingTabs.Add(objTab)
 
             'Sort and Update siblings
@@ -826,6 +837,10 @@ Namespace DotNetNuke.Entities.Tabs
             Dim beforeTab As TabInfo = siblingTabs.Find(Function(t) t.TabID = beforeTabId)
             objTab.Level = beforeTab.Level
             objTab.TabOrder = beforeTab.TabOrder - 1 ' tabs will be 1,3(afterTabId),4(moveTab),5
+
+            If siblingTabs.Find(Function(t) t.TabID = objTab.TabID) IsNot Nothing Then
+                siblingTabs.Remove(siblingTabs.Find(Function(t) t.TabID = objTab.TabID))
+            End If
 
             siblingTabs.Add(objTab)
 
@@ -1135,8 +1150,8 @@ Namespace DotNetNuke.Entities.Tabs
             moduleCtrl.CopyModules(originalTab, localizedCopy, True)
 
             'Convert these shallow copies to deep copies
-            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleCtrl.GetTabModules(originalTab.TabID)
-                moduleCtrl.LocalizeModule(kvp.Value)
+            For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleCtrl.GetTabModules(localizedCopy.TabID)
+                moduleCtrl.LocalizeModule(kvp.Value, locale)
             Next
 
             'Add Translator Role
@@ -1207,7 +1222,9 @@ Namespace DotNetNuke.Entities.Tabs
             'Update culture of modules on this page
             Dim moduleCtl As New ModuleController
             For Each kvp As KeyValuePair(Of Integer, ModuleInfo) In moduleCtl.GetTabModules(originalTab.TabID)
-                moduleCtl.LocalizeModule(kvp.Value, locale)
+                kvp.Value.CultureCode = locale.Code
+
+                moduleCtl.UpdateModule(kvp.Value)
             Next
         End Sub
 
@@ -1233,7 +1250,9 @@ Namespace DotNetNuke.Entities.Tabs
 
         Public Sub PublishTabs(ByVal tabs As List(Of TabInfo))
             For Each t As TabInfo In tabs
-                PublishTab(t)
+                If t.IsTranslated Then
+                    PublishTab(t)
+                End If
             Next
         End Sub
 

@@ -21,21 +21,37 @@ Imports System
 
 Namespace DotNetNuke.Common
 
+    ''' <summary>
+    ''' This class handles basic elements about File Items. Is is a basic Get/Set for Value and Text
+    ''' </summary>
     Public Class FileItem
         Private _Value As String
         Private _Text As String
 
+        ''' <summary>
+        ''' Initializes a new instance of the <see cref="FileItem" /> class.
+        ''' </summary>
+        ''' <param name="Value">The value.</param>
+        ''' <param name="Text">The text.</param>
         Public Sub New(ByVal Value As String, ByVal Text As String)
             _Value = Value
             _Text = Text
         End Sub
 
+        ''' <summary>
+        ''' Gets the value.
+        ''' </summary>
+        ''' <value>The value.</value>
         Public ReadOnly Property Value() As String
             Get
                 Return _Value
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets the text.
+        ''' </summary>
+        ''' <value>The text.</value>
         Public ReadOnly Property Text() As String
             Get
                 Return _Text

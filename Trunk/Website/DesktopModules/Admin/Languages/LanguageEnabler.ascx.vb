@@ -200,6 +200,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
                 If Not Page.IsPostBack Then
                     BindDefaultLanguageSelector()
                     BindGrid()
+                    chkBrowser.Checked = Me.ModuleContext.PortalSettings.EnableBrowserLanguage
                 End If
 
                 If Not UserInfo.IsSuperUser Then
@@ -240,7 +241,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected Sub actionButton_Command(ByVal sender As Object, ByVal e As CommandEventArgs) _
             Handles addLanguageButton.Command, createLanguagePackButton.Command, verifyLanguageResourcesButton.Command, _
-                    languageSettingsButton.Command, timeZonesButton.Command
+                    timeZonesButton.Command
 
             Response.Redirect(ModuleContext.EditUrl(e.CommandName), True)
         End Sub
@@ -251,6 +252,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
                     Dim enabledCheckbox As DnnCheckBox = CType(sender, DnnCheckBox)
                     Dim languageId As Integer = Integer.Parse(enabledCheckbox.CommandArgument)
                     Dim locale As Locale = LocaleController.Instance().GetLocale(languageId)
+                    Dim defaultLocale As Locale = LocaleController.Instance.GetDefaultLocale(PortalId)
+                    Dim tabPath As String = ""
 
                     Dim enabledLanguages As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(PortalId)
                     If enabledCheckbox.Enabled Then
@@ -260,10 +263,14 @@ Namespace DotNetNuke.Modules.Admin.Languages
                                 'Add language to portal
                                 Localization.AddLanguageToPortal(PortalId, languageId, True)
 
-                                If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(locale.Code, False).Count = 0 Then
-                                    'Create Localized Pages
+                                If PortalSettings.ContentLocalizationEnabled AndAlso GetLocalizedPages(locale.Code, False).Count <> GetLocalizedPages(defaultLocale.Code, False).Count Then
+                                    'Create Missing Localized Pages
+                                    Dim tab As New TabInfo
                                     For Each t As TabInfo In _TabController.GetCultureTabList(PortalId)
-                                        _TabController.CreateLocalizedCopy(t, locale)
+                                        tab = t
+                                        If _TabController.GetTabsByPortal(PortalId).WithCulture(locale.Code, False).Where(Function(tb) tb.Value.DefaultLanguageGuid = tab.UniqueId).Count < 1 Then
+                                            _TabController.CreateLocalizedCopy(t, locale)
+                                        End If
                                     Next
                                 End If
 
@@ -311,6 +318,12 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                         Dim msg As String = String.Format(Localization.GetString("Localize.Confirm", Me.LocalResourceFile), Localization.GetLocaleName(languge.Code, DisplayType), Localization.GetLocaleName(defaultLocale.Code, DisplayType))
                         localizeButton.OnClientClick = DotNetNuke.Web.UI.Utilities.GetOnClientClickConfirm(localizeButton, msg)
+                        Dim publishButton As ImageButton = gridItem.FindControl("publishButton")
+                        If publishButton IsNot Nothing Then
+                            Dim msgPublish As String = String.Format(Localization.GetString("Publish.Confirm", Me.LocalResourceFile), Localization.GetLocaleName(languge.Code, DisplayType))
+                            msgPublish = msgPublish.Replace("'", "\'")
+                            publishButton.Attributes.Add("onclick", "alert('" & msgPublish & "');")
+                        End If
                     End If
                 End If
             End If
@@ -360,6 +373,15 @@ Namespace DotNetNuke.Modules.Admin.Languages
             End Try
         End Sub
 
+        Protected Sub publishPages(ByVal sender As Object, ByVal e As CommandEventArgs)
+            Dim cultureCode As String = DirectCast(e.CommandArgument, String)
+
+            LocaleController.Instance().PublishLanguage(PortalId, cultureCode, True)
+
+            'Redirect to refresh page (and skinobjects)
+            Response.Redirect(NavigateURL(), True)
+        End Sub
+
         Protected Sub toolTipManager_AjaxUpdate(ByVal sender As Object, ByVal e As Telerik.Web.UI.ToolTipUpdateEventArgs) Handles toolTipManager.AjaxUpdate
             Dim ctrl As Control = Page.LoadControl("~/desktopmodules/admin/languages/EnableLocalizedContent.ascx")
             e.UpdatePanel.ContentTemplateContainer.Controls.Add(ctrl)
@@ -367,6 +389,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
             Dim language As Locale
+
+            PortalController.UpdatePortalSetting(Me.ModuleContext.PortalId, "EnableBrowserLanguage", chkBrowser.Checked.ToString())
 
             ' first check whether or not portal default language has changed
             Dim newDefaultLanguage As String = languagesComboBox.SelectedValue

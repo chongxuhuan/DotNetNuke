@@ -102,6 +102,7 @@ Namespace DotNetNuke.Entities.Portals
         Private _LoginTabId As Integer
         Private _RegisterTabId As Integer
         Private _UserTabId As Integer
+        Private _SearchTabId As Integer
         Private _DefaultLanguage As String
         Private _TimeZoneOffset As Integer
         Private _HomeDirectory As String
@@ -825,6 +826,21 @@ Namespace DotNetNuke.Entities.Portals
         End Property
 
         ''' <summary>
+        ''' Tabid of the Search profile page
+        ''' </summary>
+        ''' <value>TabdId of the Search Results page</value>
+        ''' <returns>TabdId of the Search Results page</returns>
+        ''' <remarks></remarks>
+        <XmlElement("searchtabid")> Public Property SearchTabId() As Integer
+            Get
+                Return _SearchTabId
+            End Get
+            Set(ByVal Value As Integer)
+                _SearchTabId = Value
+            End Set
+        End Property
+
+        ''' <summary>
         ''' Default language for the portal
         ''' </summary>
         ''' <value>Default language of the portal</value>
@@ -938,6 +954,7 @@ Namespace DotNetNuke.Entities.Portals
             LoginTabId = Null.SetNullInteger(dr("LoginTabID"))
             RegisterTabId = Null.SetNullInteger(dr("RegisterTabID"))
             UserTabId = Null.SetNullInteger(dr("UserTabID"))
+            SearchTabId = Null.SetNullInteger(dr("SearchTabID"))
             DefaultLanguage = Null.SetNullString(dr("DefaultLanguage"))
             TimeZoneOffset = Null.SetNullInteger(dr("TimeZoneOffset"))
             AdminTabId = Null.SetNullInteger(dr("AdminTabID"))

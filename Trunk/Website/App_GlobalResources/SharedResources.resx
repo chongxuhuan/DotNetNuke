@@ -1401,4 +1401,7 @@
   <data name="System_Default.Text" xml:space="preserve">
     <value>System Default</value>
   </data>
+  <data name="LanguageNotSelected.Text" xml:space="preserve">
+    <value>You have not selected a preferred locale.  Your preferred locale will therefore default to the site's default locale.</value>
+  </data>
 </root>

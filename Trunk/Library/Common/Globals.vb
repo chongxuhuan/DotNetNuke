@@ -67,63 +67,155 @@ Namespace DotNetNuke.Common
 
 #Region "Public Enums"
 
+        ''' <summary>
+        ''' The values of the enum are used to calculate cache settings throughout the portal.
+        ''' Calculating based on these numbers keeps the scaling linear for all caching.
+        ''' </summary>
         Public Enum PerformanceSettings
-            'The values of the enum are used to calculate
-            'cache settings throughout the portal.
-            'Calculating based on these numbers keeps 
-            'the scaling linear for all caching.
+            ''' No caching
+            ''' </summary>
             NoCaching = 0
+            ''' <summary>
+            ''' VEry light chaching
+            ''' </summary>
             LightCaching = 1
+            ''' <summary>
+            ''' Intermedia/moderate caching
+            ''' </summary>
             ModerateCaching = 3
+            ''' <summary>
+            ''' Maximum caching
+            ''' </summary>
             HeavyCaching = 6
         End Enum
 
+        ''' <summary>
+        ''' Status of upgrade or install
+        ''' </summary>
         Public Enum UpgradeStatus
+            ''' <summary>
+            ''' Upgrade at hand
+            ''' </summary>
             Upgrade
+            ''' <summary>
+            ''' Installation busy
+            ''' </summary>
             Install
+            ''' <summary>
+            ''' Nothign special, just running
+            ''' </summary>
             None
+            ''' <summary>
+            ''' There is something wrong here.
+            ''' </summary>
             [Error]
         End Enum
 
+        ''' <summary>
+        ''' Signals the type or registration that is used for the portal
+        ''' </summary>
         Public Enum PortalRegistrationType
+            ''' <summary>
+            ''' No registration at hand
+            ''' </summary>
             NoRegistration = 0
+            ''' <summary>
+            ''' Only private registration
+            ''' </summary>
             PrivateRegistration = 1
+            ''' <summary>
+            ''' People can register publically
+            ''' </summary>
             PublicRegistration = 2
+            ''' <summary>
+            ''' Public registration with verification
+            ''' </summary>
             VerifiedRegistration = 3
         End Enum
+
 
 #End Region
 
 #Region "Public Constants"
-
+        ''' <summary>
+        ''' Constant for the Role of All users
+        ''' </summary>
         Public Const glbRoleAllUsers As String = "-1"
+        ''' <summary>
+        ''' Constant for the Role of SuperUser
+        ''' </summary>
         Public Const glbRoleSuperUser As String = "-2"
+        ''' <summary>
+        ''' Constant for the Role of Unauthenticated users
+        ''' </summary>
         Public Const glbRoleUnauthUser As String = "-3"
+        ''' <summary>
+        ''' Constant for the No Role
+        ''' </summary>
         Public Const glbRoleNothing As String = "-4"
 
+        ''' <summary>
+        ''' Name of the role of All Users
+        ''' </summary>
         Public Const glbRoleAllUsersName As String = "All Users"
+        ''' <summary>
+        ''' Name of the role of Superusers
+        ''' </summary>
         Public Const glbRoleSuperUserName As String = "Superuser"
+        ''' <summary>
+        ''' Name of the role of Unauthenticated Users
+        ''' </summary>
         Public Const glbRoleUnauthUserName As String = "Unauthenticated Users"
 
+        ''' <summary>
+        ''' Default page for every page
+        ''' </summary>
         Public Const glbDefaultPage As String = "Default.aspx"
+        ''' <summary>
+        ''' Default subfolder in the Portals folder for host based skins
+        ''' </summary>
         Public Const glbHostSkinFolder As String = "_default"
-
+        ''' <summary>
+        ''' Default page for the control panel
+        ''' </summary>
         Public Const glbDefaultControlPanel As String = "Admin/ControlPanel/IconBar.ascx"
+        ''' <summary>
+        ''' Default name of the main content pane
+        ''' </summary>
         Public Const glbDefaultPane As String = "ContentPane"
+        ''' <summary>
+        ''' Image file types that are supported
+        ''' </summary>
         Public Const glbImageFileTypes As String = "jpg,jpeg,jpe,gif,bmp,png,swf"
+        ''' <summary>
+        ''' Default folder for congurations
+        ''' </summary>
         Public Const glbConfigFolder As String = "\Config\"
+        ''' <summary>
+        ''' Default page used for the About
+        ''' </summary>
         Public Const glbAboutPage As String = "about.htm"
+        ''' <summary>
+        ''' Default config file for DotnetNuke
+        ''' </summary>
         Public Const glbDotNetNukeConfig As String = "DotNetNuke.config"
 
-
+        ''' <summary>
+        ''' Name of the application for the Superuser
+        ''' </summary>
         Public Const glbSuperUserAppName As Integer = -1
-
+        ''' <summary>
+        ''' Default extension to be used for protected files
+        ''' </summary>
         Public Const glbProtectedExtension As String = ".resources"
-
+        ''' <summary>
+        ''' RegEx for validation of an email address
+        ''' </summary>
         Public Const glbEmailRegEx As String = "\b[a-zA-Z0-9._%\-+']+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}\b"
-
+        ''' <summary>
+        ''' Code to be used for inserting javascript in a page
+        ''' </summary>
         Public Const glbScriptFormat As String = "<script type=""text/javascript"" src=""{0}"" ></script>"
-
 #End Region
 
 #Region "Private Members"
@@ -152,7 +244,10 @@ Namespace DotNetNuke.Common
 #End Region
 
 #Region "Public Properties"
-
+        ''' <summary>
+        ''' Gets or sets the application path.
+        ''' </summary>
+        ''' <value>The application path.</value>
         Public Property ApplicationPath() As String
             Get
                 Return _ApplicationPath
@@ -162,6 +257,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the application map path.
+        ''' </summary>
+        ''' <value>The application map path.</value>
         Public Property ApplicationMapPath() As String
             Get
                 Return _ApplicationMapPath
@@ -171,12 +270,20 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets the database version.
+        ''' </summary>
+        ''' <value>The database version.</value>
         Public ReadOnly Property DataBaseVersion() As System.Version
             Get
                 Return _DataBaseVersion
             End Get
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the host map path.
+        ''' </summary>
+        ''' <value>The host map path.</value>
         Public Property HostMapPath() As String
             Get
                 Return _HostMapPath
@@ -186,6 +293,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the host path.
+        ''' </summary>
+        ''' <value>The host path.</value>
         Public Property HostPath() As String
             Get
                 Return _HostPath
@@ -195,6 +306,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the install map path.
+        ''' </summary>
+        ''' <value>The install map path.</value>
         Public Property InstallMapPath() As String
             Get
                 Return _InstallMapPath
@@ -204,6 +319,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the install path.
+        ''' </summary>
+        ''' <value>The install path.</value>
         Public Property InstallPath() As String
             Get
                 Return _InstallPath
@@ -213,6 +332,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the name of the IIS app.
+        ''' </summary>
+        ''' <value>The name of the IIS app.</value>
         Public Property IISAppName() As String
             Get
                 Return _IISAppName
@@ -222,6 +345,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the name of the server.
+        ''' </summary>
+        ''' <value>The name of the server.</value>
         Public Property ServerName() As String
             Get
                 Return _ServerName
@@ -231,6 +358,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the operating system version.
+        ''' </summary>
+        ''' <value>The operating system version.</value>
         Public Property OperatingSystemVersion() As System.Version
             Get
                 Return _OperatingSystemVersion
@@ -240,6 +371,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the NET framework version.
+        ''' </summary>
+        ''' <value>The NET framework version.</value>
         Public Property NETFrameworkVersion() As System.Version
             Get
                 Return _NETFrameworkVersion
@@ -249,6 +384,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets or sets the database engine version.
+        ''' </summary>
+        ''' <value>The database engine version.</value>
         Public Property DatabaseEngineVersion() As System.Version
             Get
                 Return _DatabaseEngineVersion
@@ -258,6 +397,10 @@ Namespace DotNetNuke.Common
             End Set
         End Property
 
+        ''' <summary>
+        ''' Gets the Ugrade status.
+        ''' <seealso cref="UpgradeStatus"></seealso></summary>
+        ''' <value>The status.</value>
         Public ReadOnly Property Status() As UpgradeStatus
             Get
                 Return _Status
@@ -333,6 +476,27 @@ Namespace DotNetNuke.Common
         End Function
 
 #End Region
+
+        Private Function GetCultureCode(ByVal TabID As Integer, ByVal IsSuperTab As Boolean, ByVal settings As PortalSettings) As String
+            Dim cultureCode As String = Null.NullString
+            If settings IsNot Nothing Then
+                Dim linkTab As TabInfo
+                Dim controller As New TabController()
+                If IsSuperTab Then
+                    linkTab = controller.GetTab(TabID, Null.NullInteger, False)
+                Else
+                    linkTab = controller.GetTab(TabID, settings.PortalId, False)
+                End If
+                If linkTab IsNot Nothing Then
+                    cultureCode = linkTab.CultureCode
+                End If
+                If String.IsNullOrEmpty(cultureCode) Then
+                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
+                End If
+            End If
+
+            Return cultureCode
+        End Function
 
 #Region "Public Methods"
 
@@ -1063,7 +1227,16 @@ Namespace DotNetNuke.Common
 
 #End Region
 
-        ' format an address on a single line ( ie. Unit, Street, City, Region, Country, PostalCode )
+        ''' <summary>
+        ''' Formats the address on a single line ( ie. Unit, Street, City, Region, Country, PostalCode )
+        ''' </summary>
+        ''' <param name="Unit">The unit.</param>
+        ''' <param name="Street">The street.</param>
+        ''' <param name="City">The city.</param>
+        ''' <param name="Region">The region.</param>
+        ''' <param name="Country">The country.</param>
+        ''' <param name="PostalCode">The postal code.</param>
+        ''' <returns></returns>
         Public Function FormatAddress(ByVal Unit As Object, ByVal Street As Object, ByVal City As Object, ByVal Region As Object, ByVal Country As Object, ByVal PostalCode As Object) As String
 
             Dim strAddress As String = ""
@@ -1106,10 +1279,21 @@ Namespace DotNetNuke.Common
 
         End Function
 
+        ''' <summary>
+        ''' Formats the system.version into the standard format nn.nn.nn
+        ''' </summary>
+        ''' <param name="version">The version.</param>
+        ''' <returns>Formatted  version as string</returns>
         Public Function FormatVersion(ByVal version As System.Version) As String
             Return FormatVersion(version, False)
         End Function
 
+        ''' <summary>
+        ''' Formats a version into the standard format nn.nn.nn
+        ''' </summary>
+        ''' <param name="version">The version to be formatted.</param>
+        ''' <param name="includeBuild">if set to <c>true</c> [include build].</param>
+        ''' <returns>Formatted version as string</returns>
         Public Function FormatVersion(ByVal version As System.Version, ByVal includeBuild As Boolean) As String
             Dim strVersion As String = version.Major.ToString("00") & "." & version.Minor.ToString("00") & "." & version.Build.ToString("00")
             If includeBuild Then
@@ -1118,6 +1302,14 @@ Namespace DotNetNuke.Common
             Return strVersion
         End Function
 
+        ''' <summary>
+        ''' Formats  a version into the standard format nn.nn.nn
+        ''' </summary>
+        ''' <param name="version">The version to be formatted.</param>
+        ''' <param name="fieldFormat">The field format.</param>
+        ''' <param name="fieldCount">The field count.</param>
+        ''' <param name="delimiterCharacter">The delimiter character.</param>
+        ''' <returns>Formatted version as a string</returns>
         Public Function FormatVersion(ByVal version As System.Version, ByVal fieldFormat As String, ByVal fieldCount As Integer, ByVal delimiterCharacter As String) As String
             Dim strVersion As String = ""
             Dim intZero As Integer = 0
@@ -1157,7 +1349,11 @@ Namespace DotNetNuke.Common
             Return strVersion
         End Function
 
-        ' obfuscate sensitive data to prevent collection by robots and spiders and crawlers
+        ''' <summary>
+        ''' Cloaks the text, obfuscate sensitive data to prevent collection by robots and spiders and crawlers
+        ''' </summary>
+        ''' <param name="PersonalInfo">The personal info.</param>
+        ''' <returns>obfuscated sensitive data by hustling ASCII characters</returns>
         Public Function CloakText(ByVal PersonalInfo As String) As String
 
             If Not PersonalInfo Is Nothing Then
@@ -1188,7 +1384,11 @@ Namespace DotNetNuke.Common
 
         End Function
 
-        ' returns a SQL Server compatible date
+        ''' <summary>
+        ''' Gets the medium date.
+        ''' </summary>
+        ''' <param name="strDate">The date.</param>
+        ''' <returns>a SQL Server compatible date</returns>
         Public Function GetMediumDate(ByVal strDate As String) As String
 
             If strDate <> "" Then
@@ -1205,7 +1405,11 @@ Namespace DotNetNuke.Common
 
         End Function
 
-        ' returns a SQL Server compatible date
+        ''' <summary>
+        ''' Gets the short date.
+        ''' </summary>
+        ''' <param name="strDate">The date.</param>
+        ''' <returns>returns a SQL Server compatible date</returns>
         Public Function GetShortDate(ByVal strDate As String) As String
 
             If strDate <> "" Then
@@ -1222,7 +1426,12 @@ Namespace DotNetNuke.Common
 
         End Function
 
-        ' returns a boolean value whether the control is an admin control
+        ''' <summary>
+        ''' Returns a boolean value whether the control is an admin control
+        ''' </summary>
+        ''' <returns>
+        ''' <c>true</c> if is admin control; otherwise, <c>false</c>.
+        ''' </returns>
         Public Function IsAdminControl() As Boolean
 
             ' This is needed to avoid an exception if there is no Context.  This will occur if code is called from the Scheduler
@@ -1232,7 +1441,12 @@ Namespace DotNetNuke.Common
             Return (Not String.IsNullOrEmpty(HttpContext.Current.Request.QueryString("mid"))) OrElse (Not String.IsNullOrEmpty(HttpContext.Current.Request.QueryString("ctl")))
         End Function
 
-        ' returns a boolean value whether the page should display an admin skin
+        ''' <summary>
+        ''' Returns a boolean value whether the page should display an admin skin
+        ''' </summary>
+        ''' <returns>
+        ''' <c>true</c> if is admin skin; otherwise, <c>false</c>.
+        ''' </returns>
         Public Function IsAdminSkin() As Boolean
             Dim _IsAdminSkin As Boolean = Null.NullBoolean
 
@@ -1259,7 +1473,7 @@ Namespace DotNetNuke.Common
         ''' <summary>
         ''' Returns whether the current tab is in EditMode
         ''' </summary>
-        ''' <returns></returns>
+        ''' <returns><c>true</c> if the tab is in Edit mode; otherwise <c>false</c></returns>
         ''' <remarks>
         ''' </remarks>
         ''' <history>
@@ -1275,7 +1489,7 @@ Namespace DotNetNuke.Common
         ''' <summary>
         ''' Returns whether the current tab is in LayoutMode
         ''' </summary>
-        ''' <returns></returns>
+        ''' <returns><c>true</c> if the current tab is in layout mode; otherwise <c>false</c></returns>
         ''' <remarks>
         ''' </remarks>
         ''' <history>
@@ -1287,7 +1501,16 @@ Namespace DotNetNuke.Common
                     PortalController.GetCurrentPortalSettings.UserMode = PortalSettings.Mode.Layout)
         End Function
 
-        ' creates RRS files
+        ''' <summary>
+        ''' Creates the RSS files
+        ''' </summary>
+        ''' <param name="dr">The datareader</param>
+        ''' <param name="TitleField">The title field.</param>
+        ''' <param name="URLField">The URL field.</param>
+        ''' <param name="CreatedDateField">The created date field.</param>
+        ''' <param name="SyndicateField">The syndicate field.</param>
+        ''' <param name="DomainName">Name of the domain.</param>
+        ''' <param name="FileName">Name of the file.</param>
         Public Sub CreateRSS(ByVal dr As IDataReader, ByVal TitleField As String, ByVal URLField As String, ByVal CreatedDateField As String, ByVal SyndicateField As String, ByVal DomainName As String, ByVal FileName As String)
 
             ' Obtain PortalSettings from Current Context
@@ -1421,7 +1644,12 @@ Namespace DotNetNuke.Common
             Return sbBuff.ToString
         End Function
 
-        ' uses recursion to search the control hierarchy for a specific control based on controlname
+        ''' <summary>
+        ''' Uses recursion to search the control hierarchy for a specific control based on controlname.
+        ''' </summary>
+        ''' <param name="objControl">The control object.</param>
+        ''' <param name="strControlName">Name of the control.</param>
+        ''' <returns></returns>
         Public Function FindControlRecursive(ByVal objControl As Control, ByVal strControlName As String) As Control
             If objControl.Parent Is Nothing Then
                 Return Nothing
@@ -1463,7 +1691,10 @@ Namespace DotNetNuke.Common
             Return objCtl
         End Function
 
-        'set focus to any control
+        ''' <summary>
+        ''' Sets focus to any control
+        ''' </summary>
+        ''' <param name="control">The control to set the focus to.</param>
         Public Sub SetFormFocus(ByVal control As Control)
             If Not control.Page Is Nothing And control.Visible Then
                 If control.Page.Request.Browser.EcmaScriptVersion.Major >= 1 Then
@@ -1504,6 +1735,11 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Gets the external request.
+        ''' </summary>
+        ''' <param name="Address">The address.</param>
+        ''' <returns>HttpWebRequest</returns>
         Public Function GetExternalRequest(ByVal Address As String) As HttpWebRequest
             ' Obtain PortalSettings from Current Context
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
@@ -1544,6 +1780,12 @@ Namespace DotNetNuke.Common
             Return objRequest
         End Function
 
+        ''' <summary>
+        ''' Gets the external request.
+        ''' </summary>
+        ''' <param name="Address">The address.</param>
+        ''' <param name="Credentials">The network credentials.</param>
+        ''' <returns>HttpWebRequest</returns>
         Public Function GetExternalRequest(ByVal Address As String, ByVal Credentials As NetworkCredential) As HttpWebRequest
             ' Create the request object
             Dim objRequest As HttpWebRequest = CType(WebRequest.Create(Address), HttpWebRequest)
@@ -1586,6 +1828,10 @@ Namespace DotNetNuke.Common
             Return objRequest
         End Function
 
+        ''' <summary>
+        ''' Deletes the folder recursive, including all subfolders.
+        ''' </summary>
+        ''' <param name="strRoot">The rootfolder to start with.</param>
         Public Sub DeleteFolderRecursive(ByVal strRoot As String)
             If strRoot <> "" Then
                 Dim strFolder As String
@@ -1610,6 +1856,11 @@ Namespace DotNetNuke.Common
             End If
         End Sub
 
+        ''' <summary>
+        ''' Deletes the files recursively, based upon a file filter
+        ''' </summary>
+        ''' <param name="strRoot">The root folder to start with.</param>
+        ''' <param name="filter">The file filter.</param>
         Public Sub DeleteFilesRecursive(ByVal strRoot As String, ByVal filter As String)
             If strRoot <> "" Then
                 Dim strFolder As String
@@ -1638,6 +1889,11 @@ Namespace DotNetNuke.Common
             Return New Dictionary(Of String, String)
         End Function
 
+        ''' <summary>
+        ''' Creates the valid ID.
+        ''' </summary>
+        ''' <param name="inputValue">The input value.</param>
+        ''' <returns>String with a valid ID</returns>
         Public Function CreateValidID(ByVal inputValue As String) As String
             Dim returnValue As String
             'Regex is expensive so we will cache the results in a lookup table
@@ -1667,14 +1923,32 @@ Namespace DotNetNuke.Common
             Return returnValue
         End Function
 
+        ''' <summary>
+        ''' Cleans the name of the file.
+        ''' </summary>
+        ''' <param name="FileName">Name of the file.</param>
+        ''' <returns>Cleaned file name</returns>
         Public Function CleanFileName(ByVal FileName As String) As String
             Return CleanFileName(FileName, "", "")
         End Function
 
+        ''' <summary>
+        ''' Cleans the name of the file of invalid filename characters
+        ''' </summary>
+        ''' <param name="FileName">Name of the file.</param>
+        ''' <param name="BadChars">The string of bad characters.</param>
+        ''' <returns>Cleaned file name</returns>
         Public Function CleanFileName(ByVal FileName As String, ByVal BadChars As String) As String
             Return CleanFileName(FileName, BadChars, "")
         End Function
 
+        ''' <summary>
+        ''' Cleans the name of the file from invalid characters.
+        ''' </summary>
+        ''' <param name="FileName">Name of the file.</param>
+        ''' <param name="BadChars">The string of bad chars.</param>
+        ''' <param name="ReplaceChar">The char to use for replacement.</param>
+        ''' <returns></returns>
         Public Function CleanFileName(ByVal FileName As String, ByVal BadChars As String, ByVal ReplaceChar As String) As String
             Dim strFileName As String = FileName
 
@@ -1717,6 +1991,61 @@ Namespace DotNetNuke.Common
                 strName = strName.Replace(strBadChars.Substring(intCounter, 1), "")
             Next intCounter
             Return strName
+        End Function
+
+        Private Function ValidClassLookupCallback(ByVal cacheItemArgs As CacheItemArgs) As Object
+            Return New Dictionary(Of String, String)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' CreateValidClass - removes characters from Module/Tab names which are invalid  
+        ''' for use as an XHTML class attribute / CSS class selector value and optionally
+        ''' prepends the letter 'A' if the first character is not alphabetic.  This differs 
+        ''' from <see>CreateValidID</see> which replaces invalid characters with an underscore
+        ''' and replaces the first letter with an 'A' if it is not alphabetic
+        ''' </summary>
+        ''' <param name="inputValue">String to use to create the class value</param>
+        ''' <param name="validateFirstChar">If set true, validate whether the first character
+        ''' is alphabetic and, if not, prepend the letter 'A' to the returned value</param>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <returns>A string suitable for use as a class value</returns>
+        ''' <history>
+        ''' 	[jenni]	27/10/2010	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function CreateValidClass(ByVal inputValue As String, ByVal validateFirstChar As Boolean) As String
+            Dim returnValue As String
+            'Regex is expensive so we will cache the results in a lookup table
+            Dim validClassLookup As Dictionary(Of String, String) = CBO.GetCachedObject(Of Dictionary(Of String, String))(New CacheItemArgs("ValidClassLookup", 200, Caching.CacheItemPriority.NotRemovable), AddressOf ValidClassLookupCallback)
+
+            If validClassLookup.ContainsKey(inputValue) Then
+                'Return value
+                returnValue = validClassLookup(inputValue)
+            Else
+                'Create Valid Class
+                ' letters ([a-zA-Z]), digits ([0-9]), hyphens ("-") and underscores ("_") are valid in class values
+                ' Remove all characters that aren't in the list
+                Dim invalidCharacters As New Regex("[^A-Z0-9_-]", RegexOptions.Compiled Or RegexOptions.CultureInvariant Or RegexOptions.IgnoreCase)
+                returnValue = invalidCharacters.Replace(inputValue, String.Empty)
+
+                ' If we're asked to validate the first character...
+                If (validateFirstChar) Then
+                    ' classes should begin with a letter ([A-Za-z])' 
+                    ' prepend a starting non-letter character with an A
+                    Dim invalidInitialCharacters As New Regex("^[^A-Z]", RegexOptions.Compiled Or RegexOptions.CultureInvariant Or RegexOptions.IgnoreCase)
+                    If (invalidCharacters.IsMatch(returnValue)) Then
+                        returnValue = "A" & returnValue
+                    End If
+                End If
+
+                'put in Dictionary
+                validClassLookup(inputValue) = returnValue
+            End If
+
+            'Return Value
+            Return returnValue
         End Function
 
 #Region "Url Methods"
@@ -2113,17 +2442,8 @@ Namespace DotNetNuke.Common
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean) As String
-            Dim cultureCode As String = Null.NullString
             Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
-            If _portalSettings IsNot Nothing Then
-                Dim linkTab As TabInfo = New TabController().GetTab(TabID, _portalSettings.PortalId, False)
-                If linkTab IsNot Nothing Then
-                    cultureCode = linkTab.CultureCode
-                End If
-                If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
-                End If
-            End If
+            Dim cultureCode As String = GetCultureCode(TabID, IsSuperTab, _portalSettings)
             Return NavigateURL(TabID, IsSuperTab, _portalSettings, Null.NullString, cultureCode, Nothing)
         End Function
 
@@ -2177,21 +2497,8 @@ Namespace DotNetNuke.Common
 
         <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
         Public Function NavigateURL(ByVal TabID As Integer, ByVal IsSuperTab As Boolean, ByVal settings As PortalSettings, ByVal ControlKey As String, ByVal ParamArray AdditionalParameters As String()) As String
-
-            Dim cultureCode As String = Null.NullString
-
-            If (settings IsNot Nothing) Then
-                Dim linkTab As TabInfo = New TabController().GetTab(TabID, settings.PortalId, False)
-                If linkTab IsNot Nothing Then
-                    cultureCode = linkTab.CultureCode
-                End If
-                If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
-                End If
-            End If
-            
+            Dim cultureCode As String = GetCultureCode(TabID, IsSuperTab, settings)
             Return NavigateURL(TabID, IsSuperTab, settings, ControlKey, cultureCode, AdditionalParameters)
-
         End Function
 
         ''' <summary>
@@ -2234,7 +2541,11 @@ Namespace DotNetNuke.Common
             Dim objTab As TabInfo = Nothing
 
             If (settings IsNot Nothing) Then
-                objTab = controller.GetTab(TabID, settings.PortalId, False)
+                If IsSuperTab Then
+                    objTab = controller.GetTab(TabID, Null.NullInteger, False)
+                Else
+                    objTab = controller.GetTab(TabID, settings.PortalId, False)
+                End If
             End If
 
             'only add language to url if more than one locale is enabled
@@ -2364,6 +2675,11 @@ Namespace DotNetNuke.Common
 
 #End Region
 
+        ''' <summary>
+        ''' Encodes reserved HTML characters into HTMLencoded strings
+        ''' </summary>
+        ''' <param name="QueryString">The query string.</param>
+        ''' <returns>Cleaned and where needed encoded query string</returns>
         Public Function EncodeReservedCharacters(ByVal QueryString As String) As String
             QueryString = QueryString.Replace("$", "%24")
             QueryString = QueryString.Replace("&", "%26")
@@ -2379,6 +2695,11 @@ Namespace DotNetNuke.Common
             Return QueryString
         End Function
 
+        ''' <summary>
+        ''' Converts a date to a string.
+        ''' </summary>
+        ''' <param name="DateValue">The date value.</param>
+        ''' <returns>String in a valid date format (s)</returns>
         Public Function DateToString(ByVal DateValue As DateTime) As String
             Try
                 If Not Null.IsNull(DateValue) Then
@@ -2391,6 +2712,12 @@ Namespace DotNetNuke.Common
             End Try
         End Function
 
+        ''' <summary>
+        ''' Gets the hash value.
+        ''' </summary>
+        ''' <param name="HashObject">The hash object.</param>
+        ''' <param name="DefaultValue">The default value.</param>
+        ''' <returns>String with a hash value</returns>
         Public Function GetHashValue(ByVal HashObject As Object, ByVal DefaultValue As String) As String
             If Not HashObject Is Nothing Then
                 If Convert.ToString(HashObject) <> "" Then
@@ -2471,6 +2798,11 @@ Namespace DotNetNuke.Common
 
 #End Region
 
+        ''' <summary>
+        ''' Gets the name of the role.
+        ''' </summary>
+        ''' <param name="RoleID">The role ID.</param>
+        ''' <returns>String with the name of the role</returns>
         Public Function GetRoleName(ByVal RoleID As Integer) As String
 
             If Convert.ToString(RoleID) = glbRoleAllUsers Then
@@ -2546,6 +2878,11 @@ Namespace DotNetNuke.Common
             Return strTabPath
         End Function
 
+        ''' <summary>
+        ''' Gets the help text.
+        ''' </summary>
+        ''' <param name="moduleControlId">The module control id.</param>
+        ''' <returns>The help text as a string</returns>
         Public Function GetHelpText(ByVal moduleControlId As Integer) As String
             Dim helpText As String = Null.NullString
             Dim objModuleControl As ModuleControlInfo = ModuleControlController.GetModuleControl(moduleControlId)
@@ -2559,6 +2896,12 @@ Namespace DotNetNuke.Common
             Return helpText
         End Function
 
+        ''' <summary>
+        ''' Gets the on line help.
+        ''' </summary>
+        ''' <param name="HelpUrl">The help URL.</param>
+        ''' <param name="moduleConfig">The module config.</param>
+        ''' <returns>String with the URL of the on line help</returns>
         Public Function GetOnLineHelp(ByVal HelpUrl As String, ByVal moduleConfig As ModuleInfo) As String
             Dim isAdminModule As Boolean = moduleConfig.DesktopModule.IsAdmin
             Dim ctlString As String = CType(HttpContext.Current.Request.QueryString("ctl"), String)
@@ -2574,6 +2917,11 @@ Namespace DotNetNuke.Common
             Return HelpUrl
         End Function
 
+        ''' <summary>
+        ''' Validates the login tab ID.
+        ''' </summary>
+        ''' <param name="tabId">The tab id.</param>
+        ''' <returns><c>true</c> if the tab is has a login module; otherwise <c>false</c></returns>
         Public Function ValidateLoginTabID(ByVal tabId As Integer) As Boolean
             Dim hasAccountModule As Boolean = Null.NullBoolean
             For Each objModule As ModuleInfo In New ModuleController().GetTabModules(tabId).Values

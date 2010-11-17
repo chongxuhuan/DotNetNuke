@@ -81,7 +81,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -101,7 +101,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -120,7 +120,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_AddVocabulary_Sets_ScopeId_To_DbNull_If_Negative_1()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.ScopeId = Null.NullInteger;
@@ -158,7 +158,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_InValidVocabularyId;
@@ -182,7 +182,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_DeleteVocabularyId;
@@ -210,7 +210,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetVocabularies_Returns_Reader_Of_All_The_Vocabulary_Records()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getVocabularies);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getVocabularies);
 
             DataService ds = new DataService();
 
@@ -240,7 +240,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_InValidVocabularyId;
@@ -277,7 +277,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.VocabulariesTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateVocabulary);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_UpdateVocabularyId;

@@ -5,12 +5,6 @@
 		<td class="SubHead" width="150" valign="top"><dnn:label id="plReplaceTokens" controlname="chkReplaceTokens" runat="server" /></td>
 		<td><asp:CheckBox ID="chkReplaceTokens" runat="server" CssClass="NormalTextBox" Checked="false" /></td>
 	</tr> 
-	<tr id="rowWorkflow" runat="server" visible="false">
-	    <td>&nbsp;</td>
-	    <td>
-            <asp:linkbutton id="cmdWorkflow" runat="server" class="CommandButton" resourcekey="cmdWorkflow" borderstyle="none" text="Manage Workflows"></asp:linkbutton>
-	    </td>
-	</tr>
 	<tr>
 		<td class="SubHead" width="150" valign="top"><dnn:label id="plWorkflow" controlname="cboWorkflow" runat="server" Text="Workflow" suffix=":" /></td>
 		<td valign="top">

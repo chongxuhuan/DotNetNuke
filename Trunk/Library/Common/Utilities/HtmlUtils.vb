@@ -23,6 +23,7 @@ Imports System.Web
 Imports System.IO
 Imports DotNetNuke.Services.Upgrade
 Imports System.Text.RegularExpressions
+Imports System.Text
 
 Namespace DotNetNuke.Common.Utilities
 
@@ -43,7 +44,7 @@ Namespace DotNetNuke.Common.Utilities
     Public Class HtmlUtils
 
 
-        Private Shared HtmlDetectionRegex As New Regex("^\s*<\w*(.*\s*)*\w?>\s*$", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+        Private Shared HtmlDetectionRegex As New Regex("<(.*\s*)>", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -79,6 +80,37 @@ Namespace DotNetNuke.Common.Utilities
             Return HTML
 
         End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' CleanWithTagInfo removes unspecified HTML Tags, Entities (and optionally any punctuation) from a string.
+        ''' </summary>
+        ''' <param name="HTML"></param>
+        ''' <param name="RemovePunctuation"></param>
+        ''' <returns>The cleaned up string</returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   09/02/2010   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function CleanWithTagInfo(ByVal HTML As String, ByVal TagsFilter As String, ByVal RemovePunctuation As Boolean) As String
+            'First remove unspecified HTML Tags ("<....>")
+            HTML = StripUnspecifiedTags(HTML, TagsFilter, True)
+
+            'Second replace any HTML entities (&nbsp; &lt; etc) through their char symbol
+            HTML = System.Web.HttpUtility.HtmlDecode(HTML)
+
+            'Thirdly remove any punctuation
+            If RemovePunctuation Then
+                HTML = StripPunctuation(HTML, True)
+            End If
+
+            'Finally remove extra whitespace
+            HTML = StripWhiteSpace(HTML, True)
+
+            Return HTML
+        End Function
+
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -313,6 +345,41 @@ Namespace DotNetNuke.Common.Utilities
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' StripUnspecifiedTags removes the HTML tags from the content -- leaving behind the info 
+        ''' for the specified HTML tags.
+        ''' </summary>
+        ''' <param name="HTML"></param>
+        ''' <param name="RetainSpace"></param>
+        ''' <returns>The cleaned up string</returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   09/02/2010   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function StripUnspecifiedTags(ByVal HTML As String, ByVal SpecifiedTags As String, ByVal RetainSpace As Boolean) As String
+            Dim result As StringBuilder = New StringBuilder
+
+            'Set up Replacement String
+            Dim RepString As String
+            If RetainSpace Then
+                RepString = " "
+            Else
+                RepString = ""
+            End If
+
+            'Stripped HTML
+            result.Append(System.Text.RegularExpressions.Regex.Replace(HTML, "<[^>]*>", RepString))
+
+            'Adding Tag info from specified tags
+            For Each m As System.Text.RegularExpressions.Match In System.Text.RegularExpressions.Regex.Matches(HTML, "(?<=(" + SpecifiedTags + ")=)""(?<a>.*?)""")
+                If m.Value.Length > 0 Then result.Append(" " + m.Value)
+            Next
+            
+            Return result.ToString
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' StripPunctuation removes the Punctuation from the content
         ''' </summary>
         ''' <remarks>
@@ -352,8 +419,8 @@ Namespace DotNetNuke.Common.Utilities
                 retHTML = afterRegEx.Replace(retHTML, RepString)
             End While
 
-            ' Return modified string
-            Return retHTML
+            ' Return modified string after trimming leading and ending quotation marks
+            Return retHTML.Trim(CChar(""""))
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -432,8 +499,6 @@ Namespace DotNetNuke.Common.Utilities
             Return HtmlDetectionRegex.IsMatch(text)
 
         End Function
-
-
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

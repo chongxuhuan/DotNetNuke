@@ -1216,11 +1216,9 @@ Namespace DotNetNuke.Common.Utilities
         ''' Iterates items in a IDictionary object and generates XML nodes
         ''' </summary>
         ''' <param name="dictionary">The IDictionary to iterate</param>
-        ''' <param name="xmlDocument">The XML document the node should be added to</param>
-        ''' <param name="rootNode">The node to append the new nodes to</param>
+        ''' <param name="document">The XML document the node should be added to</param>
+        ''' <param name="targetPath">The node to append the new nodes to</param>
         ''' <param name="elementName">The name of the new element created</param>
-        ''' <param name="keyElementName">Element name for Keys</param>
-        ''' <param name="valueElementName">Element name for Value</param>
         ''' <remarks></remarks>
         ''' <history>
         '''		[jlucarino]	09/18/2009	created

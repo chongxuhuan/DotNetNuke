@@ -306,6 +306,17 @@ Namespace DotNetNuke.Services.Log.EventLog
                     HtmlUtils.WriteFooter(response)
                     response.End()
                 End If
+            Catch exc As SqlException
+                If Not HttpContext.Current Is Nothing Then
+                    Dim response As HttpResponse = HttpContext.Current.Response
+                    HtmlUtils.WriteHeader(response, "SQL Exception")
+
+                    Dim strMessage As String = DotNetNuke.Common.Utilities.SqlUtils.TranslateSQLException(exc)
+                    HtmlUtils.WriteError(response, FilePath, strMessage)
+
+                    HtmlUtils.WriteFooter(response)
+                    response.End()
+                End If
             Catch exc As Exception
                 If Not HttpContext.Current Is Nothing Then
                     Dim response As HttpResponse = HttpContext.Current.Response

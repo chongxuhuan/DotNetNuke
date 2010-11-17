@@ -188,7 +188,7 @@ Namespace DotNetNuke.Modules.Admin.FileManager
                         FolderItem.Text = Localization.GetString("PortalRoot", Me.LocalResourceFile)
                     End If
                 Else
-                    FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.FolderPath)
+                    FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.DisplayPath)
                 End If
                 FolderItem.Value = folder.FolderPath
                 ddlFolders.Items.Add(FolderItem)
@@ -341,7 +341,7 @@ Namespace DotNetNuke.Modules.Admin.FileManager
                 If phPaLogs.Controls.Count > 0 Then
                     tblLogs.Visible = True
                 ElseIf strMessage = "" Then
-                    Response.Redirect(ReturnURL(), True)
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(Me, String.Format(Localization.GetString("FileUploadSuccess", Me.LocalResourceFile), strFileName), Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
                 Else
                     lblMessage.Text = strMessage
                 End If

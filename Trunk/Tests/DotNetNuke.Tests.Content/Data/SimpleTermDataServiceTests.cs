@@ -80,7 +80,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addSimpleTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addSimpleTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_InValidVocabularyId);
 
@@ -95,7 +95,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addSimpleTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addSimpleTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
 
@@ -113,7 +113,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_AddSimpleTerm_Returns_Correct_Id_On_Valid_Term()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addSimpleTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addSimpleTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
 
@@ -136,7 +136,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
             term.TermId = Constants.TERM_InValidTermId;
@@ -159,7 +159,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
             term.TermId = Constants.TERM_DeleteTermId;
@@ -187,7 +187,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetTerm_Returns_Empty_Reader_On_InValid_Id()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getTerm);
 
             DataService ds = new DataService();
 
@@ -205,7 +205,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetTerm_Returns_Reader_Of_The_Term_On_Valid_Id()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getTerm);
 
             DataService ds = new DataService();
 
@@ -234,7 +234,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetTermsByVocabulary_Returns_Empty_Reader_On_InValid_VocabularyId()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getTermsByVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getTermsByVocabulary);
 
             DataService ds = new DataService();
 
@@ -252,7 +252,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetTermsByVocabulary_Returns_Reader_Of_The_Terms_On_Valid_Id()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getTermsByVocabulary);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getTermsByVocabulary);
 
             DataService ds = new DataService();
 
@@ -274,7 +274,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_UpdateSimpleTerm_Throws_On_InValid_VocabularyId()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_InValidVocabularyId);
             term.TermId = Constants.TERM_UpdateTermId;
@@ -292,7 +292,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
             term.TermId = Constants.TERM_InValidTermId;
@@ -327,7 +327,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateTerm);
 
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
             term.TermId = Constants.TERM_UpdateTermId;

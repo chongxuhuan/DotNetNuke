@@ -77,7 +77,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_InValidVocabularyId,
                                                                       Constants.TERM_ValidParentTermId);
@@ -93,7 +93,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_ValidVocabularyId,
                                                                       Constants.TERM_InValidParentTermId);
@@ -109,7 +109,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = new Term(4)
                             {
@@ -139,7 +139,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = new Term(4)
                             {
@@ -168,7 +168,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = new Term(2)
                             {
@@ -206,7 +206,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = new Term(2)
                             {
@@ -244,7 +244,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addHeirarchicalTerm);
 
             Term term = new Term(2)
                             {
@@ -286,7 +286,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteHeirarchicalTerm);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_ValidVocabularyId,
                                                                       Constants.TERM_ValidParentTermId);
@@ -310,7 +310,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteHeirarchicalTerm);
 
             int termId = 7;
             Term term = new Term(2)
@@ -346,7 +346,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_DeleteHeirarchicalTerm_Does_Not_Modify_Terms_From_Other_Vocabularies()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteHeirarchicalTerm);
 
             Term term = new Term(3)
                             {
@@ -376,7 +376,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteHeirarchicalTerm);
 
             int termId = 6;
             Term term = new Term(2)
@@ -416,7 +416,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_UpdateHeirarchicalTerm_Throws_On_Invalid_VocabularyId()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_InValidVocabularyId,
                                                                       Constants.TERM_ValidParentTermId);
@@ -435,7 +435,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = ContentTestHelper.CreateValidHeirarchicalTerm(Constants.VOCABULARY_ValidVocabularyId,
                                                                       Constants.TERM_ValidParentTermId);
@@ -473,7 +473,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = new Term(4)
                             {
@@ -507,7 +507,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = new Term(3)
                             {
@@ -541,7 +541,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = new Term(2)
                             {
@@ -579,7 +579,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, ContentDataTestHelper.TermsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, updateHeirarchicalTerm);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), updateHeirarchicalTerm);
 
             Term term = new Term(2)
                             {

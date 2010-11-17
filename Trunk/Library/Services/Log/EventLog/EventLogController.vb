@@ -28,6 +28,7 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Web
 Imports System.Xml.Serialization
+Imports System.Xml
 
 Namespace DotNetNuke.Services.Log.EventLog
 
