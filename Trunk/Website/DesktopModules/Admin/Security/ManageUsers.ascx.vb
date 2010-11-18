@@ -895,12 +895,8 @@ Namespace DotNetNuke.Modules.Admin.Users
 
                 Dim localeProperty As ProfilePropertyDefinition = User.Profile.GetProperty("PreferredLocale")
                 If localeProperty.IsDirty Then
-                    'store preferredlocale in cookie, if none specified set to portal default.
-                    If User.Profile.PreferredLocale = String.Empty Then
-                        Localization.SetLanguage(PortalController.GetPortalDefaultLanguage(User.PortalID))
-                    Else
-                        Localization.SetLanguage(User.Profile.PreferredLocale)
-                    End If
+                    'store preferredlocale in cookie
+                    Localization.SetLanguage(User.Profile.PreferredLocale)
                 End If
             End If
 

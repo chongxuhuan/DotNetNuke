@@ -123,32 +123,56 @@
   <data name="plPublish.Help" xml:space="preserve">
     <value>Indicate if the content is ready for publishing</value>
   </data>
+  <data name="dshReview.Text" xml:space="preserve">
+    <value>Review Content</value>
+  </data>
+  <data name="plComment.Text" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="plComment.Help" xml:space="preserve">
+    <value>Enter a comment related to your review of the content.</value>
+  </data>
+  <data name="cmdApprove.Text" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="cmdReject.Text" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectMessage.Text" xml:space="preserve">
+    <value>You Must Enter A Comment</value>
+  </data>
   <data name="dshHistory.Text" xml:space="preserve">
     <value>Item History</value>
   </data>
-  <data name="plPreviewVersion.Text" xml:space="preserve">
+  <data name="plVersion.Text" xml:space="preserve">
     <value>Version</value>
   </data>
-  <data name="plPreviewVersion.Help" xml:space="preserve">
+  <data name="plVersion.Help" xml:space="preserve">
     <value>Displays the content version number</value>
   </data>
-  <data name="plPreviewWorkflowInUse.Text" xml:space="preserve">
-    <value>Workflow Used</value>
+  <data name="plWorkflow.Text" xml:space="preserve">
+    <value>Workflow</value>
   </data>
-  <data name="plPreviewWorkflowInUse.Help" xml:space="preserve">
-    <value>The name of the workflow configuration that this module is currently using.</value>
+  <data name="plWorkflow.Help" xml:space="preserve">
+    <value>Displays the workflow which is currently active</value>
   </data>
-  <data name="lblPreviewWorkflowState.Text" xml:space="preserve">
+  <data name="plState.Text" xml:space="preserve">
     <value>State</value>
   </data>
-  <data name="plWorkflowState.Help" xml:space="preserve">
+  <data name="plState.Help" xml:space="preserve">
     <value>Displays the current state of the content</value>
   </data>
   <data name="Date.Header" xml:space="preserve">
     <value>Date</value>
   </data>
+  <data name="Updated.Header" xml:space="preserve">
+    <value>Updated By</value>
+  </data>
   <data name="State.Header" xml:space="preserve">
     <value>State</value>
+  </data>
+  <data name="Approved.Header" xml:space="preserve">
+    <value>Approved</value>
   </data>
   <data name="dshVersions.Text" xml:space="preserve">
     <value>Version History</value>
@@ -163,7 +187,7 @@
     <value>Rollback Content To This Version</value>
   </data>
   <data name="dshPreview.Text" xml:space="preserve">
-    <value>Preview</value>
+    <value>Preview Content</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;P&gt;The Text/HTML Module renders plain text, rich text or HTML. Five different editing views are available: &lt;/P&gt;
@@ -182,6 +206,9 @@
   </data>
   <data name="cmdPreview.Text" xml:space="preserve">
     <value>Preview</value>
+  </data>
+  <data name="cmdReview.Text" xml:space="preserve">
+    <value>Review</value>
   </data>
   <data name="cmdSave.Text" xml:space="preserve">
     <value>Save</value>
@@ -209,62 +236,5 @@
   </data>
   <data name="dshMaster.Text" xml:space="preserve">
     <value>Master Language Version</value>
-  </data>
-  <data name="chkPublish.Text" xml:space="preserve">
-    <value>Publish Changes?</value>
-  </data>
-  <data name="plActionOnSave.Help" xml:space="preserve">
-    <value>Action the system should take in addition to saving the module content when 'Save' is clicked.</value>
-  </data>
-  <data name="plCurrentWorkflowInUse.Help" xml:space="preserve">
-    <value>The current workflow being used by this module.</value>
-  </data>
-  <data name="plCurrentWorkflowState.Help" xml:space="preserve">
-    <value>State of the workflow used by this module.</value>
-  </data>
-  <data name="plMaxVersions.Help" xml:space="preserve">
-    <value>The maximum versions of versions that are maintained for any html content.</value>
-  </data>
-  <data name="plPreviewWorkflowState.Help" xml:space="preserve">
-    <value>The workflow state of the content displayed.</value>
-  </data>
-  <data name="Delete.Text" xml:space="preserve">
-    <value>Delete This Version</value>
-  </data>
-  <data name="cmdCancelSubmit.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="cmdCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="EditPreviewState.Text" xml:space="preserve">
-    <value>Edit Preview</value>
-  </data>
-  <data name="plActionOnSave.Text" xml:space="preserve">
-    <value>On Save</value>
-  </data>
-  <data name="plCurrentWorkflowInUse.Text" xml:space="preserve">
-    <value>Workflow in Use</value>
-  </data>
-  <data name="plCurrentWorkflowState.Text" xml:space="preserve">
-    <value>Workflow State</value>
-  </data>
-  <data name="plMaxVersions.Text" xml:space="preserve">
-    <value>Maximum Number Of Versions</value>
-  </data>
-  <data name="plPreviewWorkflowState.Text" xml:space="preserve">
-    <value>Workflow State</value>
-  </data>
-  <data name="dshCurrentContent.Text" xml:space="preserve">
-    <value>Current Content</value>
-  </data>
-  <data name="DeleteVersion.Confirm" xml:space="preserve">
-    <value>Are you sure you wish to permanently delete version [VERSION] ([STATE]) that was created on [DATECREATED] by [USERNAME] ?</value>
-  </data>
-  <data name="plCurrentWorkVersion.Help" xml:space="preserve">
-    <value>Displays the content version number</value>
-  </data>
-  <data name="plCurrentWorkVersion.Text" xml:space="preserve">
-    <value>Version</value>
   </data>
 </root>

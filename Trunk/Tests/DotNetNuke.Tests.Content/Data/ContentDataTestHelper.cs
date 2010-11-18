@@ -17,7 +17,6 @@
 // ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // ' DEALINGS IN THE SOFTWARE.
 // '
-using System.Configuration;
 using System.Data.SqlClient;
 using DotNetNuke.Tests.Data;
 
@@ -38,15 +37,9 @@ namespace DotNetNuke.Tests.Content.Data
         public static string VocabularyTypesTableName = "Taxonomy_VocabularyTypes";
         private static string virtualScriptFilePath = "Library\\Entities\\Content\\Data\\Scripts";
 
-        public static string VirtualScriptRootPath 
-        {
-            get { return ConfigurationManager.AppSettings["VirtualScriptRootPath"]; }
-        }
-
-
         public static void AddDataToTables()
         {
-            string sqlScript = DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), SetupScript);
+            string sqlScript = DataUtil.GetSqlScript(virtualScriptFilePath, SetupScript);
 
             // Connect to the database to add data to the tables
             using (SqlConnection connection = new SqlConnection(DataTestHelper.ConnectionString))
@@ -66,49 +59,49 @@ namespace DotNetNuke.Tests.Content.Data
 
                 //Create VocabularyTypes Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath,
                                                             "\\Tables\\" + VocabularyTypesTableName),
                                       VocabularyTypesTableName);
 
                 //Create ContentTypes Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + ContentTypesTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentTypesTableName),
                                       ContentTypesTableName);
 
                 //Create ScopeTypes Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + ScopeTypesTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ScopeTypesTableName),
                                       ScopeTypesTableName);
 
                 //Create Vocabularies Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + VocabulariesTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + VocabulariesTableName),
                                       VocabulariesTableName);
 
                 //Create Terms Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + TermsTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + TermsTableName),
                                       TermsTableName);
 
                 //Create ContentItems Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + ContentItemsTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentItemsTableName),
                                       ContentItemsTableName);
 
                 //Create MetaData Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + MetaDataTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + MetaDataTableName),
                                       MetaDataTableName);
 
                 //Create ContentMetaData Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath,
                                                             "\\Tables\\" + ContentMetaDataTableName),
                                       ContentMetaDataTableName);
 
                 //Create Tags Table
                 DataUtil.CreateObject(connection,
-                                      DataUtil.GetSqlScript(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), "\\Tables\\" + ContentTagsTableName),
+                                      DataUtil.GetSqlScript(virtualScriptFilePath, "\\Tables\\" + ContentTagsTableName),
                                       ContentTagsTableName);
             }
         }

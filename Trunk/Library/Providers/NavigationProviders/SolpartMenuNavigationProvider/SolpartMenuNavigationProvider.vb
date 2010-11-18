@@ -105,14 +105,14 @@ Namespace DotNetNuke.NavigationControl
 			Get
 				Select Case Menu.MenuAlignment.ToLower
 					Case "left"
-                        Return Modules.NavigationProvider.NavigationProvider.Alignment.Left
+						Return Modules.NavigationProvider.NavigationProvider.Alignment.Left
 					Case "right"
 						Return Modules.NavigationProvider.NavigationProvider.Alignment.Right
 					Case "center"
 						Return Modules.NavigationProvider.NavigationProvider.Alignment.Center
-                    Case Else
-                        Return Modules.NavigationProvider.NavigationProvider.Alignment.Justify
-                End Select
+					Case "justify"
+						Return Modules.NavigationProvider.NavigationProvider.Alignment.Justify
+				End Select
 			End Get
 			Set(ByVal Value As Modules.NavigationProvider.NavigationProvider.Alignment)
 				Select Case Value
@@ -122,9 +122,9 @@ Namespace DotNetNuke.NavigationControl
 						Menu.MenuAlignment = "Right"
 					Case Modules.NavigationProvider.NavigationProvider.Alignment.Center
 						Menu.MenuAlignment = "Center"
-                    Case Else
-                        Menu.MenuAlignment = "Justify"
-                End Select
+					Case Modules.NavigationProvider.NavigationProvider.Alignment.Justify
+						Menu.MenuAlignment = "Justify"
+				End Select
 			End Set
 		End Property
 
@@ -138,20 +138,22 @@ Namespace DotNetNuke.NavigationControl
 		End Property
 
 		Public Overrides Property ControlOrientation() As Modules.NavigationProvider.NavigationProvider.Orientation
-            Get
-                If Menu.Display.ToLower = "horizontal" Then
-                    Return Modules.NavigationProvider.NavigationProvider.Orientation.Horizontal
-                Else
-                    Return Modules.NavigationProvider.NavigationProvider.Orientation.Vertical
-                End If
-            End Get
+			Get
+				Select Case Menu.Display.ToLower
+					Case "horizontal"
+						Return Modules.NavigationProvider.NavigationProvider.Orientation.Horizontal
+					Case "vertical"
+						Return Modules.NavigationProvider.NavigationProvider.Orientation.Vertical
+				End Select
+			End Get
 			Set(ByVal Value As Modules.NavigationProvider.NavigationProvider.Orientation)
-                If Value = Modules.NavigationProvider.NavigationProvider.Orientation.Horizontal Then
-                    Menu.Display = "Horizontal"
-                Else
-                    Menu.Display = "Vertical"
-                End If
-            End Set
+				Select Case Value
+					Case Modules.NavigationProvider.NavigationProvider.Orientation.Horizontal
+						Menu.Display = "Horizontal"
+					Case Modules.NavigationProvider.NavigationProvider.Orientation.Vertical
+						Menu.Display = "Vertical"
+				End Select
+			End Set
 		End Property
 
 		Public Overrides Property CSSIndicateChildSub() As String
@@ -484,9 +486,9 @@ Namespace DotNetNuke.NavigationControl
 						Return Modules.NavigationProvider.NavigationProvider.HoverDisplay.Highlight
 					Case MenuEffectsMouseOverDisplay.Outset
 						Return Modules.NavigationProvider.NavigationProvider.HoverDisplay.Outset
-                    Case Else
-                        Return Modules.NavigationProvider.NavigationProvider.HoverDisplay.None
-                End Select
+					Case MenuEffectsMouseOverDisplay.None
+						Return Modules.NavigationProvider.NavigationProvider.HoverDisplay.None
+				End Select
 			End Get
 			Set(ByVal Value As Modules.NavigationProvider.NavigationProvider.HoverDisplay)
 				Select Case Value
@@ -494,9 +496,9 @@ Namespace DotNetNuke.NavigationControl
 						Menu.MenuEffects.MouseOverDisplay = MenuEffectsMouseOverDisplay.Highlight
 					Case Modules.NavigationProvider.NavigationProvider.HoverDisplay.Outset
 						Menu.MenuEffects.MouseOverDisplay = MenuEffectsMouseOverDisplay.Outset
-                    Case Else
-                        Menu.MenuEffects.MouseOverDisplay = MenuEffectsMouseOverDisplay.None
-                End Select
+					Case Modules.NavigationProvider.NavigationProvider.HoverDisplay.None
+						Menu.MenuEffects.MouseOverDisplay = MenuEffectsMouseOverDisplay.None
+				End Select
 			End Set
 		End Property
 

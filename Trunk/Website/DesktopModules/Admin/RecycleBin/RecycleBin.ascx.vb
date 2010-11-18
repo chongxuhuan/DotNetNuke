@@ -209,25 +209,11 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
                 ClientAPI.AddButtonConfirm(cmdDeleteModule, Services.Localization.Localization.GetString("DeleteModule", ResourceFileRoot))
                 ClientAPI.AddButtonConfirm(cmdEmpty, Services.Localization.Localization.GetString("DeleteAll", ResourceFileRoot))
 
-                If PortalSettings.ContentLocalizationEnabled Then
-                    ClientAPI.AddButtonConfirm(cmdRestoreTab, Services.Localization.Localization.GetString("RestoreTab", ResourceFileRoot))
-                End If
-
                 tblModuleButtons.Visible = Me.IsEditable
                 tblTabButtons.Visible = Me.IsEditable
                 cmdEmpty.Visible = Me.IsEditable
 
                 modePlaceHolder.Visible = PortalSettings.ContentLocalizationEnabled
-
-                Dim mode As String = "ALL"
-                If Not String.IsNullOrEmpty(Request.QueryString("mode")) Then
-                    mode = Request.QueryString("mode")
-                End If
-                If mode.ToUpperInvariant = "SINGLE" Then
-                    modeButtonList.SelectedValue = "SINGLE"
-                Else
-                    modeButtonList.SelectedValue = "ALL"
-                End If
 
                 BindData()
             End If
@@ -416,7 +402,7 @@ Namespace DotNetNuke.Modules.Admin.RecycleBin
                 End If
             Next
             If Not errors Then
-                Response.Redirect(NavigateURL(TabId, "", "mode=" + modeButtonList.SelectedValue.ToLowerInvariant))
+                Response.Redirect(NavigateURL())
             Else
                 BindData()
             End If

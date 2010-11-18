@@ -188,10 +188,7 @@ Namespace DotNetNuke.HttpModules
                         If Not objPortalAlias Is Nothing Then
                             Dim portalID As Integer = objPortalAlias.PortalID
                             ' Identify Tab Name 
-                            Dim tabPath As String = url
-                            If (tabPath.StartsWith(myAlias)) Then
-                                tabPath = url.Remove(0, myAlias.Length)
-                            End If
+                            Dim tabPath As String = url.Replace(myAlias, "")
 
                             ' Default Page has been Requested
                             If (tabPath = "/" & glbDefaultPage.ToLower()) Then
@@ -199,7 +196,7 @@ Namespace DotNetNuke.HttpModules
                             End If
 
                             ' Check to see if the tab exists
-                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""), Null.NullString)
+                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""))
 
                             If (tabID <> Null.NullInteger) Then
                                 If (app.Request.Url.Query <> "") Then
@@ -449,28 +446,44 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    'the domain name was not found so try using the host portal's first alias
-                    PortalId = Host.HostPortalID
-                    If PortalId > Null.NullInteger Then
-                        ' use the host portal
-                        Dim objPortalAliasController As New PortalAliasController
+                    If Not Request.Url.LocalPath.EndsWith(glbDefaultPage, StringComparison.InvariantCultureIgnoreCase) Then
+                        ' allows requests for aspx pages in custom folder locations to be processed
+                        Exit Sub
+                    Else
+                        'the domain name was not found so try using the host portal's first alias
+                        PortalId = Host.HostPortalID
+                        If PortalId > Null.NullInteger Then
+                            ' use the host portal
+                            Dim objPortalAliasController As New PortalAliasController
+                            Dim arrPortalAliases As ArrayList
+                            arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
 
-                        If New PortalController().GetPortals().Count = 1 Then
-                            objPortalAliasInfo = New PortalAliasInfo()
-                            objPortalAliasInfo.PortalID = PortalId
-                            objPortalAliasInfo.HTTPAlias = PortalAlias
-                            objPortalAliasController.AddPortalAlias(objPortalAliasInfo)
-
-                            If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
-                                strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
-                            Else
-                                strURL = "http://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
+                            If arrPortalAliases.Count = 0 Then
+                                objPortalAliasInfo = New PortalAliasInfo()
+                                objPortalAliasInfo.PortalID = PortalId
+                                objPortalAliasInfo.HTTPAlias = PortalAlias
+                                objPortalAliasController.AddPortalAlias(objPortalAliasInfo)
+                                arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(PortalId)
                             End If
 
-                            Response.Redirect(app.Request.Url.ToString(), True)
+                            If arrPortalAliases.Count > 0 Then
+                                'Get the first Alias
+                                objPortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
+                                If app.Request.Url.AbsoluteUri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase) Then
+                                    strURL = "https://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
+                                Else
+                                    strURL = "http://" & objPortalAliasInfo.HTTPAlias.Replace("*.", "")
+                                End If
+                                If TabId <> -1 Then
+                                    strURL += app.Request.Url.Query()
+                                End If
+                                Response.Redirect(strURL, True)
+                            End If
                         End If
                     End If
                 End If
+
+
             Catch ex As Exception
                 ''500 Error - Redirect to ErrorPage
                 strURL = "~/ErrorPage.aspx?status=500&error=" & Server.UrlEncode(ex.Message)

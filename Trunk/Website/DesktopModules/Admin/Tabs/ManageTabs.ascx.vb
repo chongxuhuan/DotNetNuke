@@ -19,6 +19,7 @@
 '
 
 Imports System.Collections.Generic
+Imports System.IO
 Imports System.Xml
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Modules
@@ -27,9 +28,14 @@ Imports DotNetNuke.Services.FileSystem
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Security.Permissions
 Imports System.Linq
+Imports DotNetNuke.Entities.Content
 Imports DotNetNuke.Services.OutputCache
 Imports DotNetNuke.Web.UI.WebControls
+Imports Telerik.Web.UI
+Imports DotNetNuke.Services.Personalization
+Imports DotNetNuke.UI.WebControls
 Imports DotNetNuke.Services.Messaging.Data
+Imports DotNetNuke.Security.Roles
 Imports DotNetNuke.Services.Messaging
 
 Namespace DotNetNuke.Modules.Admin.Tabs
@@ -492,7 +498,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 If folder.FolderPath = Null.NullString Then
                     FolderItem.Text = Localization.GetString("Root", Me.LocalResourceFile)
                 Else
-                    FolderItem.Text = folder.DisplayPath
+                    FolderItem.Text = folder.FolderPath
                 End If
                 FolderItem.Value = folder.FolderPath
                 cboFolders.Items.Add(FolderItem)
@@ -610,11 +616,13 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 Tab.ParentId = parentTab.TabID
                 Tab.Level = parentTab.Level + 1
             Else
-                Tab.PortalID = PortalId
-                Tab.ParentId = Null.NullInteger
-                Tab.Level = 0
+                If strAction <> "edit" Then
+                    Tab.PortalID = PortalId
+                    Tab.ParentId = Null.NullInteger
+                    Tab.Level = 0
+                End If
+          
             End If
-
             Tab.IconFile = strIcon
             Tab.IconFileLarge = strIconLarge
             Tab.IsDeleted = False
@@ -639,10 +647,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
             End If
 
             'Set Culture Code
-            Dim positionTabID As Integer = Null.NullInteger
-            If cboPositionTab.SelectedItem IsNot Nothing Then
-                positionTabID = Int32.Parse(cboPositionTab.SelectedItem.Value)
-            End If
             If strAction <> "edit" Then
                 If PortalSettings.ContentLocalizationEnabled Then
                     Select Case cultureTypeList.SelectedValue
@@ -654,27 +658,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         Case Else
                             Tab.CultureCode = Null.NullString
                     End Select
-
-                    Dim tabLocale As Locale = LocaleController.Instance.GetLocale(Tab.CultureCode)
-                    If tabLocale Is Nothing Then tabLocale = LocaleController.Instance.GetDefaultLocale(PortalId)
-
-                    'Fix parent 
-                    If Tab.ParentId > Null.NullInteger Then
-                        parentTab = objTabs.GetTab(Tab.ParentId, PortalId, False)
-                        If parentTab.CultureCode <> Tab.CultureCode Then
-                            parentTab = objTabs.GetTabByCulture(Tab.ParentId, PortalId, tabLocale)
-                        End If
-                        Tab.ParentId = parentTab.TabID
-                    End If
-
-                    'Fix position TabId
-                    If positionTabID > Null.NullInteger Then
-                        Dim positionTab As TabInfo = objTabs.GetTab(positionTabID, PortalId, False)
-                        If positionTab.CultureCode <> Tab.CultureCode Then
-                            positionTab = objTabs.GetTabByCulture(positionTabID, PortalId, tabLocale)
-                        End If
-                        positionTabID = positionTab.TabID
-                    End If
                 Else
                     Tab.CultureCode = Null.NullString
                 End If
@@ -735,9 +718,12 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     UpdateTabSettings(Tab.TabID)
                 End If
             Else ' add or copy
-                If positionTabID = Null.NullInteger Then
+                If cboPositionTab.SelectedItem Is Nothing Then
                     Tab.TabID = objTabs.AddTab(Tab)
                 Else
+
+                    Dim positionTabID As Integer = Int32.Parse(cboPositionTab.SelectedItem.Value)
+
                     If rbInsertPosition.SelectedValue = "After" And positionTabID > Null.NullInteger Then
                         Tab.TabID = objTabs.AddTabAfter(Tab, positionTabID)
                     ElseIf rbInsertPosition.SelectedValue = "Before" And positionTabID > Null.NullInteger Then
@@ -752,9 +738,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 'Create Localized versions
                 If PortalSettings.ContentLocalizationEnabled AndAlso cultureTypeList.SelectedValue = "Localized" Then
                     objTabs.CreateLocalizedCopies(Tab)
-
-                    'Refresh tab
-                    _Tab = objTabs.GetTab(Tab.TabID, Tab.PortalID, True)
                 End If
 
                 Dim copyTabId As Integer = Int32.Parse(cboCopyPage.SelectedItem.Value)
@@ -778,18 +761,15 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             txtCopyTitle = CType(objDataGridItem.FindControl("txtCopyTitle"), TextBox)
 
                             objModule = objModules.GetModule(intModuleID, copyTabId, False)
-                            Dim newModule As ModuleInfo = Nothing
                             If Not objModule Is Nothing Then
                                 'Clone module as it exists in the cache and changes we make will update the cached object
-                                newModule = objModule.Clone()
+                                Dim newModule As ModuleInfo = objModule.Clone()
 
                                 If Not optReference.Checked Then
                                     newModule.ModuleID = Null.NullInteger
                                 End If
 
                                 newModule.TabID = Tab.TabID
-                                newModule.DefaultLanguageGuid = Null.NullGuid
-                                newModule.CultureCode = Tab.CultureCode
                                 newModule.ModuleTitle = txtCopyTitle.Text
                                 newModule.ModuleID = objModules.AddModule(newModule)
 
@@ -804,19 +784,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                                         End If
                                     End If
                                 End If
-                            End If
-
-                            If optReference.Checked Then
-                                'Make reference copies on secondary language
-                                For Each m As ModuleInfo In objModule.LocalizedModules.Values
-                                    Dim newLocalizedModule As ModuleInfo = m.Clone()
-                                    Dim localizedTab As TabInfo = Tab.LocalizedTabs(m.CultureCode)
-                                    newLocalizedModule.TabID = localizedTab.TabID
-                                    newLocalizedModule.CultureCode = localizedTab.CultureCode
-                                    newLocalizedModule.ModuleTitle = txtCopyTitle.Text
-                                    newLocalizedModule.DefaultLanguageGuid = newModule.UniqueId
-                                    newLocalizedModule.ModuleID = objModules.AddModule(newLocalizedModule)
-                                Next
                             End If
                         End If
                     Next
@@ -1021,18 +988,13 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     cboCopyPage.ClearSelection()
                     tblManageTabs.Visible = TabPermissionController.HasTabPermission("ADD,EDIT,COPY,MANAGE")
                     cmdUpdate.Visible = TabPermissionController.HasTabPermission("ADD,EDIT,COPY,MANAGE")
-
-                    Dim usingDefaultLocale As Boolean = LocaleController.Instance.IsDefaultLanguage(LocaleController.Instance.GetCurrentLocale(PortalId).Code)
-
                     Select Case strAction
                         Case "", "add"       ' add
                             CheckQuota()
                             rowTemplate1.Visible = True
                             rowTemplate2.Visible = True
-
-                            dshCopy.Visible = TabPermissionController.CanCopyPage() AndAlso usingDefaultLocale
-                            tblCopy.Visible = TabPermissionController.CanCopyPage() AndAlso usingDefaultLocale
-
+                            dshCopy.Visible = TabPermissionController.CanCopyPage()
+                            tblCopy.Visible = TabPermissionController.CanCopyPage()
                             cboCopyPage.SelectedIndex = 0
                             cmdDelete.Visible = False
                             ctlURL.IncludeActiveTab = True
@@ -1048,10 +1010,8 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                             ctlAudit.Visible = True
                         Case "copy"
                             CheckQuota()
-
-                            dshCopy.Visible = TabPermissionController.CanCopyPage() AndAlso usingDefaultLocale
-                            tblCopy.Visible = TabPermissionController.CanCopyPage() AndAlso usingDefaultLocale
-
+                            dshCopy.Visible = TabPermissionController.CanCopyPage()
+                            tblCopy.Visible = TabPermissionController.CanCopyPage()
                             cmdDelete.Visible = False
                             ctlURL.IncludeActiveTab = True
                             ctlAudit.Visible = False
@@ -1311,7 +1271,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
         Protected Sub readyForTranslationButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles readyForTranslationButton.Click
             Dim modCtrl As New ModuleController()
-            Dim tabCtrl As New TabController()
 
             For Each localizedTab As TabInfo In Tab.LocalizedTabs.Values
                 'Make Deep copies of all modules
@@ -1327,26 +1286,15 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                     End If
 
                     If Not sourceModule.LocalizedModules.TryGetValue(localizedTab.CultureCode, localizedModule) Then
-                        If Not sourceModule.IsDeleted Then
+                        If Not sourceModule.AllTabs AndAlso Not sourceModule.IsDeleted Then
                             'Shallow (Reference Copy)
-                            If sourceModule.AllTabs Then
-                                For Each m As ModuleInfo In moduleCtrl.GetModuleTabs(sourceModule.ModuleID)
-                                    'Get the tab
-                                    Dim allTabsTab As TabInfo = tabCtrl.GetTab(m.TabID, m.PortalID, False)
-                                    Dim localizedAllTabsTab As TabInfo = Nothing
-                                    If allTabsTab.LocalizedTabs.TryGetValue(localizedTab.CultureCode, localizedAllTabsTab) Then
-                                        moduleCtrl.CopyModule(m, localizedAllTabsTab, Null.NullString, True)
-                                    End If
-                                Next
-                            Else
-                                moduleCtrl.CopyModule(sourceModule, localizedTab, Null.NullString, True)
-                            End If
+                            moduleCtrl.CopyModule(sourceModule, localizedTab, Null.NullString, True)
 
                             'Fetch new module
                             localizedModule = moduleCtrl.GetModule(sourceModule.ModuleID, localizedTab.TabID)
 
                             'Convert to deep copy
-                            moduleCtrl.LocalizeModule(localizedModule, LocaleController.Instance.GetLocale(localizedTab.CultureCode))
+                            moduleCtrl.LocalizeModule(localizedModule)
                         End If
                     End If
 
@@ -1355,6 +1303,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 Dim users As New Dictionary(Of Integer, UserInfo)
 
                 'Give default translators for this language and administrators permissions
+                Dim tabCtrl As New TabController
                 tabCtrl.GiveTranslatorRoleEditRights(localizedTab, users)
 
                 'Send Messages to all the translators of new content

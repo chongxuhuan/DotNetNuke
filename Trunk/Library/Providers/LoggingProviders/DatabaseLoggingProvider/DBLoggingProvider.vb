@@ -27,7 +27,6 @@ Imports DotNetNuke.Services.Log.EventLog.DBLoggingProvider.Data
 Imports System.Web
 Imports System.Xml
 Imports DotNetNuke.Entities.Host
-Imports System.Data.SqlClient
 
 
 Namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
@@ -173,17 +172,7 @@ Namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
 
                     End If
                 End If
-            Catch exc As SqlException
-                If Not HttpContext.Current Is Nothing Then
-                    Dim response As HttpResponse = HttpContext.Current.Response
-                    HtmlUtils.WriteHeader(response, "SQL Exception")
 
-                    Dim strMessage As String = DotNetNuke.Common.Utilities.SqlUtils.TranslateSQLException(exc)
-                    HtmlUtils.WriteError(response, objLogTypeConfigInfo.LogFileNameWithPath, strMessage)
-
-                    HtmlUtils.WriteFooter(response)
-                    response.End()
-                End If
             Catch exc As Exception
                 If Not HttpContext.Current Is Nothing Then
                     Dim response As HttpResponse = HttpContext.Current.Response

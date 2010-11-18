@@ -26,6 +26,7 @@ Imports System.Web.Security
 Imports System.IO
 Imports DotNetNuke.Services.Log.EventLog
 Imports DotNetNuke.Entities.Host
+Imports DotNetNuke.Services.Messaging
 
 Namespace DotNetNuke.Common
 
@@ -174,6 +175,11 @@ Namespace DotNetNuke.Common
 
                     'Try and Upgrade to .NET 3.5
                     Upgrade.Upgrade.TryUpgradeNETFramework()
+
+                    'Check if protected
+                    If Not Upgrade.Upgrade.IsSiteProtectedAgainstPaddingOracleAttack Then
+                        LogException(New SecurityException(Localization.GetString("PaddingOracleNotProtected", Localization.GlobalResourceFile)))
+                    End If
 
                     'Start Scheduler
                     StartScheduler()

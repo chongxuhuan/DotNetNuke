@@ -76,7 +76,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTagsTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addTermToContent);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addTermToContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             Term term = ContentTestHelper.CreateValidSimpleTerm(Constants.VOCABULARY_ValidVocabularyId);
@@ -97,7 +97,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTagsTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addTermToContent);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, addTermToContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             content.ContentItemId = Constants.TAG_DuplicateContentItemId;
@@ -120,7 +120,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTagsTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), removeTermsFromContent);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, removeTermsFromContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             content.ContentItemId = Constants.TAG_NoContentContentId;
@@ -141,7 +141,7 @@ namespace DotNetNuke.Tests.Content.Data
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString,
                                                    ContentDataTestHelper.ContentTagsTableName);
-            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), removeTermsFromContent);
+            DataUtil.AddDatabaseObject(virtualScriptFilePath, removeTermsFromContent);
 
             ContentItem content = ContentTestHelper.CreateValidContentItem();
             content.ContentItemId = Constants.TAG_ValidContentId;

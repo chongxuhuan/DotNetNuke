@@ -7,97 +7,83 @@
 
 <script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>       
 <script type="text/javascript">
-
+    //<!--
     var _PageOnSite_ClientID = "PageOnSite";
-    Type.registerNamespace("Telerik.Web.UI.Widgets");
+
+    $(function () {
+        $("input[name$=TrackLink]").click(function (e) {
+            getLinkClickURL();
+        });
+    });
 
     $(function () {
         $("input[name$=TrackUser]").click(function (e) {
-            var trackUser = $get("TrackUser");
-            if (trackUser.checked) {
-                var trackLink = $get("TrackLink");
+            var trackUser = document.getElementById("TrackUser");
+            if (trackUser.checked == true) {
+                var trackLink = document.getElementById("TrackLink");
                 trackLink.checked = true;
             }
+            getLinkClickURL();
         });
     });
-    
-    $(function () {
-        $("input[name$=TrackLink]").click(function (e) {
-            var trackLink = $get("TrackLink");
-            if (!trackLink.checked) {
-                var trackUser = $get("TrackUser");
-                trackUser.checked = false;
-            }
-        });
-    });
-
-    function IsUrl(s) {
-        var regexp = "/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/"
-        return regexp.test(s);
-    }
-
 
     function _PageOnSite_Change(obj) {
         if (obj) {
-            var linkTextTextBox = $get("LinkText");
-            var linkUrlTextBox = $get("LinkURL");
-
+            var linkTextTextBox = document.getElementById("LinkText");
+            var linkUrlTextBox = document.getElementById("LinkURL");
+            var trackLink = document.getElementById("TrackLink");
             if (linkTextTextBox && linkTextTextBox.value == "") {
+                //strip ... prefix
                 var text = obj.get_text();
-                while (text.substring(0, 3) == "...") //strip ... prefix
+                while (text.substring(0, 3) == "...")
                     text = text.substring(3, text.length);
 
                 linkTextTextBox.value = text;
             }
-
             if (linkUrlTextBox) {
+                if (trackLink.checked == true) {
                     linkUrlTextBox.value = obj.get_value();
+                    getLinkClickURL();
+                }
+                else {
+                    linkUrlTextBox.value = obj.get_value();
+                }
             }
         }
     }
 
-
-
-    function GetLinkClickURL(linkUrl) {
+    function getLinkClickURL() {
         // Data is provided in the DialogParams format
-        var linkClickURL = linkUrl;
-        var trackClicksCheckbox = $get("TrackLink")
-        var trackUserCheckbox = $get("TrackUser")
-
-        if (linkClickURL != "http:///" && linkClickURL != "http://") {
-
+        var linkUrlTextBox = document.getElementById("LinkURL");
+        var trackLink = document.getElementById("TrackLink");
+        var trackUser = document.getElementById("TrackUser");
+        if (linkUrlTextBox.value != 'http://') {
             $.ajax({
                 type: 'POST',
-                async: false,
                 contentType: 'application/json; charset=UTF-8',
                 url: 'LinkClickUrlHandler.ashx',
-                data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage +
-                    '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory +
-                    '", "LinkUrl": "' + linkUrl + '", "Track": "' + trackClicksCheckbox.checked +
-                '", "TrackUser": "' + trackUserCheckbox.checked + '", "LinkClickUrl": "", "LinkAction":"GetLinkInfo"}',
-
+                data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + false + '", "LinkClickUrl": ""}',
+                //data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory + '", "LinkUrl": "' + linkUrlTextBox.value + '", "Track": "' + trackLink.checked + '", "TrackUser": "' + trackUser.checked + '", "LinkClickUrl": ""}',
                 dataType: 'json',
                 success: function Success(data) {
-                    linkClickURL = data.LinkClickUrl;
-                    trackClicksCheckbox.checked = data.Track;
-                    trackUserCheckbox.checked = data.TrackUser;
-                    if (data.Track) {
-                        var tabStrip = $find("LinkManagerTab");
-                        var tab = tabStrip.get_allTabs()[3];
-                        if (tab) {
-                            tab.get_linkElement().style.display = "block";
-                        }
-                    }
-
+                    var linkUrlTextBox = document.getElementById("LinkURL");
+                    linkUrlTextBox.value = data.LinkClickUrl;
                 },
                 error: function (x, status, e) {
+                    alert(status);
                     alert(x.responseText);
                 }
             });
         }
+        else {
+            alert("Please enter a valid URL before trying to track it.");
+            trackLink.checked = false;
+            trackUser.checked = false;
+        }
+    }           
 
-        return linkClickURL;
-    }
+
+	Type.registerNamespace("Telerik.Web.UI.Widgets");
 
 	Telerik.Web.UI.Widgets.LinkManager = function(element)
 	{
@@ -105,10 +91,11 @@
 		this._clientParameters = null;
 	}
 
-	Telerik.Web.UI.Widgets.LinkManager.prototype = { initialize: function () {
-	    Telerik.Web.UI.Widgets.LinkManager.callBaseMethod(this, "initialize");
-	    this.setupChildren();
-	},
+	Telerik.Web.UI.Widgets.LinkManager.prototype = {
+	    initialize: function () {
+	        Telerik.Web.UI.Widgets.LinkManager.callBaseMethod(this, "initialize");
+	        this.setupChildren();
+	    },
 
 	    dispose: function () {
 	        $clearHandlers(this._linkTargetCombo);
@@ -131,16 +118,19 @@
 	        if (selectedIndex && selectedIndex >= 0) {
 	            this._tab.set_selectedIndex(selectedIndex);
 	        }
-
+	        //clean
 	        this._cleanInputBoxes();
 	        this._loadLinkArchor();
+	        //load data
 	        this._loadLinkProperties();
-
 	    },
 
 	    _cleanInputBoxes: function () {
 	        this._linkUrl.value = "";
 	        this._linkText.value = "";
+	        if (this._linkTargetCombo.options && this._linkTargetCombo.options.length > 0) {
+	            this._linkTargetCombo.options[0].selected = true;
+	        }
 	        this._linkTooltip.value = "";
 	        this._anchorName.value = "";
 	        this._emailAddress.value = "";
@@ -148,19 +138,12 @@
 	        this._emailSubject.value = "";
 	        this._linkCssClass.set_value("");
 	        this._emailCssClass.set_value("");
-	        this._trackLink.checked = false;
-	        this._trackUser.checked = false;
-
-	        if (this._linkTargetCombo.options && this._linkTargetCombo.options.length > 0) {
-	            this._linkTargetCombo.options[0].selected = true;
-	        }
 
 	        var pages = $find(_PageOnSite_ClientID);
 	        if (pages) pages.clearSelection();
 	    },
 
 	    _loadLinkProperties: function () {
-
 	        var currentLink = this._clientParameters.get_value();
 	        var currentHref = currentLink.getAttribute("href", 2);
 	        var anchors = this._clientParameters.documentAnchors;
@@ -197,16 +180,12 @@
 	        var href = "http://"; //"link"
 
 	        if (currentLink.href) {
-	            href = GetLinkClickURL(currentHref);
+	            href = currentHref;
 	        }
-	        else {
-	            var tabStrip = $find("LinkManagerTab");
-	            var tab = tabStrip.get_allTabs()[3];
-	            if (tab) {
-	                tab.get_linkElement().style.display = "none";
-	            }
-            }
-
+	        var pos = href.toLowerCase().indexOf("linkclick.aspx")
+	        if (pos >= 0 && this._trackLink != null) {
+	            this._trackLink.checked = true;
+	        }
 	        this._linkUrl.value = href;
 	        this._loadLinkTarget();
 	        this._linkTooltip.value = currentLink.title;
@@ -222,6 +201,7 @@
 	        }
 
 	        var optgroups = this._linkTargetCombo.getElementsByTagName("optgroup");
+
 	        for (var i = 0; i < optgroups.length; i++) {
 	            if (optgroups[i].nodeName.toLowerCase() == "optgroup") {
 	                var options = optgroups[i].getElementsByTagName("option");
@@ -247,7 +227,6 @@
 	        if (!this._existingAnchor) {
 	            return;
 	        }
-
 	        var anchors = this._clientParameters.documentAnchors;
 	        var linkHref = this._clientParameters.get_value().getAttribute("href", 2) ? this._clientParameters.get_value().getAttribute("href", 2).toLowerCase() : "";
 	        //clear existing options
@@ -267,6 +246,7 @@
 
 	    _loadCssClasses: function (currentLink) {
 	        var cssClasses = this._clientParameters.CssClasses;
+
 	        //localization
 	        this._linkCssClass.set_showText(true);
 	        this._linkCssClass.set_clearclasstext(localization["ClearClass"]);
@@ -301,74 +281,64 @@
 	        var resultLink = this._clientParameters.get_value();
 	        var selectedIndex = this._tab.get_selectedIndex();
 
-	        switch (selectedIndex) {
-	            case 0: //"link"
-	                resultLink.href = this._linkUrl.value;
+	        if (selectedIndex == 0)//"link"
+	        {
+	            resultLink.href = this._linkUrl.value;
+	            if (this._linkTargetCombo.value == "_none") {
+	                resultLink.removeAttribute("target", 0);
+	            }
+	            else {
+	                resultLink.target = this._linkTargetCombo.value;
+	            }
 
-	                if (this._linkTargetCombo.value == "_none") {
-	                    resultLink.removeAttribute("target", 0);
-	                }
-	                else {
-	                    resultLink.target = this._linkTargetCombo.value;
-	                }
+	            if (this._texTextBoxParentNode && this._texTextBoxParentNode.style.display != "none") {
+	                resultLink.innerHTML = this._linkText.value;
+	            }
 
-	                if (this._texTextBoxParentNode && this._texTextBoxParentNode.style.display != "none") {
-	                    resultLink.innerHTML = this._linkText.value;
-	                }
+	            if (resultLink.innerHTML.trim() == "" || resultLink.innerHTML.trim().length < this._linkText.value.trim().length) {
+	                //try to replace <> if the content was marked as invalid html by the browser
+	                resultLink.innerHTML = this._linkText.value.replace(/&/gi, "&amp;").replace(/</gi, "&lt;").replace(/>/gi, "&gt;");
+	            }
 
-	                if (resultLink.innerHTML.trim() == "" || resultLink.innerHTML.trim().length < this._linkText.value.trim().length) {
-	                    //try to replace <> if the content was marked as invalid html by the browser
-	                    resultLink.innerHTML = this._linkText.value.replace(/&/gi, "&amp;").replace(/</gi, "&lt;").replace(/>/gi, "&gt;");
-	                }
+	            if (resultLink.innerHTML.trim() == "") {
+	                resultLink.innerHTML = resultLink.href;
+	            }
 
-	                if (resultLink.innerHTML.trim() == "") {
-	                    resultLink.innerHTML = resultLink.href;
-	                }
+	            if (this._linkTooltip.value.trim() == "") {
+	                resultLink.removeAttribute("title", 0);
+	            }
+	            else {
+	                resultLink.title = this._linkTooltip.value;
+	            }
 
-	                if (this._linkTooltip.value.trim() == "") {
-	                    resultLink.removeAttribute("title", 0);
-	                }
-	                else {
-	                    resultLink.title = this._linkTooltip.value;
-	                }
+	            this._setClass(resultLink, this._linkCssClass);
+	        }
+	        else if (selectedIndex == 1)//"anchor"
+	        {
+	            resultLink.removeAttribute("name");
+	            resultLink.removeAttribute("NAME");
+	            resultLink.name = null;
+	            resultLink.name = this._anchorName.value;
+	            resultLink["NAME"] = this._anchorName.value;
 
+	            //Make sure the href and some other attributes are removed just in case they are present
+	            resultLink.removeAttribute("href");
+	            resultLink.removeAttribute("target");
+	            resultLink.removeAttribute("title");
+	        }
+	        else //"email"
+	        {
+	            resultLink.href = "mailto:" + this._emailAddress.value;
 
-	                var trackClicksCheckbox = $get("TrackLink");
-	                var trackUserCheckbox = $get("TrackUser");
-	                var modifiedLink = trackClicksCheckbox.checked ? GetLinkClickURL(resultLink.href) : resultLink.href;
-	                resultLink.href = modifiedLink;
+	            if (this._emailSubject.value != "") {
+	                resultLink.href += "?subject=" + this._emailSubject.value;
+	            }
 
-	                this._setClass(resultLink, this._linkCssClass);
+	            if (this._emailTextBoxParentNode && this._emailTextBoxParentNode.style.display != "none") {
+	                resultLink.innerHTML = this._emailLinkText.value;
+	            }
 
-	                break;
-
-	            case 1: //anchor
-	                resultLink.removeAttribute("name");
-	                resultLink.removeAttribute("NAME");
-	                resultLink.name = null;
-	                resultLink.name = this._anchorName.value;
-	                resultLink["NAME"] = this._anchorName.value;
-
-	                //Make sure the href and some other attributes are removed just in case they are present
-	                resultLink.removeAttribute("href");
-	                resultLink.removeAttribute("target");
-	                resultLink.removeAttribute("title");
-	                break;
-	            case 2: //email
-	                resultLink.href = "mailto:" + this._emailAddress.value;
-
-	                if (this._emailSubject.value != "") {
-	                    resultLink.href += "?subject=" + this._emailSubject.value;
-	                }
-
-	                if (this._emailTextBoxParentNode && this._emailTextBoxParentNode.style.display != "none") {
-	                    resultLink.innerHTML = this._emailLinkText.value;
-	                }
-
-	                this._setClass(resultLink, this._emailCssClass);
-	                break;
-	            default:
-	                break;
+	            this._setClass(resultLink, this._emailCssClass);
 	        }
 
 	        return resultLink;
@@ -396,8 +366,6 @@
 	        this._existingAnchor = $get("ExistingAnchor");
 	        this._linkTooltip = $get("LinkTooltip");
 	        this._trackLink = $get("TrackLink");
-	        this._trackUser = $get("TrackUser");
-	        this._trackingDiv = $get("TrackingDiv");
 
 	        //NEW: Document manager support
 	        this._documentManager = $find("DocumentManagerCaller");
@@ -412,14 +380,17 @@
 	        this._emailCssClass = $find("EmailCssClass");
 
 	        this._insertButton = $get("lmInsertButton");
-	        if (this._insertButton) this._insertButton.title = localization["OK"];
+	        if (this._insertButton)
+	            this._insertButton.title = localization["OK"];
 	        this._cancelButton = $get("lmCancelButton");
-	        if (this._cancelButton) this._cancelButton.title = localization["Cancel"];
+	        if (this._cancelButton)
+	            this._cancelButton.title = localization["Cancel"];
 	        this._tab = $find("LinkManagerTab");
 
 	        //NEW: In IE RadFormDecorator styles textboxes in a way that the direct parent [of the textbox] changes, so the original implementation stopped working properly (in IE)
 	        this._texTextBoxParentNode = $get("texTextBoxParentNode");
 	        this._emailTextBoxParentNode = $get("emailTextBoxParentNode");
+
 	        this._initializeChildEvents();
 	    },
 
@@ -434,10 +405,12 @@
 
 	        $addHandlers(document, { "keydown": this._keyDownHandler }, this); //NEW add ENTER click handler
 	        $addHandlers(this._linkTargetCombo, { "change": this._linkTargetChangeHandler }, this);
-
-	        if (this._existingAnchor) $addHandlers(this._existingAnchor, { "change": this._existingAnchorChangeHandler }, this);
-	        if (this._insertButton) $addHandlers(this._insertButton, { "click": this._insertClickHandler }, this);
-	        if (this._cancelButton) $addHandlers(this._cancelButton, { "click": this._cancelClickHandler }, this);
+	        if (this._existingAnchor)
+	            $addHandlers(this._existingAnchor, { "change": this._existingAnchorChangeHandler }, this);
+	        if (this._insertButton)
+	            $addHandlers(this._insertButton, { "click": this._insertClickHandler }, this);
+	        if (this._cancelButton)
+	            $addHandlers(this._cancelButton, { "click": this._cancelClickHandler }, this);
 	    },
 
 	    //NEW: Document manager
@@ -446,12 +419,16 @@
 	        var editor = this._clientParameters.editor;
 	        var callbackFunction = Function.createDelegate(this, function (sender, args) {
 	            //For the time being just set the URL
+	            //Returned link - TODO: Use args.get_value() when the dialog returm methods are changed to return proper args object
 	            var link = args.get_value ? args.get_value() : args.Result;
 	            if (link && link.tagName == "A") {
 	                //Set various fileds - classname, target, etc - but only if their value in the returned link is != ""
 	                var href = link.getAttribute("href", 2);
 	                this._linkUrl.value = href;
-
+	                var trackLink = document.getElementById("TrackLink");
+	                if (trackLink.value == true) {
+	                    getLinkClickURL();
+	                    }
 	                if (!this._linkText.value) this._linkText.value = href;
 	                var target = link.target;
 	                if (target) this._linkTargetCombo.value = target;
@@ -461,7 +438,6 @@
 	                if (className) this._linkCssClass.set_value(className);
 	            }
 	        });
-
 	        var modifiedLink = this.getModifiedLink();
 	        var argument = new Telerik.Web.UI.EditorCommandEventArgs("DocumentManager", null, modifiedLink);
 	        Telerik.Web.UI.Editor.CommandList._getDialogArguments(argument, "A", editor, "DocumentManager");
@@ -537,73 +513,6 @@
 	    }
 	}
 
-	function OnClientTabSelected(sender, eventArgs) {
-	    var tab = eventArgs.get_tab();
-	    if (tab.get_text() == "Tracking") {
-            GetUrlTrackingInfo("GetTrackingInfo");
-        }
-
-	}
-
-	function GetUrlTrackingInfo(linkAction) {
-
-	    var trackClicksCheckbox = $get("TrackLink")
-	    var trackUserCheckbox = $get("TrackUser")
-	    var linkUrl = $get("LinkURL");
-	    var linkTrackingTable = $get("LinkTrackingTable");
-	    var trackOriginalUrl = $get("TrackOriginalURL");
-	    var createdDate = $get("TrackCreatedDate");
-	    var clicks = $get("TrackingClicks");
-	    var lastClick = $get("TrackingLastClick");
-	    var trackinURL = $get("TrackingURL");
-	    var loggingInfoTable = $get("LoggingInfoTable");
-	    var loggingInfoDiv = $get("LoggingTableDiv");
-	    var lastClickRow = $get("LastClickRow");
-
-
-        var logStartDate;
-        var logEndDate;
-        var logStartDatePicker = $find("LogStartDate");
-        logStartDate = logStartDatePicker.get_selectedDate() ? logStartDatePicker.get_selectedDate().format("MM/dd/yyyy") : "";
-
-        var logEndDatePicker = $find("LogEndDate");
-        logEndDate = logEndDatePicker.get_selectedDate() ? logEndDatePicker.get_selectedDate().format("MM/dd/yyyy") : "";
-
-        $.ajax({
-            type: 'POST',
-            async: false,
-            contentType: 'application/json; charset=UTF-8',
-            url: 'LinkClickUrlHandler.ashx',
-            data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory +
-                '", "LinkUrl": "' + linkUrl.value + '", "Track": "' + trackClicksCheckbox.checked + '", "TrackUser": "' + trackUserCheckbox.checked + '", "LinkClickUrl":"", "LinkAction":"' + linkAction +
-                '", "LogStartDate" : "' + logStartDate + '", "LogEndDate": "' + logEndDate + '"}',
-            dataType: 'json',
-            success: function Success(data) {
-                linkTrackingTable.style.display = data.Track ? "block" : "none";
-                loggingInfoTable.style.display = data.TrackUser ? "block" : "none";
-                trackOriginalUrl.innerHTML = data.LinkUrl;
-                if (data.Track) {
-                    createdDate.innerHTML = data.DateCreated;
-                    clicks.innerHTML = data.Clicks;
-                    lastClick.innerHTML = data.LastClick;
-                    trackinURL.innerHTML = data.LinkClickUrl
-                    if (data.Clicks == 0) {
-                        loggingInfoTable.style.display = "none";
-                        lastClickRow.style.display = "none";
-                    }
-                }
-
-                if (linkAction == "GetLoggingInfo") {
-                    loggingInfoDiv.innerHTML = data.TrackingLog;
-                }
-            },
-            error: function (x, status, e) {
-                alert(x.responseText);
-            }
-        });
-    
-    }
-
 	Telerik.Web.UI.Widgets.LinkManager.registerClass("Telerik.Web.UI.Widgets.LinkManager", Telerik.Web.UI.RadWebControl, Telerik.Web.IParameterConsumer);
 
 	var _moduleId = parent.dnn.getVar('editorModuleId');
@@ -616,15 +525,18 @@
 </script>
 
 
-<table cellpadding="0" cellspacing="0" class="reDialog LinkManager NoMarginDialog" style="width: 392px;">
+
+<table cellpadding="0" cellspacing="0" class="reDialog LinkManager NoMarginDialog" style="width: 400px;">
 	<tr>
 		<td class="reTopcell">
-			<telerik:RadTabStrip ShowBaseLine="true" ID="LinkManagerTab" runat="server" SelectedIndex="0" MultiPageID="dialogMultiPage" OnClientTabSelected="OnClientTabSelected">
+			<telerik:RadTabStrip ShowBaseLine="true" ID="LinkManagerTab" runat="server" SelectedIndex="0" MultiPageID="dialogMultiPage">
 				<Tabs>
-					<telerik:RadTab Text="HyperlinkTab" Value="HyperlinkTab"/>
-					<telerik:RadTab Text="AnchorTab" Value="AnchorTab"/>
-					<telerik:RadTab Text="EmailTab" Value="EmailTab"/>
-                    <telerik:RadTab Text="Tracking" Value="TrackingTab"/>
+					<telerik:RadTab Text="HyperlinkTab" Value="HyperlinkTab">
+					</telerik:RadTab>
+					<telerik:RadTab Text="AnchorTab" Value="AnchorTab">
+					</telerik:RadTab>
+					<telerik:RadTab Text="EmailTab" Value="EmailTab">
+					</telerik:RadTab>
 				</Tabs>
 			</telerik:RadTabStrip>
 		</td>
@@ -662,6 +574,19 @@
 									</table>
 								</td>
 							</tr>
+                            <tr>
+                            	<td class="reLabelCell">&nbsp;
+<%--								    <label for="TrackLink" class="reDialogLabel">
+									    <span>
+										    <script type="text/javascript">document.write(localization["TrackLink"]);</script>
+									    </span>
+								    </label>
+--%>							    </td>
+                                <td>
+                                    <asp:CheckBox ID="TrackLink" runat="server" Text="Track Clicks" />
+                                    <%--<asp:CheckBox ID="TrackUser" runat="server" Text="Track User" />--%>
+                                </td>
+                            </tr>
 						</asp:PlaceHolder>
 						<tr id="texTextBoxParentNode">
 							<td class="reLabelCell">
@@ -741,19 +666,6 @@
 							</td>
 						</tr>
 					</table>
-                    <div id="TrackingDiv">
-                    <hr />
-                    <table>
-                        <tr>
-                            <td colspan="2"><asp:CheckBox ID="TrackLink" runat="server" Text="Track the number of times this link is clicked" /></td>
-                        </tr>
-                        <tr>
-                            <td style="width:20px">&nbsp;</td>
-                            <td><asp:CheckBox ID="TrackUser" runat="server" Text="Log the user, date and time for each click" /></td>
-                        </tr>
-                    </table>
-                    <hr />
-                    </div>
 				</telerik:RadPageView>
 				<telerik:RadPageView ID="anchorFieldset" runat="server">
 					<table border="0" cellpadding="0" cellspacing="0" class="reControlsLayout">
@@ -823,124 +735,6 @@
 						</tr>
 					</table>
 				</telerik:RadPageView>
-                <telerik:RadPageView  ID="trackingFieldset" runat="server">
-                    <div id="trackingFieldsetScrollingDiv" style="width: 390px; max-width: 390px; max-height: 270px; overflow: auto;">
-                    <table border="0" cellpadding="0" cellspacing="0" class="reControlsLayout">
-                        <col span="1" style="vertical-align: top; text-align: right; max-width: 90px;" />
-                        <col span="1" style="vertical-align: top; text-align: left; max-width: 240px;" />
-						<tr>
-                            <td><strong>Link Info</strong></td>
-                        </tr>
-                        <tr>
-							<td class="reLabelCell">
-								<label for="TrackOriginalURL" class="reDialogLabel">
-									<span>
-										<script type="text/javascript">document.write(localization["LinkUrl"]);</script>:
-									</span>
-								</label>
-							</td>
-							<td class="reControlCell">
-								<span id="TrackOriginalURL" />
-							</td>
-						</tr>
-                    </table>
-                    <table id="LinkTrackingTable">
-                        <col span="1" style="vertical-align: top; text-align: right; max-width: 90px;" />
-                        <col span="1" style="vertical-align: top; text-align: left; max-width: 240px;" />
-                        <tr>
-							<td class="reLabelCell">
-								<label for="TrackCreatedDate" class="reDialogLabel">
-                                    <span>Created:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<span id="TrackCreatedDate" />
-							</td>
-						</tr>
-                        <tr>
-							<td class="reLabelCell">
-								<label for="TrackingURL" class="reDialogLabel">
-                                    <span>Tracking URL:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<div id="TrackingURL" style="width: 240px; max-width: 240px; max-height: 75px; overflow: auto;" />
-							</td>
-						</tr>
-                         <tr>
-							<td class="reLabelCell">
-								<label for="TrackingClicks" class="reDialogLabel">
-                                    <span>Clicks:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<span id="TrackingClicks" />
-							</td>
-						</tr>
-                        <tr id="LastClickRow">
-							<td class="reLabelCell">
-								<label for="TrackingLastClick" class="reDialogLabel">
-                                    <span>Last Click:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<span id="TrackingLastClick" />
-							</td>
-                        </tr>
-                    </table>
-                    <table id="LoggingInfoTable">
-                        <col span="1" style="vertical-align: top; text-align: right; max-width: 90px;" />
-                        <col span="1" style="vertical-align: top; text-align: left; max-width: 240px;" />
-                        <tr>
-                            <td><strong><br />Tracking Report</strong></td>
-                        </tr>
-                        <tr>
-							<td class="reLabelCell">
-								<label for="LogStartDate" class="reDialogLabel">
-                                    <span>Start Date:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<telerik:RadDatePicker ID="LogStartDate" runat="server" Width="140px" MinDate="01/01/1000" MaxDate="01/01/3000" ShowPopupOnFocus ="True">
-                                    <Calendar>
-                                        <SpecialDays>
-                                            <telerik:RadCalendarDay Repeatable="Today" ItemStyle-CssClass="rcToday" />
-                                        </SpecialDays>
-                                    </Calendar>
-                                </telerik:RadDatePicker>
-							</td>
-						</tr>
-                             <tr>
-							<td class="reLabelCell">
-								<label for="LogEndDate" class="reDialogLabel">
-                                    <span>End Date:</span>
-                                </label>
-							</td>
-							<td class="reControlCell">
-								<telerik:RadDatePicker ID="LogEndDate" runat="server" Width="140px"  MinDate="01/01/1000" MaxDate="01/01/3000" ShowPopupOnFocus ="True">
-                                    <Calendar>
-                                        <SpecialDays>
-                                            <telerik:RadCalendarDay Repeatable="Today" ItemStyle-CssClass="rcToday" />
-                                        </SpecialDays>
-                                    </Calendar>
-                                </telerik:RadDatePicker>
-							</td>
-						</tr>
-                        <tr>
-                            <td class="reLabelCell" style="vertical-algin: top; text-align: right; width: 90px;">
-                                &nbsp;
-                            </td>
-                            <td class="reControlCell">
-                                <button type="button" onclick="GetUrlTrackingInfo('GetLoggingInfo'); return false;">Display</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="reControlCell" colspan="2" style="text-align: left;">
-                                <div id="LoggingTableDiv" />
-                            </td>
-                        </tr>
-                     </table>
-                </telerik:RadPageView>
 			</telerik:RadMultiPage>
 		</td>
 	</tr>

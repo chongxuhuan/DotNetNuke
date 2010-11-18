@@ -80,7 +80,16 @@ Namespace DotNetNuke.UI.WebControls
         End Property
 
         Private Function IsSelected(ByVal locale As String) As Boolean
-            Return (locale = StringValue)
+            Dim selected As Boolean = Null.NullBoolean
+            If String.IsNullOrEmpty(StringValue) Then
+                'Profile property is not set - use site default
+                If locale = PortalSettings.DefaultLanguage Then
+                    selected = True
+                End If
+            Else
+                selected = (locale = StringValue)
+            End If
+            Return selected
         End Function
 
         Private Sub RenderModeButtons(ByVal writer As HtmlTextWriter)
@@ -202,54 +211,38 @@ Namespace DotNetNuke.UI.WebControls
             writer.AddAttribute(HtmlTextWriterAttribute.Name, Me.UniqueID)
             writer.RenderBeginTag(HtmlTextWriterTag.Select)
 
-            'Render None selected option
-            'Add the Value Attribute
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString)
-
-            If StringValue = Null.NullString Then
-                'Add the Selected Attribute
-                writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected")
-            End If
-            writer.RenderBeginTag(HtmlTextWriterTag.Option)
-            writer.Write(Localization.GetString("Not_Specified", Localization.SharedResourceFile))
-            writer.RenderEndTag()
-
-            Dim languageCount As Integer
             Select Case ListType
                 Case LanguagesListType.All
                     Dim cultures As CultureInfo() = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
                     Array.Sort(cultures, New CultureInfoComparer(DisplayMode))
 
+                    'Render None selected option
+                    'Add the Value Attribute
+                    writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString)
+
+                    If StringValue = Null.NullString Then
+                        'Add the Selected Attribute
+                        writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected")
+                    End If
+                    writer.RenderBeginTag(HtmlTextWriterTag.Option)
+                    writer.Write("<" & Localization.GetString("Not_Specified", Localization.SharedResourceFile) & ">")
+                    writer.RenderEndTag()
+
                     For Each culture As CultureInfo In cultures
                         RenderOption(writer, culture)
                     Next
-                    languageCount = cultures.Count
                 Case LanguagesListType.Supported
-                    Dim cultures As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(Null.NullInteger)
-                    For Each language As Locale In cultures.Values
+                    For Each language As Locale In LocaleController.Instance().GetLocales(Null.NullInteger).Values
                         RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code))
                     Next
-                    languageCount = cultures.Count
                 Case LanguagesListType.Enabled
-                    Dim cultures As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(PortalSettings.PortalId)
-                    For Each language As Locale In cultures.Values
+                    For Each language As Locale In LocaleController.Instance().GetLocales(PortalSettings.PortalId).Values
                         RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code))
                     Next
-                    languageCount = cultures.Count
             End Select
 
             'Close Select Tag
             writer.RenderEndTag()
-
-            If StringValue = Null.NullString AndAlso languageCount > 1 Then
-                writer.WriteBreak()
-
-                writer.AddAttribute(HtmlTextWriterAttribute.Class, "NormalRed")
-                writer.RenderBeginTag(HtmlTextWriterTag.Div)
-                writer.Write(Localization.GetString("LanguageNotSelected", Localization.SharedResourceFile))
-                writer.RenderEndTag()
-            End If
-
 
             'Clode Div
             writer.RenderEndTag()

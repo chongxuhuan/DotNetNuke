@@ -109,7 +109,7 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                         If folder.FolderPath = Null.NullString Then
                             FolderItem.Text = Localization.GetString("Root", Me.LocalResourceFile)
                         Else
-                            FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.DisplayPath)
+                            FolderItem.Text = FileSystemUtils.RemoveTrailingSlash(folder.FolderPath)
                         End If
                         FolderItem.Value = folder.FolderPath
                         cboFolders.Items.Add(FolderItem)

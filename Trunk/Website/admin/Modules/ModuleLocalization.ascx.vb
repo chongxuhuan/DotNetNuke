@@ -132,7 +132,7 @@ Namespace DotNetNuke.Admin.Modules
                 End If
             Else
                 For Each m As ModuleInfo In moduleCtl.GetTabModules(Me.TabId).Values
-                    If Not m.IsDeleted Then
+                    If Not m.IsDeleted AndAlso Not m.AllTabs Then
                         moduleList.Add(m)
                         If m.LocalizedModules IsNot Nothing Then
                             For Each localizedModule As ModuleInfo In m.LocalizedModules.Values
@@ -195,7 +195,7 @@ Namespace DotNetNuke.Admin.Modules
 
                         If localize Then
                             'Localize
-                            moduleCtrl.LocalizeModule(sourceModule, LocaleController.Instance.GetLocale(sourceModule.CultureCode))
+                            moduleCtrl.LocalizeModule(sourceModule)
                         Else
                             'Delocalize
                             moduleCtrl.DeLocalizeModule(sourceModule)

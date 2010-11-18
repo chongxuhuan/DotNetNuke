@@ -13,7 +13,7 @@ Imports System.Runtime.CompilerServices
 <Assembly: AssemblyDescription("Open Source Web Application Framework")> 
 <Assembly: AssemblyCompany("DotNetNuke Corporation")> 
 <Assembly: AssemblyProduct("http://www.dotnetnuke.com")> 
-<Assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2010 by DotNetNuke Corporation. All Rights Reserved.")> 
+<Assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2008 by DotNetNuke Corporation. All Rights Reserved.")> 
 <Assembly: AssemblyTrademark("DotNetNuke")> 
 <Assembly: CLSCompliant(True)> 
 
@@ -32,8 +32,8 @@ Imports System.Runtime.CompilerServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("5.6.0.0")> 
-<Assembly: AssemblyFileVersion("5.6.0.0")> 
+<Assembly: AssemblyVersion("1.0.0")> 
+<Assembly: AssemblyFileVersion("1.0.0")> 
 
 <Assembly: InternalsVisibleTo("DotNetNuke.Tests.Content")> 
 <Assembly: InternalsVisibleTo("DotNetNuke.Tests.Messaging")> 

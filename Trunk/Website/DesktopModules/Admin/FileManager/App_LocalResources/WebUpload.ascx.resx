@@ -183,10 +183,4 @@
   <data name="NoFile.Text" xml:space="preserve">
     <value>You need to select a file to upload first - click the Browse button to locate the file on your local file system.</value>
   </data>
-  <data name="Multiple.Text" xml:space="preserve">
-    <value>Upload Multiple Files?</value>
-  </data>
-  <data name="FileUploadSuccess.Text" xml:space="preserve">
-    <value>{0} Uploaded Successfully</value>
-  </data>
 </root>

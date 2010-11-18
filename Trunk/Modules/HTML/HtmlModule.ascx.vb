@@ -80,8 +80,8 @@ Namespace DotNetNuke.Modules.Html
         ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
-                Dim _htmlTextController As New HtmlTextController
-                Dim _workflowStateController As New WorkflowStateController
+                Dim objHTML As New HtmlTextController
+                Dim objWorkflow As New WorkflowStateController
 
                 ' edit in place
                 If EditorEnabled = True AndAlso Me.IsEditable = True AndAlso PortalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
@@ -91,14 +91,14 @@ Namespace DotNetNuke.Modules.Html
                 End If
 
                 ' get content
-                Dim htmlContent As HtmlTextInfo = Nothing
+                Dim objContent As HtmlTextInfo = Nothing
                 Dim strContent As String = ""
 
-                htmlContent = _htmlTextController.GetTopHtmlText(ModuleId, Not Me.IsEditable, WorkflowID)
+                objContent = objHTML.GetTopHtmlText(ModuleId, Not Me.IsEditable, WorkflowID)
 
-                If Not htmlContent Is Nothing Then
+                If Not objContent Is Nothing Then
                     'don't decode yet (this is done in FormatHtmlText)
-                    strContent = htmlContent.Content
+                    strContent = objContent.Content
                 Else
                     ' get default content from resource file
                     If PortalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
@@ -154,22 +154,22 @@ Namespace DotNetNuke.Modules.Html
                 ElseIf EditorEnabled = True AndAlso Me.IsEditable = True AndAlso PortalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
 
                     ' get content
-                    Dim _htmlTextController As HtmlTextController = New HtmlTextController
-                    Dim _workflowStateController As New WorkflowStateController
-                    Dim htmlContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
-                    If htmlContent Is Nothing Then
-                        htmlContent = New HtmlTextInfo
-                        htmlContent.ItemID = -1
+                    Dim objHTML As HtmlTextController = New HtmlTextController
+                    Dim objWorkflow As New WorkflowStateController
+                    Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
+                    If objContent Is Nothing Then
+                        objContent = New HtmlTextInfo
+                        objContent.ItemID = -1
                     End If
 
                     ' set content attributes
-                    htmlContent.ModuleID = ModuleId
-                    htmlContent.Content = Server.HtmlEncode(e.Text)
-                    htmlContent.WorkflowID = WorkflowID
-                    htmlContent.StateID = _workflowStateController.GetFirstWorkflowStateID(WorkflowID)
+                    objContent.ModuleID = ModuleId
+                    objContent.Content = Server.HtmlEncode(e.Text)
+                    objContent.WorkflowID = WorkflowID
+                    objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID)
 
                     ' save the content
-                    _htmlTextController.UpdateHtmlText(htmlContent, _htmlTextController.GetMaximumVersionHistory(PortalId))
+                    objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
                 Else
                     Throw New SecurityException()
                 End If
@@ -193,16 +193,16 @@ Namespace DotNetNuke.Modules.Html
                     ' verify security 
                     If Me.IsEditable = True AndAlso PortalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
                         ' get content
-                        Dim _htmlTextController As HtmlTextController = New HtmlTextController
-                        Dim htmlContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
+                        Dim objHTML As HtmlTextController = New HtmlTextController
+                        Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
 
-                        Dim _workflowStateController As New WorkflowStateController
-                        If htmlContent.StateID = _workflowStateController.GetFirstWorkflowStateID(WorkflowID) Then
+                        Dim objWorkflow As New WorkflowStateController
+                        If objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID) Then
                             ' publish content
-                            htmlContent.StateID = _workflowStateController.GetNextWorkflowStateID(htmlContent.WorkflowID, htmlContent.StateID)
+                            objContent.StateID = objWorkflow.GetNextWorkflowStateID(objContent.WorkflowID, objContent.StateID)
 
                             ' save the content
-                            _htmlTextController.UpdateHtmlText(htmlContent, _htmlTextController.GetMaximumVersionHistory(PortalId))
+                            objHTML.UpdateHtmlText(objContent, objHTML.GetMaximumVersionHistory(PortalId))
 
                             ' refresh page
                             Response.Redirect(NavigateURL(), True)
@@ -234,18 +234,28 @@ Namespace DotNetNuke.Modules.Html
                 Actions.Add(GetNextActionID, Localization.GetString(Entities.Modules.Actions.ModuleActionType.AddContent, LocalResourceFile), Entities.Modules.Actions.ModuleActionType.AddContent, "", "", EditUrl(), False, Security.SecurityAccessLevel.Edit, True, False)
 
                 ' get the content
-                Dim _htmlTextController As New HtmlTextController
-                Dim _workflowStateController As New WorkflowStateController
-                WorkflowID = _htmlTextController.GetWorkflow(ModuleId, TabId, PortalId).Value
+                Dim objHTML As New HtmlTextController
+                Dim objWorkflow As New WorkflowStateController
+                WorkflowID = objHTML.GetWorkflow(ModuleId, TabId, PortalId).Value
 
-                Dim htmlContent As HtmlTextInfo = _htmlTextController.GetTopHtmlText(ModuleId, False, WorkflowID)
-                If Not htmlContent Is Nothing Then
+                Dim objContent As HtmlTextInfo = objHTML.GetTopHtmlText(ModuleId, False, WorkflowID)
+                If Not objContent Is Nothing Then
                     ' if content is in the first state
-                    If htmlContent.StateID = _workflowStateController.GetFirstWorkflowStateID(WorkflowID) Then
+                    If objContent.StateID = objWorkflow.GetFirstWorkflowStateID(WorkflowID) Then
                         ' if not direct publish workflow
-                        If _workflowStateController.GetWorkflowStates(WorkflowID).Count > 1 Then
+                        If objWorkflow.GetWorkflowStates(WorkflowID).Count > 1 Then
                             ' add publish action
                             Actions.Add(GetNextActionID, Localization.GetString("PublishContent.Action", LocalResourceFile), Entities.Modules.Actions.ModuleActionType.AddContent, "publish", "grant.gif", "", True, Security.SecurityAccessLevel.Edit, True, False)
+                        End If
+                    Else
+                        ' if the content is not in the last state of the workflow then review is required
+                        If objContent.StateID <> objWorkflow.GetLastWorkflowStateID(WorkflowID) Then
+                            ' if the user has permissions to review the content
+                            If WorkflowStatePermissionController.HasWorkflowStatePermission(WorkflowStatePermissionController.GetWorkflowStatePermissions(objContent.StateID), "REVIEW") Then
+                                ' add approve and reject actions
+                                Actions.Add(GetNextActionID, Localization.GetString("ApproveContent.Action", LocalResourceFile), Entities.Modules.Actions.ModuleActionType.AddContent, "", "grant.gif", EditUrl("action", "approve", "Review"), False, Security.SecurityAccessLevel.Edit, True, False)
+                                Actions.Add(GetNextActionID, Localization.GetString("RejectContent.Action", LocalResourceFile), Entities.Modules.Actions.ModuleActionType.AddContent, "", "deny.gif", EditUrl("action", "reject", "Review"), False, Security.SecurityAccessLevel.Edit, True, False)
+                            End If
                         End If
                     End If
                 End If
