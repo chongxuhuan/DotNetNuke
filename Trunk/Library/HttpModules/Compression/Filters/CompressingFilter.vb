@@ -65,7 +65,7 @@ Namespace DotNetNuke.HttpModules.Compression
         ''' <summary>
         ''' Writes out the compression-related headers.  Subclasses should call this once before writing to the output stream.
         ''' </summary>
-        Protected Sub WriteHeaders()
+        Protected Friend Sub WriteHeaders()
             ' this is dangerous.  if Response.End is called before the filter is used, directly or indirectly,
             ' the content will not pass through the filter.  However, this header will still be appended.  
             ' Look for handling cases in PreRequestSendHeaders and Pre

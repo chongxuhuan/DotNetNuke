@@ -89,7 +89,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addContentItem);
 
             ContentItem content = new ContentItem();
             content.Content = Constants.CONTENT_ValidContent;
@@ -109,7 +109,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addContentItem);
 
             ContentItem content = new ContentItem();
             content.Content = Constants.CONTENT_ValidContent;
@@ -134,7 +134,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteContentItem);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_InValidContentItemId;
@@ -155,7 +155,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteContentItem);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_ValidContentItemId;
@@ -181,7 +181,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetContentItem_Returns_Empty_Reader_On_InValid_Id()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getContentItem);
 
             DataService ds = new DataService();
 
@@ -199,7 +199,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetContentItem_Returns_Reader_Of_The_ContentItem_On_Valid_Id()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getContentItem);
 
             DataService ds = new DataService();
 
@@ -235,7 +235,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetContentItemsByTerm_Returns_Reader_Of_ContentItems(string term, int count)
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getContentItemsByTermName);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getContentItemsByTermName);
 
             DataService ds = new DataService();
 
@@ -254,7 +254,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetUnIndexedContent_Returns_Reader_Of_UnIndexed_ContentItems()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getUnIndexedContentItemsName);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getUnIndexedContentItemsName);
 
             DataService ds = new DataService();
 
@@ -274,7 +274,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateContentItem);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_InValidContentItemId;
@@ -314,7 +314,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateContentItem);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -350,7 +350,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentItemsTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, upateContentItem);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), upateContentItem);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -380,7 +380,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addMetaData);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -401,7 +401,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, metaDataTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, addMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addMetaData);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -426,7 +426,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteMetaData);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -449,7 +449,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteMetaData);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_UpdateContentItemId;
@@ -470,7 +470,7 @@ namespace DotNetNuke.Tests.Content.Data
         {
             //Arrange
             int rowCount = DataUtil.GetRecordCount(DataTestHelper.ConnectionString, contentMetaDataTableName);
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, deleteMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), deleteMetaData);
 
             ContentItem content = new ContentItem();
             content.ContentItemId = Constants.CONTENT_InValidContentItemId;
@@ -494,7 +494,7 @@ namespace DotNetNuke.Tests.Content.Data
         public void DataService_GetMetaData_Returns_Reader_Of_MetaData()
         {
             //Arrange
-            DataUtil.AddDatabaseObject(virtualScriptFilePath, getMetaData);
+            DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), getMetaData);
 
             DataService ds = new DataService();
 

@@ -22,6 +22,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Web.Caching
 Imports System.Diagnostics
+Imports DotNetNuke.Collections
 
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Services.Cache
@@ -58,7 +59,7 @@ Namespace DotNetNuke.Common.Utilities
         'Object used to lock SyncLock block
         Private Shared dictionaryLock As New ReaderWriterLock
         Private Shared lockDictionary As New Dictionary(Of String, Object)
-        Private Shared dictionaryCache As New Dictionary(Of String, Object)
+        Private Shared dictionaryCache As New SharedDictionary(Of String, Object)
 
 #End Region
 
@@ -243,7 +244,9 @@ Namespace DotNetNuke.Common.Utilities
 
         Public Shared Sub ClearCache()
             CachingProvider.Instance().Clear("Prefix", "DNN_")
-            dictionaryCache.Clear()
+            Using writeLock As ISharedCollectionLock = dictionaryCache.GetWriteLock()
+                dictionaryCache.Clear()
+            End Using
 
             ' log the cache clear event
             Dim objEventLogInfo As New LogInfo
@@ -331,22 +334,8 @@ Namespace DotNetNuke.Common.Utilities
 
 #Region "GetCachedData"
 
-        Public Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback) As TObject
-            ' declare local object and try and retrieve item from the cache
-            Return GetCachedData(Of TObject)(cacheItemArgs, cacheItemExpired, False)
-        End Function
-
-        Friend Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback, ByVal storeInDictionary As Boolean) As TObject
-            ' declare local object and try and retrieve item from the cache
-
-            Dim objObject As Object = Nothing
-
-            If (Not storeInDictionary) Then
-                objObject = GetCache(cacheItemArgs.CacheKey)
-            ElseIf (dictionaryCache.ContainsKey(cacheItemArgs.CacheKey)) Then
-                objObject = dictionaryCache(cacheItemArgs.CacheKey)
-            End If
-
+        Private Shared Function GetCachedDataFromRuntimeCache(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback) As Object
+            Dim objObject As Object = GetCache(cacheItemArgs.CacheKey)
 
             ' if item is not cached
             If objObject Is Nothing Then
@@ -356,11 +345,7 @@ Namespace DotNetNuke.Common.Utilities
                 ' prevent other threads from entering this block while we regenerate the cache
                 SyncLock lock
                     ' try to retrieve object from the cache again (in case another thread loaded the object since we first checked)
-                    If (Not storeInDictionary) Then
-                        objObject = GetCache(cacheItemArgs.CacheKey)
-                    ElseIf (dictionaryCache.ContainsKey(cacheItemArgs.CacheKey)) Then
-                        objObject = dictionaryCache(cacheItemArgs.CacheKey)
-                    End If
+                    objObject = GetCache(cacheItemArgs.CacheKey)
 
                     ' if object was still not retrieved
                     If objObject Is Nothing Then
@@ -373,34 +358,83 @@ Namespace DotNetNuke.Common.Utilities
                             LogException(ex)
                         End Try
 
-                        If (storeInDictionary) Then
-                            dictionaryCache(cacheItemArgs.CacheKey) = objObject
-                        Else
-                            ' set cache timeout
-                            Dim timeOut As Integer = cacheItemArgs.CacheTimeOut * Convert.ToInt32(Host.PerformanceSetting)
+                        ' set cache timeout
+                        Dim timeOut As Integer = cacheItemArgs.CacheTimeOut * Convert.ToInt32(Host.PerformanceSetting)
 
-                            ' if we retrieved a valid object and we are using caching
-                            If objObject IsNot Nothing AndAlso timeOut > 0 Then
-                                ' save the object in the cache
-                                DataCache.SetCache(cacheItemArgs.CacheKey, objObject, cacheItemArgs.CacheDependency, Cache.NoAbsoluteExpiration, _
-                                                   TimeSpan.FromMinutes(timeOut), cacheItemArgs.CachePriority, cacheItemArgs.CacheCallback)
+                        ' if we retrieved a valid object and we are using caching
+                        If objObject IsNot Nothing AndAlso timeOut > 0 Then
+                            ' save the object in the cache
+                            DataCache.SetCache(cacheItemArgs.CacheKey, objObject, cacheItemArgs.CacheDependency, Cache.NoAbsoluteExpiration, _
+                                               TimeSpan.FromMinutes(timeOut), cacheItemArgs.CachePriority, cacheItemArgs.CacheCallback)
 
-                                ' check if the item was actually saved in the cache
-                                If DataCache.GetCache(cacheItemArgs.CacheKey) Is Nothing Then
+                            ' check if the item was actually saved in the cache
+                            If DataCache.GetCache(cacheItemArgs.CacheKey) Is Nothing Then
 
-                                    ' log the event if the item was not saved in the cache ( likely because we are out of memory )
-                                    Dim objEventLogInfo As New LogInfo
-                                    objEventLogInfo.LogTypeKey = EventLogController.EventLogType.CACHE_OVERFLOW.ToString()
-                                    objEventLogInfo.LogProperties.Add(New LogDetailInfo(cacheItemArgs.CacheKey, "Overflow - Item Not Cached"))
-                                    Dim objEventLog As New EventLogController()
-                                    objEventLog.AddLog(objEventLogInfo)
-                                End If
+                                ' log the event if the item was not saved in the cache ( likely because we are out of memory )
+                                Dim objEventLogInfo As New LogInfo
+                                objEventLogInfo.LogTypeKey = EventLogController.EventLogType.CACHE_OVERFLOW.ToString()
+                                objEventLogInfo.LogProperties.Add(New LogDetailInfo(cacheItemArgs.CacheKey, "Overflow - Item Not Cached"))
+                                Dim objEventLog As New EventLogController()
+                                objEventLog.AddLog(objEventLogInfo)
                             End If
                         End If
+
                         'This thread won so remove unique Lock from collection
                         RemoveUniqueLockObject(cacheItemArgs.CacheKey)
                     End If
                 End SyncLock
+            End If
+
+            Return objObject
+        End Function
+
+        Private Shared Function GetCachedDataFromDictionary(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback) As Object
+            Dim objObject As Object = Nothing
+
+            Dim idFound As Boolean = Null.NullBoolean
+            Using readLock As ISharedCollectionLock = dictionaryCache.GetReadLock()
+                If dictionaryCache.ContainsKey(cacheItemArgs.CacheKey) Then
+                    'Return value
+                    objObject = dictionaryCache(cacheItemArgs.CacheKey)
+                    idFound = True
+                End If
+            End Using
+
+            If Not idFound Then
+                ' get object from data source using delegate
+                Try
+                    objObject = cacheItemExpired(cacheItemArgs)
+                Catch ex As Exception
+                    objObject = Nothing
+                    LogException(ex)
+                End Try
+
+                Using writeLock As ISharedCollectionLock = dictionaryCache.GetWriteLock()
+                    If Not dictionaryCache.ContainsKey(cacheItemArgs.CacheKey) Then
+                        If objObject IsNot Nothing Then
+                            dictionaryCache(cacheItemArgs.CacheKey) = objObject
+                        End If
+                    End If
+                End Using
+            End If
+
+            Return objObject
+        End Function
+
+        Public Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback) As TObject
+            ' declare local object and try and retrieve item from the cache
+            Return GetCachedData(Of TObject)(cacheItemArgs, cacheItemExpired, False)
+        End Function
+
+        Friend Shared Function GetCachedData(Of TObject)(ByVal cacheItemArgs As CacheItemArgs, ByVal cacheItemExpired As CacheItemExpiredCallback, ByVal storeInDictionary As Boolean) As TObject
+            Dim objObject As Object = Nothing
+
+            If storeInDictionary Then
+                'Use Thread Safe SharedDictionary
+                objObject = GetCachedDataFromDictionary(cacheItemArgs, cacheItemExpired)
+            Else
+                'Use Cache
+                objObject = GetCachedDataFromRuntimeCache(cacheItemArgs, cacheItemExpired)
             End If
 
             ' return the object
@@ -481,7 +515,9 @@ Namespace DotNetNuke.Common.Utilities
         End Sub
 
         Public Shared Sub RemoveFromPrivateDictionary(ByVal DnnCacheKey As String)
-            dictionaryCache.Remove(CleanCacheKey(DnnCacheKey))
+            Using writeLock As ISharedCollectionLock = dictionaryCache.GetWriteLock()
+                dictionaryCache.Remove(CleanCacheKey(DnnCacheKey))
+            End Using
         End Sub
 
 #End Region

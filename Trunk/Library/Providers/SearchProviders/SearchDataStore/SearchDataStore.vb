@@ -18,15 +18,16 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-
+Imports System.Collections.Generic
 Imports DotNetNuke.Common.Utilities
-Imports DotNetNuke.Entities.Modules
+Imports DotNetNuke.Entities.Host
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Entities.Tabs
-Imports DotNetNuke.Security
+Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Exceptions
-Imports System.Collections.Generic
 Imports DotNetNuke.Security.Permissions
+Imports DotNetNuke.Security
+
 
 Namespace DotNetNuke.Services.Search
 
@@ -65,6 +66,9 @@ Namespace DotNetNuke.Services.Search
         '''                             functions with new call to HtmlUtils.Clean().
         '''                             replaced logic to determine whether word should
         '''                             be indexed by call to CanIndexWord()
+        '''     [vnguyen]   09/03/2010  added searchitem title to the content and 
+        '''                             also tab title, description, keywords where the 
+        '''                             content resides for indexed searching
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub AddIndexWords(ByVal indexId As Integer, ByVal searchItem As SearchItemInfo, ByVal language As String)
@@ -74,15 +78,27 @@ Namespace DotNetNuke.Services.Search
             Dim IndexWords As New Dictionary(Of String, Integer)
             Dim IndexPositions As New Dictionary(Of String, List(Of Integer))
 
-            Dim Content As String = GetSearchContent(searchItem)
+            Dim Content As String = GetSearchContent(searchItem)            
+            Dim title As String = HtmlUtils.StripPunctuation(searchItem.Title, True)
+
+            '' Tab and Module Metadata
+            ' Retreive module and page names
+            Dim objModule As ModuleInfo = New ModuleController().GetModule(searchItem.ModuleId)
+            Dim objTab As TabInfo = New TabController().GetTab(objModule.TabID, objModule.PortalID, False)
+            Dim tabName As String = HtmlUtils.StripPunctuation(objTab.TabName, True)
+            Dim tabTitle As String = HtmlUtils.StripPunctuation(objTab.Title, True)
+            Dim tabDescription As String = HtmlUtils.StripPunctuation(objTab.Description, True)
+            Dim tabKeywords As String = HtmlUtils.StripPunctuation(objTab.KeyWords, True)
+            Dim tagfilter As String = PortalController.GetPortalSetting("SearchIncludedTagInfoFilter", objModule.PortalID, Host.SearchIncludedTagInfoFilter)
 
             ' clean content
-            Content = HtmlUtils.Clean(Content, True)
-            Content = Content.ToLower
-
+            Content = HtmlUtils.CleanWithTagInfo(Content, tagfilter, True)
+            ' append tab and module metadata
+            Content = Content.ToLower + title.ToLower + " " + tabName.ToLower + " " + tabTitle.ToLower + " " + tabDescription.ToLower + " " + tabKeywords.ToLower
+            
             '' split content into words
             Dim ContentWords() As String = Split(Content, " ")
-
+            
             ' process each word
             Dim intWord As Integer
             Dim strWord As String
@@ -417,6 +433,7 @@ Namespace DotNetNuke.Services.Search
         ''' <param name="SearchItems">A Collection of SearchItems</param>
         ''' <history>
         '''		[cnurse]	11/15/2004	documented
+        '''     [vnguyen]   09/07/2010  Modified: Added a date comparison for LastModifiedDate on the Tab
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Sub StoreSearchItems(ByVal SearchItems As SearchItemInfoCollection)
@@ -429,6 +446,10 @@ Namespace DotNetNuke.Services.Search
                     Modules.Add(item.ModuleId, "en-US")
                 End If
             Next
+
+            Dim objTabs As New TabController
+            Dim objModule As New ModuleInfo
+            Dim objTab As New TabInfo
 
             Dim searchItem As SearchItemInfo
             Dim indexedItems As Dictionary(Of String, SearchItemInfo)
@@ -449,9 +470,22 @@ Namespace DotNetNuke.Services.Search
                     'Get item from Indexed collection
                     Dim indexedItem As SearchItemInfo = Nothing
                     If indexedItems.TryGetValue(searchItem.SearchKey, indexedItem) Then
+
+                        'Get the tab where the search item resides -- used in date comparison
+                        objModule = New ModuleController().GetModule(searchItem.ModuleId)
+                        objTab = objTabs.GetTab(searchItem.TabId, objModule.PortalID, False)
+
                         'Item exists so compare Dates to see if modified
-                        If indexedItem.PubDate < searchItem.PubDate Then
+                        If indexedItem.PubDate < searchItem.PubDate OrElse indexedItem.PubDate < objModule.LastModifiedOnDate OrElse indexedItem.PubDate < objTab.LastModifiedOnDate Then
                             Try
+                                
+                                If searchItem.PubDate < objModule.LastModifiedOnDate Then
+                                    searchItem.PubDate = objModule.LastModifiedOnDate
+                                End If
+                                If searchItem.PubDate < objTab.LastModifiedOnDate Then
+                                    searchItem.PubDate = objTab.LastModifiedOnDate
+                                End If
+                                
                                 'Content modified so update SearchItem and delete item's Words Collection
                                 searchItem.SearchItemId = indexedItem.SearchItemId
                                 SearchDataStoreController.UpdateSearchItem(searchItem)

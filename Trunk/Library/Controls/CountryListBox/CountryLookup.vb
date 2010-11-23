@@ -206,25 +206,23 @@ Namespace DotNetNuke.UI.WebControls
 
                 If (Ipnum And vbShiftLeft(1, Depth)) > 0 Then
                     If X(1) >= CountryBegin Then
-                        SeekCountry = CType(X(1) - CountryBegin, Integer)
-                        Exit Function
+                        Return CType(X(1) - CountryBegin, Integer)
                     End If
 
-                    SeekCountry = SeekCountry(X(1), Ipnum, CType(Depth - 1, Short))
-                    Exit Function
+                    Return SeekCountry(X(1), Ipnum, CType(Depth - 1, Short))
                 Else
                     If X(0) >= CountryBegin Then
-                        SeekCountry = CType(X(0) - CountryBegin, Integer)
-                        Exit Function
+                        Return CType(X(0) - CountryBegin, Integer)
                     End If
 
-                    SeekCountry = SeekCountry(X(0), Ipnum, CType(Depth - 1, Short))
-                    Exit Function
+                    Return SeekCountry(X(0), Ipnum, CType(Depth - 1, Short))
                 End If
 
             Catch exc As Exception
                 Err.Raise(9999, "CountryLookup.SeekCountry", "Error seeking country: " & exc.ToString)
             End Try
+
+            Return -1
         End Function
 #End Region
 

@@ -20,6 +20,7 @@
 
 Imports Telerik.Web.UI
 Imports DotNetNuke.Services.Localization
+Imports System.Web.UI.WebControls
 
 Namespace DotNetNuke.Web.UI.WebControls
 
@@ -35,7 +36,7 @@ Namespace DotNetNuke.Web.UI.WebControls
         End Property
 
 #End Region
- 
+
 #Region "Public Methods"
 
         Public Overloads Overrides Function Clone() As GridColumn
@@ -50,8 +51,18 @@ Namespace DotNetNuke.Web.UI.WebControls
         Public Overrides Sub InitializeCell(ByVal cell As System.Web.UI.WebControls.TableCell, ByVal columnIndex As Integer, ByVal inItem As Telerik.Web.UI.GridItem)
             MyBase.InitializeCell(cell, columnIndex, inItem)
             If TypeOf inItem Is GridHeaderItem Then
-                cell.Text = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
+                Dim headerItem As GridHeaderItem = CType(inItem, GridHeaderItem)
+                Dim columnName As String = Me.DataField
+
+                'localize link text if sorting, otherwise localize whole cell
+                If Me.Owner.AllowSorting = False Then
+                    cell.Text = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
+                Else
+                    Dim button As LinkButton = CType(headerItem(columnName.ToString).Controls(0), LinkButton)
+                    button.Text = Localization.GetString(String.Format("{0}.Header", Me.HeaderText), LocalResourceFile)
+                End If
             End If
+
         End Sub
 
 #End Region

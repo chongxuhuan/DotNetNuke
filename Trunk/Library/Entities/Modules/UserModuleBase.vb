@@ -358,9 +358,7 @@ Namespace DotNetNuke.Entities.Modules
             End If
 
             'Initialise the ProfileProperties Collection
-            Dim lc As String = Me.PortalSettings.DefaultLanguage
-            If String.IsNullOrEmpty(lc) Then lc = New DotNetNuke.Services.Localization.Localization().CurrentUICulture
-            
+            Dim lc As String = New DotNetNuke.Services.Localization.Localization().CurrentUICulture
             newUser.Profile.InitialiseProfile(PortalId)
             newUser.Profile.TimeZone = Me.PortalSettings.TimeZoneOffset
             newUser.Profile.PreferredLocale = lc

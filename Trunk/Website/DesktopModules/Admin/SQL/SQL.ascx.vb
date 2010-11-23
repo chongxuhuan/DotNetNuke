@@ -63,7 +63,7 @@ Namespace DotNetNuke.Modules.Admin.SQL
                 If Not Page.IsPostBack Then
                     Dim colConnections As ConnectionStringSettingsCollection = ConfigurationManager.ConnectionStrings
                     For Each objConnection As ConnectionStringSettings In colConnections
-                        If objConnection.Name.ToLower <> "localsqlserver" Then
+                        If objConnection.Name.ToLower <> "localmysqlserver" And objConnection.Name.ToLower <> "localsqlserver" Then
                             cboConnection.Items.Add(objConnection.Name)
                         End If
                     Next

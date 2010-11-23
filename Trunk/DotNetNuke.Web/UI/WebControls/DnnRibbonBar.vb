@@ -52,7 +52,13 @@ Namespace DotNetNuke.Web.UI.WebControls
 
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
             MyBase.OnInit(e)
-            Utilities.ApplySkin(Me, "", "RibbonBar", "RibbonBar")
+        End Sub
+
+        Protected Overrides Sub OnPreRender(ByVal e As System.EventArgs)
+            MyBase.OnPreRender(e)
+            If Me.Visible Then
+                Utilities.ApplySkin(Me, "", "RibbonBar", "RibbonBar")
+            End If
         End Sub
 
         Protected Overrides Sub Render(ByVal writer As System.Web.UI.HtmlTextWriter)

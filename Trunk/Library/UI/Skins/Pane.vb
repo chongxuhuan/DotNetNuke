@@ -19,6 +19,7 @@
 '
 
 Imports System.Collections.Generic
+Imports System.Text.RegularExpressions
 
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Security.Permissions
@@ -46,6 +47,7 @@ Namespace DotNetNuke.UI.Skins
         Private _containers As Dictionary(Of String, DotNetNuke.UI.Containers.Container)
         Private _name As String
         Private _paneControl As HtmlContainerControl
+        Private _ContainerWrapperControl As HtmlGenericControl
         Private Const c_PaneOutline As String = "paneOutline"
 
 #End Region
@@ -185,7 +187,7 @@ Namespace DotNetNuke.UI.Skins
                 Dim lex As New ModuleLoadException(Skin.MODULELOAD_ERROR, exc)
                 If TabPermissionController.CanAdminPage() Then
                     ' only display the error to administrators
-                    PaneControl.Controls.Add(New ErrorContainer(PortalSettings, String.Format(Skin.CONTAINERLOAD_ERROR, ContainerPath), lex).Container)
+                    _ContainerWrapperControl.Controls.Add(New ErrorContainer(PortalSettings, String.Format(Skin.CONTAINERLOAD_ERROR, ContainerPath), lex).Container)
                 End If
                 LogException(lex)
             End Try
@@ -357,11 +359,31 @@ Namespace DotNetNuke.UI.Skins
         ''' -----------------------------------------------------------------------------
         Public Sub InjectModule(ByVal objModule As ModuleInfo)
             Dim bSuccess As Boolean = True
+            _ContainerWrapperControl = New HtmlGenericControl("div")
+            PaneControl.Controls.Add(_ContainerWrapperControl)
+
+            ' TO BE ADDED in 5.6.1: inject module classes (dnnUX team needs to standardize format for injected classes)
+            ' Dim classFormatString As String = "DNNModule DNNModuleName-{0} DNNModuleID-{1} DNNTabModuleID-{2}"
+            ' Dim sanitizedModuleName As String = Null.NullString
+            '
+            ' If (Not String.IsNullOrEmpty(objModule.DesktopModule.ModuleName)) Then
+            '   sanitizedModuleName = CreateValidClass(objModule.DesktopModule.ModuleName, False)
+            ' End If
+            '
+            ' _ContainerWrapperControl.Attributes.Item("class") = String.Format(classFormatString, sanitizedModuleName, objModule.ModuleID, objModule.TabModuleID)
 
             Try
                 If Not IsAdminControl() Then
                     ' inject an anchor tag to allow navigation to the module content
-                    PaneControl.Controls.Add(New LiteralControl("<a name=""" & objModule.ModuleID.ToString & """></a>"))
+
+                    ' TO BE DEPRECATED in 5.6.1: an ID value must not start with a number
+                    ' Add a comment indicating that this anchor element will be deprecated
+                    '_ContainerWrapperControl.Controls.Add()(New LiteralControl("<!-- DEPRECATED in 5.6.1: anchor tag using the module ID alone - IDs must not start with a numeral -->"))
+                    _ContainerWrapperControl.Controls.Add(New LiteralControl("<a id=""" & objModule.ModuleID.ToString & """ name=""" & objModule.ModuleID.ToString & """></a>"))
+
+                    ' TO BE ADDED in 5.6.1: an ID value that does not start with a number
+                    ' Dim anchorFormatString As String = "DNNModuleID-{0}"
+                    '_ContainerWrapperControl.Controls.Add(New LiteralControl("<a id=""" & String.Format(anchorFormatString, objModule.ModuleID) & """ name=""" & String.Format(anchorFormatString, objModule.ModuleID) & """></a>"))
                 End If
 
                 'Load container control
@@ -376,7 +398,7 @@ Namespace DotNetNuke.UI.Skins
                     Dim ctlTitle As System.Web.UI.Control = ctlContainer.FindControl("dnnTitle")
                     ''Assume that the title control is named dnnTitle.  If this becomes an issue we could loop through the controls looking for the title type of skin object
                     ctlDragDropContainer.ID = ctlContainer.ID & "_DD"
-                    PaneControl.Controls.Add(ctlDragDropContainer)
+                    _ContainerWrapperControl.Controls.Add(ctlDragDropContainer)
 
                     ' inject the container into the page pane - this triggers the Pre_Init() event for the user control
                     ctlDragDropContainer.Controls.Add(ctlContainer)
@@ -395,7 +417,7 @@ Namespace DotNetNuke.UI.Skins
                         DotNetNuke.UI.Utilities.ClientAPI.RegisterPostBackEventHandler(PaneControl, "MoveToPane", AddressOf ModuleMoveToPanePostBack, False)
                     End If
                 Else
-                    PaneControl.Controls.Add(ctlContainer)
+                    _ContainerWrapperControl.Controls.Add(ctlContainer)
                 End If
 
                 'Attach Module to Container
@@ -411,7 +433,7 @@ Namespace DotNetNuke.UI.Skins
                 lex = New ModuleLoadException(String.Format(Skin.MODULEADD_ERROR, PaneControl.ID.ToString), exc)
                 If TabPermissionController.CanAdminPage() Then
                     ' only display the error to administrators
-                    PaneControl.Controls.Add(New ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container)
+                    _ContainerWrapperControl.Controls.Add(New ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container)
                 End If
                 LogException(exc)
                 bSuccess = False

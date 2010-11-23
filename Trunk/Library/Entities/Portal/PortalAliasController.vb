@@ -168,7 +168,7 @@ Namespace DotNetNuke.Entities.Portals
                 If Not objPortalAliasCollection.HasKeys OrElse _
                     (objPortalAliasCollection.Count = 1 And objPortalAliasCollection.Contains("_default")) Then
                     ' relate the PortalAlias to the default portal on a fresh database installation
-                    DataProvider.Instance().UpdatePortalAlias(PortalAlias.ToLower, UserController.GetCurrentUserInfo.UserID)
+                    DataProvider.Instance().UpdatePortalAlias(PortalAlias.ToLower.Trim("/"c), UserController.GetCurrentUserInfo.UserID)
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("PortalAlias", PortalAlias.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTALALIAS_UPDATED)
 
@@ -196,7 +196,7 @@ Namespace DotNetNuke.Entities.Portals
 #Region "Public Methods"
 
         Public Function AddPortalAlias(ByVal objPortalAliasInfo As PortalAliasInfo) As Integer
-            Dim Id As Integer = DataProvider.Instance().AddPortalAlias(objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower, UserController.GetCurrentUserInfo.UserID)
+            Dim Id As Integer = DataProvider.Instance().AddPortalAlias(objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower.Trim("/"c), UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(objPortalAliasInfo, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.PORTALALIAS_CREATED)
             'clear portal alias cache
@@ -265,7 +265,7 @@ Namespace DotNetNuke.Entities.Portals
         Public Sub UpdatePortalAliasInfo(ByVal objPortalAliasInfo As PortalAliasInfo)
             DataCache.RemoveCache(DataCache.PortalAliasCacheKey)
 
-            DataProvider.Instance().UpdatePortalAliasInfo(objPortalAliasInfo.PortalAliasID, objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower, UserController.GetCurrentUserInfo.UserID)
+            DataProvider.Instance().UpdatePortalAliasInfo(objPortalAliasInfo.PortalAliasID, objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower.Trim("/"c), UserController.GetCurrentUserInfo.UserID)
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog(objPortalAliasInfo, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, "", Log.EventLog.EventLogController.EventLogType.PORTALALIAS_UPDATED)
         End Sub

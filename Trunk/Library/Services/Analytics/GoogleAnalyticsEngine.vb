@@ -57,7 +57,7 @@ Namespace DotNetNuke.Services.Analytics
                 Return ""
             End If
 
-            scriptTemplate = scriptTemplate.Replace("[TRACKING_ID]", """" + trackingId + """")
+            scriptTemplate = scriptTemplate.Replace("[TRACKING_ID]", trackingId)
             If (urlParameter <> "") Then
                 scriptTemplate = scriptTemplate.Replace("[PAGE_URL]", urlParameter)
             Else

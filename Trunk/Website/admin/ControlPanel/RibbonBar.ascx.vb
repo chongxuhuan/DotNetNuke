@@ -101,7 +101,6 @@ Namespace DotNetNuke.UI.ControlPanels
 
 		Protected Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 			Try
-				DotNetNuke.Web.UI.Utilities.ApplySkin(Me.RibbonBarTabs, "", "", "RibbonBar")
 
 				RibbonBarTabs.Tabs(2).Visible = False
 				Pages.PageViews(2).Visible = False
@@ -114,7 +113,12 @@ Namespace DotNetNuke.UI.ControlPanels
 				'CommonTabAddModuleGroup.Visible = TabPermissionController.CanAddContentToPage()
 
 				'AddPage groups
-				'CommonTabAddPageGroup.Visible = TabPermissionController.CanAddPage()
+                'CommonTabAddPageGroup.Visible = TabPermissionController.CanAddPage()
+                Dim copyPageButton As Control = G5.FindControl("CopyPage")
+                If Not copyPageButton Is Nothing Then
+                    copyPageButton.Visible = LocaleController.Instance.IsDefaultLanguage(LocaleController.Instance.GetCurrentLocale(PortalSettings.PortalId).Code)
+                End If
+
 
 				If (Request.IsAuthenticated) Then
 					Dim user As UserInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo()
@@ -129,7 +133,9 @@ Namespace DotNetNuke.UI.ControlPanels
 				End If
 
 				If IsPageAdmin() Then
-					RB.Visible = True
+                    DotNetNuke.Web.UI.Utilities.ApplySkin(Me.RibbonBarTabs, "", "", "RibbonBar")
+
+                    RB.Visible = True
 					cmdVisibility.Visible = True
                     RB_RibbonBar.Visible = True
 

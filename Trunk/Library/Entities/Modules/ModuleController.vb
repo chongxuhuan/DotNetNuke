@@ -88,6 +88,89 @@ Namespace DotNetNuke.Entities.Modules
             UpdateModuleSettings(objModule)
         End Sub
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Localizes a Module
+        ''' </summary>
+        ''' <param name="sourceModule"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   06/10/2010   Modified: Removed Copying of permissions, Adding only View and Edit permissions
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Function LocalizeModuleInternal(ByVal sourceModule As ModuleInfo) As Integer
+            Dim moduleId As Integer = Null.NullInteger
+
+            If sourceModule IsNot Nothing Then
+                ' clone the module object ( to avoid creating an object reference to the data cache )
+                Dim newModule As ModuleInfo = sourceModule.Clone()
+                newModule.ModuleID = Null.NullInteger 'reset the module id
+
+                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", sourceModule.CultureCode), sourceModule.PortalID, "")
+
+                'Add the default translators for this language, view and edit permissions
+                Dim permissionCtrl As New PermissionController
+                Dim viewPermissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "VIEW")
+                Dim editPermissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT")
+                Dim viewPermisison As PermissionInfo = Nothing
+                Dim editPermisison As PermissionInfo = Nothing
+
+                'View
+                If viewPermissionsList IsNot Nothing AndAlso viewPermissionsList.Count > 0 Then
+                    viewPermisison = DirectCast(viewPermissionsList(0), PermissionInfo)
+                End If
+
+                'Edit
+                If editPermissionsList IsNot Nothing AndAlso editPermissionsList.Count > 0 Then
+                    editPermisison = DirectCast(editPermissionsList(0), PermissionInfo)
+                End If
+
+                If viewPermisison IsNot Nothing OrElse editPermisison IsNot Nothing Then
+                    For Each translatorRole As String In translatorRoles.Split(";"c)
+                        AddModulePermission(newModule, sourceModule.PortalID, translatorRole, viewPermisison, "VIEW")
+                        AddModulePermission(newModule, sourceModule.PortalID, translatorRole, editPermisison, "EDIT")
+                    Next
+                End If
+
+                'Add Module
+                AddModuleInternal(newModule)
+
+                ' update tabmodule
+                dataProvider.UpdateTabModule(newModule.TabModuleID, newModule.TabID, newModule.ModuleID, newModule.ModuleTitle, _
+                                             newModule.Header, newModule.Footer, newModule.ModuleOrder, newModule.PaneName, _
+                                             newModule.CacheTime, newModule.CacheMethod, newModule.Alignment, newModule.Color, _
+                                             newModule.Border, newModule.IconFile, newModule.Visibility, newModule.ContainerSrc, _
+                                             newModule.DisplayTitle, newModule.DisplayPrint, newModule.DisplaySyndicate, _
+                                             newModule.IsWebSlice, newModule.WebSliceTitle, newModule.WebSliceExpiryDate, _
+                                             newModule.WebSliceTTL, newModule.VersionGuid, newModule.DefaultLanguageGuid, _
+                                             newModule.LocalizedVersionGuid, newModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
+
+                If newModule.DesktopModule.BusinessControllerClass <> "" Then
+                    Try
+                        Dim objObject As Object = Framework.Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass)
+                        Dim portableModule As IPortable = TryCast(objObject, IPortable)
+                        If portableModule IsNot Nothing Then
+                            Dim Content As String = portableModule.ExportModule(sourceModule.ModuleID)
+                            If Content <> "" Then
+                                portableModule.ImportModule(newModule.ModuleID, Content, newModule.DesktopModule.Version, UserController.GetCurrentUserInfo.UserID)
+                            End If
+                        End If
+                    Catch ex As Exception
+                        LogException(ex)
+                    End Try
+                End If
+
+                moduleId = newModule.ModuleID
+
+                'Clear Caches
+                ClearCache(newModule.TabID)
+                ClearCache(sourceModule.TabID)
+            End If
+
+            Return moduleId
+        End Function
+
         Private Sub UpdateModuleSettings(ByVal updatedModule As ModuleInfo)
             Dim sKey As String
             For Each sKey In updatedModule.ModuleSettings.Keys
@@ -125,6 +208,37 @@ Namespace DotNetNuke.Entities.Modules
 
                 ClearCache(modInfo.TabID)
             Next
+        End Sub
+
+        ''' <summary>
+        ''' Adds a Module permission to the ModuleInfo parameter.
+        ''' </summary>
+        ''' <param name="objModule">The module to add a permission for</param>
+        ''' <param name="portalId"></param>
+        ''' <param name="roleName"></param>
+        ''' <param name="permission"></param>
+        ''' <param name="permissionKey"></param>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   06/10/2010   Created
+        ''' </history>
+        Private Sub AddModulePermission(ByRef objModule As ModuleInfo, ByVal portalId As Integer, ByVal roleName As String, ByVal permission As PermissionInfo, ByVal permissionKey As String)
+            Dim role As RoleInfo
+            Dim modulePermission As ModulePermissionInfo
+            Dim perm As ModulePermissionInfo
+
+            perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
+            If permission IsNot Nothing AndAlso perm Is Nothing Then
+                perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
+                modulePermission = New ModulePermissionInfo(permission)
+                role = New RoleController().GetRoleByName(portalId, roleName)
+                If role IsNot Nothing Then
+                    modulePermission.RoleID = role.RoleID
+                    modulePermission.AllowAccess = True
+
+                    objModule.ModulePermissions.Add(modulePermission)
+                End If
+            End If
         End Sub
 
 #End Region
@@ -626,7 +740,8 @@ Namespace DotNetNuke.Entities.Modules
         End Sub
 
         Public Sub CopyModule(ByVal sourceModule As ModuleInfo, ByVal destinationTab As TabInfo, ByVal toPaneName As String, ByVal includeSettings As Boolean)
-            Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+            Dim tabCtrl As New TabController()
+            Dim _Portal As PortalInfo = New PortalController().GetPortal(destinationTab.PortalID)
 
             'Clone Module
             Dim destinationModule As ModuleInfo = sourceModule.Clone
@@ -643,11 +758,21 @@ Namespace DotNetNuke.Entities.Modules
             destinationModule.LocalizedVersionGuid = Guid.NewGuid
 
             'Figure out the DefaultLanguage Guid
-            If Not String.IsNullOrEmpty(sourceModule.CultureCode) AndAlso _
-                    sourceModule.CultureCode = _PortalSettings.DefaultLanguage AndAlso _
-                    Not String.IsNullOrEmpty(destinationModule.CultureCode) Then
+            If (Not String.IsNullOrEmpty(sourceModule.CultureCode) AndAlso _
+                    sourceModule.CultureCode = _Portal.DefaultLanguage AndAlso _
+                    destinationModule.CultureCode <> sourceModule.CultureCode AndAlso _
+                    Not String.IsNullOrEmpty(destinationModule.CultureCode)) Then
                 'Tab is localized so set Default language Guid reference
                 destinationModule.DefaultLanguageGuid = sourceModule.UniqueId
+            ElseIf sourceModule.AllTabs AndAlso sourceModule.CultureCode <> _Portal.DefaultLanguage Then
+                If sourceModule.DefaultLanguageModule IsNot Nothing AndAlso _
+                    destinationTab.DefaultLanguageTab IsNot Nothing Then
+                    Dim defaultLanguageModule As ModuleInfo = GetModule(sourceModule.DefaultLanguageModule.ModuleID, destinationTab.DefaultLanguageTab.TabID)
+                    If defaultLanguageModule IsNot Nothing Then
+                        destinationModule.DefaultLanguageGuid = defaultLanguageModule.UniqueId
+                    End If
+                End If
+
             End If
 
             'This will fail if the page already contains this module
@@ -664,16 +789,19 @@ Namespace DotNetNuke.Entities.Modules
                                           destinationModule.DefaultLanguageGuid, destinationModule.LocalizedVersionGuid, _
                                           destinationModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
 
-                'Optionally copy the TabModuleSettings
-                If includeSettings Then
-                    CopyTabModuleSettings(sourceModule, destinationModule)
-                End If
             Catch
                 ' module already in the page, ignore error
             End Try
 
             ClearCache(sourceModule.TabID)
             ClearCache(destinationTab.TabID)
+
+            'Optionally copy the TabModuleSettings
+            If includeSettings Then
+                destinationModule = GetModule(destinationModule.ModuleID, destinationModule.TabID)
+                CopyTabModuleSettings(sourceModule, destinationModule)
+            End If
+
         End Sub
 
         Public Sub CopyModules(ByVal sourceTab As TabInfo, ByVal destinationTab As TabInfo, ByVal asReference As Boolean)
@@ -1160,84 +1288,30 @@ Namespace DotNetNuke.Entities.Modules
                                                                                         AddressOf GetTabModulesCallBack)
         End Function
 
-        Public Function LocalizeModule(ByVal sourceModule As ModuleInfo) As Integer
-            Dim moduleId As Integer = Null.NullInteger
+        Public Sub LocalizeModule(ByVal sourceModule As ModuleInfo, ByVal locale As Locale)
+            Dim defaultModule As ModuleInfo = sourceModule.DefaultLanguageModule
+            If defaultModule IsNot Nothing Then
+                Dim tabModules As ArrayList = GetModuleTabs(defaultModule.ModuleID)
+                If tabModules.Count > 1 Then
+                    'default language version is a reference copy
 
-            If sourceModule IsNot Nothing Then
-                ' clone the module object ( to avoid creating an object reference to the data cache )
-                Dim newModule As ModuleInfo = sourceModule.Clone()
-                newModule.ModuleID = Null.NullInteger 'reset the module id
+                    'Localize first tabModule
+                    Dim newModuleID As Integer = LocalizeModuleInternal(sourceModule)
 
-                'Copy Permissions from original Module
-                newModule.ModulePermissions.AddRange(sourceModule.ModulePermissions)
-
-                'Add the default translators for this language
-                Dim permissionCtrl As New PermissionController
-                Dim translatorRoles As String = PortalController.GetPortalSetting(String.Format("DefaultTranslatorRoles-{0}", sourceModule.CultureCode), sourceModule.PortalID, "")
-                Dim permissionsList As ArrayList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT")
-                If permissionsList IsNot Nothing AndAlso permissionsList.Count > 0 Then
-                    Dim translatePermisison As PermissionInfo = DirectCast(permissionsList(0), PermissionInfo)
-                    For Each translatorRole As String In translatorRoles.Split(";"c)
-                        Dim roleName As String = translatorRole
-                        Dim perm As ModulePermissionInfo = newModule.ModulePermissions.Where( _
-                                                            Function(tp) tp.RoleName = roleName _
-                                                                AndAlso tp.PermissionKey = "EDIT").SingleOrDefault()
-                        If perm Is Nothing Then
-                            'Create Permission
-                            Dim moduleTranslatePermission As New ModulePermissionInfo(translatePermisison)
-                            Dim role As RoleInfo = New RoleController().GetRoleByName(sourceModule.PortalID, roleName)
-                            If role IsNot Nothing Then
-                                moduleTranslatePermission.RoleID = role.RoleID
-                                moduleTranslatePermission.AllowAccess = True
-
-                                newModule.ModulePermissions.Add(moduleTranslatePermission)
+                    'Update Reference Copies
+                    For Each tm As ModuleInfo In tabModules
+                        If tm.IsDefaultLanguage Then
+                            Dim localModule As ModuleInfo = Nothing
+                            If tm.LocalizedModules.TryGetValue(locale.Code, localModule) Then
+                                localModule.ModuleID = newModuleID
+                                UpdateModule(localModule)
                             End If
                         End If
                     Next
+                Else
+                    LocalizeModuleInternal(sourceModule)
                 End If
-
-                'Add Module
-                AddModuleInternal(newModule)
-
-                ' update tabmodule
-                dataProvider.UpdateTabModule(newModule.TabModuleID, newModule.TabID, newModule.ModuleID, newModule.ModuleTitle, _
-                                             newModule.Header, newModule.Footer, newModule.ModuleOrder, newModule.PaneName, _
-                                             newModule.CacheTime, newModule.CacheMethod, newModule.Alignment, newModule.Color, _
-                                             newModule.Border, newModule.IconFile, newModule.Visibility, newModule.ContainerSrc, _
-                                             newModule.DisplayTitle, newModule.DisplayPrint, newModule.DisplaySyndicate, _
-                                             newModule.IsWebSlice, newModule.WebSliceTitle, newModule.WebSliceExpiryDate, _
-                                             newModule.WebSliceTTL, newModule.VersionGuid, newModule.DefaultLanguageGuid, _
-                                             newModule.LocalizedVersionGuid, newModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
-
-                If newModule.DesktopModule.BusinessControllerClass <> "" Then
-                    Try
-                        Dim objObject As Object = Framework.Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass)
-                        Dim portableModule As IPortable = TryCast(objObject, IPortable)
-                        If portableModule IsNot Nothing Then
-                            Dim Content As String = portableModule.ExportModule(sourceModule.ModuleID)
-                            If Content <> "" Then
-                                portableModule.ImportModule(newModule.ModuleID, Content, newModule.DesktopModule.Version, UserController.GetCurrentUserInfo.UserID)
-                            End If
-                        End If
-                    Catch ex As Exception
-
-                    End Try
-                End If
-
-                moduleId = newModule.ModuleID
-
-                'Clear Caches
-                ClearCache(newModule.TabID)
-                ClearCache(sourceModule.TabID)
             End If
-
-            Return moduleId
-        End Function
-
-        Public Sub LocalizeModule(ByVal originalModule As ModuleInfo, ByVal locale As Locale)
-            originalModule.CultureCode = locale.Code
-
-            UpdateModule(originalModule)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -1838,7 +1912,7 @@ Namespace DotNetNuke.Entities.Modules
 
 #End Region
 
-     End Class
+    End Class
 
 
 End Namespace

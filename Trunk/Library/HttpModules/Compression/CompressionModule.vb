@@ -22,6 +22,7 @@ Imports System.Web
 
 Imports System.Collections
 Imports System.Collections.Specialized
+Imports DotNetNuke.Common.Utilities
 
 Namespace DotNetNuke.HttpModules.Compression
 
@@ -81,13 +82,23 @@ Namespace DotNetNuke.HttpModules.Compression
         ''' <param name="e">Arguments to the event</param>
         Private Sub CompressContent(ByVal sender As Object, ByVal e As EventArgs)
 
+            Dim isOutputCached As Boolean = Null.NullBoolean
+
             Dim app As HttpApplication = CType(sender, HttpApplication)
             If (app Is Nothing) OrElse (app.Context Is Nothing) OrElse (app.Context.Items Is Nothing) Then
                 Exit Sub
             Else
-                'Check if page is a content page
-                Dim page As DotNetNuke.Framework.CDefault = TryCast(app.Context.Handler, DotNetNuke.Framework.CDefault)
-                If (page Is Nothing) Then Exit Sub
+                'Check for Output Caching - if output caching is used the cached content will already be compressed, 
+                'but we still need to add the headers
+                Dim isCached As String = app.Response.Headers("DNNOutputCache")
+                If Not String.IsNullOrEmpty(isCached) Then
+                    isOutputCached = Boolean.Parse(isCached)
+                End If
+                If Not isOutputCached Then
+                    'Check if page is a content page
+                    Dim page As DotNetNuke.Framework.CDefault = TryCast(app.Context.Handler, DotNetNuke.Framework.CDefault)
+                    If (page Is Nothing) Then Exit Sub
+                End If
             End If
 
             If app.Response Is Nothing OrElse app.Response.ContentType Is Nothing OrElse app.Response.ContentType.ToLower() <> "text/html" Then
@@ -146,6 +157,10 @@ Namespace DotNetNuke.HttpModules.Compression
                     Dim types As String() = acceptedTypes.Split(","c)
 
                     filter = GetFilterForScheme(types, app.Response.Filter, _Settings)
+
+                    'Add the headers - we do this now - becuase if Output Caching is enabled we need to
+                    'add the Headers regardless of whether compresion actually occurs in this request.
+                    filter.WriteHeaders()
                 End If
 
                 If filter Is Nothing Then

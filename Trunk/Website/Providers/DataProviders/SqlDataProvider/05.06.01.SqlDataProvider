@@ -1,0 +1,26 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/* DNNPRO-14369 - Schedule Status missing names in Name column  */
+/****************************************************************/
+
+UPDATE {databaseOwner}[{objectQualifier}Schedule] 
+	SET FriendlyName = 'Purge Output Cache' 
+	WHERE TypeFullName ='DotNetNuke.Services.OutputCache.PurgeOutputCache, DotNetNuke'
+GO
+
+UPDATE {databaseOwner}[{objectQualifier}Schedule] 
+	SET FriendlyName = 'ODL Scheduled Sync' 
+	WHERE TypeFullName ='DotNetNuke.Professional.DocumentLibrary.ScheduledSync, DotNetNuke.Professional.DocumentLibrary'
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
