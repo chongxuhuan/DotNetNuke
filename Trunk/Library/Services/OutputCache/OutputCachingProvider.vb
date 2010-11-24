@@ -36,9 +36,9 @@ Namespace DotNetNuke.Services.OutputCache
         End Function
 
         Public Shared Sub RemoveItemFromAllProviders(ByVal tabId As Integer)
-                For Each kvp As KeyValuePair(Of String, OutputCachingProvider) In GetProviderList()
-                    kvp.Value.Remove(tabId)
-                Next
+            For Each kvp As KeyValuePair(Of String, OutputCachingProvider) In GetProviderList()
+                kvp.Value.Remove(tabId)
+            Next
         End Sub
 
 #End Region

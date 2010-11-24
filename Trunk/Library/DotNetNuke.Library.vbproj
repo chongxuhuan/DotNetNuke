@@ -1185,7 +1185,6 @@
     <Folder Include="ComponentModel\Diagrams\" />
     <Folder Include="Entities\Content\Data\Scripts\ContentItems\SupportScripts\" />
     <Folder Include="My Project\" />
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

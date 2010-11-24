@@ -374,16 +374,7 @@ Namespace DotNetNuke.UI.Skins
 
             Try
                 If Not IsAdminControl() Then
-                    ' inject an anchor tag to allow navigation to the module content
-
-                    ' TO BE DEPRECATED in 5.6.1: an ID value must not start with a number
-                    ' Add a comment indicating that this anchor element will be deprecated
-                    '_ContainerWrapperControl.Controls.Add()(New LiteralControl("<!-- DEPRECATED in 5.6.1: anchor tag using the module ID alone - IDs must not start with a numeral -->"))
-                    _ContainerWrapperControl.Controls.Add(New LiteralControl("<a id=""" & objModule.ModuleID.ToString & """ name=""" & objModule.ModuleID.ToString & """></a>"))
-
-                    ' TO BE ADDED in 5.6.1: an ID value that does not start with a number
-                    ' Dim anchorFormatString As String = "DNNModuleID-{0}"
-                    '_ContainerWrapperControl.Controls.Add(New LiteralControl("<a id=""" & String.Format(anchorFormatString, objModule.ModuleID) & """ name=""" & String.Format(anchorFormatString, objModule.ModuleID) & """></a>"))
+                    _ContainerWrapperControl.Controls.Add(New LiteralControl("<a name=""" & objModule.ModuleID.ToString() & """></a>"))
                 End If
 
                 'Load container control

@@ -88,6 +88,37 @@ Namespace DotNetNuke.Entities.Modules
             UpdateModuleSettings(objModule)
         End Sub
 
+        ''' <summary>
+        ''' Adds a Module permission to the ModuleInfo parameter.
+        ''' </summary>
+        ''' <param name="objModule">The module to add a permission for</param>
+        ''' <param name="portalId"></param>
+        ''' <param name="roleName"></param>
+        ''' <param name="permission"></param>
+        ''' <param name="permissionKey"></param>
+        ''' <remarks></remarks>
+        ''' <history>
+        '''    [vnguyen]   06/10/2010   Created
+        ''' </history>
+        Private Sub AddModulePermission(ByRef objModule As ModuleInfo, ByVal portalId As Integer, ByVal roleName As String, ByVal permission As PermissionInfo, ByVal permissionKey As String)
+            Dim role As RoleInfo
+            Dim modulePermission As ModulePermissionInfo
+            Dim perm As ModulePermissionInfo
+
+            perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
+            If permission IsNot Nothing AndAlso perm Is Nothing Then
+                perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
+                modulePermission = New ModulePermissionInfo(permission)
+                role = New RoleController().GetRoleByName(portalId, roleName)
+                If role IsNot Nothing Then
+                    modulePermission.RoleID = role.RoleID
+                    modulePermission.AllowAccess = True
+
+                    objModule.ModulePermissions.Add(modulePermission)
+                End If
+            End If
+        End Sub
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Localizes a Module
@@ -208,37 +239,6 @@ Namespace DotNetNuke.Entities.Modules
 
                 ClearCache(modInfo.TabID)
             Next
-        End Sub
-
-        ''' <summary>
-        ''' Adds a Module permission to the ModuleInfo parameter.
-        ''' </summary>
-        ''' <param name="objModule">The module to add a permission for</param>
-        ''' <param name="portalId"></param>
-        ''' <param name="roleName"></param>
-        ''' <param name="permission"></param>
-        ''' <param name="permissionKey"></param>
-        ''' <remarks></remarks>
-        ''' <history>
-        '''    [vnguyen]   06/10/2010   Created
-        ''' </history>
-        Private Sub AddModulePermission(ByRef objModule As ModuleInfo, ByVal portalId As Integer, ByVal roleName As String, ByVal permission As PermissionInfo, ByVal permissionKey As String)
-            Dim role As RoleInfo
-            Dim modulePermission As ModulePermissionInfo
-            Dim perm As ModulePermissionInfo
-
-            perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
-            If permission IsNot Nothing AndAlso perm Is Nothing Then
-                perm = objModule.ModulePermissions.Where(Function(tp) tp.RoleName = roleName AndAlso tp.PermissionKey = permissionKey).SingleOrDefault()
-                modulePermission = New ModulePermissionInfo(permission)
-                role = New RoleController().GetRoleByName(portalId, roleName)
-                If role IsNot Nothing Then
-                    modulePermission.RoleID = role.RoleID
-                    modulePermission.AllowAccess = True
-
-                    objModule.ModulePermissions.Add(modulePermission)
-                End If
-            End If
         End Sub
 
 #End Region
@@ -664,10 +664,12 @@ Namespace DotNetNuke.Entities.Modules
 
                 'Synchronize module is called when a module needs to indicate that the content
                 'has changed and the cache's should be refreshed.  So we can update the Version
-                objModules.UpdateTabModuleVersionsByModuleID(moduleID)
+                objModules.UpdateTabModuleVersion(objModule.TabModuleID)
 
                 'We should also indicate that the Transalation Status has changed
-                objModules.UpdateTranslationStatus(objModule, False)
+                If PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", objModule.PortalID, False) Then
+                    objModules.UpdateTranslationStatus(objModule, False)
+                End If
             Next
         End Sub
 

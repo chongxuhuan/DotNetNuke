@@ -276,7 +276,16 @@ Namespace DotNetNuke.Common.Utilities
             CachingProvider.Instance().Clear("Module", TabId.ToString)
             Dim portals As Dictionary(Of Integer, Integer) = PortalController.GetPortalDictionary
             If portals.ContainsKey(TabId) Then
-                OutputCache.OutputCachingProvider.RemoveItemFromAllProviders(TabId)
+                Dim tabController As New TabController
+                Dim tabSettings As Hashtable
+
+                tabSettings = tabController.GetTabSettings(TabId)
+                If tabSettings("CacheProvider") IsNot Nothing AndAlso tabSettings("CacheProvider").ToString().Length > 0 Then
+                    Dim outputProvider As OutputCache.OutputCachingProvider = OutputCache.OutputCachingProvider.Instance(tabSettings("CacheProvider").ToString())
+                    If outputProvider IsNot Nothing Then
+                        outputProvider.Remove(TabId)
+                    End If
+                End If
             End If
         End Sub
 
