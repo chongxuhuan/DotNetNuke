@@ -165,4 +165,7 @@
   <data name="SelectConfig.Text" xml:space="preserve">
     <value>Select a config file...</value>
   </data>
+  <data name="Success.Text" xml:space="preserve">
+    <value>The changes were successfully made.</value>
+  </data>
 </root>

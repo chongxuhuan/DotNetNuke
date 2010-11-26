@@ -164,6 +164,7 @@ Namespace DotNetNuke.Data
         Public MustOverride Sub UpdateTabModule(ByVal TabModuleId As Integer, ByVal TabId As Integer, ByVal ModuleId As Integer, ByVal ModuleTitle As String, ByVal Header As String, ByVal Footer As String, ByVal ModuleOrder As Integer, ByVal PaneName As String, ByVal CacheTime As Integer, ByVal CacheMethod As String, ByVal Alignment As String, ByVal Color As String, ByVal Border As String, ByVal IconFile As String, ByVal Visibility As Integer, ByVal ContainerSrc As String, ByVal DisplayTitle As Boolean, ByVal DisplayPrint As Boolean, ByVal DisplaySyndicate As Boolean, ByVal IsWebSlice As Boolean, ByVal WebSliceTitle As String, ByVal WebSliceExpiryDate As DateTime, ByVal WebSliceTTL As Integer, ByVal VersionGuid As Guid, ByVal DefaultLanguageGuid As Guid, ByVal LocalizedVersionGuid As Guid, ByVal CultureCode As String, ByVal lastModifiedByUserID As Integer)
         Public MustOverride Sub UpdateTabModuleTranslationStatus(ByVal TabModuleId As Integer, ByVal LocalizedVersionGuid As Guid, ByVal LastModifiedByUserID As Integer)
         Public MustOverride Sub UpdateTabModuleVersion(ByVal TabModuleId As Integer, ByVal VersionGuid As Guid)
+        Public MustOverride Sub UpdateTabModuleVersionByModule(ByVal ModuleId As Integer)
 
 		Public MustOverride Function GetModuleSettings(ByVal ModuleId As Integer) As IDataReader
         Public MustOverride Function GetModuleSetting(ByVal ModuleId As Integer, ByVal SettingName As String) As IDataReader

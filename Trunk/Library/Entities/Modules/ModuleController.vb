@@ -205,8 +205,45 @@ Namespace DotNetNuke.Entities.Modules
         Private Sub UpdateModuleSettings(ByVal updatedModule As ModuleInfo)
             Dim sKey As String
             For Each sKey In updatedModule.ModuleSettings.Keys
-                UpdateModuleSetting(updatedModule.ModuleID, sKey, CType(updatedModule.ModuleSettings(sKey), String))
+                UpdateModuleSettingInternal(updatedModule.ModuleID, sKey, CType(updatedModule.ModuleSettings(sKey), String), False)
             Next
+
+            UpdateTabModuleVersionsByModuleID(updatedModule.ModuleID)
+        End Sub
+
+        Public Sub UpdateModuleSettingInternal(ByVal ModuleId As Integer, ByVal SettingName As String, ByVal SettingValue As String, ByVal updateVersion As Boolean)
+            Dim objEventLog As New Services.Log.EventLog.EventLogController
+            Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
+            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("ModuleId", ModuleId.ToString))
+            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingName", SettingName.ToString))
+            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingValue", SettingValue.ToString))
+
+            Dim dr As IDataReader = Nothing
+            Try
+                dr = dataProvider.GetModuleSetting(ModuleId, SettingName)
+                If dr.Read Then
+                    dataProvider.UpdateModuleSetting(ModuleId, SettingName, SettingValue, UserController.GetCurrentUserInfo.UserID)
+                    objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_UPDATED.ToString
+                    objEventLog.AddLog(objEventLogInfo)
+                Else
+                    dataProvider.AddModuleSetting(ModuleId, SettingName, SettingValue, UserController.GetCurrentUserInfo.UserID)
+                    objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_CREATED.ToString
+                    objEventLog.AddLog(objEventLogInfo)
+                End If
+
+                If updateVersion Then
+                    UpdateTabModuleVersionsByModuleID(ModuleId)
+                End If
+
+            Catch ex As Exception
+                LogException(ex)
+            Finally
+                ' Ensure DataReader is closed
+                CBO.CloseDataReader(dr, True)
+            End Try
+
+            DataCache.RemoveCache("GetModuleSettings" & ModuleId.ToString)
+
         End Sub
 
         Private Sub UpdateTabModuleSettings(ByVal updatedTabModule As ModuleInfo)
@@ -226,19 +263,12 @@ Namespace DotNetNuke.Entities.Modules
         ''' <param name="moduleID"></param>
         ''' <remarks></remarks>
         Private Sub UpdateTabModuleVersionsByModuleID(ByVal moduleID As Integer)
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
-
             ' Update the version guid of each TabModule linked to the updated module
             For Each modInfo As ModuleInfo In GetAllTabsModulesByModuleID(moduleID)
-                UpdateTabModuleVersion(modInfo.TabModuleID)
-
-                objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("TabModuleId", modInfo.TabModuleID.ToString))
-                objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.TABMODULE_UPDATED.ToString
-                objEventLog.AddLog(objEventLogInfo)
-
                 ClearCache(modInfo.TabID)
             Next
+
+            dataProvider.UpdateTabModuleVersionByModule(moduleID)
         End Sub
 
 #End Region
@@ -1483,15 +1513,7 @@ Namespace DotNetNuke.Entities.Modules
                 dataProvider.UpdateModuleOrder(TabId, ModuleId, ModuleOrder, PaneName)
 
                 ' clear cache
-                If objModule.AllTabs = False Then
-                    ClearCache(TabId)
-                Else
-                    Dim objTabs As New TabController
-                    For Each tabPair As KeyValuePair(Of Integer, TabInfo) In objTabs.GetTabsByPortal(objModule.PortalID)
-                        Dim objTab As TabInfo = tabPair.Value
-                        ClearCache(objTab.TabID)
-                    Next
-                End If
+                ClearCache(TabId)
             End If
 
         End Sub
@@ -1608,36 +1630,7 @@ Namespace DotNetNuke.Entities.Modules
         '''    [vnguyen]    2010-05-10   Modified: Added update tab module version
         ''' </history>
         Public Sub UpdateModuleSetting(ByVal ModuleId As Integer, ByVal SettingName As String, ByVal SettingValue As String)
-            Dim objEventLog As New Services.Log.EventLog.EventLogController
-            Dim objEventLogInfo As New Services.Log.EventLog.LogInfo
-            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("ModuleId", ModuleId.ToString))
-            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingName", SettingName.ToString))
-            objEventLogInfo.LogProperties.Add(New DotNetNuke.Services.Log.EventLog.LogDetailInfo("SettingValue", SettingValue.ToString))
-
-            Dim dr As IDataReader = Nothing
-            Try
-                dr = dataProvider.GetModuleSetting(ModuleId, SettingName)
-                If dr.Read Then
-                    dataProvider.UpdateModuleSetting(ModuleId, SettingName, SettingValue, UserController.GetCurrentUserInfo.UserID)
-                    objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_UPDATED.ToString
-                    objEventLog.AddLog(objEventLogInfo)
-                Else
-                    dataProvider.AddModuleSetting(ModuleId, SettingName, SettingValue, UserController.GetCurrentUserInfo.UserID)
-                    objEventLogInfo.LogTypeKey = Log.EventLog.EventLogController.EventLogType.MODULE_SETTING_CREATED.ToString
-                    objEventLog.AddLog(objEventLogInfo)
-                End If
-
-                UpdateTabModuleVersionsByModuleID(ModuleId)
-
-            Catch ex As Exception
-                LogException(ex)
-            Finally
-                ' Ensure DataReader is closed
-                CBO.CloseDataReader(dr, True)
-            End Try
-
-            DataCache.RemoveCache("GetModuleSettings" & ModuleId.ToString)
-
+            UpdateModuleSettingInternal(ModuleId, SettingName, SettingValue, True)
         End Sub
 
         ''' <summary>

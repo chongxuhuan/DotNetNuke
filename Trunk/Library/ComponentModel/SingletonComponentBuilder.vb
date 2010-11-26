@@ -20,7 +20,7 @@
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class SingletonComponentBuilder
+    Friend Class SingletonComponentBuilder
         Implements IComponentBuilder
 
         Private _Name As String

@@ -20,7 +20,7 @@
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class InstanceComponentBuilder
+    Friend Class InstanceComponentBuilder
         Implements IComponentBuilder
 
         Private _Name As String
@@ -32,7 +32,7 @@ Namespace DotNetNuke.ComponentModel
         ''' <param name="name"></param>
         ''' <param name="instance"></param>
         Public Sub New(ByVal name As String, ByVal instance As Object)
-            _Name = Name
+            _Name = name
             _Instance = instance
         End Sub
 

@@ -964,6 +964,9 @@ Namespace DotNetNuke.Data
         Public Overrides Sub UpdateTabModuleVersion(ByVal TabModuleId As Integer, ByVal VersionGuid As Guid)
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModuleVersion", TabModuleId, VersionGuid)
         End Sub
+        Public Overrides Sub UpdateTabModuleVersionByModule(ByVal ModuleId As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdateTabModuleVersionByModule", ModuleId)
+        End Sub
 
         Public Overrides Function GetSearchModules(ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetSearchModules", PortalId), IDataReader)

@@ -20,7 +20,7 @@
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class TransientComponentBuilder
+    Friend Class TransientComponentBuilder
         Implements IComponentBuilder
 
         Private _Name As String

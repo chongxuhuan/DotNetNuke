@@ -21,6 +21,21 @@ UPDATE {databaseOwner}[{objectQualifier}Schedule]
 	WHERE TypeFullName ='DotNetNuke.Professional.DocumentLibrary.ScheduledSync, DotNetNuke.Professional.DocumentLibrary'
 GO
 
+/* Add UpdateTabModuleVersionByModule */
+/**************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateTabModuleVersionByModule]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateTabModuleVersionByModule
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateTabModuleVersionByModule]
+    @ModuleID	int
+AS
+    UPDATE {databaseOwner}{objectQualifier}TabModules
+        SET    VersionGuid = NEWID()
+    WHERE  ModuleID = @ModuleID
+
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

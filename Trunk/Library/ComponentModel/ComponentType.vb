@@ -19,13 +19,14 @@
 '
 
 Imports System.Collections.ObjectModel
+Imports DotNetNuke.Collections
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class ComponentType
+    Friend Class ComponentType
 
         Private _BaseType As Type
-        Private _ComponentBuilders As New ComponentBuilderCollection()
+        Private _ComponentBuilders As New ComponentBuilderCollection
 
         Public ReadOnly Property BaseType() As Type
             Get

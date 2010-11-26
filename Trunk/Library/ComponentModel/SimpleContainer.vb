@@ -19,6 +19,7 @@
 '
 
 Imports System.Collections.Generic
+Imports DotNetNuke.Collections
 
 Namespace DotNetNuke.ComponentModel
 
@@ -26,14 +27,13 @@ Namespace DotNetNuke.ComponentModel
         Inherits AbstractContainer
 
         Private componentBuilders As New ComponentBuilderCollection()
-        Private componentDependencies As New Dictionary(Of String, IDictionary)
-        Private builderLock As New Object
-        Private registerInstanceLock As New Object
-        Private registerComponentLock As New Object
+        Private componentDependencies As New SharedDictionary(Of String, IDictionary)
         Private componentTypes As New ComponentTypeCollection()
-        Private registeredComponents As New Dictionary(Of System.Type, String)
+        Private registeredComponents As New SharedDictionary(Of System.Type, String)
 
         Private _Name As String
+
+#Region "Constructors"
 
         ''' <summary>
         ''' Initializes a new instance of the SimpleContainer class.
@@ -50,15 +50,36 @@ Namespace DotNetNuke.ComponentModel
             _Name = name
         End Sub
 
+#End Region
+
+#Region "Private Methods"
+
         Private Sub AddBuilder(ByVal contractType As System.Type, ByVal builder As IComponentBuilder)
-            SyncLock builderLock
-                If Not componentTypes.Item(contractType).ComponentBuilders.Contains(builder.Name) Then
-                    componentTypes.Item(contractType).ComponentBuilders.Add(builder)
-                End If
-                If Not componentBuilders.Contains(builder.Name) Then
-                    componentBuilders.Add(builder)
-                End If
-            End SyncLock
+            Dim componentType As ComponentType = GetComponentType(contractType)
+            If componentType IsNot Nothing Then
+                Dim builders As ComponentBuilderCollection = componentType.ComponentBuilders
+
+                Using writeLock As ISharedCollectionLock = builders.GetWriteLock()
+                    builders.AddBuilder(builder, True)
+                End Using
+
+                Using writeLock As ISharedCollectionLock = componentBuilders.GetWriteLock()
+                    componentBuilders.AddBuilder(builder, False)
+                End Using
+            End If
+
+        End Sub
+
+        Private Sub AddComponentType(ByVal contractType As System.Type)
+            Dim componentType As ComponentType = GetComponentType(contractType)
+
+            If componentType Is Nothing Then
+                componentType = New ComponentType(contractType)
+
+                Using writeLock As ISharedCollectionLock = componentTypes.GetWriteLock()
+                    componentTypes(componentType.BaseType) = componentType
+                End Using
+            End If
         End Sub
 
         Private Overloads Function GetComponent(ByVal builder As IComponentBuilder) As Object
@@ -71,48 +92,102 @@ Namespace DotNetNuke.ComponentModel
             Return component
         End Function
 
+        Private Function GetComponentBuilder(ByVal name As String) As IComponentBuilder
+            Dim builder As IComponentBuilder = Nothing
+
+            Using writeLock As ISharedCollectionLock = componentBuilders.GetReadLock()
+                componentBuilders.TryGetValue(name, builder)
+            End Using
+
+            Return builder
+        End Function
+
+        Private Function GetDefaultComponentBuilder(ByVal componentType As ComponentType) As IComponentBuilder
+            Dim builder As IComponentBuilder = Nothing
+
+            Using writeLock As ISharedCollectionLock = componentType.ComponentBuilders.GetReadLock()
+                builder = componentType.ComponentBuilders.DefaultBuilder
+            End Using
+
+            Return builder
+        End Function
+
+        Private Function GetComponentType(ByVal contractType As System.Type) As ComponentType
+            Dim componentType As ComponentType = Nothing
+
+            Using writeLock As ISharedCollectionLock = componentTypes.GetReadLock()
+                componentTypes.TryGetValue(contractType, componentType)
+            End Using
+
+            Return componentType
+        End Function
+
+        Private Overloads Sub RegisterComponent(ByVal name As String, ByVal type As System.Type)
+            Using writeLock As ISharedCollectionLock = registeredComponents.GetWriteLock()
+                registeredComponents(type) = name
+            End Using
+        End Sub
+
+#End Region
+
         Public Overloads Overrides Function GetComponent(ByVal name As String) As Object
-            Dim component As Object = Nothing
-            If componentBuilders.Contains(name) Then
-                component = GetComponent(componentBuilders.Item(name))
-            End If
-            Return component
+            Dim builder As IComponentBuilder = GetComponentBuilder(name)
+
+            Return GetComponent(builder)
         End Function
 
         Public Overloads Overrides Function GetComponent(ByVal contractType As System.Type) As Object
+            Dim componentType As ComponentType = GetComponentType(contractType)
             Dim component As Object = Nothing
-            If componentTypes.Contains(contractType) Then
-                Dim type As ComponentType = componentTypes.Item(contractType)
-                If type.ComponentBuilders.Count > 0 Then
-                    component = GetComponent(type.ComponentBuilders.Item(0))
+
+            If componentType IsNot Nothing Then
+                Dim builderCount As Integer = 0
+
+                Using readLock As ISharedCollectionLock = componentType.ComponentBuilders.GetReadLock()
+                    builderCount = componentType.ComponentBuilders.Count
+                End Using
+
+                If builderCount > 0 Then
+                    Dim builder As IComponentBuilder = GetDefaultComponentBuilder(componentType)
+
+                    component = GetComponent(builder)
                 End If
             End If
+
             Return component
         End Function
 
         Public Overloads Overrides Function GetComponent(ByVal name As String, ByVal contractType As System.Type) As Object
+            Dim componentType As ComponentType = GetComponentType(contractType)
             Dim component As Object = Nothing
-            If componentTypes.Contains(contractType) Then
-                Dim type As ComponentType = componentTypes.Item(contractType)
-                If type.ComponentBuilders.Contains(name) Then
-                    component = GetComponent(type.ComponentBuilders.Item(name))
-                End If
+
+            If componentType IsNot Nothing Then
+                Dim builder As IComponentBuilder = GetComponentBuilder(name)
+
+                component = GetComponent(builder)
             End If
             Return component
         End Function
 
         Public Overrides Function GetComponentList(ByVal contractType As System.Type) As String()
             Dim components As New List(Of String)
-            For Each kvp As KeyValuePair(Of Type, String) In registeredComponents
-                If kvp.Key.BaseType Is contractType Then
-                    components.Add(kvp.Value)
-                End If
-            Next
+
+            Using readLock As ISharedCollectionLock = registeredComponents.GetReadLock()
+                For Each kvp As KeyValuePair(Of Type, String) In registeredComponents
+                    If kvp.Key.BaseType Is contractType Then
+                        components.Add(kvp.Value)
+                    End If
+                Next
+            End Using
             Return components.ToArray()
         End Function
 
         Public Overrides Function GetComponentSettings(ByVal name As String) As System.Collections.IDictionary
-            Return componentDependencies(name)
+            Dim settings As IDictionary
+            Using readLock As ISharedCollectionLock = componentDependencies.GetReadLock()
+                settings = componentDependencies(name)
+            End Using
+            Return settings
         End Function
 
         Public Overrides ReadOnly Property Name() As String
@@ -121,35 +196,31 @@ Namespace DotNetNuke.ComponentModel
             End Get
         End Property
 
-        Public Overloads Overrides Sub RegisterComponent(ByVal name As String, ByVal contractType As System.Type, ByVal componentType As System.Type, ByVal lifestyle As ComponentLifeStyleType)
-            SyncLock (registerComponentLock)
-                If Not componentTypes.Contains(contractType) Then
-                    componentTypes.Add(New ComponentType(contractType))
-                End If
-                Dim builder As IComponentBuilder = Nothing
-                Select Case lifestyle
-                    Case ComponentLifeStyleType.Transient
-                        builder = New TransientComponentBuilder(name, componentType)
-                    Case ComponentLifeStyleType.Singleton
-                        builder = New SingletonComponentBuilder(name, componentType)
-                End Select
-                AddBuilder(contractType, builder)
+        Public Overloads Overrides Sub RegisterComponent(ByVal name As String, ByVal contractType As System.Type, ByVal type As System.Type, ByVal lifestyle As ComponentLifeStyleType)
+            AddComponentType(contractType)
 
-                registeredComponents(componentType) = name
-            End SyncLock
+            Dim builder As IComponentBuilder = Nothing
+            Select Case lifestyle
+                Case ComponentLifeStyleType.Transient
+                    builder = New TransientComponentBuilder(name, type)
+                Case ComponentLifeStyleType.Singleton
+                    builder = New SingletonComponentBuilder(name, type)
+            End Select
+            AddBuilder(contractType, builder)
+
+            RegisterComponent(name, type)
         End Sub
 
         Public Overloads Overrides Sub RegisterComponentInstance(ByVal name As String, ByVal contractType As System.Type, ByVal instance As Object)
-            SyncLock (registerInstanceLock)
-                If Not componentTypes.Contains(contractType) Then
-                    componentTypes.Add(New ComponentType(contractType))
-                End If
-                AddBuilder(contractType, New InstanceComponentBuilder(name, instance))
-            End SyncLock
+            AddComponentType(contractType)
+
+            AddBuilder(contractType, New InstanceComponentBuilder(name, instance))
         End Sub
 
         Public Overrides Sub RegisterComponentSettings(ByVal name As String, ByVal dependencies As System.Collections.IDictionary)
-            componentDependencies(name) = dependencies
+            Using writeLock As ISharedCollectionLock = componentDependencies.GetWriteLock()
+                componentDependencies(name) = dependencies
+            End Using
         End Sub
 
     End Class

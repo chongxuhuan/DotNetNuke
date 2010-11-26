@@ -95,13 +95,11 @@ Namespace DotNetNuke.Modules.XmlMerge
                     ddlConfig.Attributes.Add("onClick", "javascript: alert('" + Localization.GetString("LoadConfigWarning", LocalResourceFile) + "');")
                     txtConfiguration.Enabled = True
                     cmdSave.Enabled = True
-                    cmdExecute.Enabled = True
                 Else
                     ddlConfig.Attributes.Remove("onClick")
                     txtConfiguration.Text = String.Empty
                     txtConfiguration.Enabled = True
                     cmdSave.Enabled = False
-                    cmdExecute.Enabled = False
                 End If
             End If
 
@@ -126,19 +124,13 @@ Namespace DotNetNuke.Modules.XmlMerge
                     Dim app As DotNetNuke.Application.Application = DotNetNukeContext.Current.Application
                     Dim merge As New DotNetNuke.Services.Installer.XmlMerge(doc, FormatVersion(app.Version), app.Description)
                     merge.UpdateConfigs()
-                    LoadConfig(ddlConfig.SelectedValue)
+
+                    Skins.Skin.AddModuleMessage(Me, Localization.GetString("Success", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess)
+
                 Catch ex As Exception
                     Skins.Skin.AddModuleMessage(Me, Localization.GetString("ERROR_Merge", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.RedError)
                     LogException(ex)
                 End Try
-            End If
-        End Sub
-
-        Protected Sub cmdUpload_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUpload.Click
-            ValidateSuperUser()
-            If IsValidDocType(uplScript.PostedFile.ContentType) Then
-                Dim scriptFile As New System.IO.StreamReader(uplScript.PostedFile.InputStream)
-                txtScript.Text = scriptFile.ReadToEnd
             End If
         End Sub
 
@@ -147,12 +139,23 @@ Namespace DotNetNuke.Modules.XmlMerge
             Dim configDoc As New System.Xml.XmlDocument
             Try
                 configDoc.LoadXml(txtConfiguration.Text)
+                Config.Save(configDoc, ddlConfig.SelectedValue)
+                LoadConfig(ddlConfig.SelectedValue)
+
+                Skins.Skin.AddModuleMessage(Me, Localization.GetString("Success", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess)
+
             Catch ex As Exception
                 Skin.AddModuleMessage(Me, String.Format(Localization.GetString("ERROR_ConfigurationFormat", LocalResourceFile), ex.Message), ModuleMessage.ModuleMessageType.RedError)
                 Exit Sub
             End Try
-            Config.Save(configDoc, ddlConfig.SelectedValue)
-            LoadConfig(ddlConfig.SelectedValue)
+        End Sub
+
+        Protected Sub cmdUpload_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUpload.Click
+            ValidateSuperUser()
+            If IsValidDocType(uplScript.PostedFile.ContentType) Then
+                Dim scriptFile As New System.IO.StreamReader(uplScript.PostedFile.InputStream)
+                txtScript.Text = scriptFile.ReadToEnd
+            End If
         End Sub
 
         Protected Sub ddlConfig_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlConfig.SelectedIndexChanged

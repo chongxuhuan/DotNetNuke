@@ -19,15 +19,34 @@
 '
 
 Imports System.Collections.ObjectModel
+Imports DotNetNuke.Collections
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class ComponentBuilderCollection
-        Inherits KeyedCollection(Of String, IComponentBuilder)
+    Friend Class ComponentBuilderCollection
+        Inherits SharedDictionary(Of String, IComponentBuilder)
 
-        Protected Overrides Function GetKeyForItem(ByVal item As IComponentBuilder) As String
-            Return item.Name
-        End Function
+        Private _DefaultBuilder As IComponentBuilder
+
+        Friend Property DefaultBuilder As IComponentBuilder
+            Get
+                Return _DefaultBuilder
+            End Get
+            Set(ByVal value As IComponentBuilder)
+                _DefaultBuilder = value
+            End Set
+        End Property
+
+        Friend Sub AddBuilder(ByVal builder As IComponentBuilder, ByVal setDefault As Boolean)
+            If Not ContainsKey(builder.Name) Then
+                Item(builder.Name) = builder
+
+                If setDefault AndAlso DefaultBuilder Is Nothing Then
+                    DefaultBuilder = builder
+                End If
+            End If
+        End Sub
+
 
     End Class
 

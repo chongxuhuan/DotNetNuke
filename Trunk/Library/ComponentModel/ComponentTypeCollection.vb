@@ -19,16 +19,12 @@
 '
 
 Imports System.Collections.ObjectModel
+Imports DotNetNuke.Collections
 
 Namespace DotNetNuke.ComponentModel
 
-    Public Class ComponentTypeCollection
-        Inherits KeyedCollection(Of Type, ComponentType)
-
-        Protected Overrides Function GetKeyForItem(ByVal item As ComponentType) As Type
-            Return item.BaseType
-        End Function
-
+    Friend Class ComponentTypeCollection
+        Inherits SharedDictionary(Of Type, ComponentType)
     End Class
 
 End Namespace

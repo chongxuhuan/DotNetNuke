@@ -45,7 +45,7 @@
     </tr>
     <tr>
         <td colspan="2" align="center">
-            <asp:LinkButton ID="cmdExecute" resourcekey="cmdExecute" EnableViewState="True" CssClass="CommandButton" runat="server" Enabled="false" >Execute</asp:LinkButton>
+            <asp:LinkButton ID="cmdExecute" resourcekey="cmdExecute" EnableViewState="True" CssClass="CommandButton" runat="server" >Execute</asp:LinkButton>
         </td>
     </tr>
 </table>

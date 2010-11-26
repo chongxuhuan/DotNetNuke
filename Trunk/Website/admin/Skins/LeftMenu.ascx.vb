@@ -682,43 +682,43 @@ Namespace DotNetNuke.UI.Skins.Controls
 
             SetPanelbarProperties()
 
-            If Page.IsPostBack Then
-                Return
-            End If
-
-
-            'optional code to support displaying a specific branch of the page tree
-            GetShowOnlyCurrent(objTabController, StartingItemId, iRootGroupId)
-            'Fixed: For i = 0 To Me.PortalSettings.DesktopTabs.Count - 1
-            Dim portalID As Integer = IIf(PortalSettings.ActiveTab.IsSuperTab, -1, PortalSettings.PortalId)
-            Dim desktopTabs As IList(Of TabInfo) = TabController.GetTabsBySortOrder(portalID)
-            For i = 0 To desktopTabs.Count - 1
-                With CType(desktopTabs(i), TabInfo)
-                    If (.TabID = Me.PortalSettings.ActiveTab.TabID) Then
-                        FillShowPathArray(arrayShowPath, .TabID, objTabController)
-                    End If
-                    If (.IsVisible And Not .IsDeleted) And _
-                     ((.StartDate = DateTime.MinValue And .EndDate = DateTime.MinValue) Or (.StartDate < Now And .EndDate > Now) Or AdminMode) And _
-                     (Permissions.TabPermissionController.CanViewPage(desktopTabs(i)) And Not CheckToExclude(.TabName, .TabID)) Then
-                        '(PortalSecurity.IsInRoles(.AuthorizedRoles) And Not CheckToExclude(.TabName, .TabID)) Then
-                        temp = New qElement
-                        temp.page = CType(desktopTabs(i), TabInfo)
-                        temp.radPanelItem = New RadPanelItem
-                        If CheckShowOnlyCurrent(.TabID, .ParentId, StartingItemId, iRootGroupId) AndAlso _
-                           CheckPanelVisibility(CType(desktopTabs(i), TabInfo)) Then
-                            iItemIndex = iItemIndex + 1
-                            temp.item = iItemIndex
-                            PagesQueue.Enqueue(AuthPages.Count)
-                            RadPanel1.Items.Add(temp.radPanelItem)
+            If Not Page.IsPostBack Then
+                'optional code to support displaying a specific branch of the page tree
+                GetShowOnlyCurrent(objTabController, StartingItemId, iRootGroupId)
+                'Fixed: For i = 0 To Me.PortalSettings.DesktopTabs.Count - 1
+                Dim portalID As Integer = IIf(PortalSettings.ActiveTab.IsSuperTab, -1, PortalSettings.PortalId)
+                Dim desktopTabs As IList(Of TabInfo) = TabController.GetTabsBySortOrder(portalID)
+                For i = 0 To desktopTabs.Count - 1
+                    With CType(desktopTabs(i), TabInfo)
+                        If (.TabID = Me.PortalSettings.ActiveTab.TabID) Then
+                            FillShowPathArray(arrayShowPath, .TabID, objTabController)
                         End If
-                        AuthPages.Add(temp)
-                    End If
-                End With
-            Next i
-            BuildPanelbar(RadPanel1.Items)
-            If (0 = RadPanel1.Items.Count) Then
-                RadPanel1.Visible = False
+                        If (.IsVisible And Not .IsDeleted) And _
+                         ((.StartDate = DateTime.MinValue And .EndDate = DateTime.MinValue) Or (.StartDate < Now And .EndDate > Now) Or AdminMode) And _
+                         (Permissions.TabPermissionController.CanViewPage(desktopTabs(i)) And Not CheckToExclude(.TabName, .TabID)) Then
+                            '(PortalSecurity.IsInRoles(.AuthorizedRoles) And Not CheckToExclude(.TabName, .TabID)) Then
+                            temp = New qElement
+                            temp.page = CType(desktopTabs(i), TabInfo)
+                            temp.radPanelItem = New RadPanelItem
+                            If CheckShowOnlyCurrent(.TabID, .ParentId, StartingItemId, iRootGroupId) AndAlso _
+                               CheckPanelVisibility(CType(desktopTabs(i), TabInfo)) Then
+                                iItemIndex = iItemIndex + 1
+                                temp.item = iItemIndex
+                                PagesQueue.Enqueue(AuthPages.Count)
+                                RadPanel1.Items.Add(temp.radPanelItem)
+                            End If
+                            AuthPages.Add(temp)
+                        End If
+                    End With
+                Next i
+                BuildPanelbar(RadPanel1.Items)
+                If (0 = RadPanel1.Items.Count) Then
+                    RadPanel1.Visible = False
+                End If
             End If
+
+
+
         End Sub
 
 

@@ -313,7 +313,7 @@ Namespace DotNetNuke.Services.Installer
             Dim AttributeName As String = Null.NullString
             Dim AttributeValue As String = Null.NullString
 
-            If actionNode.Attributes("name") IsNot Nothing AndAlso actionNode.Attributes("value") IsNot Nothing Then
+            If rootNode IsNot Nothing AndAlso actionNode.Attributes("name") IsNot Nothing AndAlso actionNode.Attributes("value") IsNot Nothing Then
                 AttributeName = actionNode.Attributes("name").Value
                 AttributeValue = actionNode.Attributes("value").Value
                 If Not String.IsNullOrEmpty(AttributeName) Then
