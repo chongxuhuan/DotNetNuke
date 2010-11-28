@@ -66,21 +66,21 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_AddScopeType_Throws_On_Null_ScopeType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ScopeType>(scopeType => scopeTypeController.AddScopeType(scopeType));
+            Assert.Throws<ArgumentNullException>(() => scopeTypeController.AddScopeType(null));
         }
 
         [Test]
         public void ScopeTypeController_AddScopeType_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
-            ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
+            var scopeType = ContentTestHelper.CreateValidScopeType();
 
             //Act
             int scopeTypeId = scopeTypeController.AddScopeType(scopeType);
@@ -93,10 +93,10 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_AddScopeType_Returns_ValidId_On_Valid_ScopeType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddScopeType(It.IsAny<ScopeType>()))
                 .Returns(Constants.SCOPETYPE_AddScopeTypeId);
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
 
             //Act
@@ -110,11 +110,11 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_AddScopeType_Sets_ValidId_On_Valid_ScopeType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddScopeType(It.IsAny<ScopeType>()))
                 .Returns(Constants.SCOPETYPE_AddScopeTypeId);
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
-            ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var scopeType = ContentTestHelper.CreateValidScopeType();
 
             //Act
             scopeTypeController.AddScopeType(scopeType);
@@ -131,19 +131,19 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_DeleteScopeType_Throws_On_Null_ScopeType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ScopeType>(scopeType => scopeTypeController.DeleteScopeType(scopeType));
+            Assert.Throws<ArgumentNullException>(() => scopeTypeController.DeleteScopeType(null));
         }
 
         [Test]
         public void ScopeTypeController_DeleteScopeType_Throws_On_Negative_ScopeTypeId()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Null.NullInteger;
@@ -155,10 +155,10 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_DeleteScopeType_Calls_DataService_On_Valid_ContentTypeId()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
-            ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
+            var scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_ValidScopeTypeId;
 
             //Act
@@ -176,10 +176,10 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_GetScopeTypes_Calls_DataService()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetScopeTypes())
                 .Returns(MockHelper.CreateValidScopeTypesReader(Constants.SCOPETYPE_ValidScopeTypeCount));
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act
             IQueryable<ScopeType> scopeTypes = scopeTypeController.GetScopeTypes();
@@ -192,13 +192,13 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_GetScopeTypes_Returns_Empty_List_Of_ScopeTypes_If_No_ScopeTypes()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetScopeTypes())
                 .Returns(MockHelper.CreateEmptyScopeTypeReader());
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act
-            IQueryable<ScopeType> scopeTypes = scopeTypeController.GetScopeTypes();
+            var scopeTypes = scopeTypeController.GetScopeTypes();
 
             //Assert
             Assert.IsNotNull(scopeTypes);
@@ -209,13 +209,13 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_GetScopeTypes_Returns_List_Of_ScopeTypes()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetScopeTypes())
                 .Returns(MockHelper.CreateValidScopeTypesReader(Constants.SCOPETYPE_ValidScopeTypeCount));
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act
-            IQueryable<ScopeType> scopeTypes = scopeTypeController.GetScopeTypes();
+            var scopeTypes = scopeTypeController.GetScopeTypes();
 
             //Assert
             Assert.AreEqual(Constants.SCOPETYPE_ValidScopeTypeCount, scopeTypes.Count());
@@ -229,19 +229,19 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_UpdateScopeType_Throws_On_Null_ScopeType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ScopeType>(scopeType => scopeTypeController.UpdateScopeType(scopeType));
+            Assert.Throws<ArgumentNullException>(() => scopeTypeController.UpdateScopeType(null));
         }
 
         [Test]
         public void ScopeTypeController_UpdateScopeType_Throws_On_Negative_ScopeTypeId()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeType = Constants.SCOPETYPE_InValidScopeType;
@@ -253,8 +253,8 @@ namespace DotNetNuke.Tests.Content
         public void ScopeTypeController_UpdateScopeType_Calls_DataService_On_Valid_ContentType()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            ScopeTypeController scopeTypeController = new ScopeTypeController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_UpdateScopeTypeId;

@@ -23,7 +23,6 @@ Imports DotNetNuke.Services.Cache
 
 Namespace DotNetNuke.Entities.Controllers
 
-
     Public Class HostController
         Inherits ComponentBase(Of IHostController, HostController)
         Implements IHostController

@@ -19,21 +19,11 @@
 '
 Imports System.Collections.Generic
 
-Imports DotNetNuke
-Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Services.Localization
-Imports System.Globalization
-Imports System.Linq
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Entities.Tabs
-Imports DotNetNuke.Entities.Modules.Actions
-Imports DotNetNuke.Services.Installer
-Imports DotNetNuke.Security.Permissions
-Imports DotNetNuke.Web.UI.WebControls
 Imports DotNetNuke.Entities.Modules
 Imports Telerik.Web.UI
-Imports DotNetNuke.UI.Utilities
-Imports DotNetNuke.Services.Personalization
 Imports Telerik.Web.UI.Upload
 
 Namespace DotNetNuke.Modules.Admin.Languages
@@ -45,6 +35,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
         Private _PortalDefault As String = ""
         Private MyFileName As String = "EnableLocalizedContent.ascx"
+        Private timeout As Integer = 3600
 
 #End Region
 
@@ -127,8 +118,7 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Me.LocalResourceFile = Services.Localization.Localization.GetResourceFile(Me, "EnableLocalizedContent.ascx")
 
             'Set AJAX timeout to 1 hr for large sites
-            AJAX.GetScriptManager(Me.Page).AsyncPostBackTimeout = "3600"
-
+            AJAX.GetScriptManager(Me.Page).AsyncPostBackTimeout = timeout
         End Sub
 
         Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -155,12 +145,14 @@ Namespace DotNetNuke.Modules.Admin.Languages
             Response.Redirect(NavigateURL(), True)
         End Sub
 
-
         Protected Sub updateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles updateButton.Click
             Dim tabCtrl As New TabController
             Dim portalCtrl As New PortalController
             Dim languageCount As Integer = LocaleController.Instance().GetLocales(PortalSettings.PortalId).Count
             Dim pageList As List(Of TabInfo) = tabCtrl.GetDefaultCultureTabList(PortalId)
+
+            Dim scriptTimeOut As Integer = Server.ScriptTimeout
+            Server.ScriptTimeout = timeout
 
             Dim languageCounter As Integer = 0
             ProcessLanguage(pageList, _
@@ -190,6 +182,9 @@ Namespace DotNetNuke.Modules.Admin.Languages
 
                 End If
             Next
+
+            'Restore Script Timeout
+            Server.ScriptTimeout = scriptTimeOut
 
             ''Redirect to refresh page (and skinobjects)
             Response.Redirect(NavigateURL(), True)

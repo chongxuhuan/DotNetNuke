@@ -71,7 +71,7 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.AddContentItem(content));
+            Assert.Throws<ArgumentNullException>(() => controller.AddContentItem(null));
         }
 
         [Test]
@@ -379,7 +379,7 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.UpdateContentItem(content));
+            Assert.Throws<ArgumentNullException>(() => controller.UpdateContentItem(null));
         }
 
         [Test]
@@ -426,7 +426,7 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.AddMetaData(content,
+            Assert.Throws<ArgumentNullException>(() => controller.AddMetaData(null,
                                                                                    Constants.CONTENT_ValidMetaDataName,
                                                                                    Constants.CONTENT_ValidMetaDataValue));
         }
@@ -454,10 +454,12 @@ namespace DotNetNuke.Tests.Content
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             ContentController controller = new ContentController(mockDataService.Object);
 
+            ContentItem content = ContentTestHelper.CreateValidContentItem();
+
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.AddMetaData(content,
-                                                                                   Null.NullString,
-                                                                                   Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentException>(() => controller.AddMetaData(content,
+                                                                                  Null.NullString,
+                                                                                  Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -490,11 +492,9 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.DeleteMetaData(content,
-                                                                                      Constants.
-                                                                                          CONTENT_ValidMetaDataName,
-                                                                                      Constants.
-                                                                                          CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentException>(() => controller.AddMetaData(null,
+                                                                                  Constants.CONTENT_ValidMetaDataName,
+                                                                                  Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -520,11 +520,12 @@ namespace DotNetNuke.Tests.Content
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             ContentController controller = new ContentController(mockDataService.Object);
 
+            ContentItem content = ContentTestHelper.CreateValidContentItem();
+
             //Act, Arrange
-            AutoTester.ArgumentNull<ContentItem>(content => controller.DeleteMetaData(content,
-                                                                                      Null.NullString,
-                                                                                      Constants.
-                                                                                          CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentException>(() => controller.AddMetaData(content,
+                                                                                 Null.NullString,
+                                                                                 Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]

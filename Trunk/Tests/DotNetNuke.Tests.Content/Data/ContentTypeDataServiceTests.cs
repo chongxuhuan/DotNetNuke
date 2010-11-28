@@ -42,7 +42,6 @@ namespace DotNetNuke.Tests.Content.Data
         private static string keyField = "ContentTypeId";
         private static string upateContentType = "UpdateContentType";
         private static string virtualScriptFilePath = "Library\\Entities\\Content\\Data\\Scripts\\ContentType";
-        private static int columnCount = 2;
 
         #endregion
 

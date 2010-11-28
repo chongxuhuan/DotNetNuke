@@ -687,7 +687,7 @@ Namespace DotNetNuke.UI.Skins.Controls
                 GetShowOnlyCurrent(objTabController, StartingItemId, iRootGroupId)
                 'Fixed: For i = 0 To Me.PortalSettings.DesktopTabs.Count - 1
                 Dim portalID As Integer = IIf(PortalSettings.ActiveTab.IsSuperTab, -1, PortalSettings.PortalId)
-                Dim desktopTabs As IList(Of TabInfo) = TabController.GetTabsBySortOrder(portalID)
+                Dim desktopTabs As IList(Of TabInfo) = TabController.GetTabsBySortOrder(portalID, PortalController.GetActivePortalLanguage(portalID), True)
                 For i = 0 To desktopTabs.Count - 1
                     With CType(desktopTabs(i), TabInfo)
                         If (.TabID = Me.PortalSettings.ActiveTab.TabID) Then

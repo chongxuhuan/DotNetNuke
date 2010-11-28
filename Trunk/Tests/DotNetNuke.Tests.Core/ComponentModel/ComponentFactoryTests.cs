@@ -17,6 +17,7 @@
 // ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // ' DEALINGS IN THE SOFTWARE.
 // '
+using System;
 using System.Collections;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Tests.Utilities;
@@ -53,7 +54,7 @@ namespace DotNetNuke.Tests.Core.ComponentModel
         {
             IContainer container = CreateMockContainer();
 
-            AutoTester.ArgumentNull<IComponentInstaller>(marker => ComponentFactory.InstallComponents(marker));
+            Assert.Throws<ArgumentNullException>(() => ComponentFactory.InstallComponents(null));
         }
 
         [Test]
@@ -64,8 +65,7 @@ namespace DotNetNuke.Tests.Core.ComponentModel
             var mockInstaller = new Mock<IComponentInstaller>();
             mockInstaller.Setup(i => i.InstallComponents(container));
 
-            AutoTester.ArgumentNull<IComponentInstaller>(
-                marker => ComponentFactory.InstallComponents(mockInstaller.Object, marker));
+            Assert.Throws<ArgumentNullException>(() => ComponentFactory.InstallComponents(mockInstaller.Object, null));
         }
 
         [Test]

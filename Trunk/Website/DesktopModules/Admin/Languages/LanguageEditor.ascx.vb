@@ -747,6 +747,11 @@ Namespace DotNetNuke.Modules.Admin.Languages
                         node.Value = fileInfo.FullName
                         node.Text = fileInfo.Name.Replace(".resx", "")
 
+                        If node.Text.LastIndexOf("-") = node.Text.Length - 3 Then
+                            'Ignore language files "xx-XX"
+                            Continue For
+                        End If
+
                         e.Node.Nodes.Add(node)
                     Next
                     'For Each file In Directory.GetFiles(e.Node.Value, "SharedResources.resx")

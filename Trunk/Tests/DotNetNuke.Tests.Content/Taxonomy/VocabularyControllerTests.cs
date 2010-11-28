@@ -66,19 +66,19 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Throws_On_Null_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<Vocabulary>(vocabulary => vocabularyController.AddVocabulary(vocabulary));
+            Assert.Throws<ArgumentNullException>(() => vocabularyController.AddVocabulary(null));
         }
 
         [Test]
         public void VocabularyController_AddVocabulary_Throws_On_Invalid_Name()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.Name = Constants.VOCABULARY_InValidName;
@@ -91,8 +91,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Throws_On_Negative_ScopeTypeID()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.ScopeTypeId = Null.NullInteger;
@@ -105,8 +105,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -121,10 +121,10 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Returns_ValidId_On_Valid_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
                 .Returns(Constants.VOCABULARY_AddVocabularyId);
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -139,10 +139,10 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Sets_ValidId_On_Valid_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddVocabulary(It.IsAny<Vocabulary>(), It.IsAny<int>()))
                 .Returns(Constants.VOCABULARY_AddVocabularyId);
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -157,8 +157,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_AddVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
 
@@ -177,19 +177,19 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_DeleteVocabulary_Throws_On_Null_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<Vocabulary>(marker => vocabularyController.DeleteVocabulary(marker));
+            Assert.Throws<ArgumentNullException>(() => vocabularyController.DeleteVocabulary(null));
         }
 
         [Test]
         public void VocabularyController_DeleteVocabulary_Throws_On_Negative_VocabularyId()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = new Vocabulary();
             vocabulary.VocabularyId = Null.NullInteger;
@@ -202,8 +202,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_DeleteVocabulary_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
@@ -219,8 +219,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_DeleteVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_ValidVocabularyId;
@@ -240,10 +240,10 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_GetVocabularies_Calls_DataService()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetVocabularies())
                 .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act
             IQueryable<Vocabulary> vocabularys = vocabularyController.GetVocabularies();
@@ -256,10 +256,10 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_GetVocabularies_Returns_List_Of_Vocabularies()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetVocabularies())
                 .Returns(MockHelper.CreateValidVocabulariesReader(Constants.VOCABULARY_ValidCount));
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act
             IQueryable<Vocabulary> vocabularys = vocabularyController.GetVocabularies();
@@ -276,19 +276,19 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_UpdateVocabulary_Throws_On_Null_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             //Act, Arrange
-            AutoTester.ArgumentNull<Vocabulary>(marker => vocabularyController.UpdateVocabulary(marker));
+            Assert.Throws<ArgumentNullException>(() => vocabularyController.UpdateVocabulary(null));
         }
 
         [Test]
         public void VocabularyController_UpdateVocabulary_Throws_On_Negative_VocabularyId()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Null.NullInteger;
@@ -301,8 +301,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_UpdateVocabulary_Throws_On_Invalid_Name()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.Name = Constants.VOCABULARY_InValidName;
@@ -315,8 +315,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_UpdateVocabulary_Throws_On_Negative_ScopeTypeID()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.ScopeTypeId = Null.NullInteger;
@@ -329,8 +329,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController_UpdateVocabulary_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_UpdateVocabularyId;
@@ -346,8 +346,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void VocabularyController__UpdateVocabulary_Clears_Vocabulary_Cache_On_Valid_Vocabulary()
         {
             //Arrange
-            Mock<IDataService> mockDataService = new Mock<IDataService>();
-            VocabularyController vocabularyController = new VocabularyController(mockDataService.Object);
+            var mockDataService = new Mock<IDataService>();
+            var vocabularyController = new VocabularyController(mockDataService.Object);
 
             Vocabulary vocabulary = ContentTestHelper.CreateValidVocabulary();
             vocabulary.VocabularyId = Constants.VOCABULARY_UpdateVocabularyId;

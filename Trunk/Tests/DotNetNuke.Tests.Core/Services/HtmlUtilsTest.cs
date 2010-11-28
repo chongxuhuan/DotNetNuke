@@ -30,8 +30,6 @@ namespace DotNetNuke.Tests.Core.Services
     [TestFixture]
     public class HtmlUtilsTests
     {
-        Mock<HtmlUtils> _mockUtils;
-
         const string HtmlStr = "Hello World!<br /><br />This is a sample HTML text for testing!<br /><br /><img alt=\"HappyFaceAlt\" title=\"HappyFaceTitle\" test=\"noShow\" src=\"/dotnetnuke_enterprise/Portals/0/Telerik/images/Emoticons/1.gif\" /><br /><br /><img alt=\"\" src=\"http://localhost/dotnetnuke_enterprise/Portals/0/aspnet.gif\" /><br /><br /><a href=\"http://www.dotnetnuke.com\">DotNetNuke Corp.</a>";
         private const string Filters = "alt|href|src|title";
         private string _expected = "";

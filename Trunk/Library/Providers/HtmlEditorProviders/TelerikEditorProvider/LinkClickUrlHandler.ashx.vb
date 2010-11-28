@@ -173,7 +173,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
                         Else
                             'this section is meant for retrieving/displaying the original links and determining if the links are being tracked(making sure the track checkbox properly checked)
-                            Dim linkTrackingInfo As UrlTrackingInfo
+                            Dim linkTrackingInfo As UrlTrackingInfo = Nothing
 
                             If params.LinkUrl.Contains("fileticket") Then
                                 Dim queryString = params.LinkUrl.Split("=")

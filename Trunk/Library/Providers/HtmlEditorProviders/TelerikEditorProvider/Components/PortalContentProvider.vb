@@ -457,7 +457,11 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             Get
                 If (_TelerikContent Is Nothing) Then
                     _TelerikContent = New Widgets.FileSystemContentProvider(Me.Context, Me.SearchPatterns, _
-                     New String() {FileSystemValidation.HomeDirectory}, New String() {FileSystemValidation.HomeDirectory}, New String() {FileSystemValidation.HomeDirectory}, FileSystemValidation.ToVirtualPath(Me.SelectedUrl), FileSystemValidation.ToVirtualPath(Me.SelectedItemTag))
+                     New String() {FileSystemValidation.HomeDirectory}, _
+                     New String() {FileSystemValidation.HomeDirectory}, _
+                     New String() {FileSystemValidation.HomeDirectory}, _
+                     FileSystemValidation.ToVirtualPath(Me.SelectedUrl), _
+                     String.Empty)
                 End If
                 Return _TelerikContent
             End Get

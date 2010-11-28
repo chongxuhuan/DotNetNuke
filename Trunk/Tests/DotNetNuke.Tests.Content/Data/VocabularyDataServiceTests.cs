@@ -43,7 +43,6 @@ namespace DotNetNuke.Tests.Content.Data
         private static string keyField = "VocabularyId";
         private static string upateVocabulary = "UpdateVocabulary";
         private static string virtualScriptFilePath = "Library\\Entities\\Content\\Data\\Scripts\\Vocabularies";
-        private static int vocabulariesColumnCount = 11;
 
         #endregion
 

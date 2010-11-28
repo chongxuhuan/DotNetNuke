@@ -495,9 +495,11 @@ Namespace DotNetNuke.Web.UI.WebControls
 				Dim isHostPage As Boolean = (portalID = Null.NullInteger)
 				If (Not String.IsNullOrEmpty(controlKey)) Then
 					additionalParams.Insert(0, "mid=" + moduleInfo.ModuleID.ToString())
-				End If
+                End If
 
-				strURL = DotNetNuke.Common.Globals.NavigateURL(moduleInfo.TabID, isHostPage, PortalSettings, controlKey, additionalParams.ToArray())
+                Dim currentCulture As String = Threading.Thread.CurrentThread.CurrentCulture.Name
+
+                strURL = DotNetNuke.Common.Globals.NavigateURL(moduleInfo.TabID, isHostPage, PortalSettings, controlKey, currentCulture, additionalParams.ToArray())
 				'If (portalID = Null.NullInteger) Then
 				'	If (String.IsNullOrEmpty(controlKey)) Then
 				'		strURL = NavigateURL(moduleInfo.TabID, True, PortalSettings, "", additionalParams.ToArray())

@@ -55,24 +55,22 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_Constructor_Requires_Non_Null_VocabularyController()
         {
             //Arrange
-            Mock<IEditVocabularyView> view = new Mock<IEditVocabularyView>();
-            Mock<ITermController> termController = new Mock<ITermController>();
+            var view = new Mock<IEditVocabularyView>();
+            var termController = new Mock<ITermController>();
 
             //Act, Assert
-            AutoTester.ArgumentNull<IVocabularyController>(
-                v => new EditVocabularyPresenter(view.Object, v, termController.Object));
+            Assert.Throws<ArgumentNullException>(() => new EditVocabularyPresenter(view.Object, null, termController.Object)); 
         }
 
         [Test]
         public void EditVocabularyPresenter_Constructor_Requires_Non_Null_TermController()
         {
             //Arrange
-            Mock<IEditVocabularyView> view = new Mock<IEditVocabularyView>();
-            Mock<IVocabularyController> vocabularyController = new Mock<IVocabularyController>();
+            var view = new Mock<IEditVocabularyView>();
+            var vocabularyController = new Mock<IVocabularyController>();
 
             //Act, Assert
-            AutoTester.ArgumentNull<ITermController>(
-                t => new EditVocabularyPresenter(view.Object, vocabularyController.Object, t));
+            Assert.Throws<ArgumentNullException>(() => new EditVocabularyPresenter(view.Object, vocabularyController.Object, null));
         }
 
         #endregion
@@ -83,7 +81,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_OnInit_Calls_VocabularyController_GetVocabularies()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
@@ -100,7 +98,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_OnInit_Calls_Controller_Gets_Vocabulary_With_Correct_Id()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
@@ -116,7 +114,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_OnInit_Calls_TermController_GetTermsByVocabulary_With_Correct_Id()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, false);
@@ -198,7 +196,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_AddTerm_Loads_New_Term()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -218,7 +216,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_AddTerm_Displays_Term_Editor()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -234,7 +232,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_AddTerm_Correctly_Sets_TermEditor_Mode()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -254,10 +252,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, true);
             presenter.TabId = Constants.TAB_ValidId;
@@ -277,7 +275,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_CancelTerm_Hides_Term_Editor()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -293,7 +291,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_CancelTerm_Clears_SelectedTerm()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -313,9 +311,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteTerm_Calls_TermController_DeleteTerm()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_DeleteTermId}
                                                 };
@@ -335,7 +333,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteTerm_Clears_SelectedTerm()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -351,7 +349,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteTerm_Refreshes_Terms()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -369,7 +367,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteTerm_Hides_Term_Editor()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, true);
@@ -389,7 +387,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteVocabulary_Deletes_Vocabulary()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, Constants.VOCABULARY_DeleteVocabularyId, true);
@@ -408,10 +406,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_DeleteVocabulary_Redirects_To_Vocabulary_List_View()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
 
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse,
                                                                 Constants.VOCABULARY_DeleteVocabularyId, true);
@@ -432,9 +430,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Validates_Term()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -456,9 +454,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Does_Not_Save_If_Term_Invalid()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -481,9 +479,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Adds_New_Term_If_TermId_Negative_1()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term()
                                                 };
@@ -503,9 +501,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Updates_Term_If_Term_Valid()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -525,8 +523,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Clears_SelectedTerm()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -545,8 +543,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Refreshes_Terms_List()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -567,8 +565,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveTerm_Hides_Term_Editor()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_UpdateTermId}
                                                 };
@@ -591,8 +589,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveVocabulary_Validates_Vocabulary()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Vocabulary = new Vocabulary
                                                                      {
@@ -619,8 +617,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveVocabulary_Does_Not_Save_If_Vocabulary_Invalid()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Vocabulary = new Vocabulary
                                                                      {
@@ -648,8 +646,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Vocabulary = new Vocabulary
                                                                      {
@@ -676,8 +674,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var mockView = new Mock<IEditVocabularyView>();
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Vocabulary = new Vocabulary
                                                                      {
@@ -688,7 +686,7 @@ namespace DotNetNuke.Tests.Content.Presenters
                                                 };
             mockView.Setup(v => v.Model).Returns(editModel);
 
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
             EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse,
                                                                 Constants.VOCABULARY_UpdateVocabularyId, true);
@@ -709,9 +707,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_Loads_SelectedTerm_When_Term_Is_Selected()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_ValidTermId}
                                                 };
@@ -735,9 +733,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_Displays_Term_Editor_When_Term_Is_Selected()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_ValidTermId}
                                                 };
@@ -756,9 +754,9 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void EditVocabularyPresenter_Correctly_Sets_TermEditor_Mode_When_Term_Is_Selected()
         {
             // Arrange
-            Mock<IEditVocabularyView> mockView = new Mock<IEditVocabularyView>();
+            var mockView = new Mock<IEditVocabularyView>();
 
-            EditVocabularyModel editModel = new EditVocabularyModel
+            var editModel = new EditVocabularyModel
                                                 {
                                                     Term = new Term {TermId = Constants.TERM_ValidTermId}
                                                 };
@@ -799,8 +797,8 @@ namespace DotNetNuke.Tests.Content.Presenters
                                                           Mock<HttpResponseBase> mockHttpResponse, int vocabularyId,
                                                           bool initialize)
         {
-            Mock<HttpRequestBase> mockHttpRequest = new Mock<HttpRequestBase>();
-            NameValueCollection requestParams = new NameValueCollection();
+            var mockHttpRequest = new Mock<HttpRequestBase>();
+            var requestParams = new NameValueCollection();
             requestParams.Add("VocabularyId", vocabularyId.ToString());
             mockHttpRequest.Setup(r => r.Params).Returns(requestParams);
 
@@ -813,11 +811,11 @@ namespace DotNetNuke.Tests.Content.Presenters
         {
             MockHelper.CreateMockScopeTypeController();
 
-            Mock<HttpContextBase> mockHttpContext = new Mock<HttpContextBase>();
+            var mockHttpContext = new Mock<HttpContextBase>();
             mockHttpContext.Setup(h => h.Response).Returns(mockHttpResponse.Object);
             mockHttpContext.Setup(h => h.Request).Returns(mockHttpRequest.Object);
 
-            EditVocabularyPresenter presenter = new EditVocabularyPresenter(mockView.Object,
+            var presenter = new EditVocabularyPresenter(mockView.Object,
                                                                             MockHelper.CreateMockVocabularyController().
                                                                                 Object,
                                                                             MockHelper.CreateMockTermController().Object)

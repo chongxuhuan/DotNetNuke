@@ -73,6 +73,7 @@ Namespace DotNetNuke.Common
         ''' Calculating based on these numbers keeps the scaling linear for all caching.
         ''' </summary>
         Public Enum PerformanceSettings
+            ''' <summary>
             ''' No caching
             ''' </summary>
             NoCaching = 0
@@ -492,7 +493,7 @@ Namespace DotNetNuke.Common
                     cultureCode = linkTab.CultureCode
                 End If
                 If String.IsNullOrEmpty(cultureCode) Then
-                    cultureCode = Thread.CurrentThread.CurrentUICulture.Name
+                    cultureCode = Thread.CurrentThread.CurrentCulture.Name
                 End If
             End If
 

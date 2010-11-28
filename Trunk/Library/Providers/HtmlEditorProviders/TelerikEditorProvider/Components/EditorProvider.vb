@@ -564,14 +564,15 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
         End Sub
 
         Private Function FindToolGroup(ByRef tool As Object, ByVal toolName As String) As EditorToolGroup
-            For Each editorTool In _editor.Tools
-                tool = editorTool.FindTool(toolName)
+            Dim group As EditorToolGroup = Nothing
+
+            For Each group In _editor.Tools
+                tool = group.FindTool(toolName)
                 If (tool) Is Nothing Then
                     Continue For
-                Else
-                    Return editorTool
                 End If
             Next
+            Return group
         End Function
 
         ''' <summary>
@@ -580,7 +581,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
         Private Sub SetEmoticonsTool(ByVal remove As Boolean)
             If (_editor.Tools.Count < 1) Then Return
 
-            Dim emoticonsTool As Object
+            Dim emoticonsTool As Object = Nothing
             Dim emoticonsToolGroup As EditorToolGroup = FindToolGroup(emoticonsTool, "Emoticons")
 
             If (emoticonsTool) Is Nothing Then Return
@@ -588,7 +589,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
             If (Not TypeOf (emoticonsTool) Is EditorSplitButton) Then Return
 
             If remove Then ' temp fix to DNN-14206  
-                Dim saveTemplateTool As Object
+                Dim saveTemplateTool As Object = Nothing
                 Dim saveTemplateToolGroup As EditorToolGroup = FindToolGroup(saveTemplateTool, "SaveTemplate")
 
                 If Not saveTemplateTool Is Nothing Then

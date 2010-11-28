@@ -42,7 +42,6 @@ namespace DotNetNuke.Tests.Content.Data
         private static string keyField = "ScopeTypeId";
         private static string upateScopeType = "UpdateScopeType";
         private static string virtualScriptFilePath = "Library\\Entities\\Content\\Data\\Scripts\\Scope";
-        private static int columnCount = 2;
 
         #endregion
 

@@ -70,31 +70,29 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_Constructor_Requires_Non_Null_VocabularyController()
         {
             //Arrange
-            Mock<ICreateVocabularyView> view = new Mock<ICreateVocabularyView>();
-            Mock<IScopeTypeController> scopeTypeController = new Mock<IScopeTypeController>();
+            var view = new Mock<ICreateVocabularyView>();
+            var scopeTypeController = new Mock<IScopeTypeController>();
 
             //Act, Assert
-            AutoTester.ArgumentNull<IVocabularyController>(
-                v => new CreateVocabularyPresenter(view.Object, v, scopeTypeController.Object));
+            Assert.Throws<ArgumentNullException>(() => new CreateVocabularyPresenter(view.Object, null, scopeTypeController.Object));
         }
 
         [Test]
         public void CreateVocabularyPresenter_Constructor_Requires_Non_Null_ScopeTypeController()
         {
             //Arrange
-            Mock<ICreateVocabularyView> view = new Mock<ICreateVocabularyView>();
-            Mock<IVocabularyController> vocabularyController = new Mock<IVocabularyController>();
+            var view = new Mock<ICreateVocabularyView>();
+            var vocabularyController = new Mock<IVocabularyController>();
 
             //Act, Assert
-            AutoTester.ArgumentNull<IScopeTypeController>(
-                s => new CreateVocabularyPresenter(view.Object, vocabularyController.Object, s));
+            Assert.Throws<ArgumentNullException>(() => new CreateVocabularyPresenter(view.Object, vocabularyController.Object, null));
         }
 
         [Test]
         public void CreateVocabularyPresenter_Constructor_Calls_ScopeTypeController_GetScopeTypes()
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
             // Act
@@ -115,7 +113,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser)
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
             CreateVocabularyPresenter presenter = CreatePresenter(mockView);
@@ -137,12 +135,12 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
-            CreateVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse);
+            var presenter = CreatePresenter(mockView, mockHttpResponse);
             presenter.TabId = Constants.TAB_ValidId;
 
             // Act (Raise the Cancel Event)
@@ -160,8 +158,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_SaveVocabulary_Validates_Vocabulary()
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
-            CreateVocabularyModel model = new CreateVocabularyModel
+            var mockView = new Mock<ICreateVocabularyView>();
+            var model = new CreateVocabularyModel
                                               {
                                                   Vocabulary = new Vocabulary
                                                                    {
@@ -171,9 +169,9 @@ namespace DotNetNuke.Tests.Content.Presenters
                                               };
             mockView.Setup(v => v.Model).Returns(model);
 
-            CreateVocabularyPresenter presenter = CreatePresenter(mockView);
+            var presenter = CreatePresenter(mockView);
 
-            Mock<ObjectValidator> mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator,
+            var mockValidator = MockHelper.EnableValidMockValidator(presenter.Validator,
                                                                                       model.Vocabulary);
 
             // Act
@@ -186,8 +184,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         [Test]
         public void CreateVocabularyPresenter_SaveVocabulary_Does_Not_Save_If_Vocabulary_Invalid()
         {
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
-            CreateVocabularyModel model = new CreateVocabularyModel
+            var mockView = new Mock<ICreateVocabularyView>();
+            var model = new CreateVocabularyModel
                                               {
                                                   Vocabulary = new Vocabulary
                                                                    {
@@ -197,9 +195,9 @@ namespace DotNetNuke.Tests.Content.Presenters
                                               };
             mockView.Setup(v => v.Model).Returns(model);
 
-            CreateVocabularyPresenter presenter = CreatePresenter(mockView);
+            var presenter = CreatePresenter(mockView);
 
-            Mock<ObjectValidator> mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator,
+            var mockValidator = MockHelper.EnableInvalidMockValidator(presenter.Validator,
                                                                                         model.Vocabulary);
 
             // Act (Raise the Save Event)
@@ -214,10 +212,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_SaveVocabulary_Saves_If_Vocabulary_Valid()
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-            CreateVocabularyPresenter presenter = CreatePresenter(mockView);
+            var presenter = CreatePresenter(mockView);
 
             // Act (Raise the Save Event)
             mockView.Raise(v => v.Save += null, EventArgs.Empty);
@@ -231,10 +229,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void CreateVocabularyPresenter_SaveVocabulary_Redirects_To_Vocabulary_List_View_With_No_Errors()
         {
             // Arrange
-            Mock<ICreateVocabularyView> mockView = new Mock<ICreateVocabularyView>();
+            var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
             CreateVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse);
             presenter.TabId = Constants.TAB_ValidId;
@@ -252,7 +250,7 @@ namespace DotNetNuke.Tests.Content.Presenters
 
         protected CreateVocabularyPresenter CreatePresenter(Mock<ICreateVocabularyView> mockView)
         {
-            Mock<HttpResponseBase> mockHttpResponse = new Mock<HttpResponseBase>();
+            var mockHttpResponse = new Mock<HttpResponseBase>();
 
             return CreatePresenter(mockView, mockHttpResponse);
         }
@@ -260,10 +258,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         protected CreateVocabularyPresenter CreatePresenter(Mock<ICreateVocabularyView> mockView,
                                                             Mock<HttpResponseBase> mockHttpResponse)
         {
-            Mock<HttpContextBase> mockHttpContext = new Mock<HttpContextBase>();
+            var mockHttpContext = new Mock<HttpContextBase>();
             mockHttpContext.Setup(h => h.Response).Returns(mockHttpResponse.Object);
 
-            CreateVocabularyPresenter presenter = new CreateVocabularyPresenter(mockView.Object,
+            var presenter = new CreateVocabularyPresenter(mockView.Object,
                                                                                 MockHelper.
                                                                                     CreateMockVocabularyController().
                                                                                     Object,

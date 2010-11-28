@@ -42,10 +42,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void VocabularyListPresenter_Constructor_Requires_Non_Null_VocabularyController()
         {
             //Arrange
-            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            var view = new Mock<IVocabularyListView>();
 
             //Act, Assert
-            AutoTester.ArgumentNull<IVocabularyController>(m => new VocabularyListPresenter(view.Object, m));
+            Assert.Throws<ArgumentNullException>(() => new VocabularyListPresenter(view.Object, null));
         }
 
         #endregion
@@ -56,11 +56,11 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void VocabularyListPresenter_OnInit_Calls_Controller_GetVocabularies()
         {
             // Arrange
-            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
-            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            var mockController = new Mock<IVocabularyController>();
+            var view = new Mock<IVocabularyListView>();
             view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object);
+            var presenter = new VocabularyListPresenter(view.Object, mockController.Object);
 
             // Act (Raise the Initialize Event)
             view.Raise(v => v.Initialize += null, EventArgs.Empty);
@@ -73,11 +73,11 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void VocabularyListPresenter_OnInit_Sets_Models_NavigateUrlFormatString_Property()
         {
             // Arrange
-            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
-            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            var mockController = new Mock<IVocabularyController>();
+            var view = new Mock<IVocabularyListView>();
             view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object)
+            var presenter = new VocabularyListPresenter(view.Object, mockController.Object)
                                                     {
                                                         ModuleId = Constants.MODULE_ValidId,
                                                         TabId = Constants.TAB_ValidId
@@ -104,11 +104,11 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void VocabularyListPresenter_Load_Calls_View_ShowAddButton(bool isEditable)
         {
             // Arrange
-            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
-            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            var mockController = new Mock<IVocabularyController>();
+            var view = new Mock<IVocabularyListView>();
             view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object);
+            var presenter = new VocabularyListPresenter(view.Object, mockController.Object);
             presenter.IsEditable = isEditable;
 
             // Act (Raise the Load Event)
@@ -126,15 +126,15 @@ namespace DotNetNuke.Tests.Content.Presenters
         public void VocabularyListPresenter_On_Add_Redirects_To_CreateVocabulary()
         {
             // Arrange
-            Mock<IVocabularyController> mockController = new Mock<IVocabularyController>();
-            Mock<IVocabularyListView> view = new Mock<IVocabularyListView>();
+            var mockController = new Mock<IVocabularyController>();
+            var view = new Mock<IVocabularyListView>();
             view.Setup(v => v.Model).Returns(new VocabularyListModel());
 
-            Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
-            Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
+            var httpContext = new Mock<HttpContextBase>();
+            var httpResponse = new Mock<HttpResponseBase>();
             httpContext.Setup(h => h.Response).Returns(httpResponse.Object);
 
-            VocabularyListPresenter presenter = new VocabularyListPresenter(view.Object, mockController.Object)
+            var presenter = new VocabularyListPresenter(view.Object, mockController.Object)
                                                     {
                                                         HttpContext = httpContext.Object,
                                                         ModuleId = Constants.MODULE_ValidId,

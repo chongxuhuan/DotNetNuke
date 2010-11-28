@@ -145,7 +145,7 @@ Namespace DotNetNuke.Modules.XmlMerge
                 Skins.Skin.AddModuleMessage(Me, Localization.GetString("Success", Me.LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess)
 
             Catch ex As Exception
-                Skin.AddModuleMessage(Me, String.Format(Localization.GetString("ERROR_ConfigurationFormat", LocalResourceFile), ex.Message), ModuleMessage.ModuleMessageType.RedError)
+                Skins.Skin.AddModuleMessage(Me, String.Format(Localization.GetString("ERROR_ConfigurationFormat", LocalResourceFile), ex.Message), ModuleMessage.ModuleMessageType.RedError)
                 Exit Sub
             End Try
         End Sub
