@@ -67,6 +67,12 @@ Namespace DotNetNuke.Entities.Portals
             ModuleEditor
         End Enum
 
+        Public Enum PortalAliasMapping
+            None
+            CanonicalUrl
+            Redirect
+        End Enum
+
 #End Region
 
 #Region "Private Members"
@@ -657,6 +663,24 @@ Namespace DotNetNuke.Entities.Portals
         Public ReadOnly Property DefaultPortalSkin() As String
             Get
                 Return PortalController.GetPortalSetting("DefaultPortalSkin", PortalId, Host.Host.DefaultPortalSkin)
+            End Get
+        End Property
+
+        Public ReadOnly Property PortalAliasMappingMode() As PortalAliasMapping
+            Get
+                Dim aliasMapping As PortalAliasMapping = PortalAliasMapping.None
+                Dim setting As String = Null.NullString
+                If PortalController.GetPortalSettingsDictionary(PortalId).TryGetValue("PortalAliasMapping", setting) Then
+                    Select Case setting.ToUpperInvariant
+                        Case "CANONICALURL"
+                            aliasMapping = PortalAliasMapping.CanonicalUrl
+                        Case "REDIRECT"
+                            aliasMapping = PortalAliasMapping.Redirect
+                        Case Else
+                            aliasMapping = PortalAliasMapping.None
+                    End Select
+                End If
+                Return aliasMapping
             End Get
         End Property
 

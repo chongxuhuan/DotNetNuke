@@ -78,7 +78,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\Website\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>CountryListBox.xml</DocumentationFile>
     <BaseAddress>1298726912</BaseAddress>
     <ConfigurationOverrideFile>
@@ -150,10 +150,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  </Target>
+  <Target Name="DebugProject">
+    <Copy SourceFiles="bin\CountryListBox.dll" DestinationFolder="..\..\..\Website\bin" />
+    <Copy SourceFiles="bin\CountryListBox.pdb" DestinationFolder="..\..\..\Website\bin" />
+    <Copy SourceFiles="bin\CountryListBox.xml" DestinationFolder="..\..\..\Website\bin" />
+  </Target>
 </Project>

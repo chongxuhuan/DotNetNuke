@@ -1503,6 +1503,9 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetFoldersByPortal(ByVal PortalID As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFolders", GetNull(PortalID), -1, ""), IDataReader)
         End Function
+        Public Overrides Function GetFoldersByPortalAndPermissions(ByVal PortalID As Integer, ByVal Permissions As String, ByVal UserID As Integer) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFoldersByPermissions", GetNull(PortalID), GetNull(Permissions), GetNull(UserID), -1, ""), IDataReader)
+        End Function
         Public Overloads Overrides Function GetFolder(ByVal PortalID As Integer, ByVal FolderID As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetFolderByFolderID", GetNull(PortalID), FolderID), IDataReader)
         End Function

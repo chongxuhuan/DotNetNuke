@@ -249,7 +249,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 If Page.IsPostBack = False Then
 
                     DotNetNuke.UI.Utilities.ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteMessage", Me.LocalResourceFile))
-                    Loadportal(SelectedCultureCode)
+                    LoadPortal(SelectedCultureCode)
 
 
                     If Not Request.UrlReferrer Is Nothing Then
@@ -481,6 +481,22 @@ Namespace DotNetNuke.Modules.Admin.Portals
             ctlAdminSkin.SkinSrc = PortalController.GetPortalSetting("DefaultAdminSkin", intPortalId, Host.DefaultAdminSkin)
             ctlAdminContainer.SkinRoot = SkinController.RootContainer
             ctlAdminContainer.SkinSrc = PortalController.GetPortalSetting("DefaultAdminContainer", intPortalId, Host.DefaultAdminContainer)
+
+            Dim portalAliasMapping As String = PortalController.GetPortalSetting("PortalAliasMapping", intPortalId, "NONE")
+            portalAliasModeButtonList.Items.FindByValue(portalAliasMapping).Selected = True
+
+            If portalAliasMapping.ToUpperInvariant = "NONE" Then
+                defaultAliasRow.Visible = False
+            Else
+                defaultAliasRow.Visible = True
+                defaultAliasDropDown.DataSource = arrPortalAliases
+                defaultAliasDropDown.DataBind()
+
+                Dim defaultAlias As String = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "")
+                If defaultAliasDropDown.Items.FindByValue(defaultAlias) IsNot Nothing Then
+                    defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = True
+                End If
+            End If
 
             LoadStyleSheet()
         End Sub
@@ -774,9 +790,11 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(intPortalId, "ControlPanelVisibility", optControlPanelVisibility.SelectedItem.Value, False)
                     PortalController.UpdatePortalSetting(intPortalId, "ControlPanelSecurity", optControlPanelSecurity.SelectedItem.Value, False)
 
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString, True)
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, True)
-                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, True)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "PortalAliasMapping", portalAliasModeButtonList.SelectedValue, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalAlias", defaultAliasDropDown.SelectedValue, False)
 
                     If IsSuperUser() Then
                         PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False)

@@ -182,6 +182,8 @@ Namespace DotNetNuke.Modules.Admin.Portals
         Protected Sub grdPortals_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles dgPortalAlias.ItemDataBound
             Dim item As DataGridItem = e.Item
 
+            Dim defaultAlias As String = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "")
+
             If item.ItemType = ListItemType.Item Or _
                     item.ItemType = ListItemType.AlternatingItem Or _
                     item.ItemType = ListItemType.SelectedItem Then
@@ -191,7 +193,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     Dim delImage As ImageButton = CType(imgColumnControl, ImageButton)
                     Dim portalAlias As PortalAliasInfo = CType(item.DataItem, PortalAliasInfo)
 
-                    delImage.Visible = Not (portalAlias.PortalAliasID = Me.PortalAlias.PortalAliasID)
+                    delImage.Visible = Not (portalAlias.PortalAliasID = Me.PortalAlias.PortalAliasID) AndAlso Not (portalAlias.HTTPAlias = defaultAlias)
                 End If
                 imgColumnControl = item.Controls(0).Controls(0)
                 If TypeOf imgColumnControl Is ImageButton Then

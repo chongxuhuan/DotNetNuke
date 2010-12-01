@@ -837,6 +837,8 @@ Namespace DotNetNuke.Common
 
             For intURL = 2 To URL.GetUpperBound(0)
                 Select Case URL(intURL).ToLower
+                    Case String.Empty
+                        Continue For
                     Case "admin", "controls", "desktopmodules", "mobilemodules", "premiummodules", "providers"
                         Exit For
                     Case Else

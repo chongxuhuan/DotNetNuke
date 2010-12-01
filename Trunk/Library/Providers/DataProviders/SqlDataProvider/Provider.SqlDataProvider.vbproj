@@ -184,5 +184,7 @@
   <Target Name="DebugProject">
     <Copy SourceFiles="..\..\..\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll" DestinationFolder="..\..\..\..\Website\bin\" />
     <Copy SourceFiles="bin\DotNetNuke.SqlDataProvider.dll" DestinationFolder="..\..\..\..\Website\bin\" />
+    <Copy SourceFiles="bin\DotNetNuke.SqlDataProvider.pdb" DestinationFolder="..\..\..\..\Website\bin\" />
+    <Copy SourceFiles="bin\DotNetNuke.SqlDataProvider.xml" DestinationFolder="..\..\..\..\Website\bin\" />
   </Target>
 </Project>

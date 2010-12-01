@@ -58,6 +58,13 @@ Namespace DotNetNuke.Services.FileSystem
 
 #Region "Private methods"
 
+        Private Shared Function GetFoldersByPermissionSortedCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
+            Dim portalID As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
+            Dim permissions As String = DirectCast(cacheItemArgs.ParamList(1), String)
+            Dim userID As Integer = DirectCast(cacheItemArgs.ParamList(2), Integer)
+            Return CBO.FillSortedList(Of String, FolderInfo)("FolderPath", DataProvider.Instance().GetFoldersByPortalAndPermissions(portalID, permissions, userID))
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' GetFoldersCallBack gets a Dictionary of Folders by Portal from the the Database.
@@ -88,6 +95,7 @@ Namespace DotNetNuke.Services.FileSystem
         Private Shared Sub UpdateFolderVersion(ByVal folderId As Integer)
             DataProvider.Instance.UpdateFolderVersion(folderId, Guid.NewGuid())
         End Sub
+
 #End Region
 
 #Region "Public Methods"
@@ -143,20 +151,26 @@ Namespace DotNetNuke.Services.FileSystem
             Return folder
         End Function
 
+        Public Function GetFolderByUniqueID(ByVal UniqueId As Guid) As FolderInfo
+            Dim objFolder As FolderInfo
+            objFolder = CType(CBO.FillObject(DataProvider.Instance().GetFolderByUniqueID(UniqueId), GetType(FolderInfo)), FolderInfo)
+            Return objFolder
+        End Function
+
         Public Function GetFolderInfo(ByVal PortalID As Integer, ByVal FolderID As Integer) As FolderInfo
             Return CBO.FillObject(Of FolderInfo)(DataProvider.Instance().GetFolder(PortalID, FolderID))
+        End Function
+
+        Public Function GetFoldersByPermissionsSorted(ByVal PortalID As Integer, ByVal Permissions As String, ByVal UserID As Integer) As SortedList(Of String, FolderInfo)
+            Dim cacheKey As String = String.Format(DataCache.FolderCacheKey, PortalID.ToString(), Permissions, UserID)
+            Return CBO.GetCachedObject(Of SortedList(Of String, FolderInfo))(New CacheItemArgs(cacheKey, DataCache.FolderCacheTimeOut, DataCache.FolderCachePriority, PortalID, Permissions, UserID), _
+                                                                                    AddressOf GetFoldersByPermissionSortedCallBack)
         End Function
 
         Public Function GetFoldersSorted(ByVal PortalID As Integer) As SortedList(Of String, FolderInfo)
             Dim cacheKey As String = String.Format(DataCache.FolderCacheKey, PortalID.ToString())
             Return CBO.GetCachedObject(Of SortedList(Of String, FolderInfo))(New CacheItemArgs(cacheKey, DataCache.FolderCacheTimeOut, DataCache.FolderCachePriority, PortalID), _
                                                                                         AddressOf GetFoldersSortedCallBack)
-        End Function
-
-        Public Function GetFolderByUniqueID(ByVal UniqueId As Guid) As FolderInfo
-            Dim objFolder As FolderInfo
-            objFolder = CType(CBO.FillObject(DataProvider.Instance().GetFolderByUniqueID(UniqueId), GetType(FolderInfo)), FolderInfo)
-            Return objFolder
         End Function
 
         Public Function GetMappedDirectory(ByVal VirtualDirectory As String) As String

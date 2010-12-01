@@ -1,5 +1,5 @@
 ﻿<portal version="5.0">
-  <description>Default Website template</description>
+  <description>Default Website Template</description>
   <settings>
     <logofile>logo.gif</logofile>
     <footertext>Copyright 2010 by DotNetNuke Corporation</footertext>
@@ -11,6 +11,7 @@
     <hostspace>0</hostspace>
     <userquota>0</userquota>
     <pagequota>0</pagequota>
+    <portalaliasmapping>none</portalaliasmapping>
   </settings>
   <profiledefinitions>
     <profiledefinition>
@@ -396,17 +397,6 @@
       <portalDesktopModulePermissions />
     </portalDesktopModule>
     <portalDesktopModule>
-      <friendlyname>Configuration Manager</friendlyname>
-      <portalDesktopModulePermissions>
-        <portalDesktopModulePermission>
-          <permissioncode>SYSTEM_DESKTOPMODULE</permissioncode>
-          <permissionkey>DEPLOY</permissionkey>
-          <allowaccess>true</allowaccess>
-          <rolename>Administrators</rolename>
-        </portalDesktopModulePermission>
-      </portalDesktopModulePermissions>
-    </portalDesktopModule>
-    <portalDesktopModule>
       <friendlyname>HTML</friendlyname>
       <portalDesktopModulePermissions>
         <portalDesktopModulePermission>
@@ -479,6 +469,21 @@
           <iconfile />
           <roletype>subscriberrole</roletype>
         </role>
+        <role>
+          <rolename>Translator (en-US)</rolename>
+          <description>A role for English (United States) translators</description>
+          <billingfrequency />
+          <billingperiod>-1</billingperiod>
+          <servicefee>-3.402823E+38</servicefee>
+          <trialfrequency />
+          <trialperiod>-1</trialperiod>
+          <trialfee>-3.402823E+38</trialfee>
+          <ispublic>false</ispublic>
+          <autoassignment>false</autoassignment>
+          <rsvpcode />
+          <iconfile />
+          <roletype>none</roletype>
+        </role>
       </roles>
     </rolegroup>
   </rolegroups>
@@ -524,7 +529,7 @@
       </tabpermissions>
       <tabsettings>
         <tabsetting>
-          <settingname>IncludeVaryBy</settingname>
+          <settingname>CacheIncludeExclude</settingname>
           <settingvalue></settingvalue>
         </tabsetting>
         <tabsetting>
@@ -532,11 +537,11 @@
           <settingvalue></settingvalue>
         </tabsetting>
         <tabsetting>
-          <settingname>CacheIncludeExclude</settingname>
+          <settingname>IncludeVaryBy</settingname>
           <settingvalue></settingvalue>
         </tabsetting>
         <tabsetting>
-          <settingname>ExcludeVaryBy</settingname>
+          <settingname>CacheProvider</settingname>
           <settingvalue></settingvalue>
         </tabsetting>
         <tabsetting>
@@ -544,7 +549,7 @@
           <settingvalue></settingvalue>
         </tabsetting>
         <tabsetting>
-          <settingname>CacheProvider</settingname>
+          <settingname>ExcludeVaryBy</settingname>
           <settingvalue></settingvalue>
         </tabsetting>
       </tabsettings>
@@ -554,8 +559,8 @@
           <name>BottomPane</name>
           <modules>
             <module>
-              <moduleID>355</moduleID>
-              <title>DotNetNuke® Community Edition</title>
+              <moduleID>354</moduleID>
+              <title>DotNetNuke® Enterprise Edition</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
               <header />
@@ -584,7 +589,7 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="05.06.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;branding-top&amp;quot;&amp;gt;
+              <content type="DNNHTML" version="05.04.03"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;branding-top&amp;quot;&amp;gt;
 &amp;lt;div class=&amp;quot;link_main&amp;quot;&amp;gt;
 &amp;lt;div class=&amp;quot;link_proedition&amp;quot; onclick=&amp;quot;window.open('http://www.dotnetnuke.com/tabid/1209/Default.aspx')&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
 &amp;lt;div class=&amp;quot;link_adminguide&amp;quot; onclick=&amp;quot;window.open('http://www.dotnetnuke.com/tabid/1220/Default.aspx')&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
@@ -625,12 +630,12 @@
                 &amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
-                  <settingname>WorkflowID</settingname>
-                  <settingvalue>1</settingvalue>
-                </modulesetting>
-                <modulesetting>
                   <settingname>HtmlText_ReplaceTokens</settingname>
                   <settingvalue>False</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>WorkflowID</settingname>
+                  <settingvalue>1</settingvalue>
                 </modulesetting>
               </modulesettings>
               <tabmodulesettings>
@@ -643,7 +648,7 @@
               <moduledefinition>Text/HTML</moduledefinition>
             </module>
             <module>
-              <moduleID>356</moduleID>
+              <moduleID>355</moduleID>
               <title />
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -673,7 +678,7 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="05.06.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;hr&amp;quot;&amp;gt;&amp;lt;hr /&amp;gt;
+              <content type="DNNHTML" version="05.04.03"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;hr&amp;quot;&amp;gt;&amp;lt;hr /&amp;gt;
 &amp;lt;/div&amp;gt;
 &amp;lt;div id=&amp;quot;LoginInfo&amp;quot;&amp;gt;
 &amp;lt;h2 class=&amp;quot;Head&amp;quot;&amp;gt;Getting Started&amp;lt;/h2&amp;gt;
@@ -705,7 +710,7 @@
 &amp;lt;div id=&amp;quot;RightColumnInfo&amp;quot;&amp;gt;
 &amp;lt;div id=&amp;quot;TelerikInside&amp;quot;&amp;gt;
 &amp;lt;h2 class=&amp;quot;Head&amp;quot;&amp;gt;Includes Telerik ASP.Net AJAX&amp;lt;/h2&amp;gt;
-DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information on using Telerik within your own modules please refer to the &amp;lt;a href=&amp;quot;Documentation/TELERIK_EULA.pdf&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Telerik Community Edition EULA&amp;lt;/a&amp;gt;.&amp;lt;/div&amp;gt;
+DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information on using Telerik within your own modules please refer to the &amp;lt;a href=&amp;quot;Documentation/TELERIK_EULA.pdf&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Telerik Commercial EULA&amp;lt;/a&amp;gt;.&amp;lt;/div&amp;gt;
 &amp;lt;div id=&amp;quot;QuickLinks&amp;quot;&amp;gt;
 &amp;lt;h2 class=&amp;quot;Head&amp;quot;&amp;gt;Quick Links&amp;lt;/h2&amp;gt;
 &amp;lt;p&amp;gt;The following links provide additional information about using DotNetNuke and some of the people behind the project.&amp;lt;/p&amp;gt;
@@ -727,12 +732,12 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
 &amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
-                  <settingname>WorkflowID</settingname>
-                  <settingvalue>1</settingvalue>
-                </modulesetting>
-                <modulesetting>
                   <settingname>HtmlText_ReplaceTokens</settingname>
                   <settingvalue>False</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>WorkflowID</settingname>
+                  <settingvalue>1</settingvalue>
                 </modulesetting>
               </modulesettings>
               <tabmodulesettings>
@@ -745,7 +750,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <moduledefinition>Text/HTML</moduledefinition>
             </module>
             <module>
-              <moduleID>357</moduleID>
+              <moduleID>356</moduleID>
               <title>Sponsors</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -776,16 +781,17 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
                 </permission>
               </modulepermissions>
               <content type="DNNHTML" version="05.06.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=24&amp;amp;amp;VendorId=21&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;The Official Microsoft ASP.NET Site&amp;quot; src=&amp;quot;aspnet.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=35&amp;amp;amp;VendorId=49&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;MaximumASP - Serious Web Hosting For Serious Microsoft Developers&amp;quot; src=&amp;quot;MaximumASP.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=73&amp;amp;amp;VendorId=63&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;Telerik - The Most Comprehensive Toolset For ASP.NET&amp;quot; src=&amp;quot;telerik.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=78&amp;amp;amp;VendorId=66&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;ExactTarget&amp;quot; src=&amp;quot;exacttarget.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=629&amp;amp;amp;VendorId=21&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;Click here to go to dev.live.com for Windows Live developer resources&amp;quot; src=&amp;quot;windowslive.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=29&amp;amp;amp;VendorId=42&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;Red-Gate&amp;quot; src=&amp;quot;redgate.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;https://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=1386&amp;amp;amp;VendorId=143&amp;quot; class=&amp;quot;SponsorIcon&amp;quot; target=&amp;quot;new&amp;quot;&amp;gt;&amp;lt;img style=&amp;quot;border: 0px solid;&amp;quot; alt=&amp;quot;Applied Innovations&amp;quot; src=&amp;quot;AI_120x60.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;
-&amp;lt;div style=&amp;quot;clear: both;&amp;quot;&amp;gt;&amp;amp;nbsp;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+                  &amp;lt;div style=&amp;quot;clear: both;&amp;quot;&amp;gt;&amp;amp;nbsp;&amp;lt;/div&amp;gt;
+                  &amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]>
+              </content>
               <modulesettings>
-                <modulesetting>
-                  <settingname>WorkflowID</settingname>
-                  <settingvalue>1</settingvalue>
-                </modulesetting>
                 <modulesetting>
                   <settingname>HtmlText_ReplaceTokens</settingname>
                   <settingvalue>False</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>WorkflowID</settingname>
+                  <settingvalue>1</settingvalue>
                 </modulesetting>
               </modulesettings>
               <tabmodulesettings>
@@ -846,7 +852,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>358</moduleID>
+              <moduleID>357</moduleID>
               <title>Search Results</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -890,11 +896,11 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               </modulepermissions>
               <modulesettings />
               <tabmodulesettings />
-              <definition>SearchResults</definition>
-              <moduledefinition>Search Results</moduledefinition>
+              <definition>SearchCrawlerResults</definition>
+              <moduledefinition>SearchCrawlerResults</moduledefinition>
             </module>
             <module>
-              <moduleID>359</moduleID>
+              <moduleID>358</moduleID>
               <title>Results</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -979,7 +985,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>360</moduleID>
+              <moduleID>359</moduleID>
               <title>My Profile</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1027,7 +1033,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <moduledefinition>ViewProfile</moduledefinition>
             </module>
             <module>
-              <moduleID>361</moduleID>
+              <moduleID>360</moduleID>
               <title>My InBox</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1111,7 +1117,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>362</moduleID>
+              <moduleID>361</moduleID>
               <title>Basic Features</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1150,28 +1156,28 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <content type="Console" version="01.00.00"><![CDATA[&lt;ConsoleSettings&gt;&lt;DefaultSize&gt;IconFileLarge&lt;/DefaultSize&gt;&lt;AllowSizeChange&gt;False&lt;/AllowSizeChange&gt;&lt;DefaultView&gt;Hide&lt;/DefaultView&gt;&lt;AllowViewChange&gt;False&lt;/AllowViewChange&gt;&lt;ShowTooltip&gt;True&lt;/ShowTooltip&gt;&lt;ConsoleWidth&gt;&lt;/ConsoleWidth&gt;&lt;/ConsoleSettings&gt;]]></content>
               <modulesettings>
                 <modulesetting>
-                  <settingname>AllowViewChange</settingname>
-                  <settingvalue>False</settingvalue>
-                </modulesetting>
-                <modulesetting>
                   <settingname>ShowTooltip</settingname>
                   <settingvalue>True</settingvalue>
-                </modulesetting>
-                <modulesetting>
-                  <settingname>AllowSizeChange</settingname>
-                  <settingvalue>False</settingvalue>
                 </modulesetting>
                 <modulesetting>
                   <settingname>DefaultSize</settingname>
                   <settingvalue>IconFileLarge</settingvalue>
                 </modulesetting>
                 <modulesetting>
-                  <settingname>DefaultView</settingname>
-                  <settingvalue>Hide</settingvalue>
+                  <settingname>AllowSizeChange</settingname>
+                  <settingvalue>False</settingvalue>
                 </modulesetting>
                 <modulesetting>
                   <settingname>ConsoleWidth</settingname>
                   <settingvalue></settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>DefaultView</settingname>
+                  <settingvalue>Hide</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>AllowViewChange</settingname>
+                  <settingvalue>False</settingvalue>
                 </modulesetting>
               </modulesettings>
               <tabmodulesettings>
@@ -1227,7 +1233,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>363</moduleID>
+              <moduleID>362</moduleID>
               <title>Site Settings</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1311,7 +1317,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>364</moduleID>
+              <moduleID>363</moduleID>
               <title>Pages</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1395,7 +1401,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>365</moduleID>
+              <moduleID>364</moduleID>
               <title>Extensions</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1479,7 +1485,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>366</moduleID>
+              <moduleID>365</moduleID>
               <title>Language Management</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1563,7 +1569,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>367</moduleID>
+              <moduleID>366</moduleID>
               <title>Skin Editor</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1604,7 +1610,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
               <moduledefinition>Skins</moduledefinition>
             </module>
             <module>
-              <moduleID>368</moduleID>
+              <moduleID>367</moduleID>
               <title>Skin Designer</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1688,7 +1694,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>369</moduleID>
+              <moduleID>368</moduleID>
               <title>Security Roles</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1772,7 +1778,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>370</moduleID>
+              <moduleID>369</moduleID>
               <title>User Accounts</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1856,7 +1862,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>371</moduleID>
+              <moduleID>370</moduleID>
               <title>Vendors</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -1940,7 +1946,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>372</moduleID>
+              <moduleID>371</moduleID>
               <title>Site Log</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2024,7 +2030,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>373</moduleID>
+              <moduleID>372</moduleID>
               <title>Newsletters</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2108,7 +2114,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>374</moduleID>
+              <moduleID>373</moduleID>
               <title>File Manager</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2192,7 +2198,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>375</moduleID>
+              <moduleID>374</moduleID>
               <title>Recycle Bin</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2276,7 +2282,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>376</moduleID>
+              <moduleID>375</moduleID>
               <title>Log Viewer</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2360,7 +2366,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>377</moduleID>
+              <moduleID>376</moduleID>
               <title>Site Wizard</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2444,7 +2450,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>378</moduleID>
+              <moduleID>377</moduleID>
               <title>Google Analytics</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2528,7 +2534,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>379</moduleID>
+              <moduleID>378</moduleID>
               <title>Taxonomy Manager</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2612,7 +2618,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <name>ContentPane</name>
           <modules>
             <module>
-              <moduleID>380</moduleID>
+              <moduleID>379</moduleID>
               <title>Search Engine SiteMap</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
@@ -2694,14 +2700,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
         </permission>
       </folderpermissions>
       <files>
-        <file>
-          <contenttype>image/gif</contenttype>
-          <extension>gif</extension>
-          <filename>AI_120x60.gif</filename>
-          <height>60</height>
-          <size>4373</size>
-          <width>120</width>
-        </file>
         <file>
           <contenttype>image/gif</contenttype>
           <extension>gif</extension>
@@ -2795,7 +2793,7 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <extension>gif</extension>
           <filename>logo.gif</filename>
           <height>86</height>
-          <size>6379</size>
+          <size>3934</size>
           <width>279</width>
         </file>
         <file>
@@ -2992,62 +2990,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <size>1592</size>
           <width>-1</width>
         </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>css</extension>
-          <filename>htmlEditorTemplates.css</filename>
-          <height>-1</height>
-          <size>195</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>css</extension>
-          <filename>ImageAndTitle.css</filename>
-          <height>-1</height>
-          <size>599</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>htmtemplate</extension>
-          <filename>ImageAndTitle.htmtemplate</filename>
-          <height>-1</height>
-          <size>613</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>css</extension>
-          <filename>SimpleTableAndHeader.css</filename>
-          <height>-1</height>
-          <size>986</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>htmtemplate</extension>
-          <filename>SimpleTableAndHeader.htmtemplate</filename>
-          <height>-1</height>
-          <size>1280</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>css</extension>
-          <filename>TwoColumnAndTitle.css</filename>
-          <height>-1</height>
-          <size>733</size>
-          <width>-1</width>
-        </file>
-        <file>
-          <contenttype>application/octet-stream</contenttype>
-          <extension>htmtemplate</extension>
-          <filename>TwoColumnAndTitle.htmtemplate</filename>
-          <height>-1</height>
-          <size>772</size>
-          <width>-1</width>
-        </file>
       </files>
     </folder>
     <folder>
@@ -3077,117 +3019,6 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <permissionkey>BROWSE</permissionkey>
           <rolename>Administrators</rolename>
           <allowaccess>false</allowaccess>
-        </permission>
-      </folderpermissions>
-      <files />
-    </folder>
-    <folder>
-      <folderpath>Users/001/</folderpath>
-      <storagelocation>0</storagelocation>
-      <folderpermissions>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-      </folderpermissions>
-      <files />
-    </folder>
-    <folder>
-      <folderpath>Users/001/01/</folderpath>
-      <storagelocation>0</storagelocation>
-      <folderpermissions>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-      </folderpermissions>
-      <files />
-    </folder>
-    <folder>
-      <folderpath>Users/001/01/1/</folderpath>
-      <storagelocation>0</storagelocation>
-      <folderpermissions>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>false</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename />
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename />
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename />
-          <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
       <files />

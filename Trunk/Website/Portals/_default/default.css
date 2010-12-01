@@ -1,4 +1,4 @@
-/* background color for the content part of the pages */
+﻿/* background color for the content part of the pages */
 body{background-color:white;margin:0;font-family:Tahoma, Arial, Helvetica, sans-serif;}
 .ControlPanel, .PagingTable{width:100%;background-color:#fff;border:#036 1px solid;}
 .SkinObject{font-weight:bold;font-size:8.5pt;color:#036;text-decoration:none;}
@@ -81,6 +81,7 @@ a:link{text-decoration:none;color:#036;}
 a:visited{text-decoration:none;color:#036;}
 a:hover{text-decoration:underline;color:#f00;}
 a:active{text-decoration:none;color:#036;}
+img{border:none;}
 small{font-size:8px;}
 big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}

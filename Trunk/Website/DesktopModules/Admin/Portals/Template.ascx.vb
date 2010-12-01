@@ -348,19 +348,21 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 writer.WriteElementString("defaultlanguage", objportal.DefaultLanguage)
                 writer.WriteElementString("timezoneoffset", objportal.TimeZoneOffset.ToString())
 
-                Dim skinSettings As Dictionary(Of String, String) = PortalController.GetPortalSettingsDictionary(objportal.PortalID)
+                Dim settingsDictionary As Dictionary(Of String, String) = PortalController.GetPortalSettingsDictionary(objportal.PortalID)
 
                 Dim setting As String = ""
-                skinSettings.TryGetValue("DefaultPortalSkin", setting)
+                settingsDictionary.TryGetValue("DefaultPortalSkin", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("skinsrc", setting)
-                skinSettings.TryGetValue("DefaultAdminSkin", setting)
+                settingsDictionary.TryGetValue("DefaultAdminSkin", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("skinsrcadmin", setting)
-                skinSettings.TryGetValue("DefaultPortalContainer", setting)
+                settingsDictionary.TryGetValue("DefaultPortalContainer", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("containersrc", setting)
-                skinSettings.TryGetValue("DefaultAdminContainer", setting)
+                settingsDictionary.TryGetValue("DefaultAdminContainer", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("containersrcadmin", setting)
-                skinSettings.TryGetValue("EnableSkinWidgets", setting)
-                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("enableskinwidgets", skinSettings("EnableSkinWidgets"))
+                settingsDictionary.TryGetValue("EnableSkinWidgets", setting)
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("enableskinwidgets", settingsDictionary("EnableSkinWidgets"))
+                settingsDictionary.TryGetValue("portalaliasmapping", setting)
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("portalaliasmapping", settingsDictionary("PortalAliasMapping"))
 
                 writer.WriteElementString("hostspace", objportal.HostSpace.ToString())
                 writer.WriteElementString("userquota", objportal.UserQuota.ToString())

@@ -1614,6 +1614,7 @@ Namespace DotNetNuke.Common.Utilities
         Public Shared Function GetFoldersByUser(ByVal PortalID As Integer, ByVal IncludeSecure As Boolean, ByVal IncludeDatabase As Boolean, ByVal Permissions As String) As ArrayList
             Dim objFolderController As New FolderController
             Dim arrFolders As New ArrayList
+            Dim objUserInfo As UserInfo = UserController.GetCurrentUserInfo
 
             'Create Home folder if it doesn't exist
             Dim userFolderPath As String = GetUserFolderPath(UserController.GetCurrentUserInfo().UserID)
@@ -1625,7 +1626,7 @@ Namespace DotNetNuke.Common.Utilities
             End If
 
             'Get all the folders for the Portal
-            For Each folder As FolderInfo In objFolderController.GetFoldersSorted(PortalID).Values
+            For Each folder As FolderInfo In objFolderController.GetFoldersByPermissionsSorted(PortalID, Permissions, objUserInfo.UserID).Values
 
                 'Skip if database is ignored
                 If (Not IncludeDatabase And folder.StorageLocation = FolderController.StorageLocationTypes.DatabaseSecure) Then
@@ -1646,15 +1647,7 @@ Namespace DotNetNuke.Common.Utilities
                     End If
                 End If
 
-                'Skip if portal is null or user doesn't have permission to folder
-                If PortalID > Null.NullInteger AndAlso Not FolderPermissionController.HasFolderPermission(folder.FolderPermissions, Permissions) Then
-                    Continue For
-                End If
-
-
-
                 arrFolders.Add(folder)
-
             Next
 
             Return arrFolders

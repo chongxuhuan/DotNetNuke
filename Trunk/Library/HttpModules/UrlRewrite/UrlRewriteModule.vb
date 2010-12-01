@@ -324,7 +324,10 @@ Namespace DotNetNuke.HttpModules
             If Request.Url.LocalPath.EndsWith("scriptresource.axd", StringComparison.InvariantCultureIgnoreCase) _
                     OrElse Request.Url.LocalPath.EndsWith("webresource.axd", StringComparison.InvariantCultureIgnoreCase) _
                     OrElse Request.Url.LocalPath.EndsWith("gif", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("ico", StringComparison.InvariantCultureIgnoreCase) _
                     OrElse Request.Url.LocalPath.EndsWith("jpg", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("jpeg", StringComparison.InvariantCultureIgnoreCase) _
+                    OrElse Request.Url.LocalPath.EndsWith("png", StringComparison.InvariantCultureIgnoreCase) _
                     OrElse Request.Url.LocalPath.EndsWith("css", StringComparison.InvariantCultureIgnoreCase) _
                     OrElse Request.Url.LocalPath.EndsWith("js", StringComparison.InvariantCultureIgnoreCase) Then
                 Exit Sub
@@ -449,13 +452,13 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    'the domain name was not found so try using the host portal's first alias
-                    PortalId = Host.HostPortalID
-                    If PortalId > Null.NullInteger Then
+                    If New PortalController().GetPortals().Count = 1 AndAlso PortalController.GetPortalSetting("PortalAliasMapping", Host.HostPortalID, "NONE").ToUpperInvariant <> "NONE" Then
                         ' use the host portal
                         Dim objPortalAliasController As New PortalAliasController
+                        PortalId = Host.HostPortalID
 
-                        If New PortalController().GetPortals().Count = 1 Then
+                        'the domain name was not found so try using the host portal's first alias
+                        If PortalId > Null.NullInteger Then
                             objPortalAliasInfo = New PortalAliasInfo()
                             objPortalAliasInfo.PortalID = PortalId
                             objPortalAliasInfo.HTTPAlias = PortalAlias

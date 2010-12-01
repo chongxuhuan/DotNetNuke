@@ -321,6 +321,7 @@ Namespace DotNetNuke.Data
 
         'Folders
         Public MustOverride Function GetFoldersByPortal(ByVal PortalID As Integer) As IDataReader
+        Public MustOverride Function GetFoldersByPortalAndPermissions(ByVal PortalID As Integer, ByVal Permissions As String, ByVal UserID As Integer) As IDataReader
         Public MustOverride Function GetFolder(ByVal PortalID As Integer, ByVal FolderID As Integer) As IDataReader
         Public MustOverride Function GetFolder(ByVal PortalID As Integer, ByVal FolderPath As String) As IDataReader
         Public MustOverride Function GetFolderByUniqueID(ByVal UniqueID As Guid) As IDataReader

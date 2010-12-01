@@ -285,6 +285,25 @@ Namespace DotNetNuke.UI.Skins.Controls
             End Set
         End Property
 
+        Private Function GetSearchTabId() As Integer
+            Dim searchTabId As Integer = PortalSettings.SearchTabId
+            If searchTabId = Null.NullInteger Then
+                Dim objModules As New ModuleController
+                Dim arrModules As ArrayList = objModules.GetModulesByDefinition(PortalSettings.PortalId, "Search Results")
+                If arrModules.Count > 1 Then
+                    For Each SearchModule As ModuleInfo In arrModules
+                        If SearchModule.CultureCode = PortalSettings.CultureCode Then
+                            searchTabId = SearchModule.TabID
+                        End If
+                    Next
+                ElseIf arrModules.Count = 1 Then
+                    searchTabId = DirectCast(arrModules(0), ModuleInfo).TabID
+                End If
+            End If
+
+            Return searchTabId
+        End Function
+
         ''' <summary>
         ''' Executes the search.
         ''' </summary>
@@ -293,6 +312,12 @@ Namespace DotNetNuke.UI.Skins.Controls
         ''' <remarks>All web based searches will open in a new window, while site searches will open in the current window.  A site search uses the built
         ''' in search engine to perform the search, while both web based search variants will use an external search engine to perform a search.</remarks>
         Protected Sub ExecuteSearch(ByVal searchText As String, ByVal searchType As String)
+            Dim searchTabId As Integer = GetSearchTabId()
+
+            If searchTabId = Null.NullInteger Then
+                Exit Sub
+            End If
+
             If Not String.IsNullOrEmpty(searchText) Then
                 Select Case searchType
                     Case "S" ' site
@@ -304,25 +329,6 @@ Namespace DotNetNuke.UI.Skins.Controls
                                 UrlUtils.OpenNewWindow(Me.Page, Me.GetType(), strURL)
                             End If
                         Else
-                            Dim searchTabId As Integer = PortalSettings.SearchTabId
-                            If searchTabId = Null.NullInteger Then
-                                Dim objModules As New ModuleController
-                                Dim arrModules As ArrayList = objModules.GetModulesByDefinition(PortalSettings.PortalId, "Search Results")
-                                If arrModules.Count > 1 Then
-                                    For Each SearchModule As ModuleInfo In arrModules
-                                        If SearchModule.CultureCode = PortalSettings.CultureCode Then
-                                            searchTabId = SearchModule.TabID
-                                        End If
-                                    Next
-                                ElseIf arrModules.Count = 1 Then
-                                    searchTabId = DirectCast(arrModules(0), ModuleInfo).TabID
-                                End If
-                            End If
-
-                            If searchTabId = Null.NullInteger Then
-                                Exit Sub
-                            End If
-
                             If Host.UseFriendlyUrls Then
                                 Response.Redirect(NavigateURL(searchTabId) & "?Search=" & Server.UrlEncode(searchText))
                             Else
@@ -337,6 +343,12 @@ Namespace DotNetNuke.UI.Skins.Controls
                             UrlUtils.OpenNewWindow(Me.Page, Me.GetType(), strURL)
                         End If
                 End Select
+            Else
+                If Host.UseFriendlyUrls Then
+                    Response.Redirect(NavigateURL(searchTabId))
+                Else
+                    Response.Redirect(NavigateURL(searchTabId))
+                End If
             End If
         End Sub
 
@@ -370,10 +382,6 @@ Namespace DotNetNuke.UI.Skins.Controls
                 ClientAPI.RegisterKeyCapture(Me.txtSearch, Me.cmdSearch, Asc(vbCr))
                 ClientAPI.RegisterKeyCapture(Me.txtSearchNew, Me.cmdSearchNew, Asc(vbCr))
 
-                If Not Request.QueryString("Search") Is Nothing Then
-                    txtSearch.Text = Request.QueryString("Search").ToString
-                End If
-
                 If Submit <> "" Then
                     If Submit.IndexOf("src=") <> -1 Then
                         Submit = Replace(Submit, "src=""", "src=""" & PortalSettings.ActiveTab.SkinPath)
@@ -391,7 +399,13 @@ Namespace DotNetNuke.UI.Skins.Controls
                     cmdSearch.CssClass = CssClass
                     cmdSearchNew.CssClass = CssClass
                 End If
+
+                If Not Request.QueryString("Search") Is Nothing Then
+                    txtSearch.Text = Request.QueryString("Search").ToString
+                    txtSearchNew.Text = Request.QueryString("Search").ToString
+                End If
             End If
+
 
         End Sub
 

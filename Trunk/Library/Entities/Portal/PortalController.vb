@@ -929,6 +929,12 @@ Namespace DotNetNuke.Entities.Portals
             If XmlUtils.GetNodeValue(nodeSettings, "enableskinwidgets", "") <> "" Then
                 UpdatePortalSetting(PortalId, "EnableSkinWidgets", XmlUtils.GetNodeValue(nodeSettings, "enableskinwidgets", ""))
             End If
+
+            'Set Auto alias mapping
+            If XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "") <> "" Then
+                UpdatePortalSetting(PortalId, "PortalAliasMapping", XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", ""))
+            End If
+
         End Sub
 
         Private Sub ParsePortalDesktopModules(ByVal nav As XPathNavigator, ByVal portalID As Integer)

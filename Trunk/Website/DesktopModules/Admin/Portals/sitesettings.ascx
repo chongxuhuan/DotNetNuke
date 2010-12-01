@@ -268,8 +268,21 @@
                             <dnn:SectionHead ID="dshAliases" CssClass="Head" runat="server" Text="Portal Aliases" Section="tblAliases" ResourceKey="PortalAliases" IsExpanded="False" />
                             <table id="tblAliases" cellspacing="2" cellpadding="2" summary="Portal Aliases Setttings Design Table" border="0" runat="server">
                                 <tr>
-                                    <td style="width:50px"></td>
-                                    <td><dnn:PortalAliases id="portalAliases" runat="server" /></td>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="portalAliasModeButtonListLabel" runat="server" ControlName="portalAliasModeButtonList" /></td>
+                                    <td class="NormalTextBox" valign="top">
+                                        <asp:RadioButtonList ID="portalAliasModeButtonList" CssClass="Normal" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
+                                            <asp:ListItem Value="NONE" resourcekey="None" />
+                                            <asp:ListItem Value="CANONICALURL" resourcekey="Canonical" />
+                                            <asp:ListItem Value="REDIRECT" resourcekey="Redirect" />
+                                        </asp:RadioButtonList>
+                                    </td>
+                                </tr>
+                                <tr id="defaultAliasRow" runat="server" visible="false">
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="defaultAliasDropDownLabel" runat="server" ControlName="defaultAliasDropDown" /></td>
+                                    <td style="width:450px"><asp:DropDownList ID="defaultAliasDropDown" CssClass="NormalTextBox" runat="server" Width="300" DataTextField="HTTPAlias" DataValueField="HTTPAlias" /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><dnn:PortalAliases id="portalAliases" runat="server" /></td>
                                 </tr>
                             </table>
                             <br/>

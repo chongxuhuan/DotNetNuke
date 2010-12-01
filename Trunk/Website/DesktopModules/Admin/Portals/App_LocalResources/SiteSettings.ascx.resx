@@ -597,4 +597,22 @@
   <data name="plSearchTabId.Text" xml:space="preserve">
     <value>Search Results Page:</value>
   </data>
+  <data name="portalAliasModeButtonListLabel.Help" xml:space="preserve">
+    <value>This setting determines how the site responds to urls which are mapped to the site but are not currently in the list of aliases.  None - the new url is not mapped,  Canonical - the new url is automatically mapped but is handled as a Canaonical url, Redirect - the url is automatically mapped but is redirected to the default alias.</value>
+  </data>
+  <data name="portalAliasModeButtonListLabel.Text" xml:space="preserve">
+    <value>PortalAlias Mapping Mode:</value>
+  </data>
+  <data name="Canonical.Text" xml:space="preserve">
+    <value>Canonical</value>
+  </data>
+  <data name="Redirect.Text" xml:space="preserve">
+    <value>Redirect</value>
+  </data>
+  <data name="defaultAliasDropDownLabel.Help" xml:space="preserve">
+    <value>The default alias is used in conjunction with the Mapping Mode.  If the mode is set to Canonical then the default alias is used as the canonical alias for search engines.  If the mode is redirect then the default alias is used as the permanent redirect.</value>
+  </data>
+  <data name="defaultAliasDropDownLabel.Text" xml:space="preserve">
+    <value>Default Alias:</value>
+  </data>
 </root>
