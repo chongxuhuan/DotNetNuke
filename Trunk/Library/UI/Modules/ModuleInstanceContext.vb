@@ -643,10 +643,10 @@ Namespace DotNetNuke.UI.Modules
             If Not String.IsNullOrEmpty(Configuration.DesktopModule.BusinessControllerClass) Then
                 ' check if module implements IPortable interface, and user has Admin permissions
                 If Configuration.DesktopModule.IsPortable Then
-                    If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EXPORT", Configuration) Then
+                    If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "EXPORT", Configuration) Then
                         _actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.ExportModule, Localization.GlobalResourceFile), "", "", "action_export.gif", NavigateURL(PortalSettings.ActiveTab.TabID, "ExportModule", "moduleid=" & ModuleId.ToString), "", False, SecurityAccessLevel.View, True, False)
                     End If
-                    If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "IMPORT", Configuration) Then
+                    If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "IMPORT", Configuration) Then
                         _actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.ImportModule, Localization.GlobalResourceFile), "", "", "action_import.gif", NavigateURL(PortalSettings.ActiveTab.TabID, "ImportModule", "moduleid=" & ModuleId.ToString), "", False, SecurityAccessLevel.View, True, False)
                     End If
                 End If
@@ -675,13 +675,13 @@ Namespace DotNetNuke.UI.Modules
 
             If Not IsAdminControl() AndAlso ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "DELETE,MANAGE", Configuration) Then
                 _actions.Add(GetNextActionID, "~", "")
-                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "MANAGE", Configuration) Then
+                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "MANAGE", Configuration) Then
                     _actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.ModuleSettings, Localization.GlobalResourceFile), ModuleActionType.ModuleSettings, "", "action_settings.gif", NavigateURL(TabId, "Module", "ModuleId=" & ModuleId.ToString), False, SecurityAccessLevel.Edit, True, False)
                 End If
-                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "DELETE", Configuration) Then
+                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "DELETE", Configuration) Then
                     _actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.DeleteModule, Localization.GlobalResourceFile), ModuleActionType.DeleteModule, Configuration.ModuleID.ToString, "action_delete.gif", "", "confirm('" + DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("DeleteModule.Confirm")) + "')", False, SecurityAccessLevel.View, True, False)
                 End If
-                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "MANAGE", Configuration) Then
+                If ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "MANAGE", Configuration) Then
                     _actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.ClearCache, Localization.GlobalResourceFile), ModuleActionType.ClearCache, Configuration.ModuleID.ToString, "action_refresh.gif", "", False, SecurityAccessLevel.View, True, False)
 
                     ' module movement

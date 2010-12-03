@@ -11,7 +11,7 @@
     <hostspace>0</hostspace>
     <userquota>0</userquota>
     <pagequota>0</pagequota>
-    <portalaliasmapping>none</portalaliasmapping>
+    <portalaliasmapping>canonicalurl</portalaliasmapping>
   </settings>
   <profiledefinitions>
     <profiledefinition>

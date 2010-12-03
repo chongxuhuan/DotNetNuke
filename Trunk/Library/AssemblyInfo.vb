@@ -47,7 +47,7 @@ Imports System.Runtime.CompilerServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("5.6.1.71")> 
+<Assembly: AssemblyVersion("5.6.1.95")> 
 <Assembly: AssemblyStatus(ReleaseMode.Alpha)> 
 
 'Allow internal variables to be visible to testing projects

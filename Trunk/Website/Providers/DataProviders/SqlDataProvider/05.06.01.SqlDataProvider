@@ -17,7 +17,7 @@ UPDATE {databaseOwner}[{objectQualifier}Schedule]
 GO
 
 UPDATE {databaseOwner}[{objectQualifier}Schedule] 
-	SET FriendlyName = 'ODL Scheduled Sync' 
+	SET FriendlyName = 'Document Library Scheduled Sync' 
 	WHERE TypeFullName ='DotNetNuke.Professional.DocumentLibrary.ScheduledSync, DotNetNuke.Professional.DocumentLibrary'
 GO
 
@@ -89,6 +89,31 @@ AS
 	 ORDER BY F.FolderPath
 
 GO
+
+/* DNN-12957 - Re-Add Profile Property Type Checkbox */
+/*****************************************************/
+
+IF NOT EXISTS (SELECT value FROM {databaseOwner}{objectQualifier}Lists WHERE ListName ='DataType' AND Value = 'Checkbox')
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Lists (
+			ListName, 
+			Value, 
+			Text, 
+			DefinitionId, 
+			PortalId, 
+			SystemList
+			) 
+			VALUES (
+				'DataType', 
+				'checkBox', 
+				'DotNetNuke.UI.WebControls.CheckEditControl, DotNetNuke',
+				 -1,
+				 -1,
+				 1
+			)
+	END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -639,6 +639,12 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        Public ReadOnly Property DefaultPortalAlias() As String
+            Get
+                Return PortalController.GetPortalSetting("DefaultPortalAlias", PortalId, "")
+            End Get
+        End Property
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets the Default Tab Id

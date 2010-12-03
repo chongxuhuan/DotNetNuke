@@ -269,7 +269,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         Protected Sub SaveAlias(ByVal source As Object, ByVal e As CommandEventArgs)
             Dim controller As New PortalAliasController()
-            Dim InvalidChars As String = "! @ # $ % ^ & * ( ) + = { } [ ] | \ ; "" ' < , > ?"
 
             'Get the index of the row to save
             Dim index As Integer = dgPortalAlias.EditItemIndex
@@ -286,16 +285,17 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     strAlias = strAlias.Remove(0, strAlias.IndexOf("\\") + 2)
                 End If
 
-                For Each s As String In InvalidChars.Split(" ")
-                    If strAlias.Contains(s) Then
+                Dim strValidChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-./:"
+                For intCounter = 1 To strAlias.Length
+                    If InStr(1, strValidChars, Mid(strAlias, intCounter, 1)) = 0 Then
                         lblError.Text = Localization.GetString("InvalidAlias", Me.LocalResourceFile)
                         lblError.Visible = True
                         Exit For
                     End If
-                Next
+                Next intCounter
             End If
             If Not lblError.Visible Then
-                portalAlias.HTTPAlias = ctlAlias.Text
+                portalAlias.HTTPAlias = strAlias
                 If AddMode Then
                     controller.AddPortalAlias(portalAlias)
                 Else

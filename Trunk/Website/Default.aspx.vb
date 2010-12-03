@@ -25,6 +25,7 @@ Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.UI.Utilities
 Imports DotNetNuke.Entities.Host
 Imports DotNetNuke.Application
+Imports DotNetNuke.Entities.Portals.PortalSettings
 
 Namespace DotNetNuke.Framework
 
@@ -259,7 +260,7 @@ Namespace DotNetNuke.Framework
                 'other
                 HtmlAttributes.Add("lang", strLang)
             End If
-               
+
             'Find the placeholder control and render the doctype
             Dim objDoctype As Control = Me.FindControl("skinDocType")
             CType(objDoctype, System.Web.UI.WebControls.Literal).Text = PortalSettings.ActiveTab.SkinDoctype
@@ -417,6 +418,30 @@ Namespace DotNetNuke.Framework
             Return objDict
         End Function
 
+        ''' <summary>
+        ''' check if a warning about account defaults needs to be rendered
+        ''' </summary>
+        ''' <returns>localised error message</returns>
+        ''' <remarks></remarks>
+        ''' <history>
+        ''' 	[cathal]	2/28/2007	Created
+        ''' </history>
+        Private Function RenderDefaultsWarning() As String
+            Dim warningLevel As String = Request.QueryString("runningDefault").ToString
+            Dim warningMessage As String = String.Empty
+            Select Case warningLevel
+                Case "1"
+                    warningMessage = Services.Localization.Localization.GetString("InsecureAdmin.Text", Services.Localization.Localization.GlobalResourceFile)
+                Case "2"
+                    warningMessage = Services.Localization.Localization.GetString("InsecureHost.Text", Services.Localization.Localization.GlobalResourceFile)
+                Case "3"
+                    warningMessage = Services.Localization.Localization.GetString("InsecureDefaults.Text", Services.Localization.Localization.GlobalResourceFile)
+            End Select
+
+            Return warningMessage
+        End Function
+
+
 #End Region
 
 #Region "Protected Methods"
@@ -458,6 +483,29 @@ Namespace DotNetNuke.Framework
             Return DotNetNukeContext.Current.Application.Status <> ReleaseMode.Stable
         End Function
 #End Region
+
+        Public Function HandleCallbackEvent(ByVal eventArgument As String) As String Implements IClientAPICallbackEventHandler.RaiseClientAPICallbackEvent
+            Dim objDict As Generic.Dictionary(Of String, String) = ParsePageCallBackArgs(eventArgument)
+            If objDict.ContainsKey("type") Then
+
+                'in order to limit the keys that can be accessed and written we are storing 
+                'the enabled keys in a shared hash table
+                If DNNClientAPI.IsPersonalizationKeyRegistered(objDict("namingcontainer") & ClientAPI.CUSTOM_COLUMN_DELIMITER & objDict("key")) = False Then
+                    Throw New Exception(String.Format("This personalization key has not been enabled ({0}:{1}).  Make sure you enable it with DNNClientAPI.EnableClientPersonalization", objDict("namingcontainer"), objDict("key")))
+                End If
+                Select Case CType(objDict("type"), DNNClientAPI.PageCallBackType)
+                    Case DNNClientAPI.PageCallBackType.GetPersonalization
+                        Return Personalization.Personalization.GetProfile(objDict("namingcontainer"), objDict("key"))
+                    Case DNNClientAPI.PageCallBackType.SetPersonalization
+                        Personalization.Personalization.SetProfile(objDict("namingcontainer"), objDict("key"), objDict("value"))
+                        Return objDict("value")
+                    Case Else
+                        Throw New Exception("Unknown Callback Type")
+                End Select
+            End If
+            Return ""
+        End Function
+
 
 #Region "Event Handlers"
 
@@ -505,6 +553,23 @@ Namespace DotNetNuke.Framework
                 End If
             End If
 
+            'Manage canonical urls
+            If PortalSettings.PortalAliasMappingMode = PortalAliasMapping.CanonicalUrl AndAlso _
+                                PortalSettings.PortalAlias.HTTPAlias <> PortalSettings.DefaultPortalAlias Then
+
+                Dim originalurl As String = Me.Context.Items("UrlRewrite:OriginalUrl")
+
+                'Add Canonical <link>
+                Dim canonicalLink As New HtmlLink()
+                canonicalLink.Href = originalurl.Replace(PortalSettings.PortalAlias.HTTPAlias, PortalSettings.DefaultPortalAlias)
+
+                canonicalLink.Attributes.Add("rel", "canonical")
+
+                ' Add the HtmlLink to the Head section of the page.
+                Page.Header.Controls.Add(canonicalLink)
+            End If
+
+
             'check if running with known account defaults
             Dim messageText As String = ""
             If Request.IsAuthenticated = True AndAlso String.IsNullOrEmpty(Request.QueryString("runningDefault")) = False Then
@@ -538,29 +603,6 @@ Namespace DotNetNuke.Framework
             End If
 
         End Sub
-
-        ''' <summary>
-        ''' check if a warning about account defaults needs to be rendered
-        ''' </summary>
-        ''' <returns>localised error message</returns>
-        ''' <remarks></remarks>
-        ''' <history>
-        ''' 	[cathal]	2/28/2007	Created
-        ''' </history>
-        Private Function RenderDefaultsWarning() As String
-            Dim warningLevel As String = Request.QueryString("runningDefault").ToString
-            Dim warningMessage As String = String.Empty
-            Select Case warningLevel
-                Case "1"
-                    warningMessage = Services.Localization.Localization.GetString("InsecureAdmin.Text", Services.Localization.Localization.GlobalResourceFile)
-                Case "2"
-                    warningMessage = Services.Localization.Localization.GetString("InsecureHost.Text", Services.Localization.Localization.GlobalResourceFile)
-                Case "3"
-                    warningMessage = Services.Localization.Localization.GetString("InsecureDefaults.Text", Services.Localization.Localization.GlobalResourceFile)
-            End Select
-
-            Return warningMessage
-        End Function
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -615,28 +657,6 @@ Namespace DotNetNuke.Framework
             If jQuery.IsRequested Then jQuery.RegisterScript(Page)
 
         End Sub
-
-        Public Function HandleCallbackEvent(ByVal eventArgument As String) As String Implements IClientAPICallbackEventHandler.RaiseClientAPICallbackEvent
-            Dim objDict As Generic.Dictionary(Of String, String) = ParsePageCallBackArgs(eventArgument)
-            If objDict.ContainsKey("type") Then
-
-                'in order to limit the keys that can be accessed and written we are storing 
-                'the enabled keys in a shared hash table
-                If DNNClientAPI.IsPersonalizationKeyRegistered(objDict("namingcontainer") & ClientAPI.CUSTOM_COLUMN_DELIMITER & objDict("key")) = False Then
-                    Throw New Exception(String.Format("This personalization key has not been enabled ({0}:{1}).  Make sure you enable it with DNNClientAPI.EnableClientPersonalization", objDict("namingcontainer"), objDict("key")))
-                End If
-                Select Case CType(objDict("type"), DNNClientAPI.PageCallBackType)
-                    Case DNNClientAPI.PageCallBackType.GetPersonalization
-                        Return Personalization.Personalization.GetProfile(objDict("namingcontainer"), objDict("key"))
-                    Case DNNClientAPI.PageCallBackType.SetPersonalization
-                        Personalization.Personalization.SetProfile(objDict("namingcontainer"), objDict("key"), objDict("value"))
-                        Return objDict("value")
-                    Case Else
-                        Throw New Exception("Unknown Callback Type")
-                End Select
-            End If
-            Return ""
-        End Function
 
 #End Region
 

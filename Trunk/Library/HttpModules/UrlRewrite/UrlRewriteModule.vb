@@ -27,6 +27,7 @@ Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Host
 Imports System.Collections.Generic
+Imports DotNetNuke.Entities.Portals.PortalSettings
 
 Namespace DotNetNuke.HttpModules
 
@@ -485,6 +486,14 @@ Namespace DotNetNuke.HttpModules
                 ' load the PortalSettings into current context
                 Dim _portalSettings As PortalSettings = New PortalSettings(TabId, objPortalAliasInfo)
                 app.Context.Items.Add("PortalSettings", _portalSettings)
+
+                If _portalSettings.PortalAliasMappingMode = PortalAliasMapping.Redirect AndAlso _
+                            Not String.IsNullOrEmpty(_portalSettings.DefaultPortalAlias) AndAlso _
+                            objPortalAliasInfo.HTTPAlias <> _portalSettings.DefaultPortalAlias Then
+                    'Permanently Redirect
+                    Response.StatusCode = 301
+                    Response.AppendHeader("Location", AddHTTP(_portalSettings.DefaultPortalAlias))
+                End If
 
                 ' manage page URL redirects - that reach here because they bypass the built-in navigation
                 ' ie Spiders, saved favorites, hand-crafted urls etc

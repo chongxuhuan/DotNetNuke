@@ -90,7 +90,7 @@ Namespace DotNetNuke.HttpModules.Compression
             Else
                 'Check for Output Caching - if output caching is used the cached content will already be compressed, 
                 'but we still need to add the headers
-                Dim isCached As String = app.Response.Headers("DNNOutputCache")
+                Dim isCached As String = TryCast(app.Context.Items("DNNOutputCache"), String)
                 If Not String.IsNullOrEmpty(isCached) Then
                     isOutputCached = Boolean.Parse(isCached)
                 End If

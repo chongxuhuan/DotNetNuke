@@ -101,6 +101,12 @@ Namespace DotNetNuke.Services.FileSystem
 #Region "Public Methods"
 
         Public Function AddFolder(ByVal folder As FolderInfo) As Integer
+            'Check this is not a duplicate
+            Dim tmpfolder As FolderInfo = GetFolder(folder.PortalID, folder.FolderPath, True)
+            If tmpfolder IsNot Nothing AndAlso folder.FolderID = Null.NullInteger Then
+                folder.FolderID = tmpfolder.FolderID
+            End If
+
             If folder.FolderID = Null.NullInteger Then
                 folder.FolderPath = FileSystemUtils.FormatFolderPath(folder.FolderPath)
                 folder.FolderID = DataProvider.Instance().AddFolder(folder.PortalID, folder.UniqueId, folder.VersionGuid, folder.FolderPath, folder.StorageLocation, folder.IsProtected, folder.IsCached, folder.LastUpdated, UserController.GetCurrentUserInfo.UserID)

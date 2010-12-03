@@ -211,8 +211,16 @@ Namespace DotNetNuke.Security.Permissions
                             End If
                         End If
                     Case SecurityAccessLevel.Admin     ' admin
-                        If TabPermissionController.CanAddContentToPage() Then
+                        If TabPermissionController.CanAdminPage Then
                             blnAuthorized = True
+                        ElseIf TabPermissionController.CanAddContentToPage() Then
+                            If String.IsNullOrEmpty(permissionKey) Then
+                                permissionKey = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE"
+                            End If
+                            If ModuleConfiguration IsNot Nothing AndAlso CanViewModule(ModuleConfiguration) AndAlso _
+                                        HasModulePermission(ModuleConfiguration.ModulePermissions, permissionKey) Then
+                                blnAuthorized = True
+                            End If
                         End If
                     Case SecurityAccessLevel.Host     ' host
                 End Select

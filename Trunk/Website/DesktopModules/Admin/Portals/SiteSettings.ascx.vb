@@ -72,6 +72,225 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         End Sub
 
+        ''' <summary>
+        ''' Loads a PortalInfo object and populates the onscreen forms
+        ''' Correctly reloads the relevant language type in the case of an update
+        ''' </summary>
+        ''' <param name="activeLanguage"></param>
+        ''' <remarks></remarks>
+        Private Sub LoadPortal(ByVal activeLanguage As String)
+            Dim objPortalController As New PortalController
+            Dim objModules As New ModuleController
+            Dim objUsers As New UserController
+            Dim ctlList As New Common.Lists.ListController
+            Dim colProcessor As Common.Lists.ListEntryInfoCollection = ctlList.GetListEntryInfoCollection("Processor")
+
+            cboProcessor.DataSource = colProcessor
+            cboProcessor.DataBind()
+            cboProcessor.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString("None_Specified") + ">", ""))
+
+            Dim objPortal As PortalInfo = objPortalController.GetPortal(intPortalId, activeLanguage)
+            txtPortalName.Text = objPortal.PortalName
+            ctlLogo.FilePath = objPortal.LogoFile
+            ctlLogo.FileFilter = glbImageFileTypes
+            txtDescription.Text = objPortal.Description
+            txtKeyWords.Text = objPortal.KeyWords
+            lblGUID.Text = objPortal.GUID.ToString.ToUpper
+            ctlBackground.FilePath = objPortal.BackgroundFile
+            ctlBackground.FileFilter = glbImageFileTypes
+            txtFooterText.Text = objPortal.FooterText
+            optUserRegistration.SelectedIndex = objPortal.UserRegistration
+            ctlAudit.Entity = objPortal
+
+            Dim objPortalAliasController As New PortalAliasController
+            Dim arrPortalAliases As ArrayList
+            arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(intPortalId)
+            If PortalController.IsChildPortal(objPortal, GetAbsoluteServerPath(Request)) Then
+                txtSiteMap.Text = AddHTTP(GetDomainName(Request)) & "/SiteMap.aspx?portalid=" & intPortalId.ToString
+            Else
+                If arrPortalAliases.Count > 0 Then
+                    'Get the first Alias
+                    Dim objPortalAliasInfo As PortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
+                    txtSiteMap.Text = AddHTTP(objPortalAliasInfo.HTTPAlias) & "/SiteMap.aspx"
+                Else
+                    txtSiteMap.Text = AddHTTP(GetDomainName(Request)) & "/SiteMap.aspx"
+                End If
+            End If
+
+            optBanners.SelectedIndex = objPortal.BannerAdvertising
+            If UserInfo.IsSuperUser Then
+                lblBanners.Visible = False
+            Else
+                optBanners.Enabled = objPortal.BannerAdvertising <> 2
+                lblBanners.Visible = objPortal.BannerAdvertising = 2
+            End If
+
+            'Set up special page lists
+            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(TabController.GetTabsBySortOrder(intPortalId, activeLanguage, True), Null.NullInteger, True, "<" + Localization.GetString("None_Specified") + ">", True, False, False, False, False)
+            cboSplashTabId.DataSource = listTabs
+            cboSplashTabId.DataBind()
+            If Not cboSplashTabId.Items.FindByValue(objPortal.SplashTabId.ToString) Is Nothing Then
+                cboSplashTabId.Items.FindByValue(objPortal.SplashTabId.ToString).Selected = True
+            End If
+            cboHomeTabId.DataSource = listTabs
+            cboHomeTabId.DataBind()
+            If Not cboHomeTabId.Items.FindByValue(objPortal.HomeTabId.ToString) Is Nothing Then
+                cboHomeTabId.Items.FindByValue(objPortal.HomeTabId.ToString).Selected = True
+            End If
+            cboLoginTabId.DataSource = listTabs
+            cboLoginTabId.DataBind()
+            If Not cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString) Is Nothing Then
+                cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString).Selected = True
+            End If
+            cboRegisterTabId.DataSource = listTabs
+            cboRegisterTabId.DataBind()
+            If Not cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString) Is Nothing Then
+                cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString).Selected = True
+            End If
+            cboSearchTabId.DataSource = listTabs
+            cboSearchTabId.DataBind()
+            If Not cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString) Is Nothing Then
+                cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString).Selected = True
+            End If
+
+            listTabs = TabController.GetPortalTabs(intPortalId, Null.NullInteger, False, True)
+            cboUserTabId.DataSource = listTabs
+            cboUserTabId.DataBind()
+            If Not cboUserTabId.Items.FindByValue(objPortal.UserTabId.ToString) Is Nothing Then
+                cboUserTabId.Items.FindByValue(objPortal.UserTabId.ToString).Selected = True
+            End If
+
+            Dim colList As Common.Lists.ListEntryInfoCollection = ctlList.GetListEntryInfoCollection("Currency")
+
+            cboCurrency.DataSource = colList
+            cboCurrency.DataBind()
+            If Null.IsNull(objPortal.Currency) Or cboCurrency.Items.FindByValue(objPortal.Currency) Is Nothing Then
+                cboCurrency.Items.FindByValue("USD").Selected = True
+            Else
+                cboCurrency.Items.FindByValue(objPortal.Currency).Selected = True
+            End If
+            Dim objRoleController As New DotNetNuke.Security.Roles.RoleController
+
+            Dim Arr As ArrayList = objRoleController.GetUserRolesByRoleName(intPortalId, objPortal.AdministratorRoleName)
+            Dim i As Integer
+            For i = 0 To Arr.Count - 1
+                Dim objUser As UserRoleInfo = CType(Arr(i), UserRoleInfo)
+                cboAdministratorId.Items.Add(New ListItem(objUser.FullName, objUser.UserID.ToString))
+            Next
+            If Not cboAdministratorId.Items.FindByValue(objPortal.AdministratorId.ToString) Is Nothing Then
+                cboAdministratorId.Items.FindByValue(objPortal.AdministratorId.ToString).Selected = True
+            End If
+
+            If Not Null.IsNull(objPortal.ExpiryDate) Then
+                txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
+            End If
+            txtHostFee.Text = objPortal.HostFee.ToString
+            txtHostSpace.Text = objPortal.HostSpace.ToString
+            txtPageQuota.Text = objPortal.PageQuota.ToString
+            txtUserQuota.Text = objPortal.UserQuota.ToString
+            If Not IsDBNull(objPortal.SiteLogHistory) Then
+                txtSiteLogHistory.Text = objPortal.SiteLogHistory.ToString
+            End If
+
+            If objPortal.PaymentProcessor <> "" Then
+                If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
+                    cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
+                Else       ' default
+                    If Not cboProcessor.Items.FindByText("PayPal") Is Nothing Then
+                        cboProcessor.Items.FindByText("PayPal").Selected = True
+                    End If
+                End If
+            Else
+                cboProcessor.Items.FindByValue("").Selected = True
+            End If
+            txtUserId.Text = objPortal.ProcessorUserId
+            txtPassword.Attributes.Add("value", objPortal.ProcessorPassword)
+
+            ' use sandbox?
+            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", intPortalId, "False"))
+            chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
+
+            ' return url after payment or on cancel
+            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", intPortalId, Null.NullString)
+            txtPayPalReturnURL.Text = strPayPalReturnURL
+            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", intPortalId, Null.NullString)
+            txtPayPalCancelURL.Text = strPayPalCancelURL
+
+            ' usability settings
+            chkInlineEditor.Checked = PortalSettings.InlineEditorEnabled
+            chkHideSystemFolders.Checked = PortalSettings.HideFoldersEnabled
+
+            If PortalSettings.DefaultControlPanelMode = Entities.Portals.PortalSettings.Mode.Edit Then
+                optControlPanelMode.Items.FindByValue("EDIT").Selected = True
+            Else
+                optControlPanelMode.Items.FindByValue("VIEW").Selected = True
+            End If
+            If PortalController.GetPortalSetting("ControlPanelVisibility", intPortalId, "MAX") = "MAX" Then
+                optControlPanelVisibility.Items.FindByValue("MAX").Selected = True
+            Else
+                optControlPanelVisibility.Items.FindByValue("MIN").Selected = True
+            End If
+
+            Dim cPermission As ControlPanelPermission = ControlPanelPermission.ModuleEditor
+            Dim setting As String = Null.NullString
+            If PortalController.GetPortalSettingsDictionary(intPortalId).TryGetValue("ControlPanelSecurity", setting) Then
+                If setting.ToUpperInvariant = "TAB" Then
+                    cPermission = ControlPanelPermission.TabEditor
+                Else
+                    cPermission = ControlPanelPermission.ModuleEditor
+                End If
+            End If
+
+            If cPermission = PortalSettings.ControlPanelPermission.ModuleEditor Then
+                optControlPanelSecurity.Items.FindByValue("MODULE").Selected = True
+            Else
+                optControlPanelSecurity.Items.FindByValue("TAB").Selected = True
+            End If
+            chkSSLEnabled.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnabled", intPortalId, False)
+            chkSSLEnforced.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnforced", intPortalId, False)
+            txtSSLURL.Text = PortalController.GetPortalSetting("SSLURL", intPortalId, Null.NullString)
+            txtSTDURL.Text = PortalController.GetPortalSetting("STDURL", intPortalId, Null.NullString)
+
+            lblHomeDirectory.Text = objPortal.HomeDirectory
+
+            'Populate the timezone combobox (look up timezone translations based on currently set culture)
+            Services.Localization.Localization.LoadTimeZoneDropDownList(cboTimeZone, CType(Page, PageBase).PageCulture.Name, Convert.ToString(objPortal.TimeZoneOffset))
+
+            chkSkinWidgestEnabled.Checked = PortalController.GetPortalSettingAsBoolean("EnableSkinWidgets", intPortalId, True)
+
+            ctlPortalSkin.SkinRoot = SkinController.RootSkin
+            ctlPortalSkin.SkinSrc = PortalController.GetPortalSetting("DefaultPortalSkin", intPortalId, Host.DefaultPortalSkin)
+            ctlPortalContainer.SkinRoot = SkinController.RootContainer
+            ctlPortalContainer.SkinSrc = PortalController.GetPortalSetting("DefaultPortalContainer", intPortalId, Host.DefaultPortalContainer)
+            ctlAdminSkin.SkinRoot = SkinController.RootSkin
+            ctlAdminSkin.SkinSrc = PortalController.GetPortalSetting("DefaultAdminSkin", intPortalId, Host.DefaultAdminSkin)
+            ctlAdminContainer.SkinRoot = SkinController.RootContainer
+            ctlAdminContainer.SkinSrc = PortalController.GetPortalSetting("DefaultAdminContainer", intPortalId, Host.DefaultAdminContainer)
+
+            Dim portalAliasMapping As String = PortalController.GetPortalSetting("PortalAliasMapping", intPortalId, "NONE")
+            If portalAliasModeButtonList.Items.FindByValue(portalAliasMapping) IsNot Nothing Then
+                portalAliasModeButtonList.Items.FindByValue(portalAliasMapping).Selected = True
+            Else
+                portalAliasModeButtonList.Items(0).Selected = True
+            End If
+
+            If portalAliasMapping.ToUpperInvariant = "NONE" Then
+                defaultAliasRow.Visible = False
+            Else
+                defaultAliasRow.Visible = True
+                defaultAliasDropDown.DataSource = arrPortalAliases
+                defaultAliasDropDown.DataBind()
+
+                Dim defaultAlias As String = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "")
+                If defaultAliasDropDown.Items.FindByValue(defaultAlias) IsNot Nothing Then
+                    defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = True
+                End If
+            End If
+
+            LoadStyleSheet()
+        End Sub
+
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' LoadStyleSheet loads the stylesheet
@@ -285,220 +504,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
-        End Sub
-
-        ''' <summary>
-        ''' Loads a PortalInfo object and populates the onscreen forms
-        ''' Correctly reloads the relevant language type in the case of an update
-        ''' </summary>
-        ''' <param name="activeLanguage"></param>
-        ''' <remarks></remarks>
-        Private Sub LoadPortal(ByVal activeLanguage As String)
-            Dim objPortalController As New PortalController
-            Dim objModules As New ModuleController
-            Dim objUsers As New UserController
-            Dim ctlList As New Common.Lists.ListController
-            Dim colProcessor As Common.Lists.ListEntryInfoCollection = ctlList.GetListEntryInfoCollection("Processor")
-
-            cboProcessor.DataSource = colProcessor
-            cboProcessor.DataBind()
-            cboProcessor.Items.Insert(0, New ListItem("<" + Services.Localization.Localization.GetString("None_Specified") + ">", ""))
-
-            Dim objPortal As PortalInfo = objPortalController.GetPortal(intPortalId, activeLanguage)
-            txtPortalName.Text = objPortal.PortalName
-            ctlLogo.FilePath = objPortal.LogoFile
-            ctlLogo.FileFilter = glbImageFileTypes
-            txtDescription.Text = objPortal.Description
-            txtKeyWords.Text = objPortal.KeyWords
-            lblGUID.Text = objPortal.GUID.ToString.ToUpper
-            ctlBackground.FilePath = objPortal.BackgroundFile
-            ctlBackground.FileFilter = glbImageFileTypes
-            txtFooterText.Text = objPortal.FooterText
-            optUserRegistration.SelectedIndex = objPortal.UserRegistration
-            ctlAudit.Entity = objPortal
-
-            Dim objPortalAliasController As New PortalAliasController
-            Dim arrPortalAliases As ArrayList
-            arrPortalAliases = objPortalAliasController.GetPortalAliasArrayByPortalID(intPortalId)
-            If PortalController.IsChildPortal(objPortal, GetAbsoluteServerPath(Request)) Then
-                txtSiteMap.Text = AddHTTP(GetDomainName(Request)) & "/SiteMap.aspx?portalid=" & intPortalId.ToString
-            Else
-                If arrPortalAliases.Count > 0 Then
-                    'Get the first Alias
-                    Dim objPortalAliasInfo As PortalAliasInfo = CType(arrPortalAliases(0), PortalAliasInfo)
-                    txtSiteMap.Text = AddHTTP(objPortalAliasInfo.HTTPAlias) & "/SiteMap.aspx"
-                Else
-                    txtSiteMap.Text = AddHTTP(GetDomainName(Request)) & "/SiteMap.aspx"
-                End If
-            End If
-
-            optBanners.SelectedIndex = objPortal.BannerAdvertising
-            If UserInfo.IsSuperUser Then
-                lblBanners.Visible = False
-            Else
-                optBanners.Enabled = objPortal.BannerAdvertising <> 2
-                lblBanners.Visible = objPortal.BannerAdvertising = 2
-            End If
-
-            'Set up special page lists
-            Dim listTabs As List(Of TabInfo) = TabController.GetPortalTabs(TabController.GetTabsBySortOrder(intPortalId, activeLanguage, True), Null.NullInteger, True, "<" + Localization.GetString("None_Specified") + ">", True, False, False, False, False)
-            cboSplashTabId.DataSource = listTabs
-            cboSplashTabId.DataBind()
-            If Not cboSplashTabId.Items.FindByValue(objPortal.SplashTabId.ToString) Is Nothing Then
-                cboSplashTabId.Items.FindByValue(objPortal.SplashTabId.ToString).Selected = True
-            End If
-            cboHomeTabId.DataSource = listTabs
-            cboHomeTabId.DataBind()
-            If Not cboHomeTabId.Items.FindByValue(objPortal.HomeTabId.ToString) Is Nothing Then
-                cboHomeTabId.Items.FindByValue(objPortal.HomeTabId.ToString).Selected = True
-            End If
-            cboLoginTabId.DataSource = listTabs
-            cboLoginTabId.DataBind()
-            If Not cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString) Is Nothing Then
-                cboLoginTabId.Items.FindByValue(objPortal.LoginTabId.ToString).Selected = True
-            End If
-            cboRegisterTabId.DataSource = listTabs
-            cboRegisterTabId.DataBind()
-            If Not cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString) Is Nothing Then
-                cboRegisterTabId.Items.FindByValue(objPortal.RegisterTabId.ToString).Selected = True
-            End If
-            cboSearchTabId.DataSource = listTabs
-            cboSearchTabId.DataBind()
-            If Not cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString) Is Nothing Then
-                cboSearchTabId.Items.FindByValue(objPortal.SearchTabId.ToString).Selected = True
-            End If
-
-            listTabs = TabController.GetPortalTabs(intPortalId, Null.NullInteger, False, True)
-            cboUserTabId.DataSource = listTabs
-            cboUserTabId.DataBind()
-            If Not cboUserTabId.Items.FindByValue(objPortal.UserTabId.ToString) Is Nothing Then
-                cboUserTabId.Items.FindByValue(objPortal.UserTabId.ToString).Selected = True
-            End If
-
-            Dim colList As Common.Lists.ListEntryInfoCollection = ctlList.GetListEntryInfoCollection("Currency")
-
-            cboCurrency.DataSource = colList
-            cboCurrency.DataBind()
-            If Null.IsNull(objPortal.Currency) Or cboCurrency.Items.FindByValue(objPortal.Currency) Is Nothing Then
-                cboCurrency.Items.FindByValue("USD").Selected = True
-            Else
-                cboCurrency.Items.FindByValue(objPortal.Currency).Selected = True
-            End If
-            Dim objRoleController As New DotNetNuke.Security.Roles.RoleController
-
-            Dim Arr As ArrayList = objRoleController.GetUserRolesByRoleName(intPortalId, objPortal.AdministratorRoleName)
-            Dim i As Integer
-            For i = 0 To Arr.Count - 1
-                Dim objUser As UserRoleInfo = CType(Arr(i), UserRoleInfo)
-                cboAdministratorId.Items.Add(New ListItem(objUser.FullName, objUser.UserID.ToString))
-            Next
-            If Not cboAdministratorId.Items.FindByValue(objPortal.AdministratorId.ToString) Is Nothing Then
-                cboAdministratorId.Items.FindByValue(objPortal.AdministratorId.ToString).Selected = True
-            End If
-
-            If Not Null.IsNull(objPortal.ExpiryDate) Then
-                txtExpiryDate.Text = objPortal.ExpiryDate.ToShortDateString
-            End If
-            txtHostFee.Text = objPortal.HostFee.ToString
-            txtHostSpace.Text = objPortal.HostSpace.ToString
-            txtPageQuota.Text = objPortal.PageQuota.ToString
-            txtUserQuota.Text = objPortal.UserQuota.ToString
-            If Not IsDBNull(objPortal.SiteLogHistory) Then
-                txtSiteLogHistory.Text = objPortal.SiteLogHistory.ToString
-            End If
-
-            If objPortal.PaymentProcessor <> "" Then
-                If Not cboProcessor.Items.FindByText(objPortal.PaymentProcessor) Is Nothing Then
-                    cboProcessor.Items.FindByText(objPortal.PaymentProcessor).Selected = True
-                Else       ' default
-                    If Not cboProcessor.Items.FindByText("PayPal") Is Nothing Then
-                        cboProcessor.Items.FindByText("PayPal").Selected = True
-                    End If
-                End If
-            Else
-                cboProcessor.Items.FindByValue("").Selected = True
-            End If
-            txtUserId.Text = objPortal.ProcessorUserId
-            txtPassword.Attributes.Add("value", objPortal.ProcessorPassword)
-
-            ' use sandbox?
-            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", intPortalId, "False"))
-            chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
-
-            ' return url after payment or on cancel
-            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", intPortalId, Null.NullString)
-            txtPayPalReturnURL.Text = strPayPalReturnURL
-            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", intPortalId, Null.NullString)
-            txtPayPalCancelURL.Text = strPayPalCancelURL
-
-            ' usability settings
-            chkInlineEditor.Checked = PortalSettings.InlineEditorEnabled
-            chkHideSystemFolders.Checked = PortalSettings.HideFoldersEnabled
-
-            If PortalSettings.DefaultControlPanelMode = Entities.Portals.PortalSettings.Mode.Edit Then
-                optControlPanelMode.Items.FindByValue("EDIT").Selected = True
-            Else
-                optControlPanelMode.Items.FindByValue("VIEW").Selected = True
-            End If
-            If PortalController.GetPortalSetting("ControlPanelVisibility", intPortalId, "MAX") = "MAX" Then
-                optControlPanelVisibility.Items.FindByValue("MAX").Selected = True
-            Else
-                optControlPanelVisibility.Items.FindByValue("MIN").Selected = True
-            End If
-
-            Dim cPermission As ControlPanelPermission = ControlPanelPermission.ModuleEditor
-            Dim setting As String = Null.NullString
-            If PortalController.GetPortalSettingsDictionary(intPortalId).TryGetValue("ControlPanelSecurity", setting) Then
-                If setting.ToUpperInvariant = "TAB" Then
-                    cPermission = ControlPanelPermission.TabEditor
-                Else
-                    cPermission = ControlPanelPermission.ModuleEditor
-                End If
-            End If
-
-            If cPermission = PortalSettings.ControlPanelPermission.ModuleEditor Then
-                optControlPanelSecurity.Items.FindByValue("MODULE").Selected = True
-            Else
-                optControlPanelSecurity.Items.FindByValue("TAB").Selected = True
-            End If
-            chkSSLEnabled.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnabled", intPortalId, False)
-            chkSSLEnforced.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnforced", intPortalId, False)
-            txtSSLURL.Text = PortalController.GetPortalSetting("SSLURL", intPortalId, Null.NullString)
-            txtSTDURL.Text = PortalController.GetPortalSetting("STDURL", intPortalId, Null.NullString)
-
-            lblHomeDirectory.Text = objPortal.HomeDirectory
-
-            'Populate the timezone combobox (look up timezone translations based on currently set culture)
-            Services.Localization.Localization.LoadTimeZoneDropDownList(cboTimeZone, CType(Page, PageBase).PageCulture.Name, Convert.ToString(objPortal.TimeZoneOffset))
-
-            chkSkinWidgestEnabled.Checked = PortalController.GetPortalSettingAsBoolean("EnableSkinWidgets", intPortalId, True)
-
-            ctlPortalSkin.SkinRoot = SkinController.RootSkin
-            ctlPortalSkin.SkinSrc = PortalController.GetPortalSetting("DefaultPortalSkin", intPortalId, Host.DefaultPortalSkin)
-            ctlPortalContainer.SkinRoot = SkinController.RootContainer
-            ctlPortalContainer.SkinSrc = PortalController.GetPortalSetting("DefaultPortalContainer", intPortalId, Host.DefaultPortalContainer)
-            ctlAdminSkin.SkinRoot = SkinController.RootSkin
-            ctlAdminSkin.SkinSrc = PortalController.GetPortalSetting("DefaultAdminSkin", intPortalId, Host.DefaultAdminSkin)
-            ctlAdminContainer.SkinRoot = SkinController.RootContainer
-            ctlAdminContainer.SkinSrc = PortalController.GetPortalSetting("DefaultAdminContainer", intPortalId, Host.DefaultAdminContainer)
-
-            Dim portalAliasMapping As String = PortalController.GetPortalSetting("PortalAliasMapping", intPortalId, "NONE")
-            portalAliasModeButtonList.Items.FindByValue(portalAliasMapping).Selected = True
-
-            If portalAliasMapping.ToUpperInvariant = "NONE" Then
-                defaultAliasRow.Visible = False
-            Else
-                defaultAliasRow.Visible = True
-                defaultAliasDropDown.DataSource = arrPortalAliases
-                defaultAliasDropDown.DataBind()
-
-                Dim defaultAlias As String = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "")
-                If defaultAliasDropDown.Items.FindByValue(defaultAlias) IsNot Nothing Then
-                    defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = True
-                End If
-            End If
-
-            LoadStyleSheet()
         End Sub
 
         ''' -----------------------------------------------------------------------------
