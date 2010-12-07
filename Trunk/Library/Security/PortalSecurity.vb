@@ -94,6 +94,8 @@ Namespace DotNetNuke.Security
             listStrings.Add("<ilayer[^>]*>.*?</ilayer[^><]*>")
             listStrings.Add("<form[^>]*>")
             listStrings.Add("</form[^><]*>")
+            listStrings.Add("onerror")
+            listStrings.Add("onmouseover")
             listStrings.Add("javascript:")
             listStrings.Add("vbscript:")
             listStrings.Add("alert[\s(&nbsp;)]*\([\s(&nbsp;)]*'?[\s(&nbsp;)]*[""(&quot;)]?")

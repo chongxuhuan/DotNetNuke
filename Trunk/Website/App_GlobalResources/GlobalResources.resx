@@ -958,7 +958,7 @@ Thank you,
     <value>{0}</value>
   </data>
   <data name="403_3.Error" xml:space="preserve">
-    <value>&lt;div style="height: 100%; width:90%;"&gt;&lt;h1&gt;DotNetNuke Configuration Error&lt;/h1&gt;{1}&lt;br/&gt;&lt;br/&gt;
+    <value>&lt;div style="height: 100%; width:90%;"&gt;&lt;h1&gt;DotNetNuke Configuration Error&lt;/h1&gt;{0}&lt;br/&gt;&lt;br/&gt;
 		Your DotNetNuke installation appears to have a security settings problem (most likely permissions). DotNetNuke has extensive file upload capabilities for content, modules, and 
 		skins. These features require custom security settings so that the application 
 		is able to create and remove files in your website.
@@ -971,7 +971,6 @@ Thank you,
 		Simple File Sharing&lt;/a&gt; before these options are displayed ). Select the 
 		Security tab. Add the appropriate User Account and set the Permissions.
 		&lt;br/&gt;
-    &lt;strong&gt;Your Operation System appears to be {0}&lt;/strong&gt;
 		&lt;br/&gt;
 		&lt;ul style="text-align: left; list-style-type: none; list-style-position: outside;"&gt;
 		  &lt;li&gt;

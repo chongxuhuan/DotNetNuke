@@ -52,12 +52,14 @@ Namespace DotNetNuke.Services.Exceptions
             Dim strErrorMessage As String = HttpUtility.HtmlEncode(Request.QueryString("error"))
 
             Dim strLocalizedMessage As String = Localization.Localization.GetString(status + ".Error", Localization.Localization.GlobalResourceFile)
-            Dim strOS As String = ExtractOSVersion()
 
-            strLocalizedMessage = strLocalizedMessage.Replace("src=""images/403-3.gif""", "src=""" & ResolveUrl("~/images/403-3.gif") & """")
-            ErrorPlaceHolder.Controls.Add(New LiteralControl(String.Format(strLocalizedMessage, strOS, strErrorMessage)))
+            If Not IsNothing(strLocalizedMessage) Then
+                strLocalizedMessage = strLocalizedMessage.Replace("src=""images/403-3.gif""", "src=""" & ResolveUrl("~/images/403-3.gif") & """")
+                ErrorPlaceHolder.Controls.Add(New LiteralControl(String.Format(strLocalizedMessage, strErrorMessage)))
+            End If
         End Sub
 
+        <Obsolete("Function obsoleted in 5.6.1 as no longer used in core - version identification can be useful to potential hackers if used incorrectly")> _
         Public Function ExtractOSVersion() As String
             'default name to OSVersion in case OS not recognised
             Dim commonName As String = System.Environment.OSVersion.ToString()
@@ -109,7 +111,7 @@ Namespace DotNetNuke.Services.Exceptions
                 Dim exc As Exception = Server.GetLastError
                 Try
                     If Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") Then
-                        ErrorPlaceHolder.Controls.Add(New LiteralControl(exc.ToString))
+                        ErrorPlaceHolder.Controls.Add(New LiteralControl(HttpUtility.HtmlEncode(exc.ToString)))
                     Else
                         Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
 

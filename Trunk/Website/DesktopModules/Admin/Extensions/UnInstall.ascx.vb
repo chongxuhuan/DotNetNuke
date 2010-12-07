@@ -170,9 +170,8 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            CheckSecurity()
             Try
-                CheckSecurity()
-
                 ClientAPI.AddButtonConfirm(cmdUninstall, Services.Localization.Localization.GetString("DeleteItem"))
 
                 If Package IsNot Nothing AndAlso String.IsNullOrEmpty(Package.Manifest) Then
@@ -219,6 +218,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUninstall_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUninstall.Click
+            CheckSecurity()
             Try
                 UnInstallPackage()
 

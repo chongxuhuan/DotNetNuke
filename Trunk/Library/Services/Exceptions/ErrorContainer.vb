@@ -66,7 +66,7 @@ Namespace DotNetNuke.Services.Exceptions
 		Private Function FormatException(ByVal strError As String, ByVal exc As Exception) As UI.Skins.Controls.ModuleMessage
 			Dim m As UI.Skins.Controls.ModuleMessage
 			If Not exc Is Nothing Then
-				m = UI.Skins.Skin.GetModuleMessageControl(strError, exc.ToString, Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
+                m = UI.Skins.Skin.GetModuleMessageControl(strError, HttpUtility.HtmlEncode(exc.ToString), Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
 			Else
 				m = UI.Skins.Skin.GetModuleMessageControl(Localization.Localization.GetString("ErrorOccurred"), strError, Skins.Controls.ModuleMessage.ModuleMessageType.RedError)
 			End If

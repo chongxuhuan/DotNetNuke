@@ -105,7 +105,7 @@ IF NOT EXISTS (SELECT value FROM {databaseOwner}{objectQualifier}Lists WHERE Lis
 			) 
 			VALUES (
 				'DataType', 
-				'checkBox', 
+				'Checkbox ', 
 				'DotNetNuke.UI.WebControls.CheckEditControl, DotNetNuke',
 				 -1,
 				 -1,
