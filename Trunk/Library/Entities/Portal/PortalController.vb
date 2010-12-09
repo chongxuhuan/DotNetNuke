@@ -411,7 +411,7 @@ Namespace DotNetNuke.Entities.Portals
                 Return Language
             End If
             If HttpContext.Current IsNot Nothing AndAlso Status = UpgradeStatus.None Then
-                If Not HttpContext.Current.Request.QueryString("language") Is Nothing Then
+                If HttpContext.Current.Request.QueryString("language") IsNot Nothing Then
                     Language = HttpContext.Current.Request.QueryString("language")
                 Else
                     Dim _PortalSettings As PortalSettings = GetCurrentPortalSettings()
@@ -419,11 +419,18 @@ Namespace DotNetNuke.Entities.Portals
                         Language = _PortalSettings.ActiveTab.CultureCode
                     Else
                         'PortalSettings Is Nothing - probably means we haven't set it yet (in Begin Request)
-                        'so try detecting the user's browser
-                        Dim Culture As CultureInfo = Localization.GetBrowserCulture(portalID)
+                        'so try detecting the user's cookie
+                        If HttpContext.Current.Request("language") IsNot Nothing Then
+                            Language = HttpContext.Current.Request("language")
+                        End If
 
-                        If Culture IsNot Nothing Then
-                            Language = Culture.Name
+                        'if no cookie - try detecting browser
+                        If String.IsNullOrEmpty(Language) Then
+                            Dim Culture As CultureInfo = Localization.GetBrowserCulture(portalID)
+
+                            If Culture IsNot Nothing Then
+                                Language = Culture.Name
+                            End If
                         End If
                     End If
                 End If
@@ -931,8 +938,8 @@ Namespace DotNetNuke.Entities.Portals
             End If
 
             'Set Auto alias mapping
-            If XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "") <> "" Then
-                UpdatePortalSetting(PortalId, "PortalAliasMapping", XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", ""))
+            If XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "CANONICALURL") <> "" Then
+                UpdatePortalSetting(PortalId, "PortalAliasMapping", XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "CANONICALURL").ToUpperInvariant())
             End If
 
         End Sub
@@ -1454,6 +1461,7 @@ Namespace DotNetNuke.Entities.Portals
 
                         'Create Portal Alias
                         AddPortalAlias(intPortalId, PortalAlias)
+                        PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalAlias", PortalAlias, True)
 
                         ' log installation event
                         Try

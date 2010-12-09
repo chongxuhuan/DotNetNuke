@@ -21,6 +21,12 @@ UPDATE {databaseOwner}[{objectQualifier}Schedule]
 	WHERE TypeFullName ='DotNetNuke.Professional.DocumentLibrary.ScheduledSync, DotNetNuke.Professional.DocumentLibrary'
 GO
 
+UPDATE {databaseOwner}{objectQualifier}Schedule 
+	SET FriendlyName = LEFT(TypeFullName, 100) 
+	WHERE FriendlyName = '' OR FriendlyName IS NULL
+
+GO
+
 /* Add UpdateTabModuleVersionByModule */
 /**************************************/
 

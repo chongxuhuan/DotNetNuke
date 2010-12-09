@@ -169,21 +169,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
         Public Sub AddQueueUserWorkItem(ByVal s As ScheduleItem)
             numberOfProcessesInQueue += 1
             numberOfProcesses += 1
-            Dim obj As New ScheduleHistoryItem
-            obj.TypeFullName = s.TypeFullName
-            obj.ScheduleID = s.ScheduleID
-            obj.TimeLapse = s.TimeLapse
-            obj.TimeLapseMeasurement = s.TimeLapseMeasurement
-            obj.RetryTimeLapse = s.RetryTimeLapse
-            obj.RetryTimeLapseMeasurement = s.RetryTimeLapseMeasurement
-            obj.ObjectDependencies = s.ObjectDependencies
-            obj.CatchUpEnabled = s.CatchUpEnabled
-            obj.Enabled = s.Enabled
-            obj.NextStart = s.NextStart
-            obj.ScheduleSource = s.ScheduleSource
-            obj.ThreadID = s.ThreadID
-            obj.ProcessGroup = s.ProcessGroup
-            obj.RetainHistoryNum = s.RetainHistoryNum
+            Dim obj As New ScheduleHistoryItem(s)
 
             Try
                 ' Create a callback to subroutine RunPooledThread
@@ -199,20 +185,8 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
         Public Sub RunSingleTask(ByVal s As ScheduleItem)
             numberOfProcessesInQueue += 1
             numberOfProcesses += 1
-            Dim obj As New ScheduleHistoryItem
-            obj.TypeFullName = s.TypeFullName
-            obj.ScheduleID = s.ScheduleID
-            obj.TimeLapse = s.TimeLapse
-            obj.TimeLapseMeasurement = s.TimeLapseMeasurement
-            obj.RetryTimeLapse = s.RetryTimeLapse
-            obj.RetryTimeLapseMeasurement = s.RetryTimeLapseMeasurement
-            obj.ObjectDependencies = s.ObjectDependencies
-            obj.CatchUpEnabled = s.CatchUpEnabled
-            obj.Enabled = s.Enabled
-            obj.NextStart = s.NextStart
-            obj.ScheduleSource = s.ScheduleSource
-            obj.ThreadID = s.ThreadID
-            obj.ProcessGroup = s.ProcessGroup
+
+            Dim obj As New ScheduleHistoryItem(s)
 
             Try
                 Run(obj)

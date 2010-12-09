@@ -20,7 +20,7 @@ UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Search Engin
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Cache' WHERE TypeFullName = 'DotNetNuke.Services.Cache.PurgeCache, DOTNETNUKE'
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Module Cache' WHERE TypeFullName = 'DotNetNuke.Services.ModuleCache.PurgeModuleCache, DOTNETNUKE'
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Output Cache' WHERE TypeFullName = 'DotNetNuke.Services.OutputCache.PurgeOutputCache, DotNetNuke'
-UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = TypeFullName WHERE FriendlyName = '' OR FriendlyName IS NULL
+UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = LEFT(TypeFullName, 100) WHERE FriendlyName = '' OR FriendlyName IS NULL
 
 GO
 

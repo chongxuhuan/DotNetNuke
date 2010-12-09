@@ -5,9 +5,13 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ Register Assembly="DotNetNuke.HtmlEditor.TelerikEditorProvider" Namespace="DotNetNuke.HtmlEditor.TelerikEditorProvider" TagPrefix="provider" %>
 
-<script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>       
-<script type="text/javascript">
+<% if(this.Request.IsSecureConnection) { %>
+    <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<% } else { %>
+    <script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+<% } %>
 
+<script type="text/javascript">
     var _PageOnSite_ClientID = "PageOnSite";
     Type.registerNamespace("Telerik.Web.UI.Widgets");
 
@@ -70,7 +74,7 @@
                 type: 'POST',
                 async: false,
                 contentType: 'application/json; charset=UTF-8',
-                url: 'LinkClickUrlHandler.ashx',
+                url: 'LinkClickUrlHandler.ashx?portalid=' + _portalId,
                 data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "EnableUrlLanguage": "' + _enableUrlLanguage +
                     '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory +
                     '", "LinkUrl": "' + linkUrl + '", "Track": "' + trackClicksCheckbox.checked +
@@ -573,7 +577,7 @@
             type: 'POST',
             async: false,
             contentType: 'application/json; charset=UTF-8',
-            url: 'LinkClickUrlHandler.ashx',
+            url: 'LinkClickUrlHandler.ashx?portalid=' + _portalId,
             data: '{"PortalID": "' + _portalId + '", "PortalGuid": "' + _portalGuid + '", "TabID": "' + _tabId + '", "ModuleID": "' + _moduleId + '", "HomeDirectory": "' + _homeDirectory +
                 '", "LinkUrl": "' + linkUrl.value + '", "Track": "' + trackClicksCheckbox.checked + '", "TrackUser": "' + trackUserCheckbox.checked + '", "LinkClickUrl":"", "LinkAction":"' + linkAction +
                 '", "LogStartDate" : "' + logStartDate + '", "LogEndDate": "' + logEndDate + '"}',
@@ -612,7 +616,6 @@
 	var _homeDirectory = parent.dnn.getVar('editorHomeDirectory');
 	var _portalGuid = parent.dnn.getVar('editorPortalGuid');
 	var _enableUrlLanguage = parent.dnn.getVar('editorEnableUrlLanguage');
-	// -->
 </script>
 
 

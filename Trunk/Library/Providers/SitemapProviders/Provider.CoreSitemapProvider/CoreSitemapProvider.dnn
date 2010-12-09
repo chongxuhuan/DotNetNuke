@@ -38,7 +38,7 @@
                     <section name="sitemap" requirePermission="false" type="DotNetNuke.Framework.Providers.ProviderConfigurationHandler, DotNetNuke" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="ignore">
-                    <add name="SitemapHandler" path="Sitemap.aspx" verb="*" type="DotNetNuke.Services.Sitemap.SitemapHandler, DotNetNuke" preCondition="integratedMode,runtimeVersionv2.0" />
+                    <add name="SitemapHandler" path="Sitemap.aspx" verb="*" type="DotNetNuke.Services.Sitemap.SitemapHandler, DotNetNuke" preCondition="integratedMode" />
                   </node>
                   <node path="/configuration/system.web/httpHandlers" action="update" key="path" collision="ignore">
                     <add verb="*" path="Sitemap.aspx" type="DotNetNuke.Services.Sitemap.SitemapHandler, DotNetNuke" />
