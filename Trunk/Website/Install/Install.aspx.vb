@@ -93,6 +93,11 @@ Namespace DotNetNuke.Services.Install
                     Response.Write("<br><br>")
                     Response.Write("<h2>Installation Status Report</h2>")
                     Response.Flush()
+
+                    If Not CheckPermissions() Then
+                        Return
+                    End If
+
                     Services.Upgrade.Upgrade.InstallDNN(strProviderPath)
 
                     Response.Write("<h2>Installation Complete</h2>")
@@ -386,6 +391,14 @@ Namespace DotNetNuke.Services.Install
             End If
 
         End Sub
+
+        Private Function CheckPermissions() As Boolean
+            Dim verified = New FileSystemPermissionVerifier(Server.MapPath("~")).VerifyAll
+            HtmlUtils.WriteFeedback(HttpContext.Current.Response, 0, "Checking File and Folder permissions " + IIf(verified, "<font color='green'>Success</font>", "<font color='red'>Error</font>") + "<br>")
+            Response.Flush()
+
+            Return verified
+        End Function
 
 #End Region
 

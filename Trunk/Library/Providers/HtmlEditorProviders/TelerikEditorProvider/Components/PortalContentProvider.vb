@@ -61,7 +61,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
         Public Overrides Function CheckWritePermissions(ByVal folderPath As String) As Boolean
             Dim folder As FolderInfo = DNNFolderCtrl.GetFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(folderPath), True)
-            Return FolderPermissionController.CanManageFolder(folder)
+            Return FolderPermissionController.CanAddFolder(folder)
         End Function
 
         Public Overrides Function GetFile(ByVal url As String) As System.IO.Stream
@@ -71,7 +71,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
         Public Overrides Function CheckDeletePermissions(ByVal folderPath As String) As Boolean
             Dim folder As FolderInfo = DNNFolderCtrl.GetFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(folderPath), True)
-            Return FolderPermissionController.CanManageFolder(folder)
+            Return FolderPermissionController.CanDeleteFolder(folder)
         End Function
 
         Public Overrides Function GetPath(ByVal url As String) As String

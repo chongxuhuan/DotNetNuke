@@ -18,6 +18,10 @@
                 <asp:label runat="server" Text='<%#DataBinder.Eval(Container.DataItem, "HTTPAlias") %>' CssClass="Normal" ID="lbHTTPAlias" Width="350px"/>
 		    </ItemTemplate>
 		    <EditItemTemplate>
+ 				<asp:radiobuttonlist id="optType" cssclass="Normal" runat="server" repeatdirection="Horizontal">
+					<asp:listitem resourcekey="Parent" Selected="True" value="P" />
+					<asp:listitem resourcekey="Child" value="C" />
+				</asp:radiobuttonlist>
                 <asp:textbox runat="server" Text='<%#DataBinder.Eval(Container.DataItem, "HTTPAlias") %>' CssClass="NormalTextBox" ID="txtHTTPAlias" Width="350px"/>
 		    </EditItemTemplate>
 		</asp:TemplateColumn>

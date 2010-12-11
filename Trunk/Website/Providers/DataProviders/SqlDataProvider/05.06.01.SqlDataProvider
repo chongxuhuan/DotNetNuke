@@ -11,14 +11,8 @@
 /* DNNPRO-14369 - Schedule Status missing names in Name column  */
 /****************************************************************/
 
-UPDATE {databaseOwner}[{objectQualifier}Schedule] 
-	SET FriendlyName = 'Purge Output Cache' 
-	WHERE TypeFullName ='DotNetNuke.Services.OutputCache.PurgeOutputCache, DotNetNuke'
-GO
-
-UPDATE {databaseOwner}[{objectQualifier}Schedule] 
-	SET FriendlyName = 'Document Library Scheduled Sync' 
-	WHERE TypeFullName ='DotNetNuke.Professional.DocumentLibrary.ScheduledSync, DotNetNuke.Professional.DocumentLibrary'
+ALTER TABLE {databaseOwner}{objectQualifier}Schedule 
+	ALTER COLUMN FriendlyName nvarchar(200) NULL
 GO
 
 UPDATE {databaseOwner}{objectQualifier}Schedule 

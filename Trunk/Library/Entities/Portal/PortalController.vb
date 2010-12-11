@@ -164,6 +164,28 @@ Namespace DotNetNuke.Entities.Portals
             DataCache.SetCache(DataCache.PortalDictionaryCacheKey, portalDic)
         End Sub
 
+        Public Shared Function CreateChildPortalFolder(ByVal ChildPath As String) As String
+            Dim message As String = Null.NullString
+
+            'Set up Child Portal
+            Try
+                ' create the subdirectory for the new portal
+                If Not Directory.Exists(ChildPath) Then
+                    System.IO.Directory.CreateDirectory(ChildPath)
+                End If
+
+                ' create the subhost default.aspx file
+                If Not File.Exists(ChildPath & "\" & glbDefaultPage) Then
+                    System.IO.File.Copy(Common.Globals.HostMapPath & "subhost.aspx", ChildPath & "\" & glbDefaultPage)
+                End If
+            Catch Exc As Exception
+                message += Localization.GetString("ChildPortal.Error") + Exc.Message + Exc.StackTrace
+            End Try
+
+            Return message
+        End Function
+
+
         Public Shared Sub DeleteExpiredPortals(ByVal serverPath As String)
             For Each portal As PortalInfo In GetExpiredPortals()
                 DeletePortal(portal, serverPath)
@@ -1372,21 +1394,9 @@ Namespace DotNetNuke.Entities.Portals
 
                     'Set up Child Portal
                     If strMessage = Null.NullString Then
-                        Try
                             If IsChildPortal Then
-                                ' create the subdirectory for the new portal
-                                If Not Directory.Exists(ChildPath) Then
-                                    System.IO.Directory.CreateDirectory(ChildPath)
-                                End If
-
-                                ' create the subhost default.aspx file
-                                If Not File.Exists(ChildPath & "\" & glbDefaultPage) Then
-                                    System.IO.File.Copy(Common.Globals.HostMapPath & "subhost.aspx", ChildPath & "\" & glbDefaultPage)
-                                End If
-                            End If
-                        Catch Exc As Exception
-                            strMessage += Localization.GetString("ChildPortal.Error") + Exc.Message + Exc.StackTrace
-                        End Try
+                            strMessage = CreateChildPortalFolder(ChildPath)
+                        End If
                     Else
                         Throw New Exception(strMessage)
                     End If

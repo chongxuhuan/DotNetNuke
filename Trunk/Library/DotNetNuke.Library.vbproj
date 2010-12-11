@@ -198,6 +198,7 @@
     <Compile Include="Collections\SharedList.vb" />
     <Compile Include="Collections\WriteLockRequiredException.vb" />
     <Compile Include="Common\Assembly.vb" />
+    <Compile Include="Common\Utilities\FileSystemPermissionVerifier.aspx.vb" />
     <Compile Include="Common\Utilities\SqlUtils.vb" />
     <Compile Include="Common\Utilities\JsonExtensions.vb" />
     <Compile Include="Entities\ConfigurationSetting.vb" />

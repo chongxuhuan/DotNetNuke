@@ -129,4 +129,13 @@
   <data name="InvalidAlias.Text" xml:space="preserve">
     <value>The Portal Alias is invalid&lt;br/&gt;</value>
   </data>
+  <data name="Child.Text" xml:space="preserve">
+    <value>Child</value>
+  </data>
+  <data name="Parent.Text" xml:space="preserve">
+    <value>Parent</value>
+  </data>
+  <data name="ChildExists.Text" xml:space="preserve">
+    <value>The Child Portal Name You Specified Already Exists. Please Choose A Different Child Portal Name.&lt;br/&gt;</value>
+  </data>
 </root>

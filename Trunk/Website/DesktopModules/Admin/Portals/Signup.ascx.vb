@@ -30,15 +30,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
     Partial Class Signup
         Inherits DotNetNuke.Entities.Modules.PortalModuleBase
 
-#Region "Controls"
-
-
-
-
-
-
-#End Region
-
 #Region "Event Handlers"
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -173,7 +164,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     Dim blnChild As Boolean
                     Dim strMessage As String = String.Empty
                     Dim strPortalAlias As String
-                    Dim intCounter As Integer
                     Dim intPortalId As Integer
                     Dim strServerPath As String
                     Dim strChildPath As String = String.Empty
@@ -196,20 +186,12 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     End If
 
                     'Set Portal Name
-                    txtPortalName.Text = LCase(txtPortalName.Text)
-                    txtPortalName.Text = Replace(txtPortalName.Text, "http://", "")
+                    txtPortalName.Text = txtPortalName.Text.ToLowerInvariant
+                    txtPortalName.Text = txtPortalName.Text.Replace("http://", "")
 
                     'Validate Portal Name
                     If PortalSettings.ActiveTab.ParentId <> PortalSettings.SuperTabId Then
                         blnChild = True
-
-                        ' child portal
-                        For intCounter = 1 To txtPortalName.Text.Length
-                            If InStr(1, "abcdefghijklmnopqrstuvwxyz0123456789-", Mid(txtPortalName.Text, intCounter, 1)) = 0 Then
-                                strMessage &= "<br>" & Localization.GetString("InvalidName", Me.LocalResourceFile)
-                            End If
-                        Next intCounter
-
                         strPortalAlias = txtPortalName.Text
                     Else
                         blnChild = (optType.SelectedValue = "C")
@@ -219,17 +201,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         Else
                             strPortalAlias = txtPortalName.Text
                         End If
-
-                        Dim strValidChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-"
-                        If Not blnChild Then
-                            strValidChars += "./:"
-                        End If
-
-                        For intCounter = 1 To strPortalAlias.Length
-                            If InStr(1, strValidChars, Mid(strPortalAlias, intCounter, 1)) = 0 Then
-                                strMessage &= "<br>" & Localization.GetString("InvalidName", Me.LocalResourceFile)
-                            End If
-                        Next intCounter
+                    End If
+                    If Not PortalAliasController.ValidateAlias(strPortalAlias, blnChild) Then
+                        strMessage &= "<br>" & Localization.GetString("InvalidName", Me.LocalResourceFile)
                     End If
 
                     'Validate Password
@@ -282,7 +256,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                             strMessage = Localization.GetString("DuplicatePortalAlias", Me.LocalResourceFile)
                         End If
                     End If
-
 
                     'Create Portal
                     If strMessage = "" Then

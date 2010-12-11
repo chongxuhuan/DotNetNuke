@@ -11,6 +11,10 @@
 /* Set FriendlyName to TypeFullName in Schedule Table - fix 05.02.00 bug */
 /******************************************************/
 
+ALTER TABLE {databaseOwner}{objectQualifier}Schedule 
+	ALTER COLUMN FriendlyName nvarchar(200) NULL
+GO
+
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Users Online' WHERE TypeFullName = 'DotNetNuke.Entities.Users.PurgeUsersOnline, DOTNETNUKE'
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Site Log' WHERE TypeFullName = 'DotNetNuke.Services.Log.SiteLog.PurgeSiteLog, DOTNETNUKE'
 UPDATE {databaseOwner}{objectQualifier}Schedule SET FriendlyName = 'Purge Schedule History' WHERE TypeFullName = 'DotNetNuke.Services.Scheduling.PurgeScheduleHistory, DOTNETNUKE'

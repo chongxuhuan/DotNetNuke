@@ -202,6 +202,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
                     editImage.Visible = Not (portalAlias.PortalAliasID = Me.PortalAlias.PortalAliasID)
                 End If
+            ElseIf item.ItemType = ListItemType.EditItem Then
+                Dim optType As RadioButtonList = CType(item.Cells(1).FindControl("optType"), RadioButtonList)
+                optType.Visible = AddMode
             End If
         End Sub
 
@@ -269,15 +272,21 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         Protected Sub SaveAlias(ByVal source As Object, ByVal e As CommandEventArgs)
             Dim controller As New PortalAliasController()
+            Dim isChild As Boolean = False
+            Dim childPath As String = String.Empty
+            Dim message As String = String.Empty
 
             'Get the index of the row to save
             Dim index As Integer = dgPortalAlias.EditItemIndex
 
             Dim portalAlias As PortalAliasInfo = CType(Aliases(index), PortalAliasInfo)
             Dim ctlAlias As TextBox = CType(dgPortalAlias.Items(index).Cells(2).FindControl("txtHTTPAlias"), TextBox)
+            Dim optType As RadioButtonList = CType(dgPortalAlias.Items(index).Cells(1).FindControl("optType"), RadioButtonList)
 
             Dim strAlias As String = ctlAlias.Text.Trim()
-            If strAlias <> "" Then
+            If String.IsNullOrEmpty(strAlias) Then
+                message = Localization.GetString("InvalidAlias", Me.LocalResourceFile)
+            Else
                 If strAlias.IndexOf("://") <> -1 Then
                     strAlias = strAlias.Remove(0, strAlias.IndexOf("://") + 3)
                 End If
@@ -285,16 +294,34 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     strAlias = strAlias.Remove(0, strAlias.IndexOf("\\") + 2)
                 End If
 
-                Dim strValidChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-./:"
-                For intCounter = 1 To strAlias.Length
-                    If InStr(1, strValidChars, Mid(strAlias, intCounter, 1)) = 0 Then
-                        lblError.Text = Localization.GetString("InvalidAlias", Me.LocalResourceFile)
-                        lblError.Visible = True
-                        Exit For
+                isChild = (optType IsNot Nothing AndAlso optType.SelectedValue = "C")
+
+                'Validate Alias
+                If Not PortalAliasController.ValidateAlias(strAlias, False) Then
+                    message = Localization.GetString("InvalidAlias", Me.LocalResourceFile)
+                End If
+
+                'Validate Child Folder Name
+                If isChild Then
+                    childPath = strAlias.Substring(strAlias.LastIndexOf("/") + 1)
+                    If Not PortalAliasController.ValidateAlias(childPath, True) Then
+                        message = Localization.GetString("InvalidAlias", Me.LocalResourceFile)
                     End If
-                Next intCounter
+                End If
             End If
-            If Not lblError.Visible Then
+
+            If String.IsNullOrEmpty(message) AndAlso isChild Then
+                'Attempt to create child folder
+                Dim childPhysicalPath As String = Server.MapPath(childPath)
+
+                If System.IO.Directory.Exists(childPhysicalPath) Then
+                    message = Localization.GetString("ChildExists", Me.LocalResourceFile)
+                Else
+                    message = PortalController.CreateChildPortalFolder(childPhysicalPath)
+                End If
+            End If
+
+            If String.IsNullOrEmpty(message) Then
                 portalAlias.HTTPAlias = strAlias
                 If AddMode Then
                     controller.AddPortalAlias(portalAlias)
@@ -306,6 +333,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 lblError.Visible = False
                 dgPortalAlias.EditItemIndex = -1
                 _Aliases = Nothing
+            Else
+                lblError.Text = message
+                lblError.Visible = True
             End If
 
             BindAliases()

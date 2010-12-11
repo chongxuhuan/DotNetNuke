@@ -23,6 +23,7 @@ Imports System.Web.UI.WebControls
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Portals
+Imports Telerik.Web.UI
 
 Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
@@ -34,9 +35,6 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
 
             Dim userInfo As DotNetNuke.Entities.Users.UserInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo()
             If (Not Page.IsPostBack AndAlso Not IsNothing(userInfo) AndAlso userInfo.UserID <> Null.NullInteger) Then
-                DataTextField = "IndentedTabName"
-                DataValueField = "FullUrl"
-
                 'check view permissions - Yes?
                 Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
                 Dim pageCulture As String = _PortalSettings.ActiveTab.CultureCode
@@ -45,9 +43,15 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 End If
 
                 Dim tabs As List(Of TabInfo) = TabController.GetTabsBySortOrder(_PortalSettings.PortalId, pageCulture, True)
-                DataSource = TabController.GetPortalTabs(tabs, Null.NullInteger, False, Null.NullString, True, False, True, True, True)
+                Dim sortedTabList = TabController.GetPortalTabs(tabs, Null.NullInteger, False, Null.NullString, True, False, True, True, True)
 
-                DataBind()
+                Items.Clear()
+                For Each _tab In sortedTabList
+                    Dim tabItem As New RadComboBoxItem(_tab.IndentedTabName, _tab.FullUrl)
+                    tabItem.Enabled = Not _tab.DisableLink
+
+                    Items.Add(tabItem)
+                Next
 
                 Items.Insert(0, New Telerik.Web.UI.RadComboBoxItem("", ""))
             End If

@@ -191,6 +191,24 @@ Namespace DotNetNuke.Entities.Portals
                                                                                                 AddressOf GetPortalAliasLookupCallBack, True)
         End Function
 
+        Public Shared Function ValidateAlias(ByVal portalAlias As String, ByVal ischild As Boolean) As Boolean
+            Dim isValid As Boolean = True
+
+            Dim validChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-"
+            If Not ischild Then
+                validChars += "./:"
+            End If
+
+            For Each c As Char In portalAlias.ToCharArray()
+                If Not validChars.Contains(c) Then
+                    isValid = False
+                    Exit For
+                End If
+            Next
+
+            Return isValid
+        End Function
+
 #End Region
 
 #Region "Public Methods"

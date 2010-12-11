@@ -24,12 +24,9 @@ Imports System.Xml
 Imports System.Xml.XPath
 
 Imports DotNetNuke.Application
-Imports DotNetNuke.Entities.Modules
-Imports DotNetNuke.Framework.Providers
+Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Security.Membership
 Imports DotNetNuke.Services.Localization
-Imports DotNetNuke.Services.Mail
-Imports DotNetNuke.Entities.Host
 Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.Services.Install
@@ -341,30 +338,44 @@ Namespace DotNetNuke.Services.Install
 
             lstPermissions.Items.Clear()
 
+            Dim verifier As New FileSystemPermissionVerifier(Server.MapPath("~"))
+
             'FolderCreate
             Dim permissionItem As New ListItem()
-            If test Then permissionItem.Selected = VerifyFolderCreate()
+            If test Then
+                permissionItem.Selected = verifier.VerifyFolderCreate()
+                PermissionsValid = PermissionsValid AndAlso permissionItem.Selected
+            End If
             permissionItem.Enabled = False
             permissionItem.Text = LocalizeString("FolderCreate")
             lstPermissions.Items.Add(permissionItem)
 
             'FileCreate
             permissionItem = New ListItem()
-            If test Then permissionItem.Selected = VerifyFileCreate()
+            If test Then
+                permissionItem.Selected = verifier.VerifyFileCreate()
+                PermissionsValid = PermissionsValid AndAlso permissionItem.Selected
+            End If
             permissionItem.Enabled = False
             permissionItem.Text = LocalizeString("FileCreate")
             lstPermissions.Items.Add(permissionItem)
 
             'FileDelete
             permissionItem = New ListItem()
-            If test Then permissionItem.Selected = VerifyFileDelete()
+            If test Then
+                permissionItem.Selected = verifier.VerifyFileDelete()
+                PermissionsValid = PermissionsValid AndAlso permissionItem.Selected
+            End If
             permissionItem.Enabled = False
             permissionItem.Text = LocalizeString("FileDelete")
             lstPermissions.Items.Add(permissionItem)
 
             'FolderDelete
             permissionItem = New ListItem()
-            If test Then permissionItem.Selected = VerifyFolderDelete()
+            If test Then
+                permissionItem.Selected = verifier.VerifyFolderDelete()
+                PermissionsValid = PermissionsValid AndAlso permissionItem.Selected
+            End If
             permissionItem.Enabled = False
             permissionItem.Text = LocalizeString("FolderDelete")
             lstPermissions.Items.Add(permissionItem)
@@ -1324,122 +1335,6 @@ Namespace DotNetNuke.Services.Install
 
         End Sub
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' VerifyFileCreate checks whether a file can be created
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	02/09/2007 Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function VerifyFileCreate() As Boolean
-            Dim verifyPath As String = Server.MapPath("~/Verify/Verify.txt")
-            Dim verified As Boolean = VerifyFolderCreate()
-
-            If verified Then
-                'Attempt to create the File
-                Try
-                    If File.Exists(verifyPath) Then
-                        File.Delete(verifyPath)
-                    End If
-
-                    Dim fileStream As Stream = File.Create(verifyPath)
-                    fileStream.Close()
-
-                Catch ex As Exception
-                    verified = False
-                End Try
-            End If
-            If Not verified Then PermissionsValid = False
-
-            Return verified
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' VerifyFileDelete checks whether a file can be deleted
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	02/09/2007 Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function VerifyFileDelete() As Boolean
-            Dim verifyPath As String = Server.MapPath("~/Verify/Verify.txt")
-            Dim verified As Boolean = VerifyFileCreate()
-
-            If verified Then
-                'Attempt to delete the File
-                Try
-                    File.Delete(verifyPath)
-                Catch ex As Exception
-                    verified = False
-                End Try
-            End If
-            If Not verified Then PermissionsValid = False
-
-            Return verified
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' VerifyFolderCreate checks whether a folder can be created
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	01/23/2007 Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function VerifyFolderCreate() As Boolean
-            Dim verifyPath As String = Server.MapPath("~/Verify")
-            Dim verified As Boolean = True
-
-            'Attempt to create the Directory
-            Try
-                If Directory.Exists(verifyPath) Then
-                    Directory.Delete(verifyPath, True)
-                End If
-
-                Directory.CreateDirectory(verifyPath)
-            Catch ex As Exception
-                verified = False
-            End Try
-            If Not verified Then PermissionsValid = False
-
-            Return verified
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' VerifyFolderDelete checks whether a folder can be deleted
-        ''' </summary>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	01/23/2007 Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Private Function VerifyFolderDelete() As Boolean
-            Dim verifyPath As String = Server.MapPath("~/Verify")
-            Dim verified As Boolean = VerifyFolderCreate()
-
-            If verified Then
-                'Attempt to delete the Directory
-                Try
-                    Directory.Delete(verifyPath)
-                Catch ex As Exception
-                    verified = False
-                End Try
-            End If
-            If Not verified Then PermissionsValid = False
-
-            Return verified
-        End Function
-
 #End Region
 
 #Region "Protected Methods"
@@ -1910,6 +1805,5 @@ Namespace DotNetNuke.Services.Install
 #End Region
 
     End Class
-
 End Namespace
 
