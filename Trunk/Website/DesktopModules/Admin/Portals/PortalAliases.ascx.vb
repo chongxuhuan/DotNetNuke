@@ -203,8 +203,8 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     editImage.Visible = Not (portalAlias.PortalAliasID = Me.PortalAlias.PortalAliasID)
                 End If
             ElseIf item.ItemType = ListItemType.EditItem Then
-                Dim optType As RadioButtonList = CType(item.Cells(1).FindControl("optType"), RadioButtonList)
-                optType.Visible = AddMode
+                Dim chkChild As CheckBox = CType(item.Cells(1).FindControl("chkChild"), CheckBox)
+                chkChild.Visible = AddMode
             End If
         End Sub
 
@@ -280,8 +280,8 @@ Namespace DotNetNuke.Modules.Admin.Portals
             Dim index As Integer = dgPortalAlias.EditItemIndex
 
             Dim portalAlias As PortalAliasInfo = CType(Aliases(index), PortalAliasInfo)
-            Dim ctlAlias As TextBox = CType(dgPortalAlias.Items(index).Cells(2).FindControl("txtHTTPAlias"), TextBox)
-            Dim optType As RadioButtonList = CType(dgPortalAlias.Items(index).Cells(1).FindControl("optType"), RadioButtonList)
+            Dim ctlAlias As TextBox = CType(dgPortalAlias.Items(index).Cells(1).FindControl("txtHTTPAlias"), TextBox)
+            Dim chkChild As CheckBox = CType(dgPortalAlias.Items(index).Cells(2).FindControl("chkChild"), CheckBox)
 
             Dim strAlias As String = ctlAlias.Text.Trim()
             If String.IsNullOrEmpty(strAlias) Then
@@ -294,7 +294,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     strAlias = strAlias.Remove(0, strAlias.IndexOf("\\") + 2)
                 End If
 
-                isChild = (optType IsNot Nothing AndAlso optType.SelectedValue = "C")
+                isChild = (chkChild IsNot Nothing AndAlso chkChild.Checked)
 
                 'Validate Alias
                 If Not PortalAliasController.ValidateAlias(strAlias, False) Then

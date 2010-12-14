@@ -362,15 +362,15 @@ Namespace DotNetNuke.UI.Skins
             _ContainerWrapperControl = New HtmlGenericControl("div")
             PaneControl.Controls.Add(_ContainerWrapperControl)
 
-            ' TO BE ADDED in 5.6.1: inject module classes (dnnUX team needs to standardize format for injected classes)
-            ' Dim classFormatString As String = "DNNModule DNNModuleName-{0} DNNModuleID-{1} DNNTabModuleID-{2}"
-            ' Dim sanitizedModuleName As String = Null.NullString
-            '
-            ' If (Not String.IsNullOrEmpty(objModule.DesktopModule.ModuleName)) Then
-            '   sanitizedModuleName = CreateValidClass(objModule.DesktopModule.ModuleName, False)
-            ' End If
-            '
-            ' _ContainerWrapperControl.Attributes.Item("class") = String.Format(classFormatString, sanitizedModuleName, objModule.ModuleID, objModule.TabModuleID)
+            'inject module classes
+            Dim classFormatString As String = "DnnModule DnnModule-{0} DnnModule-{1}"
+            Dim sanitizedModuleName As String = Null.NullString
+
+            If (Not String.IsNullOrEmpty(objModule.DesktopModule.ModuleName)) Then
+                sanitizedModuleName = CreateValidClass(objModule.DesktopModule.ModuleName, False)
+            End If
+
+            _ContainerWrapperControl.Attributes.Item("class") = String.Format(classFormatString, sanitizedModuleName, objModule.ModuleID)
 
             Try
                 If Not IsAdminControl() Then

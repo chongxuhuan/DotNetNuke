@@ -138,4 +138,7 @@
   <data name="ChildExists.Text" xml:space="preserve">
     <value>The Child Portal Name You Specified Already Exists. Please Choose A Different Child Portal Name.&lt;br/&gt;</value>
   </data>
+  <data name="createChild.Text" xml:space="preserve">
+    <value>Create child folder in website root?</value>
+  </data>
 </root>

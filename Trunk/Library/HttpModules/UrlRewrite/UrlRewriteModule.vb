@@ -475,6 +475,8 @@ Namespace DotNetNuke.HttpModules
                         End If
                     End If
                 End If
+            Catch tex As Threading.ThreadAbortException
+                'Do nothing if Thread is being aborted - there are two response.redirect calls in the Try block
             Catch ex As Exception
                 ''500 Error - Redirect to ErrorPage
                 strURL = "~/ErrorPage.aspx?status=500&error=" & Server.UrlEncode(ex.Message)
