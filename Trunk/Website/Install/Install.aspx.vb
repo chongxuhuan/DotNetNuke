@@ -367,7 +367,12 @@ Namespace DotNetNuke.Services.Install
                     Case Globals.UpgradeStatus.Install
                         InstallApplication()
                         'Force an App Restart
-                        Config.Touch()
+                        Try
+                            Config.Touch()
+                        Catch ex As UnauthorizedAccessException
+                            'App cannot be restarted when no write permission on web.config
+                            'swallow error
+                        End Try
                     Case Globals.UpgradeStatus.Upgrade
                         UpgradeApplication()
                         'Force an App Restart

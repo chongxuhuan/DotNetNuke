@@ -1,4 +1,5 @@
-/*DotNetNuke® - http://www.dotnetnuke.com
+ï»¿'
+' DotNetNukeÂ® - http://www.dotnetnuke.com
 ' Copyright (c) 2002-2010
 ' by DotNetNuke Corporation
 '
@@ -15,19 +16,12 @@
 ' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ' DEALINGS IN THE SOFTWARE.
-*/
+'
 
-using System.Reflection;
-using System;
+Namespace DotNetNuke.UI.Modules
+    Public Interface IModuleHostFactory
 
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyCopyright("DotNetNuke® is copyright 2002-2008 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyInformationalVersion("5.6.1.0")]
-[assembly: AssemblyFileVersion("5.6.1.0")]
-[assembly: AssemblyVersion("5.6.1.0")]
-[assembly: AssemblyTitle("DotNetNuke.Services.Syndication")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyDelaySign(false)]
-[assembly: CLSCompliant(true)]
+        Function CreateModuleHost() As IModuleHost
+
+    End Interface
+End Namespace

@@ -920,11 +920,16 @@ Namespace DotNetNuke.Common.Utilities
 
             'create root folder
             Dim folderPath As String = ""
+            Dim relativePath As String = ""
             folderPath = System.IO.Path.Combine(Path.Combine(ParentFolderName, "Users"), RootFolder)
             dinfoNew = New System.IO.DirectoryInfo(folderPath)
             If Not dinfoNew.Exists Then
                 dinfoNew.Create()
-                AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+            End If
+            Dim folderController As New DotNetNuke.Services.FileSystem.FolderController
+            relativePath = folderPath.Substring(ParentFolderName.Length).Replace("\", "/")
+            If folderController.GetFolder(PortalId, relativePath, True) Is Nothing Then
+                AddFolder(PortalId, relativePath, StorageLocation)
             End If
 
             'create two-digit subfolder
@@ -932,7 +937,10 @@ Namespace DotNetNuke.Common.Utilities
             dinfoNew = New System.IO.DirectoryInfo(folderPath)
             If Not dinfoNew.Exists Then
                 dinfoNew.Create()
-                AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+            End If
+            relativePath = folderPath.Substring(ParentFolderName.Length).Replace("\", "/")
+            If folderController.GetFolder(PortalId, relativePath, True) Is Nothing Then
+                AddFolder(PortalId, relativePath, StorageLocation)
             End If
 
             'create folder from UserID
@@ -940,7 +948,10 @@ Namespace DotNetNuke.Common.Utilities
             dinfoNew = New System.IO.DirectoryInfo(folderPath)
             If Not dinfoNew.Exists Then
                 dinfoNew.Create()
-                Dim folderID As Integer = AddFolder(PortalId, folderPath.Substring(ParentFolderName.Length).Replace("\", "/"), StorageLocation)
+            End If
+            relativePath = folderPath.Substring(ParentFolderName.Length).Replace("\", "/")
+            If folderController.GetFolder(PortalId, relativePath, True) Is Nothing Then
+                Dim folderID As Integer = AddFolder(PortalId, relativePath, StorageLocation)
 
                 Dim folder As FolderInfo = New FolderController().GetFolderInfo(PortalId, folderID)
                 For Each permission As PermissionInfo In PermissionController.GetPermissionsByFolder()
@@ -962,7 +973,6 @@ Namespace DotNetNuke.Common.Utilities
                 Next
 
                 FolderPermissionController.SaveFolderPermissions(folder)
-
             End If
         End Sub
 

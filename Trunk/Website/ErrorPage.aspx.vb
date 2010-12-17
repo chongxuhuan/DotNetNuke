@@ -57,7 +57,9 @@ Namespace DotNetNuke.Services.Exceptions
                 strLocalizedMessage = strLocalizedMessage.Replace("src=""images/403-3.gif""", "src=""" & ResolveUrl("~/images/403-3.gif") & """")
                 ErrorPlaceHolder.Controls.Add(New LiteralControl(String.Format(strLocalizedMessage, strErrorMessage)))
             End If
-            Response.StatusCode = status
+            If IsNumeric(status) Then
+                Response.StatusCode = status
+            End If
         End Sub
 
         <Obsolete("Function obsoleted in 5.6.1 as no longer used in core - version identification can be useful to potential hackers if used incorrectly")> _

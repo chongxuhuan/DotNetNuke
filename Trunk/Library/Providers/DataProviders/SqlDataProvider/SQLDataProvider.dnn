@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="SqlDataProvider" type="Provider" version="05.06.00">
+    <package name="SqlDataProvider" type="Provider" version="05.06.01">
       <friendlyName>DotNetNuke SQL Data Provider</friendlyName>
       <description>DotNetNuke SQL Server Data Provider Project provides a Microsoft SQL Server based data service.</description>
       <dependencies/>
@@ -18,7 +18,6 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.SqlDataProvider.dll</name>
-              <version>05.06.00</version>
             </assembly>
             <assembly>
               <path>bin</path>

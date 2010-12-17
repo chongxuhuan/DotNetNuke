@@ -177,8 +177,8 @@ Namespace DotNetNuke.Services.OutputCache
         Protected Overridable Sub RemoveItemFromCache(ByVal itemId As Integer)
         End Sub
 
-        Public Overridable Sub StopFiltering(ByVal itemId As Integer, ByVal deleteData As Boolean)
-            If HasErrored Then Exit Sub
+        Public Overridable Function StopFiltering(ByVal itemId As Integer, ByVal deleteData As Boolean) As Byte()
+            If HasErrored Then Return Nothing
 
             If (Not (CaptureStream) Is Nothing) Then
                 CaptureStream.Position = 0
@@ -191,7 +191,9 @@ Namespace DotNetNuke.Services.OutputCache
             If deleteData Then
                 RemoveItemFromCache(itemId)
             End If
-        End Sub
+
+            Return Nothing
+        End Function
 
     End Class
 End Namespace

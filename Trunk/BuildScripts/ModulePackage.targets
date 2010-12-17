@@ -50,6 +50,15 @@
     <CreateItem Include="Views\Controls\*.ascx">
       <Output TaskParameter="Include" ItemName="MyViewControls" />
     </CreateItem>
+    <CreateItem Include="RazorHelpers\*.cshtml">
+      <Output TaskParameter="Include" ItemName="MyRazorHelpers" />
+    </CreateItem>
+    <CreateItem Include="Scripts\*.cshtml">
+      <Output TaskParameter="Include" ItemName="MyScripts" />
+    </CreateItem>
+    <CreateItem Include="Scripts\Shared\*.cshtml">
+      <Output TaskParameter="Include" ItemName="MySharedScripts" />
+    </CreateItem>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="..\..\Website\bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
@@ -68,6 +77,9 @@
     <Copy SourceFiles="@(MyKeys)" DestinationFolder="$(MSBuildProjectDirectory)\Package\keys" />
     <Copy SourceFiles="@(MyViews)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(MyViewControls)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Controls" />
+    <Copy SourceFiles="@(MyScripts)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Scripts" />
+    <Copy SourceFiles="@(MySharedScripts)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Scripts\Shared" />
+    <Copy SourceFiles="@(MyRazorHelpers)" DestinationFolder="$(MSBuildProjectDirectory)\Package\RazorHelpers" />
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
     </CreateItem>

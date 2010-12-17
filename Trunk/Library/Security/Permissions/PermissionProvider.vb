@@ -325,6 +325,47 @@ Namespace DotNetNuke.Security.Permissions
             If Not folder.FolderPermissions Is Nothing Then
                 Dim folderPermissions As FolderPermissionCollection = GetFolderPermissionsCollectionByFolder(folder.PortalID, folder.FolderPath)
 
+                'Ensure that if role/user has been given a permission that is not Read/Browse then they also need Read/Browse
+                Dim permController As New PermissionController()
+                Dim permArray As ArrayList = permController.GetPermissionByCodeAndKey("SYSTEM_FOLDER", "READ")
+                Dim readPerm As PermissionInfo = Nothing
+                If permArray.Count = 1 Then
+                    readPerm = TryCast(permArray(0), PermissionInfo)
+                End If
+
+                Dim browsePerm As PermissionInfo = Nothing
+                permArray = permController.GetPermissionByCodeAndKey("SYSTEM_FOLDER", "BROWSE")
+                If permArray.Count = 1 Then
+                    browsePerm = TryCast(permArray(0), PermissionInfo)
+                End If
+
+                Dim additionalPermissions As New FolderPermissionCollection
+                For Each folderPermission As FolderPermissionInfo In folder.FolderPermissions
+                    If folderPermission.PermissionKey <> "BROWSE" AndAlso folderPermission.PermissionKey <> "READ" Then
+                        'Try to add Read permission
+                        Dim newFolderPerm As New FolderPermissionInfo(readPerm)
+                        newFolderPerm.FolderID = folderPermission.FolderID
+                        newFolderPerm.RoleID = folderPermission.RoleID
+                        newFolderPerm.UserID = folderPermission.UserID
+                        newFolderPerm.AllowAccess = folderPermission.AllowAccess
+
+                        additionalPermissions.Add(newFolderPerm)
+
+                        'Try to add Browse permission
+                        newFolderPerm = New FolderPermissionInfo(browsePerm)
+                        newFolderPerm.FolderID = folderPermission.FolderID
+                        newFolderPerm.RoleID = folderPermission.RoleID
+                        newFolderPerm.UserID = folderPermission.UserID
+                        newFolderPerm.AllowAccess = folderPermission.AllowAccess
+
+                        additionalPermissions.Add(newFolderPerm)
+                    End If
+                Next
+
+                For Each folderPermission As FolderPermissionInfo In additionalPermissions
+                    folder.FolderPermissions.Add(folderPermission, True)
+                Next
+
                 If Not folderPermissions.CompareTo(folder.FolderPermissions) Then
                     dataProvider.DeleteFolderPermissionsByFolderPath(folder.PortalID, folder.FolderPath)
 

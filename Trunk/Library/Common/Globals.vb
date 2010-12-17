@@ -213,7 +213,7 @@ Namespace DotNetNuke.Common
         ''' <summary>
         ''' RegEx for validation of an email address
         ''' </summary>
-        Public Const glbEmailRegEx As String = "^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$"
+        Public Const glbEmailRegEx As String = "^[a-zA-Z0-9_%\-+](?:\.*[a-zA-Z0-9_%\-+])*@[a-zA-Z0-9_\-](?:\.*[a-zA-Z0-9_\-])*\.[a-zA-Z]{2,9}$"
         ''' <summary>
         ''' Code to be used for inserting javascript in a page
         ''' </summary>

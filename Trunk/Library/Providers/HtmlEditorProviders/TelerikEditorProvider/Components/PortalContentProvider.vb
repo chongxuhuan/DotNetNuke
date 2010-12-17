@@ -531,16 +531,18 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                     End If
 
                     Dim showFiles As ArrayList = New ArrayList()
+
                     Dim folderPermissions As Widgets.PathPermissions = Widgets.PathPermissions.Read
 
-                    If (DNNValidator.CanViewFilesInFolder(dnnFolder)) Then
-                        If (DNNValidator.CanAddToFolder(dnnFolder)) Then
-                            folderPermissions = folderPermissions Or Widgets.PathPermissions.Upload
-                        End If
+                    If (DNNValidator.CanAddToFolder(dnnFolder)) Then
+                        folderPermissions = folderPermissions Or Widgets.PathPermissions.Upload
+                    End If
 
-                        If (DNNValidator.CanDeleteFolder(dnnFolder)) Then
-                            folderPermissions = folderPermissions Or Widgets.PathPermissions.Delete
-                        End If
+                    If (DNNValidator.CanDeleteFolder(dnnFolder)) Then
+                        folderPermissions = folderPermissions Or Widgets.PathPermissions.Delete
+                    End If
+
+                    If (DNNValidator.CanViewFilesInFolder(dnnFolder)) Then
 
                         If (loadFiles) Then
                             Dim dnnFiles As IDictionary(Of String, FileSystem.FileInfo) = GetDNNFiles(dnnFolder.FolderID)

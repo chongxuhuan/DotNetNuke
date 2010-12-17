@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DotNetNuke.UI.Containers.Container">
+    <Position X="6" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="ModuleControl" Type="DotNetNuke.UI.Modules.IModuleControl">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.235" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="ModuleConfiguration" Type="DotNetNuke.Entities.Modules.ModuleInfo">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="1.058" Y="0.081" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="ModuleHost" Type="DotNetNuke.UI.Modules.ModuleHost">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.098" Y="0.716" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>CAQAACCQAABIgAABAAAwAAImAAACACQIAABEAAQgAAA=</HashCode>
+      <FileName>UI\Containers\Container.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ModuleControl" />
+      <Property Name="ModuleConfiguration" />
+      <Property Name="ModuleHost" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DotNetNuke.UI.Modules.ModuleInstanceContext">
+    <Position X="12.5" Y="3" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Configuration" Type="DotNetNuke.Entities.Modules.ModuleInfo">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.1" Y="0.31" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>IAAAACAAIAAAAAAgwIAQIBQAAIgAJAACiIEAAgARACE=</HashCode>
+      <FileName>UI\Modules\ModuleInstanceContext.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Actions" />
+      <Property Name="Configuration" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DotNetNuke.Entities.Modules.ModuleInfo">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>vuWjdAWFdcro4ZLEg2CZCCYiGAqIfngPUagwkUIJ2l4=</HashCode>
+      <FileName>Entities\Modules\ModuleInfo.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DotNetNuke.UI.Modules.ModuleHost">
+    <Position X="6.25" Y="4.75" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="ModuleControl" Type="DotNetNuke.UI.Modules.IModuleControl" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8" Y="5.626" />
+        <Point X="9.938" Y="5.626" />
+        <Point X="9.938" Y="4.43" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.12" Y="0.445" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAABAghAQAAAACAioAAAAAACAgAAMAgACAAY=</HashCode>
+      <FileName>UI\Modules\ModuleHost.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ModuleControl" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DotNetNuke.Entities.Modules.Actions.ModuleActionCollection">
+    <Position X="16" Y="3" Width="2" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Item(System.Int32)" Type="DotNetNuke.Entities.Modules.Actions.ModuleAction" FixedToPoint="true">
+      <Path>
+        <Point X="16.688" Y="4.041" />
+        <Point X="16.688" Y="5" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.034" Y="0.466" Height="0.182" Width="0.677" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AEIAAEAAAAABCAAAAAAABAAEAAAACAAAAAAAAAAUAAA=</HashCode>
+      <FileName>Entities\Modules\Actions\ModuleActionCollection.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Item(System.Int32)" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DotNetNuke.Entities.Modules.Actions.ModuleAction">
+    <Position X="16" Y="5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Actions" Type="DotNetNuke.Entities.Modules.Actions.ModuleActionCollection">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.786" Y="0.352" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgIMgGgEAAAABAQAAIAAQJDACICAAQAAEAACA=</HashCode>
+      <FileName>Entities\Modules\Actions\ModuleAction.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Actions" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="DotNetNuke.UI.Modules.IModuleControl">
+    <Position X="9.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAABAAAQAAAAAAAAEAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Modules\IModuleControl.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ModuleContext" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="DotNetNuke.UI.Containers.IActionControl">
+    <Position X="8.75" Y="6.75" Width="1.5" />
+    <AssociationLine Name="ModuleControl" Type="DotNetNuke.UI.Modules.IModuleControl">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.079" Y="1.497" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAABAAAAAAAAAAAQ=</HashCode>
+      <FileName>UI\Containers\IActionControl.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ModuleControl" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="DotNetNuke.UI.Skins.ISkinControl">
+    <Position X="10.75" Y="6.75" Width="1.5" />
+    <AssociationLine Name="ModuleControl" Type="DotNetNuke.UI.Modules.IModuleControl">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.213" Y="1.508" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Skins\ISkinControl.vb</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ModuleControl" />
+    </ShowAsAssociation>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -111,23 +111,27 @@ namespace DotNetNuke.Tests.Core.Collections
         }
 
         [Test]
-        [Ignore]
         public void DoubleWriteLockOnDifferentThreadsWaits()
         {
             using (ILockStrategy strategy = GetLockStrategy())
             {
+                Thread t;
                 using (var writeLock1 = strategy.GetWriteLock())
                 {
-                    var t = new Thread(GetWriteLock);
+                    t = new Thread(GetWriteLock);
                     t.Start(strategy);
 
-                    //sleep and let new thread run
-                    t.Join(TimeSpan.FromMilliseconds(1000));
+                    //sleep and let new thread run and block
+                    Thread.Sleep(50);
 
-                    //assert that read thread has terminated
-                    Console.WriteLine(t.ThreadState.ToString());
-                    Assert.IsTrue(t.ThreadState == ThreadState.WaitSleepJoin);
-                }
+                    //assert that write thread has not terminated
+                    Assert.IsTrue(t.IsAlive);
+                } //release write lock
+
+                Thread.Sleep(50);
+
+                //assert that getwritelock did complete once first writelock was released it's call
+                Assert.IsFalse(t.IsAlive);
             }
         }
 

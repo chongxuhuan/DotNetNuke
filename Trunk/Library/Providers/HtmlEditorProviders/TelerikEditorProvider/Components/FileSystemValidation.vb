@@ -488,23 +488,11 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                 Return False
             End If
 
-            If (Not FolderPermissionController.CanViewFolder(dnnFolder)) Then
-                Return False
-            End If
-
-            Return True
+            Return FolderPermissionController.CanViewFolder(dnnFolder)
         End Function
 
         Public Overridable Function CanAddToFolder(ByVal dnnFolder As FileSystem.FolderInfo) As Boolean
-            If (Not FolderPermissionController.CanAddFolder(dnnFolder)) Then
-                Return False
-            End If
-
-            'If (dnnFolder.StorageLocation <> FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem) Then
-            '    Return False
-            'End If
-
-            Return True
+            Return FolderPermissionController.CanAddFolder(dnnFolder)
         End Function
 
         Public Overridable Function CanDeleteFolder(ByVal dnnFolder As FileSystem.FolderInfo) As Boolean
