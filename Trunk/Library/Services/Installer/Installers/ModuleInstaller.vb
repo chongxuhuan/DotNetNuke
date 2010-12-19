@@ -62,7 +62,7 @@ Namespace DotNetNuke.Services.Installer.Installers
         ''' -----------------------------------------------------------------------------
         Public Overrides ReadOnly Property AllowableFiles() As String
             Get
-                Return "ashx, aspx, ascx, vb, cs, resx, css, js, resources, config, vbproj, csproj, sln, htm, html, xml, psd"
+                Return "cshtml, vbhtml, ashx, aspx, ascx, vb, cs, resx, css, js, resources, config, vbproj, csproj, sln, htm, html, xml, psd"
             End Get
         End Property
 

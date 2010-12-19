@@ -92,7 +92,8 @@ Namespace DotNetNuke.Entities.Users
                             result = DotNetNuke.Common.Globals.ResolveUrl("~/images/spacer.gif")
                         End If
                     Case "richtext"
-                        result = PropertyAccess.FormatString(HttpUtility.HtmlDecode(prop.PropertyValue), strFormat)
+                        Dim objSecurity As New PortalSecurity
+                        result = PropertyAccess.FormatString(objSecurity.InputFilter(HttpUtility.HtmlDecode(prop.PropertyValue), PortalSecurity.FilterFlag.NoScripting), strFormat)
                     Case Else
                         result = HttpUtility.HtmlEncode(PropertyAccess.FormatString(prop.PropertyValue, strFormat))
                 End Select

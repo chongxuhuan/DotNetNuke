@@ -198,6 +198,7 @@ Namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             'return class and remove any spaces that might appear in folder structure
             Return strClass.Replace(" ", "")
         End Function
+
         Private Function GetSourceFolder() As String
             Dim strFolder As String = Null.NullString
             If cboOwner.SelectedValue <> "" Then

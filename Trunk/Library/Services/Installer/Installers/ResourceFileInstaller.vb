@@ -315,7 +315,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                         Util.DeleteFile(filePath, PhysicalBasePath, Log)
                     End If
                 Catch ex As Exception
-                    Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                    Log.AddFailure(ex)
                 End Try
             Next
             If DeleteFiles = True Then

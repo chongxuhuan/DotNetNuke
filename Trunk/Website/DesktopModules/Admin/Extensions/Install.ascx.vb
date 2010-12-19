@@ -275,6 +275,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub CreateInstaller()
+            CheckSecurity()
             _Installer = New Installer(TempInstallFolder, ManifestFile, Request.MapPath("."), False)
 
             'The Installer is created automatically with a SecurityAccessLevel of Host
@@ -499,6 +500,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         End Sub
 
         Protected Sub wizInstall_ActiveStepChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles wizInstall.ActiveStepChanged
+            CheckSecurity()
             Select Case wizInstall.ActiveStepIndex
                 Case 1  'Warning Page
                     If ValidatePackage() Then

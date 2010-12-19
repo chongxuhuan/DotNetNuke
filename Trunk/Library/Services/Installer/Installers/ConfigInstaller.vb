@@ -128,7 +128,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Config.Save(TargetConfig, TargetFile.FullName)
                 Log.AddInfo(Util.CONFIG_Committed + " - " + TargetFile.Name)
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 
@@ -176,7 +176,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                     End If
                 End If
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 

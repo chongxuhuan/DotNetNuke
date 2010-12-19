@@ -39,27 +39,33 @@ Namespace DotNetNuke.Modules.Admin.SQL
 
 #End Region
 
+#Region "Private Methods"
+        Private Sub CheckSecurity()
+            ' Verify that the current user has access to access this page
+            If Not UserInfo.IsSuperUser Then
+                Response.Redirect(NavigateURL("Access Denied"), True)
+            End If
+        End Sub
+#End Region
+
 #Region "Event Handlers"
 
-		''' -----------------------------------------------------------------------------
-		''' <summary>
-		''' Page_Load runs when the control is loaded.
-		''' </summary>
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Page_Load runs when the control is loaded.
+        ''' </summary>
         ''' <remarks>
-		''' </remarks>
-		''' <history>
-		''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-		'''                       and localisation
-		'''     [VMasanas]  9/28/2004   Changed redirect to Access Denied
-		''' </history>
-		''' -----------------------------------------------------------------------------
-		Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-			Try
+        ''' </remarks>
+        ''' <history>
+        ''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        '''                       and localisation
+        '''     [VMasanas]  9/28/2004   Changed redirect to Access Denied
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            Try
 
-				' Verify that the current user has access to access this page
-				If Not UserInfo.IsSuperUser Then
-					Response.Redirect(NavigateURL("Access Denied"), True)
-                End If
+                CheckSecurity()
                 If Not Page.IsPostBack Then
                     Dim colConnections As ConnectionStringSettingsCollection = ConfigurationManager.ConnectionStrings
                     For Each objConnection As ConnectionStringSettings In colConnections
@@ -73,9 +79,9 @@ Namespace DotNetNuke.Modules.Admin.SQL
                 End If
 
             Catch exc As Exception    'Module failed to load
-				ProcessModuleLoadException(Me, exc)
-			End Try
-		End Sub
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
 
 		''' -----------------------------------------------------------------------------
 		''' <summary>
@@ -90,6 +96,7 @@ Namespace DotNetNuke.Modules.Admin.SQL
 		''' -----------------------------------------------------------------------------
 		Private Sub cmdExecute_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExecute.Click
             Try
+                CheckSecurity()
                 If txtQuery.Text <> "" Then
                     Dim connectionstring As String = Config.GetConnectionString(cboConnection.SelectedValue)
                     If chkRunAsScript.Checked Then
@@ -134,6 +141,7 @@ Namespace DotNetNuke.Modules.Admin.SQL
 #End Region
 
         Protected Sub cmdUpload_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdUpload.Click
+            CheckSecurity()
             If Page.IsPostBack Then
                 If uplSqlScript.PostedFile.FileName <> "" Then
                     Dim scriptFile As New System.IO.StreamReader(uplSqlScript.PostedFile.InputStream)

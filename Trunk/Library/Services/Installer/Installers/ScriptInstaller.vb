@@ -386,7 +386,7 @@ Namespace DotNetNuke.Services.Installer.Installers
 
                 Completed = bSuccess
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
 
             Log.AddInfo(Util.SQL_End)

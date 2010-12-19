@@ -137,6 +137,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         End Sub
 
         Private Sub CreatePackage()
+            CheckSecurity()
             Dim manifestName As String = txtManifestName.Text
             If String.IsNullOrEmpty(manifestName) Then
                 manifestName = txtArchiveName.Text.ToLower().Replace("zip", "dnn")
@@ -425,7 +426,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Protected Sub wizPackage_NextButtonClick(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.WizardNavigationEventArgs) Handles wizPackage.NextButtonClick
-
+            CheckSecurity()
             Select Case e.CurrentStepIndex
                 Case 3 ' Save the Manifest
                     Dim doc As XPathDocument = New XPathDocument(New StringReader(txtManifest.Text))

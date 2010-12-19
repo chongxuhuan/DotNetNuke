@@ -74,7 +74,7 @@ Namespace DotNetNuke.Services.Installer.Installers
 
                 Log.AddInfo(String.Format(Util.CLEANUP_ProcessComplete, Version.ToString(3)))
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
                 bSuccess = False
             End Try
             Return bSuccess
@@ -185,7 +185,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 End If
                 Completed = bSuccess
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 

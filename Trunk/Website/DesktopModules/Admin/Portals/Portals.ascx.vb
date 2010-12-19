@@ -188,6 +188,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' -----------------------------------------------------------------------------
         Private Sub DeleteExpiredPortals()
             Try
+                CheckSecurity()
                 PortalController.DeleteExpiredPortals(GetAbsoluteServerPath(Request))
 
                 BindData()
@@ -197,6 +198,12 @@ Namespace DotNetNuke.Modules.Admin.Portals
             End Try
         End Sub
 
+        Private Sub CheckSecurity()
+            ' Verify that the current user has access to access this page
+            If Not UserInfo.IsSuperUser Then
+                Response.Redirect(NavigateURL("Access Denied"), True)
+            End If
+        End Sub
 #End Region
 
 #Region "Protected Methods"
@@ -322,6 +329,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
             Next
         End Sub
 
+       
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Page_Load runs when the control is loaded.
@@ -339,10 +347,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 'Add an Action Event Handler to the Skin
                 AddActionHandler(AddressOf ModuleAction_Click)
 
-                ' Verify that the current user has access to access this page
-                If Not UserInfo.IsSuperUser Then
-                    Response.Redirect(NavigateURL("Access Denied"), True)
-                End If
+                CheckSecurity()
 
                 If Not Request.QueryString("CurrentPage") Is Nothing Then
                     CurrentPage = CType(Request.QueryString("CurrentPage"), Integer)
@@ -391,6 +396,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
         Private Sub grdPortals_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdPortals.DeleteCommand
             Try
+                CheckSecurity()
                 Dim objPortalController As New PortalController
                 Dim portal As PortalInfo = objPortalController.GetPortal(Int32.Parse(e.CommandArgument.ToString))
 

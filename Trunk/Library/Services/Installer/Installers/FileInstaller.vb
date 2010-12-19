@@ -241,7 +241,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                     Return False
                 End If
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
                 Return False
             End Try
         End Function
@@ -408,7 +408,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Next
                 Completed = True
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 
@@ -431,7 +431,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Next
                 Completed = bSuccess
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 
@@ -477,7 +477,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Next
                 Completed = True
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 
@@ -496,7 +496,7 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Next
                 Completed = True
             Catch ex As Exception
-                Log.AddFailure(Util.EXCEPTION + " - " + ex.Message)
+                Log.AddFailure(ex)
             End Try
         End Sub
 

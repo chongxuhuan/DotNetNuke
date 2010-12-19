@@ -190,6 +190,7 @@ Namespace DotNetNuke.Services.Installer.Log
         ''' -----------------------------------------------------------------------------
         Public Sub AddFailure(ByVal ex As Exception)
             AddFailure((Util.EXCEPTION + ex.ToString()))
+            LogException(ex)
         End Sub
 
         ''' -----------------------------------------------------------------------------

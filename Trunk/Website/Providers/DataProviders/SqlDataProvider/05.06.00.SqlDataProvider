@@ -617,7 +617,7 @@ AS
 					FROM   {databaseOwner}{objectQualifier}Users as U
 					WHERE U.IsDeleted = 0
 						AND NOT EXISTS (
-							select 1 from dbo.UserPortals UP where U.UserId = UP.UserId
+							select 1 from {databaseOwner}{objectQualifier}UserPortals UP where U.UserId = UP.UserId
 						)
 			end 
 		else 

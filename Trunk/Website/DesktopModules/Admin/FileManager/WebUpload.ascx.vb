@@ -297,6 +297,7 @@ Namespace DotNetNuke.Modules.Admin.FileManager
         ''' -----------------------------------------------------------------------------
         Private Sub cmdAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAdd.Click
             Try
+                CheckSecurity()
                 Dim strFileName As String
                 Dim strExtension As String = ""
                 Dim strMessage As String = ""

@@ -114,6 +114,89 @@ IF NOT EXISTS (SELECT value FROM {databaseOwner}{objectQualifier}Lists WHERE Lis
 	END
 GO
 
+/* update Install/UnInstall controls to correct control types*/
+/*************************************************************/
+UPDATE {databaseOwner}[{objectQualifier}ModuleControls] 
+	SET ControlType = 2
+	WHERE ModuleDefID is NULL AND
+	ControlKey = 'Install' AND
+	ControlSrc = 'DesktopModules/Admin/Extensions/Install.ascx'
+GO
+
+UPDATE {databaseOwner}[{objectQualifier}ModuleControls] 
+	SET ControlType = 3
+	WHERE ModuleDefID is NULL AND
+	ControlKey = 'UnInstall' AND
+	ControlSrc = 'DesktopModules/Admin/Extensions/UnInstall.ascx'
+GO
+
+/* DNN-14688 - Host > Superuser Accounts > Add New exception  */
+/**************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetAllUsers]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetAllUsers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetAllUsers]
+	@PortalID  int,
+	@PageIndex int,
+	@PageSize  int
+
+AS
+	BEGIN
+		-- Set the page bounds
+		DECLARE 
+			@PageLowerBound INT, 
+			@PageUpperBound INT, 
+			@RowsToReturn int
+
+		exec {databaseOwner}[{objectQualifier}CalculatePagingInformation] @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+		if @PortalID is null
+			begin
+				with [tmpUsers] as (
+					select U.*, row_number() over (order by U.UserName) AS rowid
+						FROM {databaseOwner}{objectQualifier}vw_Users u
+						where U.PortalID IS NULL AND U.IsDeleted = 0
+				)
+				select * from [tmpUsers]
+					where rowid > @PageLowerBound and rowid < @PageUpperBound
+					order by rowid
+			end 
+		else 
+			begin
+				with [tmpUsers] as (
+					select U.*, row_number() over (order by U.UserName) AS rowid
+						FROM {databaseOwner}{objectQualifier}vw_Users u
+						WHERE U.PortalID = @PortalID AND U.IsDeleted = 0
+				)
+				select * from [tmpUsers]
+					where rowid > @PageLowerBound and rowid < @PageUpperBound
+					order by rowid
+			end
+
+		set rowcount 0
+ 
+		if @PortalId is null
+			begin
+				SELECT COUNT(*) as TotalRecords
+					FROM   {databaseOwner}{objectQualifier}Users as U
+					WHERE U.IsDeleted = 0
+						AND NOT EXISTS (
+							select 1 from {databaseOwner}{objectQualifier}UserPortals UP where U.UserId = UP.UserId
+						)
+			end 
+		else 
+			begin
+				SELECT COUNT(*) as TotalRecords
+					FROM   {databaseOwner}{objectQualifier}Users U
+					INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP ON U.UserId = UP.UserId
+						WHERE UP.PortalId = @PortalId
+							AND UP.IsDeleted = 0
+			end
+	END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

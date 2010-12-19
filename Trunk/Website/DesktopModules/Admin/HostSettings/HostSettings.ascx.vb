@@ -376,6 +376,12 @@ Namespace DotNetNuke.Modules.Admin.Host
             End If
         End Sub
 
+        Private Sub CheckSecurity()
+            ' Verify that the current user has access to access this page
+            If Not UserInfo.IsSuperUser Then
+                Response.Redirect(NavigateURL("Access Denied"), True)
+            End If
+        End Sub
 #End Region
 
 #Region "Event Handlers"
@@ -394,10 +400,7 @@ Namespace DotNetNuke.Modules.Admin.Host
         ''' -----------------------------------------------------------------------------
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
-                ' Verify that the current user has access to access this page
-                If Not UserInfo.IsSuperUser Then
-                    Response.Redirect(NavigateURL("Access Denied"), True)
-                End If
+                CheckSecurity()
 
                 ' If this is the first visit to the page, populate the site data
                 If Page.IsPostBack = False Then
@@ -530,7 +533,7 @@ Namespace DotNetNuke.Modules.Admin.Host
         Private Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
             If Page.IsValid Then
                 Try
-
+                    CheckSecurity()
 
                     HostController.Instance.Update("CheckUpgrade", Convert.ToString(IIf(chkUpgrade.Checked, "Y", "N")), False)
                     HostController.Instance.Update("DisplayBetaNotice", Convert.ToString(IIf(chkBetaNotice.Checked, "Y", "N")), False)

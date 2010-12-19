@@ -86,6 +86,7 @@ Namespace DotNetNuke.Services.Installer
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub New(ByVal sitePath As String, ByVal mode As InstallMode)
+            _TempInstallFolder = DotNetNuke.Common.InstallMapPath + "Temp\" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName)
             _PhysicalSitePath = sitePath
             _InstallMode = mode
         End Sub
