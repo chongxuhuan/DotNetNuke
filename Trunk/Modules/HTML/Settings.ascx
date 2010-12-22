@@ -12,7 +12,7 @@
             <br /><br /><asp:Label ID="lblDescription" runat="server" CssClass="Normal"  />
 		</td>
 	</tr>
-	<tr id="rowApplyTo" runat="server" visible="false">
+	<tr id="rowApplyTo" runat="server" >
 	    <td class="SubHead" width="150" valign="top"><dnn:label id="plApplyTo" controlname="cboWorkflow" runat="server" Text="Apply" /></td>
 	    <td valign="top">
 	        <asp:RadioButtonList ID="rblApplyTo" runat="server" RepeatDirection="Horizontal" RepeatColumns="3">
