@@ -117,7 +117,7 @@ GO
 /* update Install/UnInstall controls to correct control types*/
 /*************************************************************/
 UPDATE {databaseOwner}[{objectQualifier}ModuleControls] 
-	SET ControlType = 2
+	SET ControlType = 3
 	WHERE ModuleDefID is NULL AND
 	ControlKey = 'Install' AND
 	ControlSrc = 'DesktopModules/Admin/Extensions/Install.ascx'

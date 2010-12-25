@@ -249,19 +249,7 @@ Namespace DotNetNuke.Modules.Admin.Extensions
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub CheckSecurity()
-
-            Dim allowAccess As Boolean = True
-            If PackageType Is Nothing Then
-                allowAccess = ModuleContext.PortalSettings.UserInfo.IsSuperUser
-            Else
-                Select Case PackageType.SecurityAccessLevel
-                    Case 3
-                        allowAccess = ModuleContext.PortalSettings.UserInfo.IsSuperUser
-                    Case 2
-                        allowAccess = ModuleContext.PortalSettings.UserInfo.IsInRole(ModuleContext.PortalSettings.AdministratorRoleName)
-                End Select
-            End If
-            If Not allowAccess Then
+            If Not ModuleContext.PortalSettings.UserInfo.IsSuperUser Then
                 Response.Redirect(NavigateURL("Access Denied"), True)
             End If
         End Sub
