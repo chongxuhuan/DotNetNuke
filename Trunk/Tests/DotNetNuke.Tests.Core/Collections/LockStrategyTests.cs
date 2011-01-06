@@ -23,12 +23,12 @@ using System.Collections.Generic;
 using System.Threading;
 using DotNetNuke.Collections;
 using MbUnit.Framework;
+using ThreadState = System.Threading.ThreadState;
 
 namespace DotNetNuke.Tests.Core.Collections
 {
     public abstract class LockStrategyTests
     {
-
         internal abstract ILockStrategy GetLockStrategy();
 
         [Test]
@@ -240,6 +240,47 @@ namespace DotNetNuke.Tests.Core.Collections
             }
         }
 
+        [Test]
+        public void TimeSpanTimedWriteLockThrows()
+        {
+            using(var strategy = GetLockStrategy())
+            {
+                var lockHolder = new WriteLockHolder(strategy);
+                lockHolder.EstablishLock();
+
+                try
+                {
+                    strategy.GetWriteLock(TimeSpan.FromMilliseconds(50));
+                }
+                catch (ApplicationException)
+                {
+                    Assert.IsTrue(true);
+                }
+
+                lockHolder.ReleaseLock();
+            }
+        }
+
+        [Test]
+        public void TimeSpanTimedReadLockThrows()
+        {
+            using (var strategy = GetLockStrategy())
+            {
+                var lockHolder = new WriteLockHolder(strategy);
+                lockHolder.EstablishLock();
+
+                try
+                {
+                    strategy.GetReadLock(TimeSpan.FromMilliseconds(50));
+                }
+                catch (ApplicationException) //todo change to a namespace specific exception
+                {
+                    Assert.IsTrue(true);
+                }
+
+                lockHolder.ReleaseLock();
+            }
+        }
 
         protected virtual IEnumerable<Action<ILockStrategy>> GetObjectDisposedExceptionMethods()
         {
@@ -268,6 +309,66 @@ namespace DotNetNuke.Tests.Core.Collections
             using (var writeLock = strategy.GetWriteLock())
             {
                 //do nothing
+            }
+        }
+
+        private class WriteLockHolder
+        {
+            //this could be IDisposable and then it would work as
+            //  using(var lockHolder as new WriteLockHolder)
+            //  {
+            //    do stuff here
+            //  }
+            private volatile bool _releaseWriteLock;
+            private volatile bool _holdingWriteLock;
+            private readonly ILockStrategy _strategy;
+
+            public WriteLockHolder(ILockStrategy strategy)
+            {
+                _strategy = strategy;
+            }
+
+            /// <summary>
+            /// Start a new thread and hold a write lock on that thread
+            /// </summary>
+            public void EstablishLock()
+            {
+                _releaseWriteLock = false;
+                var t = new Thread(HoldWriteLock);
+                t.Start(_strategy);
+
+                do
+                {
+                    Thread.Sleep(10);
+                } while (!_holdingWriteLock);
+            }
+
+            /// <summary>
+            /// Release the write lock that was established by EstablishLock
+            /// </summary>
+            public void ReleaseLock()
+            {
+                _releaseWriteLock = true;
+
+                do
+                {
+                    Thread.Sleep(10);
+                } while (_holdingWriteLock);
+            }
+
+            private void HoldWriteLock(object obj)
+            {
+                var strategy = (ILockStrategy)obj;
+                using (var writeLock = strategy.GetWriteLock())
+                {
+                    _holdingWriteLock = true;
+                    while (!_releaseWriteLock)
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+
+                _holdingWriteLock = false;
             }
         }
 
