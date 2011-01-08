@@ -211,6 +211,17 @@ Namespace DotNetNuke.Common.Utilities
             Return intValue
         End Function
 
+        Public Shared Function GetAttributeValueAsLong(ByVal nav As XPathNavigator, ByVal AttributeName As String, ByVal DefaultValue As Long) As Long
+            Dim intValue As Long = DefaultValue
+
+            Dim strValue As String = GetAttributeValue(nav, AttributeName)
+            If Not String.IsNullOrEmpty(strValue) Then
+                intValue = Convert.ToInt64(strValue)
+            End If
+
+            Return intValue
+        End Function
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets the value of a node

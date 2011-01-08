@@ -560,7 +560,7 @@
           <modules>
             <module>
               <moduleID>354</moduleID>
-              <title>DotNetNuke® Enterprise Edition</title>
+              <title>DotNetNuke® Community Edition</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
               <header />
