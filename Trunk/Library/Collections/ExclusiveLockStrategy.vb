@@ -22,7 +22,7 @@ Imports System.Threading
 
 Namespace DotNetNuke.Collections
 
-    Friend Class ExclusiveLockStrategy
+    Public Class ExclusiveLockStrategy
         Implements ILockStrategy
 
         Private _lock As New Object

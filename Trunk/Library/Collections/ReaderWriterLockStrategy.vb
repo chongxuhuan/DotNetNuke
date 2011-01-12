@@ -22,11 +22,19 @@ Imports System.Threading
 
 Namespace DotNetNuke.Collections
 
-    Friend Class ReaderWriterLockStrategy
+    Public Class ReaderWriterLockStrategy
         Implements IDisposable
         Implements ILockStrategy
 
-        Private _lock As New ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion)
+        Private _lock As ReaderWriterLockSlim
+
+        Public Sub New()
+            Me.New(LockRecursionPolicy.NoRecursion)
+        End Sub
+
+        Public Sub New(ByVal recursionPolicy As LockRecursionPolicy)
+            _lock = New ReaderWriterLockSlim(recursionPolicy)
+        End Sub
 
         Public Function GetReadLock() As ISharedCollectionLock Implements ILockStrategy.GetReadLock
             Return GetReadLock(TimeSpan.FromMilliseconds(-1))
