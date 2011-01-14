@@ -1386,7 +1386,6 @@ Namespace DotNetNuke.Entities.Modules
         ''' <history>
         '''    [sleupold]   2007-09-24   commented
         '''    [vnguyen]    2010-05-10   Modified: Added update tabmodule version guid
-        '''    [sleupold]   2010-12-09   Fixed .AllModule updates 
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub UpdateModule(ByVal objModule As ModuleInfo)
@@ -1457,18 +1456,18 @@ Namespace DotNetNuke.Entities.Modules
                         Dim objTab As TabInfo = tabPair.Value
                         For Each modulePair As KeyValuePair(Of Integer, ModuleInfo) In GetTabModules(objTab.TabID)
                             Dim objTargetModule As ModuleInfo = modulePair.Value
-                            With objTargetModule
-                                .VersionGuid = Guid.NewGuid
-                                .LocalizedVersionGuid = Guid.NewGuid
-                                dataProvider.UpdateTabModule(.TabModuleID, .TabID, .ModuleID, .ModuleTitle, .Header, _
-                                       .Footer, .ModuleOrder, .PaneName, .CacheTime, .CacheMethod, _
-                                       objModule.Alignment, objModule.Color, objModule.Border, objModule.IconFile, _
-                                       objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, _
-                                       objModule.DisplayPrint, objModule.DisplaySyndicate, _
-                                       .IsWebSlice, .WebSliceTitle, .WebSliceExpiryDate, .WebSliceTTL, _
-                                       .VersionGuid, .DefaultLanguageGuid, .LocalizedVersionGuid, .CultureCode, _
-                                       UserController.GetCurrentUserInfo.UserID)
-                            End With
+                            objTargetModule.VersionGuid = Guid.NewGuid
+                            objTargetModule.LocalizedVersionGuid = Guid.NewGuid
+
+                            dataProvider.UpdateTabModule(objTargetModule.TabModuleID, objTargetModule.TabID, objTargetModule.ModuleID, _
+                                                         objTargetModule.ModuleTitle, objTargetModule.Header, objTargetModule.Footer, _
+                                                            objTargetModule.ModuleOrder, objTargetModule.PaneName, objTargetModule.CacheTime, _
+                                                            objModule.CacheMethod, objModule.Alignment, objModule.Color, objModule.Border, _
+                                                            objModule.IconFile, objModule.Visibility, objModule.ContainerSrc, objModule.DisplayTitle, _
+                                                            objModule.DisplayPrint, objModule.DisplaySyndicate, objModule.IsWebSlice, _
+                                                            objModule.WebSliceTitle, objModule.WebSliceExpiryDate, objModule.WebSliceTTL, _
+                                                            objModule.VersionGuid, objModule.DefaultLanguageGuid, objModule.LocalizedVersionGuid, _
+                                                            objModule.CultureCode, UserController.GetCurrentUserInfo.UserID)
                         Next
                     Next
                 End If

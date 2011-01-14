@@ -51,29 +51,13 @@ Namespace DotNetNuke.Collections
         End Property
 
         Public Function GetReadLock() As ISharedCollectionLock
-            Return GetReadLock(TimeSpan.FromMilliseconds(-1))
-        End Function
-
-        Public Function GetReadLock(ByVal timeOut As TimeSpan) As ISharedCollectionLock
             EnsureNotDisposed()
-            Return _lockController.GetReadLock(timeOut)
-        End Function
-
-        Public Function GetReadLock(ByVal millisecondTimeout As Integer) As ISharedCollectionLock
-            Return GetReadLock(TimeSpan.FromMilliseconds(millisecondTimeout))
+            Return _lockController.GetReadLock()
         End Function
 
         Public Function GetWriteLock() As ISharedCollectionLock
-            Return GetWriteLock(TimeSpan.FromMilliseconds(-1))
-        End Function
-
-        Public Function GetWriteLock(ByVal timeOut As TimeSpan) As ISharedCollectionLock
             EnsureNotDisposed()
-            Return _lockController.GetWriteLock(timeOut)
-        End Function
-
-        Public Function GetWriteLock(ByVal millisecondTimeout As Integer) As ISharedCollectionLock
-            Return GetWriteLock(TimeSpan.FromMilliseconds(millisecondTimeout))
+            Return _lockController.GetWriteLock()
         End Function
 
         Private Sub EnsureReadAccess()

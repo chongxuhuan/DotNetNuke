@@ -617,6 +617,7 @@
                                 <td>
                                     <asp:DropDownList ID="cboCompression" runat="server" Style="width: 200px" CssClass="NormalTextBox">
                                         <asp:ListItem resourcekey="NoCompression" Value="0">No Compression</asp:ListItem>
+                                        <asp:ListItem resourcekey="Deflate" Value="2">Deflate Compression</asp:ListItem>
                                         <asp:ListItem resourcekey="GZip" Value="1">GZip Compression</asp:ListItem>
                                     </asp:DropDownList>
                                 </td>

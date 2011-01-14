@@ -18,9 +18,15 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 Imports System
+Imports System.Collections
+Imports System.Configuration
+Imports System.Diagnostics
 Imports System.IO
+Imports System.Reflection
 Imports System.Web.Configuration
 Imports System.Xml
+Imports DotNetNuke.Common
+
 Imports DotNetNuke.Framework.Providers
 Imports System.Xml.XPath
 
@@ -164,23 +170,6 @@ Namespace DotNetNuke.Common.Utilities
             End If
 
             Return connectionString
-        End Function
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Returns the maximum file size allowed to be uploaded to the application
-        ''' </summary>
-        ''' <returns>Size in bytes</returns>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Function GetMaxUploadSize() As Long
-            Dim configNav = Load()
-            Dim httpNode = configNav.SelectSingleNode("configuration//system.web//httpRuntime").CreateNavigator()
-            ''httpNode.Attributes("maxRequestLength")
-            ''Return 0
-
-            Dim result = XmlUtils.GetAttributeValueAsLong(httpNode, "maxRequestLength", 0)
-
-            Return result
         End Function
 
         ''' -----------------------------------------------------------------------------

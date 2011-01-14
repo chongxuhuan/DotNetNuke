@@ -22,7 +22,7 @@ Imports System.Threading
 
 Namespace DotNetNuke.Collections
 
-    Public Class ExclusiveLockStrategy
+    Friend Class ExclusiveLockStrategy
         Implements ILockStrategy
 
         Private _lock As New Object
@@ -30,33 +30,22 @@ Namespace DotNetNuke.Collections
         Private _isDisposed As Boolean = False
 
         Public Function GetReadLock() As ISharedCollectionLock Implements ILockStrategy.GetReadLock
-            Return GetLock(TimeSpan.FromMilliseconds(-1))
-        End Function
-
-        Public Function GetReadLock(ByVal timeout As TimeSpan) As ISharedCollectionLock Implements ILockStrategy.GetReadLock
-            Return GetLock(timeout)
+            Return GetLock()
         End Function
 
         Public Function GetWriteLock() As ISharedCollectionLock Implements ILockStrategy.GetWriteLock
-            Return GetLock(TimeSpan.FromMilliseconds(-1))
+            Return GetLock()
         End Function
 
-        Public Function GetWriteLock(ByVal timeout As TimeSpan) As ISharedCollectionLock Implements ILockStrategy.GetWriteLock
-            Return GetLock(timeout)
-        End Function
-
-        Private Function GetLock(ByVal timeout As TimeSpan) As ISharedCollectionLock
+        Private Function GetLock() As ISharedCollectionLock
             EnsureNotDisposed()
             If IsThreadLocked() Then
                 Throw New LockRecursionException()
             End If
 
-            If Monitor.TryEnter(_lock, timeout) Then
-                _lockedThread = Thread.CurrentThread
-                Return New MonitorLock(Me)
-            Else
-                Throw New ApplicationException("ExclusiveLockStrategy.GetLock timed out")
-            End If
+            Monitor.Enter(_lock)
+            _lockedThread = Thread.CurrentThread
+            Return New MonitorLock(Me)
         End Function
 
         Public ReadOnly Property ThreadCanRead As Boolean Implements ILockStrategy.ThreadCanRead

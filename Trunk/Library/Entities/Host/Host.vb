@@ -421,27 +421,9 @@ Namespace DotNetNuke.Entities.Host
         ''' 	[cnurse]	01/28/2008   Created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        <Obsolete("Replaced in DotNetNuke 6.0 by AllowedExtentions")> _
         Public Shared ReadOnly Property FileExtensions() As String
             Get
                 Return HostController.Instance.GetString("FileExtensions")
-            End Get
-        End Property
-
-
-        ''' <summary>
-        ''' Gets the allowed file extensions.
-        ''' </summary>
-        ''' <value>The allowed extensions.</value>
-        Public Shared ReadOnly Property AllowedExtensions() As List(Of String)
-            Get
-                Dim extentions = HostController.Instance.GetString("FileExtensions").ToLowerInvariant().Split(","c)
-                Dim result As New List(Of String)
-                For Each item As String In extentions
-                    result.Add("." & item)
-                Next
-
-                Return result
             End Get
         End Property
 

@@ -22,44 +22,22 @@ Imports System.Threading
 
 Namespace DotNetNuke.Collections
 
-    Public Class ReaderWriterLockStrategy
+    Friend Class ReaderWriterLockStrategy
         Implements IDisposable
         Implements ILockStrategy
 
-        Private _lock As ReaderWriterLockSlim
-
-        Public Sub New()
-            Me.New(LockRecursionPolicy.NoRecursion)
-        End Sub
-
-        Public Sub New(ByVal recursionPolicy As LockRecursionPolicy)
-            _lock = New ReaderWriterLockSlim(recursionPolicy)
-        End Sub
+        Private _lock As New ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion)
 
         Public Function GetReadLock() As ISharedCollectionLock Implements ILockStrategy.GetReadLock
-            Return GetReadLock(TimeSpan.FromMilliseconds(-1))
-        End Function
-
-        Public Function GetReadLock(ByVal timeout As TimeSpan) As ISharedCollectionLock Implements ILockStrategy.GetReadLock
             EnsureNotDisposed()
-            If _lock.TryEnterReadLock(timeout) Then
-                Return New ReaderWriterSlimLock(_lock)
-            Else
-                Throw New ApplicationException("ReaderWriterLockStrategy.GetReadLock timed out")
-            End If
+            _lock.EnterReadLock()
+            Return New ReaderWriterSlimLock(_lock)
         End Function
 
         Public Function GetWriteLock() As ISharedCollectionLock Implements ILockStrategy.GetWriteLock
-            Return GetWriteLock(TimeSpan.FromMilliseconds(-1))
-        End Function
-
-        Public Function GetWriteLock(ByVal timeout As TimeSpan) As ISharedCollectionLock Implements ILockStrategy.GetWriteLock
             EnsureNotDisposed()
-            If _lock.TryEnterWriteLock(timeout) Then
-                Return New ReaderWriterSlimLock(_lock)
-            Else
-                Throw New ApplicationException("ReaderWriterLockStrategy.GetWriteLock timed out")
-            End If
+            _lock.EnterWriteLock()
+            Return New ReaderWriterSlimLock(_lock)
         End Function
 
         Public ReadOnly Property ThreadCanRead() As Boolean Implements ILockStrategy.ThreadCanRead

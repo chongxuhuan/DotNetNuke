@@ -19,12 +19,9 @@
 '
 
 Imports System
-Imports System.IO
-Imports NLog.Config
 Imports DotNetNuke.ComponentModel
 Imports DotNetNuke.Common.Utilities
 Imports System.Web
-Imports NLog
 
 
 Namespace DotNetNuke.Common
@@ -63,11 +60,6 @@ Namespace DotNetNuke.Common
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub Application_Start(ByVal Sender As Object, ByVal E As EventArgs)
-
-            
-            LogManager.Configuration = New XmlLoggingConfiguration(Server.MapPath("~") & "\log.config", False)
-            LogManager.GetCurrentClassLogger().Info("Starting DNN")
-
             If Config.GetSetting("ServerName") = "" Then
                 ServerName = Server.MachineName
             Else
@@ -115,7 +107,7 @@ Namespace DotNetNuke.Common
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub Application_End(ByVal Sender As Object, ByVal E As EventArgs)
-            LogManager.GetCurrentClassLogger().Info("Shutting Down DNN")
+
             ' log APPLICATION_END event
             Initialize.LogEnd()
 

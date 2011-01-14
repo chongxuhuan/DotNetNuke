@@ -29,7 +29,7 @@
     <OutputType>Library</OutputType>
     <OptionCompare>Binary</OptionCompare>
     <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>Off</OptionStrict>
+    <OptionStrict>On</OptionStrict>
     <RootNamespace>
     </RootNamespace>
     <StartupObject>
@@ -73,10 +73,10 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>full</DebugType>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
@@ -96,14 +96,11 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <DebugType>pdbonly</DebugType>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetNuke.WebControls, Version=2.0.107.0, Culture=neutral, processorArchitecture=MSIL">
