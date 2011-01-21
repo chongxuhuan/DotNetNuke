@@ -181,20 +181,5 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 ProcessSchedulerException(exc)
             End Try
         End Sub
-
-        Public Sub RunSingleTask(ByVal s As ScheduleItem)
-            numberOfProcessesInQueue += 1
-            numberOfProcesses += 1
-
-            Dim obj As New ScheduleHistoryItem(s)
-
-            Try
-                Run(obj)
-                Thread.Sleep(1000)
-            Catch exc As Exception
-                ProcessSchedulerException(exc)
-            End Try
-        End Sub
-
     End Class
 End Namespace

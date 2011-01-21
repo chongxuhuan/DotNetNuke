@@ -1351,7 +1351,6 @@ Namespace DotNetNuke.Services.Upgrade
                     Dim userTab As TabInfo = tabController.GetTabByName(tabName, objPortal.PortalID)
                     If userTab Is Nothing Then
                         userTab = tabController.DeserializeTab(userTabNode, Nothing, objPortal.PortalID, PortalTemplateModuleAction.Merge)
-                        tabController.DeserializePanes(userTabNode.SelectSingleNode("panes"), userTab.PortalID, userTab.TabID, PortalTemplateModuleAction.Ignore, New Hashtable)
                     End If
 
                     'Update SiteSettings to point to the new page
@@ -1558,6 +1557,16 @@ Namespace DotNetNuke.Services.Upgrade
             Dim moduleControl As ModuleControlInfo = ModuleControlController.GetModuleControlsByModuleDefinitionID(languageModule.ModuleDefID)("LanguageSettings")
             moduleControl.ControlKey = "Settings"
             ModuleControlController.UpdateModuleControl(moduleControl)
+
+        End Sub
+
+        Private Shared Sub UpgradeToVersion_562()
+            'Add new Photo Profile field to Host
+            Dim objListController As New ListController
+            Dim dataTypes As ListEntryInfoCollection = objListController.GetListEntryInfoCollection("DataType")
+
+            Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
+            ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, UserVisibilityMode.AllUsers, dataTypes)
 
         End Sub
 
@@ -2195,7 +2204,6 @@ Namespace DotNetNuke.Services.Upgrade
                 Dim strPassword As String = XmlUtils.GetNodeValue(node, "password")
                 Dim strEmail As String = XmlUtils.GetNodeValue(node, "email")
                 Dim strLocale As String = XmlUtils.GetNodeValue(node, "locale")
-                Dim timeZone As Integer = XmlUtils.GetNodeValueInt(node, "timezone")
 
                 objSuperUserInfo = New UserInfo
                 objSuperUserInfo.PortalID = -1
@@ -2211,7 +2219,7 @@ Namespace DotNetNuke.Services.Upgrade
                 objSuperUserInfo.Profile.FirstName = strFirstName
                 objSuperUserInfo.Profile.LastName = strLastName
                 objSuperUserInfo.Profile.PreferredLocale = strLocale
-                objSuperUserInfo.Profile.TimeZone = timeZone
+                objSuperUserInfo.Profile.PreferredTimeZone = TimeZoneInfo.Local
             End If
             Return objSuperUserInfo
         End Function
@@ -2888,6 +2896,8 @@ Namespace DotNetNuke.Services.Upgrade
                         UpgradeToVersion_550()
                     Case "5.6.0"
                         UpgradeToVersion_560()
+                    Case "5.6.2"
+                        UpgradeToVersion_562()
                 End Select
 
             Catch ex As Exception

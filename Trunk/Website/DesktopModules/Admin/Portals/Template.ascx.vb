@@ -54,8 +54,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <summary>
         ''' Serializes all Files
         ''' </summary>
-        ''' <param name="xmlTemplate">Reference to XmlDocument context</param>
-        ''' <param name="nodeFiles">Node to add the serialized objects</param>
         ''' <param name="objportal">Portal to serialize</param>
         ''' <param name="folderPath">The folder containing the files</param>
         ''' <remarks>
@@ -98,7 +96,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <summary>
         ''' Serializes all Folders including Permissions
         ''' </summary>
-        ''' <param name="xmlTemplate">Reference to XmlDocument context</param>
         ''' <param name="objportal">Portal to serialize</param>
         ''' <remarks>
         ''' The serialization uses the xml attributes defined in FolderInfo class.
@@ -135,7 +132,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <summary>
         ''' Serializes all Folder Permissions
         ''' </summary>
-        ''' <param name="xmlTemplate">Reference to XmlDocument context</param>
         ''' <param name="objportal">Portal to serialize</param>
         ''' <param name="folderPath">The folder containing the files</param>
         ''' <remarks>
@@ -168,8 +164,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <summary>
         ''' Serializes all Profile Definitions
         ''' </summary>
-        ''' <param name="xmlTemplate">Reference to XmlDocument context</param>
-        ''' <param name="nodeProfileDefinitions">Node to add the serialized objects</param>
         ''' <param name="objportal">Portal to serialize</param>
         ''' <remarks>
         ''' The serialization uses the xml attributes defined in ProfilePropertyDefinition class.
@@ -209,8 +203,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <summary>
         ''' Serializes all portal Tabs
         ''' </summary>
-        ''' <param name="xmlTemplate">Reference to XmlDocument context</param>
-        ''' <param name="nodeTabs">Node to add the serialized objects</param>
         ''' <param name="objportal">Portal to serialize</param>
         ''' <remarks>
         ''' Only portal tabs will be exported to the template, Admin tabs are not exported.
@@ -306,6 +298,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' <history>
         ''' 	[VMasanas]	23/09/2004	Created
         ''' 	[cnurse]	11/08/2004	Addition of files to template
+        '''  	[aprasad]	1/17/2011	New setting AutoAddPortalAlias
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdExport_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdExport.Click
@@ -346,7 +339,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 writer.WriteElementString("userregistration", objportal.UserRegistration.ToString())
                 writer.WriteElementString("banneradvertising", objportal.BannerAdvertising.ToString())
                 writer.WriteElementString("defaultlanguage", objportal.DefaultLanguage)
-                writer.WriteElementString("timezoneoffset", objportal.TimeZoneOffset.ToString())
 
                 Dim settingsDictionary As Dictionary(Of String, String) = PortalController.GetPortalSettingsDictionary(objportal.PortalID)
 
@@ -360,9 +352,13 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 settingsDictionary.TryGetValue("DefaultAdminContainer", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("containersrcadmin", setting)
                 settingsDictionary.TryGetValue("EnableSkinWidgets", setting)
-                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("enableskinwidgets", settingsDictionary("EnableSkinWidgets"))
-                settingsDictionary.TryGetValue("portalaliasmapping", setting)
-                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("portalaliasmapping", settingsDictionary("PortalAliasMapping"))
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("enableskinwidgets", setting)
+                settingsDictionary.TryGetValue("PortalAliasMapping", setting)
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("portalaliasmapping", setting)
+                settingsDictionary.TryGetValue("TimeZone", setting)
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("timezone", setting)
+                settingsDictionary.TryGetValue("AutoAddPortalAlias", setting)
+                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("autoaddportalalias", setting)
 
                 writer.WriteElementString("hostspace", objportal.HostSpace.ToString())
                 writer.WriteElementString("userquota", objportal.UserQuota.ToString())

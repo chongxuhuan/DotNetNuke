@@ -22,6 +22,8 @@ Imports System.Web
 Imports DotNetNuke.Entities.Portals
 
 Namespace DotNetNuke.Entities.Users
+
+    <Obsolete("Deprecated in DNN 5.6.2.")> _
     Public Class UserTime
 
         Public Sub New()

@@ -147,7 +147,7 @@ Namespace DotNetNuke.UI.Skins
         ''' -----------------------------------------------------------------------------
         Private Sub AddDefaultSkin()
             Dim strDefault As String = Services.Localization.Localization.GetString("Not_Specified") & "<br>"
-            strDefault += "<img src=""" & Common.Globals.ApplicationPath & "/images/spacer.gif"" width=""140"" height=""135"" border=""0"">"
+            strDefault += "<img src=""" & Common.Globals.ApplicationPath.Replace("\", "/") & "/images/spacer.gif"" width=""140"" height=""135"" border=""0"">"
             optSkin.Items.Insert(0, New ListItem(strDefault, ""))
         End Sub
 
@@ -168,9 +168,9 @@ Namespace DotNetNuke.UI.Skins
             Dim strImage As String = ""
 
             If File.Exists(strFile.Replace(".ascx", ".jpg")) Then
-                strImage += "<a href=""" & CreateThumbnail(strFile.Replace(".ascx", ".jpg")).Replace("thumbnail_", "") & """ target=""_new""><img src=""" & CreateThumbnail(strFile.Replace(".ascx", ".jpg")) & """ border=""1""></a>"
+                strImage += "<a href=""" & CreateThumbnail(strFile.Replace(".ascx", ".jpg")).Replace("thumbnail_", "").Replace("\", "/") & """ target=""_new""><img src=""" & CreateThumbnail(strFile.Replace(".ascx", ".jpg")).Replace("\", "/") & """ border=""1""></a>"
             Else
-                strImage += "<img src=""" & Common.Globals.ApplicationPath & "/images/thumbnail.jpg"" border=""1"">"
+                strImage += "<img src=""" & Common.Globals.ApplicationPath.Replace("\", "/") & "/images/thumbnail.jpg"" border=""1"">"
             End If
 
             optSkin.Items.Add(New ListItem(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)) & "<br>" & strImage, root & "/" & strFolder & "/" & Path.GetFileName(strFile)))

@@ -70,6 +70,7 @@ Namespace DotNetNuke.Entities.Users
         Private Const cPhoto As String = "Photo"
         Private Const cTimeZone As String = "TimeZone"
         Private Const cPreferredLocale As String = "PreferredLocale"
+        Private Const cPreferredTimeZone As String = "PreferredTimeZone"
 
 #End Region
 
@@ -304,6 +305,31 @@ Namespace DotNetNuke.Entities.Users
             End Set
         End Property
 
+        Public Property PreferredTimeZone() As TimeZoneInfo
+            Get
+                'First set to Server
+                Dim _TimeZone As TimeZoneInfo = TimeZoneInfo.Local
+
+                'Next check if there is a Portal Setting
+                Dim _PortalSettings As PortalSettings = PortalController.GetCurrentPortalSettings()
+                If _PortalSettings IsNot Nothing Then
+                    _TimeZone = _PortalSettings.TimeZone
+                End If
+
+                'Next check if there is a Property Setting
+                Dim _TimeZoneId As String = GetPropertyValue(cPreferredTimeZone)
+                If Not String.IsNullOrEmpty(_TimeZoneId) Then
+                    _TimeZone = TimeZoneInfo.FindSystemTimeZoneById(_TimeZoneId)
+                End If
+
+                'return timezone
+                Return _TimeZone
+            End Get
+            Set(ByVal Value As TimeZoneInfo)
+                SetProfileProperty(cPreferredTimeZone, Value.Id)
+            End Set
+        End Property
+
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets and sets the Collection of Profile Properties
@@ -370,28 +396,6 @@ Namespace DotNetNuke.Entities.Users
             End Get
             Set(ByVal Value As String)
                 SetProfileProperty(cTelephone, Value)
-            End Set
-        End Property
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Gets and sets the TimeZone
-        ''' </summary>
-        ''' <history>
-        '''     [cnurse]	02/10/2006	Documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Property TimeZone() As Integer
-            Get
-                Dim retValue As Int32 = Null.NullInteger
-                Dim propValue As String = GetPropertyValue(cTimeZone)
-                If Not propValue Is Nothing Then
-                    retValue = Integer.Parse(propValue)
-                End If
-                Return retValue
-            End Get
-            Set(ByVal Value As Integer)
-                SetProfileProperty(cTimeZone, Value.ToString)
             End Set
         End Property
 
@@ -547,7 +551,8 @@ Namespace DotNetNuke.Entities.Users
 
 #End Region
 
-#Region "Obsolete Methods"
+#Region "Obsolete"
+
         <Obsolete("Deprecated in DNN 5.1")> _
         <Browsable(False)> Public Property ObjectHydrated() As Boolean
             Get
@@ -555,6 +560,21 @@ Namespace DotNetNuke.Entities.Users
             End Get
             Set(ByVal Value As Boolean)
                 _ObjectHydrated = Value
+            End Set
+        End Property
+
+        <Obsolete("Deprecated in DNN 5.6.2. Replaced by PreferredTimeZone.")> _
+        <Browsable(False)> Public Property TimeZone() As Integer
+            Get
+                Dim retValue As Int32 = Null.NullInteger
+                Dim propValue As String = GetPropertyValue(cTimeZone)
+                If Not propValue Is Nothing Then
+                    retValue = Integer.Parse(propValue)
+                End If
+                Return retValue
+            End Get
+            Set(ByVal Value As Integer)
+                SetProfileProperty(cTimeZone, Value.ToString)
             End Set
         End Property
 

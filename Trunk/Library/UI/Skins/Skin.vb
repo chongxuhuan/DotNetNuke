@@ -311,7 +311,9 @@ Namespace DotNetNuke.UI.Skins
             If TabPermissionController.CanViewPage() Then
                 ' check portal expiry date
                 If Not CheckExpired() Then
-                    If (PortalSettings.ActiveTab.StartDate < Now AndAlso PortalSettings.ActiveTab.EndDate > Now) OrElse IsLayoutMode() Then
+                    If (PortalSettings.ActiveTab.StartDate < Now AndAlso PortalSettings.ActiveTab.EndDate > Now) _
+                                OrElse TabPermissionController.CanAdminPage() _
+                                OrElse IsLayoutMode() Then
                         ' dynamically populate the panes with modules
                         If PortalSettings.ActiveTab.Modules.Count > 0 Then
                             ' loop through each entry in the configuration system for this tab
@@ -319,7 +321,8 @@ Namespace DotNetNuke.UI.Skins
                                 ' if user is allowed to view module and module is not deleted
                                 If ModulePermissionController.CanViewModule(objModule) AndAlso objModule.IsDeleted = False Then
                                     ' if current date is within module display schedule or user is admin
-                                    If (objModule.StartDate < Now AndAlso objModule.EndDate > Now) OrElse IsLayoutMode() OrElse IsEditMode() Then
+                                    If (objModule.StartDate < Now AndAlso objModule.EndDate > Now) _
+                                                OrElse IsLayoutMode() OrElse IsEditMode() Then
                                         Dim pane As Pane = Nothing
                                         Dim bFound As Boolean = Panes.TryGetValue(objModule.PaneName.ToLowerInvariant, pane)
 

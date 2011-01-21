@@ -78,6 +78,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </summary>
         ''' <param name="activeLanguage"></param>
         ''' <remarks></remarks>
+        ''' <history>
+        ''' 	[aprasad]	1/17/2011	New setting AutoAddPortalAlias
+        ''' </history>
         Private Sub LoadPortal(ByVal activeLanguage As String)
             Dim objPortalController As New PortalController
             Dim objModules As New ModuleController
@@ -206,68 +209,55 @@ Namespace DotNetNuke.Modules.Admin.Portals
             txtUserId.Text = objPortal.ProcessorUserId
             txtPassword.Attributes.Add("value", objPortal.ProcessorPassword)
 
-            ' use sandbox?
-            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", intPortalId, "False"))
-            chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
+            lblHomeDirectory.Text = objPortal.HomeDirectory
 
-            ' return url after payment or on cancel
-            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", intPortalId, Null.NullString)
-            txtPayPalReturnURL.Text = strPayPalReturnURL
-            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", intPortalId, Null.NullString)
-            txtPayPalCancelURL.Text = strPayPalCancelURL
+            ''PortalSettings for portal being edited
+            Dim _PortalSettings As PortalSettings = New PortalSettings(objPortal)
 
             ' usability settings
-            chkInlineEditor.Checked = PortalSettings.InlineEditorEnabled
-            chkHideSystemFolders.Checked = PortalSettings.HideFoldersEnabled
+            chkInlineEditor.Checked = _PortalSettings.InlineEditorEnabled
+            chkHideSystemFolders.Checked = _PortalSettings.HideFoldersEnabled
 
-            If PortalSettings.DefaultControlPanelMode = Entities.Portals.PortalSettings.Mode.Edit Then
+            If _PortalSettings.DefaultControlPanelMode = Entities.Portals.PortalSettings.Mode.Edit Then
                 optControlPanelMode.Items.FindByValue("EDIT").Selected = True
             Else
                 optControlPanelMode.Items.FindByValue("VIEW").Selected = True
             End If
-            If PortalController.GetPortalSetting("ControlPanelVisibility", intPortalId, "MAX") = "MAX" Then
+
+            If _PortalSettings.DefaultControlPanelVisibility Then
                 optControlPanelVisibility.Items.FindByValue("MAX").Selected = True
             Else
                 optControlPanelVisibility.Items.FindByValue("MIN").Selected = True
             End If
 
-            Dim cPermission As ControlPanelPermission = ControlPanelPermission.ModuleEditor
-            Dim setting As String = Null.NullString
-            If PortalController.GetPortalSettingsDictionary(intPortalId).TryGetValue("ControlPanelSecurity", setting) Then
-                If setting.ToUpperInvariant = "TAB" Then
-                    cPermission = ControlPanelPermission.TabEditor
-                Else
-                    cPermission = ControlPanelPermission.ModuleEditor
-                End If
-            End If
-
-            If cPermission = PortalSettings.ControlPanelPermission.ModuleEditor Then
+            If _PortalSettings.ControlPanelSecurity = PortalSettings.ControlPanelPermission.ModuleEditor Then
                 optControlPanelSecurity.Items.FindByValue("MODULE").Selected = True
             Else
                 optControlPanelSecurity.Items.FindByValue("TAB").Selected = True
             End If
-            chkSSLEnabled.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnabled", intPortalId, False)
-            chkSSLEnforced.Checked = PortalController.GetPortalSettingAsBoolean("SSLEnforced", intPortalId, False)
-            txtSSLURL.Text = PortalController.GetPortalSetting("SSLURL", intPortalId, Null.NullString)
-            txtSTDURL.Text = PortalController.GetPortalSetting("STDURL", intPortalId, Null.NullString)
 
-            lblHomeDirectory.Text = objPortal.HomeDirectory
-
-            'Populate the timezone combobox (look up timezone translations based on currently set culture)
-            Services.Localization.Localization.LoadTimeZoneDropDownList(cboTimeZone, CType(Page, PageBase).PageCulture.Name, Convert.ToString(objPortal.TimeZoneOffset))
-
-            chkSkinWidgestEnabled.Checked = PortalController.GetPortalSettingAsBoolean("EnableSkinWidgets", intPortalId, True)
+            chkSSLEnabled.Checked = _PortalSettings.SSLEnabled
+            chkSSLEnforced.Checked = _PortalSettings.SSLEnforced
+            txtSSLURL.Text = _PortalSettings.SSLURL
+            txtSTDURL.Text = _PortalSettings.STDURL
 
             ctlPortalSkin.SkinRoot = SkinController.RootSkin
-            ctlPortalSkin.SkinSrc = PortalController.GetPortalSetting("DefaultPortalSkin", intPortalId, Host.DefaultPortalSkin)
+            ctlPortalSkin.SkinSrc = _PortalSettings.DefaultPortalSkin
             ctlPortalContainer.SkinRoot = SkinController.RootContainer
-            ctlPortalContainer.SkinSrc = PortalController.GetPortalSetting("DefaultPortalContainer", intPortalId, Host.DefaultPortalContainer)
+            ctlPortalContainer.SkinSrc = _PortalSettings.DefaultPortalContainer
             ctlAdminSkin.SkinRoot = SkinController.RootSkin
-            ctlAdminSkin.SkinSrc = PortalController.GetPortalSetting("DefaultAdminSkin", intPortalId, Host.DefaultAdminSkin)
+            ctlAdminSkin.SkinSrc = _PortalSettings.DefaultAdminSkin
             ctlAdminContainer.SkinRoot = SkinController.RootContainer
-            ctlAdminContainer.SkinSrc = PortalController.GetPortalSetting("DefaultAdminContainer", intPortalId, Host.DefaultAdminContainer)
+            ctlAdminContainer.SkinSrc = _PortalSettings.DefaultAdminContainer
 
-            Dim portalAliasMapping As String = PortalController.GetPortalSetting("PortalAliasMapping", intPortalId, "NONE")
+            timeZones.DataBind()
+            If timeZones.FindItemByValue(_PortalSettings.TimeZone.Id) IsNot Nothing Then
+                timeZones.FindItemByValue(_PortalSettings.TimeZone.Id).Selected = True
+            End If
+
+            chkSkinWidgestEnabled.Checked = _PortalSettings.EnableSkinWidgets
+
+            Dim portalAliasMapping As String = _PortalSettings.PortalAliasMappingMode.ToString().ToUpper()
             If portalAliasModeButtonList.Items.FindByValue(portalAliasMapping) IsNot Nothing Then
                 portalAliasModeButtonList.Items.FindByValue(portalAliasMapping).Selected = True
             Else
@@ -281,15 +271,33 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 defaultAliasDropDown.DataSource = arrPortalAliases
                 defaultAliasDropDown.DataBind()
 
-                Dim defaultAlias As String = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "")
+                Dim defaultAlias As String = _PortalSettings.DefaultPortalAlias
                 If defaultAliasDropDown.Items.FindByValue(defaultAlias) IsNot Nothing Then
                     defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = True
                 End If
             End If
 
+            'Auto Add Portal Alias
+            If New PortalController().GetPortals().Count > 1 Then
+                chkAutoAddPortalAlias.Enabled = False
+                chkAutoAddPortalAlias.Checked = False
+            Else
+                chkAutoAddPortalAlias.Checked = PortalSettings.AutoAddPortalAlias
+            End If
+
+
+            ' use sandbox?
+            Dim bolPayPalSandbox As Boolean = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", intPortalId, "False"))
+            chkPayPalSandboxEnabled.Checked = bolPayPalSandbox
+
+            ' return url after payment or on cancel
+            Dim strPayPalReturnURL As String = PortalController.GetPortalSetting("paypalsubscriptionreturn", intPortalId, Null.NullString)
+            txtPayPalReturnURL.Text = strPayPalReturnURL
+            Dim strPayPalCancelURL As String = PortalController.GetPortalSetting("paypalsubscriptioncancelreturn", intPortalId, Null.NullString)
+            txtPayPalCancelURL.Text = strPayPalCancelURL
+
             LoadStyleSheet()
         End Sub
-
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -405,11 +413,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Function IsSubscribed(ByVal PortalModuleDefinitionId As Integer) As Boolean
-            Try
-                Return Null.IsNull(PortalModuleDefinitionId) = False
-            Catch exc As Exception    'Module failed to load
-                ProcessModuleLoadException(Me, exc)
-            End Try
+            Return Null.IsNull(PortalModuleDefinitionId) = False
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -672,6 +676,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </remarks>
         ''' <history>
         ''' 	[cnurse]	9/9/2004	Modified
+        ''' 	[aprasad]	1/17/2011	New setting AutoAddPortalAlias
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
@@ -776,12 +781,14 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         IIf(cboProcessor.SelectedValue = "", "", cboProcessor.SelectedItem.Text).ToString, _
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
-                        intUserTabId, intSearchTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
+                        intUserTabId, intSearchTabId, objPortal.DefaultLanguage, _
                         lblHomeDirectory.Text, SelectedCultureCode)
 
                     If Not refreshPage Then
                         refreshPage = (PortalSettings.DefaultAdminSkin = ctlAdminSkin.SkinSrc) OrElse (PortalSettings.DefaultAdminContainer = ctlAdminContainer.SkinSrc)
                     End If
+
+                    PortalController.UpdatePortalSetting(intPortalId, "TimeZone", timeZones.SelectedValue, False)
 
                     PortalController.UpdatePortalSetting(intPortalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString, False)
                     PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminSkin", ctlAdminSkin.SkinSrc, False)
@@ -800,6 +807,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, False)
                     PortalController.UpdatePortalSetting(intPortalId, "PortalAliasMapping", portalAliasModeButtonList.SelectedValue, False)
                     PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalAlias", defaultAliasDropDown.SelectedValue, False)
+                    PortalController.UpdatePortalSetting(intPortalId, "AutoAddPortalAlias", chkAutoAddPortalAlias.Checked.ToString, False)
 
                     If IsSuperUser() Then
                         PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False)
@@ -810,7 +818,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
 
                     ' Redirect to this site to refresh only if admin skin changed or either of the images have changed
                     If refreshPage Then Response.Redirect(Request.RawUrl, True)
-                    Loadportal(SelectedCultureCode)
+                    LoadPortal(SelectedCultureCode)
                 Catch exc As Exception    'Module failed to load
                     ProcessModuleLoadException(Me, exc)
                 Finally

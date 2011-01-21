@@ -82,7 +82,7 @@ Namespace DotNetNuke.Modules.Admin.Authentication
                     ' set the control ID to the resource file name ( ie. controlname.ascx = controlname )
                     ' this is necessary for the Localization in PageBase
                     authLogoffControl.AuthenticationType = authSystem.AuthenticationType
-                    authLogoffControl.ID = Path.GetFileNameWithoutExtension(authSystem.LoginControlSrc) + "_" + authSystem.AuthenticationType
+                    authLogoffControl.ID = Path.GetFileNameWithoutExtension(authSystem.LogoffControlSrc) + "_" + authSystem.AuthenticationType
                     authLogoffControl.LocalResourceFile = authLogoffControl.TemplateSourceDirectory & "/" & Services.Localization.Localization.LocalResourceDirectory & "/" & Path.GetFileNameWithoutExtension(authSystem.LogoffControlSrc)
                     authLogoffControl.ModuleConfiguration = Me.ModuleConfiguration
 

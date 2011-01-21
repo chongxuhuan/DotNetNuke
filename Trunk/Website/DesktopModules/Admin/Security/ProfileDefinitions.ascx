@@ -18,7 +18,7 @@
 		<dnn:imagecommandcolumn CommandName="Delete" Text="Delete" ImageUrl="~/images/delete.gif" HeaderText="Del" KeyField="PropertyDefinitionID" />
 		<dnn:imagecommandcolumn commandname="MoveDown" imageurl="~/images/dn.gif" headertext="Dn" keyfield="PropertyDefinitionID" />
 		<dnn:imagecommandcolumn commandname="MoveUp" imageurl="~/images/up.gif" headertext="Up" keyfield="PropertyDefinitionID" />
-		<dnn:textcolumn DataField="PropertyName" HeaderText="Name" Width="100px" />
+		<dnn:textcolumn DataField="PropertyName" HeaderText="Name" Width="125px" />
 		<dnn:textcolumn DataField="PropertyCategory" HeaderText="Category" Width="100px" />
 		<asp:TemplateColumn HeaderText="DataType">
 			<ItemStyle Width="100px"></ItemStyle>

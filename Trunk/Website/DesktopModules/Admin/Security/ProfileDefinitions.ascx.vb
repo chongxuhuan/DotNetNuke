@@ -620,7 +620,7 @@ Namespace DotNetNuke.Modules.Admin.Users
                     Dim profProperty As ProfilePropertyDefinition = CType(item.DataItem, ProfilePropertyDefinition)
 
                     Select Case profProperty.PropertyName.ToLower
-                        Case "lastname", "firstname", "timezone", "preferredlocale"
+                        Case "lastname", "firstname", "preferredtimezone", "preferredlocale"
                             delImage.Visible = False
                         Case Else
                             delImage.Visible = True

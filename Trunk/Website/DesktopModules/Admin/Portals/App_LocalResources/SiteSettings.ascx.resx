@@ -598,7 +598,7 @@
     <value>Search Results Page:</value>
   </data>
   <data name="portalAliasModeButtonListLabel.Help" xml:space="preserve">
-    <value>This setting determines how the site responds to urls which are mapped to the site but are not currently in the list of aliases.  None - the new url is not mapped,  Canonical - the new url is automatically mapped but is handled as a Canaonical url, Redirect - the url is automatically mapped but is redirected to the default alias.</value>
+    <value>This setting determines how the site responds to urls which are defined as alias, but are not the default-alias. None - no additional action is taken,  Canonical - the alias url is handled as a Canaonical url, Redirect - redirected to default alias. </value>
   </data>
   <data name="portalAliasModeButtonListLabel.Text" xml:space="preserve">
     <value>PortalAlias Mapping Mode:</value>
@@ -608,6 +608,12 @@
   </data>
   <data name="Redirect.Text" xml:space="preserve">
     <value>Redirect</value>
+  </data>
+  <data name="plAutoAddPortalAlias.Help" xml:space="preserve">
+    <value>This setting determines how the site responds to urls which are mapped to the site but are not currently in the list of aliases. Setting is effective in single-portal configuration only. Select this option to automatically map new url.</value>
+  </data>
+  <data name="plAutoAddPortalAlias.Text" xml:space="preserve">
+    <value>Auto Add Portal Alias:</value>
   </data>
   <data name="defaultAliasDropDownLabel.Help" xml:space="preserve">
     <value>The default alias is used in conjunction with the Mapping Mode.  If the mode is set to Canonical then the default alias is used as the canonical alias for search engines.  If the mode is redirect then the default alias is used as the permanent redirect.</value>

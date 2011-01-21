@@ -77,7 +77,7 @@ Namespace DotNetNuke.Web.Mvp
 
 
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
-            PageViewHost.Register(Me, Context)
+            PageViewHost.Register(Me, Context, False)
 
             MyBase.OnInit(e)
 

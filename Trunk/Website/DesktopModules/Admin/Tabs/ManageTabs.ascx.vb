@@ -580,6 +580,9 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
         '''                       and localisation
         ''' 	[jlucarino]	2/26/2009	Added CreatedByUserID and LastModifiedByUserID
+        '''     [aprasad]	6/12/2010	Removed copying of PortalID to Tab.PortalId as it was causing problems during editing of 'host' page.
+        '''                             For 'host' page PortalId and ParentId should be both Null. Old code would set PortalId to 0 if ParentId is Null.                            
+        '''                             The PortalID is otherwise always set correctly (both for Add and Edit), and need not be set again during save.
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Function SaveTabData(ByVal strAction As String) As Integer
@@ -610,7 +613,6 @@ Namespace DotNetNuke.Modules.Admin.Tabs
                 Tab.ParentId = parentTab.TabID
                 Tab.Level = parentTab.Level + 1
             Else
-                Tab.PortalID = PortalId
                 Tab.ParentId = Null.NullInteger
                 Tab.Level = 0
             End If
@@ -1119,16 +1121,17 @@ Namespace DotNetNuke.Modules.Admin.Tabs
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' cmdCancel_Click runs when the Cancel Button is clicked
+        ''' cmdBack_Click runs when the Back Button is clicked
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
         ''' <history>
         ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
         '''                       and localisation
+        '''     [aprasad]	1/13/2011	Renamed Cancel to Back. DNN-14685
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub cmdCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdCancel.Click
+        Private Sub cmdBack_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdBack.Click
             Try
                 Dim strURL As String = NavigateURL()
 
@@ -1211,29 +1214,28 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         ''' <history>
         ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
         '''                       and localisation
+        '''     [aprasad]	1/13/2011	DNN-14685. Modified Redirect behavior after Save. Now redirects
+        '''                       to self (Request.RawUrl), unless return tab id is specified.
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal Sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
             Try
                 If Page.IsValid Then
-                    Dim intTabId As Integer = SaveTabData(strAction)
+                    SaveTabData(strAction)
 
-                    If intTabId <> Null.NullInteger Then
-                        'Get tab
-                        Dim strURL As String = NavigateURL(intTabId)
+                    Dim strURL As String = Request.RawUrl
 
-                        If Not Request.QueryString("returntabid") Is Nothing Then
-                            ' return to admin tab
-                            strURL = NavigateURL(Convert.ToInt32(Request.QueryString("returntabid").ToString))
-                        Else
-                            If ctlURL.Url <> "" Or chkDisableLink.Checked Then
-                                ' redirect to current tab if URL was specified ( add or copy )
-                                strURL = NavigateURL(TabId)
-                            End If
+                    If Not Request.QueryString("returntabid") Is Nothing Then
+                        ' return to admin tab
+                        strURL = NavigateURL(Convert.ToInt32(Request.QueryString("returntabid").ToString))
+                    Else
+                        If ctlURL.Url <> "" Or chkDisableLink.Checked Then
+                            ' redirect to current tab if URL was specified ( add or copy )
+                            strURL = NavigateURL(TabId)
                         End If
-
-                        Response.Redirect(strURL, True)
                     End If
+
+                    Response.Redirect(strURL, True)                
                 End If
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)

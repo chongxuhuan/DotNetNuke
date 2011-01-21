@@ -1,4 +1,25 @@
-﻿/* background color for the content part of the pages */
+﻿/* 
+ * Deprecated DNN CSS class names will remain available for some time
+ * before being  permanently removed. Removal will occur according to
+ * the  following process:
+ *
+ * 1. Removal will only occur with a major (x.y) release, never
+ *    with a maintenance (x.y.z) release.
+ * 2. Removal will not occur less than six months after the release
+ *    when it was deprecated.
+ * 3. Removal will not occur until after deprecation has been noted 
+ *    in at least two major releases.
+ *
+ *                                              |        |Planned |
+ *  Name                                        |Release |Removal |
+ *----------------------------------------------+--------+--------+
+ * Mod{NAME}C                                     5.6.2    6.2
+ *   {NAME} = sanitized version of the DesktopModule Name 
+ *   Used on <div> tag surrounding Module Content, inside container
+ *----------------------------------------------+--------+--------+
+ */
+ 
+/* background color for the content part of the pages */
 body{background-color:white;margin:0;font-family:Tahoma, Arial, Helvetica, sans-serif;}
 .ControlPanel, .PagingTable{width:100%;background-color:#fff;border:#036 1px solid;}
 .SkinObject{font-weight:bold;font-size:8.5pt;color:#036;text-decoration:none;}

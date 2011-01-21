@@ -31,7 +31,6 @@ Imports DotNetNuke.Entities.Host
 Imports System.Collections.Generic
 Imports DotNetNuke.Services.Cache
 
-
 Namespace DotNetNuke.Services.Localization
 
     ''' <summary>
@@ -121,15 +120,9 @@ Namespace DotNetNuke.Services.Localization
             End Get
         End Property
 
-        Public Shared ReadOnly Property SystemTimeZoneOffset() As Integer
+        Public Shared ReadOnly Property SystemTimeZone() As String
             Get
-                Return -480
-            End Get
-        End Property
-
-        Public Shared ReadOnly Property TimezonesFile() As String
-            Get
-                Return ApplicationResourceDirectory + "/TimeZones.xml"
+                Return "Pacific Standard Time"
             End Get
         End Property
 
@@ -1437,58 +1430,6 @@ Namespace DotNetNuke.Services.Localization
 
 #End Region
 
-        '' -----------------------------------------------------------------------------
-        '' <summary>
-        '' GetTimeZones gets a collection of Tme Zones in the relevant language
-        '' </summary>
-        '' <param name="language">Language</param>
-        ''	<returns>The TimeZones as a Name/Value Collection</returns>
-        '' <history>
-        '' 	[cnurse]	10/29/2004	Modified to exit gracefully if no relevant file
-        '' </history>
-        '' -----------------------------------------------------------------------------
-        Public Shared Function GetTimeZones(ByVal language As String) As NameValueCollection
-            language = language.ToLower
-            Dim cacheKey As String = "dotnetnuke-" + language + "-timezones"
-
-            Dim TranslationFile As String
-
-            If language = Services.Localization.Localization.SystemLocale.ToLower Then
-                TranslationFile = Services.Localization.Localization.TimezonesFile
-            Else
-                TranslationFile = Services.Localization.Localization.TimezonesFile.Replace(".xml", "." + language + ".xml")
-            End If
-
-            Dim timeZones As NameValueCollection = CType(DataCache.GetCache(cacheKey), NameValueCollection)
-
-            If timeZones Is Nothing Then
-                Dim filePath As String = HttpContext.Current.Server.MapPath(TranslationFile)
-                timeZones = New NameValueCollection
-                If File.Exists(filePath) = False Then
-                    Return timeZones
-                End If
-                Dim dp As New DNNCacheDependency(filePath)
-                Try
-                    Dim d As New XmlDocument
-                    d.Load(filePath)
-
-                    Dim n As XmlNode
-                    For Each n In d.SelectSingleNode("root").ChildNodes
-                        If n.NodeType <> XmlNodeType.Comment Then
-                            timeZones.Add(n.Attributes("name").Value, n.Attributes("key").Value)
-                        End If
-                    Next n
-                Catch ex As Exception
-
-                End Try
-                If Host.PerformanceSetting <> Common.Globals.PerformanceSettings.NoCaching Then
-                    DataCache.SetCache(cacheKey, timeZones, dp)
-                End If
-            End If
-
-            Return timeZones
-        End Function    'GetTimeZones
-
         ''' <summary>
         ''' <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
         ''' based on the languages defined in the supported locales file, for the current portal</para>
@@ -1596,44 +1537,6 @@ Namespace DotNetNuke.Services.Localization
                 End If
             End If
         End Sub    'LoadCultureDropDownList
-
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' LoadTimeZoneDropDownList loads a drop down list with the Timezones
-        ''' </summary>
-        ''' <param name="list">The list to load</param>
-        ''' <param name="language">Language</param>
-        ''' <param name="selectedValue">The selected Time Zone</param>
-        ''' <history>
-        ''' 	[cnurse]	10/29/2004	documented
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public Shared Sub LoadTimeZoneDropDownList(ByVal list As DropDownList, ByVal language As String, ByVal selectedValue As String)
-
-            Dim timeZones As NameValueCollection = GetTimeZones(language)
-            'If no Timezones defined get the System Locale Time Zones
-            If timeZones.Count = 0 Then
-                timeZones = GetTimeZones(Services.Localization.Localization.SystemLocale.ToLower)
-            End If
-            Dim i As Integer
-            For i = 0 To timeZones.Keys.Count - 1
-                list.Items.Add(New ListItem(timeZones.GetKey(i).ToString(), timeZones.Get(i).ToString()))
-            Next i
-
-            ' select the default item
-            If Not selectedValue Is Nothing Then
-                Dim item As ListItem = list.Items.FindByValue(selectedValue)
-                If item Is Nothing Then
-                    'Try system default
-                    item = list.Items.FindByValue(SystemTimeZoneOffset.ToString)
-                End If
-                If Not item Is Nothing Then
-                    list.SelectedIndex = -1
-                    item.Selected = True
-                End If
-            End If
-
-        End Sub    'LoadTimeZoneDropDownList
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
@@ -1916,6 +1819,49 @@ Namespace DotNetNuke.Services.Localization
             Return LocaleController.Instance().GetLocales(portalID)
         End Function
 
+        <Obsolete("Deprecated in DNN 5.6.2. Replaced by use of .NET TimeZoneInfo class")> _
+        Public Shared Function GetTimeZones(ByVal language As String) As NameValueCollection
+            language = language.ToLower
+            Dim cacheKey As String = "dotnetnuke-" + language + "-timezones"
+
+            Dim TranslationFile As String
+
+            If language = Services.Localization.Localization.SystemLocale.ToLower Then
+                TranslationFile = Services.Localization.Localization.TimezonesFile
+            Else
+                TranslationFile = Services.Localization.Localization.TimezonesFile.Replace(".xml", "." + language + ".xml")
+            End If
+
+            Dim timeZones As NameValueCollection = CType(DataCache.GetCache(cacheKey), NameValueCollection)
+
+            If timeZones Is Nothing Then
+                Dim filePath As String = HttpContext.Current.Server.MapPath(TranslationFile)
+                timeZones = New NameValueCollection
+                If File.Exists(filePath) = False Then
+                    Return timeZones
+                End If
+                Dim dp As New DNNCacheDependency(filePath)
+                Try
+                    Dim d As New XmlDocument
+                    d.Load(filePath)
+
+                    Dim n As XmlNode
+                    For Each n In d.SelectSingleNode("root").ChildNodes
+                        If n.NodeType <> XmlNodeType.Comment Then
+                            timeZones.Add(n.Attributes("name").Value, n.Attributes("key").Value)
+                        End If
+                    Next n
+                Catch ex As Exception
+
+                End Try
+                If Host.PerformanceSetting <> Common.Globals.PerformanceSettings.NoCaching Then
+                    DataCache.SetCache(cacheKey, timeZones, dp)
+                End If
+            End If
+
+            Return timeZones
+        End Function    'GetTimeZones
+
         <Obsolete("Deprecated in DNN 5.5.  Replcaed by LocaleController.IsEnabled()")> _
         Public Overloads Shared Function LocaleIsEnabled(ByVal locale As Locale) As Boolean
             Return LocaleIsEnabled(locale.Code)
@@ -1947,6 +1893,48 @@ Namespace DotNetNuke.Services.Localization
         <Obsolete("Deprecated in DNN 5.0. This does nothing now as the Admin Tabs are treated like any other tab.")> _
         Public Shared Sub LocalizePortalSettings()
         End Sub
+
+        <Obsolete("Deprecated in DNN 5.6.2. Replaced by new DnnTimeZoneComboBox control and use of .NET TimeZoneInfo class")> _
+        Public Shared Sub LoadTimeZoneDropDownList(ByVal list As DropDownList, ByVal language As String, ByVal selectedValue As String)
+
+            Dim timeZones As NameValueCollection = GetTimeZones(language)
+            'If no Timezones defined get the System Locale Time Zones
+            If timeZones.Count = 0 Then
+                timeZones = GetTimeZones(Services.Localization.Localization.SystemLocale.ToLower)
+            End If
+            Dim i As Integer
+            For i = 0 To timeZones.Keys.Count - 1
+                list.Items.Add(New ListItem(timeZones.GetKey(i).ToString(), timeZones.Get(i).ToString()))
+            Next i
+
+            ' select the default item
+            If Not selectedValue Is Nothing Then
+                Dim item As ListItem = list.Items.FindByValue(selectedValue)
+                If item Is Nothing Then
+                    'Try system default
+                    item = list.Items.FindByValue(SystemTimeZoneOffset.ToString)
+                End If
+                If Not item Is Nothing Then
+                    list.SelectedIndex = -1
+                    item.Selected = True
+                End If
+            End If
+
+        End Sub    'LoadTimeZoneDropDownList
+
+        <Obsolete("Deprecated in DNN 5.6.2. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")> _
+        Public Shared ReadOnly Property SystemTimeZoneOffset() As Integer
+            Get
+                Return -480
+            End Get
+        End Property
+
+        <Obsolete("Deprecated in DNN 5.6.2. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")> _
+        Public Shared ReadOnly Property TimezonesFile() As String
+            Get
+                Return ApplicationResourceDirectory + "/TimeZones.xml"
+            End Get
+        End Property
 
         <Obsolete("Deprecated in DNN 5.0. Replaced by Host.EnableBrowserLanguage OR PortalSettings.EnableBrowserLanguage")> _
         Public Shared Function UseBrowserLanguage() As Boolean

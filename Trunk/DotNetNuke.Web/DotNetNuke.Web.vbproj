@@ -151,6 +151,8 @@
     <Compile Include="UI\WebControls\DnnGrid.vb" />
     <Compile Include="UI\WebControls\DnnGridBoundColumn.vb" />
     <Compile Include="UI\WebControls\DnnGridHyperlinkColumn.vb" />
+    <Compile Include="UI\WebControls\DnnTimeZoneComboBox.vb" />
+    <Compile Include="UI\WebControls\DnnTimeZoneEditControl.vb" />
     <Compile Include="UI\WebControls\DnnTreeView.vb" />
     <Compile Include="UI\WebControls\DnnTextBox.vb" />
     <Compile Include="UI\WebControls\DnnListBox.vb" />

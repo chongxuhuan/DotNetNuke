@@ -37,6 +37,7 @@ Imports System.Xml.XPath
 Imports System.Threading
 Imports System.Text
 
+
 Namespace DotNetNuke.Entities.Portals
 
     Public Class PortalController
@@ -897,6 +898,7 @@ Namespace DotNetNuke.Entities.Portals
         ''' 	[VMasanas]	15/10/2004	Modified for new skin structure
         '''     [cnurse]    11/21/2004  Modified to use GetNodeValueDate for ExpiryDate
         '''     [VMasanas]  02/21/2005  Modified to not overwrite ExpiryDate if not present
+        '''     [aprasad]   01/17/2011  New setting AutoAddPortalAlias
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub ParsePortalSettings(ByVal nodeSettings As XmlNode, ByVal PortalId As Integer)
@@ -932,13 +934,12 @@ Namespace DotNetNuke.Entities.Portals
                 objPortal.SiteLogHistory = XmlUtils.GetNodeValueInt(nodeSettings, "siteloghistory")
             End If
             objPortal.DefaultLanguage = XmlUtils.GetNodeValue(nodeSettings, "defaultlanguage", "en-US")
-            objPortal.TimeZoneOffset = XmlUtils.GetNodeValueInt(nodeSettings, "timezoneoffset", -8)
 
             UpdatePortalInfo(objPortal.PortalID, objPortal.PortalName, objPortal.LogoFile, objPortal.FooterText, _
              objPortal.ExpiryDate, objPortal.UserRegistration, objPortal.BannerAdvertising, objPortal.Currency, objPortal.AdministratorId, objPortal.HostFee, _
              objPortal.HostSpace, objPortal.PageQuota, objPortal.UserQuota, objPortal.PaymentProcessor, objPortal.ProcessorUserId, objPortal.ProcessorPassword, objPortal.Description, _
              objPortal.KeyWords, objPortal.BackgroundFile, objPortal.SiteLogHistory, objPortal.SplashTabId, objPortal.HomeTabId, objPortal.LoginTabId, objPortal.RegisterTabId, objPortal.UserTabId, _
-             objPortal.SearchTabId, objPortal.DefaultLanguage, objPortal.TimeZoneOffset, objPortal.HomeDirectory)
+             objPortal.SearchTabId, objPortal.DefaultLanguage, objPortal.HomeDirectory)
 
             ' set portal skins and containers
             If XmlUtils.GetNodeValue(nodeSettings, "skinsrc", "") <> "" Then
@@ -962,6 +963,16 @@ Namespace DotNetNuke.Entities.Portals
             'Set Auto alias mapping
             If XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "CANONICALURL") <> "" Then
                 UpdatePortalSetting(PortalId, "PortalAliasMapping", XmlUtils.GetNodeValue(nodeSettings, "portalaliasmapping", "CANONICALURL").ToUpperInvariant())
+            End If
+
+            'Set Time Zone maping
+            If XmlUtils.GetNodeValue(nodeSettings, "timezone", Localization.SystemTimeZone) <> "" Then
+                UpdatePortalSetting(PortalId, "TimeZone", XmlUtils.GetNodeValue(nodeSettings, "timezone", Localization.SystemTimeZone))
+            End If
+
+            'Set Auto Add Portal Alias
+            If XmlUtils.GetNodeValue(nodeSettings, "autoaddportalalias", "") <> "" Then
+                UpdatePortalSetting(PortalId, "AutoAddPortalAlias", XmlUtils.GetNodeValue(nodeSettings, "autoaddportalalias", ""))
             End If
 
         End Sub
@@ -1394,7 +1405,7 @@ Namespace DotNetNuke.Entities.Portals
 
                     'Set up Child Portal
                     If strMessage = Null.NullString Then
-                            If IsChildPortal Then
+                        If IsChildPortal Then
                             strMessage = CreateChildPortalFolder(ChildPath)
                         End If
                     Else
@@ -1454,11 +1465,12 @@ Namespace DotNetNuke.Entities.Portals
                          objportal.ExpiryDate, objportal.UserRegistration, objportal.BannerAdvertising, objportal.Currency, objportal.AdministratorId, objportal.HostFee, _
                          objportal.HostSpace, objportal.PageQuota, objportal.UserQuota, objportal.PaymentProcessor, objportal.ProcessorUserId, objportal.ProcessorPassword, objportal.Description, _
                          objportal.KeyWords, objportal.BackgroundFile, objportal.SiteLogHistory, objportal.SplashTabId, objportal.HomeTabId, objportal.LoginTabId, objportal.RegisterTabId, objportal.UserTabId, _
-                         objportal.SearchTabId, objportal.DefaultLanguage, objportal.TimeZoneOffset, objportal.HomeDirectory)
+                         objportal.SearchTabId, objportal.DefaultLanguage, objportal.HomeDirectory)
 
                         'Update Administrators Locale/TimeZone
+                        Dim _PortalSettings As New PortalSettings(objportal)
                         objAdminUser.Profile.PreferredLocale = objportal.DefaultLanguage
-                        objAdminUser.Profile.TimeZone = objportal.TimeZoneOffset
+                        objAdminUser.Profile.PreferredTimeZone = _PortalSettings.TimeZone
 
                         'Save Admin User
                         UserController.UpdateUser(objportal.PortalID, objAdminUser)
@@ -1553,7 +1565,13 @@ Namespace DotNetNuke.Entities.Portals
         ''' -----------------------------------------------------------------------------
         Public Function GetPortal(ByVal PortalId As Integer) As PortalInfo
             Dim defaultLanguage As String = PortalController.GetActivePortalLanguage(PortalId)
-            Return GetPortal(PortalId, defaultLanguage)
+            Dim portal As PortalInfo = GetPortal(PortalId, defaultLanguage)
+            If portal Is Nothing Then
+                'Active language may not be valid, so fallback to default language
+                defaultLanguage = PortalController.GetPortalDefaultLanguage(PortalId)
+                portal = GetPortal(PortalId, defaultLanguage)
+            End If
+            Return portal
         End Function
 
         Public Function GetPortal(ByVal PortalId As Integer, ByVal CultureCode As String) As PortalInfo
@@ -1847,7 +1865,7 @@ Namespace DotNetNuke.Entities.Portals
                         ExpiryDate = Now()
                     End If
 
-                    DataProvider.Instance().UpdatePortalInfo(PortalId, Convert.ToString(dr("PortalName")), Convert.ToString(dr("LogoFile")), Convert.ToString(dr("FooterText")), DateAdd(DateInterval.Month, 1, ExpiryDate), Convert.ToInt32(dr("UserRegistration")), Convert.ToInt32(dr("BannerAdvertising")), Convert.ToString(dr("Currency")), Convert.ToInt32(dr("AdministratorId")), Convert.ToDouble(dr("HostFee")), Convert.ToDouble(dr("HostSpace")), Convert.ToInt32(dr("PageQuota")), Convert.ToInt32(dr("UserQuota")), Convert.ToString(dr("PaymentProcessor")), Convert.ToString(dr("ProcessorUserId")), Convert.ToString(dr("ProcessorPassword")), Convert.ToString(dr("Description")), Convert.ToString(dr("KeyWords")), Convert.ToString(dr("BackgroundFile")), Convert.ToInt32(dr("SiteLogHistory")), Convert.ToInt32(dr("SplashTabId")), Convert.ToInt32(dr("HomeTabId")), Convert.ToInt32(dr("LoginTabId")), Convert.ToInt32(dr("RegisterTabId")), Convert.ToInt32(dr("UserTabId")), Convert.ToInt32(dr("SearchTabId")), Convert.ToString(dr("DefaultLanguage")), Convert.ToInt32(dr("TimeZoneOffset")), Convert.ToString(dr("HomeDirectory")), UserController.GetCurrentUserInfo.UserID, CultureCode)
+                    DataProvider.Instance().UpdatePortalInfo(PortalId, Convert.ToString(dr("PortalName")), Convert.ToString(dr("LogoFile")), Convert.ToString(dr("FooterText")), DateAdd(DateInterval.Month, 1, ExpiryDate), Convert.ToInt32(dr("UserRegistration")), Convert.ToInt32(dr("BannerAdvertising")), Convert.ToString(dr("Currency")), Convert.ToInt32(dr("AdministratorId")), Convert.ToDouble(dr("HostFee")), Convert.ToDouble(dr("HostSpace")), Convert.ToInt32(dr("PageQuota")), Convert.ToInt32(dr("UserQuota")), Convert.ToString(dr("PaymentProcessor")), Convert.ToString(dr("ProcessorUserId")), Convert.ToString(dr("ProcessorPassword")), Convert.ToString(dr("Description")), Convert.ToString(dr("KeyWords")), Convert.ToString(dr("BackgroundFile")), Convert.ToInt32(dr("SiteLogHistory")), Convert.ToInt32(dr("SplashTabId")), Convert.ToInt32(dr("HomeTabId")), Convert.ToInt32(dr("LoginTabId")), Convert.ToInt32(dr("RegisterTabId")), Convert.ToInt32(dr("UserTabId")), Convert.ToInt32(dr("SearchTabId")), Convert.ToString(dr("DefaultLanguage")), Convert.ToString(dr("HomeDirectory")), UserController.GetCurrentUserInfo.UserID, CultureCode)
                     'as all other changes are maintained, only log the altered expirydate
                     Dim objEventLog As New Services.Log.EventLog.EventLogController
                     objEventLog.AddLog("ExpiryDate", ExpiryDate.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTALINFO_UPDATED)
@@ -1879,7 +1897,7 @@ Namespace DotNetNuke.Entities.Portals
              Portal.ProcessorPassword, Portal.Description, Portal.KeyWords, _
              Portal.BackgroundFile, Portal.SiteLogHistory, Portal.SplashTabId, Portal.HomeTabId, _
              Portal.LoginTabId, Portal.RegisterTabId, Portal.UserTabId, Portal.SearchTabId, Portal.DefaultLanguage, _
-             Portal.TimeZoneOffset, Portal.HomeDirectory, PortalController.GetActivePortalLanguage(Portal.PortalID))
+             Portal.HomeDirectory, PortalController.GetActivePortalLanguage(Portal.PortalID))
 
         End Sub
 
@@ -1909,18 +1927,13 @@ Namespace DotNetNuke.Entities.Portals
         ''' <param name="LoginTabId"></param>
         ''' <param name="UserTabId"></param>
         ''' <param name="DefaultLanguage"></param>
-        ''' <param name="TimeZoneOffset"></param>
-        ''' <remarks>
-        ''' </remarks>
-        ''' <history>
-        ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal SearchTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String)
-            UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, DefaultLanguage, TimeZoneOffset, HomeDirectory, PortalController.GetActivePortalLanguage(PortalId))
+        Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal SearchTabId As Integer, ByVal DefaultLanguage As String, ByVal HomeDirectory As String)
+            UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, DefaultLanguage, HomeDirectory, PortalController.GetActivePortalLanguage(PortalId))
         End Sub
 
-        Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal SearchTabId As Integer, ByVal DefaultLanguage As String, ByVal TimeZoneOffset As Integer, ByVal HomeDirectory As String, ByVal CultureCode As String)
-            DataProvider.Instance().UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, DefaultLanguage, TimeZoneOffset, HomeDirectory, UserController.GetCurrentUserInfo.UserID, CultureCode)
+        Public Sub UpdatePortalInfo(ByVal PortalId As Integer, ByVal PortalName As String, ByVal LogoFile As String, ByVal FooterText As String, ByVal ExpiryDate As Date, ByVal UserRegistration As Integer, ByVal BannerAdvertising As Integer, ByVal Currency As String, ByVal AdministratorId As Integer, ByVal HostFee As Double, ByVal HostSpace As Double, ByVal PageQuota As Integer, ByVal UserQuota As Integer, ByVal PaymentProcessor As String, ByVal ProcessorUserId As String, ByVal ProcessorPassword As String, ByVal Description As String, ByVal KeyWords As String, ByVal BackgroundFile As String, ByVal SiteLogHistory As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal SearchTabId As Integer, ByVal DefaultLanguage As String, ByVal HomeDirectory As String, ByVal CultureCode As String)
+            DataProvider.Instance().UpdatePortalInfo(PortalId, PortalName, LogoFile, FooterText, ExpiryDate, UserRegistration, BannerAdvertising, Currency, AdministratorId, HostFee, HostSpace, PageQuota, UserQuota, PaymentProcessor, ProcessorUserId, ProcessorPassword, Description, KeyWords, BackgroundFile, SiteLogHistory, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, DefaultLanguage, HomeDirectory, UserController.GetCurrentUserInfo.UserID, CultureCode)
 
             Dim objEventLog As New Services.Log.EventLog.EventLogController
             objEventLog.AddLog("PortalId", PortalId.ToString, PortalController.GetCurrentPortalSettings, UserController.GetCurrentUserInfo.UserID, Log.EventLog.EventLogController.EventLogType.PORTALINFO_UPDATED)
@@ -1969,9 +1982,9 @@ Namespace DotNetNuke.Entities.Portals
                  targetPortal.ProcessorPassword, targetPortal.Description, targetPortal.KeyWords, _
                  targetPortal.BackgroundFile, targetPortal.SiteLogHistory, targetPortal.SplashTabId, targetPortal.HomeTabId, _
                  targetPortal.LoginTabId, targetPortal.RegisterTabId, targetPortal.UserTabId, targetPortal.SearchTabId, targetPortal.DefaultLanguage, _
-                 targetPortal.TimeZoneOffset, targetPortal.HomeDirectory, targetPortal.CultureCode)
+                 targetPortal.HomeDirectory, targetPortal.CultureCode)
         End Sub
-        
+
 #End Region
 
 #Region "Obsolete Methods"

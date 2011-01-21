@@ -403,17 +403,12 @@ Namespace DotNetNuke.UI.Modules
             MyBase.OnPreRender(e)
 
             If Host.EnableCustomModuleCssClass Then
-                ' DEPRECATE IN 5.6.1
-                ' Need to figure out how/where to inject a related XHTML comment
                 Dim strModuleName As String = Me.ModuleControl.ModuleContext.Configuration.DesktopModule.ModuleName
                 If Not strModuleName = Nothing Then
                     strModuleName = CleanName(strModuleName)
                 End If
-                ' REMOVE IN 5.6.1: original class injection
-                Me.Attributes.Add("class", String.Format("Mod{0}C", strModuleName))
 
-                ' ADD IN 5.6.1: updated class injection (dnnUX team needs to finish hashing out details)
-                ' Me.Attributes.Add("class", String.Format("DNNModuleContent Mod{0}C Mod{0}C-isdeprecated", strModuleName))
+                Me.Attributes.Add("class", String.Format("DNNModuleContent Mod{0}C", strModuleName))
             End If
         End Sub
 

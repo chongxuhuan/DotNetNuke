@@ -479,6 +479,6 @@
 <p>
     <dnn:CommandButton ID="cmdUpdate" resourcekey="cmdUpdate" runat="server" CssClass="CommandButton" ImageUrl="~/images/save.gif" />&nbsp;
     <dnn:CommandButton ID="cmdDelete" resourcekey="cmdDelete" runat="server" CssClass="CommandButton" ImageUrl="~/images/delete.gif" CausesValidation="False" />&nbsp;
-    <dnn:CommandButton ID="cmdCancel" resourcekey="cmdCancel" runat="server" CssClass="CommandButton" ImageUrl="~/images/lt.gif" CausesValidation="False" />
+    <dnn:CommandButton ID="cmdBack" resourcekey="cmdBack" runat="server" CssClass="CommandButton" ImageUrl="~/images/lt.gif" CausesValidation="False" />
 </p>
 <dnn:audit id="ctlAudit" runat="server" />

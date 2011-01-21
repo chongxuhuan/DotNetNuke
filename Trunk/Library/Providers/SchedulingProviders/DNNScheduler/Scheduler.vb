@@ -18,6 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 Imports System.Threading
+Imports DotNetNuke.Collections
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Services.Log.EventLog
@@ -56,102 +57,9 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             Private Shared Debug As Boolean = False
 
             Private Shared NumberOfProcessGroups As Integer
-            Private Shared _ScheduleQueue As Collection
-            Private Shared _ScheduleInProgress As Collection
 
-            '''''''''''''''''''''''''''''''''''''''''''''''''''
-            'The ScheduleQueue collection contains the current
-            'queue of scheduler clients that need to run
-            '''''''''''''''''''''''''''''''''''''''''''''''''''
-            Private Shared Property ScheduleQueue() As Collection
-                Get
-                    Try
-                        objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                        Try
-                            ' It is safe for this thread to read or write
-                            ' from the shared resource.
-                            If _ScheduleQueue Is Nothing Then
-                                _ScheduleQueue = New Collection
-                            End If
-                            Interlocked.Increment(Reads)
-                        Finally
-                            ' Ensure that the lock is released.
-                            objQueueReadWriteLock.ReleaseReaderLock()
-                        End Try
-                    Catch ex As ApplicationException
-                        ' The writer lock request timed out.
-                        Interlocked.Increment(ReadTimeout)
-                        LogException(ex)
-                    End Try
-                    Return _ScheduleQueue
-                End Get
-                Set(ByVal Value As Collection)
-                    Try
-                        objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
-                        Try
-                            ' It is safe for this thread to read or write
-                            ' from the shared resource.
-                            DataCache.SetCache("ScheduleQueue", Value)
-                            _ScheduleQueue = Value
-                            Interlocked.Increment(Writes)
-                        Finally
-                            ' Ensure that the lock is released.
-                            objQueueReadWriteLock.ReleaseWriterLock()
-                        End Try
-                    Catch ex As ApplicationException
-                        ' The writer lock request timed out.
-                        Interlocked.Increment(WriterTimeouts)
-                        LogException(ex)
-                    End Try
-                End Set
-            End Property
-
-            '''''''''''''''''''''''''''''''''''''''''''''''''''
-            'The ScheduleInProgress collection contains the 
-            'collection of tasks that are currently in progress
-            '''''''''''''''''''''''''''''''''''''''''''''''''''
-            Private Shared Property ScheduleInProgress() As Collection
-                Get
-                    Try
-                        objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                        Try
-                            ' It is safe for this thread to read or write
-                            ' from the shared resource.
-                            If _ScheduleInProgress Is Nothing Then
-                                _ScheduleInProgress = New Collection
-                            End If
-                            Interlocked.Increment(Reads)
-                        Finally
-                            ' Ensure that the lock is released.
-                            objQueueReadWriteLock.ReleaseReaderLock()
-                        End Try
-                    Catch ex As ApplicationException
-                        ' The writer lock request timed out.
-                        Interlocked.Increment(ReadTimeout)
-                        LogException(ex)
-                    End Try
-                    Return _ScheduleInProgress
-                End Get
-                Set(ByVal Value As Collection)
-                    Try
-                        objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
-                        Try
-                            ' It is safe for this thread to read or write
-                            ' from the shared resource.
-                            DataCache.SetCache("ScheduleQueue", Value)
-                            _ScheduleInProgress = Value
-                            Interlocked.Increment(Writes)
-                        Finally
-                            ' Ensure that the lock is released.
-                            objQueueReadWriteLock.ReleaseWriterLock()
-                        End Try
-                    Catch ex As ApplicationException
-                        ' The writer lock request timed out.
-                        Interlocked.Increment(WriterTimeouts)
-                        LogException(ex)
-                    End Try
-                End Set
-            End Property
+            Private Shared _ScheduleQueue As SharedList(Of ScheduleItem)
+            Private Shared _ScheduleInProgress As SharedList(Of ScheduleHistoryItem)
 
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is our array that holds the process group
@@ -166,17 +74,18 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             'establishes variables to help keep track
             'of the ReaderWriter locks.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
-            Private Shared objInProgressReadWriteLock As New ReaderWriterLock
-            Private Shared objQueueReadWriteLock As New ReaderWriterLock
             Private Shared ReaderTimeouts As Integer = 0
             Private Shared WriterTimeouts As Integer = 0
-            Private Shared Reads As Integer = 0
-            Private Shared Writes As Integer = 0
-            Private Shared ReadTimeout As Integer = 45000    'wait 45 seconds
-            Private Shared WriteTimeout As Integer = 45000    'wait 45 seconds
+            Private Shared ReadOnly LockTimeout As TimeSpan = TimeSpan.FromSeconds(45)
             Private Shared objStatusReadWriteLock As New ReaderWriterLock
             Private Shared Status As ScheduleStatus = ScheduleStatus.STOPPED
 
+            Shared Sub New()
+                Dim lockStrategy As ReaderWriterLockStrategy = New ReaderWriterLockStrategy(LockRecursionPolicy.SupportsRecursion)
+
+                _ScheduleQueue = New SharedList(Of ScheduleItem)(lockStrategy)
+                _ScheduleInProgress = New SharedList(Of ScheduleHistoryItem)(lockStrategy)
+            End Sub
 #End Region
 
 #Region "Public Shared Members"
@@ -201,24 +110,16 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that adds
             'an item to the collection of schedule items in 
-            'progress.  It first obtains a write lock
-            'on the ScheduleInProgress object.
+            'progress.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Private Shared Sub AddToScheduleInProgress(ByVal objScheduleHistoryItem As ScheduleHistoryItem)
                 If Not ScheduleInProgressContains(objScheduleHistoryItem) Then
                     Try
-                        objInProgressReadWriteLock.AcquireWriterLock(WriteTimeout)
-                        Try
+                        Using lock As ISharedCollectionLock = _ScheduleInProgress.GetWriteLock(LockTimeout)
                             If Not ScheduleInProgressContains(objScheduleHistoryItem) Then
-                                ' It is safe for this thread to read or write
-                                ' from the shared resource.
-                                ScheduleInProgress.Add(objScheduleHistoryItem, objScheduleHistoryItem.ScheduleID.ToString)
-                                Interlocked.Increment(Writes)
+                                _ScheduleInProgress.Add(objScheduleHistoryItem)
                             End If
-                        Finally
-                            ' Ensure that the lock is released.
-                            objInProgressReadWriteLock.ReleaseWriterLock()
-                        End Try
+                        End Using
                     Catch ex As ApplicationException
                         ' The writer lock request timed out.
                         Interlocked.Increment(WriterTimeouts)
@@ -230,24 +131,13 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that clears
             'the collection of schedule items in 
-            'queue.  It first obtains a write lock
-            'on the ScheduleQueue object.
+            'queue.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Private Shared Sub ClearScheduleQueue()
                 Try
-                    Dim intCount As Integer = GetScheduleQueueCount()
-                    If intCount = 0 Then Exit Sub
-                    objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
-                    Try
-                        Dim i As Integer
-                        For i = 1 To intCount
-                            ScheduleQueue.Remove(i)
-                        Next
-                        Interlocked.Increment(Writes)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objQueueReadWriteLock.ReleaseWriterLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetWriteLock(LockTimeout)
+                        _ScheduleQueue.Clear()
+                    End Using
                 Catch ex As ApplicationException
                     ' The writer lock request timed out.
                     Interlocked.Increment(WriterTimeouts)
@@ -262,53 +152,30 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             End Function
 
             Private Shared Function IsInProgress(ByVal objScheduleItem As ScheduleItem) As Boolean
-                Dim i As Integer
-                Dim objReturn As Boolean = False
                 Try
-                    objInProgressReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        If ScheduleInProgress.Count() > 0 Then
-                            For i = 1 To ScheduleInProgress.Count()
-                                Dim obj As ScheduleItem
-                                obj = CType(ScheduleInProgress(i), ScheduleItem)
-                                If obj.ScheduleID = objScheduleItem.ScheduleID Then
-                                    objReturn = True
-                                End If
-                            Next
-                        End If
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objInProgressReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetReadLock(LockTimeout)
+                        Return _ScheduleInProgress.Any(Function(si) si.ScheduleID = objScheduleItem.ScheduleID)
+                    End Using
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return False
                 End Try
-                Return objReturn
             End Function
 
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that removes
             'an item from the collection of schedule items in 
-            'progress.  It first obtains a write lock
-            'on the ScheduleInProgress object.
+            'progress.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Private Shared Sub RemoveFromScheduleInProgress(ByVal objScheduleItem As ScheduleItem)
                 Try
-                    objInProgressReadWriteLock.AcquireWriterLock(WriteTimeout)
-                    Try
-                        ' It is safe for this thread to read or write
-                        ' from the shared resource.
-                        ScheduleInProgress.Remove(objScheduleItem.ScheduleID.ToString)
-                        Interlocked.Increment(Writes)
-                    Catch exc As System.ArgumentException
-                    Finally
-                        ' Ensure that the lock is released.
-                        objInProgressReadWriteLock.ReleaseWriterLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetWriteLock(LockTimeout)
+                        Dim item As ScheduleHistoryItem = _ScheduleInProgress.Where(Function(si) si.ScheduleID = objScheduleItem.ScheduleID).SingleOrDefault()
+                        If Not item Is Nothing Then
+                            _ScheduleInProgress.Remove(item)
+                        End If
+                    End Using
                 Catch ex As ApplicationException
                     ' The writer lock request timed out.
                     Interlocked.Increment(WriterTimeouts)
@@ -317,27 +184,27 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             End Sub
 
             Private Shared Function ScheduleInProgressContains(ByVal objScheduleHistoryItem As ScheduleHistoryItem) As Boolean
-                Dim i As Integer
-
-                For i = 1 To GetScheduleInProgressCount()
-                    Dim objScheduleHistoryItem2 As ScheduleHistoryItem = CType(ScheduleInProgress.Item(i), ScheduleHistoryItem)
-                    If objScheduleHistoryItem2.ScheduleID = objScheduleHistoryItem.ScheduleID Then
-                        Return True
-                    End If
-                Next
-                Return False
+                Try
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetReadLock(LockTimeout)
+                        Return _ScheduleInProgress.Any(Function(si) si.ScheduleID = objScheduleHistoryItem.ScheduleID)
+                    End Using
+                Catch ex As ApplicationException
+                    Interlocked.Increment(ReaderTimeouts)
+                    LogException(ex)
+                    Return False
+                End Try
             End Function
 
             Private Shared Function ScheduleQueueContains(ByVal objScheduleItem As ScheduleItem) As Boolean
-                Dim i As Integer
-
-                For i = 1 To GetScheduleQueueCount()
-                    Dim objScheduleItem2 As ScheduleItem = CType(ScheduleQueue.Item(i), ScheduleItem)
-                    If objScheduleItem2.ScheduleID = objScheduleItem.ScheduleID Then
-                        Return True
-                    End If
-                Next
-                Return False
+                Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetReadLock(LockTimeout)
+                        Return _ScheduleQueue.Any(Function(si) si.ScheduleID = objScheduleItem.ScheduleID)
+                    End Using
+                Catch ex As ApplicationException
+                    Interlocked.Increment(ReaderTimeouts)
+                    LogException(ex)
+                    Return False
+                End Try
             End Function
 
 #End Region
@@ -345,32 +212,15 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
 #Region "Friend Shared Methods"
 
             Friend Shared Function IsInQueue(ByVal objScheduleItem As ScheduleItem) As Boolean
-                Dim i As Integer
-                Dim objReturn As Boolean = False
                 Try
-                    objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        If GetScheduleQueueCount() > 0 Then
-                            For i = 1 To GetScheduleQueueCount()
-                                Dim obj As ScheduleItem
-                                obj = CType(ScheduleQueue(i), ScheduleItem)
-                                If obj.ScheduleID = objScheduleItem.ScheduleID Then
-                                    objReturn = True
-                                End If
-                            Next
-                        End If
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objQueueReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetReadLock(LockTimeout)
+                        Return _ScheduleQueue.Any(Function(si) si.ScheduleID = objScheduleItem.ScheduleID)
+                    End Using
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return False
                 End Try
-                Return objReturn
             End Function
 
 #End Region
@@ -393,25 +243,20 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that adds
             'an item to the collection of schedule items in 
-            'queue.  It first obtains a write lock
-            'on the ScheduleQueue object.
+            'queue.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Sub AddToScheduleQueue(ByVal objScheduleHistoryItem As ScheduleHistoryItem)
                 If Not ScheduleQueueContains(objScheduleHistoryItem) Then
                     Try
-                        objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
-                        Try
+                        'objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
+                        Using lock As ISharedCollectionLock = _ScheduleQueue.GetWriteLock(LockTimeout)
                             'Do a second check just in case
                             If Not ScheduleQueueContains(objScheduleHistoryItem) AndAlso Not IsInProgress(objScheduleHistoryItem) Then
                                 ' It is safe for this thread to read or write
                                 ' from the shared resource.
-                                ScheduleQueue.Add(objScheduleHistoryItem, objScheduleHistoryItem.ScheduleID.ToString)
-                                Interlocked.Increment(Writes)
+                                _ScheduleQueue.Add(objScheduleHistoryItem)
                             End If
-                        Finally
-                            ' Ensure that the lock is released.
-                            objQueueReadWriteLock.ReleaseWriterLock()
-                        End Try
+                        End Using
                     Catch ex As ApplicationException
                         ' The writer lock request timed out.
                         Interlocked.Increment(WriterTimeouts)
@@ -420,7 +265,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 End If
             End Sub
 
-            Public Shared Sub FireEvents(ByVal Asynchronous As Boolean)
+            Public Shared Sub FireEvents()
                 '''''''''''''''''''''''''''''''''''''''''''''''''''
                 'This method uses a thread pool to
                 'call the SchedulerClient methods that need
@@ -435,82 +280,87 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 'so the ProcessGroup can pass it around for
                 'logging and notifications.
                 '''''''''''''''''''''''''''''''''''''''''''''''''''
-                Dim intScheduleQueueCount As Integer = GetScheduleQueueCount()
-                Dim numToRun As Integer = intScheduleQueueCount
-                Dim numRun As Integer = 0
-                'If numToRun > FreeThreads Then
-                '	numToRun = FreeThreads
-                'End If
+                Using lock As ISharedCollectionLock = _ScheduleQueue.GetReadLock(LockTimeout)
+                    Dim numToRun As Integer = _ScheduleQueue.Count
+                    Dim numRun As Integer = 0
 
-                Dim i As Integer
-                For i = 0 To intScheduleQueueCount - 1
-                    If KeepRunning = False Then Exit Sub
-                    Dim ProcessGroup As Integer = GetProcessGroup()
-                    Dim objScheduleItem As ScheduleItem = CType(ScheduleQueue(i + 1), ScheduleItem)
+                    For Each objScheduleItem As ScheduleItem In _ScheduleQueue
+                        If KeepRunning = False Then Exit Sub
+                        Dim ProcessGroup As Integer = GetProcessGroup()
+                        'Dim objScheduleItem As ScheduleItem = CType(ScheduleQueue(i + 1), ScheduleItem)
 
-                    If objScheduleItem.NextStart <= Now _
-                     AndAlso objScheduleItem.Enabled _
-                     AndAlso Not IsInProgress(objScheduleItem) _
-                     AndAlso Not HasDependenciesConflict(objScheduleItem) _
-                     AndAlso numRun < numToRun Then
-                        objScheduleItem.ProcessGroup = ProcessGroup
-                        If Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD Then
-                            objScheduleItem.ScheduleSource = ScheduleSource.STARTED_FROM_TIMER
-                        ElseIf Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.REQUEST_METHOD Then
-                            objScheduleItem.ScheduleSource = ScheduleSource.STARTED_FROM_BEGIN_REQUEST
-                        End If
-                        If Asynchronous = True Then
+                        If objScheduleItem.NextStart <= Now _
+                         AndAlso objScheduleItem.Enabled _
+                         AndAlso Not IsInProgress(objScheduleItem) _
+                         AndAlso Not HasDependenciesConflict(objScheduleItem) _
+                         AndAlso numRun < numToRun Then
+                            objScheduleItem.ProcessGroup = ProcessGroup
+                            If Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD Then
+                                objScheduleItem.ScheduleSource = ScheduleSource.STARTED_FROM_TIMER
+                            ElseIf Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.REQUEST_METHOD Then
+                                objScheduleItem.ScheduleSource = ScheduleSource.STARTED_FROM_BEGIN_REQUEST
+                            End If
+
                             arrProcessGroup(ProcessGroup).AddQueueUserWorkItem(objScheduleItem)
+
+                            LogEventAddedToProcessGroup(objScheduleItem)
+                            numRun += 1
                         Else
-                            arrProcessGroup(ProcessGroup).RunSingleTask(objScheduleItem)
+                            LogWhyTaskNotRun(objScheduleItem)
                         End If
-                        If Debug = True Then
-                            Dim objEventLog As New EventLogController
-                            Dim objEventLogInfo As New LogInfo
-                            objEventLogInfo.AddProperty("EVENT ADDED TO PROCESS GROUP " + objScheduleItem.ProcessGroup.ToString, objScheduleItem.TypeFullName)
-                            objEventLogInfo.AddProperty("SCHEDULE ID", objScheduleItem.ScheduleID.ToString)
-                            objEventLogInfo.LogTypeKey = "DEBUG"
-                            objEventLog.AddLog(objEventLogInfo)
-                        End If
-                        numRun += 1
-                    Else
-                        If Debug = True Then
-                            Dim appended As Boolean = False
-                            Dim strDebug As New System.Text.StringBuilder("Task not run because ")
-                            If Not objScheduleItem.NextStart <= Now Then
-                                strDebug.Append(" task is scheduled for " + objScheduleItem.NextStart.ToString)
-                                appended = True
-                            End If
-                            'If Not (objScheduleItem.NextStart <> Null.NullDate And objScheduleItem.ScheduleSource <> ScheduleSource.STARTED_FROM_EVENT) Then
-                            '    If appended Then strDebug.Append(" and")
-                            '    strDebug.Append(" task's NextStart <> NullDate and it's wasn't started from an EVENT")
-                            '    appended = True
-                            'End If
-                            If Not objScheduleItem.Enabled Then
-                                If appended Then strDebug.Append(" and")
-                                strDebug.Append(" task is not enabled")
-                                appended = True
-                            End If
-                            If IsInProgress(objScheduleItem) Then
-                                If appended Then strDebug.Append(" and")
-                                strDebug.Append(" task is already in progress")
-                                appended = True
-                            End If
-                            If HasDependenciesConflict(objScheduleItem) Then
-                                If appended Then strDebug.Append(" and")
-                                strDebug.Append(" task has conflicting dependency")
-                                appended = True
-                            End If
-                            Dim objEventLog As New EventLogController
-                            Dim objEventLogInfo As New LogInfo
-                            objEventLogInfo.AddProperty("EVENT NOT RUN REASON", strDebug.ToString)
-                            objEventLogInfo.AddProperty("SCHEDULE ID", objScheduleItem.ScheduleID.ToString)
-                            objEventLogInfo.AddProperty("TYPE FULL NAME", objScheduleItem.TypeFullName)
-                            objEventLogInfo.LogTypeKey = "DEBUG"
-                            objEventLog.AddLog(objEventLogInfo)
-                        End If
+                    Next
+                End Using
+            End Sub
+
+            Private Shared Sub LogWhyTaskNotRun(ByVal objScheduleItem As ScheduleItem)
+
+                If Debug Then
+                    Dim appended As Boolean = False
+                    Dim strDebug As New System.Text.StringBuilder("Task not run because ")
+                    If Not objScheduleItem.NextStart <= Now Then
+                        strDebug.Append(" task is scheduled for " + objScheduleItem.NextStart.ToString)
+                        appended = True
                     End If
-                Next
+                    'If Not (objScheduleItem.NextStart <> Null.NullDate And objScheduleItem.ScheduleSource <> ScheduleSource.STARTED_FROM_EVENT) Then
+                    '    If appended Then strDebug.Append(" and")
+                    '    strDebug.Append(" task's NextStart <> NullDate and it's wasn't started from an EVENT")
+                    '    appended = True
+                    'End If
+                    If Not objScheduleItem.Enabled Then
+                        If appended Then strDebug.Append(" and")
+                        strDebug.Append(" task is not enabled")
+                        appended = True
+                    End If
+                    If IsInProgress(objScheduleItem) Then
+                        If appended Then strDebug.Append(" and")
+                        strDebug.Append(" task is already in progress")
+                        appended = True
+                    End If
+                    If HasDependenciesConflict(objScheduleItem) Then
+                        If appended Then strDebug.Append(" and")
+                        strDebug.Append(" task has conflicting dependency")
+                        appended = True
+                    End If
+                    Dim objEventLog As New EventLogController
+                    Dim objEventLogInfo As New LogInfo
+                    objEventLogInfo.AddProperty("EVENT NOT RUN REASON", strDebug.ToString)
+                    objEventLogInfo.AddProperty("SCHEDULE ID", objScheduleItem.ScheduleID.ToString)
+                    objEventLogInfo.AddProperty("TYPE FULL NAME", objScheduleItem.TypeFullName)
+                    objEventLogInfo.LogTypeKey = "DEBUG"
+                    objEventLog.AddLog(objEventLogInfo)
+                End If
+            End Sub
+
+            Private Shared Sub LogEventAddedToProcessGroup(ByVal objScheduleItem As ScheduleItem)
+
+                If Debug = True Then
+                    Dim objEventLog As New EventLogController
+                    Dim objEventLogInfo As New LogInfo
+                    objEventLogInfo.AddProperty("EVENT ADDED TO PROCESS GROUP " + objScheduleItem.ProcessGroup.ToString, objScheduleItem.TypeFullName)
+                    objEventLogInfo.AddProperty("SCHEDULE ID", objScheduleItem.ScheduleID.ToString)
+                    objEventLogInfo.LogTypeKey = "DEBUG"
+                    objEventLog.AddLog(objEventLogInfo)
+                End If
             End Sub
 
             Public Shared Function GetActiveThreadCount() As Integer
@@ -527,23 +377,17 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that returns
-            'the number of items in the collection of 
-            'schedule items in progress.  It first obtains a
-            'read lock on the ScheduleProgress object.
+            'a copy of the collection of 
+            'schedule items in progress.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Function GetScheduleInProgress() As Collection
-                Dim c As Collection = Nothing
+                Dim c As New Collection
                 Try
-                    objInProgressReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        c = ScheduleInProgress
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objInProgressReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetReadLock(LockTimeout)
+                        For Each item As ScheduleItem In _ScheduleInProgress
+                          c.Add(item, item.ScheduleID.ToString)
+                        Next
+                    End Using
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
@@ -554,51 +398,36 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that returns
             'the number of items in the collection of 
-            'schedule items in progress.  It first obtains a
-            'read lock on the ScheduleProgress object.
+            'schedule items in progress.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Function GetScheduleInProgressCount() As Integer
-                Dim intCount As Integer
                 Try
-                    objInProgressReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        intCount = ScheduleInProgress.Count
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objInProgressReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetReadLock(LockTimeout)
+                        Return _ScheduleInProgress.Count
+                    End Using
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return 0
                 End Try
-                Return intCount
             End Function
 
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that returns
-            'the number of items in the collection of 
-            'schedule items in queue.  It first obtains a
-            'read lock on the ScheduleQueue object.
+            'a copy of collection of all schedule items in queue.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Function GetScheduleQueue() As Collection
-                Dim c As Collection = Nothing
+                Dim c As Collection = New Collection
                 Try
-                    objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        c = ScheduleQueue
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objQueueReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetReadLock(LockTimeout)
+                        For Each item As ScheduleItem In _ScheduleQueue
+                            c.Add(item, item.ScheduleID.ToString)
+                        Next
+                    End Using
+                    Return c
                 Catch ex As ApplicationException
-                    ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    LogException(ex)
                 End Try
                 Return c
             End Function
@@ -606,46 +435,35 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that returns
             'the number of items in the collection of 
-            'schedule items in queue.  It first obtains a
-            'read lock on the ScheduleQueue object.
+            'schedule items in queue.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Function GetScheduleQueueCount() As Integer
-                Dim intCount As Integer
                 Try
-                    objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        intCount = ScheduleQueue.Count
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objQueueReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetReadLock(LockTimeout)
+                        Return _ScheduleQueue.Count
+                    End Using
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return 0
                 End Try
-                Return intCount
             End Function
 
             Public Shared Function GetScheduleStatus() As ScheduleStatus
-                Dim s As ScheduleStatus
                 Try
-                    objStatusReadWriteLock.AcquireReaderLock(ReadTimeout)
+                    objStatusReadWriteLock.AcquireReaderLock(LockTimeout)
                     Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        s = Status
+                        'ScheduleStatus is a value type a copy is returned (enumeration)
+                        Return Status
                     Finally
-                        ' Ensure that the lock is released.
+'                         Ensure that the lock is released.
                         objStatusReadWriteLock.ReleaseReaderLock()
                     End Try
                 Catch ex As ApplicationException
-                    ' The reader lock request timed out.
+'                     The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return ScheduleStatus.NOT_SET
                 End Try
-                Return s
             End Function
 
             Public Shared Sub Halt(ByVal SourceOfHalt As String)
@@ -672,36 +490,23 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             End Sub
 
             Public Shared Function HasDependenciesConflict(ByVal objScheduleItem As ScheduleItem) As Boolean
-                Dim i As Integer
-                Dim objReturn As Boolean = False
                 Try
-                    objInProgressReadWriteLock.AcquireReaderLock(ReadTimeout)
-                    Try
-                        ' It is safe for this thread to read from
-                        ' the shared resource.
-                        If Not ScheduleInProgress Is Nothing And objScheduleItem.ObjectDependencies.Length > 0 Then
-                            For i = 1 To ScheduleInProgress.Count()
-                                Dim obj As ScheduleItem
-                                obj = CType(ScheduleInProgress(i), ScheduleItem)
-                                If obj.ObjectDependencies.Length > 0 Then
-                                    If obj.HasObjectDependencies(objScheduleItem.ObjectDependencies) Then
-                                        objReturn = True
-                                    End If
+                    Using lock As ISharedCollectionLock = _ScheduleInProgress.GetReadLock(LockTimeout)
+                        If objScheduleItem.ObjectDependencies.Any() Then
+                            For Each item As ScheduleItem In _ScheduleInProgress.Where(Function(si) si.ObjectDependencies.Any())
+                                If item.HasObjectDependencies(objScheduleItem.ObjectDependencies) Then
+                                    Return True
                                 End If
                             Next
                         End If
+                    End Using
 
-                        Interlocked.Increment(Reads)
-                    Finally
-                        ' Ensure that the lock is released.
-                        objInProgressReadWriteLock.ReleaseReaderLock()
-                    End Try
+                    Return False
                 Catch ex As ApplicationException
                     ' The reader lock request timed out.
                     Interlocked.Increment(ReaderTimeouts)
+                    Return False
                 End Try
-
-                Return objReturn
             End Function
 
             Public Shared Sub LoadQueueFromEvent(ByVal EventName As EventName)
@@ -755,22 +560,17 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             'This is a multi-thread safe method that removes
             'an item from the collection of schedule items in 
-            'queue.  It first obtains a write lock
-            'on the ScheduleQueue object.
+            'queue.
             '''''''''''''''''''''''''''''''''''''''''''''''''''
             Public Shared Sub RemoveFromScheduleQueue(ByVal objScheduleItem As ScheduleItem)
                 Try
-                    objQueueReadWriteLock.AcquireWriterLock(WriteTimeout)
-                    Try
-                        ' It is safe for this thread to read or write
-                        ' from the shared resource.
-                        ScheduleQueue.Remove(objScheduleItem.ScheduleID.ToString)
-                        Interlocked.Increment(Writes)
-                    Catch exc As System.ArgumentException
-                    Finally
-                        ' Ensure that the lock is released.
-                        objQueueReadWriteLock.ReleaseWriterLock()
-                    End Try
+                    Using lock As ISharedCollectionLock = _ScheduleQueue.GetWriteLock(LockTimeout)
+                        'the scheduleitem instances may not be equal even though the scheduleids are equal
+                        Dim item As ScheduleItem = _ScheduleQueue.Where(Function(si) si.ScheduleID = objScheduleItem.ScheduleID).SingleOrDefault()
+                        If Not item Is Nothing Then
+                            _ScheduleQueue.Remove(item)
+                        End If
+                    End Using
                 Catch ex As ApplicationException
                     ' The writer lock request timed out.
                     Interlocked.Increment(WriterTimeouts)
@@ -803,37 +603,21 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                         '''''''''''''''''''''''''''''''''''''''''''''''''''
                         'Fire off the events that need running.
                         '''''''''''''''''''''''''''''''''''''''''''''''''''
-
-                        Try
-                            objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                            Try
-                                ' It is safe for this thread to read from
-                                ' the shared resource.
-                                If GetScheduleQueueCount() > 0 Then
-                                    'FireEvents(False)
-                                    FireEvents(True)
-                                End If
-                                Interlocked.Increment(Reads)
-                            Finally
-                                ' Ensure that the lock is released.
-                                objQueueReadWriteLock.ReleaseReaderLock()
-                            End Try
-                        Catch ex As ApplicationException
-                            ' The reader lock request timed out.
-                            Interlocked.Increment(ReaderTimeouts)
-                        End Try
+                        If GetScheduleQueueCount() > 0 Then
+                            FireEvents()
+                        End If
 
 
                         If WriterTimeouts > 20 Or ReaderTimeouts > 20 Then
                             '''''''''''''''''''''''''''''''''''''''''''''''''''
                             'Wait for 10 minutes so we don't fill up the logs
                             '''''''''''''''''''''''''''''''''''''''''''''''''''
-                            Thread.Sleep(600000)       'sleep for 10 seconds
+                            Thread.Sleep(TimeSpan.FromMinutes(10))
                         Else
                             '''''''''''''''''''''''''''''''''''''''''''''''''''
                             'Wait for 10 seconds to avoid cpu overutilization
                             '''''''''''''''''''''''''''''''''''''''''''''''''''
-                            Thread.Sleep(10000)       'sleep for 10 seconds
+                            Thread.Sleep(TimeSpan.FromSeconds(10))
                         End If
 
                         If GetScheduleQueueCount() = 0 Then Exit Sub
@@ -847,14 +631,18 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
             End Sub
 
-            Public Shared Sub SetScheduleStatus(ByVal objScheduleStatus As ScheduleStatus)
+            Public Shared Sub SetScheduleStatus(ByVal newStatus As ScheduleStatus)
                 Try
-                    objStatusReadWriteLock.AcquireWriterLock(WriteTimeout)
+                    'note:locking inside this method is highly misleading
+                    'as there is no lock in place between when the caller
+                    'decides to call this method and when the lock is acquired
+                    'the value could easily change in that time
+                    objStatusReadWriteLock.AcquireWriterLock(LockTimeout)
                     Try
                         ' It is safe for this thread to read or write
                         ' from the shared resource.
-                        Status = objScheduleStatus
-                        Interlocked.Increment(Writes)
+                        Status = newStatus
+
                     Finally
                         ' Ensure that the lock is released.
                         objStatusReadWriteLock.ReleaseWriterLock()
@@ -913,32 +701,20 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                 '''''''''''''''''''''''''''''''''''''''''''''''''''
                                 'Fire off the events that need running.
                                 '''''''''''''''''''''''''''''''''''''''''''''''''''
+                                If Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD Then
+                                    SetScheduleStatus(ScheduleStatus.RUNNING_TIMER_SCHEDULE)
+                                Else
+                                    SetScheduleStatus(ScheduleStatus.RUNNING_REQUEST_SCHEDULE)
+                                End If
 
-                                Try
-                                    If Scheduling.SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD Then
-                                        SetScheduleStatus(ScheduleStatus.RUNNING_TIMER_SCHEDULE)
-                                    Else
-                                        SetScheduleStatus(ScheduleStatus.RUNNING_REQUEST_SCHEDULE)
-                                    End If
-                                    objQueueReadWriteLock.AcquireReaderLock(ReadTimeout)
-                                    Try
-                                        ' It is safe for this thread to read from
-                                        ' the shared resource.
-                                        If GetScheduleQueueCount() > 0 Then
-                                            FireEvents(True)
-                                        End If
-                                        If KeepThreadAlive = False Then
-                                            Exit Sub
-                                        End If
-                                        Interlocked.Increment(Reads)
-                                    Finally
-                                        ' Ensure that the lock is released.
-                                        objQueueReadWriteLock.ReleaseReaderLock()
-                                    End Try
-                                Catch ex As ApplicationException
-                                    ' The reader lock request timed out.
-                                    Interlocked.Increment(ReaderTimeouts)
-                                End Try
+                                ' It is safe for this thread to read from
+                                ' the shared resource.
+                                If GetScheduleQueueCount() > 0 Then
+                                    FireEvents()
+                                End If
+                                If KeepThreadAlive = False Then
+                                    Exit Sub
+                                End If
 
 
                                 If WriterTimeouts > 20 Or ReaderTimeouts > 20 Then
@@ -947,7 +723,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                     'Wait for 10 minutes so we don't fill up the logs
                                     '''''''''''''''''''''''''''''''''''''''''''''''''''
                                     If KeepRunning = True Then
-                                        Thread.Sleep(600000)             'sleep for 10 minutes
+                                        Thread.Sleep(TimeSpan.FromMinutes(10))
                                     Else
                                         Exit Sub
                                     End If
@@ -956,7 +732,7 @@ Namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                     'Wait for 10 seconds to avoid cpu overutilization
                                     '''''''''''''''''''''''''''''''''''''''''''''''''''
                                     If KeepRunning = True Then
-                                        Thread.Sleep(10000)             'sleep for 10 seconds
+                                        Thread.Sleep(TimeSpan.FromSeconds(10))
                                     Else
                                         Exit Sub
                                     End If

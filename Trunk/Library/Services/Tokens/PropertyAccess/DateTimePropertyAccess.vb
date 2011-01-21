@@ -27,14 +27,14 @@ Namespace DotNetNuke.Services.Tokens
 
         
         Public Function GetProperty(ByVal strPropertyName As String, ByVal strFormat As String, ByVal formatProvider As System.Globalization.CultureInfo, ByVal AccessingUser As Entities.Users.UserInfo, ByVal AccessLevel As Scope, ByRef PropertyNotFound As Boolean) As String Implements IPropertyAccess.GetProperty
-            Dim now As DateTime = UserTime.CurrentTimeForUser(AccessingUser)
+            Dim userTimeZone As TimeZoneInfo = AccessingUser.Profile.PreferredTimeZone
             Select Case strPropertyName.ToLower
                 Case "current"
                     If strFormat = String.Empty Then strFormat = "D"
-                    Return now.ToString(strFormat, formatProvider)
+                    Return TimeZoneInfo.ConvertTime(DateTime.Now, userTimeZone).ToString(strFormat, formatProvider)
                 Case "now"
                     If strFormat = String.Empty Then strFormat = "g"
-                    Return now.ToString(strFormat, formatProvider)
+                    Return TimeZoneInfo.ConvertTime(DateTime.Now, userTimeZone).ToString(strFormat, formatProvider)
                 Case "system"
                     If strFormat = String.Empty Then strFormat = "g"
                     Return DateTime.Now.ToString(strFormat, formatProvider)

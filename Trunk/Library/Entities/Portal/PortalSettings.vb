@@ -515,15 +515,6 @@ Namespace DotNetNuke.Entities.Portals
             End Set
         End Property
 
-        Public Property TimeZoneOffset() As Integer
-            Get
-                Return _TimeZoneOffset
-            End Get
-            Set(ByVal Value As Integer)
-                _TimeZoneOffset = Value
-            End Set
-        End Property
-
         Public Property Users() As Integer
             Get
                 Return _Users
@@ -690,6 +681,20 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets whether Add Adding of Portal Alias is Enabled
+        ''' </summary>
+        ''' <remarks>Defaults to True</remarks>
+        ''' <history>
+        ''' 	[aprasad]	01/17/2011   Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public ReadOnly Property AutoAddPortalAlias() As Boolean
+            Get
+                Return PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", PortalId, True)
+            End Get
+        End Property
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets whether Browser Language Detection is Enabled
@@ -874,6 +879,22 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
+        Public ReadOnly Property TimeZone() As TimeZoneInfo
+            Get
+                'First set to Server
+                Dim _TimeZone As TimeZoneInfo = TimeZoneInfo.Local
+
+                'Next check if there is a PortalSetting
+                Dim _TimeZoneId As String = PortalController.GetPortalSetting("TimeZone", PortalId, String.Empty)
+                If Not String.IsNullOrEmpty(_TimeZoneId) Then
+                    _TimeZone = TimeZoneInfo.FindSystemTimeZoneById(_TimeZoneId)
+                End If
+
+                'return timezone
+                Return _TimeZone
+            End Get
+        End Property
+
         Public ReadOnly Property UserMode() As Mode
             Get
                 Dim mode As Mode
@@ -980,7 +1001,6 @@ Namespace DotNetNuke.Entities.Portals
             Me.UserTabId = portal.UserTabId
             Me.SearchTabId = portal.SearchTabId
             Me.DefaultLanguage = portal.DefaultLanguage
-            Me.TimeZoneOffset = portal.TimeZoneOffset
             Me.HomeDirectory = portal.HomeDirectory
             Me.Pages = portal.Pages
             Me.Users = portal.Users
@@ -992,9 +1012,6 @@ Namespace DotNetNuke.Entities.Portals
             End If
             If Null.IsNull(Me.DefaultLanguage) Then
                 Me.DefaultLanguage = Localization.SystemLocale
-            End If
-            If Null.IsNull(Me.TimeZoneOffset) Then
-                Me.TimeZoneOffset = Localization.SystemTimeZoneOffset
             End If
             Me.HomeDirectory = Common.Globals.ApplicationPath + "/" + portal.HomeDirectory + "/"
 
@@ -1245,8 +1262,6 @@ Namespace DotNetNuke.Entities.Portals
                     PublicProperty = False : PropertyNotFound = False : result = (Me.UserTabId.ToString(OutputFormat, formatProvider))
                 Case "defaultlanguage"
                     PublicProperty = True : PropertyNotFound = False : result = PropertyAccess.FormatString(Me.DefaultLanguage, strFormat)
-                Case "timezoneoffset"
-                    PublicProperty = True : PropertyNotFound = False : result = (Me.TimeZoneOffset.ToString(OutputFormat, formatProvider))
                 Case "users"
                     PublicProperty = False : PropertyNotFound = False : result = (Me.Users.ToString(OutputFormat, formatProvider))
                 Case "pages"
@@ -1480,6 +1495,16 @@ Namespace DotNetNuke.Entities.Portals
 
                 Return _DesktopTabs
             End Get
+        End Property
+
+        <Obsolete("Deprecated in DNN 5.6.2")> _
+        Public Property TimeZoneOffset() As Integer
+            Get
+                Return _TimeZoneOffset
+            End Get
+            Set(ByVal Value As Integer)
+                _TimeZoneOffset = Value
+            End Set
         End Property
 
         <Obsolete("Deprecated in DNN 5.0. Replaced by DataProvider.UpgradeDatabaseSchema")> _

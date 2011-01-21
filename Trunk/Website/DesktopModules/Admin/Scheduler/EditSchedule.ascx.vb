@@ -159,6 +159,15 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
             Return objScheduleItem
         End Function
 
+        Private Sub UpdateScheduleItem(ByVal objScheduleItem As ScheduleItem)
+            If Not ViewState("ScheduleID") Is Nothing Then
+                objScheduleItem.ScheduleID = Convert.ToInt32(ViewState("ScheduleID"))
+                SchedulingProvider.Instance.UpdateSchedule(objScheduleItem)
+            Else
+                SchedulingProvider.Instance.AddSchedule(objScheduleItem)
+            End If
+        End Sub
+
 #End Region
 
 #Region "Event Handlers"
@@ -180,6 +189,9 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
                     ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteItem"))
                     BindData()
                 End If
+
+                cmdRun.Enabled = chkEnabled.Checked
+
             Catch exc As Exception           'Module failed to load
                 ProcessModuleLoadException(Me, exc)
             End Try
@@ -214,10 +226,7 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
             Dim strMessage As String
             Dim objScheduleItem As ScheduleItem = CreateScheduleItem()
 
-            If Not ViewState("ScheduleID") Is Nothing Then
-                objScheduleItem.ScheduleID = Convert.ToInt32(ViewState("ScheduleID"))
-                SchedulingProvider.Instance.RunScheduleItemNow(objScheduleItem)
-            End If
+            UpdateScheduleItem(objScheduleItem)
 
             SchedulingProvider.Instance.RunScheduleItemNow(objScheduleItem)
 
@@ -241,14 +250,9 @@ Namespace DotNetNuke.Modules.Admin.Scheduler
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdate.Click
             Dim strMessage As String
-            Dim objScheduleItem As ScheduleItem = CreateScheduleItem()
 
-            If Not ViewState("ScheduleID") Is Nothing Then
-                objScheduleItem.ScheduleID = Convert.ToInt32(ViewState("ScheduleID"))
-                SchedulingProvider.Instance.UpdateSchedule(objScheduleItem)
-            Else
-                SchedulingProvider.Instance.AddSchedule(objScheduleItem)
-            End If
+            UpdateScheduleItem(CreateScheduleItem())
+
             strMessage = Services.Localization.Localization.GetString("UpdateSuccess", Me.LocalResourceFile)
             UI.Skins.Skin.AddModuleMessage(Me, strMessage, UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess)
             If SchedulingProvider.SchedulerMode = SchedulerMode.TIMER_METHOD Then

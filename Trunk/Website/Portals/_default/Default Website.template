@@ -6,7 +6,6 @@
     <userregistration>2</userregistration>
     <banneradvertising>0</banneradvertising>
     <defaultlanguage>en-US</defaultlanguage>
-    <timezoneoffset>-480</timezoneoffset>
     <enableskinwidgets>true</enableskinwidgets>
     <hostspace>0</hostspace>
     <userquota>0</userquota>
@@ -560,7 +559,7 @@
           <modules>
             <module>
               <moduleID>354</moduleID>
-              <title>DotNetNuke® Community Edition</title>
+              <title>DotNetNuke® Enterprise Edition</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
               <header />

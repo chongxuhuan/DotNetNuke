@@ -261,7 +261,7 @@
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plTimeZone" runat="server" ControlName="cboTimeZone" /></td>
-                                    <td style="width:450px"><asp:DropDownList ID="cboTimeZone" CssClass="NormalTextBox" runat="server" Width="300" /></td>
+                                    <td style="width:450px"><dnn:DnnTimeZoneComboBox ID="timeZones" runat="server" Width="450px" /></td>
                                 </tr>
                             </table>
                             <br/>
@@ -276,6 +276,10 @@
                                             <asp:ListItem Value="REDIRECT" resourcekey="Redirect" />
                                         </asp:RadioButtonList>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td class="SubHead" style="width:250px"><dnn:Label ID="plAutoAddPortalAlias" runat="server" ControlName="chkAutoAddPortalAlias" /></td>
+                                    <td class="NormalTextBox" valign="top" style="width:450px"><asp:CheckBox ID="chkAutoAddPortalAlias" runat="server" CssClass="Normal" /></td>
                                 </tr>
                                 <tr id="defaultAliasRow" runat="server" visible="false">
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="defaultAliasDropDownLabel" runat="server" ControlName="defaultAliasDropDown" /></td>

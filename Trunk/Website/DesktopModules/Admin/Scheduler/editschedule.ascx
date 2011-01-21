@@ -13,7 +13,7 @@
         </tr>
         <tr valign="top">
             <td class="SubHead" width="250"><dnn:Label ID="plEnabled" runat="server" ControlName="chkEnabled" Text="Schedule Enabled:" /></td>
-            <td class="Normal"><asp:CheckBox ID="chkEnabled" runat="server" Text="Yes" resourcekey="Yes" CssClass="NormalTextBox" /></td>
+            <td class="Normal"><asp:CheckBox ID="chkEnabled" runat="server" Text="Yes" resourcekey="Yes" CssClass="NormalTextBox" AutoPostBack="true" /></td>
         </tr>
         <tr valign="top">
             <td class="SubHead" width="250"><dnn:Label ID="plTimeLapse" runat="server" ControlName="txtTimeLapse" Text="Time Lapse:"/></td>

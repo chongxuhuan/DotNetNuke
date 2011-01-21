@@ -453,7 +453,7 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    If New PortalController().GetPortals().Count = 1 AndAlso PortalController.GetPortalSetting("PortalAliasMapping", Host.HostPortalID, "NONE").ToUpperInvariant <> "NONE" Then
+                    If New PortalController().GetPortals().Count = 1 AndAlso PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True) Then
                         ' use the host portal
                         Dim objPortalAliasController As New PortalAliasController
                         PortalId = Host.HostPortalID

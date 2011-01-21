@@ -23,11 +23,12 @@ Namespace DotNetNuke.Collections
     Public Interface ILockStrategy
         Inherits IDisposable
         Function GetReadLock() As ISharedCollectionLock
+        Function GetReadLock(ByVal timeout As TimeSpan) As ISharedCollectionLock
         Function GetWriteLock() As ISharedCollectionLock
+        Function GetWriteLock(ByVal timeout As TimeSpan) As ISharedCollectionLock
         ReadOnly Property ThreadCanRead() As Boolean
         ReadOnly Property ThreadCanWrite() As Boolean
         ReadOnly Property SupportsConcurrentReads() As Boolean
     End Interface
 
 End Namespace
-
