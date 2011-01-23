@@ -421,6 +421,47 @@ create index IX_{objectQualifier}Messaging_Messages_EmailSent_EmailSchedulerInst
             [EmailSent] ASC, [EmailSchedulerInstance] ASC, [Status] ASC, [Date] DESC
       )
 GO
+
+/* DNN-13773 - Skin Object to request jQuery */
+/*********************************************/
+
+IF (NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Packages WHERE Name='DotNetNuke.JQUERYSkinObject'))
+	BEGIN
+		EXEC {databaseOwner}{objectQualifier}AddPackage 
+			@PortalID=NULL,
+			@Name=N'DotNetNuke.JQUERYSkinObject',
+			@FriendlyName=N'JQUERY SkinObject',
+			@Description=N'',
+			@PackageType=N'SkinObject',
+			@Version=N'1.0.0',
+			@License=N'',
+			@Manifest=N'',
+			@Owner=N'DotNetNuke',
+			@Organization=N'DotNetNuke Corporation',
+			@Url=N'www.dotnetnuke.com',
+			@Email=N'support@dotnetnuke.com',
+			@ReleaseNotes=N'',
+			@IsSystemPackage=0,
+			@CreatedByUserID=NULL
+
+		DECLARE @NewPackageID AS INT
+		SELECT @NewPackageID = PackageID FROM {databaseOwner}{objectQualifier}Packages WHERE Name='DotNetNuke.JQUERYSkinObject'
+		
+		EXEC {databaseOwner}{objectQualifier}AddSkinControl 
+			@PackageID=@NewPackageID,
+			@ControlKey=N'JQUERY',
+			@ControlSrc=N'Admin/Skins/jQuery.ascx',
+			@SupportsPartialRendering=0,
+			@CreatedByUserID=NULL
+	END
+
+GO
+
+
+/* Add new event log type for SQL auditing */
+EXEC {databaseOwner}{objectQualifier}SaveCoreAuditTypes N'HOST_SQL_EXECUTED',N'SQL Query Executed',N'DotNetNuke.Logging.EventLogType',N'GeneralAdminOperation' ,1,-1,0
+
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -43,7 +43,7 @@ Namespace DotNetNuke.Modules.Messaging.Views
 
         Public ReadOnly Property DisplayModule() As Boolean Implements IProfileModule.DisplayModule
             Get
-                Return (ProfileUserId = ModuleContext.PortalSettings.UserId)
+                Return Request.IsAuthenticated AndAlso (ProfileUserId = ModuleContext.PortalSettings.UserId)
             End Get
         End Property
 

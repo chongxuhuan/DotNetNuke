@@ -36,6 +36,7 @@ Namespace DotNetNuke.UI.Skins.Controls
         Inherits UI.Skins.SkinObjectBase
 
         ' private members
+        Private _AllowNullBannerType As Boolean = False
         Private _groupName As String
         Private _bannerTypeId As String
         Private _bannerCount As String
@@ -49,6 +50,17 @@ Namespace DotNetNuke.UI.Skins.Controls
         Const MyFileName As String = "Banner.ascx"
 
 #Region "Public Members"
+
+        Public Property AllowNullBannerType As Boolean
+            Get
+                Return _AllowNullBannerType
+            End Get
+            Set(ByVal Value As Boolean)
+                _AllowNullBannerType = Value
+            End Set
+        End Property
+
+
         Public Property GroupName() As String
             Get
                 Return _groupName
@@ -137,10 +149,18 @@ Namespace DotNetNuke.UI.Skins.Controls
 
             If PortalSettings.BannerAdvertising <> 0 And Me.Visible = True Then
 
-                ' public attributes
-                If BannerTypeId = "" Then
-                    BannerTypeId = PortalController.GetPortalSetting("BannerTypeId", PortalSettings.PortalId, "1")
+                Dim BannerType As Integer
+                If AllowNullBannerType Then
+                    If Not String.IsNullOrEmpty(BannerTypeId) Then
+                        BannerType = Int32.Parse(CType(BannerTypeId, String))
+                    End If
+                Else
+                    If String.IsNullOrEmpty(BannerTypeId) Then
+                        BannerType = PortalController.GetPortalSettingAsInteger("BannerTypeId", PortalSettings.PortalId, 1)
+                    End If
                 End If
+
+                ' public attributes
                 If GroupName = "" Then
                     GroupName = PortalController.GetPortalSetting("BannerGroupName", PortalSettings.PortalId, "")
                 End If
@@ -157,7 +177,7 @@ Namespace DotNetNuke.UI.Skins.Controls
 
                 ' load banners
                 Dim objBanners As New BannerController
-                Dim arrBanners As ArrayList = objBanners.LoadBanners(intPortalId, Null.NullInteger, Integer.Parse(BannerTypeId), GroupName, Integer.Parse(BannerCount))
+                Dim arrBanners As ArrayList = objBanners.LoadBanners(intPortalId, Null.NullInteger, BannerType, GroupName, Integer.Parse(BannerCount))
 
                 ' bind to datalist
                 lstBanners.DataSource = arrBanners

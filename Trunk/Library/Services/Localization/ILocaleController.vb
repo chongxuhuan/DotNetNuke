@@ -33,7 +33,7 @@ Namespace DotNetNuke.Services.Localization
         Function GetLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
         Function GetPublishedLocales(ByVal portalID As Integer) As Dictionary(Of String, Locale)
 
-        Function IsEnabled(ByVal localeCode As String, ByVal portalId As Integer) As Boolean
+        Function IsEnabled(ByRef localeCode As String, ByVal portalId As Integer) As Boolean
 
         Sub UpdatePortalLocale(ByVal locale As Locale)
         Function IsDefaultLanguage(ByVal code As String) As Boolean

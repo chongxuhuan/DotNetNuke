@@ -790,8 +790,8 @@ Namespace DotNetNuke.Modules.Admin.Languages
                         length = p.Second.ToString().Length
                     End If
                     If length > 30 Then
-                        Dim height As Integer = 20 * (length \ 30)
-                        If height > 100 Then height = 100
+                        Dim height As Integer = 18 * (length \ 30)
+                        If height > 108 Then height = 108
                         t.Height = New Unit(height)
                         t.TextMode = TextBoxMode.MultiLine
                         d.Height = New Unit(height)

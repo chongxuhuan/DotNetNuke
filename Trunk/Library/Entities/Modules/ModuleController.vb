@@ -1149,6 +1149,50 @@ Namespace DotNetNuke.Entities.Modules
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' get Module by specific locale
+        ''' </summary>
+        ''' <param name="ModuleId">ID of the module</param>
+        ''' <param name="tabid">ID of the tab</param>
+        ''' <param name="portalId">ID of the portal</param>
+        ''' <param name="locale">The wanted locale</param>
+        ''' <returns>ModuleInfo associated to submitted locale</returns>
+        ''' <history>
+        '''    [manzoni Fausto]   2010-10-27 commented
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Function GetModuleByCulture(ByVal ModuleId As Integer, ByVal tabid As Integer, ByVal portalId As Integer, ByVal locale As Locale) As ModuleInfo
+            Dim originalModule As ModuleInfo = Nothing
+            Dim localizedModule As ModuleInfo = Nothing
+
+            'Get Module specified by Id
+            originalModule = GetModule(ModuleId, tabid)
+
+            If locale IsNot Nothing AndAlso originalModule IsNot Nothing Then
+                'Check if tab is in the requested culture
+                If String.IsNullOrEmpty(originalModule.CultureCode) OrElse originalModule.CultureCode = locale.Code Then
+                    localizedModule = originalModule
+                Else
+                    'See if tab exists for culture
+                    If originalModule.IsDefaultLanguage Then
+                        originalModule.LocalizedModules.TryGetValue(locale.Code, localizedModule)
+                    Else
+                        If originalModule.DefaultLanguageModule IsNot Nothing Then
+                            If originalModule.DefaultLanguageModule.CultureCode = locale.Code Then
+                                localizedModule = originalModule.DefaultLanguageModule
+                            Else
+                                If Not originalModule.DefaultLanguageModule.LocalizedModules.TryGetValue(locale.Code, localizedModule) Then
+                                    localizedModule = originalModule.DefaultLanguageModule
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+            Return localizedModule
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' get all Module objects of a portal
         ''' </summary>
         ''' <param name="portalID">ID of the portal</param>

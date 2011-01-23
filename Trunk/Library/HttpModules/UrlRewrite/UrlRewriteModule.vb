@@ -28,6 +28,7 @@ Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Entities.Host
 Imports System.Collections.Generic
 Imports DotNetNuke.Entities.Portals.PortalSettings
+Imports DotNetNuke.Services.Localization
 
 Namespace DotNetNuke.HttpModules
 
@@ -199,18 +200,48 @@ Namespace DotNetNuke.HttpModules
                                 Return
                             End If
 
-                            ' Check to see if the tab exists
-                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""), Null.NullString)
+                            'Start of patch
+                            Dim CulturCode As String = String.Empty
 
-                            If (tabID <> Null.NullInteger) Then
-                                If (app.Request.Url.Query <> "") Then
-                                    RewriterUtils.RewriteUrl(app.Context, "~/" & glbDefaultPage & "?TabID=" & tabID.ToString() & "&" & app.Request.Url.Query.TrimStart("?"c))
-                                Else
-                                    RewriterUtils.RewriteUrl(app.Context, "~/" & glbDefaultPage & "?TabID=" & tabID.ToString())
-                                End If
-                                Return
+                            Dim dicLocales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalID)
+                            If dicLocales.Count > 1 Then
+                                For Each CulturePart As String In splitUrl
+                                    If CulturePart.Length.Equals(5) Then
+                                        For Each key As KeyValuePair(Of String, Locale) In dicLocales
+                                            If key.Key.ToLower.Equals(CulturePart.ToLower) Then
+                                                CulturCode = key.Value.Code
+                                                tabPath = tabPath.Replace("/" & CulturePart, "")
+                                                Exit For
+                                            End If
+                                        Next
+                                    End If
+                                Next
                             End If
 
+                            ' Check to see if the tab exists (if localization is enable, check for the specified culture)
+                            Dim tabID As Integer = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""), CulturCode)
+
+                            ' Check to see if neutral culture tab exists
+                            If (tabID = Null.NullInteger And CulturCode.Length > 0) Then
+                                tabID = TabController.GetTabByTabPath(portalID, tabPath.Replace("/", "//").Replace(".aspx", ""), "")
+                            End If
+
+                            'End of patch
+
+                            If (tabID <> Null.NullInteger) Then
+                                Dim sendToUrl As String = "~/" & glbDefaultPage & "?TabID=" & tabID.ToString()
+                                If Not CulturCode.Equals(String.Empty) Then
+                                    sendToUrl = sendToUrl & "&language=" & CulturCode
+                                End If
+
+                                If (app.Request.Url.Query <> "") Then
+                                    sendToUrl = sendToUrl & "&" & app.Request.Url.Query.TrimStart("?"c)
+                                End If
+
+                                RewriterUtils.RewriteUrl(app.Context, sendToUrl)
+
+                                Return
+                            End If
                             tabPath = tabPath.ToLower()
 
                             If (tabPath.IndexOf("?"c) <> -1) Then

@@ -122,24 +122,14 @@ Namespace DotNetNuke.UI.UserControls
 #End Region
 
 #Region "Event Handlers"
-        '*******************************************************
-        '
-        ' The Page_Load server event handler on this page is used
-        ' to populate the role information for the page
-        '
-        '*******************************************************
-
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
-
                 'this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdStartCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtStartDate)
                 cmdEndCalendar.NavigateUrl = Common.Utilities.Calendar.InvokePopupCal(txtEndDate)
 
                 If Not Page.IsPostBack Then
-
                     If _URL <> "" Then
-
                         lblLogURL.Text = URL ' saved for loading Log grid
 
                         Dim URLType As TabType = GetURLType(_URL)
@@ -149,15 +139,14 @@ Namespace DotNetNuke.UI.UserControls
                             lblLogURL.Text = "FileID=" & objFiles.ConvertFilePathToFileId(_URL, PortalSettings.PortalId).ToString
                         End If
 
-
                         Dim objUrls As New UrlController
                         Dim objUrlTracking As UrlTrackingInfo = objUrls.GetUrlTracking(PortalSettings.PortalId, lblLogURL.Text, ModuleID)
                         If Not objUrlTracking Is Nothing Then
                             If _FormattedURL = "" Then
-                                If Not URL.StartsWith("http") And Not URL.StartsWith("mailto") Then
-                                    lblURL.Text = AddHTTP(Request.Url.Host)
+                                lblURL.Text = Common.Globals.LinkClick(URL, PortalSettings.ActiveTab.TabID, ModuleID, False)
+                                If Not lblURL.Text.StartsWith("http") And Not lblURL.Text.StartsWith("mailto") Then
+                                    lblURL.Text = AddHTTP(Request.Url.Host) & lblURL.Text
                                 End If
-                                lblURL.Text += Common.Globals.LinkClick(URL, PortalSettings.ActiveTab.TabID, ModuleID, False)
                             Else
                                 lblURL.Text = _FormattedURL
                             End If
@@ -189,7 +178,6 @@ Namespace DotNetNuke.UI.UserControls
                     Else
                         Me.Visible = False
                     End If
-
                 End If
 
             Catch exc As Exception    'Module failed to load

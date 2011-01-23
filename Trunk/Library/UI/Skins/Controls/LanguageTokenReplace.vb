@@ -65,16 +65,33 @@ Namespace DotNetNuke.UI.Skins.Controls
         ''' <history>
         '''     [erikvb]   20070814    added
         ''' </history>
-        Private Function getQSParams(ByVal newLanguage As String) As String()
+        Private Function getQSParams(ByVal newLanguage As Locale, ByVal isLocalized As Boolean) As String()
             Dim returnValue As String = ""
             Dim coll As NameValueCollection = HttpContext.Current.Request.QueryString
             Dim arrKeys(), arrValues() As String
+            Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
+
             arrKeys = coll.AllKeys
             For i As Integer = 0 To arrKeys.GetUpperBound(0)
                 If arrKeys(i) IsNot Nothing Then
                     Select Case arrKeys(i).ToLowerInvariant()
                         Case "tabid", "ctl", "language"
                             'skip parameter
+                        Case "mid", "moduleid" 'start of patch (Manzoni Fausto)
+                            If isLocalized Then
+                                Dim ModuleIdKey As String = arrKeys(i).ToLowerInvariant()
+                                Dim ModuleID As Integer, tabid As Integer
+
+                                Integer.TryParse(coll(ModuleIdKey), ModuleID)
+                                Integer.TryParse(coll("tabid"), tabid)
+                                Dim localizedModule As DotNetNuke.Entities.Modules.ModuleInfo = _
+                                New DotNetNuke.Entities.Modules.ModuleController().GetModuleByCulture(ModuleID, tabid, settings.PortalId, newLanguage)
+                                If localizedModule IsNot Nothing Then
+                                    If returnValue <> "" Then returnValue += "&"
+                                    returnValue += ModuleIdKey + "=" + localizedModule.ModuleID.ToString
+                                End If
+
+                            End If
                         Case Else
                             If (arrKeys(i).ToLowerInvariant = "portalid") And objPortal.ActiveTab.IsSuperTab Then
                                 'skip parameter
@@ -90,13 +107,12 @@ Namespace DotNetNuke.UI.Skins.Controls
                 End If
             Next
 
-            Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
             If (Not settings.ContentLocalizationEnabled) AndAlso _
                     LocaleController.Instance.GetLocales(settings.PortalId).Count > 1 AndAlso _
                     (settings.EnableUrlLanguage = False) Then
                 'because useLanguageInUrl is false, navigateUrl won't add a language param, so we need to do that ourselves
                 If returnValue <> "" Then returnValue += "&"
-                returnValue += "language=" + newLanguage
+                returnValue += "language=" + newLanguage.Code.ToLower
             End If
 
             'return the new querystring as a string array
@@ -118,12 +134,14 @@ Namespace DotNetNuke.UI.Skins.Controls
 
             'Ensure that the current ActiveTab is the culture of the new language
             Dim tabId As Integer = objPortal.ActiveTab.TabID
+            Dim islocalized As Boolean = False
             Dim localizedTab As TabInfo = New TabController().GetTabByCulture(tabId, objPortal.PortalId, newLocale)
             If localizedTab IsNot Nothing Then
+                islocalized = True
                 tabId = localizedTab.TabID
             End If
 
-            Return objSecurity.InputFilter(NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString("ctl"), newLanguage, getQSParams(newLanguage)), PortalSecurity.FilterFlag.NoScripting)
+            Return objSecurity.InputFilter(NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString("ctl"), newLanguage, getQSParams(newLocale, islocalized)), PortalSecurity.FilterFlag.NoScripting)
         End Function
 
 

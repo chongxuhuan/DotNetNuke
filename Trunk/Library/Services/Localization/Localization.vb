@@ -1558,7 +1558,7 @@ Namespace DotNetNuke.Services.Localization
         Public Shared Function LocalizeControlTitle(ByVal moduleControl As IModuleControl) As String
             Dim controlTitle As String = moduleControl.ModuleContext.Configuration.ModuleTitle
             Dim controlKey As String = moduleControl.ModuleContext.Configuration.ModuleControl.ControlKey.ToLower
-            If controlTitle = "" And controlKey <> "" Then
+            If Not String.IsNullOrEmpty(controlTitle) And Not String.IsNullOrEmpty(controlKey) Then
                 controlTitle = moduleControl.ModuleContext.Configuration.ModuleControl.ControlTitle
             End If
             If Not String.IsNullOrEmpty(controlKey) Then
@@ -1566,7 +1566,9 @@ Namespace DotNetNuke.Services.Localization
                 reskey = "ControlTitle_" + moduleControl.ModuleContext.Configuration.ModuleControl.ControlKey.ToLower + ".Text"
 
                 Dim localizedvalue As String = Services.Localization.Localization.GetString(reskey, moduleControl.LocalResourceFile)
-                If Not localizedvalue Is Nothing Then
+                If String.IsNullOrEmpty(localizedvalue) Then
+                    controlTitle = moduleControl.ModuleContext.Configuration.ModuleControl.ControlTitle
+                Else
                     controlTitle = localizedvalue
                 End If
             End If

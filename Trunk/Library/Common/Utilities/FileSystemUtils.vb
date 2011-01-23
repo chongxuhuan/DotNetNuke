@@ -1322,9 +1322,6 @@ Namespace DotNetNuke.Common.Utilities
             Dim objFile As New System.IO.FileInfo(FileLoc)
             Dim objResponse As System.Web.HttpResponse = System.Web.HttpContext.Current.Response
             Dim filename As String = objFile.Name
-            If HttpContext.Current.Request.UserAgent.IndexOf("; MSIE ") > 0 Then
-                filename = HttpUtility.UrlEncode(filename)
-            End If
             If objFile.Exists Then
                 objResponse.ClearContent()
                 objResponse.ClearHeaders()
@@ -1376,10 +1373,6 @@ Namespace DotNetNuke.Common.Utilities
             Dim objFile As DotNetNuke.Services.FileSystem.FileInfo = objFiles.GetFileById(FileId, PortalId)
             If Not objFile Is Nothing Then
                 Dim filename As String = objFile.FileName
-                If HttpContext.Current.Request.UserAgent.IndexOf("; MSIE ") > 0 Then
-                    filename = HttpUtility.UrlEncode(filename)
-                End If
-
                 Dim objFolders As New FolderController
                 Dim objFolder As FolderInfo = objFolders.GetFolder(PortalId, objFile.Folder, False)
 

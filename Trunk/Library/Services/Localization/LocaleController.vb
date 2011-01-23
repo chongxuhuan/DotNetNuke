@@ -150,14 +150,12 @@ Namespace DotNetNuke.Services.Localization
             Return locales
         End Function
 
-        Public Function IsEnabled(ByVal localeCode As String, ByVal portalId As Integer) As Boolean Implements ILocaleController.IsEnabled
+        Public Function IsEnabled(ByRef localeCode As String, ByVal portalId As Integer) As Boolean Implements ILocaleController.IsEnabled
             Try
                 Dim enabled As Boolean = False
                 Dim dicLocales As Dictionary(Of String, Locale) = GetLocales(portalId)
 
                 If (Not dicLocales.ContainsKey(localeCode)) Then
-                    enabled = False
-                ElseIf dicLocales.Item(localeCode) Is Nothing Then
                     'if localecode is neutral (en, es,...) try to find a locale that has the same language
                     If localeCode.IndexOf("-") = -1 Then
                         For Each strLocale As String In dicLocales.Keys

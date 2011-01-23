@@ -146,7 +146,8 @@ Namespace DotNetNuke.Services.Log.EventLog
 			TAB_ORDER_UPDATED
 			TAB_SETTING_CREATED
 			TAB_SETTING_UPDATED
-			TAB_SETTING_DELETED
+            TAB_SETTING_DELETED
+            HOST_SQL_EXECUTED
         End Enum
     End Class
 End Namespace

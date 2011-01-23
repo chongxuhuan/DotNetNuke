@@ -17,25 +17,27 @@
 ' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ' DEALINGS IN THE SOFTWARE.
 '
+Imports DotNetNuke.Services.Log.EventLog
+
 Namespace DotNetNuke.Modules.Admin.SQL
 
-	''' -----------------------------------------------------------------------------
-	''' <summary>
-	''' The SQL PortalModuleBase is used run SQL Scripts on the Database
-	''' </summary>
+    ''' -----------------------------------------------------------------------------
+    ''' <summary>
+    ''' The SQL PortalModuleBase is used run SQL Scripts on the Database
+    ''' </summary>
     ''' <remarks>
-	''' </remarks>
-	''' <history>
-	''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-	'''                       and localisation
-	''' </history>
-	''' -----------------------------------------------------------------------------
-	Partial  Class SQL
-		Inherits DotNetNuke.Entities.Modules.PortalModuleBase
+    ''' </remarks>
+    ''' <history>
+    ''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    '''                       and localisation
+    ''' </history>
+    ''' -----------------------------------------------------------------------------
+    Partial Class SQL
+        Inherits DotNetNuke.Entities.Modules.PortalModuleBase
 
 #Region "Controls"
 
-		Protected WithEvents lblRunAsScript As System.Web.UI.WebControls.Label
+        Protected WithEvents lblRunAsScript As System.Web.UI.WebControls.Label
 
 #End Region
 
@@ -83,18 +85,18 @@ Namespace DotNetNuke.Modules.Admin.SQL
             End Try
         End Sub
 
-		''' -----------------------------------------------------------------------------
-		''' <summary>
-		''' cmdExecute_Click runs when the Execute button is clicked
-		''' </summary>
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' cmdExecute_Click runs when the Execute button is clicked
+        ''' </summary>
         ''' <remarks>
-		''' </remarks>
-		''' <history>
-		''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-		'''                       and localisation
-		''' </history>
-		''' -----------------------------------------------------------------------------
-		Private Sub cmdExecute_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExecute.Click
+        ''' </remarks>
+        ''' <history>
+        ''' 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        '''                       and localisation
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdExecute_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExecute.Click
             Try
                 CheckSecurity()
                 If txtQuery.Text <> "" Then
@@ -116,6 +118,8 @@ Namespace DotNetNuke.Modules.Admin.SQL
                             lblMessage.Text = Services.Localization.Localization.GetString("QueryError", Me.LocalResourceFile)
                         End If
                     End If
+
+                    RecordAuditEventLog(txtQuery.Text)
                 End If
             Catch exc As Exception           'Module failed to load
                 ProcessModuleLoadException(Me, exc)
@@ -123,20 +127,29 @@ Namespace DotNetNuke.Modules.Admin.SQL
 
         End Sub
 
+        Private Sub RecordAuditEventLog(ByVal query As String)
+            Dim props As New LogProperties
+            props.Add(New LogDetailInfo("User", UserInfo.Username))
+            props.Add(New LogDetailInfo("SQL Query", query))
+
+            Dim elc As New EventLogController
+            elc.AddLog(props, PortalSettings, UserId, EventLogController.EventLogType.HOST_SQL_EXECUTED.ToString, True)
+        End Sub
+
 #End Region
 
 #Region " Web Form Designer Generated Code "
 
-		'This call is required by the Web Form Designer.
-		<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
 
-		End Sub
+        End Sub
 
-		Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-			'CODEGEN: This method call is required by the Web Form Designer
-			'Do not modify it using the code editor.
-			InitializeComponent()
-		End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
 

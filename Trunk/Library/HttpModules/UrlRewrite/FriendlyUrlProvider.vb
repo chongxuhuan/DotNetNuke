@@ -156,6 +156,13 @@ Namespace DotNetNuke.Services.Url.FriendlyUrl
                     If (queryStringDic.Count = 0 OrElse (queryStringDic.Count = 1 AndAlso queryStringDic.ContainsKey("tabid"))) Then
                         'Return AddHTTP(portalAlias & "/" & tab.TabPath.Replace("//", "/").TrimStart(Convert.ToChar("/")) + ".aspx")
                         friendlyPath = GetFriendlyAlias("~/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath)
+                    ElseIf (queryStringDic.Count = 2 AndAlso queryStringDic.ContainsKey("tabid") AndAlso _
+                            queryStringDic.ContainsKey("language")) Then
+                        If Not tab.IsNeutralCulture Then
+                            friendlyPath = GetFriendlyAlias("~/" & tab.CultureCode & "/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath).ToLower
+                        Else
+                            friendlyPath = GetFriendlyAlias("~/" & queryStringDic("language") & "/" & tab.TabPath.Replace("//", "/").TrimStart("/"c) + ".aspx", portalAlias, isPagePath).ToLower
+                        End If
                     Else
                         If (queryStringDic.ContainsKey("ctl")) AndAlso Not (queryStringDic.ContainsKey("language")) Then
                             Select Case queryStringDic("ctl")

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<language name="English" key="en-US" fallback="" />
-	<language name="한국어" key="ko-KR" fallback="en-US" />
+  <language name="Português (Brasil)" key="pt-BR" fallback="en-US" />
+  <language name="한국어" key="ko-KR" fallback="en-US" />
 	<language name="Italiano (Italia)" key="it-IT" fallback="" />
 	<language name="Français" key="fr-FR" fallback="en-US" />
 	<language name="Deutsch" key="de-DE" fallback="en-US" />
