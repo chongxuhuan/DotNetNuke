@@ -220,15 +220,7 @@ Namespace DotNetNuke.UI.WebControls
         Private Function GetDefaultOpmlFeed() As Opml
 
             Dim opmlFeed As Opml = New Opml()
-            Dim fileName As String = "SolutionsExplorer.opml.config"
-            Dim filePath As String = ApplicationMapPath + "\" + fileName
-
-            If Not File.Exists(filePath) Then
-                'Copy from \Config
-                If File.Exists(ApplicationMapPath + glbConfigFolder + fileName) Then
-                    File.Copy(ApplicationMapPath + glbConfigFolder + fileName, filePath, True)
-                End If
-            End If
+            Dim filePath As String = Config.GetPathToFile(ConfigFileType.SolutionsExplorer)
 
             If File.Exists(filePath) Then
                 opmlFeed = Opml.LoadFromFile(filePath)

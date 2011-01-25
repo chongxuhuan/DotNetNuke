@@ -460,7 +460,151 @@ GO
 
 /* Add new event log type for SQL auditing */
 EXEC {databaseOwner}{objectQualifier}SaveCoreAuditTypes N'HOST_SQL_EXECUTED',N'SQL Query Executed',N'DotNetNuke.Logging.EventLogType',N'GeneralAdminOperation' ,1,-1,0
+GO
 
+/* DNN-14565 - Folderpath should be nvarchar */
+/*********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddFolder]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}AddFolder
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddFolder
+    @PortalID 			int,
+    @UniqueId	 		uniqueidentifier,
+    @VersionGuid 		uniqueidentifier,
+    @FolderPath 		nvarchar(300),
+    @StorageLocation 	int,
+    @IsProtected 		bit,
+    @IsCached 			bit,
+    @LastUpdated 		datetime,
+    @CreatedByUserID  	int
+AS
+    INSERT INTO {databaseOwner}{objectQualifier}Folders (
+        PortalID, 
+        UniqueId,
+        VersionGuid,
+        FolderPath, 
+        StorageLocation, 
+        IsProtected, 
+        IsCached, 
+        LastUpdated,
+        CreatedByUserID,
+        CreatedOnDate,
+        LastModifiedByUserID,
+        LastModifiedOnDate
+    )
+    VALUES (
+        @PortalID, 
+        @UniqueId,
+        @VersionGuid,
+        @FolderPath, 
+        @StorageLocation, 
+        @IsProtected, 
+        @IsCached, 
+        @LastUpdated,
+        @CreatedByUserID,
+        getdate(),
+        @CreatedByUserID,
+        getdate()
+    )
+    SELECT SCOPE_IDENTITY()
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteFolder]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteFolder
+GO
+
+CREATE procedure {databaseOwner}{objectQualifier}DeleteFolder
+	@PortalID int,
+	@FolderPath nvarchar(300)
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}Folders
+	WHERE ((PortalID = @PortalID) or (PortalID is null and @PortalID is null))
+	AND FolderPath = @FolderPath
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateFolder]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateFolder
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdateFolder
+    @PortalID 				int,
+    @VersionGuid 			uniqueidentifier,	
+    @FolderID 				int,
+    @FolderPath 			nvarchar(300),
+    @StorageLocation 		int,
+    @IsProtected 			bit,
+    @IsCached 				bit,
+    @LastUpdated 			datetime,
+    @LastModifiedByUserID  	int
+AS
+    UPDATE {databaseOwner}{objectQualifier}Folders
+        SET    FolderPath = @FolderPath,
+               VersionGuid = @VersionGuid,
+               StorageLocation = @StorageLocation,
+               IsProtected = @IsProtected,
+               IsCached = @IsCached,
+               LastUpdated = @LastUpdated,
+               LastModifiedByUserID = @LastModifiedByUserID,
+               LastModifiedOnDate = getdate()
+        WHERE  ((PortalID = @PortalID) OR (PortalID IS Null AND @PortalID IS Null)) AND FolderID = @FolderID
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteFolderPermissionsByFolderPath]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteFolderPermissionsByFolderPath
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteFolderPermissionsByFolderPath
+	@PortalID int,
+	@FolderPath nvarchar(300)
+AS
+DECLARE @FolderID int
+SELECT @FolderID = FolderID FROM {databaseOwner}{objectQualifier}Folders
+WHERE FolderPath = @FolderPath
+AND ((PortalID = @PortalID) or (PortalID is null and @PortalID is null))
+
+DELETE FROM {databaseOwner}{objectQualifier}FolderPermission
+WHERE
+	[FolderID] = @FolderID
+
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetFolderPermissionsByFolderPath]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetFolderPermissionsByFolderPath
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetFolderPermissionsByFolderPath
+	
+	@PortalID int,
+	@FolderPath nvarchar(300), 
+	@PermissionID int
+
+AS
+SELECT *
+FROM {databaseOwner}{objectQualifier}vw_FolderPermissions
+
+WHERE	((FolderPath = @FolderPath 
+				AND ((PortalID = @PortalID) OR (PortalID IS NULL AND @PortalID IS NULL)))
+			OR (FolderPath IS NULL AND PermissionCode = 'SYSTEM_FOLDER'))
+	AND	(PermissionID = @PermissionID OR @PermissionID = -1)
+
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}folders DROP CONSTRAINT IX_{objectQualifier}FolderPath
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}folders
+	ALTER COLUMN FolderPath nvarchar(300) NOT NULL
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}folders ADD CONSTRAINT 
+	IX_{objectQualifier}FolderPath UNIQUE NONCLUSTERED 
+		(
+		  PortalID,
+		  FolderPath
+		) ON [PRIMARY]	
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

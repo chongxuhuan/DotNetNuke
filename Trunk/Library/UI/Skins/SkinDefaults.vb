@@ -76,7 +76,7 @@ Namespace DotNetNuke.UI.Skins
 
         Private Sub New(ByVal DefaultType As SkinDefaultType)
             Dim nodename As String = [Enum].GetName(DefaultType.GetType(), DefaultType).ToLower
-            Dim filePath As String = System.IO.Path.Combine(DotNetNuke.Common.Globals.ApplicationMapPath, glbDotNetNukeConfig)
+            Dim filePath As String = Config.GetPathToFile(ConfigFileType.DotNetNuke)
 
             Dim dnndoc As New XmlDocument()
             dnndoc.Load(filePath)

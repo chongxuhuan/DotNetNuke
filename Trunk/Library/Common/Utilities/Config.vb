@@ -500,8 +500,47 @@ Namespace DotNetNuke.Common.Utilities
             Return xmlConfig
         End Function
 
+        ''' <summary>
+        ''' Gets the path for the specificed Config file
+        ''' </summary>
+        ''' <param name="file">The config.file to get the path for</param>
+        ''' <param name="overwrite">force an overwrite of the config file</param>
+        ''' <returns>fully qualified path to the file</returns>
+        ''' <remarks>Will copy the file from the template directory as requried</remarks>
+        Public Shared Function GetPathToFile(ByVal file As ConfigFileType, Optional ByVal overwrite As Boolean = False) As String
+            Dim fileName As String = EnumToFileName(file)
+            Dim path As String = System.IO.Path.Combine(Globals.ApplicationMapPath, fileName)
+
+            If Not System.IO.File.Exists(path) Or overwrite Then
+                'Copy from \Config
+                Dim pathToDefault As String = System.IO.Path.Combine(Globals.ApplicationMapPath + Globals.glbConfigFolder, fileName)
+                If (System.IO.File.Exists(pathToDefault)) Then
+                    System.IO.File.Copy(pathToDefault, path, True)
+                End If
+            End If
+
+            Return path
+        End Function
+
 #End Region
 
+        Private Shared Function EnumToFileName(ByVal file As ConfigFileType) As String
+            Select Case file
+                Case ConfigFileType.SolutionsExplorer
+                    Return "SolutionsExplorer.opml.config"
+                Case Else
+                    Return file.ToString + ".config"
+            End Select
+        End Function
+
     End Class
+
+    Public Enum ConfigFileType
+        DotNetNuke 'compatible with glbDotNetNukeConfig
+        SiteAnalytics
+        Compression
+        SiteUrls
+        SolutionsExplorer
+    End Enum
 
 End Namespace

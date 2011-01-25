@@ -115,14 +115,7 @@ Namespace DotNetNuke.HttpModules.Compression
                 Catch e As Exception
                 End Try
 
-                Dim filePath As String = Globals.ApplicationMapPath + "\Compression.config"
-
-                If Not File.Exists(filePath) Then
-                    'Copy from \Config
-                    If File.Exists(Globals.ApplicationMapPath + Globals.glbConfigFolder + "Compression.config") Then
-                        File.Copy(Globals.ApplicationMapPath + Globals.glbConfigFolder + "Compression.config", Globals.ApplicationMapPath + "\Compression.config", True)
-                    End If
-                End If
+                Dim filePath As String = DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.Compression)
 
                 'Create a FileStream for the Config file
                 Dim fileReader As New FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)

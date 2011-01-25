@@ -65,14 +65,7 @@ Namespace DotNetNuke.HttpModules.Config
                 Config = CType(DataCache.GetCache("RewriterConfig"), RewriterConfiguration)
 
                 If (Config Is Nothing) Then
-                    filePath = ApplicationMapPath & "\SiteUrls.config"
-
-                    If Not File.Exists(filePath) Then
-                        'Copy from \Config
-                        If File.Exists(ApplicationMapPath & glbConfigFolder & "SiteUrls.config") Then
-                            File.Copy(ApplicationMapPath & glbConfigFolder & "SiteUrls.config", ApplicationMapPath & "\SiteUrls.config", True)
-                        End If
-                    End If
+                    filePath = DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.SiteUrls)
 
                     'Create a FileStream for the Config file
                     fileReader = New FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)

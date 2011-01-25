@@ -73,9 +73,7 @@ Namespace DotNetNuke.Services.Analytics
                         'compare md5 hash
                         If result.Count > 0 Then
                             'Copy new config file from \Config
-                            If File.Exists(ApplicationMapPath & glbConfigFolder & "SiteAnalytics.config") Then
-                                File.Copy(ApplicationMapPath & glbConfigFolder & "SiteAnalytics.config", ApplicationMapPath & "\SiteAnalytics.config", True)
-                            End If
+                            DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.SiteAnalytics, True) 'True causes .config to be overwritten
                         End If
 
                     End If

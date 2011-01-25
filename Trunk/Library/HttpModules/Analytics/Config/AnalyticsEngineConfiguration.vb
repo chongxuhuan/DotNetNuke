@@ -80,14 +80,7 @@ Namespace DotNetNuke.HttpModules.Config
                 Config = CType(DataCache.GetCache("AnalyticsEngineConfig"), AnalyticsEngineConfiguration)
 
                 If (Config Is Nothing) Then
-                    filePath = ApplicationMapPath & "\SiteAnalytics.config"
-
-                    If Not File.Exists(filePath) Then
-                        'Copy from \Config
-                        If File.Exists(ApplicationMapPath & glbConfigFolder & "SiteAnalytics.config") Then
-                            File.Copy(ApplicationMapPath & glbConfigFolder & "SiteAnalytics.config", ApplicationMapPath & "\SiteAnalytics.config", True)
-                        End If
-                    End If
+                    filePath = DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.SiteAnalytics)
 
                     'Create a FileStream for the Config file
                     fileReader = New FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)

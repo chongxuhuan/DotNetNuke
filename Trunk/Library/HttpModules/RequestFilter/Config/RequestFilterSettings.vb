@@ -67,15 +67,7 @@ Namespace DotNetNuke.HttpModules.RequestFilter
             If _Settings Is Nothing Then
                 _Settings = New RequestFilterSettings()
 
-                Dim filePath As String = String.Format("{0}\\{1}", Globals.ApplicationMapPath, glbDotNetNukeConfig)
-
-                If Not File.Exists(filePath) Then
-                    'Copy from \Config
-                    Dim defaultConfigFile As String = Globals.ApplicationMapPath + Globals.glbConfigFolder + glbDotNetNukeConfig
-                    If (File.Exists(defaultConfigFile)) Then
-                        File.Copy(defaultConfigFile, filePath, True)
-                    End If
-                End If
+                Dim filePath As String = DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.DotNetNuke)
 
                 'Create a FileStream for the Config file
                 Dim filereader As New FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)
@@ -109,16 +101,7 @@ Namespace DotNetNuke.HttpModules.RequestFilter
 
         Public Shared Sub Save(ByVal rules As List(Of RequestFilterRule))
 
-            Dim filePath As String = String.Format("{0}\\{1}", Globals.ApplicationMapPath, glbDotNetNukeConfig)
-
-            If Not File.Exists(filePath) Then
-                'Copy from \Config
-                Dim defaultConfigFile As String = Globals.ApplicationMapPath + Globals.glbConfigFolder + glbDotNetNukeConfig
-                If (File.Exists(defaultConfigFile)) Then
-                    File.Copy(defaultConfigFile, filePath, True)
-                End If
-            End If
-
+            Dim filePath As String = DotNetNuke.Common.Utilities.Config.GetPathToFile(ConfigFileType.DotNetNuke)
 
             Dim doc As New XmlDocument()
             doc.Load(filePath)
