@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.DBLoggingProvider" type="Provider" version="05.06.01">
+    <package name="DotNetNuke.DBLoggingProvider" type="Provider" version="05.06.02">
       <friendlyName>DotNetNuke Database Logging Provider</friendlyName>
       <description>DotNetNuke Database Logging Provider Project provides a database logging service.</description>
       <dependencies/>

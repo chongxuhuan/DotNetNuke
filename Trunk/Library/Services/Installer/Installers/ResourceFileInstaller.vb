@@ -154,6 +154,9 @@ Namespace DotNetNuke.Services.Installer.Installers
         ''' <param name="insFile">The InstallFile to install</param>
         ''' <history>
         ''' 	[cnurse]	01/18/2008  created
+        ''' 	[aprasad]	01/26/2011  Removed condition [If String.IsNullOrEmpty(Manifest) Then] prior to setting _Manifest
+        '''                 Since it was not able to set _Manifest for the second file onwards, same manifest file was being 
+        '''                 created for all the resource files
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Protected Overrides Function InstallFile(ByVal insFile As InstallFile) As Boolean
@@ -166,10 +169,8 @@ Namespace DotNetNuke.Services.Installer.Installers
                 Log.AddInfo(Util.FILES_Expanding)
                 unzip = New ZipInputStream(New FileStream(insFile.TempFileName, FileMode.Open))
 
-                'Create a writer to create the manifest for the resource file
-                If String.IsNullOrEmpty(Manifest) Then
-                    _Manifest = insFile.Name & ".manifest"
-                End If
+                'Create a writer to create the manifest for the resource file                
+                _Manifest = insFile.Name & ".manifest"
                 If Not Directory.Exists(PhysicalBasePath) Then
                     Directory.CreateDirectory(PhysicalBasePath)
                 End If

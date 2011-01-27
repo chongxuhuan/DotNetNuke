@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.SearchProvider" type="Provider" version="05.06.01">
+    <package name="DotNetNuke.SearchProvider" type="Provider" version="05.06.02">
       <friendlyName>DotNetNuke Search Provider</friendlyName>
       <description>DotNetNuke Search Provider Project provides a search service.</description>
       <dependencies/>
