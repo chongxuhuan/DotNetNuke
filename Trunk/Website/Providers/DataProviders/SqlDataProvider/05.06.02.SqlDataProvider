@@ -606,6 +606,607 @@ ALTER TABLE {databaseOwner}{objectQualifier}folders ADD CONSTRAINT
 		) ON [PRIMARY]	
 GO
 
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateAnonymousUser]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateAnonymousUser
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdateAnonymousUser
+    @UserID  char(36),
+    @PortalID  int,
+    @TabID   int,
+    @LastActiveDate datetime 
+as
+begin
+ update {databaseOwner}{objectQualifier}AnonymousUsers set 
+  TabID = @TabID,
+  LastActiveDate = @LastActiveDate
+ where
+  UserID = @UserID
+  and PortalID = @PortalID
+
+ if @@ROWCOUNT = 0
+ begin
+  insert into {databaseOwner}{objectQualifier}AnonymousUsers
+   (UserID, PortalID, TabID, CreationDate, LastActiveDate) 
+  VALUES
+   (@UserID, @PortalID, @TabID, GetDate(), @LastActiveDate)
+ end
+end
+GO
+
+
+create index IX_UserPortals_PortalId_IsDeleted on {databaseOwner}{objectQualifier}UserPortals (PortalId, IsDeleted) on [PRIMARY]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetUserCountByPortal]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetUserCountByPortal
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetUserCountByPortal
+ @PortalId int
+AS
+begin
+ SELECT count(*)
+ FROM {databaseOwner}{objectQualifier}UserPortals AS UP
+ WHERE UP.IsDeleted = 0 AND UP.PortalID = @PortalID
+end
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetEventLog]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetEventLog
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetEventLog
+ @PortalID int,
+ @LogTypeKey nvarchar(35),
+ @PageSize int,
+ @PageIndex int
+AS
+begin
+ -- Set the page bounds
+ DECLARE @PageLowerBound INT
+  , @PageUpperBound INT
+  , @RowsToReturn int
+  , @TotalRecords int
+
+ exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+ begin with [eLog] as (
+  select row_number() over (order by E.LogCreateDate desc) as rowid, e.*
+  from {databaseOwner}{objectQualifier}EventLog e
+  where (e.LogPortalID = @PortalID or @PortalID IS NULL)
+   AND (e.LogTypeKey = @LogTypeKey or @LogTypeKey IS NULL)
+ )
+  select * from [eLog]
+  where rowid > @PageLowerBound and rowid < @PageUpperBound
+  order by rowid
+ end
+
+ select count(*) AS TotalRecords
+ from {databaseOwner}{objectQualifier}EventLog e
+ where (e.LogPortalID = @PortalID or @PortalID IS NULL)
+  AND (e.LogTypeKey = @LogTypeKey or @LogTypeKey IS NULL)
+
+END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddFile]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}AddFile
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddFile
+ @PortalId   int,
+ @UniqueId   uniqueidentifier,
+ @VersionGuid  uniqueidentifier,
+ @FileName   nvarchar(100),
+ @Extension   nvarchar(100),
+ @Size    int,
+ @Width    int,
+ @Height    int,
+ @ContentType  nvarchar(200),
+ @Folder    nvarchar(200),
+ @FolderID   int,
+ @CreatedByUserID   int,
+ @Hash     varchar(40)
+AS
+BEGIN
+ DECLARE @FileID int
+
+ UPDATE {databaseOwner}{objectQualifier}Files
+ SET
+  /* retrieves FileId from table */
+  @FileID = FileId,
+  FileName = @FileName,
+  VersionGuid = @VersionGuid,
+  Extension = @Extension,
+  Size = @Size,
+  Width = @Width,
+  Height = @Height,
+  ContentType = @ContentType,
+  Folder = @Folder,
+  FolderID = @FolderID,
+  LastModifiedByUserID = @CreatedByUserID,
+  LastModifiedOnDate = getdate(),
+  SHA1Hash = @Hash
+ WHERE
+  FolderID = @FolderID AND FileName = @FileName
+
+ IF @@ROWCOUNT = 0
+ BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}Files (
+   PortalId,
+   UniqueId,
+   VersionGuid,
+   FileName,
+   Extension,
+   Size,
+   Width,
+   Height,
+   ContentType,
+   Folder,
+   FolderID,
+   CreatedByUserID,
+   CreatedOnDate,
+   LastModifiedByUserID,
+   LastModifiedOnDate,
+   SHA1Hash
+    )
+    VALUES (
+   @PortalId,
+   @UniqueId,
+   @VersionGuid,
+   @FileName,
+   @Extension,
+   @Size,
+   @Width,
+   @Height,
+   @ContentType,
+   @Folder,
+   @FolderID,
+   @CreatedByUserID,
+   getdate(),
+   @CreatedByUserID,
+   getdate(),
+   @Hash
+    )
+
+  SELECT @FileID = SCOPE_IDENTITY()
+ END
+
+ SELECT @FileID
+END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddListEntry]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}AddListEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddListEntry
+
+ @ListName nvarchar(50), 
+ @Value nvarchar(100), 
+ @Text nvarchar(150),
+ @ParentID int,
+ @Level int, 
+ @EnableSortOrder bit,
+ @DefinitionID int, 
+ @Description nvarchar(500),
+ @PortalID int,
+ @SystemList bit,
+ @CreatedByUserID int
+
+AS
+BEGIN
+ -- Check if this entry exists
+ If EXISTS (SELECT [EntryID] From {databaseOwner}{objectQualifier}Lists WHERE [ListName] = @ListName And [Value] = @Value And [Text] = @Text And [ParentID] = @ParentID)
+ BEGIN
+  SELECT -1
+  RETURN 
+ END
+
+ INSERT INTO {databaseOwner}{objectQualifier}Lists 
+  (
+    [ListName],
+  [Value],
+  [Text],
+  [Level],
+  [SortOrder],
+  [DefinitionID],
+  [ParentID],
+  [Description],
+  [PortalID],
+  [SystemList],
+  [CreatedByUserID],
+  [CreatedOnDate],
+  [LastModifiedByUserID],
+  [LastModifiedOnDate]
+  )
+ VALUES (
+  @ListName,
+  @Value,
+  @Text,
+  @Level,
+  CASE WHEN @EnableSortOrder = 1 THEN COALESCE((SELECT MAX([SortOrder]) + 1 From {databaseOwner}{objectQualifier}Lists Where [ListName] = @ListName), 1) ELSE 0 END,
+  @DefinitionID,
+  @ParentID,
+  @Description,
+  @PortalID,
+  @SystemList,
+    @CreatedByUserID,
+    getdate(),
+    @CreatedByUserID,
+    getdate() 
+  )
+
+ SELECT SCOPE_IDENTITY()
+END
+GO
+
+/* DNN-13538 - Adjust DeleteEventLog for performance */
+/*****************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteEventLog]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteEventLog
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteEventLog	
+    @LogGUID varchar(36)
+AS
+BEGIN
+    IF @LogGUID is null
+    BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}EventLog
+    END ELSE BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}EventLog WHERE LogGUID = @LogGUID
+    END
+END
+GO
+
+/* DNN-13535 - Adjust DeleteFile for performance */
+/*************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteFile]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteFile
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteFile	
+    @PortalID int,
+	@FileName nvarchar(100),
+	@FolderID int
+AS
+BEGIN
+    IF @PortalID is null
+    BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Files WHERE FileName = @FileName AND FolderID = @FolderID AND PortalId IS Null
+    END ELSE BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Files WHERE FileName = @FileName AND FolderID = @FolderID AND PortalId = @PortalID
+    END
+END
+GO
+
+/* DNN-13534 - Adjust DeleteFiles for performance */
+/**************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteFiles]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteFiles
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteFiles	
+    @PortalID int
+AS
+BEGIN
+    IF @PortalID is null
+    BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Files WHERE PortalId is null
+    END ELSE BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Files WHERE PortalId = @PortalID
+    END
+END
+GO
+
+/* DNN-13533 - Adjust DeleteFolder for performance */
+/***************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteFolder]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteFolder
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteFolder	
+    @PortalID int,
+    @FolderPath nvarchar(300)
+AS
+BEGIN
+    IF @PortalID is null
+    BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Folders
+        WHERE PortalID is null AND FolderPath = @FolderPath
+    END ELSE BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}Folders
+        WHERE PortalID = @PortalID AND FolderPath = @FolderPath
+    END
+END
+GO
+
+/* DNN-13541 - Adjust DeleteHeirarchicalTerm for performance */
+/*************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteHeirarchicalTerm]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteHeirarchicalTerm
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteHeirarchicalTerm	
+    @TermId			int    
+AS
+BEGIN
+    DECLARE @Left int, @Right int, @VocabularyID int, @Width int
+
+	SELECT
+		@Left = tt.TermLeft
+		, @Right = tt.TermRight
+		, @VocabularyID = tt.VocabularyID
+		, @Width = @Right - @Left + 1
+	FROM
+		{databaseOwner}{objectQualifier}Taxonomy_Terms tt
+	WHERE
+		tt.TermID = @TermID
+
+	BEGIN TRANSACTION
+
+	-- Delete term(s)
+	DELETE FROM {databaseOwner}{objectQualifier}Taxonomy_Terms
+	WHERE TermLeft > = @Left AND TermLeft > 0
+	  AND TermRight <= @Right AND TermRight > 0
+	  AND VocabularyID = @VocabularyID
+
+	IF @@ERROR = 0
+	BEGIN
+		-- Update Left values for all items that are after deleted term
+		UPDATE {databaseOwner}{objectQualifier}Taxonomy_Terms
+	    SET TermLeft = TermLeft - @Width
+		WHERE TermLeft >= @Left + @Width
+			AND VocabularyID = @VocabularyID
+
+        IF @@ERROR = 0
+        BEGIN
+            -- Update Right values for all items that are after deleted term
+            UPDATE {databaseOwner}{objectQualifier}Taxonomy_Terms
+            SET TermRight = TermRight - @Width
+            WHERE TermRight >= @Right
+                AND VocabularyID = @VocabularyID
+
+            IF @@ERROR = 0
+            BEGIN
+                COMMIT TRANSACTION
+                RETURN
+            END
+        END
+    END
+    
+	ROLLBACK TRANSACTION
+END
+GO
+
+/* DNN-13551 - Adjust DeletePortalDesktopModules for performance */
+/*****************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalDesktopModules]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
+    @PortalID        int,
+    @DesktopModuleId int
+AS
+BEGIN
+    IF @PortalID is not null AND @DesktopModuleId is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID AND DesktopModuleId = @DesktopModuleId
+    IF @PortalID is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID
+    IF @DesktopModuleId is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE DesktopModuleId = @DesktopModuleId
+END
+GO
+
+/* DNN-13548 - Adjust DeletePortalLanguages for performance */
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalLanguages]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeletePortalLanguages
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeletePortalLanguages
+    @PortalId int,
+    @LanguageId int
+AS
+BEGIN
+    IF @PortalId is not null AND @LanguageId is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalLanguages WHERE PortalId = @PortalId AND LanguageId = @LanguageId
+    ELSE IF @PortalId is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalLanguages WHERE PortalId = @PortalId
+    ELSE IF @LanguageId is not null
+       DELETE FROM {databaseOwner}{objectQualifier}PortalLanguages WHERE LanguageId = @LanguageId
+END
+GO
+
+/* DNN-13554 - Adjust DeleteUrlTracking for performance */
+/********************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteUrlTracking]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteUrlTracking
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteUrlTracking	
+    @PortalID     int,
+    @Url          nvarchar(255),
+    @ModuleID     int
+AS
+BEGIN
+    IF @ModuleId is not null
+    BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}UrlTracking WHERE PortalID = @PortalID AND Url = @Url AND ModuleId = @ModuleId
+    END ELSE BEGIN
+        DELETE FROM {databaseOwner}{objectQualifier}UrlTracking WHERE PortalID = @PortalID AND Url = @Url
+    END
+END
+GO
+
+/* DNN-13552 - Adjust DeleteUsersOnline for performance */
+/********************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteUsersOnline]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteUsersOnline
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteUsersOnline
+	@TimeWindow int	
+AS
+BEGIN
+    DECLARE @dt datetime
+	SET @dt = DATEADD(MINUTE, -@TimeWindow, GETDATE())
+
+	DELETE FROM {databaseOwner}{objectQualifier}AnonymousUsers WHERE LastActiveDate < @dt
+
+	DELETE FROM {databaseOwner}{objectQualifier}UsersOnline WHERE LastActiveDate < @dt
+END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddPropertyDefinition]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}AddPropertyDefinition
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddPropertyDefinition
+ @PortalId int,
+ @ModuleDefId int,
+ @DataType int,
+ @DefaultValue ntext,
+ @PropertyCategory nvarchar(50),
+ @PropertyName nvarchar(50),
+ @Required bit,
+ @ValidationExpression nvarchar(2000),
+ @ViewOrder int,
+ @Visible bit,
+    @Length int,
+    @DefaultVisibility int,
+ @CreatedByUserID int
+AS
+begin
+ DECLARE @PropertyDefinitionId int
+
+ UPDATE {databaseOwner}{objectQualifier}ProfilePropertyDefinition 
+  SET
+   @PropertyDefinitionId = PropertyDefinitionId,
+   DataType = @DataType,
+   ModuleDefId = @ModuleDefId,
+   DefaultValue = @DefaultValue,
+   PropertyCategory = @PropertyCategory,
+   Required = @Required,
+   ValidationExpression = @ValidationExpression,
+   [ViewOrder] = CASE WHEN @ViewOrder = -1 THEN (SELECT MAX(pv.ViewOrder) + 1 FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition pv) ELSE @ViewOrder END,
+   [Deleted] = 0,
+   Visible = @Visible,
+   [Length] = @Length,
+            DefaultVisibility = @DefaultVisibility,
+   [LastModifiedByUserID] = @CreatedByUserID, 
+   [LastModifiedOnDate] = getdate()
+  WHERE  (PortalId = @PortalId OR (PortalId IS NULL AND @PortalId IS NULL))
+   AND PropertyName = @PropertyName
+
+ IF @@ROWCOUNT = 0
+ BEGIN
+  INSERT {databaseOwner}{objectQualifier}ProfilePropertyDefinition(
+    PortalId,
+    ModuleDefId,
+    [Deleted],
+    DataType,
+    DefaultValue,
+    PropertyCategory,
+    PropertyName,
+    Required,
+    ValidationExpression,
+    [ViewOrder],
+    Visible,
+    [Length],
+    DefaultVisibility,
+    [CreatedByUserID],
+    [CreatedOnDate],
+    [LastModifiedByUserID],
+    [LastModifiedOnDate]
+   )
+   VALUES (
+    @PortalId,
+    @ModuleDefId,
+    0,
+    @DataType,
+    @DefaultValue,
+    @PropertyCategory,
+    @PropertyName,
+    @Required,
+    @ValidationExpression,
+    CASE WHEN @ViewOrder = -1 THEN (SELECT MAX(pv.ViewOrder) + 1 FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition pv) ELSE @ViewOrder END,
+    @Visible,
+    @Length,
+    @DefaultVisibility,
+    @CreatedByUserID,
+    getdate(),
+    @CreatedByUserID,
+    getdate()
+   )
+
+  SELECT @PropertyDefinitionId = SCOPE_IDENTITY()
+ END
+  
+ SELECT @PropertyDefinitionId
+end
+GO
+
+/* DNN-13810 - Adjuect GetSkinPackageByPackageID for performance */
+/*****************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetSkinPackageByPackageID]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetSkinPackageByPackageID
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetSkinPackageByPackageID
+	@PackageID int	
+AS
+BEGIN
+ SELECT SP.*
+  FROM  {databaseOwner}{objectQualifier}SkinPackages SP
+  WHERE SP.PackageID = @PackageID
+
+ SELECT I.*
+  FROM  {databaseOwner}{objectQualifier}Skins I
+ INNER JOIN {databaseOwner}{objectQualifier}SkinPackages S ON S.SkinPackageID = I.SkinPackageID
+ WHERE S.PackageID = @PackageID
+END
+GO
+
+/* DNN-13526 - Adjust AddSkin for performance */
+/**********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddSkin]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}AddSkin
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddSkin
+	@PackageID int	
+AS
+BEGIN
+IF NOT EXISTS (
+  select 1 from {databaseOwner}{objectQualifier}Skins S
+  where S.SkinPackageID = @SkinPackageID and S.SkinSrc = @SkinSrc
+ )
+ BEGIN
+  INSERT INTO {databaseOwner}{objectQualifier}Skins (SkinPackageID, SkinSrc)
+  VALUES (@SkinPackageID, @SkinSrc)
+ ENDEND
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
