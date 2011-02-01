@@ -780,72 +780,6 @@ BEGIN
 END
 GO
 
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddListEntry]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-    DROP PROCEDURE {databaseOwner}{objectQualifier}AddListEntry
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}AddListEntry
-
- @ListName nvarchar(50), 
- @Value nvarchar(100), 
- @Text nvarchar(150),
- @ParentID int,
- @Level int, 
- @EnableSortOrder bit,
- @DefinitionID int, 
- @Description nvarchar(500),
- @PortalID int,
- @SystemList bit,
- @CreatedByUserID int
-
-AS
-BEGIN
- -- Check if this entry exists
- If EXISTS (SELECT [EntryID] From {databaseOwner}{objectQualifier}Lists WHERE [ListName] = @ListName And [Value] = @Value And [Text] = @Text And [ParentID] = @ParentID)
- BEGIN
-  SELECT -1
-  RETURN 
- END
-
- INSERT INTO {databaseOwner}{objectQualifier}Lists 
-  (
-    [ListName],
-  [Value],
-  [Text],
-  [Level],
-  [SortOrder],
-  [DefinitionID],
-  [ParentID],
-  [Description],
-  [PortalID],
-  [SystemList],
-  [CreatedByUserID],
-  [CreatedOnDate],
-  [LastModifiedByUserID],
-  [LastModifiedOnDate]
-  )
- VALUES (
-  @ListName,
-  @Value,
-  @Text,
-  @Level,
-  CASE WHEN @EnableSortOrder = 1 THEN COALESCE((SELECT MAX([SortOrder]) + 1 From {databaseOwner}{objectQualifier}Lists Where [ListName] = @ListName), 1) ELSE 0 END,
-  @DefinitionID,
-  @ParentID,
-  @Description,
-  @PortalID,
-  @SystemList,
-    @CreatedByUserID,
-    getdate(),
-    @CreatedByUserID,
-    getdate() 
-  )
-
- SELECT SCOPE_IDENTITY()
-END
-GO
-
 /* DNN-13538 - Adjust DeleteEventLog for performance */
 /*****************************************************/
 
@@ -1074,96 +1008,6 @@ BEGIN
 END
 GO
 
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddPropertyDefinition]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-    DROP PROCEDURE {databaseOwner}{objectQualifier}AddPropertyDefinition
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}AddPropertyDefinition
- @PortalId int,
- @ModuleDefId int,
- @DataType int,
- @DefaultValue ntext,
- @PropertyCategory nvarchar(50),
- @PropertyName nvarchar(50),
- @Required bit,
- @ValidationExpression nvarchar(2000),
- @ViewOrder int,
- @Visible bit,
-    @Length int,
-    @DefaultVisibility int,
- @CreatedByUserID int
-AS
-begin
- DECLARE @PropertyDefinitionId int
-
- UPDATE {databaseOwner}{objectQualifier}ProfilePropertyDefinition 
-  SET
-   @PropertyDefinitionId = PropertyDefinitionId,
-   DataType = @DataType,
-   ModuleDefId = @ModuleDefId,
-   DefaultValue = @DefaultValue,
-   PropertyCategory = @PropertyCategory,
-   Required = @Required,
-   ValidationExpression = @ValidationExpression,
-   [ViewOrder] = CASE WHEN @ViewOrder = -1 THEN (SELECT MAX(pv.ViewOrder) + 1 FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition pv) ELSE @ViewOrder END,
-   [Deleted] = 0,
-   Visible = @Visible,
-   [Length] = @Length,
-            DefaultVisibility = @DefaultVisibility,
-   [LastModifiedByUserID] = @CreatedByUserID, 
-   [LastModifiedOnDate] = getdate()
-  WHERE  (PortalId = @PortalId OR (PortalId IS NULL AND @PortalId IS NULL))
-   AND PropertyName = @PropertyName
-
- IF @@ROWCOUNT = 0
- BEGIN
-  INSERT {databaseOwner}{objectQualifier}ProfilePropertyDefinition(
-    PortalId,
-    ModuleDefId,
-    [Deleted],
-    DataType,
-    DefaultValue,
-    PropertyCategory,
-    PropertyName,
-    Required,
-    ValidationExpression,
-    [ViewOrder],
-    Visible,
-    [Length],
-    DefaultVisibility,
-    [CreatedByUserID],
-    [CreatedOnDate],
-    [LastModifiedByUserID],
-    [LastModifiedOnDate]
-   )
-   VALUES (
-    @PortalId,
-    @ModuleDefId,
-    0,
-    @DataType,
-    @DefaultValue,
-    @PropertyCategory,
-    @PropertyName,
-    @Required,
-    @ValidationExpression,
-    CASE WHEN @ViewOrder = -1 THEN (SELECT MAX(pv.ViewOrder) + 1 FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition pv) ELSE @ViewOrder END,
-    @Visible,
-    @Length,
-    @DefaultVisibility,
-    @CreatedByUserID,
-    getdate(),
-    @CreatedByUserID,
-    getdate()
-   )
-
-  SELECT @PropertyDefinitionId = SCOPE_IDENTITY()
- END
-  
- SELECT @PropertyDefinitionId
-end
-GO
-
 /* DNN-13810 - Adjuect GetSkinPackageByPackageID for performance */
 /*****************************************************************/
 
@@ -1194,7 +1038,8 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{
 GO
 
 CREATE PROCEDURE {databaseOwner}{objectQualifier}AddSkin
-	@PackageID int	
+	@SkinPackageID int,
+    @SkinSrc nvarchar(200)		
 AS
 BEGIN
 IF NOT EXISTS (
@@ -1204,9 +1049,95 @@ IF NOT EXISTS (
  BEGIN
   INSERT INTO {databaseOwner}{objectQualifier}Skins (SkinPackageID, SkinSrc)
   VALUES (@SkinPackageID, @SkinSrc)
- ENDEND
+ END
+END
 GO
 
+/* DNN-13594 - Adjust GetFolderByFolderPath for performance */
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetFolderByFolderPath]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetFolderByFolderPath
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetFolderByFolderPath
+ @PortalID int,
+ @FolderPath nvarchar(300)
+AS
+BEGIN
+ if @PortalID is not null
+ begin
+  SELECT *
+  FROM {databaseOwner}{objectQualifier}Folders
+  WHERE PortalID = @PortalID AND FolderPath = @FolderPath
+ end else begin
+  SELECT *
+  FROM {databaseOwner}{objectQualifier}Folders
+  WHERE PortalID is null AND  FolderPath = @FolderPath
+ end
+END
+GO
+
+/* DNN-13593 - Adjust GetFolders for performance */
+/*************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetFolders]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetFolders
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetFolders
+ @PortalID int,
+ @FolderID int,
+ @FolderPath nvarchar(300)
+AS
+BEGIN
+ if @FolderID <> -1
+ begin
+  SELECT *
+  FROM {databaseOwner}{objectQualifier}Folders
+  WHERE FolderID = @FolderID
+ end else if @PortalID is not null and @FolderPath <> ''
+ begin
+  SELECT *
+  FROM {databaseOwner}{objectQualifier}Folders
+  WHERE PortalID = @PortalID AND FolderPath = @FolderPath
+  ORDER BY FolderPath
+ end else begin
+  /* let it default here. Any ORM would negate the switching. */
+  SELECT *
+  FROM {databaseOwner}{objectQualifier}Folders
+  WHERE ((PortalID = @PortalID) or (PortalID is null and @PortalID is null))
+   AND (FolderID = @FolderID or @FolderID = -1)
+   AND (FolderPath = @FolderPath or @FolderPath = '')
+  ORDER BY FolderPath
+ end
+END
+GO
+
+/* DNN-13809 - Adjust GetSystemMessage for performance */
+/*******************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetSystemMessage]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetSystemMessage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetSystemMessage
+ @PortalID     int,
+ @MessageName  nvarchar(50)
+AS
+BEGIN
+ if @PortalID is null
+ begin
+  select MessageValue
+  from   {databaseOwner}{objectQualifier}SystemMessages
+  where  PortalID is null and MessageName = @MessageName
+ end else begin
+  select MessageValue
+  from   {databaseOwner}{objectQualifier}SystemMessages
+  where  PortalID = @PortalID and MessageName = @MessageName
+ end
+END
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
