@@ -1138,6 +1138,76 @@ BEGIN
  end
 END
 GO
+
+/* DNN-13582 - Adjust GetContentItemsByTerm for performance */
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetContentItemsByTerm]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetContentItemsByTerm
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetContentItemsByTerm
+ @Term nvarchar(250)
+AS
+BEGIN
+DECLARE @TermID int
+  , @TermLeft int
+  , @TermRight int
+  , @VocabularyID int
+
+ SELECT
+  @TermID = TermID
+  , @TermLeft = TermLeft
+  , @TermRight = TermRight
+  , @VocabularyID = VocabularyID
+ FROM
+  {databaseOwner}{objectQualifier}Taxonomy_Terms
+ WHERE
+  Name = @Term
+
+ IF @TermLeft = 0 AND @TermRight = 0
+ BEGIN
+  -- Simple Term
+  SELECT c.*
+  FROM {databaseOwner}{objectQualifier}ContentItems As c
+   INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags ct ON ct.ContentItemID = c.ContentItemID
+   INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms t ON t.TermID = ct.TermID
+  WHERE t.TermID = @TermID
+ END ELSE BEGIN
+  -- Hierarchical Term
+  SELECT c.*
+  FROM {databaseOwner}{objectQualifier}ContentItems As c
+   INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags ct ON ct.ContentItemID = c.ContentItemID
+   INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms t ON t.TermID = ct.TermID
+  WHERE t.TermLeft >= @TermLeft
+   AND t.TermRight <= @TermRight
+   AND t.VocabularyID = @VocabularyID
+ END
+END
+GO
+
+/* DNN-13421 - GetSchedule optimized retrieval */
+/***********************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetSchedule]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetSchedule
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetSchedule
+ @Server varchar(150)
+AS
+BEGIN
+SELECT
+  S.*
+  , (SELECT max(S1.NextStart)
+   FROM {databaseOwner}{objectQualifier}ScheduleHistory S1
+   WHERE S1.ScheduleID = S.ScheduleID) as NextStart
+ FROM {databaseOwner}{objectQualifier}Schedule S
+ WHERE
+  (@Server IS NULL OR S.Servers LIKE '%,' + @Server + ',%' OR S.Servers IS NULL)
+END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
