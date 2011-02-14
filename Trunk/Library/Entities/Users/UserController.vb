@@ -203,6 +203,24 @@ Namespace DotNetNuke.Entities.Users
             Return settings
         End Function
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUserCountByPortalCallBack gets the number of users associates to a portal from the the Database.
+        ''' and sets the cache.
+        ''' </summary>
+        ''' <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
+        ''' needed for the database call</param>
+        ''' <history>
+        ''' 	[pbeadle]	02/09/2011    
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Shared Function GetUserCountByPortalCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
+            Dim _portalId As Integer = DirectCast(cacheItemArgs.ParamList(0), Integer)
+            Dim portalUserCount As Integer = memberProvider.GetUserCountByPortal(_portalId)
+            DataCache.SetCache(cacheItemArgs.CacheKey, portalUserCount)
+            Return portalUserCount
+        End Function
+
 #End Region
 
 #Region "Shared/Static Methods"
@@ -781,8 +799,8 @@ Namespace DotNetNuke.Entities.Users
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUserCountByPortal(ByVal portalId As Integer) As Integer
-
-            Return memberProvider.GetUserCountByPortal(portalId)
+            Dim cacheKey As String = String.Format(DataCache.PortalUserCountCacheKey, portalId)
+            Return CBO.GetCachedObject(Of Integer)(New CacheItemArgs(cacheKey, DataCache.PortalUserCountCacheTimeOut, DataCache.PortalUserCountCachePriority, portalId), AddressOf GetUserCountByPortalCallBack)
 
         End Function
 

@@ -1244,6 +1244,26 @@ Namespace DotNetNuke.Entities.Portals
             DataCache.ClearPortalCache(PortalId, True)
         End Sub
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetPortalsCallBack gets an ArrayList of Portals from the the Database.
+        ''' and sets the cache.
+        ''' </summary>
+        ''' <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
+        ''' needed for the database call</param>
+        ''' <history>
+        ''' 	[cnurse]	01/15/2008   Created
+        ''' 	[pbeadle]	02/7/2011    
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Shared Function GetPortalsCallBack(ByVal cacheItemArgs As CacheItemArgs) As Object
+            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, Null.NullInteger, Null.NullString)
+            Dim portals As ArrayList = CBO.FillCollection(DataProvider.Instance().GetPortals(), GetType(PortalInfo))
+            DataCache.SetCache(cacheKey, portals)
+            Return portals
+        End Function
+
+
 #End Region
 
 #Region "Public Methods"
@@ -1368,6 +1388,8 @@ Namespace DotNetNuke.Entities.Portals
 
             'Attempt to create a new portal
             Dim intPortalId As Integer = CreatePortal(PortalName, HomeDirectory)
+            'Add Languages to Portal - DNNPRO-14885 - All users get full Control 
+            Localization.AddLanguagesToPortal(intPortalId)
 
             If intPortalId <> -1 Then
                 If HomeDirectory = "" Then
@@ -1477,9 +1499,6 @@ Namespace DotNetNuke.Entities.Portals
 
                         'Add DesktopModules to Portal
                         DesktopModuleController.AddDesktopModulesToPortal(intPortalId)
-
-                        'Add Languages to Portal
-                        Localization.AddLanguagesToPortal(intPortalId)
 
                         'Create Portal Alias
                         AddPortalAlias(intPortalId, PortalAlias)
@@ -1591,7 +1610,9 @@ Namespace DotNetNuke.Entities.Portals
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Function GetPortals() As ArrayList
-            Return CBO.FillCollection(DataProvider.Instance().GetPortals(), GetType(PortalInfo))
+            Dim cacheKey As String = String.Format(DataCache.PortalCacheKey, Null.NullInteger, Null.NullString)
+            Return CBO.GetCachedObject(Of ArrayList)(New CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority), _
+                                                                         AddressOf GetPortalsCallBack)
         End Function
 
         Public Function GetPortal(ByVal uniqueId As Guid) As PortalInfo

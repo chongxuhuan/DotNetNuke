@@ -1761,6 +1761,30 @@ Namespace DotNetNuke.Services.Localization
             End Try
         End Sub
 
+        ''' <summary>
+        ''' Sets the culture codes on the current Thread
+        ''' </summary>
+        ''' <param name="cultureInfo">Culture Info for the current page</param>
+        ''' <param name="portalSettings">The current portalSettings</param>
+        ''' <remarks>This method will configure the Thread culture codes.  Any page which does not derive from PageBase should
+        ''' be sure to call this method in OnInit to ensure localiztion works correctly.  See the TelerikDialogHandler for an example.</remarks>
+        Public Shared Sub SetThreadCultures(ByVal cultureInfo As CultureInfo, ByVal portalSettings As PortalSettings)
+            If HttpContext.Current.Request IsNot Nothing AndAlso Not HttpContext.Current.Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") Then
+                ' Set the current culture
+                ' this logic was copied into DotNetNukeDialogHandler.vb
+                'any changes to this logic must be updated there too
+                Thread.CurrentThread.CurrentUICulture = cultureInfo
+                If portalSettings IsNot Nothing AndAlso portalSettings.ContentLocalizationEnabled AndAlso _
+                   HttpContext.Current.Request.IsAuthenticated AndAlso _
+                   portalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
+                    Dim locale As Locale = LocaleController.Instance().GetCurrentLocale(portalSettings.PortalId)
+                    Thread.CurrentThread.CurrentCulture = New CultureInfo(locale.Code)
+                Else
+                    Thread.CurrentThread.CurrentCulture = cultureInfo
+                End If
+            End If
+        End Sub
+
 #End Region
 
 #Region "Obsolete"
@@ -1949,7 +1973,6 @@ Namespace DotNetNuke.Services.Localization
         End Function
 
 #End Region
-
     End Class
 
 End Namespace

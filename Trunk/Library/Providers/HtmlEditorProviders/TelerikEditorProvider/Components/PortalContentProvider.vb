@@ -554,7 +554,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                                         Dim url As String = DotNetNuke.Common.Globals.LinkClick("fileid=" + dnnFile.FileId.ToString(), Null.NullInteger, Null.NullInteger)
 
                                         Dim fileItem As Widgets.FileItem = New Widgets.FileItem( _
-                                         dnnFile.FileName, dnnFile.Extension, dnnFile.Size, endUserPath, _
+                                         dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", _
                                          url, "", folderPermissions)
 
                                         showFiles.Add(fileItem)

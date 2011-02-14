@@ -176,11 +176,12 @@ Namespace DotNetNuke.Services.Installer.Installers
         ''' <value>A String</value>
         ''' <history>
         ''' 	[cnurse]	03/28/2008  created
+        '''     [aprasad]   02/08/2011  Added SQL extension
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides ReadOnly Property AllowableFiles() As String
             Get
-                Return "*dataprovider"
+                Return "*dataprovider, sql"
             End Get
         End Property
 
@@ -232,9 +233,10 @@ Namespace DotNetNuke.Services.Installer.Installers
         Private Function InstallScriptFile(ByVal scriptFile As InstallFile) As Boolean
             'Call base InstallFile method to copy file
             Dim bSuccess As Boolean = InstallFile(scriptFile)
+            Dim fileExtension As String = Path.GetExtension(scriptFile.Name.ToLower).Substring(1)
 
             'Process the file if it is an Install Script
-            If bSuccess AndAlso ProviderConfiguration.DefaultProvider.ToLower = Path.GetExtension(scriptFile.Name.ToLower).Substring(1) Then
+            If bSuccess AndAlso (ProviderConfiguration.DefaultProvider.ToLower = fileExtension Or AllowableFiles.Contains(fileExtension)) Then
                 Log.AddInfo(Util.SQL_Executing + scriptFile.Name)
                 'bSuccess = ExecuteSql(scriptFile, True)
                 bSuccess = ExecuteSql(scriptFile, False)

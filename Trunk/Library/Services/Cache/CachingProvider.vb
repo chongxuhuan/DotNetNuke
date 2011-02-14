@@ -87,6 +87,7 @@ Namespace DotNetNuke.Services.Cache
         End Sub
 
         Private Sub ClearCacheKeysByPortalInternal(ByVal portalId As Integer, ByVal clearRuntime As Boolean)
+            RemoveFormattedCacheKey(DataCache.PortalCacheKey, clearRuntime, Null.NullInteger, String.Empty)
             RemoveFormattedCacheKey(DataCache.LocalesCacheKey, clearRuntime, portalId)
             RemoveFormattedCacheKey(DataCache.ProfileDefinitionsCacheKey, clearRuntime, portalId)
             RemoveFormattedCacheKey(DataCache.ListsCacheKey, clearRuntime, portalId)
@@ -134,6 +135,7 @@ Namespace DotNetNuke.Services.Cache
 
         Private Sub ClearPortalCacheInternal(ByVal portalId As Integer, ByVal cascade As Boolean, ByVal clearRuntime As Boolean)
             RemoveFormattedCacheKey(DataCache.PortalSettingsCacheKey, clearRuntime, portalId)
+            RemoveFormattedCacheKey(DataCache.PortalUserCountCacheKey, clearRuntime, portalId)
 
             Dim locales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalId)
             If locales Is Nothing OrElse locales.Count = 0 Then

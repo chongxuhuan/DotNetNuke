@@ -428,18 +428,8 @@ Namespace DotNetNuke.Framework
         End Sub
 
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
-            If HttpContext.Current.Request IsNot Nothing AndAlso Not HttpContext.Current.Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") Then
-                ' Set the current culture
-                Thread.CurrentThread.CurrentUICulture = PageCulture
-                If PortalSettings IsNot Nothing AndAlso PortalSettings.ContentLocalizationEnabled AndAlso _
-                            Request.IsAuthenticated AndAlso _
-                            PortalSettings.UserMode = DotNetNuke.Entities.Portals.PortalSettings.Mode.Edit Then
-                    Dim locale As Locale = LocaleController.Instance().GetCurrentLocale(PortalSettings.PortalId)
-                    Thread.CurrentThread.CurrentCulture = New CultureInfo(locale.Code)
-                Else
-                    Thread.CurrentThread.CurrentCulture = PageCulture
-                End If
-            End If
+
+            Localization.SetThreadCultures(PageCulture, PortalSettings)
 
             'register page with AJAX
             AJAX.AddScriptManager(Me)

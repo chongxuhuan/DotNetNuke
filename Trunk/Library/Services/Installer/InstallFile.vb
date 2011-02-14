@@ -405,7 +405,7 @@ Namespace DotNetNuke.Services.Installer
                     Case "resources", "zip"
                         _Type = InstallFileType.Resources
                     Case Else
-                        If Extension.ToLower.EndsWith("dataprovider") Then
+                        If Extension.ToLower.EndsWith("dataprovider") Or Extension.ToLower = "sql" Then
                             _Type = InstallFileType.Script
                         ElseIf _Path.StartsWith("[app_code]") Then
                             _Type = InstallFileType.AppCode

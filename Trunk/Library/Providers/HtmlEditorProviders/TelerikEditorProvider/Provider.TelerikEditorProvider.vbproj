@@ -117,6 +117,9 @@
       <DependentUpon>SaveTemplate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="DotNetNukeDialogHandler.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="LinkClickUrlHandler.ashx.vb">
       <DependentUpon>LinkClickUrlHandler.ashx</DependentUpon>
     </Compile>

@@ -29,6 +29,7 @@ Imports DotNetNuke.UI.Utilities
 Imports System.Reflection
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Localization
+Imports DotNetNuke.Entities.Portals
 Imports Telerik.Web.UI
 Imports DotNetNuke.Framework.Providers
 Imports System.Collections.Generic
@@ -350,7 +351,7 @@ Namespace DotNetNuke.HtmlEditor.TelerikEditorProvider
                     _editor.DialogOpener.Window.ReloadOnShow = True
 
                     'Set dialog handlers
-                    Dim tempHandlerUrl As String = "Telerik.Web.UI.DialogHandler.aspx?tabid=" & PortalSettings.ActiveTab.TabID.ToString()
+                    Dim tempHandlerUrl As String = "Telerik.Web.UI.DialogHandler.aspx?tabid=" & PortalSettings.ActiveTab.TabID.ToString() & "&language=" & PortalController.GetCurrentPortalSettings().CultureCode
                     _editor.DialogHandlerUrl = _panel.Page.ResolveUrl(ProviderPath & tempHandlerUrl)
                     tempHandlerUrl = "Telerik.Web.UI.SpellCheckHandler.ashx?tabid=" & PortalSettings.ActiveTab.TabID.ToString()
                     _editor.SpellCheckSettings.AjaxUrl = _panel.Page.ResolveUrl(ProviderPath & tempHandlerUrl)

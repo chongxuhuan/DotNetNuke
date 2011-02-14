@@ -829,7 +829,12 @@ Namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetting", PortalId, SettingName, SettingValue, UserID, CultureCode)
         End Sub
         Public Overrides Sub UpdatePortalSetup(ByVal PortalId As Integer, ByVal AdministratorId As Integer, ByVal AdministratorRoleId As Integer, ByVal RegisteredRoleId As Integer, ByVal SplashTabId As Integer, ByVal HomeTabId As Integer, ByVal LoginTabId As Integer, ByVal RegisterTabId As Integer, ByVal UserTabId As Integer, ByVal SearchTabId As Integer, ByVal AdminTabId As Integer, ByVal CultureCode As String)
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetup", PortalId, AdministratorId, AdministratorRoleId, RegisteredRoleId, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, AdminTabId, CultureCode)
+            Try
+                SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner & ObjectQualifier & "UpdatePortalSetup", PortalId, AdministratorId, AdministratorRoleId, RegisteredRoleId, SplashTabId, HomeTabId, LoginTabId, RegisterTabId, UserTabId, SearchTabId, AdminTabId, CultureCode)
+
+            Catch ex As Exception
+                Dim a As String = ex.Message
+            End Try
         End Sub
         Public Overrides Function VerifyPortal(ByVal PortalId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "VerifyPortal", PortalId), IDataReader)

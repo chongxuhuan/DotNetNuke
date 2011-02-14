@@ -572,11 +572,11 @@ Namespace DotNetNuke.Security.Permissions
             'Get the Collection from the Dictionary
             Dim tabPermissions As TabPermissionCollection = Nothing
             bFound = dicTabPermissions.TryGetValue(tabID, tabPermissions)
-
             If Not bFound Then
                 'try the database
                 tabPermissions = New TabPermissionCollection(CBO.FillCollection(dataProvider.GetTabPermissionsByTabID(tabID, -1), GetType(TabPermissionInfo)), tabID)
             End If
+            Dim a As List(Of PermissionInfoBase) = tabPermissions.ToList
 
             Return tabPermissions
         End Function

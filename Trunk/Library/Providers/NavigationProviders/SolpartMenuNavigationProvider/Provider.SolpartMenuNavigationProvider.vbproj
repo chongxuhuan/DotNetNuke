@@ -58,7 +58,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.SolpartMenuNavigationProvider.xml</DocumentationFile>
     <BaseAddress>1293746176</BaseAddress>
     <ConfigurationOverrideFile>
@@ -78,7 +78,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Website\bin\Providers\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.SolpartMenuNavigationProvider.xml</DocumentationFile>
     <BaseAddress>1293746176</BaseAddress>
     <ConfigurationOverrideFile>
@@ -183,9 +183,22 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>SolpartMenuNavigationProvider</DNNFileName>
+    <PackageName>SolpartMenuNavigationProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="..\..\..\..\BuildScripts\SolpartPackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">
   </Target>
-  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Copy SourceFiles="..\..\..\Controls\SolpartMenu\bin\SolpartWebControls.dll" DestinationFolder="..\..\..\Website\bin\Providers\" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
   </Target>
 </Project>

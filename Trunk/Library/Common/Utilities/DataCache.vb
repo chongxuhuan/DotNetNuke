@@ -89,6 +89,10 @@ Namespace DotNetNuke.Common.Utilities
         Public Const PortalCachePriority As CacheItemPriority = CacheItemPriority.High
         Public Const PortalCacheTimeOut As Integer = 20
 
+        Public Const PortalUserCountCacheKey As String = "PortalUserCount{0}"
+        Public Const PortalUserCountCachePriority As CacheItemPriority = CacheItemPriority.High
+        Public Const PortalUserCountCacheTimeOut As Integer = 20
+
         'Tab cache keys
         Public Const TabCacheKey As String = "Tab_Tabs{0}"
         Public Const TabCachePriority As CacheItemPriority = CacheItemPriority.High

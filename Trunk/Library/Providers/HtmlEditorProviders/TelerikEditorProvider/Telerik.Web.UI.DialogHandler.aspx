@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="Telerik.Web.UI.DialogHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4" %>
+<%@ Page Language="C#" Inherits="DotNetNukeDialogHandler" %>

@@ -68,8 +68,9 @@
         var trackClicksCheckbox = $get("TrackLink")
         var trackUserCheckbox = $get("TrackUser")
 
-        if (linkClickURL != "http:///" && linkClickURL != "http://") {
-
+        //secured files will already have a linkclick url, so don't bother looking them up
+        if (linkClickURL != "http:///" && linkClickURL != "http://" && linkClickURL.indexOf("LinkClick") == -1) {
+            
             $.ajax({
                 type: 'POST',
                 async: false,
