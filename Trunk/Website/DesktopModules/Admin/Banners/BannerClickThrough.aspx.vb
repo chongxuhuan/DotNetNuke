@@ -53,7 +53,7 @@ Namespace DotNetNuke.Modules.Admin.Vendors
                         Dim strURL As String = "~/" & glbDefaultPage
 
                         Dim objBanners As New BannerController
-                        Dim objBanner As BannerInfo = objBanners.GetBanner(intBannerId, intVendorId, intPortalId)
+                        Dim objBanner As BannerInfo = objBanners.GetBanner(intBannerId)
                         If Not objBanner Is Nothing Then
                             If objBanners.IsBannerActive(objBanner) Then
                                 If Not Null.IsNull(objBanner.URL) Then

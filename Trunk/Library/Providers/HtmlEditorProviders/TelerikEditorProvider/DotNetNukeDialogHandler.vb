@@ -20,14 +20,18 @@
 
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Services.Localization
+Imports System.Globalization
 
 Public Class DotNetNukeDialogHandler
     Inherits Telerik.Web.UI.DialogHandler
-    
-    Protected Overrides Sub OnInit (ByVal e As EventArgs)
-        MyBase.OnInit (e)
+
+    Protected Overrides Sub OnInit(ByVal e As EventArgs)
+        MyBase.OnInit(e)
 
         Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
-        Localization.SetThreadCultures(Localization.GetPageLocale(settings), settings)
+        Dim pageLocale As CultureInfo = Localization.GetPageLocale(settings)
+        If Not settings Is Nothing AndAlso Not pageLocale Is Nothing Then
+            Localization.SetThreadCultures(pageLocale, settings)
+        End If
     End Sub
 End Class

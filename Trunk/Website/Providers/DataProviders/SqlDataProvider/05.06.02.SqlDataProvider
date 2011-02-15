@@ -1208,6 +1208,45 @@ SELECT
 END
 GO
 
+
+/* DNN-13372 - Procedure GetBanner doesn't use @VendorID or @PortalID */
+/**********************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetBanner]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}GetBanner
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetBanner
+@BannerId int
+as
+select B.BannerId,
+       B.VendorId,
+       'ImageFile' = case when F.FileName is null then B.ImageFile else F.Folder + F.FileName end,
+       B.BannerName,
+       B.Impressions,
+       B.CPM,
+       B.Views,
+       B.ClickThroughs,
+       B.StartDate,
+       B.EndDate,
+       'CreatedByUser' = U.FirstName + ' ' + U.LastName,
+       B.CreatedDate,
+       B.BannerTypeId,
+       B.Description,
+       B.GroupName,
+       B.Criteria,
+       B.URL,        
+       B.Width,
+       B.Height
+from   {databaseOwner}{objectQualifier}Banners B 
+inner join {databaseOwner}{objectQualifier}Vendors V ON B.VendorId = V.VendorId 
+left outer join {databaseOwner}{objectQualifier}Users U ON B.CreatedByUser = U.UserID
+left outer join {databaseOwner}{objectQualifier}Files F on B.ImageFile = 'FileId=' + convert(varchar,F.FileID)
+where  B.BannerId = @BannerId
+
+GO
+
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

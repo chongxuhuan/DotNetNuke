@@ -203,8 +203,8 @@ Namespace DotNetNuke.Services.Vendors
             Return FormatBanner(VendorId, BannerId, BannerTypeId, BannerName, ImageFile, Description, URL, Width, Height, BannerSource, HomeDirectory, String.Empty)
         End Function
 
-        Public Function GetBanner(ByVal BannerId As Integer, ByVal VendorId As Integer, ByVal PortalId As Integer) As BannerInfo
-            Return CType(CBO.FillObject(DataProvider.Instance().GetBanner(BannerId, VendorId, PortalId), GetType(BannerInfo)), BannerInfo)
+        Public Function GetBanner(ByVal BannerId As Integer) As BannerInfo
+            Return CType(CBO.FillObject(DataProvider.Instance().GetBanner(BannerId), GetType(BannerInfo)), BannerInfo)
         End Function
 
         Public Function GetBannerGroups(ByVal PortalId As Integer) As DataTable
@@ -283,6 +283,14 @@ Namespace DotNetNuke.Services.Vendors
         Public Sub UpdateBannerClickThrough(ByVal BannerId As Integer, ByVal VendorId As Integer)
             DataProvider.Instance().UpdateBannerClickThrough(BannerId, VendorId)
         End Sub
+#End Region
+
+#Region "Obsolete Methods"
+
+        <Obsolete("Deprecated in DNN 5.6.2. Use BannerController.GetBanner(Int32)")> _
+        Public Function GetBanner(ByVal BannerId As Integer, ByVal VendorId As Integer, ByVal PortalId As Integer) As BannerInfo
+            Return GetBanner(BannerId)
+        End Function
 
 #End Region
 

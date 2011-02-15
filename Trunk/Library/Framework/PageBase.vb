@@ -428,8 +428,9 @@ Namespace DotNetNuke.Framework
         End Sub
 
         Protected Overrides Sub OnInit(ByVal e As System.EventArgs)
-
-            Localization.SetThreadCultures(PageCulture, PortalSettings)
+            If HttpContext.Current.Request IsNot Nothing AndAlso Not HttpContext.Current.Request.Url.LocalPath.ToLower.EndsWith("installwizard.aspx") Then
+                Localization.SetThreadCultures(PageCulture, PortalSettings)
+            End If
 
             'register page with AJAX
             AJAX.AddScriptManager(Me)

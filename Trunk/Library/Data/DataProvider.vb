@@ -262,7 +262,7 @@ Namespace DotNetNuke.Data
 
         ' banners
         Public MustOverride Function GetBanners(ByVal VendorId As Integer) As IDataReader
-        Public MustOverride Function GetBanner(ByVal BannerId As Integer, ByVal VendorId As Integer, ByVal PortalID As Integer) As IDataReader
+        Public MustOverride Function GetBanner(ByVal BannerId As Integer) As IDataReader
         Public MustOverride Function GetBannerGroups(ByVal PortalId As Integer) As DataTable
         Public MustOverride Sub DeleteBanner(ByVal BannerId As Integer)
         Public MustOverride Function AddBanner(ByVal BannerName As String, ByVal VendorId As Integer, ByVal ImageFile As String, ByVal URL As String, ByVal Impressions As Integer, ByVal CPM As Double, ByVal StartDate As Date, ByVal EndDate As Date, ByVal UserName As String, ByVal BannerTypeId As Integer, ByVal Description As String, ByVal GroupName As String, ByVal Criteria As Integer, ByVal Width As Integer, ByVal Height As Integer) As Integer

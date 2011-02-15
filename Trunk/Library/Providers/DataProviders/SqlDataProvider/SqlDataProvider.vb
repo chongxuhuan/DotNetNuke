@@ -1230,8 +1230,8 @@ Namespace DotNetNuke.Data
         Public Overrides Function GetBanners(ByVal VendorId As Integer) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetBanners", VendorId), IDataReader)
         End Function
-        Public Overrides Function GetBanner(ByVal BannerId As Integer, ByVal VendorId As Integer, ByVal PortalId As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetBanner", BannerId, VendorId, GetNull(PortalId)), IDataReader)
+        Public Overrides Function GetBanner(ByVal BannerId As Integer) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner & ObjectQualifier & "GetBanner", BannerId), IDataReader)
         End Function
         Public Overrides Function GetBannerGroups(ByVal PortalId As Integer) As DataTable
             Return SqlHelper.ExecuteDataset(ConnectionString, DatabaseOwner & ObjectQualifier & "GetBannerGroups", GetNull(PortalId)).Tables(0)

@@ -29,9 +29,6 @@ Namespace DotNetNuke.Modules.Admin.Vendors
     ''' <summary>
     ''' The EditBanner PortalModuleBase is used to add/edit a Banner
     ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks>
-    ''' </remarks>
     ''' <history>
     ''' 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
     '''                       and localisation
@@ -88,7 +85,7 @@ Namespace DotNetNuke.Modules.Admin.Vendors
                     If Not BannerId = Null.NullInteger Then
 
                         ' Obtain a single row of banner information
-                        Dim objBanner As BannerInfo = objBanners.GetBanner(BannerId, VendorId, PortalId)
+                        Dim objBanner As BannerInfo = objBanners.GetBanner(BannerId)
 
                         If Not objBanner Is Nothing Then
                             txtBannerName.Text = objBanner.BannerName
@@ -282,7 +279,7 @@ Namespace DotNetNuke.Modules.Admin.Vendors
 
             ' send email summary to vendor
             Dim objBanners As New BannerController
-            Dim objBanner As BannerInfo = objBanners.GetBanner(BannerId, VendorId, PortalId)
+            Dim objBanner As BannerInfo = objBanners.GetBanner(BannerId)
             If Not objBanner Is Nothing Then
                 Dim objVendors As New VendorController
                 Dim objVendor As VendorInfo = objVendors.GetVendor(objBanner.VendorId, PortalId)

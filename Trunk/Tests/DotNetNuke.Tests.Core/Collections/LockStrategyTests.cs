@@ -128,7 +128,13 @@ namespace DotNetNuke.Tests.Core.Collections
                     Assert.IsTrue(t.IsAlive);
                 } //release write lock
 
-                Thread.Sleep(50);
+                //loop up to 2 seconds (40*50ms) waiting for thread to terminate
+                //no termination in 2 seconds is likely a failure
+                for(int i = 0; i < 40; i++)
+                {
+                    Thread.Sleep(50);
+                    if (!t.IsAlive) break;
+                }
 
                 //assert that getwritelock did complete once first writelock was released it's call
                 Assert.IsFalse(t.IsAlive);
