@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
+' Copyright (c) 2002-2011
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -671,6 +671,26 @@ Namespace DotNetNuke.Common.Utilities
                 WriteFeedback(response, 0, "<font color='red'>Error! (see " & strLogFile & " for more information)</font><br>", False)
             End If
         End Sub
+
+        ''' <summary>
+        ''' Searches the provided html for absolute hrefs that match the provided aliases and converts them to relative urls
+        ''' </summary>
+        ''' <param name="html">The input html</param>
+        ''' <param name="aliases">a list of aliases that should be made into relative urls</param>
+        ''' <returns>html string</returns>
+        Public Shared Function AbsoluteToRelativeUrls(ByVal html As String, ByVal aliases As IEnumerable(Of String)) As String
+            For Each portalAlias As String In aliases
+                Dim searchAlias As String = portalAlias
+                If portalAlias.Contains("/") Then
+                    searchAlias = portalAlias.Substring(0, portalAlias.IndexOf("/"))
+                End If
+                Dim exp As New Regex(String.Format("(href=&quot;)https?://{0}(.*?&quot;)", searchAlias))
+
+                html = exp.Replace(html, "$1$2")
+            Next
+
+            Return html
+        End Function
 
     End Class
 End Namespace

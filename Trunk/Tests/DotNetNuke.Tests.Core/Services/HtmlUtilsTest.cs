@@ -126,6 +126,45 @@ namespace DotNetNuke.Tests.Core.Services
 			Assert.IsTrue(result);
 		}
 
+        [Test]
+        public void HtmlUtils_AbsoluteToRelativeUrls_Handles_Http()
+        {
+            const string input = "<a href=&quot;http://alias/en-us/admin.aspx&quot;>Admin</a>";
+            const string expected = "<a href=&quot;/en-us/admin.aspx&quot;>Admin</a>";
+            Assert.AreEqual(expected, HtmlUtils.AbsoluteToRelativeUrls(input, new[] {"diversion", "alias", "otheralias"}));
+        }
+
+        [Test]
+        public void HtmlUtils_AbsoluteToRelativeUrls_Handles_Alias_With_Subdir()
+        {
+            const string input = "<a href=&quot;http://alias/subdir/dir2/en-us/admin.aspx&quot;>Admin</a>";
+            const string expected = "<a href=&quot;/subdir/dir2/en-us/admin.aspx&quot;>Admin</a>";
+            Assert.AreEqual(expected, HtmlUtils.AbsoluteToRelativeUrls(input, new[] { "diversion", "alias/subdir/dir2", "otheralias" }));
+        }
+
+        [Test]
+        public void HtmlUtils_AbsoluteToRelativeUrls_Handles_multiple_links()
+        {
+            const string input = "<a href=&quot;http://alias/subdir/en-us/admin.aspx&quot;>Admin</a>some other text<a href=&quot;http://alias/subdir/foo.aspx?sumthin&quot;>Admin</a>";
+            const string expected = "<a href=&quot;/subdir/en-us/admin.aspx&quot;>Admin</a>some other text<a href=&quot;/subdir/foo.aspx?sumthin&quot;>Admin</a>";
+            Assert.AreEqual(expected, HtmlUtils.AbsoluteToRelativeUrls(input, new[] { "diversion", "alias/subdir", "otheralias" }));
+        }
+
+        [Test]
+        public void HtmlUtils_AbsoluteToRelativeUrls_Handles_Https()
+        {
+            const string input = "<a href=&quot;https://alias/en-us/admin.aspx&quot;>Admin</a>";
+            const string expected = "<a href=&quot;/en-us/admin.aspx&quot;>Admin</a>";
+            Assert.AreEqual(expected, HtmlUtils.AbsoluteToRelativeUrls(input, new[] { "alias" }));
+        }
+
+        [Test]
+        public void HtmlUtils_AbsoluteToRelativeUrls_Handles_Plain_Text()
+        {
+            const string input = "this is just some text &quot;https://alias/en-us/admin.aspx&quot;";
+            Assert.AreEqual(input, HtmlUtils.AbsoluteToRelativeUrls(input, new[] { "alias" }));
+        }
+
         [TearDown]
         public void TearDown()
         {}

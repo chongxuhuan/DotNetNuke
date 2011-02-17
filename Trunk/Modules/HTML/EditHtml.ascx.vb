@@ -1,6 +1,6 @@
 '
 ' DotNetNuke® - http://www.dotnetnuke.com
-' Copyright (c) 2002-2010
+' Copyright (c) 2002-2011
 ' by DotNetNuke Corporation
 '
 ' Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,11 +23,11 @@ Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Security.Permissions
 Imports DotNetNuke.Services.Exceptions
-Imports DotNetNuke.Web.UI.WebControls
-
 Imports DotNetNuke.Entities.Users
 Imports DotNetNuke.Security
+Imports DotNetNuke.Entities.Portals
 Imports Telerik.Web.UI
+Imports DotNetNuke.Common.Utilities
 
 Namespace DotNetNuke.Modules.Html
 
@@ -387,7 +387,11 @@ Namespace DotNetNuke.Modules.Html
             Try
                 ' get content
                 Dim htmlContent As HtmlTextInfo = GetLatestHTMLContent()
-                htmlContent.Content = txtContent.Text
+
+                Dim pac As New PortalAliasController
+                Dim aliases = From pa As PortalAliasInfo In pac.GetPortalAliasByPortalID(PortalSettings.PortalId).Values
+                                Select pa.HTTPAlias
+                htmlContent.Content = HtmlUtils.AbsoluteToRelativeUrls(txtContent.Text, aliases)
 
                 Dim draftStateID As Integer = _workflowStateController.GetFirstWorkflowStateID(WorkflowID)
                 Dim nextWorkflowStateID As Integer = _workflowStateController.GetNextWorkflowStateID(WorkflowID, htmlContent.StateID)
