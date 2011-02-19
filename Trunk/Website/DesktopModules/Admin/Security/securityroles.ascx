@@ -90,7 +90,7 @@
     <tr>
         <td>
             <asp:Panel ID="pnlUserRoles" runat="server" CssClass="WorkPanel" Visible="True">
-                <hr noshade size="1">
+                <hr noshade="noshade" size="1">
                 <asp:DataGrid ID="grdUserRoles" runat="server" Width="100%" GridLines="None" BorderWidth="0px"
                     BorderStyle="None" DataKeyField="UserRoleID"
                     EnableViewState="false" AutoGenerateColumns="false" CellSpacing="0" CellPadding="4"
@@ -127,7 +127,7 @@
                         </asp:TemplateColumn>
                     </Columns>
                 </asp:DataGrid>
-                <hr noshade size="1">
+                <hr noshade="noshade" size="1">
             </asp:Panel>
         </td>
     </tr>

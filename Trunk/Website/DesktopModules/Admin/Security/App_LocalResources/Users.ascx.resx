@@ -184,6 +184,9 @@
   <data name="DeleteUnAuthorized.Action" xml:space="preserve">
     <value>Delete Unauthorized Users</value>
   </data>
+  <data name="RemoveDeleted.Action" xml:space="preserve">
+    <value>Remove Deleted Users</value>
+  </data>
   <data name="UserSettings.Action" xml:space="preserve">
     <value>User Settings</value>
   </data>
@@ -204,6 +207,12 @@
   </data>
   <data name="Delete.Text" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="Remove.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Restore.Text" xml:space="preserve">
+    <value>Restore</value>
   </data>
   <data name="Prefix.Text" xml:space="preserve">
     <value>Prefix</value>

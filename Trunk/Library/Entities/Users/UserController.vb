@@ -339,6 +339,74 @@ Namespace DotNetNuke.Entities.Users
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' Restores an existing User from the Data Store
+        ''' </summary>
+        ''' <remarks></remarks>
+        ''' <param name="objUser">The userInfo object to restore from the Database</param>
+        ''' <returns>A Boolean value that indicates whether the User was successfully restored</returns>
+        ''' <history>
+        ''' 	[aprasad]	2/15/2011	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function RestoreUser(ByRef objUser As UserInfo) As Boolean
+
+            Dim retValue As Boolean = False
+
+            'Restore the User
+            retValue = memberProvider.RestoreUser(objUser)
+
+            If (retValue) Then
+                ' Obtain PortalSettings from Current Context
+                Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+                'Log event
+                Dim objEventLog As New Services.Log.EventLog.EventLogController
+                objEventLog.AddLog("Username", objUser.Username, _portalSettings, objUser.UserID, Services.Log.EventLog.EventLogController.EventLogType.USER_RESTORED)
+
+                DataCache.ClearPortalCache(objUser.PortalID, False)
+                DataCache.ClearUserCache(objUser.PortalID, objUser.Username)
+            End If
+
+            Return retValue
+
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Permanently Remove Soft-Deleted User from the Data Store
+        ''' </summary>
+        ''' <remarks></remarks>
+        ''' <param name="objUser">The userInfo object to remove from the Database</param>
+        ''' <returns>A Boolean value that indicates whether the User was successfully removed</returns>
+        ''' <history>
+        ''' 	[aprasad]	2/15/2011	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function RemoveUser(ByRef objUser As UserInfo) As Boolean
+
+            Dim retValue As Boolean = False
+
+            'Restore the User
+            retValue = memberProvider.RemoveUser(objUser)
+
+            If (retValue) Then
+                ' Obtain PortalSettings from Current Context
+                Dim _portalSettings As PortalSettings = PortalController.GetCurrentPortalSettings
+
+                'Log event
+                Dim objEventLog As New Services.Log.EventLog.EventLogController
+                objEventLog.AddLog("Username", objUser.Username, _portalSettings, objUser.UserID, Services.Log.EventLog.EventLogController.EventLogType.USER_REMOVED)
+
+                DataCache.ClearPortalCache(objUser.PortalID, False)
+                DataCache.ClearUserCache(objUser.PortalID, objUser.Username)
+            End If
+
+            Return retValue
+
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Deletes an existing User from the Data Store
         ''' </summary>
         ''' <remarks></remarks>
@@ -454,6 +522,28 @@ Namespace DotNetNuke.Entities.Users
             For Each objUser As UserInfo In arrUsers
                 If objUser.Membership.Approved = False Or objUser.Membership.LastLoginDate = Null.NullDate Then
                     DeleteUser(objUser, True, False)
+                End If
+            Next
+
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Permanently removes soft-deleted users for a Portal
+        ''' </summary>
+        ''' <remarks></remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <history>
+        ''' 	[aprasad]	2/15/2011	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Sub RemoveDeletedUsers(ByVal portalId As Integer)
+
+            Dim arrUsers As ArrayList = GetUsers(True, False, portalId)
+
+            For Each objUser As UserInfo In arrUsers
+                If objUser.IsDeleted Then
+                    RemoveUser(objUser)
                 End If
             Next
 
@@ -596,7 +686,7 @@ Namespace DotNetNuke.Entities.Users
                     objUserInfo.Membership.UpdatePassword = Null.SetNullBoolean(dr("UpdatePassword"))
                     If Not objUserInfo.IsSuperUser Then
                         objUserInfo.Membership.Approved = Null.SetNullBoolean(dr("Authorised"))
-                    End If
+                    End If                    
                 End If
             Finally
                 CBO.CloseDataReader(dr, closeDataReader)
@@ -743,13 +833,48 @@ Namespace DotNetNuke.Entities.Users
         ''' <remarks>
         ''' </remarks>
         ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="includeDeleted">Include Deleted users</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>        
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
-        '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/18/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return memberProvider.GetUnAuthorizedUsers(portalId, includeDeleted, superUsersOnly)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUnAuthorizedUsers gets all the non-deleted users of the portal, that are not authorized
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [cnurse]	7/11/2006	created        
+        '''     [aprasad]	2/18/2011	call new overload with Deleted and SuperUsersOnly parameters as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUnAuthorizedUsers(ByVal portalId As Integer) As ArrayList
-            Return memberProvider.GetUnAuthorizedUsers(portalId)
+            Return GetUnAuthorizedUsers(portalId, False, False)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetDeletedUsers gets all the users of the portal, that are deleted
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/15/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetDeletedUsers(ByVal portalId As Integer) As ArrayList
+            Return memberProvider.GetDeletedUsers(portalId)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -917,7 +1042,7 @@ Namespace DotNetNuke.Entities.Users
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' GetUsers gets all the users of the portal
+        ''' GetUsers gets all the non-deleted users of the portal
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
@@ -925,10 +1050,28 @@ Namespace DotNetNuke.Entities.Users
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted and SuperUsersOnly parameters as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUsers(ByVal portalId As Integer) As ArrayList
-            Return GetUsers(portalId, -1, -1, -1)
+            Return GetUsers(False, False, portalId)
+        End Function
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsers gets all the users of the portal
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="includeDeleted">Include Deleted users</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUsers(ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean, ByVal portalId As Integer) As ArrayList
+            Return GetUsers(portalId, -1, -1, -1, includeDeleted, superUsersOnly)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -941,13 +1084,35 @@ Namespace DotNetNuke.Entities.Users
         ''' <param name="pageIndex">The page of records to return.</param>
         ''' <param name="pageSize">The size of the page</param>
         ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return memberProvider.GetUsers(portalId, pageIndex, pageSize, totalRecords, includeDeleted, superUsersOnly)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsers gets all the non-deleted users of the portal, by page
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-            Return memberProvider.GetUsers(portalId, pageIndex, pageSize, totalRecords)
+            Return GetUsers(portalId, pageIndex, pageSize, totalRecords, False, False)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -962,13 +1127,37 @@ Namespace DotNetNuke.Entities.Users
         ''' <param name="pageIndex">The page of records to return.</param>
         ''' <param name="pageSize">The size of the page</param>
         ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return memberProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, totalRecords, includeDeleted, superUsersOnly)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByEmail gets all the non-deleted users of the portal whose email matches a provided
+        ''' filter expression
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="emailToMatch">The email address to use to find a match.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-            Return memberProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, totalRecords)
+            Return GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, totalRecords, False, False)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -983,13 +1172,37 @@ Namespace DotNetNuke.Entities.Users
         ''' <param name="pageIndex">The page of records to return.</param>
         ''' <param name="pageSize">The size of the page</param>
         ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/17/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return memberProvider.GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, totalRecords, includeDeleted, superUsersOnly)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByUserName gets all the non-deleted users of the portal whose username matches a provided
+        ''' filter expression
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="userNameToMatch">The username to use to find a match.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-            Return memberProvider.GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, totalRecords)
+            Return GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, totalRecords, False, False)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1007,11 +1220,34 @@ Namespace DotNetNuke.Entities.Users
         ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
+        '''     [cnurse]	2/17/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Shared Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return memberProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, totalRecords, includeDeleted, superUsersOnly)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByProfileProperty gets all the non-deleted users of the portal whose profile matches
+        ''' the profile property pased as a parameter
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="propertyName">The name of the property being matched.</param>
+        ''' <param name="propertyValue">The value of the property being matched.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
         '''     [cnurse]	7/11/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Shared Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-            Return memberProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, totalRecords)
+            Return GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, totalRecords, False, False)
         End Function
 
         ''' -----------------------------------------------------------------------------

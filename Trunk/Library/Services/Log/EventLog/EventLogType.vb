@@ -148,6 +148,8 @@ Namespace DotNetNuke.Services.Log.EventLog
 			TAB_SETTING_UPDATED
             TAB_SETTING_DELETED
             HOST_SQL_EXECUTED
+            USER_RESTORED
+            USER_REMOVED
         End Enum
     End Class
 End Namespace

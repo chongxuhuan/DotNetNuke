@@ -50,7 +50,7 @@
 <br>
 <asp:Panel ID="pnlScheduleProcessing" runat="server">
     <asp:Label ID="lblProcessing" runat="server" resourcekey="lblProcessing" CssClass="SubHead">Items Processing</asp:Label>
-    <hr noshade size="1">
+    <hr noshade="noshade" size="1">
     <asp:DataGrid ID="dgScheduleProcessing" runat="server" AutoGenerateColumns="false"
         CellPadding="4" DataKeyField="ScheduleID" EnableViewState="false" border="1"
         summary="This table shows the scheduled tasks that are currently running." AlternatingItemStyle-BackColor="#CFCFCF"
@@ -99,7 +99,7 @@
 <br>
 <asp:Panel ID="pnlScheduleQueue" runat="server">
     <asp:Label ID="lblQueue" runat="server" resourcekey="lblQueue" CssClass="SubHead">Items Processing</asp:Label>
-    <hr noshade size="1">
+    <hr noshade="noshade" size="1">
     <asp:DataGrid ID="dgScheduleQueue" runat="server" AutoGenerateColumns="false" CellPadding="4"
         DataKeyField="ScheduleID" EnableViewState="false" border="1" summary="This table shows the tasks that are queued up in the schedule."
         AlternatingItemStyle-BackColor="#CFCFCF" BorderStyle="None" BorderWidth="0px"

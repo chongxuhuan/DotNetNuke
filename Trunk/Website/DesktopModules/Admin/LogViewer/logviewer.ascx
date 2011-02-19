@@ -294,7 +294,7 @@ function flipFlop(eTarget) {
         <tr>
             <td colspan="2">
                 <asp:Label class="normal" ID="lblExceptionsWarning" runat="server" resourcekey="ExceptionsWarning"/>
-                <hr noshade size="1">
+                <hr noshade='noshade' size="1">
                 <asp:RadioButtonList ID="optEmailType" runat="server" CssClass="Normal" AutoPostBack="False"
                     RepeatDirection="Horizontal">
                     <asp:ListItem Value="Email" Selected="True" resourcekey="ToEmail.Text">To Specified Email Address</asp:ListItem>

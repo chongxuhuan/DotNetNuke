@@ -20,7 +20,7 @@
 								<tr>
 									<td colspan="2" valign="top" class="SubHead">
 										<asp:label id="lblMovePage" runat="server" resourcekey="MovePage">Move Page</asp:label>
-										<hr noshade size="1">
+										<hr noshade="noshade" size="1">
 									</td>
 								</tr>
 								<tr>
@@ -77,7 +77,7 @@
 								<tr>
 									<td colspan="2" valign="top" class="SubHead">
 										<asp:label id="lblActions" runat="server" resourcekey="Actions">Actions</asp:label>
-										<hr noshade size="1">
+										<hr noshade="noshade" size="1">
 									</td>
 								</tr>
 								<tr>

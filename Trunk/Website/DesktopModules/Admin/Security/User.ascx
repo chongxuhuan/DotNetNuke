@@ -70,7 +70,15 @@
 </asp:panel>
 <asp:panel id="pnlUpdate" runat="server" align="center">
 	<dnn:commandbutton id="cmdDelete" runat="server" 
-		imageurl="~/images/delete.gif" 
+		imageurl="~/images/action_delete.gif" 
+		causesvalidation="False" />
+	&nbsp;&nbsp;&nbsp;
+	<dnn:commandbutton id="cmdRemove" runat="server" 
+		resourcekey="cmdRemove" imageurl="~/images/delete.gif" 
+		causesvalidation="False" />
+	&nbsp;&nbsp;&nbsp;
+	<dnn:commandbutton id="cmdRestore" runat="server" 
+		resourcekey="cmdRestore" imageurl="~/images/restore.gif" 
 		causesvalidation="False" />
 	&nbsp;&nbsp;&nbsp;
 	<dnn:commandbutton id="cmdUpdate" runat="server" 

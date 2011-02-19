@@ -41,10 +41,13 @@ a.SkinObject:link, a.SkinObject:visited, a.SkinObject:hover, a.SkinObject:active
 .SubSubHead{font-size:11px;font-weight:bold;color:black;}
 
 /* text style used for most text rendered by modules */
-.Normal, .NormalDisabled{font-size:11px;font-weight:normal;}
+.Normal, .NormalDisabled, .NormalDeleted{font-size:11px;font-weight:normal;}
 
 /* text style used for rendered text which should appear disabled */
-.NormalDisabled{color:Silver;}
+.NormalDisabled, .NormalDeleted{color:Silver;}
+
+/* text style used for rendered text which should appear deleted */
+.NormalDeleted{text-decoration:line-through;}
 
 /* text style used for rendered text which requires emphasis */
 .NormalBold{font-size:11px;font-weight:bold;}

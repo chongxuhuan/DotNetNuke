@@ -120,6 +120,9 @@
   <data name="DeleteItem.Text" xml:space="preserve">
     <value>Are You Sure You Wish To Delete This Item?</value>
   </data>
+  <data name="RemoveItem.Text" xml:space="preserve">
+    <value>Are You Sure You Wish To Remove This Item?</value>
+  </data>
   <data name="Calendar.Text" xml:space="preserve">
     <value>Calendar</value>
   </data>
@@ -852,11 +855,17 @@
   <data name="DeleteItems.Confirm" xml:space="preserve">
     <value>Are You Sure You Wish To Delete These Items?</value>
   </data>
+  <data name="RemoveItems.Confirm" xml:space="preserve">
+    <value>Are You Sure You Wish To Remove These Items?</value>
+  </data>
   <data name="PasswordMismatch.Text" xml:space="preserve">
     <value>The Password and Confirmation Passwords do not match</value>
   </data>
   <data name="OnLine.Text" xml:space="preserve">
     <value>Online</value>
+  </data>
+  <data name="Deleted.Text" xml:space="preserve">
+    <value>Deleted</value>
   </data>
   <data name="LOG.LangPackReader.ModuleWarning" xml:space="preserve">
     <value>Resource file {0} was not saved because the module {1} is not installed</value>

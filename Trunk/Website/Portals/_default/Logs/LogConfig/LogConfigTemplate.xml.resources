@@ -52,6 +52,8 @@
     <LogType LogTypeKey="ADMIN_ALERT" LogTypeFriendlyName="Admin Alert" LogTypeDescription="" LogTypeOwner="DotNetNuke.Logging.EventLogType" LogTypeCSSClass="AdminAlert" />
     <LogType LogTypeKey="HOST_ALERT" LogTypeFriendlyName="Host Alert" LogTypeDescription="" LogTypeOwner="DotNetNuke.Logging.EventLogType" LogTypeCSSClass="HostAlert" />
     <LogType LogTypeKey="USER_ROLE_UPDATED" LogTypeFriendlyName="User Role Updated" LogTypeDescription="" LogTypeOwner="DotNetNuke.Logging.EventLogType" LogTypeCSSClass="ItemUpdated" />
+    <LogType LogTypeKey="USER_REMOVED" LogTypeFriendlyName="User Removed" LogTypeDescription="" LogTypeOwner="DotNetNuke.Logging.EventLogType" LogTypeCSSClass="ItemDeleted" />
+    <LogType LogTypeKey="USER_RESTORED" LogTypeFriendlyName="User Restored" LogTypeDescription="" LogTypeOwner="DotNetNuke.Logging.EventLogType" LogTypeCSSClass="ItemUpdated" />
   </LogTypes>
   <LogTypeConfig LogFileID="8726e8d5-5d2b-4ddb-848e-91831a6b3f4e" LoggingStatus="On" LogTypeKey="SCHEDULER_EXCEPTION" LogTypePortalID="*" KeepMostRecent="100" FileName="Exception.xml.resources" EmailNotificationStatus="Off" NotificationThreshold="1" NotificationThresholdTime="1" NotificationThresholdTimeType="1" MailFromAddress="" MailToAddress="" />
   <LogTypeConfig LogFileID="6b780a60-cf46-4588-8a76-75ae9c577277" LoggingStatus="On" LogTypeKey="GENERAL_EXCEPTION" LogTypePortalID="*" KeepMostRecent="100" FileName="Exception.xml.resources" EmailNotificationStatus="Off" NotificationThreshold="1" NotificationThresholdTime="1" NotificationThresholdTimeType="1" MailFromAddress="" MailToAddress="" />

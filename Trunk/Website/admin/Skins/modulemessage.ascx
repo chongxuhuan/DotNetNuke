@@ -5,4 +5,4 @@
 		<td valign="middle" align="left"><asp:label id="lblHeading" runat="server" CssClass="SubHead" visible="False" enableviewstate="False"/><asp:label id="lblMessage" runat="server" CssClass="Normal" enableviewstate="False" /></td>
 	</tr>
 </table>
-<hr noshade size="1"/>
+<hr noshade="noshade" size="1"/>

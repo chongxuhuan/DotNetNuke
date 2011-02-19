@@ -353,15 +353,7 @@ Namespace DotNetNuke.HttpModules
             Dim Response As HttpResponse = app.Response
             Dim requestedPath As String = app.Request.Url.AbsoluteUri
 
-            If Request.Url.LocalPath.EndsWith("scriptresource.axd", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("webresource.axd", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("gif", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("ico", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("jpg", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("jpeg", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("png", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("css", StringComparison.InvariantCultureIgnoreCase) _
-                    OrElse Request.Url.LocalPath.EndsWith("js", StringComparison.InvariantCultureIgnoreCase) Then
+            If RewriterUtils.OmitFromRewriteProcessing(Request.Url.LocalPath) Then
                 Exit Sub
             End If
 
@@ -396,27 +388,36 @@ Namespace DotNetNuke.HttpModules
             'check if we are upgrading/installing or if this is a captcha request
             RewriteUrl(app)
 
-            ' *Note: from this point on we are dealing with a "standard" querystring ( ie. http://www.domain.com/default.aspx?tabid=## )
+            ' from this point on we are dealing with a "standard" querystring ( ie. http://www.domain.com/default.aspx?tabid=## )
+            ' only if the portal/url was succesfully identified
 
             Dim TabId As Integer
             Dim PortalId As Integer
             Dim DomainName As String = Nothing
             Dim PortalAlias As String = Nothing
             Dim objPortalAliasInfo As PortalAliasInfo = Nothing
+            Dim parsingError As Boolean = False
 
             ' get TabId from querystring ( this is mandatory for maintaining portal context for child portals )
-            Try
+            If Not String.IsNullOrEmpty(Request.QueryString("tabid")) Then
                 If Not Int32.TryParse(Request.QueryString("tabid"), TabId) Then
                     TabId = Null.NullInteger
+                    parsingError = True
                 End If
-                ' get PortalId from querystring ( this is used for host menu options as well as child portal navigation )
+            End If
+
+            ' get PortalId from querystring ( this is used for host menu options as well as child portal navigation )
+            If Not String.IsNullOrEmpty(Request.QueryString("portalid")) Then
                 If Not Int32.TryParse(Request.QueryString("portalid"), PortalId) Then
                     PortalId = Null.NullInteger
+                    parsingError = True
                 End If
-            Catch ex As Exception
+            End If
+
+            If parsingError Then
                 'The tabId or PortalId are incorrectly formatted (potential DOS)
                 Throw New HttpException(404, "Not Found")
-            End Try
+            End If
 
             Try
                 ' alias parameter can be used to switch portals
@@ -484,7 +485,14 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    If New PortalController().GetPortals().Count = 1 AndAlso PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True) Then
+                    'TODO AutoAddPortalAlias really should be a host setting as it can only be read from the host portal anyway
+                    Dim autoAddPortalAlias As Boolean = PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True)
+                    autoAddPortalAlias = autoAddPortalAlias AndAlso New PortalController().GetPortals().Count = 1
+
+                    If Not autoAddPortalAlias AndAlso Not Request.Url.LocalPath.EndsWith(glbDefaultPage, StringComparison.InvariantCultureIgnoreCase) Then
+                        ' allows requests for aspx pages in custom folder locations to be processed
+                        Exit Sub
+                    ElseIf autoAddPortalAlias Then
                         ' use the host portal
                         Dim objPortalAliasController As New PortalAliasController
                         PortalId = Host.HostPortalID

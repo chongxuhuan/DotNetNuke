@@ -59,6 +59,8 @@ Namespace DotNetNuke.Security.Membership
         Public MustOverride Function ChangePasswordQuestionAndAnswer(ByVal user As UserInfo, ByVal password As String, ByVal passwordQuestion As String, ByVal passwordAnswer As String) As Boolean
         Public MustOverride Function CreateUser(ByRef user As UserInfo) As UserCreateStatus
         Public MustOverride Function DeleteUser(ByVal user As UserInfo) As Boolean
+        Public MustOverride Function RestoreUser(ByVal user As UserInfo) As Boolean
+        Public MustOverride Function RemoveUser(ByVal user As UserInfo) As Boolean
         Public MustOverride Function GeneratePassword() As String
         Public MustOverride Function GeneratePassword(ByVal length As Integer) As String
         Public MustOverride Function GetPassword(ByVal user As UserInfo, ByVal passwordAnswer As String) As String
@@ -84,11 +86,11 @@ Namespace DotNetNuke.Security.Membership
         Public MustOverride Function GetUser(ByVal portalId As Integer, ByVal userId As Integer) As UserInfo
         Public MustOverride Function GetUserByUserName(ByVal portalId As Integer, ByVal username As String) As UserInfo
         Public MustOverride Function GetUnAuthorizedUsers(ByVal portalId As Integer) As ArrayList
+        Public MustOverride Function GetDeletedUsers(ByVal portalId As Integer) As ArrayList
         Public MustOverride Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
         Public MustOverride Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
         Public MustOverride Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
         Public MustOverride Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-
 
         <Obsolete("Deprecated in 5.1 as Ishydrated is no longer supported")> _
         Public MustOverride Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal isHydrated As Boolean) As ArrayList
@@ -107,6 +109,28 @@ Namespace DotNetNuke.Security.Membership
 
 #End Region
 
+#Region "Virtual Methods"
+        Public Overridable Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Throw New NotImplementedException()
+        End Function
+
+#End Region
     End Class
 
 End Namespace

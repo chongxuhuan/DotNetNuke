@@ -244,6 +244,7 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' <history>
         ''' 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
         '''                       and localisation
+        '''  	[aprasad]	2/15/2011	Handle Deleted filter
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub BindData(ByVal SearchText As String, ByVal SearchField As String)
@@ -257,21 +258,24 @@ Namespace DotNetNuke.Modules.Admin.Users
             End If
 
             If SearchText = Localization.GetString("Unauthorized") Then
-                Users = UserController.GetUnAuthorizedUsers(UsersPortalId)
+                Users = UserController.GetUnAuthorizedUsers(UsersPortalId, True, IsSuperUser)
+                ctlPagingControl.Visible = False
+            ElseIf SearchText = Localization.GetString("Deleted") Then
+                Users = UserController.GetDeletedUsers(UsersPortalId)
                 ctlPagingControl.Visible = False
             ElseIf SearchText = Localization.GetString("OnLine") Then
                 Users = UserController.GetOnlineUsers(UsersPortalId)
                 ctlPagingControl.Visible = False
             ElseIf SearchText = Localization.GetString("All") Then
-                Users = UserController.GetUsers(UsersPortalId, CurrentPage - 1, PageSize, TotalRecords)
+                Users = UserController.GetUsers(UsersPortalId, CurrentPage - 1, PageSize, TotalRecords, True, IsSuperUser)
             ElseIf SearchText <> "None" Then
                 Select Case SearchField
                     Case "Email"
-                        Users = UserController.GetUsersByEmail(UsersPortalId, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords)
+                        Users = UserController.GetUsersByEmail(UsersPortalId, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords, True, IsSuperUser)
                     Case "Username"
-                        Users = UserController.GetUsersByUserName(UsersPortalId, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords)
+                        Users = UserController.GetUsersByUserName(UsersPortalId, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords, True, IsSuperUser)
                     Case Else
-                        Users = UserController.GetUsersByProfileProperty(UsersPortalId, SearchField, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords)
+                        Users = UserController.GetUsersByProfileProperty(UsersPortalId, SearchField, SearchText + "%", CurrentPage - 1, PageSize, TotalRecords, True, IsSuperUser)
                         strQuerystring += "&filterProperty=" + SearchField
                 End Select
             End If
@@ -308,6 +312,7 @@ Namespace DotNetNuke.Modules.Admin.Users
             filters += "," + Localization.GetString("All")
             filters += "," + Localization.GetString("OnLine")
             filters += "," + Localization.GetString("Unauthorized")
+            filters += "," + Localization.GetString("Deleted")
 
             Dim strAlphabet As String() = filters.Split(","c)
             rptLetterSearch.DataSource = strAlphabet
@@ -333,6 +338,60 @@ Namespace DotNetNuke.Modules.Admin.Users
                 ProcessModuleLoadException(Me, exc)
             End Try
         End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Permanently removes soft-deleted users
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub RemoveDeletedUsers()
+            Try
+                UserController.RemoveDeletedUsers(PortalId)
+
+                BindData(Filter, ddlSearchType.SelectedItem.Value)
+
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Can user delete / remove / restore
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	2/16/2011	Created
+        '''                       
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Function IsCommandAllowed(ByVal user As UserInfo, ByVal Command As String) As Boolean
+
+            Dim immageVisibility As Boolean = Not (user.UserID = PortalSettings.AdministratorId) AndAlso _
+                                    (Not user.IsInRole(PortalSettings.AdministratorRoleName) OrElse _
+                                    (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))) AndAlso _
+                                    Not user.UserID = UserId
+
+            If (immageVisibility) Then
+                If (Command = "Delete") Then
+                    If (user.IsDeleted) Then
+                        immageVisibility = False
+                    End If                    
+                ElseIf (Command = "Remove" Or Command = "Restore") Then
+                    If (user.IsDeleted) Then
+                        immageVisibility = True
+                    Else
+                        immageVisibility = False
+                    End If
+                End If
+            End If
+
+            Return immageVisibility
+        End Function
 
 #End Region
 
@@ -523,6 +582,8 @@ Namespace DotNetNuke.Modules.Admin.Users
                     Dim imageColumn As ImageCommandColumn = CType(column, ImageCommandColumn)
                     If imageColumn.CommandName = "Delete" Then
                         imageColumn.OnClickJS = Localization.GetString("DeleteItem")
+                    ElseIf imageColumn.CommandName = "Remove" Then
+                        imageColumn.OnClickJS = Localization.GetString("RemoveItem")
                     End If
                     'Manage Edit Column NavigateURLFormatString
                     If imageColumn.CommandName = "Edit" Then
@@ -620,7 +681,9 @@ Namespace DotNetNuke.Modules.Admin.Users
         Private Sub ModuleAction_Click(ByVal sender As Object, ByVal e As ActionEventArgs)
             Select Case e.Action.CommandArgument
                 Case "Delete"
-                    DeleteUnAuthorizedUsers()
+                    DeleteUnAuthorizedUsers()                    
+                Case "Remove"
+                    RemoveDeletedUsers()
             End Select
         End Sub
 
@@ -642,6 +705,26 @@ Namespace DotNetNuke.Modules.Admin.Users
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' grdUsers_ItemCommand runs when any command is trggered
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	02/16/2011	Intial documentation
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub grdUsers_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdUsers.ItemCommand
+            Select Case e.CommandName
+                Case "Delete"
+                    grdUsers_DeleteCommand(source, e)
+                Case "Remove"
+                    grdUsers_RemoveCommand(source, e)
+                Case "Restore"
+                    grdUsers_RestoreCommand(source, e)
+            End Select
+        End Sub
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' grdUsers_DeleteCommand runs when the icon in the delete column is clicked
         ''' </summary>
         ''' <remarks>
@@ -650,7 +733,7 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' 	[cnurse]	01/05/2007	Intial documentation
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub grdUsers_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdUsers.DeleteCommand
+        Private Sub grdUsers_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs)
             Try
                 Dim userId As Integer = Int32.Parse(e.CommandArgument.ToString)
 
@@ -661,6 +744,74 @@ Namespace DotNetNuke.Modules.Admin.Users
                         UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserDeleted", Me.LocalResourceFile), ModuleMessageType.GreenSuccess)
                     Else
                         UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserDeleteError", Me.LocalResourceFile), ModuleMessageType.RedError)
+                    End If
+                End If
+
+                If txtSearch.Text <> "" Then
+                    Filter = txtSearch.Text
+                End If
+                BindData(Filter, ddlSearchType.SelectedItem.Value)
+
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' grdUsers_RemoveCommand runs when the icon in the delete column is clicked
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	02/16/2011	Intial documentation
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub grdUsers_RemoveCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs)
+            Try
+                Dim userId As Integer = Int32.Parse(e.CommandArgument.ToString)
+
+                Dim user As UserInfo = UserController.GetUserById(UsersPortalId, userId)
+
+                If Not user Is Nothing Then
+                    If UserController.RemoveUser(user) Then
+                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserRemoved", Me.LocalResourceFile), ModuleMessageType.GreenSuccess)
+                    Else
+                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserRemoveError", Me.LocalResourceFile), ModuleMessageType.RedError)
+                    End If
+                End If
+
+                If txtSearch.Text <> "" Then
+                    Filter = txtSearch.Text
+                End If
+                BindData(Filter, ddlSearchType.SelectedItem.Value)
+
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' grdUsers_RestoreCommand runs when the icon in the delete column is clicked
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	02/16/2011	Intial documentation
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub grdUsers_RestoreCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs)
+            Try
+                Dim userId As Integer = Int32.Parse(e.CommandArgument.ToString)
+
+                Dim user As UserInfo = UserController.GetUserById(UsersPortalId, userId)
+
+                If Not user Is Nothing Then
+                    If UserController.RestoreUser(user) Then
+                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserRestored", Me.LocalResourceFile), ModuleMessageType.GreenSuccess)
+                    Else
+                        UI.Skins.Skin.AddModuleMessage(Me, Localization.GetString("UserRestoreError", Me.LocalResourceFile), ModuleMessageType.RedError)
                     End If
                 End If
 
@@ -691,40 +842,66 @@ Namespace DotNetNuke.Modules.Admin.Users
                     item.ItemType = ListItemType.AlternatingItem Or _
                     item.ItemType = ListItemType.SelectedItem Then
 
+                Dim imgApprovedDeleted As WebControl = item.FindControl("imgApprovedDeleted")
+                Dim imgNotApprovedDeleted As WebControl = item.FindControl("imgNotApprovedDeleted")
+                Dim imgApproved As WebControl = item.FindControl("imgApproved")
+                Dim imgNotApproved As WebControl = item.FindControl("imgNotApproved")
+
+                Dim user As UserInfo = CType(item.DataItem, UserInfo)
+                If user IsNot Nothing Then
+                    If user.IsDeleted Then
+                        For Each control As WebControl In item.Controls()
+                            control.Attributes.Remove("class")
+                            control.Attributes.Add("class", "NormalDeleted")
+                        Next
+                        If imgApprovedDeleted IsNot Nothing AndAlso user.Membership.Approved Then
+                            imgApprovedDeleted.Visible = True
+                        ElseIf imgNotApprovedDeleted IsNot Nothing AndAlso Not user.Membership.Approved Then
+                            imgNotApprovedDeleted.Visible = True
+                        End If
+                    Else
+                        If imgApproved IsNot Nothing AndAlso user.Membership.Approved Then
+                            imgApproved.Visible = True
+                        ElseIf imgNotApproved IsNot Nothing AndAlso Not user.Membership.Approved Then
+                            imgNotApproved.Visible = True
+                        End If
+                    End If
+                End If
+
                 Dim imgColumnControl As Control = item.Controls(0).Controls(0)
                 If TypeOf imgColumnControl Is HyperLink Then
                     Dim editLink As HyperLink = CType(imgColumnControl, HyperLink)
-                    Dim user As UserInfo = CType(item.DataItem, UserInfo)
-
                     editLink.Visible = Not user.IsInRole(PortalSettings.AdministratorRoleName) OrElse (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
                 End If
 
                 imgColumnControl = item.Controls(1).Controls(0)
                 If TypeOf imgColumnControl Is ImageButton Then
                     Dim delImage As ImageButton = CType(imgColumnControl, ImageButton)
-                    Dim user As UserInfo = CType(item.DataItem, UserInfo)
-
-                    delImage.Visible = Not (user.UserID = PortalSettings.AdministratorId) AndAlso _
-                                            (Not user.IsInRole(PortalSettings.AdministratorRoleName) OrElse _
-                                            (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))) AndAlso _
-                                            Not user.UserID = UserId
-
+                    delImage.Visible = IsCommandAllowed(user, "Delete")
                 End If
 
                 imgColumnControl = item.Controls(2).Controls(0)
                 If TypeOf imgColumnControl Is HyperLink Then
                     Dim rolesLink As HyperLink = CType(imgColumnControl, HyperLink)
-                    Dim user As UserInfo = CType(item.DataItem, UserInfo)
-
                     rolesLink.Visible = Not user.IsInRole(PortalSettings.AdministratorRoleName) OrElse (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
                 End If
 
                 imgColumnControl = item.Controls(3).FindControl("imgOnline")
                 If TypeOf imgColumnControl Is System.Web.UI.WebControls.Image Then
                     Dim userOnlineImage As System.Web.UI.WebControls.Image = CType(imgColumnControl, System.Web.UI.WebControls.Image)
-                    Dim user As UserInfo = CType(item.DataItem, UserInfo)
-
                     userOnlineImage.Visible = user.Membership.IsOnLine
+                End If
+
+                imgColumnControl = item.Controls(3).Controls(0)
+                If TypeOf imgColumnControl Is ImageButton Then
+                    Dim restoreImage As ImageButton = CType(imgColumnControl, ImageButton)
+                    restoreImage.Visible = IsCommandAllowed(user, "Restore")
+                End If
+
+                imgColumnControl = item.Controls(4).Controls(0)
+                If TypeOf imgColumnControl Is ImageButton Then
+                    Dim removeImage As ImageButton = CType(imgColumnControl, ImageButton)
+                    removeImage.Visible = IsCommandAllowed(user, "Remove")
                 End If
             End If
         End Sub
@@ -748,8 +925,9 @@ Namespace DotNetNuke.Modules.Admin.Users
                 End If
 
                 Actions.Add(GetNextActionID, Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl(), False, SecurityAccessLevel.Edit, True, False)
+                Actions.Add(GetNextActionID, Localization.GetString("RemoveDeleted.Action", LocalResourceFile), ModuleActionType.AddContent, "Remove", "delete.gif", "", "confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("RemoveItems.Confirm")) + "')", True, SecurityAccessLevel.Edit, True, False)
                 If Not IsSuperUser Then
-                    Actions.Add(GetNextActionID, Localization.GetString("DeleteUnAuthorized.Action", LocalResourceFile), ModuleActionType.AddContent, "Delete", "delete.gif", "", "confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("DeleteItems.Confirm")) + "')", True, SecurityAccessLevel.Edit, True, False)
+                    Actions.Add(GetNextActionID, Localization.GetString("DeleteUnAuthorized.Action", LocalResourceFile), ModuleActionType.AddContent, "Delete", "action_delete.gif", "", "confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("DeleteItems.Confirm")) + "')", True, SecurityAccessLevel.Edit, True, False)
                 End If
                 If ProfileProviderConfig.CanEditProviderProperties Then
                     Actions.Add(GetNextActionID, Localization.GetString("ManageProfile.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_profile_16px.gif", EditUrl("ManageProfile"), False, SecurityAccessLevel.Edit, True, False)

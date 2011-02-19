@@ -559,7 +559,7 @@
           <modules>
             <module>
               <moduleID>354</moduleID>
-              <title>DotNetNuke® Enterprise Edition</title>
+              <title>DotNetNuke® Community Edition</title>
               <alltabs>false</alltabs>
               <inheritviewpermissions>true</inheritviewpermissions>
               <header />
@@ -590,43 +590,59 @@
               </modulepermissions>
               <content type="DNNHTML" version="05.04.03"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;branding-top&amp;quot;&amp;gt;
 &amp;lt;div class=&amp;quot;link_main&amp;quot;&amp;gt;
-&amp;lt;div class=&amp;quot;link_proedition&amp;quot; onclick=&amp;quot;window.open('http://www.dotnetnuke.com/tabid/1209/Default.aspx')&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-&amp;lt;div class=&amp;quot;link_adminguide&amp;quot; onclick=&amp;quot;window.open('http://www.dotnetnuke.com/tabid/1220/Default.aspx')&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;div class=&amp;quot;link_proedition&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.dotnetnuke.com/tabid/1209/Default.aspx&amp;#39;)&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;div class=&amp;quot;link_manuals&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.dotnetnuke.com/tabid/1667/Default.aspx&amp;#39;)&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
 &amp;lt;div&amp;gt;&amp;lt;/div&amp;gt;
 &amp;lt;/div&amp;gt;
 &amp;lt;/div&amp;gt;
 &amp;lt;div class=&amp;quot;branding-bottom&amp;quot;&amp;gt;
 &amp;lt;ul&amp;gt;
-    &amp;lt;li class=&amp;quot;commmunity&amp;quot;&amp;gt;
-    &amp;lt;dl&amp;gt;
-        &amp;lt;dt&amp;gt;Share your knowledge &amp;lt;/dt&amp;gt;
-        &amp;lt;dd&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/tabid/795/Default.aspx&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Interact and engage with other members of the DotNetNuke community&amp;lt;/a&amp;gt; &amp;lt;/dd&amp;gt;
-    &amp;lt;/dl&amp;gt;
-    &amp;lt;dl class=&amp;quot;bt&amp;quot;&amp;gt;&amp;lt;/dl&amp;gt;
+    &amp;lt;li class=&amp;quot;commmunity&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.dotnetnuke.com/tabid/795/Default.aspx&amp;#39;)&amp;quot;&amp;gt;
+    &amp;lt;ul class=&amp;quot;feature-block&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;feature-icon&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+        &amp;lt;li&amp;gt;
+        &amp;lt;div class=&amp;quot;feature-text&amp;quot;&amp;gt;Engage with other members of the DotNetNuke community&amp;lt;/div&amp;gt;
         &amp;lt;/li&amp;gt;
-        &amp;lt;li class=&amp;quot;marketplace&amp;quot;&amp;gt;
-        &amp;lt;dl&amp;gt;
-            &amp;lt;dt&amp;gt;Find modules and skins &amp;lt;/dt&amp;gt;
-            &amp;lt;dd&amp;gt;&amp;lt;a href=&amp;quot;http://www.snowcovered.com&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Add third-party modules and skins to your DotNetNuke site by visiting Snowcovered &amp;amp;nbsp;marketplace&amp;lt;/a&amp;gt; &amp;lt;/dd&amp;gt;
-        &amp;lt;/dl&amp;gt;
-        &amp;lt;dl class=&amp;quot;bt&amp;quot;&amp;gt;&amp;lt;/dl&amp;gt;
-            &amp;lt;/li&amp;gt;
-            &amp;lt;li class=&amp;quot;conferences&amp;quot;&amp;gt;
-            &amp;lt;dl&amp;gt;
-                &amp;lt;dt&amp;gt;Learn. Share. Connect &amp;lt;/dt&amp;gt;
-                &amp;lt;dd&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/News/Events/tabid/1282/Default.aspx&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Dive deep into DotNetNuke with in-depth technical and business sessions from experts&amp;lt;/a&amp;gt; &amp;lt;/dd&amp;gt;
-            &amp;lt;/dl&amp;gt;
-            &amp;lt;dl class=&amp;quot;bt&amp;quot;&amp;gt;&amp;lt;/dl&amp;gt;
-                &amp;lt;/li&amp;gt;
-                &amp;lt;li class=&amp;quot;training&amp;quot;&amp;gt;
-                &amp;lt;dl&amp;gt;
-                    &amp;lt;dt&amp;gt;Learn from the experts &amp;lt;/dt&amp;gt;
-                    &amp;lt;dd&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/tabid/1222/Default.aspx&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Learn how to use all of DotNetNuke's potential from experts&amp;lt;/a&amp;gt; &amp;lt;/dd&amp;gt;
-                &amp;lt;/dl&amp;gt;
-                &amp;lt;dl class=&amp;quot;bt&amp;quot;&amp;gt;&amp;lt;/dl&amp;gt;
-                    &amp;lt;/li&amp;gt;
-                &amp;lt;/ul&amp;gt;
-                &amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;ul class=&amp;quot;bt&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;action-btn engage-action&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li class=&amp;quot;marketplace&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.snowcovered.com/Snowcovered2/Default.aspx&amp;#39;)&amp;quot;&amp;gt;
+    &amp;lt;ul class=&amp;quot;feature-block&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;feature-icon&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+        &amp;lt;li&amp;gt;
+        &amp;lt;div class=&amp;quot;feature-text&amp;quot;&amp;gt;Select from nearly 10,000 apps at Snowcovered.com&amp;lt;/div&amp;gt;
+        &amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;ul class=&amp;quot;bt&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;action-btn shop-action&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li class=&amp;quot;conferences&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.dotnetnuke.com/News/Events/tabid/1282/Default.aspx&amp;#39;)&amp;quot;&amp;gt;
+    &amp;lt;ul class=&amp;quot;feature-block&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;feature-icon&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+        &amp;lt;li&amp;gt;
+        &amp;lt;div class=&amp;quot;feature-text&amp;quot;&amp;gt;Look for DotNetNuke conferences and user groups in your area&amp;lt;/div&amp;gt;
+        &amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;ul class=&amp;quot;bt&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;action-btn connect-action&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li class=&amp;quot;training&amp;quot; onclick=&amp;quot;window.open(&amp;#39;http://www.dotnetnuke.com/Resources/Training/tabid/1299/Default.aspx&amp;#39;)&amp;quot;&amp;gt;
+    &amp;lt;ul class=&amp;quot;feature-block&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;feature-icon&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+        &amp;lt;li&amp;gt;
+        &amp;lt;div class=&amp;quot;feature-text&amp;quot;&amp;gt;View training videos or register for upcoming sessions&amp;lt;/div&amp;gt;
+        &amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;ul class=&amp;quot;bt&amp;quot;&amp;gt;
+        &amp;lt;li class=&amp;quot;action-btn learn-action&amp;quot;&amp;gt;&amp;lt;/li&amp;gt;
+    &amp;lt;/ul&amp;gt;
+    &amp;lt;/li&amp;gt;
+&amp;lt;/ul&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>HtmlText_ReplaceTokens</settingname>
@@ -2742,9 +2758,9 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
         <file>
           <contenttype>application/octet-stream</contenttype>
           <extension>png</extension>
-          <filename>dnn_adminguide.png</filename>
+          <filename>dnn_manuals.png</filename>
           <height>137</height>
-          <size>7084</size>
+          <size>10209</size>
           <width>316</width>
         </file>
         <file>
@@ -2752,15 +2768,47 @@ DotNetNuke now includes Telerik ASP.Net AJAX support. For licensing information 
           <extension>png</extension>
           <filename>dnn_large_banner.png</filename>
           <height>428</height>
-          <size>30806</size>
+          <size>116468</size>
           <width>900</width>
+        </file>
+        <file>
+          <contenttype>application/octet-stream</contenttype>
+          <extension>png</extension>
+          <filename>connect_btn.png</filename>
+          <height>26</height>
+          <size>2802</size>
+          <width>118</width>
+        </file>
+        <file>
+          <contenttype>application/octet-stream</contenttype>
+          <extension>png</extension>
+          <filename>engage_btn.png</filename>
+          <height>26</height>
+          <size>2783</size>
+          <width>118</width>
+        </file>
+        <file>
+          <contenttype>application/octet-stream</contenttype>
+          <extension>png</extension>
+          <filename>learn_btn.png</filename>
+          <height>26</height>
+          <size>2666</size>
+          <width>118</width>
+        </file>
+        <file>
+          <contenttype>application/octet-stream</contenttype>
+          <extension>png</extension>
+          <filename>shop_btn.png</filename>
+          <height>26</height>
+          <size>2592</size>
+          <width>118</width>
         </file>
         <file>
           <contenttype>application/octet-stream</contenttype>
           <extension>png</extension>
           <filename>dnn_proedition.png</filename>
           <height>137</height>
-          <size>8364</size>
+          <size>13807</size>
           <width>514</width>
         </file>
         <file>

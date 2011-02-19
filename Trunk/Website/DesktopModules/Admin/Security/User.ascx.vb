@@ -215,6 +215,7 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' </summary>
         ''' <history>
         ''' 	[cnurse]	03/01/2006  Created
+        ''' 	[aprasad]	04/15/2011  Restore and Remove button
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Sub DataBind()
@@ -228,10 +229,19 @@ Namespace DotNetNuke.Modules.Admin.Users
                 chkRandom.Checked = False
             End If
 
-            If AddUser Then
-                cmdDelete.Visible = False
-            Else
-                cmdDelete.Visible = Not (User.UserID = PortalSettings.AdministratorId) AndAlso Not (IsUser And User.IsSuperUser)
+            cmdDelete.Visible = False
+            cmdRemove.Visible = False
+            cmdRestore.Visible = False
+            If Not AddUser Then
+                Dim DeletePermitted As Boolean = Not (User.UserID = PortalSettings.AdministratorId) AndAlso Not (IsUser And User.IsSuperUser)
+                If (DeletePermitted) Then
+                    If (User.IsDeleted) Then
+                        cmdRemove.Visible = True
+                        cmdRestore.Visible = True
+                    Else
+                        cmdDelete.Visible = True
+                    End If
+                End If
             End If
 
             If IsUser Then
@@ -320,6 +330,44 @@ Namespace DotNetNuke.Modules.Admin.Users
                 OnUserDeleted(New UserDeletedEventArgs(id, name))
             Else
                 OnUserDeleteError(New UserUpdateErrorArgs(id, name, "UserDeleteError"))
+            End If
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' cmdRestore_Click runs when the restore Button is clicked
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdRestore_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdRestore.Click
+            Dim name As String = User.Username
+            Dim id As Integer = UserId
+
+            If UserController.RestoreUser(User) Then
+                OnUserRestored(New UserRestoredEventArgs(id, name))
+            Else
+                OnUserRestoreError(New UserUpdateErrorArgs(id, name, "UserRestoreError"))
+            End If
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' cmdRemove_Click runs when the remove Button is clicked
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub cmdRemove_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdRemove.Click
+            Dim name As String = User.Username
+            Dim id As Integer = UserId
+
+            If UserController.RemoveUser(User) Then
+                OnUserRemoved(New UserRemovedEventArgs(id, name))
+            Else
+                OnUserRemoveError(New UserUpdateErrorArgs(id, name, "UserRemoveError"))
             End If
         End Sub
 

@@ -55,6 +55,7 @@ Namespace DotNetNuke.Entities.Users
         Private _PasswordAnswer As String
         Private _PasswordQuestion As String
         Private _UpdatePassword As Boolean
+        Private _IsDeleted As Boolean
 
         Private IsSuperUser As Boolean
 
@@ -276,6 +277,22 @@ Namespace DotNetNuke.Entities.Users
             End Set
         End Property
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Gets and sets a flag that determines whether the user is deleted
+        ''' </summary>
+        ''' <history>
+        '''     [aprasad]	02/14/2011	Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        <SortOrder(11)> Public Property IsDeleted() As Boolean
+            Get
+                Return _IsDeleted
+            End Get
+            Set(ByVal Value As Boolean)
+                _IsDeleted = Value
+            End Set
+        End Property
 #End Region
 
 #Region "Deprecated Members"

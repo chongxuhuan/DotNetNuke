@@ -31,8 +31,10 @@
 	<pagerstyle cssclass="DataGrid_Pager" />
 	<columns>
 		<dnn:imagecommandcolumn CommandName="Edit" ImageUrl="~/images/edit.gif" EditMode="URL" KeyField="UserID" />
-		<dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/delete.gif" keyfield="UserID" />
+		<dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/action_delete.gif" keyfield="UserID" />
 		<dnn:imagecommandcolumn CommandName="UserRoles" ImageUrl="~/images/icon_securityroles_16px.gif" EditMode="URL" KeyField="UserID" />
+        <dnn:imagecommandcolumn commandname="Restore" imageurl="~/images/restore.gif" keyfield="UserID" />
+        <dnn:imagecommandcolumn commandname="Remove" imageurl="~/images/delete.gif" keyfield="UserID"  />
 		<asp:templatecolumn>
 			<itemtemplate>
 				<asp:image id="imgOnline" runat="Server" imageurl="~/images/userOnline.gif" />		
@@ -52,7 +54,7 @@
 			<itemtemplate>
 				<asp:Label ID="Label4" Runat="server" Text='<%# DisplayEmail(CType(Container.DataItem, DotNetNuke.Entities.Users.UserInfo).Profile.Telephone) %>'>
 				</asp:Label>
-			</ItemTemplate>
+			</itemtemplate>            
 		</asp:TemplateColumn>
 		<asp:TemplateColumn HeaderText="Email">
 			<itemtemplate>
@@ -74,8 +76,10 @@
 		</asp:TemplateColumn>
 		<asp:TemplateColumn HeaderText="Authorized">
 			<itemtemplate>
-				<asp:Image Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible="<%# CType(Container.DataItem, DotNetNuke.Entities.Users.UserInfo).Membership.Approved=true%>"/>
-				<asp:Image Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible="<%# CType(Container.DataItem, DotNetNuke.Entities.Users.UserInfo).Membership.Approved=false%>"/>
+				<asp:Image Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible="False"/>
+				<asp:Image Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible="False"/>
+                <asp:Image Runat="server" ID="imgApprovedDeleted" ImageUrl="~/images/checked-disabled.gif" Visible="False"/>
+                <asp:Image Runat="server" ID="imgNotApprovedDeleted" ImageUrl="~/images/unchecked-disabled.gif" Visible="False"/>
 			</ItemTemplate>
 		</asp:TemplateColumn>
 	</columns>

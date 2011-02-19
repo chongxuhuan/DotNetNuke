@@ -56,12 +56,7 @@ Namespace DotNetNuke.HttpModules.RequestFilter
             Dim request As HttpRequest = app.Context.Request
             Dim response As HttpResponse = app.Context.Response
 
-            If request.Url.LocalPath.ToLower.EndsWith("scriptresource.axd") _
-                    OrElse request.Url.LocalPath.ToLower.EndsWith("webresource.axd") _
-                    OrElse request.Url.LocalPath.ToLower.EndsWith("gif") _
-                    OrElse request.Url.LocalPath.ToLower.EndsWith("jpg") _
-                    OrElse request.Url.LocalPath.ToLower.EndsWith("css") _
-                    OrElse request.Url.LocalPath.ToLower.EndsWith("js") Then
+            If RewriterUtils.OmitFromRewriteProcessing(request.Url.LocalPath) Then
                 Exit Sub
             End If
 

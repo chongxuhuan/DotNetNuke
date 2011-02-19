@@ -27,7 +27,7 @@
 					</td>
 				</tr>
 			</table>
-			<hr noShade SIZE="1">
+			<hr noshade="noshade" SIZE="1">
 		</td>
 	</tr>
 	<tr id="rowEntryGrid" runat="server">

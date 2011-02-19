@@ -50,6 +50,8 @@ Namespace DotNetNuke.Entities.Modules
 
         Public Delegate Sub UserCreatedEventHandler(ByVal sender As Object, ByVal e As UserCreatedEventArgs)
         Public Delegate Sub UserDeletedEventHandler(ByVal sender As Object, ByVal e As UserDeletedEventArgs)
+        Public Delegate Sub UserRestoredEventHandler(ByVal sender As Object, ByVal e As UserRestoredEventArgs)
+        Public Delegate Sub UserRemovedEventHandler(ByVal sender As Object, ByVal e As UserRemovedEventArgs)
         Public Delegate Sub UserUpdateErrorEventHandler(ByVal sender As Object, ByVal e As UserUpdateErrorArgs)
 
 #End Region
@@ -60,6 +62,10 @@ Namespace DotNetNuke.Entities.Modules
         Public Event UserCreateCompleted As UserCreatedEventHandler
         Public Event UserDeleted As UserDeletedEventHandler
         Public Event UserDeleteError As UserUpdateErrorEventHandler
+        Public Event UserRestored As UserRestoredEventHandler
+        Public Event UserRestoreError As UserUpdateErrorEventHandler
+        Public Event UserRemoved As UserRemovedEventHandler
+        Public Event UserRemoveError As UserUpdateErrorEventHandler
         Public Event UserUpdated As EventHandler
         Public Event UserUpdateCompleted As EventHandler
         Public Event UserUpdateError As UserUpdateErrorEventHandler
@@ -114,6 +120,54 @@ Namespace DotNetNuke.Entities.Modules
         ''' -----------------------------------------------------------------------------
         Public Sub OnUserDeleteError(ByVal e As UserUpdateErrorArgs)
             RaiseEvent UserDeleteError(Me, e)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Raises the UserRestored Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Sub OnUserRestored(ByVal e As UserRestoredEventArgs)
+            RaiseEvent UserRestored(Me, e)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Raises the OnUserRestoreError Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Sub OnUserRestoreError(ByVal e As UserUpdateErrorArgs)
+            RaiseEvent UserRestoreError(Me, e)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Raises the UserRemoved Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Sub OnUserRemoved(ByVal e As UserRemovedEventArgs)
+            RaiseEvent UserRemoved(Me, e)
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' Raises the OnUserRemoveError Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  Created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Sub OnUserRemoveError(ByVal e As UserUpdateErrorArgs)
+            RaiseEvent UserRemoveError(Me, e)
         End Sub
 
         ''' -----------------------------------------------------------------------------
@@ -326,6 +380,64 @@ Namespace DotNetNuke.Entities.Modules
 
         End Class
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' The UserRestoredEventArgs class provides a customised EventArgs class for
+        ''' the UserRestored Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Class UserRestoredEventArgs
+            Inherits BaseUserEventArgs
+
+            ''' -----------------------------------------------------------------------------
+            ''' <summary>
+            ''' Constructs a new UserRestoredEventArgs
+            ''' </summary>
+            ''' <param name="id">The Id of the User</param>
+            ''' <param name="name">The user name of the User</param>
+            ''' <history>
+            ''' 	[aprasad]	02/15/2011  created
+            ''' </history>
+            ''' -----------------------------------------------------------------------------
+            Public Sub New(ByVal id As Integer, ByVal name As String)
+                UserId = id
+                UserName = name
+            End Sub
+
+        End Class
+
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' The UserRestoredEventArgs class provides a customised EventArgs class for
+        ''' the UserRestored Event
+        ''' </summary>
+        ''' <history>
+        ''' 	[aprasad]	02/15/2011  created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Class UserRemovedEventArgs
+            Inherits BaseUserEventArgs
+
+            ''' -----------------------------------------------------------------------------
+            ''' <summary>
+            ''' Constructs a new UserRemovedEventArgs
+            ''' </summary>
+            ''' <param name="id">The Id of the User</param>
+            ''' <param name="name">The user name of the User</param>
+            ''' <history>
+            ''' 	[aprasad]	02/15/2011  created
+            ''' </history>
+            ''' -----------------------------------------------------------------------------
+            Public Sub New(ByVal id As Integer, ByVal name As String)
+                UserId = id
+                UserName = name
+            End Sub
+
+        End Class
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' The UserUpdateErrorArgs class provides a customised EventArgs class for

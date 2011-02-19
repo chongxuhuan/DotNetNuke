@@ -19,6 +19,7 @@
 '
 
 Imports System.Web
+Imports DotNetNuke.Entities.Controllers
 
 Namespace DotNetNuke.HttpModules
 
@@ -90,6 +91,20 @@ Namespace DotNetNuke.HttpModules
                 End If
             End If
 
+        End Function
+
+        Friend Shared Function OmitFromRewriteProcessing(ByVal localPath As String) As Boolean
+            Dim omitSettings As String = HostController.Instance.GetString("OmitFromRewriteProcessing")
+            If String.IsNullOrEmpty(omitSettings) Then
+                omitSettings = "scriptresource.axd|webresource.axd|gif|ico|jpg|jpeg|png|css|js"
+            End If
+            omitSettings = omitSettings.ToLower()
+            localPath = localPath.ToLower()
+
+            Dim omissions As String() = omitSettings.Split(New Char() {"|"c})
+            Return (From s In omissions _
+                       Where localPath.EndsWith(s) _
+                       Select s = s).Count() > 0
         End Function
 
     End Class

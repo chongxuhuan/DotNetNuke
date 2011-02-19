@@ -99,16 +99,36 @@ Namespace DotNetNuke.Security.Membership.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("DeleteUserPortal"), UserId, GetNull(PortalId))
         End Sub
 
+        Public Overrides Sub RestoreUser(ByVal UserId As Integer, ByVal PortalId As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("RestoreUser"), UserId, GetNull(PortalId))
+        End Sub
+
+        Public Overrides Sub RemoveUser(ByVal UserId As Integer, ByVal PortalId As Integer)
+            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("RemoveUser"), UserId, GetNull(PortalId))
+        End Sub
+
         Public Overrides Sub UpdateUser(ByVal UserId As Integer, ByVal PortalID As Integer, ByVal FirstName As String, ByVal LastName As String, ByVal Email As String, ByVal DisplayName As String, ByVal UpdatePassword As Boolean, ByVal IsApproved As Boolean, ByVal RefreshRoles As Boolean, ByVal LastIPAddress As String, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
             SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUser"), UserId, GetNull(PortalID), FirstName, LastName, Email, DisplayName, UpdatePassword, IsApproved, RefreshRoles, LastIPAddress, IsDeleted, lastModifiedByUserID)
         End Sub
 
+        Public Overrides Function GetAllUsers(ByVal PortalID As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetAllUsers"), GetNull(PortalID), pageIndex, pageSize, includeDeleted, superUsersOnly), IDataReader)
+        End Function
+
         Public Overrides Function GetAllUsers(ByVal PortalID As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetAllUsers"), GetNull(PortalID), pageIndex, pageSize), IDataReader)
+            Return GetAllUsers(PortalID, pageIndex, pageSize, False, False)
+        End Function
+
+        Public Overrides Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUnAuthorizedUsers"), GetNull(portalId), includeDeleted, superUsersOnly), IDataReader)
         End Function
 
         Public Overrides Function GetUnAuthorizedUsers(ByVal portalId As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUnAuthorizedUsers"), GetNull(portalId)), IDataReader)
+            Return GetUnAuthorizedUsers(portalId, False, False)
+        End Function
+
+        Public Overrides Function GetDeletedUsers(ByVal portalId As Integer) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetDeletedUsers"), GetNull(portalId)), IDataReader)
         End Function
 
         Public Overrides Function GetUser(ByVal PortalId As Integer, ByVal UserId As Integer) As IDataReader
@@ -128,19 +148,30 @@ Namespace DotNetNuke.Security.Membership.Data
         End Function
 
         Public Overrides Function GetUsersByEmail(ByVal PortalID As Integer, ByVal Email As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByEmail"), GetNull(PortalID), Email, pageIndex, pageSize), IDataReader)
+            Return GetUsersByEmail(PortalID, Email, pageIndex, pageSize, False, False)
+        End Function
+
+        Public Overrides Function GetUsersByEmail(ByVal PortalID As Integer, ByVal Email As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByEmail"), GetNull(PortalID), Email, pageIndex, pageSize, includeDeleted, superUsersOnly), IDataReader)
         End Function
 
         Public Overrides Function GetUsersByProfileProperty(ByVal PortalID As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByProfileProperty"), GetNull(PortalID), propertyName, propertyValue, pageIndex, pageSize), IDataReader)
+            Return GetUsersByProfileProperty(PortalID, propertyName, propertyValue, pageIndex, pageSize, False, False)
         End Function
 
+        Public Overrides Function GetUsersByProfileProperty(ByVal PortalID As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByProfileProperty"), GetNull(PortalID), propertyName, propertyValue, pageIndex, pageSize, includeDeleted, superUsersOnly), IDataReader)
+        End Function
         Public Overrides Function GetUsersByRolename(ByVal PortalID As Integer, ByVal Rolename As String) As IDataReader
             Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByRolename"), GetNull(PortalID), Rolename), IDataReader)
         End Function
 
+        Public Overrides Function GetUsersByUsername(ByVal PortalID As Integer, ByVal Username As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByUsername"), GetNull(PortalID), Username, pageIndex, pageSize, includeDeleted, superUsersOnly), IDataReader)
+        End Function
+
         Public Overrides Function GetUsersByUsername(ByVal PortalID As Integer, ByVal Username As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
-            Return CType(SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByUsername"), GetNull(PortalID), Username, pageIndex, pageSize), IDataReader)
+            Return GetUsersByUsername(PortalID, Username, pageIndex, pageSize, False, False)
         End Function
 
         Public Overrides Function GetSuperUsers() As IDataReader

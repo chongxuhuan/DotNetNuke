@@ -236,8 +236,9 @@ Namespace DotNetNuke.Security.Membership
                 user.Membership.LastLockoutDate = aspNetUser.LastLockoutDate
                 user.Membership.LastLoginDate = aspNetUser.LastLoginDate
                 user.Membership.LastPasswordChangeDate = aspNetUser.LastPasswordChangedDate
-                user.Membership.LockedOut = aspNetUser.IsLockedOut
+                user.Membership.LockedOut = aspNetUser.IsLockedOut                
                 user.Membership.PasswordQuestion = aspNetUser.PasswordQuestion
+                user.Membership.IsDeleted = user.IsDeleted
                 If user.IsSuperUser Then
                     'For superusers the Approved info is stored in aspnet membership
                     user.Membership.Approved = aspNetUser.IsApproved
@@ -783,6 +784,57 @@ Namespace DotNetNuke.Security.Membership
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' RestoreUser Restores a single User from the Data Store
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="user">The user to restore from the Data Store.</param>
+        ''' <returns>A Boolean indicating success or failure.</returns>
+        ''' <history>
+        '''     [aprasad]	2/15/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overrides Function RestoreUser(ByVal user As UserInfo) As Boolean
+            Dim retValue As Boolean = True
+            
+            Try
+                dataProvider.RestoreUser(user.UserID, user.PortalID)
+            Catch ex As Exception
+                LogException(ex)
+                retValue = False
+            End Try
+
+            Return retValue
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' RemoveUser Removes a single User permanently from the Data Store and Asp.Net Membership
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="user">The user to permanently remove from the Data Store.</param>
+        ''' <returns>A Boolean indicating success or failure.</returns>
+        ''' <history>
+        '''     [aprasad]	2/15/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overrides Function RemoveUser(ByVal user As UserInfo) As Boolean
+            Dim retValue As Boolean = True
+
+            Try
+                dataProvider.RemoveUser(user.UserID, user.PortalID)
+                DeleteMembershipUser(user)
+            Catch ex As Exception
+                LogException(ex)
+                retValue = False
+            End Try
+
+            Return retValue
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' Deletes all UserOnline inof from the database that has activity outside of the
         ''' time window
         ''' </summary>
@@ -881,8 +933,16 @@ Namespace DotNetNuke.Security.Membership
 
         End Function
 
+        Public Overrides Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            Return UserController.FillUserCollection(portalId, dataProvider.GetUnAuthorizedUsers(portalId, includeDeleted, superUsersOnly))
+        End Function
+
         Public Overrides Function GetUnAuthorizedUsers(ByVal portalId As Integer) As ArrayList
-            Return UserController.FillUserCollection(portalId, dataProvider.GetUnAuthorizedUsers(portalId))
+            Return GetUnAuthorizedUsers(portalId, False, False)
+        End Function
+
+        Public Overrides Function GetDeletedUsers(ByVal portalId As Integer) As ArrayList
+            Return UserController.FillUserCollection(portalId, dataProvider.GetDeletedUsers(portalId))
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -976,20 +1036,67 @@ Namespace DotNetNuke.Security.Membership
         ''' <param name="pageIndex">The page of records to return.</param>
         ''' <param name="pageSize">The size of the page</param>
         ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users.</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
-        '''     [cnurse]	12/14/2005	created
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Public Overloads Overrides Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
+        Public Overloads Overrides Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
             If pageIndex = -1 Then
                 pageIndex = 0
                 pageSize = Integer.MaxValue
             End If
 
-            Return UserController.FillUserCollection(portalId, dataProvider.GetAllUsers(portalId, pageIndex, pageSize), totalRecords)
+            Return UserController.FillUserCollection(portalId, dataProvider.GetAllUsers(portalId, pageIndex, pageSize, includeDeleted, superUsersOnly), totalRecords)
         End Function
 
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsers gets all the non-deleted users of the portal
+        ''' </summary>
+        ''' <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [cnurse]	12/14/2005	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overloads Overrides Function GetUsers(ByVal portalId As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList            
+            Return GetUsers(portalId, pageIndex, pageSize, totalRecords, False, False)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByEmail gets all the users of the portal whose email matches a provided
+        ''' filter expression
+        ''' </summary>
+        ''' <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="emailToMatch">The email address to use to find a match.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users.</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overrides Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
+            If pageIndex = -1 Then
+                pageIndex = 0
+                pageSize = Integer.MaxValue
+            End If
+
+            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), totalRecords)
+        End Function
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' GetUsersByEmail gets all the users of the portal whose email matches a provided
@@ -1004,15 +1111,38 @@ Namespace DotNetNuke.Security.Membership
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	12/14/2005	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Function GetUsersByEmail(ByVal portalId As Integer, ByVal emailToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
+            Return GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, totalRecords, False, False)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByUserName gets all the users of the portal whose username matches a provided
+        ''' filter expression
+        ''' </summary>
+        ''' <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="userNameToMatch">The username to use to find a match.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users.</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overrides Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
             If pageIndex = -1 Then
                 pageIndex = 0
                 pageSize = Integer.MaxValue
             End If
 
-            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize), totalRecords)
+            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByUsername(portalId, userNameToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), totalRecords)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1029,15 +1159,40 @@ Namespace DotNetNuke.Security.Membership
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	12/14/2005	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Function GetUsersByUserName(ByVal portalId As Integer, ByVal userNameToMatch As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
+            Return GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, totalRecords, False, False)
+        End Function
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' GetUsersByProfileProperty gets all the users of the portal whose profile matches
+        ''' the profile property pased as a parameter
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <param name="portalId">The Id of the Portal</param>
+        ''' <param name="propertyName">The name of the property being matched.</param>
+        ''' <param name="propertyValue">The value of the property being matched.</param>
+        ''' <param name="pageIndex">The page of records to return.</param>
+        ''' <param name="pageSize">The size of the page</param>
+        ''' <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        ''' <param name="includeDeleted">Include Deleted users.</param>
+        ''' <param name="superUsersOnly">Bring back super users only</param>
+        ''' <returns>An ArrayList of UserInfo objects.</returns>
+        ''' <history>
+        '''     [aprasad]	2/16/2011	created - new overload with Deletion option
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Public Overrides Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As ArrayList
             If pageIndex = -1 Then
                 pageIndex = 0
                 pageSize = Integer.MaxValue
             End If
 
-            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByUsername(portalId, userNameToMatch, pageIndex, pageSize), totalRecords)
+            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, includeDeleted, superUsersOnly), totalRecords)
         End Function
 
         ''' -----------------------------------------------------------------------------
@@ -1056,16 +1211,13 @@ Namespace DotNetNuke.Security.Membership
         ''' <returns>An ArrayList of UserInfo objects.</returns>
         ''' <history>
         '''     [cnurse]	02/01/2006	created
+        '''     [aprasad]	2/16/2011	call new overload with Deleted parameter as False
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Overrides Function GetUsersByProfileProperty(ByVal portalId As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByRef totalRecords As Integer) As ArrayList
-            If pageIndex = -1 Then
-                pageIndex = 0
-                pageSize = Integer.MaxValue
-            End If
-
-            Return UserController.FillUserCollection(portalId, dataProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize), totalRecords)
+            Return GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, totalRecords, False, False)
         End Function
+
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>

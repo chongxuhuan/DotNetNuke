@@ -238,14 +238,7 @@ Namespace DotNetNuke.Services.Mail
 
             SendMail = ""
 
-            If Not IsValidEmailAddress(MailFrom, If(PortalSettings.Current IsNot Nothing, PortalSettings.Current.PortalId, Null.NullInteger)) Then
-                'TODO: Add more robust logging that handles validation of all params
-                Dim ex As New ArgumentException(String.Format(Localize.GetString("EXCEPTION_InvalidEmailAddress", PortalSettings.Current), MailFrom))
-                LogException(ex)
-                Return ex.Message
-            End If
-
-            ' SMTP server configuration
+      ' SMTP server configuration
             If String.IsNullOrEmpty(SMTPServer) AndAlso Not String.IsNullOrEmpty(Host.SMTPServer) Then
                 SMTPServer = Host.SMTPServer
             End If

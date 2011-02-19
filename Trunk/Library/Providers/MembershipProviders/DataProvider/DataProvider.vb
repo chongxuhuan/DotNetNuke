@@ -56,16 +56,19 @@ Namespace DotNetNuke.Security.Membership.Data
         'Users
         Public MustOverride Function AddUser(ByVal PortalID As Integer, ByVal Username As String, ByVal FirstName As String, ByVal LastName As String, ByVal AffiliateId As Integer, ByVal IsSuperUser As Boolean, ByVal Email As String, ByVal DisplayName As String, ByVal UpdatePassword As Boolean, ByVal IsApproved As Boolean, ByVal createdByUserID As Integer) As Integer
         Public MustOverride Sub DeleteUserPortal(ByVal UserId As Integer, ByVal PortalId As Integer)
+        Public MustOverride Sub RestoreUser(ByVal UserId As Integer, ByVal PortalId As Integer)
+        Public MustOverride Sub RemoveUser(ByVal UserId As Integer, ByVal PortalId As Integer)
         Public MustOverride Function GetAllUsers(ByVal PortalID As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
         Public MustOverride Function GetUnAuthorizedUsers(ByVal portalId As Integer) As IDataReader
+        Public MustOverride Function GetDeletedUsers(ByVal portalId As Integer) As IDataReader
         Public MustOverride Function GetUser(ByVal PortalId As Integer, ByVal UserId As Integer) As IDataReader
         Public MustOverride Function GetUserByAuthToken(ByVal PortalID As Integer, ByVal UserToken As String, ByVal AuthType As String) As IDataReader
         Public MustOverride Function GetUserByUsername(ByVal PortalID As Integer, ByVal Username As String) As IDataReader
         Public MustOverride Function GetUserCountByPortal(ByVal portalId As Integer) As Integer
-        Public MustOverride Function GetUsersByEmail(ByVal PortalID As Integer, ByVal Email As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
-        Public MustOverride Function GetUsersByProfileProperty(ByVal PortalID As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
+        Public MustOverride Function GetUsersByEmail(ByVal PortalID As Integer, ByVal Email As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader        
+        Public MustOverride Function GetUsersByProfileProperty(ByVal PortalID As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader        
         Public MustOverride Function GetUsersByRolename(ByVal PortalID As Integer, ByVal Rolename As String) As IDataReader
-        Public MustOverride Function GetUsersByUsername(ByVal PortalID As Integer, ByVal Username As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader
+        Public MustOverride Function GetUsersByUsername(ByVal PortalID As Integer, ByVal Username As String, ByVal pageIndex As Integer, ByVal pageSize As Integer) As IDataReader        
         Public MustOverride Function GetSuperUsers() As IDataReader
         Public MustOverride Sub UpdateUser(ByVal UserId As Integer, ByVal PortalID As Integer, ByVal FirstName As String, ByVal LastName As String, ByVal Email As String, ByVal DisplayName As String, ByVal UpdatePassword As Boolean, ByVal IsApproved As Boolean, ByVal RefreshRoles As Boolean, ByVal LastIPAddress As String, ByVal IsDeleted As Boolean, ByVal lastModifiedByUserID As Integer)
 
@@ -109,6 +112,29 @@ Namespace DotNetNuke.Security.Membership.Data
 
         ' legacy
         Public MustOverride Function GetUsers(ByVal PortalId As Integer) As IDataReader
+
+#End Region
+
+#Region "Virtual Methods"
+        Public Overridable Function GetAllUsers(ByVal PortalID As Integer, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByEmail(ByVal PortalID As Integer, ByVal Email As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByProfileProperty(ByVal PortalID As Integer, ByVal propertyName As String, ByVal propertyValue As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUsersByUsername(ByVal PortalID As Integer, ByVal Username As String, ByVal pageIndex As Integer, ByVal pageSize As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overridable Function GetUnAuthorizedUsers(ByVal portalId As Integer, ByVal includeDeleted As Boolean, ByVal superUsersOnly As Boolean) As IDataReader
+            Throw New NotImplementedException()
+        End Function
 
 #End Region
 

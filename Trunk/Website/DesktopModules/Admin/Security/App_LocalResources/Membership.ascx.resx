@@ -97,10 +97,16 @@
         <value>Unlock Account</value>
     </data>
     <data name="UserMembership_UpdatePassword.Text">
-        <value>Update Password</value>
+        <value>Update Password:</value>
     </data>
     <data name="UserMembership_UpdatePassword.Help">
         <value>Force this user to update their password</value>
+    </data>
+    <data name="UserMembership_IsDeleted.Text">
+      <value>Deleted:</value>
+    </data>
+    <data name="UserMembership_IsDeleted.Help">
+      <value>Is the user deleted</value>
     </data>
     <data name="cmdPassword.Text">
         <value>Force Password Change</value>

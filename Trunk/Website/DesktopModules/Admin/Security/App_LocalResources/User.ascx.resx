@@ -222,6 +222,12 @@
   <data name="Delete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="cmdRemove.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="cmdRestore.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
   <data name="ConfirmUnRegister.Text" xml:space="preserve">
     <value>Are you sure you want to un-register</value>
   </data>

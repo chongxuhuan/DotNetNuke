@@ -989,6 +989,42 @@ Namespace DotNetNuke.Modules.Admin.Users
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
+        ''' UserRestored runs when the User has been deleted
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	2/15/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub UserRestored(ByVal sender As Object, ByVal e As User.UserRestoredEventArgs) Handles ctlUser.UserRestored
+            Try
+                Response.Redirect(ReturnUrl, True)
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
+        ''' UserRemoved runs when the User has been deleted
+        ''' </summary>
+        ''' <remarks>
+        ''' </remarks>
+        ''' <history>
+        ''' 	[aprasad]	2/15/2011	created
+        ''' </history>
+        ''' -----------------------------------------------------------------------------
+        Private Sub UserRemoved(ByVal sender As Object, ByVal e As User.UserRemovedEventArgs) Handles ctlUser.UserRemoved
+            Try
+                Response.Redirect(ReturnUrl, True)
+            Catch exc As Exception    'Module failed to load
+                ProcessModuleLoadException(Me, exc)
+            End Try
+        End Sub
+
+        ''' -----------------------------------------------------------------------------
+        ''' <summary>
         ''' UserUpdateCompleted runs when a user has been updated
         ''' </summary>
         ''' <remarks>
@@ -1012,7 +1048,7 @@ Namespace DotNetNuke.Modules.Admin.Users
         ''' 	[cnurse]	2/07/2007	created
         ''' </history>
         ''' -----------------------------------------------------------------------------
-        Private Sub UserUpdateError(ByVal sender As Object, ByVal e As User.UserUpdateErrorArgs) Handles ctlUser.UserUpdateError, ctlUser.UserDeleteError
+        Private Sub UserUpdateError(ByVal sender As Object, ByVal e As User.UserUpdateErrorArgs) Handles ctlUser.UserUpdateError, ctlUser.UserDeleteError, ctlUser.UserRestoreError, ctlUser.UserRemoveError
             AddModuleMessage(e.Message, ModuleMessageType.RedError, True)
         End Sub
 
