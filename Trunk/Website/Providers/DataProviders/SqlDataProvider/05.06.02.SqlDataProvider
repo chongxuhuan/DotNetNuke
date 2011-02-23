@@ -1684,6 +1684,18 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}HostSettings] WHER
 	END
 GO
 
+/*  DNN-13449 This procedure is no longer in use         */
+/*********************************************************/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetServerErrors]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetServerErrors]
+
+
+/*  DNN-14577 - Add Data Type Multiline Textbox for Profile Properties   */
+/*************************************************************************/
+IF NOT EXISTS (SELECT value FROM {databaseOwner}{objectQualifier}Lists 
+    WHERE ListName ='DataType' AND Value = 'Multi-line Text')     
+    INSERT INTO {databaseOwner}{objectQualifier}Lists (ListName, Value, Text, DefinitionId, PortalId, SystemList) 
+        VALUES ('DataType', 'Multi-line Text', 'DotNetNuke.UI.WebControls.MultiLineTextEditControl, DotNetNuke', -1, -1, 1)
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

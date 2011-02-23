@@ -35,6 +35,7 @@ Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Security
 Imports DotNetNuke.Services.Messaging
+Imports DotNetNuke.Services.Exceptions
 
 Namespace DotNetNuke.Modules.Html
 
@@ -156,7 +157,11 @@ Namespace DotNetNuke.Modules.Html
                                 message.Status = Services.Messaging.Data.MessageStatusType.Unread
                                 _messagingController.SaveMessage(message)
 
-                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, _user.Email, message.Subject, message.Body)
+                                Try
+                                    Services.Mail.Mail.SendEmail(objPortalSettings.Email, _user.Email, message.Subject, message.Body)
+                                Catch exc As Exception
+                                    Exceptions.LogException(exc)
+                                End Try
 
                             End If
                         End If
@@ -176,7 +181,11 @@ Namespace DotNetNuke.Modules.Html
                             message.Status = Services.Messaging.Data.MessageStatusType.Unread
                             '_messagingController.SaveMessage(message)
 
-                            Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body)
+                            Try
+                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body)
+                            Catch exc As Exception
+                                Exceptions.LogException(exc)
+                            End Try
                         End If
                     End If
                 End If

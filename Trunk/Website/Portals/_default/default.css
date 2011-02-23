@@ -58,6 +58,9 @@ a.SkinObject:link, a.SkinObject:visited, a.SkinObject:hover, a.SkinObject:active
 /* text style used for textboxes in the admin and edit pages, for Nav compatibility */
 .NormalTextBox{font-size:12px;font-weight:normal;}
 
+/* text style used for textareas in the admin and edit pages, for Nav compatibility */
+textarea.NormalTextBox{width:300px;height:200px;}
+
 /* style to apply if the content should be hidden */
 .Hidden{display:none;}
 
