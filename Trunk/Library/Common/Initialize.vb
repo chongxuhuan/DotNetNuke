@@ -134,24 +134,6 @@ Namespace DotNetNuke.Common
             Dim Request As HttpRequest = app.Request
             Dim redirect As String = Null.NullString
 
-            If HttpContext.Current.Request.ApplicationPath = "/" Then
-                If Config.GetSetting("InstallationSubfolder") = "" Then
-                    ApplicationPath = ""
-                Else
-                    ApplicationPath = (Config.GetSetting("InstallationSubfolder") & "/").ToLowerInvariant()
-                End If
-            Else
-                ApplicationPath = Request.ApplicationPath.ToLowerInvariant()
-            End If
-            ApplicationMapPath = System.AppDomain.CurrentDomain.BaseDirectory.Substring(0, System.AppDomain.CurrentDomain.BaseDirectory.Length - 1)
-            ApplicationMapPath = ApplicationMapPath.Replace("/", "\")
-
-            HostPath = ApplicationPath & "/Portals/_default/"
-            HostMapPath = Server.MapPath(HostPath)
-
-            InstallPath = ApplicationPath & "/Install/"
-            InstallMapPath = Server.MapPath(InstallPath)
-
             'Call the Global GetStatus function to determine the current status
             Globals.GetStatus()
 

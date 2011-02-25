@@ -181,6 +181,8 @@ Namespace DotNetNuke.Security.Permissions
         ''' <history>
         '''     [cnurse]        02/27/2007  New overload
         '''     [cnurse]        02/27/2007  Moved from PortalSecurity
+        '''     [aprasad]       02/23/2011  For Admin permission check: No need to check CanAddContentToPage, ModulePermissions is sufficient.
+        '''                                                             Also CanAdminModule makes Authorized
         ''' </history>
         '''-----------------------------------------------------------------------------
         Public Shared Function HasModuleAccess(ByVal AccessLevel As SecurityAccessLevel, ByVal permissionKey As String, ByVal ModuleConfiguration As ModuleInfo) As Boolean
@@ -211,9 +213,9 @@ Namespace DotNetNuke.Security.Permissions
                             End If
                         End If
                     Case SecurityAccessLevel.Admin     ' admin
-                        If TabPermissionController.CanAdminPage Then
+                        If TabPermissionController.CanAdminPage Or CanAdminModule(ModuleConfiguration) Then
                             blnAuthorized = True
-                        ElseIf TabPermissionController.CanAddContentToPage() Then
+                        Else
                             If String.IsNullOrEmpty(permissionKey) Then
                                 permissionKey = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE"
                             End If

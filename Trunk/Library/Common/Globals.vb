@@ -250,26 +250,35 @@ Namespace DotNetNuke.Common
         ''' Gets or sets the application path.
         ''' </summary>
         ''' <value>The application path.</value>
-        Public Property ApplicationPath() As String
+        Public ReadOnly Property ApplicationPath() As String
             Get
+                If _ApplicationPath Is Nothing AndAlso Not HttpContext.Current Is Nothing Then
+                    If HttpContext.Current.Request.ApplicationPath = "/" Then
+                        If Config.GetSetting("InstallationSubfolder") = "" Then
+                            _ApplicationPath = ""
+                        Else
+                            _ApplicationPath = (Config.GetSetting("InstallationSubfolder") & "/").ToLowerInvariant()
+                        End If
+                    Else
+                        _ApplicationPath = HttpContext.Current.Request.ApplicationPath.ToLowerInvariant()
+                    End If
+                End If
+
                 Return _ApplicationPath
             End Get
-            Set(ByVal Value As String)
-                _ApplicationPath = Value
-            End Set
         End Property
 
         ''' <summary>
         ''' Gets or sets the application map path.
         ''' </summary>
         ''' <value>The application map path.</value>
-        Public Property ApplicationMapPath() As String
+        Public ReadOnly Property ApplicationMapPath() As String
             Get
+                If _ApplicationMapPath Is Nothing Then
+                    _ApplicationMapPath = System.AppDomain.CurrentDomain.BaseDirectory.Substring(0, System.AppDomain.CurrentDomain.BaseDirectory.Length - 1).Replace("/", "\")
+                End If
                 Return _ApplicationMapPath
             End Get
-            Set(ByVal Value As String)
-                _ApplicationMapPath = Value
-            End Set
         End Property
 
         ''' <summary>
@@ -286,52 +295,52 @@ Namespace DotNetNuke.Common
         ''' Gets or sets the host map path.
         ''' </summary>
         ''' <value>The host map path.</value>
-        Public Property HostMapPath() As String
+        Public ReadOnly Property HostMapPath() As String
             Get
+                If _HostMapPath Is Nothing AndAlso Not HttpContext.Current Is Nothing Then
+                    _HostMapPath = HttpContext.Current.Server.MapPath(HostPath)
+                End If
                 Return _HostMapPath
             End Get
-            Set(ByVal Value As String)
-                _HostMapPath = Value
-            End Set
         End Property
 
         ''' <summary>
         ''' Gets or sets the host path.
         ''' </summary>
         ''' <value>The host path.</value>
-        Public Property HostPath() As String
+        Public ReadOnly Property HostPath() As String
             Get
+                If _HostPath Is Nothing Then
+                    _HostPath = ApplicationPath & "/Portals/_default/"
+                End If
                 Return _HostPath
             End Get
-            Set(ByVal Value As String)
-                _HostPath = Value
-            End Set
         End Property
 
         ''' <summary>
         ''' Gets or sets the install map path.
         ''' </summary>
         ''' <value>The install map path.</value>
-        Public Property InstallMapPath() As String
+        Public ReadOnly Property InstallMapPath() As String
             Get
+                If _InstallMapPath = Nothing AndAlso Not HttpContext.Current Is Nothing Then
+                    _InstallMapPath = HttpContext.Current.Server.MapPath(InstallPath)
+                End If
                 Return _InstallMapPath
             End Get
-            Set(ByVal Value As String)
-                _InstallMapPath = Value
-            End Set
         End Property
 
         ''' <summary>
         ''' Gets or sets the install path.
         ''' </summary>
         ''' <value>The install path.</value>
-        Public Property InstallPath() As String
+        Public ReadOnly Property InstallPath() As String
             Get
+                If _InstallPath = Nothing Then
+                    _InstallPath = ApplicationPath & "/Install/"
+                End If
                 Return _InstallPath
             End Get
-            Set(ByVal Value As String)
-                _InstallPath = Value
-            End Set
         End Property
 
         ''' <summary>

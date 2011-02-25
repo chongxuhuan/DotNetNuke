@@ -271,7 +271,7 @@ Namespace DotNetNuke.UI.ControlPanel
                 Dim defaultModuleName As String = Localization.GetString("DefaultModule", LocalResourceFile, PortalSettings.Current, Nothing, True)
                 If (Not String.IsNullOrEmpty(defaultModuleName)) Then
                     Dim desktopModule As DesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName(defaultModuleName, PortalSettings.Current.PortalId)
-                    If (Not IsNothing(desktopModule)) Then
+                    If (Not IsNothing(desktopModule) AndAlso Not IsNothing(ModuleLst.Items.FindItemByValue(desktopModule.DesktopModuleID))) Then
                         ModuleLst.SelectedValue = desktopModule.DesktopModuleID.ToString()
                     End If
                 End If
