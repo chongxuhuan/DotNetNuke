@@ -3,6 +3,16 @@
 <%@ Import Namespace="DotNetNuke" %>
 <script runat="server">
 
+    Protected Overrides Sub OnInit(ByVal e As EventArgs)
+        MyBase.OnInit(e)
+
+        Dim settings As PortalSettings = PortalController.GetCurrentPortalSettings
+        Dim pageLocale As CultureInfo = Localization.GetPageLocale(settings)
+        If Not settings Is Nothing AndAlso Not pageLocale Is Nothing Then
+            Localization.SetThreadCultures(pageLocale, settings)
+        End If
+    End Sub    
+    
     Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs)
 
         Dim DomainName As String = Null.NullString

@@ -213,7 +213,7 @@ Namespace DotNetNuke.Security.Permissions
                             End If
                         End If
                     Case SecurityAccessLevel.Admin     ' admin
-                        If TabPermissionController.CanAdminPage Or CanAdminModule(ModuleConfiguration) Then
+                        If TabPermissionController.CanAdminPage OrElse CanAdminModule(ModuleConfiguration) Then
                             blnAuthorized = True
                         Else
                             If String.IsNullOrEmpty(permissionKey) Then

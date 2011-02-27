@@ -924,7 +924,7 @@ Namespace DotNetNuke.Services.Localization
                 End If
             End If
 
-            If pageCulture Is Nothing AndAlso portalSettings.EnableBrowserLanguage Then
+            If pageCulture Is Nothing AndAlso portalSettings IsNot Nothing AndAlso portalSettings.EnableBrowserLanguage Then
                 pageCulture = GetBrowserCulture(portalSettings.PortalId)
             End If
 

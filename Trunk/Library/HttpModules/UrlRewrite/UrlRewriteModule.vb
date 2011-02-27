@@ -391,32 +391,24 @@ Namespace DotNetNuke.HttpModules
             ' from this point on we are dealing with a "standard" querystring ( ie. http://www.domain.com/default.aspx?tabid=## )
             ' only if the portal/url was succesfully identified
 
-            Dim TabId As Integer
-            Dim PortalId As Integer
+            Dim TabId As Integer = -1
+            Dim PortalId As Integer = -1
             Dim DomainName As String = Nothing
             Dim PortalAlias As String = Nothing
             Dim objPortalAliasInfo As PortalAliasInfo = Nothing
-            Dim parsingError As Boolean = False
-
+            
             ' get TabId from querystring ( this is mandatory for maintaining portal context for child portals )
             If Not String.IsNullOrEmpty(Request.QueryString("tabid")) Then
                 If Not Int32.TryParse(Request.QueryString("tabid"), TabId) Then
-                    TabId = Null.NullInteger
-                    parsingError = True
+                    Throw New HttpException(404, "Not Found")
                 End If
             End If
 
             ' get PortalId from querystring ( this is used for host menu options as well as child portal navigation )
             If Not String.IsNullOrEmpty(Request.QueryString("portalid")) Then
                 If Not Int32.TryParse(Request.QueryString("portalid"), PortalId) Then
-                    PortalId = Null.NullInteger
-                    parsingError = True
+                    Throw New HttpException(404, "Not Found")
                 End If
-            End If
-
-            If parsingError Then
-                'The tabId or PortalId are incorrectly formatted (potential DOS)
-                Throw New HttpException(404, "Not Found")
             End If
 
             Try
