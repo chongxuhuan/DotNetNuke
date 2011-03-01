@@ -46,10 +46,30 @@ Namespace DotNetNuke.HttpModules
             Return URL
         End Function
 
-        Private Sub RewriteUrl(ByVal app As HttpApplication)
+        Private Sub RewriteUrl(ByVal app As HttpApplication, ByRef portalAlias As String)
             Dim Request As HttpRequest = app.Request
             Dim Response As HttpResponse = app.Response
             Dim requestedPath As String = app.Request.Url.AbsoluteUri
+
+            portalAlias = ""
+
+            'determine portal alias looking for longest possible match
+            Dim myAlias As String = GetDomainName(app.Request, True)
+            Dim objPortalAlias As PortalAliasInfo
+            Do
+                objPortalAlias = PortalAliasController.GetPortalAliasInfo(myAlias)
+                If Not objPortalAlias Is Nothing Then
+                    portalAlias = myAlias
+                    Exit Do
+                End If
+
+                Dim slashIndex As Integer = myAlias.LastIndexOf("/"c)
+                If slashIndex > 1 Then
+                    myAlias = myAlias.Substring(0, slashIndex)
+                Else
+                    myAlias = ""
+                End If
+            Loop Until myAlias.Length = 0
 
             ' save original url in context
             app.Context.Items.Add("UrlRewrite:OriginalUrl", app.Request.Url.AbsoluteUri)
@@ -166,7 +186,6 @@ Namespace DotNetNuke.HttpModules
             Else
 
                 ' Try to rewrite by TabPath
-                Dim domain As String = ""
                 Dim url As String
                 If UsePortNumber() AndAlso ((app.Request.Url.Port <> 80 AndAlso Not app.Request.IsSecureConnection) OrElse (app.Request.Url.Port <> 443 AndAlso app.Request.IsSecureConnection)) Then
                     url = app.Request.Url.Host + ":" + app.Request.Url.Port.ToString + app.Request.Url.LocalPath
@@ -174,19 +193,7 @@ Namespace DotNetNuke.HttpModules
                     url = app.Request.Url.Host + app.Request.Url.LocalPath
                 End If
 
-                Dim splitUrl() As String = url.Split(Convert.ToChar("/"))
-
-                Dim myAlias As String = ""
-                If (splitUrl.Length > 0) Then
-                    For Each urlPart As String In splitUrl
-
-                        If (myAlias = "") Then
-                            myAlias = urlPart
-                        Else
-                            myAlias = myAlias & "/" & urlPart
-                        End If
-
-                        Dim objPortalAlias As PortalAliasInfo = PortalAliasController.GetPortalAliasInfo(myAlias)
+                If Not String.IsNullOrEmpty(myAlias) Then
                         If Not objPortalAlias Is Nothing Then
                             Dim portalID As Integer = objPortalAlias.PortalID
                             ' Identify Tab Name 
@@ -194,7 +201,7 @@ Namespace DotNetNuke.HttpModules
                             If (tabPath.StartsWith(myAlias)) Then
                                 tabPath = url.Remove(0, myAlias.Length)
                             End If
-
+                            
                             ' Default Page has been Requested
                             If (tabPath = "/" & glbDefaultPage.ToLower()) Then
                                 Return
@@ -205,6 +212,8 @@ Namespace DotNetNuke.HttpModules
 
                             Dim dicLocales As Dictionary(Of String, Locale) = LocaleController.Instance().GetLocales(portalID)
                             If dicLocales.Count > 1 Then
+                                Dim splitUrl() As String = app.Request.Url.ToString.Split("/"c)
+
                                 For Each CulturePart As String In splitUrl
                                     If CulturePart.Length.Equals(5) Then
                                         For Each key As KeyValuePair(Of String, Locale) In dicLocales
@@ -316,11 +325,7 @@ Namespace DotNetNuke.HttpModules
                                     Return
                                 End If
                             Next
-                        Else
-
                         End If
-
-                    Next
                 Else
                     ' Should always resolve to something
                     ' RewriterUtils.RewriteUrl(app.Context, "~/" & glbDefaultPage)
@@ -385,15 +390,21 @@ Namespace DotNetNuke.HttpModules
                 'example to test: http://localhost/dotnetnuke_2/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/default.aspx
             End Try
 
-            'check if we are upgrading/installing or if this is a captcha request
-            RewriteUrl(app)
+            Dim DomainName As String = Nothing
+            RewriteUrl(app, DomainName)
+
+            'blank DomainName indicates RewriteUrl couldn't locate a current portal
+            'reprocess url for portal alias if auto add is an option
+            If DomainName = "" AndAlso CanAutoAddPortalAlias() Then
+                DomainName = GetDomainName(app.Request, True)
+            End If
 
             ' from this point on we are dealing with a "standard" querystring ( ie. http://www.domain.com/default.aspx?tabid=## )
-            ' only if the portal/url was succesfully identified
+            ' if the portal/url was succesfully identified
 
             Dim TabId As Integer = -1
             Dim PortalId As Integer = -1
-            Dim DomainName As String = Nothing
+
             Dim PortalAlias As String = Nothing
             Dim objPortalAliasInfo As PortalAliasInfo = Nothing
             
@@ -429,9 +440,6 @@ Namespace DotNetNuke.HttpModules
                         End If
                     End If
                 End If
-
-                ' parse the Request URL into a Domain Name token 
-                DomainName = GetDomainName(Request, True)
 
                 ' PortalId identifies a portal when set
                 If PortalAlias Is Nothing Then
@@ -477,10 +485,8 @@ Namespace DotNetNuke.HttpModules
 
                 ' if the portalid is not known
                 If PortalId = -1 Then
-                    'TODO AutoAddPortalAlias really should be a host setting as it can only be read from the host portal anyway
-                    Dim autoAddPortalAlias As Boolean = PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True)
-                    autoAddPortalAlias = autoAddPortalAlias AndAlso New PortalController().GetPortals().Count = 1
-
+                    Dim autoAddPortalAlias As Boolean = CanAutoAddPortalAlias()
+                    
                     If Not autoAddPortalAlias AndAlso Not Request.Url.LocalPath.EndsWith(glbDefaultPage, StringComparison.InvariantCultureIgnoreCase) Then
                         ' allows requests for aspx pages in custom folder locations to be processed
                         Exit Sub
@@ -606,6 +612,13 @@ Namespace DotNetNuke.HttpModules
             End If
 
         End Sub
+
+        Private Function CanAutoAddPortalAlias() As Boolean
+            'TODO AutoAddPortalAlias really should be a host setting as it can only be read from the host portal anyway
+            Dim autoAddPortalAlias As Boolean = PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True)
+            autoAddPortalAlias = autoAddPortalAlias AndAlso New PortalController().GetPortals().Count = 1
+            Return autoAddPortalAlias
+        End Function
 
         Public Sub Dispose() Implements IHttpModule.Dispose
         End Sub

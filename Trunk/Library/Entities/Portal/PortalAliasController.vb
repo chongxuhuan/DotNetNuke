@@ -50,7 +50,6 @@ Namespace DotNetNuke.Entities.Portals
             Dim objPortalAliasCollection As PortalAliasCollection = PortalAliasController.GetPortalAliasLookup()
             Dim strHTTPAlias As String
             Dim bFound As Boolean = False
-
             'Do a specified PortalAlias check first
             Dim objPortalAliasInfo As PortalAliasInfo = objPortalAliasCollection(PortalAlias.ToLower)
             If Not objPortalAliasInfo Is Nothing Then
@@ -63,12 +62,18 @@ Namespace DotNetNuke.Entities.Portals
 
             'No match so iterate through the alias keys
             If Not bFound Then
-                For Each key As String In objPortalAliasCollection.Keys
+                'searching from longest to shortest alias ensures that the most specific portal is matched first
+                'In some cases this method has been called with "portalaliases" that were not exactly the real portal alias
+                'the startswith behaviour is preserved here to support those non-specific uses
+                Dim aliases As IEnumerable(Of String) = From k As Object In objPortalAliasCollection.Keys _
+                                                        Order By CStr(k).Length Descending _
+                                                        Select CStr(k)
+                For Each currentAlias As String In aliases
                     ' check if the alias key starts with the portal alias value passed in - we use
                     ' StartsWith because child portals are redirected to the parent portal domain name
                     ' eg. child = 'www.domain.com/child' and parent is 'www.domain.com'
                     ' this allows the parent domain name to resolve to the child alias ( the tabid still identifies the child portalid )
-                    objPortalAliasInfo = objPortalAliasCollection(key)
+                    objPortalAliasInfo = objPortalAliasCollection(currentAlias)
 
                     strHTTPAlias = objPortalAliasInfo.HTTPAlias.ToLower()
                     If strHTTPAlias.StartsWith(PortalAlias.ToLower) = True And objPortalAliasInfo.PortalID = PortalId Then
@@ -194,7 +199,7 @@ Namespace DotNetNuke.Entities.Portals
         Public Shared Function ValidateAlias(ByVal portalAlias As String, ByVal ischild As Boolean) As Boolean
             Dim isValid As Boolean = True
 
-            Dim validChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-"
+            Dim validChars As String = "abcdefghijklmnopqrstuvwxyz0123456789-_"
             If Not ischild Then
                 validChars += "./:"
             End If
