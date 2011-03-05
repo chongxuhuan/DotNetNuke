@@ -973,27 +973,6 @@ BEGIN
 END
 GO
 
-/* DNN-13554 - Adjust DeleteUrlTracking for performance */
-/********************************************************/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteUrlTracking]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-    DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteUrlTracking
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteUrlTracking	
-    @PortalID     int,
-    @Url          nvarchar(255),
-    @ModuleID     int
-AS
-BEGIN
-    IF @ModuleId is not null
-    BEGIN
-        DELETE FROM {databaseOwner}{objectQualifier}UrlTracking WHERE PortalID = @PortalID AND Url = @Url AND ModuleId = @ModuleId
-    END ELSE BEGIN
-        DELETE FROM {databaseOwner}{objectQualifier}UrlTracking WHERE PortalID = @PortalID AND Url = @Url
-    END
-END
-GO
 
 /* DNN-13552 - Adjust DeleteUsersOnline for performance */
 /********************************************************/
@@ -1088,37 +1067,17 @@ GO
 /* DNN-13593 - Adjust GetFolders for performance */
 /*************************************************/
 
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetFolders]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-    DROP PROCEDURE {databaseOwner}{objectQualifier}GetFolders
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetFolders]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolders]
 GO
 
-CREATE PROCEDURE {databaseOwner}{objectQualifier}GetFolders
- @PortalID int,
- @FolderID int,
- @FolderPath nvarchar(300)
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolders]
+	@PortalID int
 AS
-BEGIN
- if @FolderID <> -1
- begin
-  SELECT *
-  FROM {databaseOwner}{objectQualifier}Folders
-  WHERE FolderID = @FolderID
- end else if @PortalID is not null and @FolderPath <> ''
- begin
-  SELECT *
-  FROM {databaseOwner}{objectQualifier}Folders
-  WHERE PortalID = @PortalID AND FolderPath = @FolderPath
-  ORDER BY FolderPath
- end else begin
-  /* let it default here. Any ORM would negate the switching. */
-  SELECT *
-  FROM {databaseOwner}{objectQualifier}Folders
-  WHERE ((PortalID = @PortalID) or (PortalID is null and @PortalID is null))
-   AND (FolderID = @FolderID or @FolderID = -1)
-   AND (FolderPath = @FolderPath or @FolderPath = '')
-  ORDER BY FolderPath
- end
-END
+SELECT *
+	FROM {databaseOwner}{objectQualifier}Folders
+	WHERE PortalID = @PortalID
+	ORDER BY FolderPath
 GO
 
 /* DNN-13809 - Adjust GetSystemMessage for performance */

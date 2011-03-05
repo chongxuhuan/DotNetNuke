@@ -18,7 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Public Class SharedList(Of T)
         Implements IList(Of T)

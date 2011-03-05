@@ -18,7 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Public Enum LockingStrategy
         ReaderWriter = 0

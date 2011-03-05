@@ -19,6 +19,7 @@
 '
 
 Imports System.IO
+Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.UI.Skins.Controls.ModuleMessage
 Imports DotNetNuke.Entities.Modules
@@ -78,9 +79,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </summary>
         ''' <param name="activeLanguage"></param>
         ''' <remarks></remarks>
-        ''' <history>
-        ''' 	[aprasad]	1/17/2011	New setting AutoAddPortalAlias
-        ''' </history>
         Private Sub LoadPortal(ByVal activeLanguage As String)
             Dim objPortalController As New PortalController
             Dim objModules As New ModuleController
@@ -282,7 +280,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 chkAutoAddPortalAlias.Enabled = False
                 chkAutoAddPortalAlias.Checked = False
             Else
-                chkAutoAddPortalAlias.Checked = PortalSettings.AutoAddPortalAlias
+                chkAutoAddPortalAlias.Checked = HostController.Instance.GetBoolean("AutoAddPortalAlias")
             End If
 
 
@@ -674,10 +672,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
         ''' </summary>
         ''' <remarks>
         ''' </remarks>
-        ''' <history>
-        ''' 	[cnurse]	9/9/2004	Modified
-        ''' 	[aprasad]	1/17/2011	New setting AutoAddPortalAlias
-        ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
             If Page.IsValid Then
@@ -807,7 +801,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(intPortalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, False)
                     PortalController.UpdatePortalSetting(intPortalId, "PortalAliasMapping", portalAliasModeButtonList.SelectedValue, False)
                     PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalAlias", defaultAliasDropDown.SelectedValue, False)
-                    PortalController.UpdatePortalSetting(intPortalId, "AutoAddPortalAlias", chkAutoAddPortalAlias.Checked.ToString, False)
+                    HostController.Instance.Update("AutoAddPortalAlias", IIf(chkAutoAddPortalAlias.Checked, "Y", "N"), True)
 
                     If IsSuperUser() Then
                         PortalController.UpdatePortalSetting(intPortalId, "SSLEnabled", chkSSLEnabled.Checked.ToString, False)

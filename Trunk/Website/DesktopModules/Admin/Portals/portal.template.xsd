@@ -28,7 +28,6 @@
               <xs:element name="containersrc" type="xs:string" minOccurs="0" maxOccurs="1" />
               <xs:element name="containersrcadmin" type="xs:string" minOccurs="0" maxOccurs="1" />
               <xs:element name="portalaliasmapping" type="xs:string" minOccurs="0" maxOccurs="1" />
-              <xs:element name="autoaddportalalias" type="xs:string" minOccurs="0" maxOccurs="1" />
             </xs:all>
           </xs:complexType>
         </xs:element>

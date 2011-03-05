@@ -21,7 +21,7 @@
 Imports System.Runtime.InteropServices
 Imports System.Runtime.CompilerServices
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Public Class SharedDictionary(Of TKey, TValue)
         Implements IDictionary(Of TKey, TValue)

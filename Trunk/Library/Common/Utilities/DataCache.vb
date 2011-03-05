@@ -22,7 +22,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Web.Caching
 Imports System.Diagnostics
-Imports DotNetNuke.Collections
+Imports DotNetNuke.Collections.Internal
 
 Imports DotNetNuke.Entities.Tabs
 Imports DotNetNuke.Services.Cache

@@ -20,7 +20,7 @@
 
 Imports System.Threading
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Friend Class ReaderWriterSlimLock
         Implements ISharedCollectionLock

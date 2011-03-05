@@ -20,7 +20,7 @@
 
 Imports System.Threading
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Public Class ReaderWriterLockStrategy
         Implements IDisposable

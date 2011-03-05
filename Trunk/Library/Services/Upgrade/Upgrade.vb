@@ -1568,6 +1568,12 @@ Namespace DotNetNuke.Services.Upgrade
             Dim properties As ProfilePropertyDefinitionCollection = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger)
             ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count * 2 + 2, UserVisibilityMode.AllUsers, dataTypes)
 
+            If Globals.Status = Globals.UpgradeStatus.Install Then
+                HostController.Instance.Update("AutoAddPortalAlias", "Y")
+            Else 'upgrade
+                HostController.Instance.Update("AutoAddPortalAlias", "N")
+            End If
+
         End Sub
 
 #End Region

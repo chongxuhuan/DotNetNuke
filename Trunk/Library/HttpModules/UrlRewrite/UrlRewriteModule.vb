@@ -21,6 +21,7 @@
 Imports System
 Imports System.Text.RegularExpressions
 Imports System.Web
+Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke.Entities.Portals
 Imports DotNetNuke.Common
 Imports DotNetNuke.Common.Utilities
@@ -614,8 +615,7 @@ Namespace DotNetNuke.HttpModules
         End Sub
 
         Private Function CanAutoAddPortalAlias() As Boolean
-            'TODO AutoAddPortalAlias really should be a host setting as it can only be read from the host portal anyway
-            Dim autoAddPortalAlias As Boolean = PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", Host.HostPortalID, True)
+            Dim autoAddPortalAlias As Boolean = HostController.Instance.GetBoolean("AutoAddPortalAlias")
             autoAddPortalAlias = autoAddPortalAlias AndAlso New PortalController().GetPortals().Count = 1
             Return autoAddPortalAlias
         End Function

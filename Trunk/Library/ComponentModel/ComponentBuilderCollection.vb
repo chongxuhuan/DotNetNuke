@@ -19,7 +19,7 @@
 '
 
 Imports System.Collections.ObjectModel
-Imports DotNetNuke.Collections
+Imports DotNetNuke.Collections.Internal
 
 Namespace DotNetNuke.ComponentModel
 

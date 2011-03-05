@@ -20,7 +20,7 @@
 
 Namespace DotNetNuke.UI.Skins.Controls
     Partial Class jQuery
-        Inherits DotNetNuke.UI.Skins.SkinObjectBase
+        Inherits UI.Skins.SkinObjectBase
 
         Protected Sub Page_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Init
             DotNetNuke.Framework.jQuery.RequestRegistration()

@@ -18,7 +18,7 @@
 // ' DEALINGS IN THE SOFTWARE.
 // '
 
-using DotNetNuke.Collections;
+using DotNetNuke.Collections.Internal;
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections

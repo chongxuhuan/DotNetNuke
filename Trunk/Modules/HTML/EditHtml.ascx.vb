@@ -498,7 +498,10 @@ Namespace DotNetNuke.Modules.Html
 
                 Dim createdBy As String = "Default"
                 If (htmlContent.CreatedByUserID <> -1) Then
-                    createdBy = UserController.GetUserById(PortalId, htmlContent.CreatedByUserID).DisplayName
+                    Dim createdByByUser As UserInfo = UserController.GetUserById(PortalId, htmlContent.CreatedByUserID)
+                    If (Not createdByByUser Is Nothing) Then
+                        createdBy = createdByByUser.DisplayName
+                    End If
                 End If
 
                 For Each cell As TableCell In item.Cells

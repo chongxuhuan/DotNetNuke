@@ -23,7 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using DotNetNuke.Collections;
+using DotNetNuke.Collections.Internal;
 using Gallio.Framework;
 using MbUnit.Framework;
 using MbUnit.Framework.ContractVerifiers;

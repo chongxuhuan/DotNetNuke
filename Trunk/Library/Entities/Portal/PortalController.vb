@@ -898,7 +898,6 @@ Namespace DotNetNuke.Entities.Portals
         ''' 	[VMasanas]	15/10/2004	Modified for new skin structure
         '''     [cnurse]    11/21/2004  Modified to use GetNodeValueDate for ExpiryDate
         '''     [VMasanas]  02/21/2005  Modified to not overwrite ExpiryDate if not present
-        '''     [aprasad]   01/17/2011  New setting AutoAddPortalAlias
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub ParsePortalSettings(ByVal nodeSettings As XmlNode, ByVal PortalId As Integer)
@@ -968,11 +967,6 @@ Namespace DotNetNuke.Entities.Portals
             'Set Time Zone maping
             If XmlUtils.GetNodeValue(nodeSettings, "timezone", Localization.SystemTimeZone) <> "" Then
                 UpdatePortalSetting(PortalId, "TimeZone", XmlUtils.GetNodeValue(nodeSettings, "timezone", Localization.SystemTimeZone))
-            End If
-
-            'Set Auto Add Portal Alias
-            If XmlUtils.GetNodeValue(nodeSettings, "autoaddportalalias", "") <> "" Then
-                UpdatePortalSetting(PortalId, "AutoAddPortalAlias", XmlUtils.GetNodeValue(nodeSettings, "autoaddportalalias", ""))
             End If
 
         End Sub

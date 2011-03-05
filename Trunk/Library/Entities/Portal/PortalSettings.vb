@@ -681,20 +681,7 @@ Namespace DotNetNuke.Entities.Portals
             End Get
         End Property
 
-        ''' -----------------------------------------------------------------------------
-        ''' <summary>
-        ''' Gets whether Add Adding of Portal Alias is Enabled
-        ''' </summary>
-        ''' <remarks>Defaults to True</remarks>
-        ''' <history>
-        ''' 	[aprasad]	01/17/2011   Created
-        ''' </history>
-        ''' -----------------------------------------------------------------------------
-        Public ReadOnly Property AutoAddPortalAlias() As Boolean
-            Get
-                Return PortalController.GetPortalSettingAsBoolean("AutoAddPortalAlias", PortalId, True)
-            End Get
-        End Property
+       
         ''' -----------------------------------------------------------------------------
         ''' <summary>
         ''' Gets whether Browser Language Detection is Enabled

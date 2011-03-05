@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using DotNetNuke.Collections;
+using DotNetNuke.Collections.Internal;
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections

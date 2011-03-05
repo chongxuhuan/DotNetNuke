@@ -27,7 +27,7 @@ Imports System.Threading
 Imports System.Xml
 Imports System.Web
 Imports System.Web.UI
-Imports DotNetNuke.Collections
+Imports DotNetNuke.Collections.Internal
 Imports DotNetNuke.Entities.Controllers
 Imports DotNetNuke.Services.Cache
 Imports DotNetNuke.Entities.Modules.Actions

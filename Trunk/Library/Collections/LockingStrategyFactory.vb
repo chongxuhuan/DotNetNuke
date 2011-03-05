@@ -19,7 +19,7 @@
 '
 
 
-Namespace DotNetNuke.Collections
+Namespace DotNetNuke.Collections.Internal
 
     Friend Class LockingStrategyFactory
         Public Shared Function Create(ByVal strategy As LockingStrategy) As ILockStrategy

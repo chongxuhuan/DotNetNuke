@@ -18,7 +18,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 Imports System.Threading
-Imports DotNetNuke.Collections
+Imports DotNetNuke.Collections.Internal
 Imports DotNetNuke.Common.Utilities
 Imports DotNetNuke.Services.Exceptions
 Imports DotNetNuke.Services.Log.EventLog

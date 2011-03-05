@@ -357,8 +357,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("portalaliasmapping", setting)
                 settingsDictionary.TryGetValue("TimeZone", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("timezone", setting)
-                settingsDictionary.TryGetValue("AutoAddPortalAlias", setting)
-                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("autoaddportalalias", setting)
 
                 writer.WriteElementString("hostspace", objportal.HostSpace.ToString())
                 writer.WriteElementString("userquota", objportal.UserQuota.ToString())

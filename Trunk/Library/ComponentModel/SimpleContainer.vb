@@ -19,7 +19,7 @@
 '
 
 Imports System.Collections.Generic
-Imports DotNetNuke.Collections
+Imports DotNetNuke.Collections.Internal
 
 Namespace DotNetNuke.ComponentModel
 
