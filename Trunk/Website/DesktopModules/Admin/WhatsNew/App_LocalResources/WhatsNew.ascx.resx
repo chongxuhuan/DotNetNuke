@@ -1405,4 +1405,95 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
+  <data name="WhatsNew.05.06.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue to remove preCondition checks when upgrading to .Net 4.0&lt;/li&gt;
+	&lt;li&gt;Fixed issue where some valid domains were failing email validation checks.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where editing Host menu page settings assigns the page to a 
+	Portal.&lt;/li&gt;
+	&lt;li&gt;Fixed issue which caused XHTML validation problems in 5.6.0&lt;/li&gt;
+	&lt;li&gt;Fixed issue where an aspx page in any subfolder was inaccessible.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Config.Touch method signature had an unintentional breaking 
+	change in 5.6.0&lt;/li&gt;
+	&lt;li&gt;Fixed issue which caused error on adding new super user account&lt;/li&gt;
+	&lt;li&gt;Fixed issue where Google Analytics was broken during upgrade to 5.6.0&lt;/li&gt;
+	&lt;li&gt;Re-Added Checkbox to Profile Property Types&lt;/li&gt;
+	&lt;li&gt;Added ability to perform 301 redirects or use canonical URLs when site has 
+	multiple portal aliases.&lt;/li&gt;
+	&lt;li&gt;Changed default viewstate encryption setting to reflect security best practices.&lt;/li&gt;
+	&lt;li&gt;Added new core module to enable the use of Razor scripts in sites running 
+	.Net 4.0&lt;/li&gt;
+	&lt;li&gt;Added the ability to create Child Portal type aliases to existing portals.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno45/tabid/2112/Default.aspx"&gt;
+	Edit Level Users have Admin rights to modules&lt;/a&gt;&amp;nbsp; &lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno46/tabid/2113/Default.aspx"&gt;
+	Unauthenticated user can install/uninstall modules&lt;/a&gt;&amp;nbsp; &lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno47/tabid/2114/Default.aspx"&gt;
+	Failure to filter viewstate exception details can lead to reflective xss issue&lt;/a&gt;
+	&lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno48/tabid/2115/Default.aspx"&gt;
+	Remove OS identification code&lt;/a&gt;&amp;nbsp; &lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno49/tabid/2116/Default.aspx"&gt;
+	Add additional checks to core input filter&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno50/tabid/2117/Default.aspx"&gt;
+	Change localized text to stop user enumeration&lt;/a&gt;&amp;nbsp; &lt;/li&gt;
+	&lt;li&gt;
+	&lt;a href="http://www.dotnetnuke.com/securitybulletinno51/tabid/2118/Default.aspx"&gt;
+	Ensure that profile properties are correctly filtered &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.6.1 packages.&amp;nbsp; 
+Please see the specific project pages for notes on what bugs or enhancements were 
+corrected with each release. &lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Newsfeeds Module 04.01.00&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.05.06.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue where HTML Editor dialogs were not displaying correctly in alternate 
+	languages&lt;/li&gt;
+	&lt;li&gt;Fixed issue with Regex for email validation&lt;/li&gt;
+	&lt;li&gt;Fixed race condition in the core scheduler&lt;/li&gt;
+	&lt;li&gt;Fixed issue where editing Host page settings would result in broken host 
+	menu&lt;/li&gt;
+	&lt;li&gt;Fixed issue where &amp;quot;Apply to All Modules&amp;quot; setting was not propogating settings 
+	correctly.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where browser language detection was not working for child portals&lt;/li&gt;
+	&lt;li&gt;Fixed issues where ASPX pages in subfolders were returning an error&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the Host Users list was not showing the correct users&lt;/li&gt;
+	&lt;li&gt;Fixed issue where SendMail API was throwing validation error on valid email 
+	address.&lt;/li&gt;
+	&lt;li&gt;Fixed issue where adding runAllManagedModulesForAllRequests=&amp;quot;true&amp;quot; to web.config 
+	would result in some file types not being accessible&lt;/li&gt;
+	&lt;li&gt;Enhanced Host&amp;gt;SQL module to log module usage&lt;/li&gt;
+	&lt;li&gt;Enhanced user manager to allow users to be restored or hard-deleted&lt;/li&gt;
+	&lt;li&gt;Enhanced the way modules are identified in HTML for easier CSS control&lt;/li&gt;
+	&lt;li&gt;Added the ability to disable the Auto-PortalAlias feature&lt;/li&gt;
+	&lt;li&gt;Added numerous performance enhancements&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;p&gt;The following modules and providers have been updated in the 5.6.2 packages. 
+Please see the specific project pages for notes on what bugs or enhancements were 
+corrected with each release. &lt;/p&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;&amp;nbsp;Blog 04.01.00&lt;/li&gt;
+	&lt;li&gt;Documents 04.01.01&lt;/li&gt;
+	&lt;li&gt;Forum 05.00.01&lt;/li&gt;
+	&lt;li&gt;RazorHost 01.00.01&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
 </root>

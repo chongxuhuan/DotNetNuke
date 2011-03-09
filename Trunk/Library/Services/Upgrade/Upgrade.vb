@@ -2787,17 +2787,38 @@ Namespace DotNetNuke.Services.Upgrade
                     'For the alias to be for a child it must be of the form ...../child
                     Dim intChild As Integer = objAlias.HTTPAlias.IndexOf("/")
                     If intChild <> -1 And intChild <> (objAlias.HTTPAlias.Length - 1) Then
-                        childPath = ApplicationMapPath & "\" & objAlias.HTTPAlias.Substring(intChild + 1)
+                        childPath = (ApplicationMapPath & "\" & objAlias.HTTPAlias.Substring(intChild + 1))
+                        If Not String.IsNullOrEmpty(ApplicationPath) Then
+                            childPath = childPath.Replace("\", "/")
+                            childPath = childPath.Replace(ApplicationPath, "")
+                        End If
+                        childPath = childPath.Replace("/", "\")
                         ' check if Folder exists
-                        If Directory.Exists(childPath) Then
-                            Dim objDefault As System.IO.FileInfo = New System.IO.FileInfo(childPath & "\" & glbDefaultPage)
+                        If childPath <> ApplicationMapPath AndAlso Directory.Exists(childPath) Then
+                            Dim childDefaultPage As String = childPath & "\" & glbDefaultPage
+                            Dim objDefault As System.IO.FileInfo = New System.IO.FileInfo(childDefaultPage)
                             Dim objSubHost As System.IO.FileInfo = New System.IO.FileInfo(Common.Globals.HostMapPath & "subhost.aspx")
                             ' check if upgrade is necessary
                             If objDefault.Length <> objSubHost.Length Then
+                                'check file is readonly
+                                Dim wasReadonly As Boolean = False
+                                Dim attributes As System.IO.FileAttributes = File.GetAttributes(childDefaultPage)                                
+                                If ((attributes And FileAttributes.ReadOnly) = FileAttributes.ReadOnly) Then
+                                    wasReadonly = True
+                                    'remove readonly attribute
+                                    File.SetAttributes(childDefaultPage, FileAttributes.Normal)
+                                End If
+
                                 'Rename existing file 
-                                System.IO.File.Copy(childPath & "\" & glbDefaultPage, childPath & "\old_" & glbDefaultPage, True)
-                                ' create the subhost default.aspx file
-                                System.IO.File.Copy(Common.Globals.HostMapPath & "subhost.aspx", childPath & "\" & glbDefaultPage, True)
+                                System.IO.File.Copy(childDefaultPage, childPath & "\old_" & glbDefaultPage, True)
+
+                                ' copy file
+                                System.IO.File.Copy(Common.Globals.HostMapPath & "subhost.aspx", childDefaultPage, True)
+
+                                'set back the readonly attribute
+                                If wasReadonly Then
+                                    File.SetAttributes(childDefaultPage, FileAttributes.ReadOnly)
+                                End If
                             End If
                         End If
                     End If
