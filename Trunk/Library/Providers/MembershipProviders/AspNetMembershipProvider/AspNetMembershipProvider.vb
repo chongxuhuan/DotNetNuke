@@ -824,7 +824,11 @@ Namespace DotNetNuke.Security.Membership
 
             Try
                 dataProvider.RemoveUser(user.UserID, user.PortalID)
-                DeleteMembershipUser(user)
+                'Prior to removing membership, ensure user is not present in any other portal
+                Dim otherUser As UserInfo = GetUserByUserName(Null.NullInteger, user.Username)
+                If (otherUser Is Nothing) Then
+                    DeleteMembershipUser(user)
+                End If
             Catch ex As Exception
                 LogException(ex)
                 retValue = False
@@ -947,7 +951,7 @@ Namespace DotNetNuke.Security.Membership
 
         ''' -----------------------------------------------------------------------------
         ''' <summary>
-        ''' GetUserByUserName retrieves a User from the DataStore
+        ''' GetUser retrieves a User from the DataStore
         ''' </summary>
         ''' <remarks>
         ''' </remarks>

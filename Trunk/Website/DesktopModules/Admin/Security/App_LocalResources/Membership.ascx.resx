@@ -76,7 +76,7 @@
         <value>Date this user was last locked out, due to repetitive failed logins</value>
     </data>
     <data name="UserMembership_IsOnLine.Text">
-        <value>User Is On Line:</value>
+        <value>User Is Online:</value>
     </data>
     <data name="UserMembership_IsOnLine.Help">
         <value>Is the user online at the moment</value>

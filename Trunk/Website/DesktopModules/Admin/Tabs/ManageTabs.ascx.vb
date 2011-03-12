@@ -1216,26 +1216,33 @@ Namespace DotNetNuke.Modules.Admin.Tabs
         '''                       and localisation
         '''     [aprasad]	1/13/2011	DNN-14685. Modified Redirect behavior after Save. Now redirects
         '''                       to self (Request.RawUrl), unless return tab id is specified.
+        '''     [aprasad]	3/09/2011	DNN-15130 - New page is created, but page settings is still displayed instead of new page
+        '''                             After update, remain on page settings only if more than one languages are installed 
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Private Sub cmdUpdate_Click(ByVal Sender As Object, ByVal e As EventArgs) Handles cmdUpdate.Click
             Try
                 If Page.IsValid Then
-                    SaveTabData(strAction)
+                    Dim intTabId As Integer = SaveTabData(strAction)
 
-                    Dim strURL As String = Request.RawUrl
-
-                    If Not Request.QueryString("returntabid") Is Nothing Then
-                        ' return to admin tab
-                        strURL = NavigateURL(Convert.ToInt32(Request.QueryString("returntabid").ToString))
-                    Else
-                        If ctlURL.Url <> "" Or chkDisableLink.Checked Then
-                            ' redirect to current tab if URL was specified ( add or copy )
-                            strURL = NavigateURL(TabId)
+                    If intTabId <> Null.NullInteger Then
+                        Dim strURL As String = NavigateURL(intTabId, "Tab", "action=edit")
+                        If LocaleController.Instance().GetLocales(Me.PortalId).Count = 1 Then
+                            strURL = NavigateURL(intTabId)
                         End If
-                    End If
 
-                    Response.Redirect(strURL, True)                
+                        If Not Request.QueryString("returntabid") Is Nothing Then
+                            ' return to admin tab
+                            strURL = NavigateURL(Convert.ToInt32(Request.QueryString("returntabid").ToString))
+                        Else
+                            If ctlURL.Url <> "" Or chkDisableLink.Checked Then
+                                ' redirect to current tab if URL was specified ( add or copy )
+                                strURL = NavigateURL(TabId)
+                            End If
+                        End If
+
+                        Response.Redirect(strURL, True)
+                    End If
                 End If
             Catch exc As Exception    'Module failed to load
                 ProcessModuleLoadException(Me, exc)

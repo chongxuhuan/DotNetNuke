@@ -20,7 +20,7 @@
 
 Imports System.IO
 Imports System.Drawing.Imaging
-Imports System.XML
+Imports System.Xml
 Imports DotNetNuke.UI.Skins
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.UI.UserControls
@@ -349,7 +349,10 @@ Namespace DotNetNuke.Modules.Admin.Portals
                     ' parse portal desktop modules (version 5.0 templates)
                     node = xmlDoc.SelectSingleNode("//portal/portalDesktopModules")
                     If node IsNot Nothing Then
-                        lblTemplateMessage.Text = String.Format("This template has the following modules that are not installed.<br/>{0}", PortalController.CheckDesktopModulesInstalled(node.CreateNavigator()))
+                        Dim message As String = PortalController.CheckDesktopModulesInstalled(node.CreateNavigator())
+                        If Not String.IsNullOrEmpty(message) Then
+                            lblTemplateMessage.Text = String.Format("This template has the following modules that are not installed.<br/>{0}", message)
+                        End If
                     End If
                 Catch ex As Exception    ' error
                     lblTemplateMessage.Text = "Error Loading Template description"
