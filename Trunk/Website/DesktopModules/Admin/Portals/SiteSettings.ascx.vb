@@ -239,6 +239,9 @@ Namespace DotNetNuke.Modules.Admin.Portals
             txtSSLURL.Text = _PortalSettings.SSLURL
             txtSTDURL.Text = _PortalSettings.STDURL
 
+            'Populate the timezone combobox (look up timezone translations based on currently set culture)
+            Services.Localization.Localization.LoadTimeZoneDropDownList(cboTimeZone, CType(Page, PageBase).PageCulture.Name, Convert.ToString(objPortal.TimeZoneOffset))
+
             ctlPortalSkin.SkinRoot = SkinController.RootSkin
             ctlPortalSkin.SkinSrc = _PortalSettings.DefaultPortalSkin
             ctlPortalContainer.SkinRoot = SkinController.RootContainer
@@ -247,11 +250,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
             ctlAdminSkin.SkinSrc = _PortalSettings.DefaultAdminSkin
             ctlAdminContainer.SkinRoot = SkinController.RootContainer
             ctlAdminContainer.SkinSrc = _PortalSettings.DefaultAdminContainer
-
-            timeZones.DataBind()
-            If timeZones.FindItemByValue(_PortalSettings.TimeZone.Id) IsNot Nothing Then
-                timeZones.FindItemByValue(_PortalSettings.TimeZone.Id).Selected = True
-            End If
 
             chkSkinWidgestEnabled.Checked = _PortalSettings.EnableSkinWidgets
 
@@ -775,14 +773,12 @@ Namespace DotNetNuke.Modules.Admin.Portals
                         IIf(cboProcessor.SelectedValue = "", "", cboProcessor.SelectedItem.Text).ToString, _
                         txtUserId.Text, txtPassword.Text, txtDescription.Text, txtKeyWords.Text, _
                         strBackground, intSiteLogHistory, intSplashTabId, intHomeTabId, intLoginTabId, intRegisterTabId, _
-                        intUserTabId, intSearchTabId, objPortal.DefaultLanguage, _
+                        intUserTabId, intSearchTabId, objPortal.DefaultLanguage, Convert.ToInt32(cboTimeZone.SelectedValue), _
                         lblHomeDirectory.Text, SelectedCultureCode)
 
                     If Not refreshPage Then
                         refreshPage = (PortalSettings.DefaultAdminSkin = ctlAdminSkin.SkinSrc) OrElse (PortalSettings.DefaultAdminContainer = ctlAdminContainer.SkinSrc)
                     End If
-
-                    PortalController.UpdatePortalSetting(intPortalId, "TimeZone", timeZones.SelectedValue, False)
 
                     PortalController.UpdatePortalSetting(intPortalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString, False)
                     PortalController.UpdatePortalSetting(intPortalId, "DefaultAdminSkin", ctlAdminSkin.SkinSrc, False)

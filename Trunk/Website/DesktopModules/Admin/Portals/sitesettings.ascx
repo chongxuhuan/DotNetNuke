@@ -261,7 +261,7 @@
                                 </tr>
                                 <tr>
                                     <td class="SubHead" style="width:250px"><dnn:Label ID="plTimeZone" runat="server" ControlName="cboTimeZone" /></td>
-                                    <td style="width:450px"><dnn:DnnTimeZoneComboBox ID="timeZones" runat="server" Width="450px" /></td>
+                                    <td style="width:450px"><asp:DropDownList ID="cboTimeZone" CssClass="NormalTextBox" runat="server" Width="300" /></td>
                                 </tr>
                             </table>
                             <br/>

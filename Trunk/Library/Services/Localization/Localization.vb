@@ -120,9 +120,15 @@ Namespace DotNetNuke.Services.Localization
             End Get
         End Property
 
-        Public Shared ReadOnly Property SystemTimeZone() As String
+        Public Shared ReadOnly Property SystemTimeZoneOffset() As Integer
             Get
-                Return "Pacific Standard Time"
+                Return -480
+            End Get
+        End Property
+
+        Public Shared ReadOnly Property TimezonesFile() As String
+            Get
+                Return ApplicationResourceDirectory + "/TimeZones.xml"
             End Get
         End Property
 
@@ -1842,7 +1848,7 @@ Namespace DotNetNuke.Services.Localization
             Return LocaleController.Instance().GetLocales(portalID)
         End Function
 
-        <Obsolete("Deprecated in DNN 5.6.2. Replaced by use of .NET TimeZoneInfo class")> _
+        <Obsolete("Deprecated in DNN 5.6.2.")> _
         Public Shared Function GetTimeZones(ByVal language As String) As NameValueCollection
             language = language.ToLower
             Dim cacheKey As String = "dotnetnuke-" + language + "-timezones"
@@ -1917,7 +1923,7 @@ Namespace DotNetNuke.Services.Localization
         Public Shared Sub LocalizePortalSettings()
         End Sub
 
-        <Obsolete("Deprecated in DNN 5.6.2. Replaced by new DnnTimeZoneComboBox control and use of .NET TimeZoneInfo class")> _
+        <Obsolete("Deprecated in DNN 5.6.2")> _
         Public Shared Sub LoadTimeZoneDropDownList(ByVal list As DropDownList, ByVal language As String, ByVal selectedValue As String)
 
             Dim timeZones As NameValueCollection = GetTimeZones(language)
@@ -1944,20 +1950,6 @@ Namespace DotNetNuke.Services.Localization
             End If
 
         End Sub    'LoadTimeZoneDropDownList
-
-        <Obsolete("Deprecated in DNN 5.6.2. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")> _
-        Public Shared ReadOnly Property SystemTimeZoneOffset() As Integer
-            Get
-                Return -480
-            End Get
-        End Property
-
-        <Obsolete("Deprecated in DNN 5.6.2. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")> _
-        Public Shared ReadOnly Property TimezonesFile() As String
-            Get
-                Return ApplicationResourceDirectory + "/TimeZones.xml"
-            End Get
-        End Property
 
         <Obsolete("Deprecated in DNN 5.0. Replaced by Host.EnableBrowserLanguage OR PortalSettings.EnableBrowserLanguage")> _
         Public Shared Function UseBrowserLanguage() As Boolean

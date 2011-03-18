@@ -2210,6 +2210,7 @@ Namespace DotNetNuke.Services.Upgrade
                 Dim strPassword As String = XmlUtils.GetNodeValue(node, "password")
                 Dim strEmail As String = XmlUtils.GetNodeValue(node, "email")
                 Dim strLocale As String = XmlUtils.GetNodeValue(node, "locale")
+                Dim timeZone As Integer = XmlUtils.GetNodeValueInt(node, "timezone")
 
                 objSuperUserInfo = New UserInfo
                 objSuperUserInfo.PortalID = -1
@@ -2225,7 +2226,7 @@ Namespace DotNetNuke.Services.Upgrade
                 objSuperUserInfo.Profile.FirstName = strFirstName
                 objSuperUserInfo.Profile.LastName = strLastName
                 objSuperUserInfo.Profile.PreferredLocale = strLocale
-                objSuperUserInfo.Profile.PreferredTimeZone = TimeZoneInfo.Local
+                objSuperUserInfo.Profile.TimeZone = timeZone
             End If
             Return objSuperUserInfo
         End Function

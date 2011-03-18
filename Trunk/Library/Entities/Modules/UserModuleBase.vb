@@ -360,7 +360,7 @@ Namespace DotNetNuke.Entities.Modules
             'Initialise the ProfileProperties Collection
             Dim lc As String = New DotNetNuke.Services.Localization.Localization().CurrentUICulture
             newUser.Profile.InitialiseProfile(PortalId)
-            newUser.Profile.PreferredTimeZone = Me.PortalSettings.TimeZone
+            newUser.Profile.TimeZone = Me.PortalSettings.TimeZoneOffset
             newUser.Profile.PreferredLocale = lc
 
             'Set default countr

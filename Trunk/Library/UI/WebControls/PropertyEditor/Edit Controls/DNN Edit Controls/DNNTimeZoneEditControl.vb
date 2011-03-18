@@ -27,7 +27,19 @@ Imports DotNetNuke.Framework
 
 Namespace DotNetNuke.UI.WebControls
 
-    <Obsolete("Deprecated in DNN 5.6.2.  Replaced by control of same name in DotNetNuke.Web assembly")> _
+    ''' -----------------------------------------------------------------------------
+    ''' Project:    DotNetNuke
+    ''' Namespace:  DotNetNuke.UI.WebControls
+    ''' Class:      DNNTimeZoneEditControl
+    ''' -----------------------------------------------------------------------------
+    ''' <summary>
+    ''' The DNNTimeZoneEditControl control provides a standard UI component for selecting
+    ''' a Time Zone
+    ''' </summary>
+    ''' <history>
+    '''     [cnurse]	02/23/2006	created
+    ''' </history>
+    ''' -----------------------------------------------------------------------------    
     <ToolboxData("<{0}:DNNTimeZoneEditControl runat=server></{0}:DNNTimeZoneEditControl>")> _
     Public Class DNNTimeZoneEditControl
         Inherits IntegerEditControl

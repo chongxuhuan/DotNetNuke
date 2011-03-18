@@ -339,6 +339,7 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 writer.WriteElementString("userregistration", objportal.UserRegistration.ToString())
                 writer.WriteElementString("banneradvertising", objportal.BannerAdvertising.ToString())
                 writer.WriteElementString("defaultlanguage", objportal.DefaultLanguage)
+                writer.WriteElementString("timezoneoffset", objportal.TimeZoneOffset.ToString())
 
                 Dim settingsDictionary As Dictionary(Of String, String) = PortalController.GetPortalSettingsDictionary(objportal.PortalID)
 
@@ -355,8 +356,6 @@ Namespace DotNetNuke.Modules.Admin.Portals
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("enableskinwidgets", setting)
                 settingsDictionary.TryGetValue("PortalAliasMapping", setting)
                 If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("portalaliasmapping", setting)
-                settingsDictionary.TryGetValue("TimeZone", setting)
-                If Not String.IsNullOrEmpty(setting) Then writer.WriteElementString("timezone", setting)
 
                 writer.WriteElementString("hostspace", objportal.HostSpace.ToString())
                 writer.WriteElementString("userquota", objportal.UserQuota.ToString())

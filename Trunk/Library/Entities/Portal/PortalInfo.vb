@@ -856,6 +856,21 @@ Namespace DotNetNuke.Entities.Portals
         End Property
 
         ''' <summary>
+        ''' Default Timezone offset for the portal
+        ''' </summary>
+        ''' <value>Default Timezone offset for the portal</value>
+        ''' <returns>Default Timezone offset for the portal</returns>
+        ''' <remarks></remarks>
+        <XmlElement("timezoneoffset")> Public Property TimeZoneOffset() As Integer
+            Get
+                Return _TimeZoneOffset
+            End Get
+            Set(ByVal Value As Integer)
+                _TimeZoneOffset = Value
+            End Set
+        End Property
+
+        ''' <summary>
         ''' Home directory of the portal (logical path)
         ''' </summary>
         ''' <value>Portal home directory</value>
@@ -941,6 +956,7 @@ Namespace DotNetNuke.Entities.Portals
             UserTabId = Null.SetNullInteger(dr("UserTabID"))
             SearchTabId = Null.SetNullInteger(dr("SearchTabID"))
             DefaultLanguage = Null.SetNullString(dr("DefaultLanguage"))
+            TimeZoneOffset = Null.SetNullInteger(dr("TimeZoneOffset"))
             AdminTabId = Null.SetNullInteger(dr("AdminTabID"))
             HomeDirectory = Null.SetNullString(dr("HomeDirectory"))
             SuperTabId = Null.SetNullInteger(dr("SuperTabId"))
@@ -970,17 +986,6 @@ Namespace DotNetNuke.Entities.Portals
         End Property
 
 #End Region
-
-        <Obsolete("Deprecated in DNN 5.6.2.")> _
-        <XmlIgnore()> _
-        Public Property TimeZoneOffset() As Integer
-            Get
-                Return _TimeZoneOffset
-            End Get
-            Set(ByVal Value As Integer)
-                _TimeZoneOffset = Value
-            End Set
-        End Property
 
 
     End Class

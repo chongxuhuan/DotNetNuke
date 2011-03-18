@@ -315,13 +315,4 @@
   <data name="ProfileProperties_Photo.Text" xml:space="preserve">
     <value>Photo:</value>
   </data>
-  <data name="ProfileProperties_PreferredTimeZone.Help" xml:space="preserve">
-    <value>Choose your preferred time zone</value>
-  </data>
-  <data name="ProfileProperties_PreferredTimeZone.Required" xml:space="preserve">
-    <value>Preferred Time Zone is required</value>
-  </data>
-  <data name="ProfileProperties_PreferredTimeZone.Text" xml:space="preserve">
-    <value>Preferred Time Zone:</value>
-  </data>
 </root>
