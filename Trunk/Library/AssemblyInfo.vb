@@ -48,7 +48,7 @@ Imports System.Runtime.CompilerServices
 ' by using the '*' as shown below:
 
 <Assembly: AssemblyVersion("5.6.2.143")> 
-<Assembly: AssemblyStatus(ReleaseMode.Alpha)> 
+<Assembly: AssemblyStatus(ReleaseMode.Stable)> 
 
 'Allow internal variables to be visible to testing projects
 <Assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")> 
