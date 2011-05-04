@@ -1,0 +1,27 @@
+/* ===========   Admin Settings Module Styling   =========== */
+.dnnSiteSettings{width:900px;margin:2em auto;}
+	.dnnSiteSettings div.ssBasicSettings, .dnnSiteSettings div.ssAdvancedSettings, .dnnSiteSettings div.ssStylesheetEditor{padding:0;margin-top:1em;}
+		.dnnSiteSettings .dnnFormItem input[type="text"], .dnnSiteSettings .dnnFormItem .dnnFormInput, .dnnSiteSettings .dnnFormItem textarea{min-width:50%;}
+		.dnnSiteSettings textarea{min-height:100px;}
+	.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnSSRadioButtons input, .dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons input{float:left;padding:0;width:2%;text-align:left;}
+		.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnPSRadioButtons label{width:auto;padding:0 15px 0 6px;}
+		.dnnForm input[type="checkbox"]{width:auto;}
+	.dnnSiteSettings .dnnSSRadioButtons br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
+	.ssasUsabilitySettings .dnnSSRadioButtons label, .ssasPortalAlias .dnnSSRadioButtons label, .ssasSecuritySettings .dnnSSRadioButtons label{width:auto;}
+	.dnnFormItem.ssbsAppearance label{width:20%;text-align:right;padding-right:2%;font-weight:bold;}
+		.dnnFormItem.ssbsAppearance label label{width:100%;}
+	.dnnSiteSettings .ssseContent textarea{margin:1em;min-width:52em;}
+	.ssseContent ul.dnnActions{padding:0em 2em 3em;border:none;overflow:hidden;clear:both;}
+	.dnnSiteSettings div.dnnssStat{border-top:1px #ccc solid;padding:1em 0 4em;overflow:hidden;}
+	.dnnssStat p{float:left;padding-right:2em;}
+		p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
+	.dnnPortalAliasGrid{float:right;}
+		.dnnPortalAliasGrid td{padding:3px 5px;}
+			.dnnPortalAliasGrid td input.dnnFormInput{width:42%;}
+		.dnnPortalAliasGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
+		.dnnPortalAliasGridItem{border-bottom:1px #eee solid}
+		.dnnPortalAliasGridAltItem{background:#f1f1f1;}
+	.ssasPortalAlias .dnnFormItem span.CommandButton{clear:both;overflow:hidden;display:block;margin-left:26%;}
+	.dnnPortalSignup .dnnFormMessage.dnnFormWarning{max-width:100%;}		
+.vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;)
+/* ===========   End Admin Settings Module Styling   =========== */

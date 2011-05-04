@@ -1,0 +1,69 @@
+﻿/* styles used in the Wizard Framework */
+.Wizard
+{
+    border-right: black 1px solid;
+    border-top: black 1px solid;
+    border-left: black 1px solid;
+    border-bottom: black 1px solid;
+    height: 400px;
+    width: 650px;
+}
+.WizardButton
+{
+    border-right: #696969 1px solid;
+    padding-right: 2px;
+    border-top: #696969 1px solid;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    border-left: #696969 1px solid;
+    padding-top: 2px;
+    border-bottom: #696969 1px solid;
+    background-color: #dcdcdc;
+}
+.WizardHeader
+{
+    background: #ffffcc;
+    border-bottom: black 1px solid;
+    height: 40px;
+}
+.WizardFooter
+{
+    border-top: black 1px solid;
+    background: #ccffcc;
+    height: 25px;
+    text-align: right;
+}
+.WizardBody
+{
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    height: 325px;
+}
+.WizardHelp
+{
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 9pt;
+    padding-bottom: 5px;
+    border-left: black 1px solid;
+    width: 180px;
+    padding-top: 5px;
+    background-color: #ccffff;
+}
+.WizardHelpText
+{
+    overflow: auto;
+    font-size: 8pt;
+    width: 180px;
+    color: black;
+    font-family: Tahoma, Verdana, Arial, Sans-Serif;
+    height: 300px;
+}
+.WizardText
+{
+    font-size: 9pt;
+    color: black;
+    font-family: Tahoma, Verdana, Arial, Sans-Serif;
+}

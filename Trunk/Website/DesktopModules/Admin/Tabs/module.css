@@ -1,0 +1,145 @@
+﻿/* ===========   Page Settings Module Styling   =========== */
+.dnnPageSettings{width:900px;margin:2em auto;}
+	.dnnPageSettings div.dnnPageDetails, .dnnPageSettings div.dnnPermissions, .dnnPageSettings div.dnnLocalization, .dnnPageSettings div.dnnAdvancedSettings {padding:0;margin-top:2.5em;}
+		.dnnPageSettings textarea{min-height:100px;}
+		.dnnPageSettings .dnnFormItem input, .dnnPageSettings .dnnFormItem .dnnFormInput, .dnnPageSettings .dnnFormItem textarea{min-width:50%;}
+	.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnSSRadioButtons input, .dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons input{float:left;padding:0;width:2%;text-align:left;}
+		.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnPSRadioButtons label{width:auto;padding:0 15px 0 6px;}
+	.dnnPageSettings .dnnSSRadioButtons br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
+	.ssasUsabilitySettings .dnnSSRadioButtons label{width:12%;}
+	.ssasPortalAlias .dnnSSRadioButtons label, .ssasSecuritySettings .dnnSSRadioButtons label{width:8%;}
+	.dnnFormItem.ssbsAppearance label{width:20%;text-align:right;padding-right:2%;font-weight:bold;}
+		.dnnFormItem.ssbsAppearance label label{width:100%;}
+	.dnnPageSettings .ssseContent textarea{margin:1em;min-width:52em;}
+	.ssseContent ul.dnnActions{padding:0em 2em 3em;border:none;overflow:hidden;clear:both;}
+	.dnnPageSettings div.dnnssStat{border-top:1px #ccc solid;padding:1em 0 4em;overflow:hidden;}
+	.dnnssStat p{float:left;padding-right:2em;}
+		p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
+	.dnnPortalAliasGrid{float:right;}
+		.dnnPortalAliasGrid td{padding:3px 5px;}
+			.dnnPortalAliasGrid td input.dnnFormInput{width:42%;}
+		.dnnPortalAliasGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
+		.dnnPortalAliasGridItem{border-bottom:1px #eee solid}
+		.dnnPortalAliasGridAltItem{background:#f1f1f1;}
+	.ssasPortalAlias .dnnFormItem span.CommandButton{clear:both;overflow:hidden;display:block;margin-left:26%;}
+	.dnnPortalSignup .dnnFormMessage.dnnFormWarning{max-width:100%;}		
+/* ===========   End Host Settings Module Styling   =========== */
+
+.dotnetnuke_pagesmain
+{
+    width:900px;
+}
+
+.dotnetnuke_pageshead
+{
+    padding: 10px 0 20px 0;
+}
+.dotnetnuke_pageselect
+{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border: 1px solid #d5d5d5;
+    background: #eee;
+    padding:5px;    
+}
+.dotnetnuke_pageselect a img
+{
+    border: 1px solid #ccc;
+}
+.dotnetnuke_pageselect a:hover img
+{
+    border: 1px solid #000;
+}
+.dotnetnuke_tree
+{
+    float:left;
+    margin-top: 20px;
+    margin-left: 5px;
+    width: 250px;
+    padding-bottom:20px;
+}
+.dotnetnuke_details
+{
+    float:left;
+    width: 600px;
+    margin: 20px 0 0 40px;
+}
+.dotnetnuke_legend
+{
+    clear:both;
+    border: 1px solid #d5d5d5;
+    background: #eee;
+    padding:5px;
+    margin-top: 20px;
+    height: 50px;
+    padding-bottom:10px;
+}
+.legenditem
+{
+    float:left;
+    margin-left: 5px;
+    white-space: nowrap;
+    margin-top:5px;
+}
+
+.pageview
+{
+    border: 1px solid #888;
+    padding: 20px;
+    width: 560px;
+}
+
+.clearfix
+{
+    clear:both;
+}
+img.statusicon
+{
+    height: 12px;
+    width:12px;
+}
+
+.dtBtn 
+{
+    padding-top:10px;
+    padding-bottom: 20px;
+}
+.btnLeft{float:left;}
+.btnRight{float:right;}
+.tdLabel {vertical-align:top;padding-right:20px;padding-top:8px;}
+.tdControl{vertical-align:top;padding-top:3px;}
+.tdIconLabel {vertical-align:top;padding-right:20px;padding-top:15px;}
+.pnlHost {float:left;margin-left:40px;}
+.pnlHostLabel {float:left;padding-top:7px;}
+.pnlHostRbl {float:left;padding-top:2px;}
+a.cmd
+{
+    height: 25px;
+    border: 1px solid #82745f;
+    background-color: #bab094;
+    text-align:center;
+    line-height:25px;
+    font-size: 12px !important;
+    float: left;
+    margin-right: 0px;
+    color: #333 !important;
+    padding: 1px 5px 1px 22px;
+}
+a.cmd:hover
+{
+    background-color: #EEF0AF;
+    color: #333 !important;
+    text-decoration: none;
+}
+a.Update
+{
+    background: #bab094 url(images/update.png) 4px 6px no-repeat;
+}
+a.More
+{
+    background: #bab094 url(images/more.png) 4px 6px no-repeat;
+}
+a.Copy
+{
+    background: #bab094 url(images/Icon_down.png) 4px 6px no-repeat;
+}

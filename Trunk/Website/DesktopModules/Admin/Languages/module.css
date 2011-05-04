@@ -1,0 +1,11 @@
+﻿.dnnLanguages input[type="checkbox"]{width:auto;}
+.dnnLanguages .enableLocalization{float:right;}
+.dnnLanguageEditor .dnnTree{float:left; width:25%;}
+.dnnLanguageEditor .dnnEditor{float:right; width:74%;}
+.dnnFormItem input[type="checkbox"]{width:auto;}
+
+.dnnLanguageEditor .dnnFormItem label{width:30%;}
+.dnnLanguageEditor .dnnTree .dnnFormItem label{width:70%;}
+
+.dnnFormItem .lpwRadioButtons label {width:auto;}
+.dnnFormItem .lpwCheckBoxes label {width:auto;margin-left: 10px;}

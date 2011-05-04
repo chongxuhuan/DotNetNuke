@@ -1,0 +1,6 @@
+﻿.dnnVendorsGrid td, .dnnAffiliatesGrid td, .dnnBannersGrid td{padding:3px 5px;}
+.dnnVendorsGridHeader, .dnnAffiliatesGridHeader, .dnnBannersGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
+.dnnVendorsGridItem, .dnnAffiliatesGridItem, .dnnBannersGridItem{border-bottom:1px #eee solid}
+.dnnVendorsGridAltItem, .dnnAffiliatesGridAltItem, .dnnBannersGridAltItem{background:#f1f1f1;}
+.vPageSize{float: right;}
+.vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;)

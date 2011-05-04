@@ -1,0 +1,29 @@
+/* ===========   Security Roles Module Styling   =========== */
+
+.dnnSecurityRoles{}
+	.dnnSecurityRolesGrid{}
+	
+.uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
+
+.dnnUser{min-width:50%; float:left;}	
+.dnnMembership{width:50%; float:left;}	
+
+.dnnEditRole .dnnFormItem input[type="checkbox"]{width:auto;}
+
+.dnnUser .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width: 35%;}
+.dnnMembership .dnnFormItem label, .dnnMembership .dnnFormItem .dnnFormLabel {width: 45%;}
+.dnnSecurityRoles .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width: 100%;}
+
+p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}	
+
+.dnnUser a.dnnPrimaryAction, .dnnUser a.dnnPrimaryAction:link, .dnnUser a.dnnPrimaryAction:visited {color:White; }	
+.dnnPassword a.dnnPrimaryAction, .dnnPassword a.dnnPrimaryAction:link, .dnnPassword a.dnnPrimaryAction:visited {color:White; }	
+
+.dnnProfileDetails .dnnFormItem .dnnFormLabel{width:15%;}
+.dnnProfileDetails .dnnFormItem label{width:100%;}
+.dnnProfileDetails .dnnFormItem .dnnFormInput{width:38%;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%; float:right;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%; float:none;}
+.dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%; float:none;}
+
+/* ===========   End Security Roles Module Styling   =========== */

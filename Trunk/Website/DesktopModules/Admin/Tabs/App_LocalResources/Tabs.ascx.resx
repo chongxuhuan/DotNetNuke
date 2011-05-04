@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddPage.Text" xml:space="preserve">
+    <value>Add Page(s)</value>
+  </data>
+  <data name="CanNotDeleteHomeTab.Text" xml:space="preserve">
+    <value>You must not delete the home page of your portal!</value>
+  </data>
+  <data name="CanNotDeleteSpecialTab.Text" xml:space="preserve">
+    <value>This is a special tab and cannot be deleted!</value>
+  </data>
+  <data name="Collapse.Text" xml:space="preserve">
+    <value>Collapse all Nodes</value>
+  </data>
+  <data name="ConfirmDelete.Text" xml:space="preserve">
+    <value>This will delete the selected page and all its child pages. Are you sure?</value>
+  </data>
+  <data name="DeletePage.Text" xml:space="preserve">
+    <value>Delete Page</value>
+  </data>
+  <data name="EditPage.Text" xml:space="preserve">
+    <value>Edit Page</value>
+  </data>
+  <data name="Expand.Text" xml:space="preserve">
+    <value>Expand all Nodes</value>
+  </data>
+  <data name="InvalidTabName.Text" xml:space="preserve">
+    <value>{0} is an invalid Page Title!</value>
+  </data>
+  <data name="lblDisabled.Text" xml:space="preserve">
+    <value>Page is disabled</value>
+  </data>
+  <data name="lblHead.Text" xml:space="preserve">
+    <value>The pages module allows you to manage pages within your portal. You can move pages by using drag &amp; drop, other operations are available on right click.</value>
+  </data>
+  <data name="lblHidden.Text" xml:space="preserve">
+    <value>Page is hidden in menu</value>
+  </data>
+  <data name="lblHome.Text" xml:space="preserve">
+    <value>Homepage of the portal</value>
+  </data>
+  <data name="lblSecure.Text" xml:space="preserve">
+    <value>Visible to dedicated roles only</value>
+  </data>
+  <data name="lblEveryone.Text" xml:space="preserve">
+    <value>Page is visible to everyone</value>
+  </data>
+  <data name="MovePageDown.Text" xml:space="preserve">
+    <value>Move Down</value>
+  </data>
+  <data name="MovePageUp.Text" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="root.Text" xml:space="preserve">
+    <value>Portal Root</value>
+  </data>
+  <data name="ShowHostTabs.Text" xml:space="preserve">
+    <value>Host Pages</value>
+  </data>
+  <data name="ShowPortalTabs.Text" xml:space="preserve">
+    <value>Portal Pages</value>
+  </data>
+  <data name="ViewPage.Text" xml:space="preserve">
+    <value>View Page</value>
+  </data>
+  <data name="DisablePage.Text" xml:space="preserve">
+    <value>Disable link in navigation</value>
+  </data>
+  <data name="EnablePage.Text" xml:space="preserve">
+    <value>Enable link in navigation</value>
+  </data>
+  <data name="HidePage.Text" xml:space="preserve">
+    <value>Hide from navigation</value>
+  </data>
+  <data name="lblHostOnly.Text" xml:space="preserve">
+    <value>&lt;strong&gt;Host only:&lt;/strong&gt;  Manage</value>
+  </data>
+  <data name="ShowPage.Text" xml:space="preserve">
+    <value>Show in navigation</value>
+  </data>
+  <data name="lblAdminOnly.Text" xml:space="preserve">
+    <value>Visible to administrators only</value>
+  </data>
+  <data name="lblRegistered.Text" xml:space="preserve">
+    <value>Visible to registered users</value>
+  </data>
+  <data name="lblHelp_Appearance.Text" xml:space="preserve">
+    <value>From here you can override the site's default skin and container. Page Icons may or may not be supported by the skin that you are using on the page.</value>
+  </data>
+  <data name="lblHelp_Common.Text" xml:space="preserve">
+    <value>This is the place to set common properties like the page name (used in the navigation or the page title (used in the title bar of the browser). A disabled page is shown in the navigation but cannot be clicked while a hidden page is not even shown in the navigation (but can still be browsed)</value>
+  </data>
+  <data name="lblHelp_Link.Text" xml:space="preserve">
+    <value>You may link the page to another resource. Resources can be other portal pages, external urls, files in the portal's filesystem or even user profiles. If a page is linked you can set the link to be a permanent redirection.</value>
+  </data>
+  <data name="lblHelp_Meta.Text" xml:space="preserve">
+    <value>Setup metatags like page refresh intervall and other meta tags from here.</value>
+  </data>
+  <data name="lblHelp_Modules.Text" xml:space="preserve">
+    <value>These are the modules currently used on the page. You can edit settings for each module from here or remove the module from the page.</value>
+  </data>
+  <data name="lblHelp_Permissions.Text" xml:space="preserve">
+    <value>Page permissions allows you to configure security roles and their right for the page.</value>
+  </data>
+  <data name="lblHelp_SEO.Text" xml:space="preserve">
+    <value>Configure SEO settings for the page. You can override the sitemap priority (default is 0.5 for each page) and setup keywords and a page description.</value>
+  </data>
+  <data name="btnBulkCreate.Text" xml:space="preserve">
+    <value>Create Page(s)</value>
+  </data>
+  <data name="BulkCreateIntro.Text" xml:space="preserve">
+    <value>This will create one page per line below the selected page. For creating hierarchies, you may prepend lines with "&gt;".</value>
+  </data>
+  <data name="MakeHome.Text" xml:space="preserve">
+    <value>Make Homepage</value>
+  </data>
+  <data name="cmdMore.Text" xml:space="preserve">
+    <value>More Settings</value>
+  </data>
+  <data name="cmdUpdate.Text" xml:space="preserve">
+    <value>Update Page</value>
+  </data>
+  <data name="Appearance.Tabname" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Common.Tabname" xml:space="preserve">
+    <value>Common</value>
+  </data>
+  <data name="Link.Tabname" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Metatags.Tabname" xml:space="preserve">
+    <value>Metatags</value>
+  </data>
+  <data name="Module.Header" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Modules.Tabname" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="ModuleTitle.Header" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Options.Header" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Permissions.Tabname" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="SEO.Tabname" xml:space="preserve">
+    <value>SEO</value>
+  </data>
+  <data name="lblContainer.Text" xml:space="preserve">
+    <value>Default Container:</value>
+  </data>
+  <data name="lblDescription.Text" xml:space="preserve">
+    <value>Page Description:</value>
+  </data>
+  <data name="lblDisabledPage.Text" xml:space="preserve">
+    <value>Clicking the Page is disabled</value>
+  </data>
+  <data name="lblIconLarge.Text" xml:space="preserve">
+    <value>Large Icon:</value>
+  </data>
+  <data name="lblIconSmall.Text" xml:space="preserve">
+    <value>Small Icon:</value>
+  </data>
+  <data name="lblKeywords.Text" xml:space="preserve">
+    <value>Page Keywords:</value>
+  </data>
+  <data name="lblMetaHead.Text" xml:space="preserve">
+    <value>Page Header Tags:</value>
+  </data>
+  <data name="lblMetaRefresh.Text" xml:space="preserve">
+    <value>Refresh Interval (seconds):</value>
+  </data>
+  <data name="lblName.Text" xml:space="preserve">
+    <value>Page Name:</value>
+  </data>
+  <data name="lblPageSSL.Text" xml:space="preserve">
+    <value>Page is SSL secured</value>
+  </data>
+  <data name="lblPermanentRedirect.Text" xml:space="preserve">
+    <value>Permanent Redirect:</value>
+  </data>
+  <data name="lblSitemapPriority.Text" xml:space="preserve">
+    <value>Sitemap Priority:</value>
+  </data>
+  <data name="lblSkin.Text" xml:space="preserve">
+    <value>Page Skin:</value>
+  </data>
+  <data name="lblTitle.Text" xml:space="preserve">
+    <value>Page Title:</value>
+  </data>
+  <data name="lblVisible.Text" xml:space="preserve">
+    <value>Page is shown in Navigation</value>
+  </data>
+  <data name="lblTags.Text" xml:space="preserve">
+    <value>Page Tags:</value>
+  </data>
+  <data name="cmdCopySkin.Text" xml:space="preserve">
+    <value>Copy selected Skin to Childpages</value>
+  </data>
+  <data name="DefaultContainer.Text" xml:space="preserve">
+    <value>[Default Container]</value>
+  </data>
+  <data name="DefaultSkin.Text" xml:space="preserve">
+    <value>[Default Skin]</value>
+  </data>
+  <data name="DesignCopied.Text" xml:space="preserve">
+    <value>Skin applied to all child pages</value>
+  </data>
+  <data name="DesignCopyError.Text" xml:space="preserve">
+    <value>An error occured while applying the the selected skin to all childpages</value>
+  </data>
+</root>

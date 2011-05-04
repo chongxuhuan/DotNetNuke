@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="ResMimeType">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="Version">
+        <value>1.0.0.0</value>
+    </resheader>
+    <resheader name="Reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="Writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="plState.Text">
+        <value>State:</value>
+    </data>
+    <data name="plProvince.Text">
+        <value>Province:</value>
+    </data>
+    <data name="plStreet.Text">
+        <value>Street:</value>
+    </data>
+    <data name="plStreet.Help">
+        <value>Enter the Street part of your Address (eg 1 Main Street)</value>
+    </data>
+    <data name="plUnit.Text">
+        <value>Unit #:</value>
+    </data>
+    <data name="plUnit.Help">
+        <value>Enter the Unit # or Apartment #</value>
+    </data>
+    <data name="plCity.Text">
+        <value>City:</value>
+    </data>
+    <data name="plCity.Help">
+        <value>Enter the City</value>
+    </data>
+    <data name="plCountry.Text">
+        <value>Country:</value>
+    </data>
+    <data name="plCountry.Help">
+        <value>Enter the Country</value>
+    </data>
+    <data name="StreetRequired.Text">
+        <value>&lt;br&gt;Street Is Required.</value>
+    </data>
+    <data name="CityRequired.Text">
+        <value>&lt;br&gt;City Is Required.</value>
+    </data>
+    <data name="CountryRequired.Text">
+        <value>&lt;br&gt;Country Is Required.</value>
+    </data>
+    <data name="plState.Help">
+        <value>Select the state from the list</value>
+    </data>
+    <data name="plProvince.Help">
+        <value>Select the province from the list</value>
+    </data>
+    <data name="StateRequired.Text">
+        <value>&lt;br&gt;State Is Required.</value>
+    </data>
+    <data name="ProvinceRequired.Text">
+        <value>&lt;br&gt;Province Is Required.</value>
+    </data>
+    <data name="RegionRequired.Text">
+        <value>&lt;br&gt;Region Is Required.</value>
+    </data>
+    <data name="plRegion.Text">
+	<value>Region:</value>
+    </data>
+    <data name="plRegion.Help">
+        <value>Enter the Region</value>
+    </data>
+    <data name="plPostal.Text">
+        <value>Postal Code:</value>
+    </data>
+    <data name="plPostal.Help">
+        <value>Enter the Postal Code</value>
+    </data>
+    <data name="plZip.Text">
+        <value>ZIP Code:</value>
+    </data>
+    <data name="plZip.Help">
+        <value>Enter the ZIP Code</value>
+    </data>
+    <data name="PostalRequired.Text">
+        <value>&lt;br&gt;Postal Code Is Required.</value>
+    </data>
+    <data name="plTelephone.Text">
+        <value>Telephone:</value>
+    </data>
+    <data name="plTelephone.Help">
+        <value>Enter Telephone No.</value>
+    </data>
+    <data name="TelephoneRequired.Text">
+        <value>&lt;br&gt;Telephone Number Is Required.</value>
+    </data>
+    <data name="plCell.Text">
+        <value>Cell:</value>
+    </data>
+    <data name="plCell.Help">
+        <value>Enter Cell Phone No.</value>
+    </data>
+    <data name="CellRequired.Text">
+        <value>&lt;br&gt;Cell Phone Number Is Required.</value>
+    </data>
+    <data name="plFax.Text">
+        <value>Fax:</value>
+    </data>
+    <data name="plFax.Help">
+        <value>Enter Fax No.</value>
+    </data>
+    <data name="FaxRequired.Text">
+        <value>&lt;br&gt;Fax Number Is Required.</value>
+    </data>
+</root>
