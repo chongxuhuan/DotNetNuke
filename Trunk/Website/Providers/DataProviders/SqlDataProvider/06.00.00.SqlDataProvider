@@ -1,0 +1,1354 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/* Hide Host Tab */
+/*****************/
+
+UPDATE {databaseOwner}{objectQualifier}Tabs
+	SET IsVisible = 0
+WHERE TabPath = '//Host'
+
+/* Add FolderMappings Table */
+/****************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FolderMappings]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}FolderMappings]
+	(
+		[FolderMappingID] [int] IDENTITY(5,1) NOT NULL,
+		[PortalID] [int] NULL,
+		[MappingName] [nvarchar](50) NOT NULL,
+		[FolderProviderType] [nvarchar](50) NOT NULL,
+		[IsEnabled] [bit] NOT NULL,
+		[Priority] [int] NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}FolderMappings] PRIMARY KEY CLUSTERED ([FolderMappingID] ASC)
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}FolderMappings]
+	ADD CONSTRAINT IX_{objectQualifier}FolderMappings
+	UNIQUE NONCLUSTERED (PortalID, MappingName)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}FolderMappings]
+	ADD CONSTRAINT FK_{objectQualifier}FolderMappings_{objectQualifier}Portals
+	FOREIGN KEY (PortalID)
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] (PortalID) ON DELETE CASCADE 
+END
+GO
+
+/* Add AddFolderMapping Procedure */
+/**********************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddFolderMapping]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddFolderMapping]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddFolderMapping]
+	@PortalID int,
+	@MappingName nvarchar(50),
+	@FolderProviderType nvarchar(50),
+	@IsEnabled bit,
+	@CreatedByUserID int
+AS
+BEGIN
+	DECLARE @Priority int
+
+	SELECT TOP 1 @Priority = Priority + 1
+	FROM {databaseOwner}[{objectQualifier}FolderMappings]
+	WHERE [PortalID] = @PortalID
+	ORDER BY Priority DESC
+
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (
+		PortalID,
+		MappingName,
+		FolderProviderType,
+		IsEnabled,
+		Priority,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	)
+	VALUES (
+		@PortalID,
+		@MappingName,
+		@FolderProviderType,
+		@IsEnabled,
+		@Priority,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
+
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+/* Add UpdateFolderMapping Procedure */
+/*************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateFolderMapping]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolderMapping]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolderMapping]
+	@FolderMappingID int,
+	@MappingName nvarchar(50),
+	@IsEnabled bit,
+	@Priority int,
+	@LastModifiedByUserID int
+AS
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}FolderMappings]
+	SET
+		MappingName = @MappingName,
+		IsEnabled = @IsEnabled,
+		Priority = @Priority,
+		LastModifiedByUserID = @LastModifiedByUserID,
+		LastModifiedOnDate = GETDATE()
+	WHERE FolderMappingID = @FolderMappingID
+END
+GO
+
+/* Add DeleteFolderMapping Procedure */
+/*************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteFolderMapping]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteFolderMapping]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteFolderMapping]
+	@FolderMappingID int
+AS
+BEGIN
+	DECLARE @DefaultFolderMappingID int
+
+	SELECT @DefaultFolderMappingID = FM.FolderMappingID
+	FROM {databaseOwner}[{objectQualifier}FolderMappings] FM
+	JOIN {databaseOwner}[{objectQualifier}FolderMappings] FM2 ON ISNULL(FM.PortalID, -1) = ISNULL(FM2.PortalID, -1)
+	WHERE FM2.FolderMappingID = @FolderMappingID
+	AND FM.MappingName = 'Standard'
+
+	UPDATE {databaseOwner}[{objectQualifier}Folders]
+	SET StorageLocation = @DefaultFolderMappingID
+	WHERE StorageLocation = @FolderMappingID
+
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}FolderMappings]
+	WHERE FolderMappingID = @FolderMappingID
+END
+GO
+
+/* Add GetFolderMapping Procedure */
+/**********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMapping]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMapping]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMapping]
+	@FolderMappingID int
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}[{objectQualifier}FolderMappings]
+	WHERE FolderMappingID = @FolderMappingID
+END
+GO
+
+/* Add GetFolderMappingByMappingName Procedure */
+/***********************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMappingByMappingName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingByMappingName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingByMappingName]
+	@PortalID int,
+	@MappingName nvarchar(50)
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}[{objectQualifier}FolderMappings]
+	WHERE ISNULL(PortalID, -1) = ISNULL(@PortalID, -1) AND MappingName = @MappingName
+END
+GO
+
+/* Add GetFolderMappings Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMappings]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappings]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappings]
+	@PortalID int
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}[{objectQualifier}FolderMappings]
+	WHERE ISNULL(PortalID, -1) = ISNULL(@PortalID, -1)
+	ORDER BY Priority
+END
+GO
+
+/* Add AddDefaultFolderTypes Procedure */
+/***************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddDefaultFolderTypes]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddDefaultFolderTypes]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddDefaultFolderTypes]
+	@PortalID int
+AS
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+	SELECT @PortalID, 'Standard', 'StandardFolderProvider', 1, 1
+	UNION ALL
+	SELECT @PortalID, 'Secure', 'SecureFolderProvider', 1, 2
+	UNION ALL
+	SELECT @PortalID, 'Database', 'DatabaseFolderProvider', 1, 3
+END
+GO
+
+/* Add FolderMappingsSettings Table */
+/************************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FolderMappingsSettings]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}FolderMappingsSettings]
+	(
+		[FolderMappingID] [int] NOT NULL,
+		[SettingName] [nvarchar](50) NOT NULL,
+		[SettingValue] [nvarchar](2000) NOT NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}FolderMappingsSettings] PRIMARY KEY CLUSTERED ([FolderMappingID] ASC, [SettingName] ASC)
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}FolderMappingsSettings] WITH CHECK
+		ADD CONSTRAINT [FK_{objectQualifier}FolderMappingsSettings_{objectQualifier}FolderMappings] FOREIGN KEY([FolderMappingID]) REFERENCES {databaseOwner}[{objectQualifier}FolderMappings] ([FolderMappingID]) ON DELETE CASCADE
+END
+GO
+
+/* Add AddFolderMappingsSetting Procedure */
+/******************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddFolderMappingsSetting]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddFolderMappingsSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddFolderMappingsSetting]
+	@FolderMappingID int,
+	@SettingName nvarchar(50),
+	@SettingValue nvarchar(2000),
+	@CreatedByUserID int
+AS
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappingsSettings] (
+		FolderMappingID,
+		SettingName,
+		SettingValue,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	)
+	VALUES (
+		@FolderMappingID,
+		@SettingName,
+		@SettingValue,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
+END
+GO
+
+/* Add UpdateFolderMappingsSetting Procedure */
+/*********************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateFolderMappingsSetting]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolderMappingsSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolderMappingsSetting]
+	@FolderMappingID int,
+	@SettingName nvarchar(50),
+	@SettingValue nvarchar(2000),
+	@LastModifiedByUserID int
+AS
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}FolderMappingsSettings]
+	SET
+		SettingValue = @SettingValue,
+		LastModifiedByUserID = @LastModifiedByUserID,
+		LastModifiedOnDate = GETDATE()
+	WHERE FolderMappingID = @FolderMappingID AND SettingName = @SettingName
+END
+GO
+
+/* Add GetFolderMappingsSettings Procedure */
+/*******************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMappingsSettings]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingsSettings]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingsSettings]
+	@FolderMappingID int
+AS
+BEGIN
+	SELECT SettingName, SettingValue
+	FROM {databaseOwner}[{objectQualifier}FolderMappingsSettings]
+	WHERE FolderMappingID = @FolderMappingID
+END
+GO
+
+/* Add GetFolderMappingsSetting Procedure */
+/******************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMappingsSetting]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingsSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingsSetting]
+	@FolderMappingID int,
+	@SettingName nvarchar(50)
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}[{objectQualifier}FolderMappingsSettings]
+	WHERE FolderMappingID = @FolderMappingID AND SettingName = @SettingName
+END
+GO
+
+/* Insert Default Host Folder Mappings */
+/***************************************/
+
+IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Standard')
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+	VALUES (NULL, 'Standard', 'StandardFolderProvider', 1, 1)
+END
+GO
+
+IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Secure')
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+	VALUES (NULL, 'Secure', 'SecureFolderProvider', 1, 2)
+END
+GO
+
+IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Database')
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+	VALUES (NULL, 'Database', 'DatabaseFolderProvider', 1, 3)
+END
+GO
+
+
+/* Insert Default Portal Folder Mappings */
+/*****************************************/
+
+IF (SELECT COUNT(PortalID) FROM {databaseOwner}[{objectQualifier}Portals]) > 0 BEGIN
+	DECLARE @PortalID int
+	
+	DECLARE portal_cursor CURSOR FOR
+	SELECT PortalID FROM {databaseOwner}[{objectQualifier}Portals]
+
+	OPEN portal_cursor
+
+	FETCH NEXT FROM portal_cursor INTO @PortalID
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Standard')
+		BEGIN
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+			VALUES (@PortalID, 'Standard', 'StandardFolderProvider', 1, 1)
+		END
+
+		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Secure')
+		BEGIN
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+			VALUES (@PortalID, 'Secure', 'SecureFolderProvider', 1, 2)
+		END
+
+		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Database')
+		BEGIN
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
+			VALUES (@PortalID, 'Database', 'DatabaseFolderProvider', 1, 3)
+		END
+
+		FETCH NEXT FROM portal_cursor INTO @PortalID
+	END
+	
+	CLOSE portal_cursor
+	DEALLOCATE portal_cursor
+END
+GO
+
+/* Replace StorageLocation with FolderMappingID */
+/************************************************/
+
+IF NOT EXISTS(SELECT FolderID FROM {databaseOwner}[{objectQualifier}Folders] WHERE StorageLocation >= 5)
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}Folders]
+	SET [StorageLocation] = (
+		SELECT FM.FolderMappingID
+		FROM {databaseOwner}[{objectQualifier}FolderMappings] AS FM
+		WHERE ISNULL(FM.PortalID, -1) = ISNULL({databaseOwner}[{objectQualifier}Folders].PortalID, -1)
+		AND FolderProviderType = (
+			CASE {databaseOwner}[{objectQualifier}Folders].StorageLocation
+				WHEN 0 THEN 'StandardFolderProvider'
+				WHEN 1 THEN 'SecureFolderProvider'
+				WHEN 2 THEN 'DatabaseFolderProvider'
+				ELSE 'StandardFolderProvider'
+			END
+		)
+	)
+END
+GO
+
+/* Add ModuleControls to work with Folder Mappings */
+/***************************************************/
+
+DECLARE @FileManagerModuleDefID int
+
+SELECT @FileManagerModuleDefID = ModuleDefID
+FROM {databaseOwner}[{objectQualifier}ModuleDefinitions]
+WHERE FriendlyName = N'File Manager'
+
+IF NOT EXISTS (SELECT ModuleControlID FROM {databaseOwner}[{objectQualifier}ModuleControls] WHERE ModuleDefID = @FileManagerModuleDefID AND ControlKey = N'FolderMappings')
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}ModuleControls] (
+		ModuleDefID,
+		ControlKey,
+		ControlTitle,
+		ControlSrc,
+		ControlType,
+		SupportsPartialRendering
+	)
+	VALUES (
+		@FileManagerModuleDefID,
+		N'FolderMappings',
+		N'Folder Mappings',
+		N'DesktopModules/Admin/FileManager/FolderMappings.ascx',
+		0,
+		1
+	)
+END
+
+IF NOT EXISTS (SELECT ModuleControlID FROM {databaseOwner}[{objectQualifier}ModuleControls] WHERE ModuleDefID = @FileManagerModuleDefID AND ControlKey = N'EditFolderMapping')
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}ModuleControls] (
+		ModuleDefID,
+		ControlKey,
+		ControlTitle,
+		ControlSrc,
+		ControlType,
+		SupportsPartialRendering
+	)
+	VALUES (
+		@FileManagerModuleDefID,
+		N'EditFolderMapping',
+		N'Edit Folder Mapping',
+		N'DesktopModules/Admin/FileManager/EditFolderMapping.ascx',
+		0,
+		1
+	)
+END
+GO
+
+
+/* Add SupportsPopUps Column to ModuleControls Table */
+/*****************************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}ModuleControls' AND COLUMN_NAME='SupportsPopUps')
+    BEGIN
+        -- Add new Column
+        ALTER TABLE {databaseOwner}{objectQualifier}ModuleControls
+            ADD SupportsPopUps bit NOT NULL CONSTRAINT DF_{objectQualifier}ModuleControls_SupportsPopUps DEFAULT ((1))
+    END
+GO
+
+/* Update AddModuleControl */
+/***************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddModuleControl]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddModuleControl]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddModuleControl]
+	
+	@ModuleDefID                int,
+	@ControlKey                 nvarchar(50),
+	@ControlTitle               nvarchar(50),
+	@ControlSrc                 nvarchar(256),
+	@IconFile                   nvarchar(100),
+	@ControlType                int,
+	@ViewOrder                  int,
+	@HelpUrl                    nvarchar(200),
+	@SupportsPartialRendering   bit,
+	@SupportsPopUps				bit,
+	@CreatedByUserID			int
+
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}ModuleControls (
+		ModuleDefID,
+		ControlKey,
+		ControlTitle,
+		ControlSrc,
+		IconFile,
+		ControlType,
+		ViewOrder,
+		HelpUrl,
+		SupportsPartialRendering,
+		SupportsPopUps,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	)
+	VALUES (
+		@ModuleDefID,
+		@ControlKey,
+		@ControlTitle,
+		@ControlSrc,
+		@IconFile,
+		@ControlType,
+		@ViewOrder,
+		@HelpUrl,
+		@SupportsPartialRendering,
+		@SupportsPopUps,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate()
+	)
+
+	SELECT SCOPE_IDENTITY()
+GO
+
+/* Update UpdateModuleControl */
+/******************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateModuleControl]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateModuleControl]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateModuleControl]
+	@ModuleControlId				int,
+	@ModuleDefID					int,
+	@ControlKey						nvarchar(50),
+	@ControlTitle					nvarchar(50),
+	@ControlSrc						nvarchar(256),
+	@IconFile						nvarchar(100),
+	@ControlType					int,
+	@ViewOrder						int,
+	@HelpUrl						nvarchar(200),
+	@SupportsPartialRendering		bit,
+	@SupportsPopUps					bit,
+	@LastModifiedByUserID  			int
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}ModuleControls
+	SET    
+		ModuleDefId = @ModuleDefId,
+		ControlKey = @ControlKey,
+		ControlTitle = @ControlTitle,
+		ControlSrc = @ControlSrc,
+		IconFile = @IconFile,
+		ControlType = @ControlType,
+		ViewOrder = ViewOrder,
+		HelpUrl = @HelpUrl,
+		SupportsPartialRendering = @SupportsPartialRendering,
+		SupportsPopUps = @SupportsPopUps,
+		LastModifiedByUserID = @LastModifiedByUserID,
+		LastModifiedOnDate = getdate()
+	WHERE  ModuleControlId = @ModuleControlId
+GO
+
+/* Update Terms and privacy so they don't popup */
+/************************************************/
+
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+	SET    
+		SupportsPopUps = 0
+	WHERE ControlSrc = 'Admin/Portal/Privacy.ascx'
+		OR ControlSrc = 'Admin/Portal/Terms.ascx'
+
+
+/* Add FolderName Column to Packages  */
+/**************************************/
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Packages' AND COLUMN_NAME='FolderName')
+    BEGIN
+        -- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}Packages
+			ADD FolderName nvarchar(128) NULL
+    END
+GO
+
+
+/* Add IconFile Column to Packages  */
+/************************************/
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Packages' AND COLUMN_NAME='IconFile')
+    BEGIN
+        -- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}Packages
+			ADD IconFile nvarchar(100) NULL
+    END
+GO
+
+/* Update AddPackage */
+/*********************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddPackage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddPackage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPackage]
+	@PortalID			int,
+	@Name			    nvarchar(128),
+	@FriendlyName	    nvarchar(250),
+	@Description	    nvarchar(2000),
+	@PackageType	    nvarchar(50),
+	@Version		    nvarchar(50),
+	@License		    ntext,
+	@Manifest		    ntext,
+	@Owner				nvarchar(100),
+	@Organization		nvarchar(100),
+	@Url				nvarchar(250),
+	@Email				nvarchar(100),
+	@ReleaseNotes	    ntext,
+	@IsSystemPackage    bit,
+	@CreatedByUserID	int,
+	@FolderName			nvarchar(127),
+	@IconFile			nvarchar(100)
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}Packages
+	(
+		PortalID,
+		[Name],
+		FriendlyName,
+		[Description],
+		PackageType,
+		Version,
+		License,
+		Manifest,
+		ReleaseNotes,
+		[Owner],
+		Organization,
+		Url,
+		Email,
+		IsSystemPackage,
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate],
+		FolderName,
+		IconFile
+	)
+	VALUES (
+		@PortalID,
+		@Name,
+		@FriendlyName,
+		@Description,
+		@PackageType,
+		@Version,
+		@License,
+		@Manifest,
+		@ReleaseNotes,
+		@Owner,
+		@Organization,
+		@Url,
+		@Email,
+		@IsSystemPackage,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate(),
+		@FolderName,
+		@IconFile
+	)
+	SELECT SCOPE_IDENTITY()
+GO
+
+
+/* Update UpdatePackage */
+/************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdatePackage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePackage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePackage]
+	@PortalID			int,
+	@Name			    nvarchar(128),
+	@FriendlyName	    nvarchar(250),
+	@Description	    nvarchar(2000),
+	@PackageType	    nvarchar(50),
+	@Version		    nvarchar(50),
+	@License		    ntext,
+	@Manifest		    ntext,
+	@Owner				nvarchar(100),
+	@Organization		nvarchar(100),
+	@Url				nvarchar(250),
+	@Email				nvarchar(100),
+	@ReleaseNotes	    ntext,
+	@IsSystemPackage    bit,
+	@LastModifiedByUserID	int,
+	@FolderName			nvarchar(128),
+	@IconFile			nvarchar(100)
+AS
+	UPDATE {databaseOwner}{objectQualifier}Packages
+		SET	
+			PortalID = @PortalID,
+			FriendlyName = @FriendlyName,
+			[Description] = @Description,
+			PackageType = @PackageType,
+			Version = @Version,
+			License = @License,
+			Manifest = @Manifest,
+			[Owner] = @Owner,
+			Organization = @Organization,
+			Url = @Url,
+			Email = @Email,
+			ReleaseNotes = @ReleaseNotes,
+			IsSystemPackage = @IsSystemPackage,
+			[LastModifiedByUserID] = @LastModifiedByUserID,	[LastModifiedOnDate] = getdate(),
+			FolderName = @FolderName,
+			IconFile = @IconFile
+		WHERE  [Name] = @Name
+GO
+
+
+/* Update Default Packages with Icon Info*/
+/*****************************************/
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Analytics', IconFile = '~/DesktopModules/Admin/Analytics/analytics.gif' WHERE NAME = 'DotNetNuke.Google Analytics'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Authentication', IconFile = '~/DesktopModules/Admin/Authentication/authentication.gif' WHERE NAME = 'DotNetNuke.Authentication'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Banners', IconFile = '~/DesktopModules/Admin/Banners/banners.gif' WHERE NAME = 'DotNetNuke.Banners'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Dashboard', IconFile = '~/DesktopModules/Admin/Dashboard/dashboard.gif' WHERE NAME = 'DotNetNuke.Dashboard'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Extensions', IconFile = '~/DesktopModules/Admin/Extensions/extensions.gif' WHERE NAME = 'DotNetNuke.Extensions'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/FeedExplorer', IconFile = '~/DesktopModules/Admin/FeedExplorer/feedExplorer.gif' WHERE NAME = 'DotNetNuke.FeedExplorer'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/HostSettings', IconFile = '~/DesktopModules/Admin/HostSettings/hostSettings.gif' WHERE NAME = 'DotNetNuke.HostSettings'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Languages', IconFile = '~/DesktopModules/Admin/Languages/languages.gif' WHERE NAME = 'DotNetNuke.Languages'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Lists', IconFile = '~/DesktopModules/Admin/Lists/lists.gif' WHERE NAME = 'DotNetNuke.Lists'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/LogViewer', IconFile = '~/DesktopModules/Admin/LogViewer/logViewer.gif' WHERE NAME = 'DotNetNuke.LogViewer'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Marketplace', IconFile = '~/DesktopModules/Admin/Marketplace/marketplace.gif' WHERE NAME = 'DotNetNuke.Marketplace'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Newsletters', IconFile = '~/DesktopModules/Admin/Newsletters/newsletters.gif' WHERE NAME = 'DotNetNuke.Newsletters'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/RecycleBin', IconFile = '~/DesktopModules/Admin/RecycleBin/recycleBin.gif' WHERE NAME = 'DotNetNuke.RecycleBin'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Scheduler', IconFile = '~/DesktopModules/Admin/Scheduler/scheduler.gif' WHERE NAME = 'DotNetNuke.Scheduler'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SearchAdmin', IconFile = '~/DesktopModules/Admin/SearchAdmin/search.gif' WHERE NAME = 'DotNetNuke.SearchAdmin'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SearchInput', IconFile = '~/DesktopModules/Admin/SearchInput/search.gif' WHERE NAME = 'DotNetNuke.SearchInput'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SearchResults', IconFile = '~/DesktopModules/Admin/SearchResults/search.gif' WHERE NAME = 'DotNetNuke.SearchResults'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SiteLog', IconFile = '~/DesktopModules/Admin/SiteLog/siteLog.gif' WHERE NAME = 'DotNetNuke.SiteLog'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SiteWizard', IconFile = '~/DesktopModules/Admin/SiteWizard/siteWizard.gif' WHERE NAME = 'DotNetNuke.SiteWizard'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Sitemap', IconFile = '~/DesktopModules/Admin/Sitemap/sitemap.gif' WHERE NAME = 'DotNetNuke.Sitemap'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SkinDesigner', IconFile = '~/DesktopModules/Admin/SkinDesigner/skinDesigner.gif' WHERE NAME = 'DotNetNuke.Skin Designer'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Skins', IconFile = '~/DesktopModules/Admin/Skins/skins.gif' WHERE NAME = 'DotNetNuke.Skins'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Solutions', IconFile = '~/DesktopModules/Admin/Solutions/solutions.gif' WHERE NAME = 'DotNetNuke.Solutions'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/SQL', IconFile = '~/DesktopModules/Admin/SQL/sql.gif' WHERE NAME = 'DotNetNuke.SQL'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/WhatsNew', IconFile = '~/DesktopModules/Admin/WhatsNew/whatsNew.gif' WHERE NAME = 'DotNetNuke.WhatsNew'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/ViewProfile', IconFile = '~/DesktopModules/Admin/ViewProfile/viewProfile.gif' WHERE NAME = 'DotNetNuke.ViewProfile'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/XmlMerge', IconFile = '~/DesktopModules/Admin/XmlMerge/xmlMerge.png' WHERE NAME = 'DotNetNuke.Configuration Manager'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/FileManager', IconFile = '~/DesktopModules/Admin/FileManager/icon_filemanager_32px.gif' WHERE NAME = 'DotNetNuke.FileManager'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Portals', IconFile = '~/DesktopModules/Admin/Portals/icon_sitesettings_32px.gif' WHERE NAME = 'DotNetNuke.Portals'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Tabs', IconFile = '~/DesktopModules/Admin/Tabs/icon_tabs_32px.gif' WHERE NAME = 'DotNetNuke.Tabs'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Security', IconFile = '~/DesktopModules/Admin/Security/icon_users_32px.gif' WHERE NAME = 'DotNetNuke.Security'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Vendors', IconFile = '~/DesktopModules/Admin/Vendors/icon_Vendors_32px.gif' WHERE NAME = 'DotNetNuke.Vendors'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/Console', IconFile = '~/DesktopModules/Admin/Console/console.gif' WHERE NAME = 'DotNetNuke.Console'
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/ContentList', IconFile = '~/DesktopModules/Admin/ContentList/contentList.gif' WHERE NAME = 'DotNetNuke.ContentList'
+
+/* Add Module Categories System Vocabulary */
+/*******************************************/
+
+IF NOT EXISTS(SELECT VocabularyID FROM {databaseOwner}[{objectQualifier}Taxonomy_Vocabularies] WHERE [Name] = 'Module_Categories')
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Taxonomy_Vocabularies	(
+			[VocabularyTypeID],
+			[Name],
+			[Description],
+			[IsSystem],
+			[ScopeTypeID],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
+		)
+		 VALUES	(
+				1,
+				'Module_Categories',
+				'System Vocabulary to manage Module Categories',
+				1,
+				1,
+				-1,
+				GETDATE(),
+				-1,
+				GETDATE()
+			)
+END
+GO
+
+/* Add ContentItemId Column to DesktopModules Table */
+/****************************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}DesktopModules' AND COLUMN_NAME='ContentItemId')
+    BEGIN
+        -- Add new Column
+        ALTER TABLE {databaseOwner}{objectQualifier}DesktopModules
+            ADD ContentItemId int NOT NULL CONSTRAINT DF_{objectQualifier}DesktopModules_ContentItemId DEFAULT (-1)
+    END
+
+GO
+
+/* Add DesktopModule View */
+/************************************/
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_DesktopModules]') and OBJECTPROPERTY(id, N'IsView') = 1)
+    DROP VIEW {databaseOwner}[{objectQualifier}vw_DesktopModules]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_DesktopModules]
+AS
+    SELECT     
+		DM.DesktopModuleID, 
+		DM.FriendlyName, 
+		DM.Description, 
+		DM.Version, 
+        DM.IsPremium, 
+		DM.IsAdmin, 
+		DM.BusinessControllerClass, 
+        DM.FolderName, 
+		DM.ModuleName, 
+		DM.SupportedFeatures, 
+        DM.CompatibleVersions, 
+		DM.Dependencies, 
+		DM.Permissions, 
+        DM.PackageID, 
+		DM.CreatedByUserID, 
+		DM.CreatedOnDate, 
+        DM.LastModifiedByUserID, 
+		DM.LastModifiedOnDate, 
+		CI.ContentItemID, 
+        CI.[Content], 
+		CI.ContentTypeID, 
+		CI.TabID, 
+		CI.ModuleID, 
+        CI.ContentKey, 
+		CI.Indexed
+	FROM {databaseOwner}{objectQualifier}DesktopModules AS DM 
+		 LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI ON DM.ContentItemId = CI.ContentItemID
+GO
+
+/* Update AddDesktopModule */
+/***************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddDesktopModule]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddDesktopModule]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddDesktopModule]
+	@PackageID			int,
+	@ModuleName			nvarchar(128),
+	@FolderName			nvarchar(128),
+	@FriendlyName		nvarchar(128),
+	@Description		nvarchar(2000),
+	@Version			nvarchar(8),
+	@IsPremium			bit,
+	@IsAdmin			bit,
+	@BusinessController nvarchar(200),
+	@SupportedFeatures	int,
+	@CompatibleVersions	nvarchar(500),
+    @Dependencies       nvarchar(400),
+    @Permissions		nvarchar(400),
+	@ContentItemId		int,
+	@CreatedByUserID	int
+
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}DesktopModules (
+		PackageID,
+		ModuleName,
+		FolderName,
+		FriendlyName,
+		Description,
+		Version,
+		IsPremium,
+		IsAdmin,
+		BusinessControllerClass,
+		SupportedFeatures,
+		CompatibleVersions,
+		Dependencies,
+		Permissions,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate,
+		ContentItemId
+	)
+	VALUES (
+		@PackageID,
+		@ModuleName,
+		@FolderName,
+		@FriendlyName,
+		@Description,
+		@Version,
+		@IsPremium,
+		@IsAdmin,
+		@BusinessController,
+		@SupportedFeatures,
+		@CompatibleVersions,
+		@Dependencies,
+		@Permissions,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate(),
+		@ContentItemId
+	)
+
+	SELECT SCOPE_IDENTITY()
+GO
+
+/* Update UpdateDesktopModule */
+/******************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateDesktopModule]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateDesktopModule]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateDesktopModule]
+	@DesktopModuleId		int,    
+	@PackageID				int,
+	@ModuleName				nvarchar(128),
+	@FolderName				nvarchar(128),
+	@FriendlyName			nvarchar(128),
+	@Description			nvarchar(2000),
+	@Version				nvarchar(8),
+	@IsPremium				bit,
+	@IsAdmin				bit,
+	@BusinessController		nvarchar(200),
+	@SupportedFeatures		int,
+	@CompatibleVersions		nvarchar(500),
+    @Dependencies			nvarchar(400),
+    @Permissions			nvarchar(400),
+	@ContentItemId			int,
+	@LastModifiedByUserID	int
+
+AS
+		UPDATE {databaseOwner}{objectQualifier}DesktopModules
+		SET    	
+			PackageID = @PackageID,
+			ModuleName = @ModuleName,
+			FolderName = @FolderName,
+			FriendlyName = @FriendlyName,
+			Description = @Description,
+			Version = @Version,
+			IsPremium = @IsPremium,
+			IsAdmin = @IsAdmin,
+			BusinessControllerClass = @BusinessController,
+			SupportedFeatures = @SupportedFeatures,
+			CompatibleVersions = @CompatibleVersions,
+			Dependencies = @Dependencies,
+			Permissions = @Permissions,
+			ContentItemId = @ContentItemId,
+			LastModifiedByUserID = @LastModifiedByUserID,
+			LastModifiedOnDate = getdate()
+	WHERE  DesktopModuleId = @DesktopModuleId
+
+GO
+
+/* Update GetDesktopModules */
+/****************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModules]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModules]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModules]
+AS
+	SELECT *
+	FROM  {databaseOwner}{objectQualifier}vw_DesktopModules
+	ORDER BY FriendlyName
+
+GO
+
+/* Update GetDesktopModules */
+/****************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModulesByPortal]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModulesByPortal]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModulesByPortal]
+	@PortalId int 
+AS 
+	SELECT DISTINCT DM.* 
+	FROM {databaseOwner}{objectQualifier}vw_DesktopModules DM 
+	WHERE ( IsPremium = 0 ) 
+	OR  ( DesktopModuleID IN ( 
+		SELECT DesktopModuleID 
+		FROM {databaseOwner}{objectQualifier}PortalDesktopModules PDM 
+		WHERE PDM.PortalId = @PortalId ) ) 
+	ORDER BY FriendlyName 
+
+
+GO
+
+/* Drop GetDesktopModule */
+/*************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModule]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModule]
+GO
+
+/* Drop GetDesktopModuleByFriendlyName */
+/***************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModuleByFriendlyName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModuleByFriendlyName]
+GO
+
+/* Drop GetDesktopModuleByModuleName */
+/*************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModuleByModuleName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModuleByModuleName]
+GO
+
+/* Drop GetDesktopModuleByPackageID */
+/************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDesktopModuleByPackageID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDesktopModuleByPackageID]
+GO
+
+/* Drop GetModuleDefinition */
+/****************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetModuleDefinition]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetModuleDefinition]
+GO
+
+/* Drop GetModuleDefinitionByName */
+/**********************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetModuleDefinitionByName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetModuleDefinitionByName]
+GO
+
+/* DNN-4991 Add Support for Daylight Saving Time (DST). Make old Timezone Deleted */
+/************************************************************************************/
+
+UPDATE {databaseOwner}{objectQualifier}ProfilePropertyDefinition
+	SET Visible = 0, Deleted = 1
+WHERE PropertyCategory = N'Preferences'
+AND   PropertyName     = N'TimeZone'
+
+GO
+
+/* DNN-4991 Add Support for Daylight Saving Time (DST). Create new TimeZoneInfo property for ALL portals and Host */
+/******************************************************************************************************************/
+
+DECLARE @PortalID int
+DECLARE @ViewOrder int
+DECLARE @DataType int
+
+--find DataType
+SELECT @DataType = EntryID FROM {databaseOwner}[{objectQualifier}Lists] WHERE ListName = N'DataType' and Value = N'TimeZoneInfo'
+IF @DataType IS NULL
+BEGIN
+	SET @DataType = 363
+END
+
+--Create new entry for Host
+IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZoneInfo' AND PortalID IS NULL)
+BEGIN
+	--try to find old view order
+	SELECT @ViewOrder = ViewOrder FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZone' AND PortalID IS NULL
+	IF @ViewOrder IS NULL
+	BEGIN
+		SET @ViewOrder = 1
+	END
+    INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (NULL, -1, 0, @DataType, N'Preferences', N'TimeZoneInfo', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+END 
+
+--Create new entries for Portals
+
+--Iterate through each portal
+DECLARE Portals_Cursor CURSOR FOR
+SELECT PortalID
+FROM         {databaseOwner}{objectQualifier}Portals
+
+OPEN Portals_Cursor
+--get first
+FETCH NEXT FROM Portals_Cursor
+into @PortalID
+WHILE @@FETCH_STATUS = 0
+   BEGIN
+	   IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZoneInfo' AND PortalID = @PortalID)
+	   BEGIN
+			--try to find old view order
+			SELECT @ViewOrder = ViewOrder FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZone' AND PortalID = @PortalID
+			IF @ViewOrder IS NULL
+			BEGIN
+				SET @ViewOrder = 1
+			END
+            INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (@PortalID, -1, 0, @DataType, N'Preferences', N'TimeZoneInfo', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+	   END 
+
+       FETCH NEXT FROM Portals_Cursor
+       into @PortalID
+   END
+CLOSE Portals_Cursor
+DEALLOCATE Portals_Cursor
+GO
+
+/* Update GetEventLog */
+/**********************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetEventLog]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetEventLog]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetEventLog]
+ @PortalID int,
+ @LogTypeKey nvarchar(35),
+ @PageSize int,
+ @PageIndex int
+AS
+begin
+ -- Set the page bounds
+ DECLARE @PageLowerBound INT
+  , @PageUpperBound INT
+  , @RowsToReturn int
+  , @TotalRecords int
+
+ exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+ begin with [eLog] as (
+  select row_number() over (order by E.LogCreateDate desc) as rowid, e.*
+  from {databaseOwner}{objectQualifier}EventLog e
+  where (e.LogPortalID = @PortalID or @PortalID IS NULL)
+   AND (e.LogTypeKey Like @LogTypeKey or @LogTypeKey IS NULL)
+ )
+  select * from [eLog]
+  where rowid > @PageLowerBound and rowid < @PageUpperBound
+  order by rowid
+ end
+
+ select count(*) AS TotalRecords
+ from {databaseOwner}{objectQualifier}EventLog e
+ where (e.LogPortalID = @PortalID or @PortalID IS NULL)
+  AND (e.LogTypeKey Like @LogTypeKey or @LogTypeKey IS NULL)
+
+END
+
+GO
+
+/* DNNPRO-15529 - GetFolders stored procedure doesn't return anything when PortalID is null */
+/********************************************************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolders]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolders]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolders]
+	@PortalID int
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}{objectQualifier}Folders
+	WHERE (PortalID = @PortalID) OR (PortalID is null AND @PortalID is null)
+	ORDER BY FolderPath
+END
+GO
+
+
+/* DNN-15383 - Correct if fall through in  DeletePortalDesktopModules */
+/**********************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalDesktopModules]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
+    @PortalID        int,
+    @DesktopModuleId int
+AS
+BEGIN
+    IF @PortalID is not null AND @DesktopModuleId is not null
+        DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID AND DesktopModuleId = @DesktopModuleId
+    ELSE 
+        BEGIN
+            IF @PortalID is not null
+                DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID
+            ELSE
+                BEGIN 
+                    IF @DesktopModuleId is not null
+                        DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE DesktopModuleId = @DesktopModuleId
+                END
+        END
+END
+GO
+
+/* Update GetFile - Remove PortalID parameter because it's not needed */
+/**********************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFile]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFile]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFile]
+	@FileName nvarchar(100),
+	@FolderID int
+AS
+BEGIN
+	SELECT FileId,
+		   folders.PortalId,
+		   [FileName],
+		   Extension,
+		   Size,
+		   Width,
+		   Height,
+		   ContentType,
+		   files.FolderID,
+		   'Folder' = FolderPath,
+		   StorageLocation,
+		   IsCached,
+		   files.UniqueId,
+		   files.VersionGuid,	   
+		   files.SHA1Hash
+	FROM {databaseOwner}[{objectQualifier}Files] AS files
+	INNER JOIN {databaseOwner}[{objectQualifier}Folders] AS folders ON files.FolderID = folders.FolderID
+	WHERE [FileName] = @FileName AND files.FolderID = @FolderID
+END
+GO
+
+/* Update GetFileById - Remove PortalID parameter because it's not needed */
+/**************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileById]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileById]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFileById]
+	@FileId int	
+AS
+BEGIN
+	SELECT FileId,
+		   folders.PortalId,
+		   [FileName],
+		   Extension,
+		   Size,
+		   Width,
+		   Height,
+		   ContentType,
+		   files.FolderID,
+		   'Folder' = FolderPath,
+		   StorageLocation,
+		   IsCached,
+		   SHA1Hash
+	FROM {databaseOwner}[{objectQualifier}Files] AS files
+	INNER JOIN {databaseOwner}[{objectQualifier}Folders] AS folders ON files.FolderID = folders.FolderID
+	WHERE FileId = @FileId
+END
+GO
+
+/* Update GetFolderByFolderID - Remove PortalID parameter because it's not needed */
+/**********************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderByFolderID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderByFolderID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderByFolderID]
+	@FolderID int
+AS
+BEGIN
+	SELECT *
+	FROM {databaseOwner}[{objectQualifier}Folders]
+	WHERE FolderID = @FolderID
+END
+GO
+
+/* Set SupportsPartialRendering = 0 for the new Tabs module */
+/* (dnnwerks codeplex project has this turned off as well)  */
+/************************************************************/
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+SET SupportsPartialRendering = 0
+WHERE ControlSrc = 'DesktopModules/Admin/Tabs/Tabs.ascx'  
+GO
+
+
+/* DNN-15736 - Skin Object for Control Panel */
+/*********************************************/
+
+IF (NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Packages WHERE Name='DotNetNuke.CONTROLPANEL.SkinObject'))
+	BEGIN
+		EXEC {databaseOwner}{objectQualifier}AddPackage 
+			@PortalID=NULL,
+			@Name=N'DotNetNuke.CONTROLPANEL.SkinObject',
+			@FriendlyName=N'CONTROLPANEL SkinObject',
+			@Description=N'',
+			@PackageType=N'SkinObject',
+			@Version=N'1.0.0',
+			@License=N'',
+			@Manifest=N'',
+			@Owner=N'DotNetNuke',
+			@Organization=N'DotNetNuke Corporation',
+			@Url=N'www.dotnetnuke.com',
+			@Email=N'support@dotnetnuke.com',
+			@ReleaseNotes=N'',
+			@IsSystemPackage=0,
+			@CreatedByUserID=NULL,
+			@FolderName=NULL,
+			@IconFile=NULL
+
+		DECLARE @NewPackageID AS INT
+		SELECT @NewPackageID = PackageID FROM {databaseOwner}{objectQualifier}Packages WHERE Name='DotNetNuke.CONTROLPANEL.SkinObject'
+		
+		EXEC {databaseOwner}{objectQualifier}AddSkinControl 
+			@PackageID=@NewPackageID,
+			@ControlKey=N'CONTROLPANEL',
+			@ControlSrc=N'Admin/Skins/controlpanel.ascx',
+			@SupportsPartialRendering=0,
+			@CreatedByUserID=NULL
+	END
+
+GO
+
+/* Add new AppGalleryDownload host ModuleControl */
+/********************************************************/
+
+IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE ModuleDefID IS NULL AND ControlKey = 'AppGalleryDownload') = 0
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
+			( ControlKey, ControlTitle, ControlSrc, ControlType )
+			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
+	END
+GO
+
+
+/* Replace incorrect SiteMap module icon */
+/*****************************************/
+UPDATE {databaseOwner}{objectQualifier}ModuleControls SET IconFile = '~/images/icon_siteMap_32px.gif' WHERE ControlSrc = 'DesktopModules/Admin/Sitemap/SitemapSettings.ascx'
+
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
