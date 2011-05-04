@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="DebugModule" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="PackageProvider" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  </Target>
-  <Target Name="DebugProvider" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
-  </Target>
-</Project>

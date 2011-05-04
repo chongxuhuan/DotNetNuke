@@ -1,2 +1,0 @@
-<%@ Control language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.UI.Skins.Controls.Terms" CodeFile="Terms.ascx.vb" %>
-<asp:hyperlink id="hypTerms" runat="server" cssclass="SkinObject" enableviewstate="False"></asp:hyperlink>

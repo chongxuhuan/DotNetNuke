@@ -1,2 +1,0 @@
-<%@ Control language="vb" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.UI.Skins.Controls.Login" CodeFile="Login.ascx.vb" %>
-<asp:LinkButton ID="cmdLogin" runat="server" cssclass="SkinObject" CausesValidation="false"></asp:LinkButton>
