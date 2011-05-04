@@ -1,0 +1,67 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="SqlDataProvider" type="Provider" version="06.00.00">
+      <friendlyName>DotNetNuke SQL Data Provider</friendlyName>
+      <description>DotNetNuke SQL Server Data Provider Project provides a Microsoft SQL Server based data service.</description>
+      <dependencies/>
+      <owner>
+        <name>DotNetNuke</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <components>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <path>bin</path>
+              <name>DotNetNuke.SqlDataProvider.dll</name>
+              <version>05.06.00</version>
+            </assembly>
+            <assembly>
+              <path>bin</path>
+              <name>Microsoft.ApplicationBlocks.Data.dll</name>
+              <version>02.00.00</version>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>\Providers\DataProviders\SqlDataProvider</basePath>
+            <file>
+              <name>license.txt</name>
+            </file>
+            <file>
+              <name>releaseNotes.txt</name>
+            </file>
+          </files>
+        </component>
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/data/providers" action="update" key="name" collision="overwrite">
+                    <add name="SqlDataProvider" type="DotNetNuke.Data.SqlDataProvider, DotNetNuke.SqlDataProvider"
+											 connectionStringName="SiteSqlServer" upgradeConnectionString="" providerPath="~\Providers\DataProviders\SqlDataProvider\"
+											 objectQualifier="dnn_" databaseOwner="dbo" />
+                  </node>
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/data/providers/add[@name='SqlDataProvider']" action="remove" />
+                </nodes>
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>
