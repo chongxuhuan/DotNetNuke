@@ -1,0 +1,9 @@
+'remove App_code files
+App_Code\HTML\DataProviderPro.vb
+App_Code\HTML\WorkflowStateControllerPro.vb
+App_Code\HTML\WorkflowStatePermissionControllerPro.vb
+App_Code\HTML\WorkflowStatePermissionsGridPro.vb
+
+' remove Community Version Assembly
+bin\DotNetNuke.Modules.Html.dll
+

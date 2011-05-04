@@ -1,0 +1,24 @@
+﻿@using RazorHelpers;
+
+<h2>Razor Facebook Example</h2>
+
+<p>Points to the current page, uses default settings:</p> 
+@Facebook.LikeButton() 
+             
+<p>Points to the ASP.NET Web site:</p> 
+@Facebook.LikeButton( 
+        href: "http://www.asp.net/webmatrix",  
+        action: "recommend", 
+        width: 250, 
+        buttonLayout: "standard", 
+        showFaces: true, 
+        colorScheme: "light") 
+
+<p>Points to DotNetNuke.com:</p> 
+@Facebook.LikeButton( 
+        href: "http://www.dotnetnuke.com",  
+        action: "like", 
+        width: 250, 
+        buttonLayout: "standard", 
+        showFaces: true, 
+        colorScheme: "light") 
