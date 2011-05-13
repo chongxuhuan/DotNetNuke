@@ -130,7 +130,7 @@
     <value>Active Threads:</value>
   </data>
   <data name="lblFreeThreadsLabel.Text" xml:space="preserve">
-    <value>Free Treads:</value>
+    <value>Free Threads:</value>
   </data>
   <data name="lblCommand.Text" xml:space="preserve">
     <value>Command:</value>

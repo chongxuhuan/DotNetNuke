@@ -11,16 +11,16 @@
 </div>
 <div class="dnnFormItem">
     <dnn:DnnFieldLabel id="SkinLbl" runat="server" Text="Skin" AssociatedControlID="SkinLst" />
-    <dnn:DnnComboBox ID="SkinLst" runat="server" MaxHeight="300px" />
+    <dnn:DnnComboBox ID="SkinLst" runat="server" Width="290px" MaxHeight="300px" />
 </div>
-<div class="dnnFormItem cppeNavOptions">	
+<div class="cppeNavOptions">	
     <div class="dnnFormItem dnnLeft">
+		<asp:CheckBox ID="IncludeInMenu" runat="server" Checked="true" />
         <dnn:DnnFieldLabel id="IncludeInMenuLbl" runat="server" Text="IncludeInMenu" AssociatedControlID="IncludeInMenu" />
-        <asp:CheckBox ID="IncludeInMenu" runat="server" Checked="true" />
     </div>
     <div class="dnnFormItem dnnLeft penoDisabled">
-        <dnn:DnnFieldLabel id="DisabledLbl" runat="server" Text="Disabled" AssociatedControlID="IsDisabled" />
         <asp:CheckBox ID="IsDisabled" runat="server" Checked="false" />
+        <dnn:DnnFieldLabel id="DisabledLbl" runat="server" Text="Disabled" AssociatedControlID="IsDisabled" />
     </div>
 </div>
 <asp:Panel ID="IsSecurePanel" runat="server" CssClass="dnnFormItem">

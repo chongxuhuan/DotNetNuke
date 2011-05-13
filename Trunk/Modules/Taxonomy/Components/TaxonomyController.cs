@@ -62,6 +62,13 @@ namespace DotNetNuke.Modules.Taxonomy
                                                   true);
                         }
                         break;
+
+                    case "06.00.00":
+                        DesktopModuleController controller = new DesktopModuleController();
+                        DesktopModuleInfo desktopModule = controller.GetDesktopModuleByModuleName("DotNetNuke.Taxonomy");
+                        desktopModule.Category = "Admin";
+                        DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
+                        break;
                 }
                 return "Success";
             }

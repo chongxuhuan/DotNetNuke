@@ -1,68 +1,92 @@
 ﻿jQuery(function ($) {
-  $('.dnnControlPanel').wrap(function () {
-    return '<div id="dnnCPWrap"><div id="dnnCPWrapLeft"><div id="dnnCPWrapRight"></div></div></div>'
-  });
+	$('.dnnControlPanel').wrap(function () {
+		return '<div id="dnnCPWrap"><div id="dnnCPWrapLeft"><div id="dnnCPWrapRight"></div></div></div>'
+	});
 
-  function cpHoverOver() {
-    $(this).find(".dnnCPContent").stop().slideDown('fast').show();
-  }
+	function cpHoverOver() {
+		if ($("#dnnCPWrap").hasClass("Pinned")) return;
+		$(this).find(".dnnCPContent").stop().slideDown('fast').show();
+	}
 
-  function cpHoverOut() {
-    $("#dnnCPWrap").animate({ opacity: 1.0 }, 100, function () {
-      if ($("#dnnCPWrap").find('.dnnCPContent.focused').size() == 0) {
-        $("#dnnCPWrap").find(".dnnCPContent").stop().slideUp('fast', function () {
-          $(".dnnCPContent").hide();
-        });
-      }
-    });
-  }
+	function cpHoverOut() {
+		if ($("#dnnCPWrap").hasClass("Pinned")) return;
+		$("#dnnCPWrap").animate({ opacity: 1.0 }, 100, function () {
+			if ($("#dnnCPWrap").find('.dnnCPContent.focused').size() == 0) {
+				$("#dnnCPWrap").find(".dnnCPContent").stop().slideUp('fast', function () {
+					$(".dnnCPContent").hide();
+				});
+			}
+		});
+	}
 
-  function fixPadding() {
-    var $wrapper = $('#dnnCPWrap');
-    if ($wrapper.hasClass('Pinned')) {
-      $wrapper.parent().css({ paddingBottom: '0' });
-    } else {
-      $wrapper.parent().css({ paddingBottom: $('.dnnCPHeader').height() + 5 + 'px' });
-    }
-  }
+	function fixPadding() {
+		var $wrapper = $('#dnnCPWrap');
+		if ($wrapper.hasClass('Pinned')) {
+			$wrapper.parent().css({ paddingBottom: '0' });
+		} else {
+			$wrapper.parent().css({ paddingBottom: $('.dnnCPHeader').height() + 5 + 'px' });
+		}
+	}
 
-  var config = {
-    sensitivity: 2,
-    interval: 100,
-    over: cpHoverOver,
-    timeout: 500,
-    out: cpHoverOut
-  };
+	var config = {
+		sensitivity: 2,
+		interval: 100,
+		over: cpHoverOver,
+		timeout: 500,
+		out: cpHoverOut
+	};
 
-  $("#dnnCPWrap")
+	$("#dnnCPWrap")
   	.hoverIntent(config)
   	.live('mouseenter mouseleave', function (event) {
-  	  if (event.type == 'mouseenter') {
-  	    $(this).addClass('moused');
-  	  } else {
-  	    $(this).removeClass('moused');
-  	  }
+  		if (event.type == 'mouseenter') {
+  			$(this).addClass('moused');
+  		} else {
+  			$(this).removeClass('moused');
+  		}
   	})
     .parent()
-    .css({ overflow: 'hidden', position: 'relative' });
+    .css({ position: 'relative' });
 
-  $('.dnnCPContent').live('focus blur', function (event) {
-    if (event.type == 'focusout') {
-      $(this).removeClass('focused');
-      if ($("#dnnCPWrap.moused").size() == 0) cpHoverOut();
+	$('.dnnCPContent').live('focus blur', function (event) {
+		if (event.type == 'focusout') {
+			$(this).removeClass('focused');
+			if ($("#dnnCPWrap.moused").size() == 0) cpHoverOut();
 
-    } else {
-      $(this).addClass('focused');
-    }
-  });
+		} else {
+			$(this).addClass('focused');
+		}
+	});
 
-  $('.dnnCPDock').click(function () {
-    $(this).toggleClass('Pinned');
-    $('#dnnCPWrap').toggleClass('Pinned');
-    fixPadding();
-  });
+	$('.dnnCPDock').click(function () {
+		togglePinned(!$(this).hasClass("Pinned"));
+	});
 
-  fixPadding();
+	var togglePinned = function (pinned) {
+		var cookie;
+		if (pinned) {
+			$(".dnnCPDock").addClass('Pinned');
+			$('#dnnCPWrap').addClass('Pinned');
+			$(".dnnCPContent").show();
+			cookie = "Pinned";
+		}
+		else {
+			$(".dnnCPDock").removeClass('Pinned');
+			$('#dnnCPWrap').removeClass('Pinned');
+			$(".dnnCPContent").hide();
+			cookie = "";
+		}
+
+		fixPadding();
+		dnn.dom.setCookie("CP_Pinned", cookie, 1, '/', '', false);
+	}
+
+	fixPadding();
+
+	var cookie = dnn.dom.getCookie("CP_Pinned");
+	if (cookie == "Pinned") {
+		togglePinned(true);
+	}
 });
 
 //jQuery(document).ready(function() {

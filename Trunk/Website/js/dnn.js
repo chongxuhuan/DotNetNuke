@@ -1,4 +1,13 @@
-﻿
+﻿/*add browser detect for chrome*/
+if (typeof (Sys.Browser.Chrome) == "undefined") {
+	Sys.Browser.Chrome = {};
+	if (navigator.userAgent.indexOf(" Chrome/") > -1) {
+		Sys.Browser.agent = Sys.Browser.Chrome;
+		Sys.Browser.version = parseFloat(navigator.userAgent.match(/Chrome\/(\d+\.\d+)/)[1]);
+		Sys.Browser.name = "Chrome";
+		Sys.Browser.hasDebuggerStatement = true;
+	}
+}
 var DNN_HIGHLIGHT_COLOR='#9999FF';var COL_DELIMITER=String.fromCharCode(18);var ROW_DELIMITER=String.fromCharCode(17);var QUOTE_REPLACEMENT=String.fromCharCode(19);var KEY_LEFT_ARROW=37;var KEY_UP_ARROW=38;var KEY_RIGHT_ARROW=39;var KEY_DOWN_ARROW=40;var KEY_RETURN=13;var KEY_ESCAPE=27;Type.registerNamespace('dnn');dnn.extend=function(dest,src)
 {for(s in src)
 dest[s]=src[s];return dest;}

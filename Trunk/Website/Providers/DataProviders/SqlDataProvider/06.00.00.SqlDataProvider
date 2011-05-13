@@ -22,7 +22,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 BEGIN
 	CREATE TABLE {databaseOwner}[{objectQualifier}FolderMappings]
 	(
-		[FolderMappingID] [int] IDENTITY(5,1) NOT NULL,
+		[FolderMappingID] [int] IDENTITY(1,1) NOT NULL,
 		[PortalID] [int] NULL,
 		[MappingName] [nvarchar](50) NOT NULL,
 		[FolderProviderType] [nvarchar](50) NOT NULL,
@@ -132,6 +132,12 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteFolderMapping]
 	@FolderMappingID int
 AS
 BEGIN
+	-- Delete the files contained in folders of the type to delete
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}Files]
+	WHERE FolderID IN (SELECT FolderID FROM {databaseOwner}[{objectQualifier}Folders] WHERE FolderMappingID = @FolderMappingID)
+
+	-- Update the folder type to Standard
 	DECLARE @DefaultFolderMappingID int
 
 	SELECT @DefaultFolderMappingID = FM.FolderMappingID
@@ -141,9 +147,10 @@ BEGIN
 	AND FM.MappingName = 'Standard'
 
 	UPDATE {databaseOwner}[{objectQualifier}Folders]
-	SET StorageLocation = @DefaultFolderMappingID
-	WHERE StorageLocation = @FolderMappingID
+	SET FolderMappingID = @DefaultFolderMappingID
+	WHERE FolderMappingID = @FolderMappingID
 
+	-- Delete the mapping
 	DELETE
 	FROM {databaseOwner}[{objectQualifier}FolderMappings]
 	WHERE FolderMappingID = @FolderMappingID
@@ -404,26 +411,29 @@ IF (SELECT COUNT(PortalID) FROM {databaseOwner}[{objectQualifier}Portals]) > 0 B
 END
 GO
 
-/* Replace StorageLocation with FolderMappingID */
-/************************************************/
+/* Add FolderMappingID column to Folders table and fill it with right values */
+/*****************************************************************************/
 
-IF NOT EXISTS(SELECT FolderID FROM {databaseOwner}[{objectQualifier}Folders] WHERE StorageLocation >= 5)
-BEGIN
-	UPDATE {databaseOwner}[{objectQualifier}Folders]
-	SET [StorageLocation] = (
-		SELECT FM.FolderMappingID
-		FROM {databaseOwner}[{objectQualifier}FolderMappings] AS FM
-		WHERE ISNULL(FM.PortalID, -1) = ISNULL({databaseOwner}[{objectQualifier}Folders].PortalID, -1)
-		AND FolderProviderType = (
-			CASE {databaseOwner}[{objectQualifier}Folders].StorageLocation
-				WHEN 0 THEN 'StandardFolderProvider'
-				WHEN 1 THEN 'SecureFolderProvider'
-				WHEN 2 THEN 'DatabaseFolderProvider'
-				ELSE 'StandardFolderProvider'
-			END
-		)
+ALTER TABLE {databaseOwner}[{objectQualifier}Folders] ADD [FolderMappingID] int NULL
+GO
+
+UPDATE {databaseOwner}[{objectQualifier}Folders]
+SET [FolderMappingID] = (
+	SELECT FM.FolderMappingID
+	FROM {databaseOwner}[{objectQualifier}FolderMappings] AS FM
+	WHERE ISNULL(FM.PortalID, -1) = ISNULL({databaseOwner}[{objectQualifier}Folders].PortalID, -1)
+	AND FolderProviderType = (
+		CASE {databaseOwner}[{objectQualifier}Folders].StorageLocation
+			WHEN 0 THEN 'StandardFolderProvider'
+			WHEN 1 THEN 'SecureFolderProvider'
+			WHEN 2 THEN 'DatabaseFolderProvider'
+			ELSE 'StandardFolderProvider'
+		END
 	)
-END
+)
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Folders] ALTER COLUMN [FolderMappingID] int NOT NULL
 GO
 
 /* Add ModuleControls to work with Folder Mappings */
@@ -1205,8 +1215,8 @@ BEGIN
 END
 GO
 
-/* Update GetFile - Remove PortalID parameter because it's not needed */
-/**********************************************************************/
+/* Update GetFile - Remove PortalID parameter because it's not needed and add FolderMappingID to the results */
+/*************************************************************************************************************/
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFile]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFile]
@@ -1231,15 +1241,16 @@ BEGIN
 		   IsCached,
 		   files.UniqueId,
 		   files.VersionGuid,	   
-		   files.SHA1Hash
+		   files.SHA1Hash,
+		   FolderMappingID
 	FROM {databaseOwner}[{objectQualifier}Files] AS files
 	INNER JOIN {databaseOwner}[{objectQualifier}Folders] AS folders ON files.FolderID = folders.FolderID
 	WHERE [FileName] = @FileName AND files.FolderID = @FolderID
 END
 GO
 
-/* Update GetFileById - Remove PortalID parameter because it's not needed */
-/**************************************************************************/
+/* Update GetFileById - Remove PortalID parameter because it's not needed and add FolderMappingID to the results */
+/*****************************************************************************************************************/
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileById]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileById]
@@ -1261,7 +1272,8 @@ BEGIN
 		   'Folder' = FolderPath,
 		   StorageLocation,
 		   IsCached,
-		   SHA1Hash
+		   SHA1Hash,
+		   FolderMappingID
 	FROM {databaseOwner}[{objectQualifier}Files] AS files
 	INNER JOIN {databaseOwner}[{objectQualifier}Folders] AS folders ON files.FolderID = folders.FolderID
 	WHERE FileId = @FileId
@@ -1345,9 +1357,351 @@ GO
 
 /* Replace incorrect SiteMap module icon */
 /*****************************************/
-UPDATE {databaseOwner}{objectQualifier}ModuleControls SET IconFile = '~/images/icon_siteMap_32px.gif' WHERE ControlSrc = 'DesktopModules/Admin/Sitemap/SitemapSettings.ascx'
+UPDATE {databaseOwner}{objectQualifier}ModuleControls 
+	SET IconFile = '~/images/icon_siteMap_32px.gif' 
+	WHERE ControlSrc = 'DesktopModules/Admin/Sitemap/SitemapSettings.ascx'
+GO
 
+/*************************/
+/* Support for SQL Azure */
+/*************************/
 
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'aspnet_Setup_RemoveAllRoleMembers') AND (type = 'P')))
+	DROP PROCEDURE dbo.aspnet_Setup_RemoveAllRoleMembers
+GO
+
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'aspnet_Membership_GetNumberOfUsersOnline') AND (type = 'P')))
+	DROP PROCEDURE dbo.aspnet_Membership_GetNumberOfUsersOnline
+GO
+
+CREATE PROCEDURE dbo.aspnet_Membership_GetNumberOfUsersOnline
+    @ApplicationName            nvarchar(256),
+    @MinutesSinceLastInActive   int,
+    @CurrentTimeUtc             datetime
+AS
+	BEGIN
+		DECLARE @DateActive datetime
+		SELECT  @DateActive = DATEADD(minute,  -(@MinutesSinceLastInActive), @CurrentTimeUtc)
+
+		DECLARE @NumOnline int
+		SELECT  @NumOnline = COUNT(*)
+		FROM    dbo.aspnet_Users u WITH (NOLOCK),
+				dbo.aspnet_Applications a WITH (NOLOCK),
+				dbo.aspnet_Membership m WITH (NOLOCK)
+		WHERE   u.ApplicationId = a.ApplicationId                  AND
+				LastActivityDate > @DateActive                     AND
+				a.LoweredApplicationName = LOWER(@ApplicationName) AND
+				u.UserId = m.UserId
+		RETURN(@NumOnline)
+	END
+GO
+
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'{objectQualifier}UpdateListSortOrder') AND (type = 'P')))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateListSortOrder
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdateListSortOrder
+(
+	@EntryID	int, 
+	@MoveUp		bit
+)
+AS
+	DECLARE @EntryListName nvarchar(50)
+	DECLARE @ParentID int
+	DECLARE @CurrentSortValue int
+	DECLARE @ReplaceSortValue int
+	-- Get the current sort order
+	SELECT @CurrentSortValue = [SortOrder], @EntryListName = [ListName], @ParentID = [ParentID] 
+		FROM {databaseOwner}{objectQualifier}Lists WITH (nolock) 
+		WHERE [EntryID] = @EntryID
+	-- Move the item up or down?
+	IF (@MoveUp = 1)
+	  BEGIN
+		IF (@CurrentSortValue != 1) -- we rearrange sort order only if list enable sort order - sortorder >= 1
+		  BEGIN
+			SET @ReplaceSortValue = @CurrentSortValue - 1
+			UPDATE {databaseOwner}{objectQualifier}Lists 
+				SET [SortOrder] = @CurrentSortValue 
+				WHERE [SortOrder] = @ReplaceSortValue And [ListName] = @EntryListName And [ParentID] = @ParentID
+			UPDATE {databaseOwner}{objectQualifier}Lists 
+				SET [SortOrder] = @ReplaceSortValue 
+				WHERE [EntryID] = @EntryID
+		  END
+	  END
+	ELSE
+	  BEGIN
+		IF (@CurrentSortValue < (SELECT MAX([SortOrder]) FROM {databaseOwner}{objectQualifier}Lists))
+		BEGIN
+		  SET @ReplaceSortValue = @CurrentSortValue + 1
+		  UPDATE {databaseOwner}{objectQualifier}Lists 
+			SET [SortOrder] = @CurrentSortValue 
+			WHERE SortOrder = @ReplaceSortValue And [ListName] = @EntryListName  And [ParentID] = @ParentID
+		  UPDATE {databaseOwner}{objectQualifier}Lists 
+			SET [SortOrder] = @ReplaceSortValue 
+			WHERE EntryID = @EntryID
+		END
+	  END
+GO
+
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'{objectQualifier}Dashboard_GetDbBackups') AND (type = 'P')))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbBackups
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbBackups
+AS
+
+IF CHARINDEX(@@VERSION, 'Azure') = 0
+	EXEC ('SELECT TOP 20     
+		name, 
+		backup_start_date as StartDate, 
+		backup_finish_date as FinishDate, 
+		backup_size/1024 as size, 
+		database_name, 
+		CASE type
+			WHEN ''D'' THEN ''Database''
+			WHEN ''I'' THEN ''Differential database''
+			WHEN ''L'' THEN ''Log''
+			WHEN ''F'' THEN ''File or filegroup''
+			WHEN ''G'' THEN ''Differential file''
+			WHEN ''P'' THEN ''Partial''
+			WHEN ''Q'' THEN ''Differential partial''
+		END as BackupType
+	FROM         
+		msdb..backupset
+	WHERE
+		database_name = DB_NAME() 
+	ORDER BY backup_start_date DESC')
+GO
+
+/*****************************/
+/* End Support for SQL Azure */
+/*****************************/
+
+/* Update  GetPackageTypes */
+/***************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetPackageTypes]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPackageTypes]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPackageTypes]
+AS
+	SELECT 
+		PackageType, 
+		Description, 
+		SecurityAccessLevel, 
+		EditorControlSrc
+	FROM   {databaseOwner}{objectQualifier}PackageTypes
+GO
+
+/* Update Dashboard_GetInstalledModules Procedure */
+/**************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetInstalledModules]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetInstalledModules]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetInstalledModules]
+AS
+	SELECT		
+		DesktopModuleID, 
+		ModuleName,
+		FriendlyName,
+		Version,
+		(SELECT     COUNT(*) AS Instances
+			FROM          {databaseOwner}{objectQualifier}DesktopModules 
+				INNER JOIN {databaseOwner}{objectQualifier}ModuleDefinitions ON {databaseOwner}{objectQualifier}DesktopModules.DesktopModuleID = {databaseOwner}{objectQualifier}ModuleDefinitions.DesktopModuleID 
+				INNER JOIN {databaseOwner}{objectQualifier}Modules ON {databaseOwner}{objectQualifier}ModuleDefinitions.ModuleDefID = {databaseOwner}{objectQualifier}Modules.ModuleDefID
+			WHERE      ({databaseOwner}{objectQualifier}DesktopModules.DesktopModuleID = DM.DesktopModuleID)) AS Instances
+	FROM {databaseOwner}{objectQualifier}DesktopModules AS DM
+	WHERE (IsAdmin = 0)
+	ORDER BY [FriendlyName] ASC
+GO
+
+/* Fix Bug 15970 */
+/*****************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetEventLogConfig]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetEventLogConfig]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetEventLogConfig
+	@ID int
+AS
+SELECT c.*, t.LogTypeFriendlyName
+FROM {databaseOwner}{objectQualifier}EventLogConfig AS c
+	INNER JOIN {databaseOwner}{objectQualifier}EventLogTypes AS t ON t.LogTypeKey = c.LogTypeKey
+WHERE (ID = @ID or @ID IS NULL)
+ORDER BY t.LogTypeFriendlyName ASC
+
+GO
+
+/* Update GetAllFiles Procedure to include FolderMappingID in the results */
+/**************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetAllFiles]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetAllFiles]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetAllFiles]
+AS
+BEGIN
+	SELECT
+		F.FileId,
+        FO.PortalId,
+        F.[FileName],
+        F.Extension,
+        F.Size,
+        F.Width,
+        F.Height,
+        F.ContentType,
+        F.FolderID,
+        'Folder' = FolderPath,
+	    FO.StorageLocation,
+        FO.IsCached,
+        F.UniqueId,
+        F.VersionGuid,
+        F.SHA1Hash,
+        FO.FolderMappingID
+	FROM {databaseOwner}[{objectQualifier}Files] F
+	INNER JOIN {databaseOwner}[{objectQualifier}Folders] FO on F.FolderID = FO.FolderID
+END
+GO
+
+/* Update GetFiles Procedure to include FolderMappingID in the results and remove PortalID parameter */
+/*****************************************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFiles]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFiles]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFiles]
+	@FolderID int
+AS
+BEGIN
+	SELECT 
+		FileId,
+		FO.PortalId,
+		[FileName],
+		Extension,
+		Size,
+		Width,
+		Height,
+		ContentType,
+		F.FolderID,
+		'Folder' = FolderPath,
+		StorageLocation,
+		IsCached,
+		FolderMappingID
+	FROM {databaseOwner}[{objectQualifier}Files] F
+	INNER JOIN {databaseOwner}[{objectQualifier}Folders] FO ON F.FolderID = FO.FolderID
+	WHERE F.FolderID = @FolderID
+	ORDER BY [FileName]
+END
+GO
+
+/* Update AddFolder Procedure to include FolderMappingID parameter */
+/*******************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddFolder]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddFolder]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddFolder]
+    @PortalID 			int,
+    @UniqueId	 		uniqueidentifier,
+    @VersionGuid 		uniqueidentifier,
+    @FolderPath 		nvarchar(300),
+    @StorageLocation 	int,
+    @IsProtected 		bit,
+    @IsCached 			bit,
+    @LastUpdated 		datetime,
+    @CreatedByUserID  	int,
+    @FolderMappingID	int = 0
+AS
+BEGIN
+	IF @FolderMappingID = 0 BEGIN
+		SELECT @FolderMappingID = FM.FolderMappingID
+		FROM {databaseOwner}[{objectQualifier}FolderMappings] as FM
+		WHERE ISNULL(FM.PortalID, -1) = ISNULL(@PortalID, -1)
+		AND FolderProviderType = (
+			CASE @StorageLocation
+				WHEN 0 THEN 'StandardFolderProvider'
+				WHEN 1 THEN 'SecureFolderProvider'
+				WHEN 2 THEN 'DatabaseFolderProvider'
+				ELSE 'StandardFolderProvider'
+			END
+		)
+	END
+	
+    INSERT INTO {databaseOwner}[{objectQualifier}Folders] (
+        PortalID, 
+        UniqueId,
+        VersionGuid,
+        FolderPath, 
+        StorageLocation, 
+        IsProtected, 
+        IsCached, 
+        LastUpdated,
+        CreatedByUserID,
+        CreatedOnDate,
+        LastModifiedByUserID,
+        LastModifiedOnDate,
+        FolderMappingID
+    )
+    VALUES (
+        @PortalID, 
+        @UniqueId,
+        @VersionGuid,
+        @FolderPath, 
+        @StorageLocation, 
+        @IsProtected, 
+        @IsCached, 
+        @LastUpdated,
+        @CreatedByUserID,
+        getdate(),
+        @CreatedByUserID,
+        getdate(),
+        @FolderMappingID
+    )
+    SELECT SCOPE_IDENTITY()
+END
+GO
+
+/* Update UpdateFolder Procedure to include FolderMappingID parameter */
+/**********************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateFolder]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolder]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolder]
+    @PortalID 				int,
+    @VersionGuid 			uniqueidentifier,	
+    @FolderID 				int,
+    @FolderPath 			nvarchar(300),
+    @StorageLocation 		int,
+    @IsProtected 			bit,
+    @IsCached 				bit,
+    @LastUpdated 			datetime,
+    @LastModifiedByUserID  	int,
+    @FolderMappingID		int
+AS
+BEGIN
+    UPDATE {databaseOwner}[{objectQualifier}Folders]
+    SET
+		FolderPath = @FolderPath,
+		VersionGuid = @VersionGuid,
+		StorageLocation = @StorageLocation,
+		IsProtected = @IsProtected,
+		IsCached = @IsCached,
+		LastUpdated = @LastUpdated,
+		LastModifiedByUserID = @LastModifiedByUserID,
+		LastModifiedOnDate = getdate(),
+		FolderMappingID = @FolderMappingID
+    WHERE FolderID = @FolderID
+END
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

@@ -185,7 +185,7 @@ namespace DotNetNuke.SitemapProviders
                             if ((denyRole == Globals.glbRoleUnauthUserName || denyRole == Globals.glbRoleAllUsersName))
                             {
                                 hasPublicRole = false;
-                                break; // TODO: might not be correct. Was : Exit For
+                                break;
                             }
                             // Grant permission
                         }
@@ -194,7 +194,7 @@ namespace DotNetNuke.SitemapProviders
                             if ((role == Globals.glbRoleUnauthUserName || role == Globals.glbRoleAllUsersName))
                             {
                                 hasPublicRole = true;
-                                break; // TODO: might not be correct. Was : Exit For
+                                break;
                             }
                         }
                     }

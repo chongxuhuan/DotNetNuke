@@ -51,7 +51,7 @@ namespace DotNetNuke.Tests.Content
 
         internal static ScopeType CreateValidScopeType()
         {
-            ScopeType scopeType = new ScopeType {Type = Constants.SCOPETYPE_ValidScopeType};
+            ScopeType scopeType = new ScopeType { ScopeType = Constants.SCOPETYPE_ValidScopeType };
             return scopeType;
         }
 

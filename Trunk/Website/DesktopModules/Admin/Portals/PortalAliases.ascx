@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Portals.PortalAliases" CodeFile="PortalAliases.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+
 <asp:DataGrid ID="dgPortalAlias" Runat="server" AutoGenerateColumns="false" width="74%" GridLines="None" CssClass="dnnPortalAliasGrid">
     <headerstyle CssClass="dnnPortalAliasGridHeader" />
     <itemstyle CssClass="dnnPortalAliasGridItem" horizontalalign="Left" />

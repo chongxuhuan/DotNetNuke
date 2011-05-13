@@ -25,8 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -68,6 +66,8 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
+            if (!folderMapping.IsEnabled) throw new ArgumentException(Localization.Localization.GetExceptionMessage("AddFolderDisabledMappingError", "The folder cannot be added using a disabled mapping."));
+
             try
             {
                 FolderProvider.Instance(folderMapping.FolderProviderType).AddFolder(folderPath, folderMapping);
@@ -90,7 +90,6 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="portalID">The portal identifier.</param>
         /// <param name="folderPath">The path of the new folder.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when folderPath is null or empty.</exception>
-        /// <exception cref="System.ArgumentException">Thrown when parent folder doesn't exists.</exception>
         /// <returns>The added folder.</returns>
         public virtual IFolderInfo AddFolder(int portalID, string folderPath)
         {
@@ -103,10 +102,10 @@ namespace DotNetNuke.Services.FileSystem
 
             if (parentFolder == null)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("AddFolderParentCannotBeFound", "Parent folder cannot be found."));
+                parentFolder = AddFolder(portalID, parentFolderPath);
             }
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(parentFolder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(parentFolder.FolderMappingID);
 
             return AddFolder(folderMapping, folderPath);
         }
@@ -121,7 +120,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("folder", folder);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             try
             {
@@ -180,7 +179,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("folder", folder);
 
-            var fileCollection = CBOWrapper.Instance.FillCollection<FileInfo>(DataProvider.Instance().GetFiles(folder.PortalID, folder.FolderID));
+            var fileCollection = CBOWrapper.Instance.FillCollection<FileInfo>(DataProvider.Instance().GetFiles(folder.FolderID));
 
             var files = fileCollection.Cast<IFileInfo>().ToList();
 
@@ -196,7 +195,7 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>
-        /// Gets a folder entity by providing a portal identifier and folder identifier.
+        /// Gets a folder entity by providing a folder identifier.
         /// </summary>
         /// <param name="folderID">The identifier of the folder.</param>
         /// <returns>The folder entity or null if the folder cannot be located.</returns>
@@ -356,12 +355,12 @@ namespace DotNetNuke.Services.FileSystem
                     continue;
                 }
 
-                if (!includeDatabase && folder.StorageLocation == databaseFolderMapping.FolderMappingID)
+                if (!includeDatabase && folder.FolderMappingID == databaseFolderMapping.FolderMappingID)
                 {
                     continue;
                 }
 
-                if (!includeSecure && folder.StorageLocation == secureFolderMapping.FolderMappingID)
+                if (!includeSecure && folder.FolderMappingID == secureFolderMapping.FolderMappingID)
                 {
                     continue;
                 }
@@ -400,7 +399,7 @@ namespace DotNetNuke.Services.FileSystem
 
             if (!folder.FolderName.Equals(newFolderName))
             {
-                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
                 if (folderMapping != null)
                 {
@@ -506,7 +505,8 @@ namespace DotNetNuke.Services.FileSystem
                                                     folder.IsProtected,
                                                     folder.IsCached,
                                                     folder.LastUpdated,
-                                                    GetCurrentUserID());
+                                                    GetCurrentUserID(),
+                                                    folder.FolderMappingID);
 
             AddLogEntry(folder, EventLogController.EventLogType.FOLDER_UPDATED);
 
@@ -660,7 +660,8 @@ namespace DotNetNuke.Services.FileSystem
                                                                     folder.IsProtected,
                                                                     folder.IsCached,
                                                                     folder.LastUpdated,
-                                                                    GetCurrentUserID());
+                                                                    GetCurrentUserID(),
+                                                                    folder.FolderMappingID);
 
                 //Refetch folder for logging
                 folder = GetFolder(folder.PortalID, folder.FolderPath);
@@ -679,7 +680,8 @@ namespace DotNetNuke.Services.FileSystem
                                                      folder.IsProtected,
                                                      folder.IsCached,
                                                      folder.LastUpdated,
-                                                     GetCurrentUserID());
+                                                     GetCurrentUserID(),
+                                                     folder.FolderMappingID);
 
                 var objEventLog = new EventLogController();
                 objEventLog.AddLog("FolderPath",
@@ -770,7 +772,24 @@ namespace DotNetNuke.Services.FileSystem
         internal virtual int CreateFolderInDatabase(int portalID, string folderPath, int folderMappingID)
         {
             var isProtected = PathUtils.Instance.IsDefaultProtectedPath(folderPath);
-            var folder = new FolderInfo(portalID, folderPath, folderMappingID, isProtected, false, Null.NullDate);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folderMappingID);
+            var storageLocation = (int)FolderController.StorageLocationTypes.NonDefault;
+            if (!folderMapping.IsEditable)
+            {
+                switch (folderMapping.MappingName)
+                {
+                    case "Standard":
+                        storageLocation = (int)FolderController.StorageLocationTypes.InsecureFileSystem;
+                        break;
+                    case "Secure":
+                        storageLocation = (int)FolderController.StorageLocationTypes.SecureFileSystem;
+                        break;
+                    default:
+                        storageLocation = (int)FolderController.StorageLocationTypes.DatabaseSecure;
+                        break;
+                }
+            }
+            var folder = new FolderInfo(portalID, folderPath, storageLocation, isProtected, false, Null.NullDate) { FolderMappingID = folderMappingID };
             folder.FolderID = AddFolder(folder);
 
             if (portalID != Null.NullInteger)
@@ -824,7 +843,7 @@ namespace DotNetNuke.Services.FileSystem
                                    {
                                        FolderPath = relativePath,
                                        ExistsInDatabase = true,
-                                       StorageLocation = folder.StorageLocation
+                                       FolderMappingID = folder.FolderMappingID
                                    };
 
                     databaseFolders.Add(relativePath, item);
@@ -854,7 +873,7 @@ namespace DotNetNuke.Services.FileSystem
                                {
                                    FolderPath = folderInfo.FolderPath,
                                    ExistsInDatabase = true,
-                                   StorageLocation = folderInfo.StorageLocation
+                                   FolderMappingID = folderInfo.FolderMappingID
                                };
 
                 result.Add(item.FolderPath, item);
@@ -1076,9 +1095,9 @@ namespace DotNetNuke.Services.FileSystem
                     existingItem.ExistsInDatabase = existingItem.ExistsInDatabase || item.ExistsInDatabase;
                     existingItem.ExistsInFolderMappings.AddRange(item.ExistsInFolderMappings);
 
-                    if (item.StorageLocation != 0)
+                    if (item.FolderMappingID != 0)
                     {
-                        existingItem.StorageLocation = item.StorageLocation;
+                        existingItem.FolderMappingID = item.FolderMappingID;
                     }
                 }
                 else
@@ -1108,7 +1127,7 @@ namespace DotNetNuke.Services.FileSystem
             {
                 if (item.ExistsInDatabase)
                 {
-                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(item.StorageLocation);
+                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(item.FolderMappingID);
 
                     if (item.ExistsInFolderMappings.Count == 0)
                     {
@@ -1116,7 +1135,7 @@ namespace DotNetNuke.Services.FileSystem
                         {
                             if (itemIndex < (mergedTree.Count - 1) && mergedTree.Values[itemIndex + 1].FolderPath.StartsWith(item.FolderPath))
                             {
-                                UpdateStorageLocation(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
+                                UpdateFolderMappingID(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
                             }
                             else
                             {
@@ -1136,20 +1155,25 @@ namespace DotNetNuke.Services.FileSystem
                             if (FolderProvider.Instance(folderMapping.FolderProviderType).GetFiles(folder).Length == 0)
                             {
                                 newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
-                                UpdateStorageLocation(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
+                                UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
                             }
+
+                            return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
                         }
-                        else
+
+                        newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
+
+                        if (item.FolderMappingID != newFolderMapping.FolderMappingID)
                         {
-                            newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
+                            UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
 
-                            if (item.StorageLocation != newFolderMapping.FolderMappingID)
-                            {
-                                UpdateStorageLocation(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
-                            }
+                            return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
                         }
 
-                        return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
+                        if (item.ExistsInFolderMappings.Count > 1)
+                        {
+                            return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
+                        }
                     }
                 }
                 else
@@ -1173,7 +1197,7 @@ namespace DotNetNuke.Services.FileSystem
             {
                 if (item.ExistsInDatabase)
                 {
-                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(item.StorageLocation);
+                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(item.FolderMappingID);
 
                     if (item.ExistsInFolderMappings.Count == 0)
                     {
@@ -1186,7 +1210,7 @@ namespace DotNetNuke.Services.FileSystem
                             if (itemIndex < (mergedTree.Count - 1) && mergedTree.Values[itemIndex + 1].FolderPath.StartsWith(item.FolderPath))
                             {
                                 CreateFolderInFileSystem(PathUtils.Instance.GetPhysicalPath(portalID, item.FolderPath));
-                                UpdateStorageLocation(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
+                                UpdateFolderMappingID(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
                             }
                             else
                             {
@@ -1204,13 +1228,13 @@ namespace DotNetNuke.Services.FileSystem
                             {
                                 if (item.ExistsInFolderMappings.Count == 1)
                                 {
-                                    UpdateStorageLocation(portalID, item.FolderPath, item.ExistsInFolderMappings[0]);
+                                    UpdateFolderMappingID(portalID, item.FolderPath, item.ExistsInFolderMappings[0]);
                                 }
                                 else
                                 {
                                     var newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
 
-                                    UpdateStorageLocation(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
+                                    UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
 
                                     return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
                                 }
@@ -1223,7 +1247,7 @@ namespace DotNetNuke.Services.FileSystem
                                 if (GetFiles(folder).Count == 0)
                                 {
                                     newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
-                                    UpdateStorageLocation(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
+                                    UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
                                 }
 
                                 return string.Format(collisionNotification, item.FolderPath, newFolderMapping.MappingName);
@@ -1233,9 +1257,9 @@ namespace DotNetNuke.Services.FileSystem
                         {
                             var newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
 
-                            if (item.StorageLocation != newFolderMapping.FolderMappingID)
+                            if (item.FolderMappingID != newFolderMapping.FolderMappingID)
                             {
-                                UpdateStorageLocation(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
+                                UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);
                             }
 
                             if (item.ExistsInFolderMappings.Count > 1)
@@ -1268,7 +1292,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             var files = GetFiles(folder);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             if (folderMapping != null)
             {
@@ -1364,7 +1388,7 @@ namespace DotNetNuke.Services.FileSystem
                 return;
             }
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             if (folderMapping == null)
             {
@@ -1385,13 +1409,17 @@ namespace DotNetNuke.Services.FileSystem
 
                         if (file == null)
                         {
-                            var fileContent = folderProvider.GetFileStream(folder, fileName);
-                            fileManager.AddFile(folder, fileName, fileContent, false);
+                            using (var fileContent = folderProvider.GetFileStream(folder, fileName))
+                            {
+                                fileManager.AddFile(folder, fileName, fileContent, false);
+                            }
                         }
                         else if (!folderProvider.IsInSync(file))
                         {
-                            var fileContent = fileManager.GetFileContent(file);
-                            fileManager.UpdateFile(file, fileContent);
+                            using (var fileContent = fileManager.GetFileContent(file))
+                            {
+                                fileManager.UpdateFile(file, fileContent);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -1423,10 +1451,10 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
-        internal virtual void UpdateStorageLocation(int portalID, string folderPath, int storageLocation)
+        internal virtual void UpdateFolderMappingID(int portalID, string folderPath, int folderMappingID)
         {
             var folder = GetFolder(portalID, folderPath);
-            folder.StorageLocation = storageLocation;
+            folder.FolderMappingID = folderMappingID;
             UpdateFolder(folder);
         }
 
@@ -1443,7 +1471,7 @@ namespace DotNetNuke.Services.FileSystem
             public bool ExistsInFileSystem { get; set; }
             public bool ExistsInDatabase { get; set; }
             public List<int> ExistsInFolderMappings { get; set; }
-            public int StorageLocation { get; set; }
+            public int FolderMappingID { get; set; }
 
             public MergedTreeItem()
             {

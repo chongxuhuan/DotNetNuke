@@ -46,7 +46,7 @@ namespace DotNetNuke.Tests.Content.Mocks
         {
             get
             {
-                List<ScopeType> scopeTypes = new List<ScopeType> {new ScopeType {ScopeTypeId = 1, Type = "Application"}, new ScopeType {ScopeTypeId = 2, Type = "Portal"}};
+                List<ScopeType> scopeTypes = new List<ScopeType> { new ScopeType { ScopeTypeId = 1, ScopeType = "Application" }, new ScopeType { ScopeTypeId = 2, ScopeType = "Portal" } };
 
                 return scopeTypes.AsQueryable();
             }

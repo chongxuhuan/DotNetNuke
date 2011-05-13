@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="CreateInstall" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variables.build" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <Target Name="BuildSourcePackages" DependsOnTargets="VersionCheck">
+    <XmlRead Prefix="n"
+                Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+                XPath="/package/@value"
+                XmlFileName="$(PackagesFolder)\LastPackage.xml">
+      <Output TaskParameter="Value" PropertyName="Version" />
+    </XmlRead>
+    
+    <Copy SourceFiles="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Source\Website\development.config" DestinationFiles="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Source\Website\web.config" />
+    <MSBuild Projects="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Source\DotNetNuke_Community_UnitTests_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <MSBuild Projects="$(PackagesFolder)\CommunityPackages\$(Version)\DotNetNuke_Community_$(Version)_Source\DotNetNuke_Community_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    
+    <Copy SourceFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Source\Website\development.config" DestinationFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Source\Website\web.config" />
+    <MSBuild Projects="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Source\DotNetNuke_Professional_UnitTests_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <MSBuild Projects="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Source\DotNetNuke_Professional_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+               
+    <Copy SourceFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Elite\Website\development.config" DestinationFiles="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Elite\Website\web.config" />
+    <MSBuild Projects="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Elite\DotNetNuke_Professional_UnitTests_Elite.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <MSBuild Projects="$(PackagesFolder)\ProfessionalPackages\$(Version)\DotNetNuke_Professional_$(Version)_Elite\DotNetNuke_Professional_Elite.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+                 
+    <Copy SourceFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Source\Website\development.config" DestinationFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Source\Website\web.config" />
+    <MSBuild Projects="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Source\DotNetNuke_Enterprise_UnitTests_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <MSBuild Projects="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Source\DotNetNuke_Enterprise_Source.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+                   
+    <Copy SourceFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Elite\Website\development.config" DestinationFiles="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Elite\Website\web.config" />
+    <MSBuild Projects="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Elite\DotNetNuke_Enterprise_UnitTests_Elite.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <MSBuild Projects="$(PackagesFolder)\EnterprisePackages\$(Version)\DotNetNuke_Enterprise_$(Version)_Elite\DotNetNuke_Enterprise_Elite.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+  </Target>
+</Project>

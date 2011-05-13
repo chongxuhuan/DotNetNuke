@@ -102,7 +102,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
                     //Check Portal Scope
                     if (View.Model != null && View.Model.Vocabulary != null && View.Model.Vocabulary.ScopeType != null)
                     {
-                        _isEnabled = String.Compare(View.Model.Vocabulary.ScopeType.Type, "Portal", false) == 0;
+                        _isEnabled = String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", false) == 0;
                     }
                 }
                 return _isEnabled;

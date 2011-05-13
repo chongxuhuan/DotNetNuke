@@ -37,8 +37,10 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Common.Lists
 {
+
     public partial class ListEntries : PortalModuleBase
     {
+
         protected int DefinitionID
         {
             get
@@ -113,14 +115,7 @@ namespace DotNetNuke.Common.Lists
         {
             get
             {
-                if (ViewState["ListName"] != null)
-                {
-                    return ViewState["ListName"].ToString();
-                }
-                else
-                {
-                    return "";
-                }
+                return ViewState["ListName"] != null ? ViewState["ListName"].ToString() : "";
             }
             set
             {
@@ -148,14 +143,7 @@ namespace DotNetNuke.Common.Lists
         {
             get
             {
-                if (ViewState["Mode"] != null)
-                {
-                    return ViewState["Mode"].ToString();
-                }
-                else
-                {
-                    return "";
-                }
+                return ViewState["Mode"] != null ? ViewState["Mode"].ToString() : "";
             }
             set
             {
@@ -167,14 +155,7 @@ namespace DotNetNuke.Common.Lists
         {
             get
             {
-                if (ViewState["ParentKey"] != null)
-                {
-                    return ViewState["ParentKey"].ToString();
-                }
-                else
-                {
-                    return "";
-                }
+                return ViewState["ParentKey"] != null ? ViewState["ParentKey"].ToString() : "";
             }
             set
             {
@@ -186,14 +167,7 @@ namespace DotNetNuke.Common.Lists
         {
             get
             {
-                if (ViewState["SelectedKey"] != null)
-                {
-                    return ViewState["SelectedKey"].ToString();
-                }
-                else
-                {
-                    return "";
-                }
+                return ViewState["SelectedKey"] != null ? ViewState["SelectedKey"].ToString() : "";
             }
             set
             {
@@ -205,14 +179,7 @@ namespace DotNetNuke.Common.Lists
         {
             get
             {
-                if (ViewState["ShowDelete"] != null)
-                {
-                    return Convert.ToBoolean(ViewState["ShowDelete"]);
-                }
-                else
-                {
-                    return false;
-                }
+                return ViewState["ShowDelete"] != null && Convert.ToBoolean(ViewState["ShowDelete"]);
             }
             set
             {
@@ -409,21 +376,7 @@ namespace DotNetNuke.Common.Lists
             BindGrid();
         }
 
-        protected void OnListCreated(EventArgs e)
-        {
-            if (ListCreated != null)
-            {
-                ListCreated(this, e);
-            }
-        }
-
-        protected void OnListEntryCreated(EventArgs e)
-        {
-            if (ListEntryCreated != null)
-            {
-                ListEntryCreated(this, e);
-            }
-        }
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {
@@ -446,16 +399,16 @@ namespace DotNetNuke.Common.Lists
         {
             base.OnLoad(e);
 
-            grdEntries.ItemCommand += grdEntries_ItemCommand;
-            ddlSelectList.SelectedIndexChanged += ddlSelectList_SelectedIndexChanged;
-            cmdAddEntry.Click += cmdAddEntry_Click;
-            cmdCancel.Click += cmdCancel_Click;
-            cmdDelete.Click += cmdDelete_Click;
-            cmdDeleteList.Click += cmdDeleteList_Click;
-            cmdSaveEntry.Click += cmdSaveEntry_Click;
+            grdEntries.ItemCommand += EntriesGridItemCommand;
+            ddlSelectList.SelectedIndexChanged += SelectListIndexChanged;
+            cmdAddEntry.Click += OnAddEntryClick;
+            cmdCancel.Click += OnCancelClick;
+            cmdDelete.Click += OnDeleteClick;
+            cmdDeleteList.Click += OnDeleteListClick;
+            cmdSaveEntry.Click += OnSaveEntryClick;
         }
 
-        private void grdEntries_ItemCommand(object source, DataGridCommandEventArgs e)
+        protected void EntriesGridItemCommand(object source, DataGridCommandEventArgs e)
         {
             try
             {
@@ -503,7 +456,7 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
-        private void ddlSelectList_SelectedIndexChanged(object sender, EventArgs e)
+        protected void SelectListIndexChanged(object sender, EventArgs e)
         {
             var ctlLists = new ListController();
             if(!String.IsNullOrEmpty(ddlSelectList.SelectedValue))
@@ -524,13 +477,13 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
-        private void cmdAddEntry_Click(object sender, EventArgs e)
+        protected void OnAddEntryClick(object sender, EventArgs e)
         {
             Mode = "AddEntry";
             DataBind();
         }
 
-        private void cmdSaveEntry_Click(object sender, EventArgs e)
+        protected void OnSaveEntryClick(object sender, EventArgs e)
         {
             var ctlLists = new ListController();
             var entry = new ListEntryInfo();
@@ -596,17 +549,17 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
-        private void cmdDeleteList_Click(object sender, EventArgs e)
+        protected void OnDeleteListClick(object sender, EventArgs e)
         {
             DeleteList();
         }
 
-        private void cmdDelete_Click(object sender, EventArgs e)
+        protected void OnDeleteClick(object sender, EventArgs e)
         {
             DeleteItem(Convert.ToInt32(txtEntryID.Text));
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
+        protected void OnCancelClick(object sender, EventArgs e)
         {
             try
             {
@@ -625,5 +578,24 @@ namespace DotNetNuke.Common.Lists
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        protected void OnListCreated(EventArgs e)
+        {
+            if (ListCreated != null)
+            {
+                ListCreated(this, e);
+            }
+        }
+
+        protected void OnListEntryCreated(EventArgs e)
+        {
+            if (ListEntryCreated != null)
+            {
+                ListEntryCreated(this, e);
+            }
+        }
+
+        #endregion
+
     }
 }

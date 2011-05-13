@@ -145,7 +145,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -167,10 +167,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "37559"
+		SlnRelativePath = "Website\"
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.AzureFolderProvider", "Professional\Providers\FolderProviders\AzureFolderProvider\DotNetNuke.Professional.AzureFolderProvider.csproj", "{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"
 EndProject
@@ -404,18 +402,18 @@ Global
 		SccProjectTopLevelParentUniqueName57 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName57 = Professional/Providers/FolderProviders/AmazonS3FolderProvider
 		SccLocalPath57 = Professional\\Providers\\FolderProviders\\AmazonS3FolderProvider
-		SccWebProject58 = true
-		SccProjectUniqueName58 = http://localhost/DotNetNuke_Community
-		SccProjectName58 = Website
-		SccLocalPath58 = Website
-		SccProjectEnlistmentChoice58 = 2
-		SccProjectUniqueName59 = Professional\\Providers\\FolderProviders\\AzureFolderProvider\\DotNetNuke.Professional.AzureFolderProvider.csproj
-		SccProjectTopLevelParentUniqueName59 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName59 = Professional/Providers/FolderProviders/AzureFolderProvider
-		SccLocalPath59 = Professional\\Providers\\FolderProviders\\AzureFolderProvider
-		SccProjectUniqueName60 = Externally\u0020Sourced\\Externally.Sourced.csproj
-		SccProjectName60 = Externally\u0020Sourced
-		SccLocalPath60 = Externally\u0020Sourced
+		SccProjectUniqueName58 = Professional\\Providers\\FolderProviders\\AzureFolderProvider\\DotNetNuke.Professional.AzureFolderProvider.csproj
+		SccProjectTopLevelParentUniqueName58 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName58 = Professional/Providers/FolderProviders/AzureFolderProvider
+		SccLocalPath58 = Professional\\Providers\\FolderProviders\\AzureFolderProvider
+		SccProjectUniqueName59 = Externally\u0020Sourced\\Externally.Sourced.csproj
+		SccProjectName59 = Externally\u0020Sourced
+		SccLocalPath59 = Externally\u0020Sourced
+		SccWebProject60 = true
+		SccProjectUniqueName60 = http://localhost/DotNetNuke_Community
+		SccProjectName60 = Website
+		SccLocalPath60 = Website
+		SccProjectEnlistmentChoice60 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1201,7 +1199,6 @@ Global
 		{6F0A5B23-E09F-431A-879A-993CB77E23D8} = {8F128F7A-C68D-49E4-B37F-56EBB70A5A67}
 		{89093FD0-076F-48CD-9232-B665226CDBF0} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
 		{86AF9531-D270-4C18-A8B9-C67A8782AF69} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}

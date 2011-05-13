@@ -355,7 +355,7 @@ namespace DotNetNuke.Data
                     if (!(c.Number == 2812 && c.Class == 16))
                     {
                         connectionValid = false;
-                        break; // TODO: might not be correct. Was : Exit For
+                        break;
                     }
                 }
             }
@@ -1713,9 +1713,9 @@ namespace DotNetNuke.Data
                                       LastModifiedByUserID);
         }
 
-        public override IDataReader GetFiles(int PortalId, int FolderID)
+        public override IDataReader GetFiles(int FolderID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFiles", GetNull(PortalId), FolderID);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFiles", FolderID);
         }
 
         public override IDataReader GetFile(string FileName, int FolderID)
@@ -2498,7 +2498,7 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFolderByUniqueID", UniqueID);
         }
 
-        public override int AddFolder(int PortalID, Guid UniqueId, Guid VersionGuid, string FolderPath, int StorageLocation, bool IsProtected, bool IsCached, DateTime LastUpdated, int createdByUserID)
+        public override int AddFolder(int PortalID, Guid UniqueId, Guid VersionGuid, string FolderPath, int StorageLocation, bool IsProtected, bool IsCached, DateTime LastUpdated, int createdByUserID, int folderMappingID)
         {
             return
                 Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString,
@@ -2511,11 +2511,11 @@ namespace DotNetNuke.Data
                                                         IsProtected,
                                                         IsCached,
                                                         GetNull(LastUpdated),
-                                                        createdByUserID));
+                                                        createdByUserID,
+                                                        folderMappingID));
         }
 
-        public override void UpdateFolder(int PortalID, Guid VersionGuid, int FolderID, string FolderPath, int StorageLocation, bool IsProtected, bool IsCached, DateTime LastUpdated,
-                                          int lastModifiedByUserID)
+        public override void UpdateFolder(int PortalID, Guid VersionGuid, int FolderID, string FolderPath, int StorageLocation, bool IsProtected, bool IsCached, DateTime LastUpdated, int lastModifiedByUserID, int folderMappingID)
         {
             SqlHelper.ExecuteScalar(ConnectionString,
                                     DatabaseOwner + ObjectQualifier + "UpdateFolder",
@@ -2527,7 +2527,8 @@ namespace DotNetNuke.Data
                                     IsProtected,
                                     IsCached,
                                     GetNull(LastUpdated),
-                                    lastModifiedByUserID);
+                                    lastModifiedByUserID,
+                                    folderMappingID);
         }
 
         public override void DeleteFolder(int PortalID, string FolderPath)

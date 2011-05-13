@@ -42,6 +42,9 @@ namespace DotNetNuke.Modules.Admin.Vendors
 {
     public partial class EditAffiliate : PortalModuleBase
     {
+
+        #region Private Members
+
         private int AffiliateId = -1;
         private int VendorId = -1;
 
@@ -53,21 +56,22 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     return -1;
                 }
-                else
-                {
-                    return PortalSettings.PortalId;
-                }
+                return PortalSettings.PortalId;
             }
         }
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdDelete.Click += cmdDelete_Click;
-            cmdSend.Click += cmdSend_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
+            cmdCancel.Click += OnCancelClick;
+            cmdDelete.Click += OnDeleteClick;
+            cmdSend.Click += OnSendClick;
+            cmdUpdate.Click += OnUpdateClick;
 
             if ((Request.QueryString["VendorId"] != null))
             {
@@ -81,11 +85,11 @@ namespace DotNetNuke.Modules.Admin.Vendors
             cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
             if (Page.IsPostBack == false)
             {
-                ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
+
                 var objAffiliates = new AffiliateController();
                 if (AffiliateId != Null.NullInteger)
                 {
-                    AffiliateInfo objAffiliate = objAffiliates.GetAffiliate(AffiliateId, VendorId, PortalId);
+                    var objAffiliate = objAffiliates.GetAffiliate(AffiliateId, VendorId, PortalId);
                     if (objAffiliate != null)
                     {
                         if (!Null.IsNull(objAffiliate.StartDate))
@@ -113,12 +117,12 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
+        protected void OnCancelClick(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
         }
 
-        private void cmdDelete_Click(object sender, EventArgs e)
+        protected void OnDeleteClick(object sender, EventArgs e)
         {
             if (AffiliateId != -1)
             {
@@ -128,23 +132,24 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdSend_Click(object sender, EventArgs e)
+        protected void OnSendClick(object sender, EventArgs e)
         {
             var objVendors = new VendorController();
-            VendorInfo objVendor;
-            objVendor = objVendors.GetVendor(VendorId, PortalId);
+            var objVendor = objVendors.GetVendor(VendorId, PortalId);
             if (objVendor != null)
             {
                 if (!Null.IsNull(objVendor.Email))
                 {
-                    var Custom = new ArrayList();
-                    Custom.Add(objVendor.VendorName);
-                    Custom.Add(Globals.GetPortalDomainName(PortalSettings.PortalAlias.HTTPAlias, Request, true) + "/" + Globals.glbDefaultPage + "?AffiliateId=" + VendorId);
-                    string errorMsg = Mail.SendMail(PortalSettings.Email,
+                    var custom = new ArrayList
+                                     {
+                                         objVendor.VendorName,
+                                         Globals.GetPortalDomainName(PortalSettings.PortalAlias.HTTPAlias, Request, true) + "/" + Globals.glbDefaultPage + "?AffiliateId=" + VendorId
+                                     };
+                    var errorMsg = Mail.SendMail(PortalSettings.Email,
                                                     objVendor.Email,
                                                     "",
                                                     Localization.GetSystemMessage(PortalSettings, "EMAIL_AFFILIATE_NOTIFICATION_SUBJECT"),
-                                                    Localization.GetSystemMessage(PortalSettings, "EMAIL_AFFILIATE_NOTIFICATION_BODY", Localization.GlobalResourceFile, Custom),
+                                                    Localization.GetSystemMessage(PortalSettings, "EMAIL_AFFILIATE_NOTIFICATION_BODY", Localization.GlobalResourceFile, custom),
                                                     "",
                                                     "",
                                                     "",
@@ -167,31 +172,19 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             if (Page.IsValid)
             {
-                var objAffiliate = new AffiliateInfo();
-                objAffiliate.AffiliateId = AffiliateId;
-                objAffiliate.VendorId = VendorId;
-                if (!String.IsNullOrEmpty(txtStartDate.Text))
-                {
-                    objAffiliate.StartDate = DateTime.Parse(txtStartDate.Text);
-                }
-                else
-                {
-                    objAffiliate.StartDate = Null.NullDate;
-                }
-                if (!String.IsNullOrEmpty(txtEndDate.Text))
-                {
-                    objAffiliate.EndDate = DateTime.Parse(txtEndDate.Text);
-                }
-                else
-                {
-                    objAffiliate.EndDate = Null.NullDate;
-                }
-                objAffiliate.CPC = double.Parse(txtCPC.Text);
-                objAffiliate.CPA = double.Parse(txtCPA.Text);
+                var objAffiliate = new AffiliateInfo
+                                       {
+                                           AffiliateId = AffiliateId,
+                                           VendorId = VendorId,
+                                           StartDate = !String.IsNullOrEmpty(txtStartDate.Text) ? DateTime.Parse(txtStartDate.Text) : Null.NullDate,
+                                           EndDate = !String.IsNullOrEmpty(txtEndDate.Text) ? DateTime.Parse(txtEndDate.Text) : Null.NullDate,
+                                           CPC = double.Parse(txtCPC.Text),
+                                           CPA = double.Parse(txtCPA.Text)
+                                       };
                 var objAffiliates = new AffiliateController();
                 if (AffiliateId == -1)
                 {
@@ -205,15 +198,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void InitializeComponent()
-        {
-        }
+        #endregion
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
-            InitializeComponent();
-        }
     }
 }

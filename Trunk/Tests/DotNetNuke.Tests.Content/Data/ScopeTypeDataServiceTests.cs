@@ -82,7 +82,7 @@ namespace DotNetNuke.Tests.Content.Data
             DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addScopeType);
 
             ScopeType scopeType = new ScopeType();
-            scopeType.Type = Constants.SCOPETYPE_ValidScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_ValidScopeType;
 
             DataService ds = new DataService();
 
@@ -101,7 +101,7 @@ namespace DotNetNuke.Tests.Content.Data
             DataUtil.AddDatabaseObject(string.Concat(ContentDataTestHelper.VirtualScriptRootPath, virtualScriptFilePath), addScopeType);
 
             ScopeType scopeType = new ScopeType();
-            scopeType.Type = Constants.SCOPETYPE_ValidScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_ValidScopeType;
 
             DataService ds = new DataService();
 
@@ -192,7 +192,7 @@ namespace DotNetNuke.Tests.Content.Data
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_InValidScopeTypeId;
-            scopeType.Type = Constants.SCOPETYPE_UpdateScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_UpdateScopeType;
 
             DataService ds = new DataService();
 
@@ -225,7 +225,7 @@ namespace DotNetNuke.Tests.Content.Data
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_UpdateScopeTypeId;
-            scopeType.Type = Constants.SCOPETYPE_UpdateScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_UpdateScopeType;
 
             DataService ds = new DataService();
 

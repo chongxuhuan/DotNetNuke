@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Xml;
 
 using DotNetNuke.Application;
@@ -50,9 +51,10 @@ namespace DotNetNuke.Modules.XmlMerge
 {
     public partial class XmlMerge : PortalModuleBase
     {
+
         #region Private Functions
 
-        private bool IsValidDocType(string contentType)
+        private static bool IsValidDocType(string contentType)
         {
             switch (contentType)
             {
@@ -76,18 +78,17 @@ namespace DotNetNuke.Modules.XmlMerge
 
         private void BindConfigList()
         {
-            string[] files = Directory.GetFiles(Globals.ApplicationMapPath, "*.config");
+            var files = Directory.GetFiles(Globals.ApplicationMapPath, "*.config");
             IEnumerable<string> fileList = (from file in files select Path.GetFileName(file));
             ddlConfig.DataSource = fileList;
             ddlConfig.DataBind();
-            var selectItem = new RadComboBoxItem(Localization.GetString("SelectConfig", LocalResourceFile), "-1");
+            var selectItem = new ListItem(Localization.GetString("SelectConfig", LocalResourceFile), "-1");
             ddlConfig.Items.Insert(0, selectItem);
             ddlConfig.SelectedIndex = 0;
         }
 
         private void ValidateSuperUser()
         {
-            // Verify that the current user has access to access this page
             if (!UserInfo.IsSuperUser)
             {
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
@@ -96,7 +97,7 @@ namespace DotNetNuke.Modules.XmlMerge
 
         private void LoadConfig(string configFile)
         {
-            XmlDocument configDoc = Config.Load(configFile);
+            var configDoc = Config.Load(configFile);
             using (var txtWriter = new StringWriter())
             {
                 using (var writer = new XmlTextWriter(txtWriter))
@@ -116,10 +117,10 @@ namespace DotNetNuke.Modules.XmlMerge
         {
             base.OnInit(e);
 
-            cmdExecute.Click += cmdExecute_Click;
-            cmdSave.Click += cmdSave_Click;
-            cmdUpload.Click += cmdUpload_Click;
-            ddlConfig.SelectedIndexChanged += ddlConfig_SelectedIndexChanged;
+            cmdExecute.Click += OnExecuteClick;
+            cmdSave.Click += OnSaveClick;
+            cmdUpload.Click += OnUploadClick;
+            ddlConfig.SelectedIndexChanged += OnConfigFileIndexChanged;
 
             jQuery.RequestDnnPluginsRegistration();
         }
@@ -168,7 +169,7 @@ namespace DotNetNuke.Modules.XmlMerge
             }
         }
 
-        protected void cmdExecute_Click(object sender, EventArgs e)
+        protected void OnExecuteClick(object sender, EventArgs e)
         {
             ValidateSuperUser();
             if (IsValidXmlMergDocument(txtScript.Text))
@@ -190,7 +191,7 @@ namespace DotNetNuke.Modules.XmlMerge
             }
         }
 
-        protected void cmdSave_Click(object sender, EventArgs e)
+        protected void OnSaveClick(object sender, EventArgs e)
         {
             ValidateSuperUser();
             var configDoc = new XmlDocument();
@@ -210,7 +211,7 @@ namespace DotNetNuke.Modules.XmlMerge
             }
         }
 
-        protected void cmdUpload_Click(object sender, EventArgs e)
+        protected void OnUploadClick(object sender, EventArgs e)
         {
             ValidateSuperUser();
             if (IsValidDocType(uplScript.PostedFile.ContentType))
@@ -220,7 +221,7 @@ namespace DotNetNuke.Modules.XmlMerge
             }
         }
 
-        protected void ddlConfig_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnConfigFileIndexChanged(object sender, EventArgs e)
         {
             if (ddlConfig.SelectedIndex != 0)
             {
@@ -229,5 +230,6 @@ namespace DotNetNuke.Modules.XmlMerge
         }
 
         #endregion
+
     }
 }

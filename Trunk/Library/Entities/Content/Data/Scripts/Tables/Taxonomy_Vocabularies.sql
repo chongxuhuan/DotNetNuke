@@ -23,9 +23,9 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 			[ScopeID] [int] NULL,
 			[ScopeTypeID] [int] NOT NULL,
 			[CreatedByUserID] [int] NULL,
-			[CreatedOnDate] [date] NULL,
+			[CreatedOnDate] [datetime] NULL,
 			[LastModifiedByUserID] [int] NULL,
-			[LastModifiedOnDate] [date] NULL,
+			[LastModifiedOnDate] [datetime] NULL,
 			CONSTRAINT [PK_{objectQualifier}Taxonomy_Vocabulary] PRIMARY KEY CLUSTERED ( [VocabularyID] ASC )
 		)
 

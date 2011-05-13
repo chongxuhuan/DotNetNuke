@@ -55,10 +55,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 lblDate.CssClass = CssClass;
             }
-            //TODO remove in DST fixes
-#pragma warning disable 612,618
             var objUserTime = new UserTime();
-#pragma warning restore 612,618
             if (!String.IsNullOrEmpty(DateFormat))
             {
                 lblDate.Text = objUserTime.CurrentUserTime.ToString(DateFormat);

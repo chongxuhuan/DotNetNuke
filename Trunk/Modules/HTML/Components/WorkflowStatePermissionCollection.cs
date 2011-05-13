@@ -112,7 +112,7 @@ namespace DotNetNuke.Security.Permissions
                     if (permission.PermissionID == value.PermissionID && permission.UserID == value.UserID && permission.RoleID == value.RoleID)
                     {
                         isMatch = true;
-                        break; // TODO: might not be correct. Was : Exit For
+                        break;
                     }
                 }
                 if (!isMatch)
@@ -189,7 +189,7 @@ namespace DotNetNuke.Security.Permissions
                 if (permission.PermissionID == permissionID && permission.UserID == userID && permission.RoleID == roleID)
                 {
                     List.Remove(permission);
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
         }

@@ -69,7 +69,4 @@
 	    </Columns>
     </asp:datagrid>
     <dnnsc:PagingControl id="ctlPagingControl" runat="server"></dnnsc:PagingControl>
-    <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdDelete" resourcekey="cmdDelete" Runat="server" CssClass="CommandButton" /></li>
-    </ul>
 </div>

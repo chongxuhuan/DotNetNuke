@@ -208,9 +208,24 @@
     <value>Icon File:</value>
   </data>
   <data name="appgalleryEndpoint.Text" xml:space="preserve">
-    <value>dev-cc-2:8080</value>
+    <value>appgallery.dotnetnuke.com</value>
   </data>
   <data name="appgalleryTracker.Text" xml:space="preserve">
     <value>&amp;r=appgallery</value>
+  </data>
+  <data name="SnowcoveredLogin.Text" xml:space="preserve">
+    <value>you need to login to &lt;a href='www.snowcovered.com' target=_new'&gt;snowcovered&lt;/a&gt;</value>
+  </data>
+  <data name="WebserviceFailure.Text" xml:space="preserve">
+    <value>We cannot connect to the webservice</value>
+  </data>
+  <data name="WebservicePermission.Text" xml:space="preserve">
+    <value>This site does not allow external webservice connections</value>
+  </data>
+  <data name="SnowcoveredCookie.Text" xml:space="preserve">
+    <value>https://www.snowcovered.com/Snowcovered2/AppGalleryHandler.ashx?PortalID=0</value>
+  </data>
+  <data name="SnowCoveredFile.Text" xml:space="preserve">
+    <value>https://www.snowcovered.com/Snowcovered2/AppGalleryHandler.ashx?PortalID=0&amp;FileID=</value>
   </data>
 </root>

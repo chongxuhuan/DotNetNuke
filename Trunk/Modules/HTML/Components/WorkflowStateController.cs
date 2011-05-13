@@ -145,7 +145,7 @@ namespace DotNetNuke.Modules.Html
                 if (((WorkflowStateInfo) arrWorkflowStates[intItem]).StateID == StateID)
                 {
                     intPreviousStateID = StateID;
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
 
@@ -158,7 +158,7 @@ namespace DotNetNuke.Modules.Html
                     if (((WorkflowStateInfo) arrWorkflowStates[intItem]).IsActive)
                     {
                         intPreviousStateID = ((WorkflowStateInfo) arrWorkflowStates[intItem]).StateID;
-                        break; // TODO: might not be correct. Was : Exit While
+                        break;
                     }
                     intItem = intItem - 1;
                 }
@@ -196,7 +196,7 @@ namespace DotNetNuke.Modules.Html
                 if (((WorkflowStateInfo) arrWorkflowStates[intItem]).StateID == StateID)
                 {
                     intNextStateID = StateID;
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
 
@@ -209,7 +209,7 @@ namespace DotNetNuke.Modules.Html
                     if (((WorkflowStateInfo) arrWorkflowStates[intItem]).IsActive)
                     {
                         intNextStateID = ((WorkflowStateInfo) arrWorkflowStates[intItem]).StateID;
-                        break; // TODO: might not be correct. Was : Exit While
+                        break;
                     }
                     intItem = intItem + 1;
                 }

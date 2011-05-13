@@ -43,5 +43,6 @@ namespace DotNetNuke.Services.FileSystem
         int StorageLocation { get; set; }
         Guid UniqueId { get; set; }
         Guid VersionGuid { get; set; }
+        int FolderMappingID { get; set; }
     }
 }

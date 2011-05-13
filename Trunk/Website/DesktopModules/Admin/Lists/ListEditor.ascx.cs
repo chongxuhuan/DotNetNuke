@@ -38,8 +38,10 @@ using DNNControls = DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Common.Lists
 {
+
     public partial class ListEditor : PortalModuleBase
     {
+
         protected string Mode
         {
             get
@@ -70,7 +72,7 @@ namespace DotNetNuke.Common.Lists
         private void BindTree()
         {
             var ctlLists = new ListController();
-            ListInfoCollection colLists = ctlLists.GetListInfoCollection();
+            var colLists = ctlLists.GetListInfoCollection();
             var indexLookup = new Hashtable();
             DNNtree.TreeNodes.Clear();
             foreach (ListInfo list in colLists)

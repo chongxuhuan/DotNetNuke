@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -131,5 +131,8 @@
   </data>
   <data name="Updated.Text" xml:space="preserve">
     <value>Updated Google Analytics Configuration.</value>
+  </data>
+  <data name="valTrackingId.Text" xml:space="preserve">
+    <value>Tracking ID is Required!</value>
   </data>
 </root>

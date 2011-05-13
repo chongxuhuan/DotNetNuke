@@ -104,7 +104,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
             foreach (ModuleInfo m in tabModules.Values)
             {
-                if (ModulePermissionController.CanAdminModule(m) & m.IsDeleted == false)
+                if (ModulePermissionController.CanAdminModule(m) && m.IsDeleted == false)
                 {
                     pageModules.Add(m);
                 }

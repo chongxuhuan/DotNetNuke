@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+	<template>DNNAdmin.xslt</template>
+	<scripts>
+    <script>jquery.hoverIntent.min.js</script>
+    <script>jquery.dnnadminmega.js</script>
+  </scripts>
+  <stylesheets>
+    <stylesheet>dnnadmin.css</stylesheet>
+  </stylesheets>
+  <defaultClientOptions>
+		<clientOption name="MenuStyle" type="string" value="DNNAdmin" />
+	</defaultClientOptions>
+</manifest>

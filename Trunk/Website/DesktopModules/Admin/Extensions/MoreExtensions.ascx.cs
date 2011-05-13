@@ -54,11 +54,21 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 cs.RegisterClientScriptInclude("jquery.tmpl", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.tmpl.js"));
             };
-
+            if (!cs.IsClientScriptIncludeRegistered("json2"))
+            {
+                cs.RegisterClientScriptInclude("json2", Globals.ResolveUrl("~/Resources/Shared/Scripts/json2.js"));
+            };
             if (!cs.IsClientScriptIncludeRegistered("gallery"))
             {
-                cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery.js"));
-            };
+                if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.IsDebuggingEnabled)
+                {
+                    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery.js"));
+                }
+                else
+                {
+                    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery-compiled.js"));
+                }
+            }
         }
 
     }

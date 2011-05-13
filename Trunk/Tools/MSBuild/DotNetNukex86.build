@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Compile" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Variablesx86.build" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <Target Name="Compile" DependsOnTargets="VersionCheck">
+    <ItemGroup>
+      <CheckOutFiles Include="$(RootFolder)\Website\web.config"/>
+      <!--<CheckOutFiles Include="$(RootFolder)\Website\Portals\_default\Default Website.template"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Portals\_default\Default Website.template.resources"/>-->
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropySkin_01.00.07_Install.resources"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropyBetaSkin_01.00.08_Install.zip"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropyProSkin_01.00.07_Install.zip"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Skin\DarkKnight.zip"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Container\DNN-MinimalExtropyContainer_01.00.05_Install.zip"/>
+      <CheckOutFiles Include="$(RootFolder)\Website\Install\Container\DNN-MinimalExtropyProContainer_01.00.05_Install.zip"/>
+      <CheckOutFiles Include="$(RootFolder)\DotNetNuke_Enterprise.sln"/>
+      <CheckOutFiles Include="$(RootFolder)\DotNetNuke_Community_UnitTests.sln"/>
+      <CheckOutFiles Include="$(RootFolder)\DotNetNuke_Community.sln"/>
+    </ItemGroup>
+    <!--<ShellCommand Command="$(tf) workspaces /s:https://tfs.dotnetnuke.com:8088/tfs /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />-->
+    <ShellCommand Command="$(tf) checkout @(CheckOutFiles, ' ') /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <ShellCommand Command='$(tf) checkout "$(RootFolder)\Website\Portals\_default\Default Website.template.resources" /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass' WaitCompletion="True" />
+    <ShellCommand Command='$(tf) checkout "$(RootFolder)\Website\Portals\_default\Default Website.template" /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass' WaitCompletion="True" />
+
+    <Message Text="DotNetNuke Compile started" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFiles="$(RootFolder)\Website\bin\Telerik.Web.UI.dll" />
+    <!--Copy development.config to web.config check in to keep configs in synch.-->
+    <Copy SourceFiles="$(RootFolder)\Website\development.config" DestinationFiles="$(RootFolder)\Website\web.config" />
+    <ShellCommand Command="$(tf) checkin $(RootFolder)\Website\web.config /comment:CIBuild /noprompt /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+    <!--Copy release.config to web.config for Precompiling to work-->
+    <Attrib Files="$(RootFolder)\Website\web.config" ReadOnly="false"/>
+    <Copy SourceFiles="$(RootFolder)\Website\release.config" DestinationFiles="$(RootFolder)\Website\web.config" />
+    <Attrib Files="$(RootFolder)\Website\web.config" ReadOnly="true"/>
+    <!--Copy CE templates tp Portals/_default-->
+    <Copy SourceFiles="$(RootFolder)\Community\Templates\Default Website.template" DestinationFolder="$(RootFolder)\Website\Portals\_default" />
+    <Copy SourceFiles="$(RootFolder)\Community\Templates\Default Website.template.resources" DestinationFolder="$(RootFolder)\Website\Portals\_default" />
+    <ItemGroup>
+      <CESkin Include="$(RootFolder)\Skins\MinimalExtropy\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(CESkin)" WorkingDirectory="$(RootFolder)\Skins\MinimalExtropy\" ZipFileName="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropySkin_01.00.07_Install.resources" />
+    <ItemGroup>
+      <BetaSkin Include="$(RootFolder)\Skins\MinimalExtropyBeta\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(BetaSkin)" WorkingDirectory="$(RootFolder)\Skins\MinimalExtropyBeta\" ZipFileName="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropyBetaSkin_01.00.08_Install.zip" />
+    <ItemGroup>
+      <PESkin Include="$(RootFolder)\Skins\MinimalExtropyPro\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(PESkin)" WorkingDirectory="$(RootFolder)\Skins\MinimalExtropyPro\" ZipFileName="$(RootFolder)\Website\Install\Skin\DNN-MinimalExtropyProSkin_01.00.07_Install.zip" />
+    <ItemGroup>
+      <DarkKnightSkin Include="$(RootFolder)\Skins\DarkKnight\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(DarkKnightSkin)" WorkingDirectory="$(RootFolder)\Skins\DarkKnight\" ZipFileName="$(RootFolder)\Website\Install\Skin\DarkKnight.zip" />
+    <ItemGroup>
+      <CEContainer Include="$(RootFolder)\Containers\MinimalExtropy\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(CEContainer)" WorkingDirectory="$(RootFolder)\Containers\MinimalExtropy\" ZipFileName="$(RootFolder)\Website\Install\Container\DNN-MinimalExtropyContainer_01.00.05_Install.zip" />
+    <ItemGroup>
+      <PEContainer Include="$(RootFolder)\Containers\MinimalExtropyPro\**\*.*"/>
+    </ItemGroup>
+    <Zip Files="@(PEContainer)" WorkingDirectory="$(RootFolder)\Containers\MinimalExtropyPro\" ZipFileName="$(RootFolder)\Website\Install\Container\DNN-MinimalExtropyProContainer_01.00.05_Install.zip" />
+    <GenerateSolutionFiles OriginalFile="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" CreatedFile="$(RootFolder)\DotNetNuke_Enterprise.sln" ProjectNames="@(TestProjects); @(EETestProjects)" Replacements="" RemoveTfsBindings="false"/>
+    <GenerateSolutionFiles OriginalFile="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" CreatedFile="$(RootFolder)\DotNetNuke_Community_UnitTests.sln" ProjectNames="@(EEProjects); @(PEProjects); @(EETestProjects); DotNetNuke.Professional.HtmlPro" Replacements="@(CEReplacements)" RemoveTfsBindings="false"/>
+    <GenerateSolutionFiles OriginalFile="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" CreatedFile="$(RootFolder)\DotNetNuke_Community.sln" ProjectNames="@(EEProjects); @(PEProjects); @(EETestProjects); @(TestProjects); DotNetNuke.Professional.HtmlPro" Replacements="@(CEReplacements)" RemoveTfsBindings="false"/>
+
+    <ShellCommand Command="$(tf) checkin $(RootFolder) /recursive /comment:CIBuild /noprompt /login:maximumasplocal\ded275dnetCCNet,Ccn3t_pass" WaitCompletion="True" />
+
+
+    <!--Remove any exisiting built zip files from Install folder-->
+    <ItemGroup>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Modules\*.zip"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\*.zip"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\ASP2MenuNavigationProvider*"/>
+      <ExtensionZips Include="$(RootFolder)\Website\Install\Providers\DNNDropDownNavigationProvider*"/>
+    </ItemGroup>
+    <Delete Files="@(ExtensionZips)" />
+    <ItemGroup>
+      <BinFiles Include="$(RootFolder)\Website\bin\*.*"/>
+    </ItemGroup>
+    <Delete Files="@(BinFiles)" />
+
+    <!--Update the resx files in Tests for build server creds-->
+    <Attrib Files="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx" ReadOnly="false"/>
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx"
+      Xpath="/root/data[@name='AdminConnectionString']/value"
+      Value="Data Source={0};User ID=sa;Password=DotNetNuke;"  />
+
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx"
+      Xpath="/root/data[@name='ConnectionString']/value"
+      Value="Data Source={0};User ID=sa;Password=DotNetNuke;Initial Catalog={1}"  />
+    <Attrib Files="$(RootFolder)\Tests\DotNetNuke.Tests.Data\DataResources.resx" ReadOnly="true"/>
+
+    <Attrib Files="$(RootFolder)\Tests\DotNetNuke.Tests.Content\app.config" ReadOnly="false"/>
+    <XmlUpdate Namespace="http://schemas.microsoft.com/.NetConfiguration/v2.0"
+      XmlFileName="$(RootFolder)\Tests\DotNetNuke.Tests.Content\app.config"
+      Xpath="/configuration/appSettings/add[@key='VirtualScriptRootPath']/@value"
+      Value="CSharp\\WorkingDirectory\\"  />
+    <Attrib Files="$(RootFolder)\Tests\DotNetNuke.Tests.Content\app.config" ReadOnly="true"/>
+
+    <!--Do the build thing-->
+    <MSBuild Projects="$(RootFolder)\DotNetNuke_Enterprise_UnitTests.sln" Properties="Configuration=Release;Platform=Any CPU" Targets="Rebuild" />
+    <ItemGroup>
+      <CIWebsiteFiles Include="$(RootFolder)\Website\**"/>
+    </ItemGroup>
+    <!--Copy Website folder for test installation-->
+    <RemoveDir Directories ="$(TestWebsiteFolder)\Website" />
+
+    <Copy SourceFiles="@(CIWebsiteFiles)" DestinationFolder="$(TestWebsiteFolder)\Website\%(RecursiveDir)" />
+    <ItemGroup>
+      <TestWebsiteFiles Include="$(TestWebsiteFolder)\Website\**"/>
+    </ItemGroup>
+    <Attrib Files="$(TestWebsiteFiles)" ReadOnly="false"/>
+
+    <DotNetNukeDeploy PhysicalPath="$(TestWebsiteFolder)\Website" WebsiteName="DotNetNuke_CIBuild" AppPool="DotNetNukeAppPool" />
+
+    <!--Remove PreCompiled directory it is of no use.-->
+    <RemoveDir Directories="$(RootFolder)\PreCompiled" ContinueOnError="true" />
+    <RemoveDir Directories="$(RootFolder)\PrecompiledWeb" ContinueOnError="true" />
+
+    <!--Copy the Test dlls to common location for execution-->
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Core\bin\Release\DotNetNuke.Tests.Core.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Content\bin\Release\DotNetNuke.Tests.Content.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Content\bin\Release\DotNetNuke.Tests.Content.dll.config" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\Externals\Moq\Moq.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Utilities\bin\Release\TestUtilities.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.UI\bin\Release\DotNetNuke.Tests.UI.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.Data\bin\Release\DotNetNuke.Tests.Data.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Tests\DotNetNuke.Tests.ContentStaging\bin\DotNetNuke.Tests.ContentStaging.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Copy SourceFiles="$(RootFolder)\Library\Providers\DataProviders\SqlDataProvider\bin\DotNetNuke.SqlDataProvider.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Library\bin\DotNetNuke.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\DotNetNuke.Web\bin\DotNetNuke.Web.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Modules\Taxonomy\bin\DotNetNuke.Modules.Taxonomy.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Modules\ContentStaging\bin\DotNetNuke.Enterprise.ContentStaging.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Copy SourceFiles="$(RootFolder)\Library\Components\WebFormsMvp\bin\WebFormsMvp.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Library\Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Copy SourceFiles="$(RootFolder)\DotNetNuke.Instrumentation\bin\DotNetNuke.Instrumentation.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\DotNetNuke.Instrumentation\bin\DotNetNuke.log4net.dll" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+    <Copy SourceFiles="$(RootFolder)\Website\DotNetNuke.log4net.config" DestinationFolder="$(RootFolder)\Tests\TestFixtures" />
+
+    <Message Text="DotNetNuke Compile Complete" />
+
+  </Target>
+
+</Project>

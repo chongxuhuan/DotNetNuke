@@ -1,11 +1,6 @@
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Users.ProfileDefinitions" Language="C#" AutoEventWireup="false" CodeFile="ProfileDefinitions.ascx.cs" %>
-<div style="text-align:left;">
-    <asp:Label ID="lblProfileHelp" runat="Server" class="normal" resourcekey="ProfilePropertiesHelp" />
-</div>
-<br />
-<asp:datagrid id="grdProfileProperties" AutoGenerateColumns="false" width="100%" CellPadding="4"
-	GridLines="None" cssclass="dnnGridHeader" Runat="server">
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<asp:datagrid id="grdProfileProperties" AutoGenerateColumns="false" width="100%" CellPadding="4" GridLines="None" cssclass="dnnGridHeader" Runat="server">
 	<headerstyle cssclass="dnnGridHeader" verticalalign="Top" horizontalalign="Center" />
 	<itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 	<alternatingitemstyle cssclass="dnnGridAltItem" />

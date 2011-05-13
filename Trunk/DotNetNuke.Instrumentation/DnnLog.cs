@@ -26,11 +26,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Web;
 using System.Web.Compilation;
-using System.Web.Hosting;
 
-using log4net;
 using log4net.Config;
 
 #endregion
@@ -80,7 +77,7 @@ namespace DotNetNuke.Instrumentation
             {
                 if (!_configured)
                 {
-                    var configPath = Path.Combine(HostingEnvironment.ApplicationPhysicalPath, ConfigFile);
+                    var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFile);
                     if (File.Exists(configPath))
                     {
                         XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));

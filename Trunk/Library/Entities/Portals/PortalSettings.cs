@@ -962,6 +962,7 @@ namespace DotNetNuke.Entities.Portals
                 if (tab != null)
                 {
                     isVerified = true;
+                    ActiveTab = tab.Clone();
                 }
             }
 

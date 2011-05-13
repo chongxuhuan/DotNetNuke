@@ -27,7 +27,7 @@
                 <li><asp:LinkButton id="cmdDisplay" resourcekey="cmdDisplay" cssclass="dnnPrimaryAction" Text="Display" runat="server"  /></li>
             </ul>
         </fieldset>        
-        <asp:datagrid id="grdLog" Runat="server" Border="0" AutoGenerateColumns="true" BorderStyle="None" GridLines="None">
+        <asp:datagrid id="grdLog" Runat="server" cellpadding="4" Border="0" AutoGenerateColumns="true" BorderStyle="None" GridLines="None">
         	    <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
 	            <footerstyle cssclass="dnnGridFooter" />
 	            <pagerstyle cssclass="dnnGridPager" />

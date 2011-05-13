@@ -48,5 +48,6 @@ namespace DotNetNuke.Services.FileSystem
         Nullable<FileAttributes> FileAttributes { get; set; }
         bool SupportsFileAttributes { get; }
         DateTime LastModificationTime { get; }
+        int FolderMappingID { get; set; }
     }
 }

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -71,25 +72,38 @@ namespace DotNetNuke.Modules.Messaging
                                         int moduleId = Upgrade.AddModuleToPage(tab, moduleDefinition.ModuleDefID, "My Inbox", "", true);
                                         ModuleInfo objModule = objModuleController.GetModule(moduleId, tabID, false);
 
-                                    	var settings = new PortalSettings(portal);
+                                        var settings = new PortalSettings(portal);
 
-                                        ArrayList permissions = new PermissionController().GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT");
-                                        PermissionInfo permission = null;
-                                        if (permissions.Count == 1)
+                                        var modulePermission = (from ModulePermissionInfo p in objModule.ModulePermissions
+                                                                where p.ModuleID == moduleId
+                                                                   && p.RoleID == settings.RegisteredRoleId
+                                                                   && p.UserID == Null.NullInteger
+                                                                   && p.PermissionCode == "EDIT"
+                                                                select p).SingleOrDefault();
+
+                                        if (modulePermission == null)
                                         {
-                                            permission = permissions[0] as PermissionInfo;
-                                        }
-                                        if (permission != null)
-                                        {
-                                            var modulePermission = new ModulePermissionInfo(permission);
-                                            modulePermission.ModuleID = moduleId;
-                                            modulePermission.RoleID = settings.RegisteredRoleId;
-                                            modulePermission.UserID = Null.NullInteger;
-                                            modulePermission.AllowAccess = true;
+                                            ArrayList permissions = new PermissionController().GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "EDIT");
+                                            PermissionInfo permission = null;
+                                            if (permissions.Count == 1)
+                                            {
+                                                permission = permissions[0] as PermissionInfo;
+                                            }
+                                            if (permission != null)
+                                            {
+                                                modulePermission = new ModulePermissionInfo(permission)
+                                                                            {
+                                                                                ModuleID = moduleId,
+                                                                                RoleID = settings.RegisteredRoleId,
+                                                                                UserID = Null.NullInteger,
+                                                                                AllowAccess = true
+                                                                            };
 
-                                            objModule.ModulePermissions.Add(modulePermission);
 
-                                            ModulePermissionController.SaveModulePermissions(objModule);
+                                                objModule.ModulePermissions.Add(modulePermission);
+
+                                                ModulePermissionController.SaveModulePermissions(objModule);
+                                            }
                                         }
                                     }
                                 }

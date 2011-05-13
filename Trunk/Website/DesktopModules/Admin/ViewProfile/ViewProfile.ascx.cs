@@ -27,6 +27,7 @@ using System;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
@@ -107,7 +108,7 @@ namespace DotNetNuke.Modules.Admin.Users
                         }
                         else
                         {
-                            Response.Redirect(Globals.NavigateURL(ModuleContext.PortalSettings.HomeTabId), true);
+                            Response.Redirect(GetRedirectUrl(), true);
                         }
                     }
                     else
@@ -184,6 +185,24 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             Response.Redirect(Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3"), true);
         }
+
+		private string GetRedirectUrl()
+		{
+			//redirect user to default page if not specific the home tab, do this action to prevent loop redirect.
+			int homeTabId = ModuleContext.PortalSettings.HomeTabId;
+			string redirectUrl = string.Empty;
+
+			if (homeTabId > Null.NullInteger)
+			{
+				redirectUrl = Globals.NavigateURL(homeTabId);
+			}
+			else
+			{
+				redirectUrl = Globals.GetPortalDomainName(PortalSettings.Current.PortalAlias.HTTPAlias, this.Request, true) + "/" + Globals.glbDefaultPage;
+			}
+
+			return redirectUrl;
+		}
 
         #endregion
     }

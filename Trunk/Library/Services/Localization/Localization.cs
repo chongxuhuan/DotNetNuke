@@ -1533,7 +1533,7 @@ namespace DotNetNuke.Services.Localization
             string controlTitle = moduleControl.ModuleContext.Configuration.ModuleTitle;
             string controlKey = moduleControl.ModuleContext.Configuration.ModuleControl.ControlKey.ToLower();
 
-            if (!string.IsNullOrEmpty(controlTitle) & !string.IsNullOrEmpty(controlKey))
+            if (!string.IsNullOrEmpty(controlTitle) && !string.IsNullOrEmpty(controlKey))
             {
                 controlTitle = moduleControl.ModuleContext.Configuration.ModuleControl.ControlTitle;
             }
@@ -1859,7 +1859,7 @@ namespace DotNetNuke.Services.Localization
                 if (kvp.Value.LanguageId == languageID)
                 {
                     language = kvp.Value;
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
 

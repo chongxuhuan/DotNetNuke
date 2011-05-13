@@ -1,2 +1,4 @@
-﻿.dnnFormItem .esCheckBoxes label{width:auto;}
+﻿.dnnFormItem .esCheckBoxes label{width:auto;font-weight:normal;}
 .dnnEditSkins .dnnFormItem table.skinViewer{width:74%; float:right;}
+.dnnESRadioButtons{}
+.dnnESRadioButtons label{width:auto;padding:0 5px 0 0;margin-left:3px;text-align:left;font-weight:normal;margin-top:0;}

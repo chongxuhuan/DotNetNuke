@@ -106,7 +106,7 @@ namespace DotNetNuke.Common.Utilities
 
         private static void RemoveOrphanedFiles(FolderInfo folder, int PortalId)
         {
-            if (folder.StorageLocation != FolderMappingController.Instance.GetFolderMapping(PortalId, "Database").FolderMappingID)
+            if (folder.FolderMappingID != FolderMappingController.Instance.GetFolderMapping(PortalId, "Database").FolderMappingID)
             {
                 foreach (FileInfo objFile in FolderManager.Instance.GetFiles(folder))
                 {
@@ -291,14 +291,18 @@ namespace DotNetNuke.Common.Utilities
             
             if (file == null)
             {
-                file = new FileInfo() { PortalId = PortalId, FolderId = folder.FolderID, FileName = fileName };
-                var fileContent = fileManager.GetFileContent(file);
-                fileManager.AddFile(folder, GetFileName(strFile), fileContent, false);
+                file = new FileInfo { PortalId = PortalId, FolderId = folder.FolderID, FileName = fileName };
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    fileManager.AddFile(folder, GetFileName(strFile), fileContent, false);
+                }
             }
             else
             {
-                var fileContent = fileManager.GetFileContent(file);
-                fileManager.UpdateFile(file, fileContent);
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    fileManager.UpdateFile(file, fileContent);
+                }
             }
 
             return "";
@@ -355,16 +359,30 @@ namespace DotNetNuke.Common.Utilities
         [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.AddFolder(string folderPath, int folderMappingID) ")]
         public static void AddFolder(PortalSettings portalSettings, string parentFolder, string newFolder, int storageLocation, Guid uniqueId)
         {
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(storageLocation);
+            FolderMappingInfo folderMapping;
+
+            switch (storageLocation)
+            {
+                case (int)FolderController.StorageLocationTypes.InsecureFileSystem:
+                    folderMapping = FolderMappingController.Instance.GetFolderMapping(portalSettings.PortalId, "Standard");
+                    break;
+                case (int)FolderController.StorageLocationTypes.SecureFileSystem:
+                    folderMapping = FolderMappingController.Instance.GetFolderMapping(portalSettings.PortalId, "Secure");
+                    break;
+                case (int)FolderController.StorageLocationTypes.DatabaseSecure:
+                    folderMapping = FolderMappingController.Instance.GetFolderMapping(portalSettings.PortalId, "Database");
+                    break;
+                default:
+                    folderMapping = FolderMappingController.Instance.GetDefaultFolderMapping(portalSettings.PortalId);
+                    break;
+            }
             
             if (folderMapping != null)
             {
                 var folderManager = FolderManager.Instance;
                 var folderPath = PathUtils.Instance.GetRelativePath(folderMapping.PortalID, parentFolder + newFolder);
                 
-                folderManager.AddFolder(folderMapping, folderPath);
-                
-                var folder = folderManager.GetFolder(folderMapping.PortalID, folderPath);
+                var folder = folderManager.AddFolder(folderMapping, folderPath);
                 folder.UniqueId = uniqueId;
                 
                 folderManager.UpdateFolder(folder);
@@ -853,7 +871,7 @@ namespace DotNetNuke.Common.Utilities
 
             foreach (FolderInfo objFolder in folderManager.GetFolders(portalId))
             {
-                if (objFolder.StorageLocation != databaseMapping.FolderMappingID)
+                if (objFolder.FolderMappingID != databaseMapping.FolderMappingID)
                 {
                     if (Directory.Exists(objFolder.PhysicalPath) == false)
                     {

@@ -96,10 +96,10 @@ namespace DotNetNuke.Services.FileSystem
             {
                 fileContent = FileWrapper.Instance.ReadAllBytes(file.PhysicalPath);
             }
-			catch (Exception ex)
-			{
-				DnnLog.Error(ex);
-			}
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+            }
 
             return fileContent;
         }
@@ -114,10 +114,10 @@ namespace DotNetNuke.Services.FileSystem
             {
                 fileAttributes = FileWrapper.Instance.GetAttributes(file.PhysicalPath);
             }
-			catch (Exception ex)
-			{
-				DnnLog.Error(ex);
-			}
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+            }
 
             return fileAttributes;
         }
@@ -156,10 +156,10 @@ namespace DotNetNuke.Services.FileSystem
             {
                 stream = FileWrapper.Instance.OpenRead(Path.Combine(folder.PhysicalPath, fileName));
             }
-			catch (Exception ex)
-			{
-				DnnLog.Error(ex);
-			}
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+            }
 
             return stream;
         }
@@ -179,10 +179,10 @@ namespace DotNetNuke.Services.FileSystem
             {
                 lastModificationTime = FileWrapper.Instance.GetLastWriteTime(file.PhysicalPath);
             }
-			catch (Exception ex)
-			{
-				DnnLog.Error(ex);
-			}
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+            }
 
             return lastModificationTime;
         }
@@ -200,7 +200,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            return ((FileManager)FileManager.Instance).GetHash(FileWrapper.Instance.OpenRead(file.PhysicalPath)) == file.SHA1Hash;
+            return GetHash(file) == file.SHA1Hash;
         }
 
         public override void RenameFile(IFileInfo file, string newFileName)
@@ -246,51 +246,42 @@ namespace DotNetNuke.Services.FileSystem
 
             var arrData = new byte[2048];
             var filePath = Path.Combine(folder.PhysicalPath, fileName);
-            Stream outStream = null;
 
-            try
+            if (FileWrapper.Instance.Exists(filePath))
             {
-                if (FileWrapper.Instance.Exists(filePath))
-                {
-                    FileWrapper.Instance.Delete(filePath);
-                }
-
-                outStream = FileWrapper.Instance.Create(filePath);
-            }
-            catch (Exception)
-            {
-                if (outStream != null)
-                {
-                    outStream.Close();
-                    outStream.Dispose();
-                }
-
-                throw;
+                FileWrapper.Instance.Delete(filePath);
             }
 
-            var originalPosition = content.Position;
-            content.Position = 0;
-
-            try
+            using (var outStream = FileWrapper.Instance.Create(filePath))
             {
-                var intLength = content.Read(arrData, 0, arrData.Length);
+                var originalPosition = content.Position;
+                content.Position = 0;
 
-                while (intLength > 0)
+                try
                 {
-                    outStream.Write(arrData, 0, intLength);
-                    intLength = content.Read(arrData, 0, arrData.Length);
+                    var intLength = content.Read(arrData, 0, arrData.Length);
+
+                    while (intLength > 0)
+                    {
+                        outStream.Write(arrData, 0, intLength);
+                        intLength = content.Read(arrData, 0, arrData.Length);
+                    }
+                }
+                finally
+                {
+                    content.Position = originalPosition;
                 }
             }
-            finally
-            {
-                content.Position = originalPosition;
+        }
 
-                if (outStream != null)
-                {
-                    outStream.Close();
-                    outStream.Dispose();
-                }
-            }
+        #endregion
+
+        #region Internal Methods
+
+        internal virtual string GetHash(IFileInfo file)
+        {
+            var fileManager = new FileManager();
+            return fileManager.GetHash(file);
         }
 
         #endregion

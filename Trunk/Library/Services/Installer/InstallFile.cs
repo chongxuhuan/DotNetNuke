@@ -270,7 +270,7 @@ namespace DotNetNuke.Services.Installer
                         _Type = InstallFileType.Resources;
                         break;
                     default:
-                        if (Extension.ToLower().EndsWith("dataprovider") | Extension.ToLower() == "sql")
+                        if (Extension.ToLower().EndsWith("dataprovider") || Extension.ToLower() == "sql")
                         {
                             _Type = InstallFileType.Script;
                         }

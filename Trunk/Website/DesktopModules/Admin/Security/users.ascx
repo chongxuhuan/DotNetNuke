@@ -1,5 +1,5 @@
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Users.UserAccounts" Language="C#" AutoEventWireup="false" CodeFile="Users.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <div class="dnnForm dnnUsers dnnClear" id="dnnUsers">
     <div class="uContent dnnClear">
         <div class="dnnFormItem">
@@ -17,7 +17,7 @@
         </div>
         <div>
             <asp:datagrid id="grdUsers" AutoGenerateColumns="false" width="100%" CellPadding="2" GridLines="None" cssclass="dnnSecurityRolesGrid" Runat="server">
-                <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
+                <headerstyle cssclass="dnnGridHeader" verticalalign="Top" />
 	            <itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 	            <alternatingitemstyle cssclass="dnnGridAltItem" />
 	            <edititemstyle cssclass="dnnFormInput" />

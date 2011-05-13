@@ -625,16 +625,12 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void IsInSync_Returns_True_When_File_Is_In_Sync()
         {
-            var validFileBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
             _fileInfo.Setup(fi => fi.SHA1Hash).Returns(Constants.FOLDER_UnmodifiedFileHash);
-            _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
 
-            _fileWrapper.Setup(fw => fw.ReadAllBytes(Constants.FOLDER_ValidSecureFilePath)).Returns(validFileBytes);
+            var sfp = new Mock<SecureFolderProvider> { CallBase = true };
+            sfp.Setup(fp => fp.GetHash(_fileInfo.Object)).Returns(Constants.FOLDER_UnmodifiedFileHash);
 
-            _fileManager.Setup(fm => ((FileManager)fm).GetHash(It.IsAny<Stream>())).Returns(Constants.FOLDER_UnmodifiedFileHash);
-
-            var result = _sfp.IsInSync(_fileInfo.Object);
+            var result = sfp.Object.IsInSync(_fileInfo.Object);
 
             Assert.IsTrue(result);
         }
@@ -642,16 +638,12 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void IsInSync_Returns_False_When_File_Is_Not_In_Sync()
         {
-            var validFileBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
             _fileInfo.Setup(fi => fi.SHA1Hash).Returns(Constants.FOLDER_UnmodifiedFileHash);
-            _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
 
-            _fileWrapper.Setup(fw => fw.ReadAllBytes(Constants.FOLDER_ValidFilePath)).Returns(validFileBytes);
+            var sfp = new Mock<SecureFolderProvider> { CallBase = true };
+            sfp.Setup(fp => fp.GetHash(_fileInfo.Object)).Returns(Constants.FOLDER_ModifiedFileHash);
 
-            _fileManager.Setup(fm => ((FileManager)fm).GetHash(It.IsAny<Stream>())).Returns(Constants.FOLDER_ModifiedFileHash);
-
-            var result = _sfp.IsInSync(_fileInfo.Object);
+            var result = sfp.Object.IsInSync(_fileInfo.Object);
 
             Assert.IsFalse(result);
         }

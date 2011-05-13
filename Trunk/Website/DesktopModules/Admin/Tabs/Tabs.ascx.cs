@@ -45,7 +45,6 @@ using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Web.UI;
 
 using Telerik.Web.UI;
@@ -1229,8 +1228,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
             ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn_dom);
             ClientAPI.RegisterClientScriptBlock(Page, "dnn.controls.js");
-            ClientAPI.RegisterClientScriptBlock(Page, "MicrosoftAjax.js");
-            ClientAPI.RegisterClientScriptBlock(Page, "dnn.permissiontristate.js");
+            dgPermissions.RegisterScriptsForAjaxPanel();
         }
 
         protected override void OnLoad(EventArgs e)

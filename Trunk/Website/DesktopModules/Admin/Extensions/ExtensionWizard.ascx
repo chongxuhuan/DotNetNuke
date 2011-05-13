@@ -47,7 +47,7 @@
                 <div class="dnnForm">
                     <div id="extensionTypeRow" runat="server" class="dnnFormItem">
                         <dnn:Label ID="plExtensionType" runat="server" ControlName="cboExtensionType" />
-                        <asp:DropDownList ID="cboExtensionType" runat="server" DataTextField="Description" DataValueField="Type" AutoPostBack="true"/>
+                        <asp:DropDownList ID="cboExtensionType" runat="server" DataTextField="Description" DataValueField="PackageType" AutoPostBack="true"/>
                     </div>
                     <div class="dnnFormItem">
                         <asp:Label ID="lblHelp" runat="server" cssClass="WizardText" resourcekey="IntroductionHelp" />

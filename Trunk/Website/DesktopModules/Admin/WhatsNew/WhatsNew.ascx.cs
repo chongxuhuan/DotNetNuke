@@ -38,6 +38,9 @@ namespace DotNetNuke.Modules.Admin.Host
 {
     public partial class WhatsNew : PortalModuleBase
     {
+
+        #region Event Handlers
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -48,17 +51,17 @@ namespace DotNetNuke.Modules.Admin.Host
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            string resourcefile = Server.MapPath(LocalResourceFile + ".ascx.resx");
+            var resourcefile = Server.MapPath(LocalResourceFile + ".ascx.resx");
             if (File.Exists(resourcefile))
             {
                 var document = new XPathDocument(resourcefile);
-                XPathNavigator navigator = document.CreateNavigator();
-                XPathNodeIterator nodes = navigator.Select("/root/data[starts-with(@name, 'WhatsNew')]/@name");
+                var navigator = document.CreateNavigator();
+                var nodes = navigator.Select("/root/data[starts-with(@name, 'WhatsNew')]/@name");
                 var releasenotes = new List<ReleaseInfo>();
                 while (nodes.MoveNext())
                 {
-                    string key = nodes.Current.Value;
-                    string version = string.Format(Localization.GetString("notestitle.text", LocalResourceFile), key.Replace("WhatsNew.", string.Empty));
+                    var key = nodes.Current.Value;
+                    var version = string.Format(Localization.GetString("notestitle.text", LocalResourceFile), key.Replace("WhatsNew.", string.Empty));
                     releasenotes.Add(new ReleaseInfo(Localization.GetString(key, LocalResourceFile), version));
                 }
                 releasenotes.Sort(CompareReleaseInfo);
@@ -69,10 +72,16 @@ namespace DotNetNuke.Modules.Admin.Host
             }
         }
 
-        private int CompareReleaseInfo(ReleaseInfo notes1, ReleaseInfo notes2)
+        #endregion
+
+        #region Private Methods
+
+        private static int CompareReleaseInfo(ReleaseInfo notes1, ReleaseInfo notes2)
         {
             return notes2.Version.CompareTo(notes1.Version);
         }
+
+        #endregion
 
         #region Nested type: ReleaseInfo
 
@@ -90,5 +99,6 @@ namespace DotNetNuke.Modules.Admin.Host
         }
 
         #endregion
+
     }
 }

@@ -94,11 +94,11 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             ScopeType scopeType = null;
             if (IsSuperUser)
             {
-                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.Type == "Application").SingleOrDefault();
+                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Application").SingleOrDefault();
             }
             else
             {
-                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.Type == "Portal").SingleOrDefault();
+                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Portal").SingleOrDefault();
             }
 
             if (scopeType != null)
@@ -129,7 +129,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             //Bind Model
             View.BindVocabulary(View.Model.Vocabulary, IsSuperUser);
-            if (View.Model.Vocabulary.ScopeType.Type == "Portal")
+            if (View.Model.Vocabulary.ScopeType.ScopeType == "Portal")
             {
                 View.Model.Vocabulary.ScopeId = PortalId;
             }

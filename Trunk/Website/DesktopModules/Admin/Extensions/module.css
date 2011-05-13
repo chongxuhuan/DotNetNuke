@@ -29,105 +29,18 @@
 
 /* ===========   More Extensions Module Styling   =========== */
 
-body {
-	margin:0;
-	padding:0;
-	border:0;			/* This removes the border around the viewport in old versions of IE */
-	width:100%;
-	background:#fff;
-	min-width:600px;		/* Minimum width of layout - remove line if not required */
-					/* The min-width property does not work in old versions of Internet Explorer */
-	font-size:90%;
-}
-a {
-	color:#369;
-}
-a:hover {
-	color:#fff;
-	background:#369;
-	text-decoration:none;
-}
-h1, h2, h3 {
-	margin:.8em 0 .2em 0;
-	padding:0;
-}
-p {
-	margin:.4em 0 .8em 0;
-	padding:0;
-}
-img {
-	margin:10px 0 5px;
-}
-#ads img {
-	display:block;
-	padding-top:10px;
-}
+.dnnAppGalleryTags{ width: 35%; float:left;}
+.dnnAppGalleryListing{ width: 60%; float:right;}
 
-/* Header styles */
-#header {
-	clear:both;
-	float:left;
-	width:100%;
-}
-#header {
-	border-bottom:1px solid #000;
-}
-#header p,
-#header h1,
-#header h2 {
-	padding:.4em 15px 0 15px;
-	margin:0;
-}
-#header ul {
-	clear:left;
-	float:left;
-	width:100%;
-	list-style:none;
-	margin:10px 0 0 0;
-	padding:0;
-}
-#header ul li {
-	display:inline;
-	list-style:none;
-	margin:0;
-	padding:0;
-}
-#header ul li a {
-	display:block;
-	float:left;
-	margin:0 0 0 1px;
-	padding:3px 10px;
-	text-align:center;
-	background:#eee;
-	color:#000;
-	text-decoration:none;
-	position:relative;
-	left:15px;
-	line-height:1.3em;
-}
-#header ul li a:hover {
-	background:#369;
-	color:#fff;
-}
-#header ul li a.active,
-#header ul li a.active:hover {
-	color:#fff;
-	background:#000;
-	font-weight:bold;
-}
-#header ul li a span {
-	display:block;
-}
-/* 'widths' sub menu */
-#layoutdims {
-	clear:both;
-	background:#eee;
-	border-top:4px solid #000;
-	margin:0;
-	padding:6px 15px !important;
-	text-align:right;
-}
+.dnnProductImage {max-height:100px; max-width:100px; padding: 5px 20px 20px 5px; float:left;}
+.dnnIcon { width:32px; }
+a.dnnProductTitle, a.dnnProductTitle:link, a.dnnProductTitle:visited, a.dnnProductTitle:active { font-size: 1.4em; color:black; display:block}
+.dnnProductOwner {display:block;padding-bottom: 20px;}
+.dnnProductDescription {display:block; padding-bottom: 20px;}
+.dnnProductPrice {font-size: 1.2em; display:block; padding-bottom: 20px; text-align:right;}
 
+.dnnProduct {}
+.dnnProductFooter {border-bottom:#ccc solid}
 
 .loading-image 
 {
@@ -136,7 +49,7 @@ img {
     text-align:center;
     vertical-align:middle;
 }
-#loading
+.dnnAppGalleryLoading
 {
     text-align:center;
     vertical-align:middle;
@@ -151,123 +64,16 @@ img {
     z-index:1005;
 }
 
-.description 
-{
-    font-size:1.15;
+
+
+.AppGallery {
+    background-color:white;
+}
+.Forge {
+    background-color:white;
 }
 
-.shopping-cart 
-{
-    width:48px;   
-}
-.deploy
-{
-    width:48px;   
-}
-.price 
-{
-    font-size:1.25em;
-}
-.productImageBig 
-{
-    max-height:200px;
-    max-width:200px;
-}
-.productImage 
-{
-    max-height:100px;
-    max-width:100px;
-}
-.productIcon
-{
-    width:32px;
-}
-.productTypeImage
-{
-    vertical-align:baseline;
-}
-.inline 
-{
-    display:inline;
-}
-#typeDDL 
-{   
-    width:250px
-}
-#searchText
-{
-    width:500px
-}
-.extension 
-{
-    vertical-align:top;
-}
-.tag
-{
-    font-size:1em;
-}
-.tags-header 
-{
-    font-size:2em;
-}
-.clear-float
-{
-    float:none;
-}
 
-.SearchButton
-{
-    width:24px;
-    vertical-align:bottom;    
-}
 
-.searchOptions 
-{
-    vertical-align:bottom;    
-}
-.even-row 
-{
-    background-color:#ccc;
-}
-.odd-row 
-{
-}
-.sort-options 
-{
-    border: 1px solid #ccc;
-    font-size:1.5em;
-}
-.fullWidth-Center
-{
-    width:100%;
-    text-align:center;
-    vertical-align:middle;
-}
-
-.sort-button-on
-{
-    background-color:#ccc;
-}
-.sort-button-off
-{
-    background-color:#fff;
-}
-.redback 
-{
-    background-color:red;
-}
-.extDetailTmpl-header 
-{
-}
-.extDetailTmpl-header-left 
-{   
-    width:300px;
-}
-.extDetailTmpl-header-right 
-{
-    text-align:left;
-    vertical-align:top;
-    width:300px;
-}
 
 /* ===========   More Extensions Module Styling   =========== */

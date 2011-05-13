@@ -1,71 +1,64 @@
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Users.UserSettings" CodeFile="UserSettings.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Users.UserSettings" CodeFile="UserSettings.ascx.cs" %>
 
-<table>
-	<tr>
-		<td>
-			<dnn:sectionhead id="dshProvider" cssclass="Head" runat="server" 
-				text="Provider Settings" section="tblProvider" resourcekey="ProviderSettings" 
-				isexpanded="True" includerule="True" />
-			<table id="tblProvider" runat="server">
-				<tr>
-					<td class="Normal"><asp:label id="lblprovider" runat="server" resourcekey="ProviderSettingsHelp" /></td>
-				</tr>
-				<tr>
-					<td>
-						<dnn:propertyeditorcontrol id="ProviderSettings" runat="Server"
-                			valuedatafield="PropertyValue" 
-                            namedatafield="Name" 
-                            helpstyle-cssclass="dnnFormHelpContent dnnClear" 
-							SortMode="SortOrderAttribute"/>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr><td height="10"></td></tr>
-	<tr>
-		<td>
-			<dnn:sectionhead id="dshPassword" cssclass="Head" runat="server" 
-				text="Password Settings" section="tblPassword" resourcekey="PasswordSettings" 
-				isexpanded="True" includerule="True" />
-			<table id="tblPassword" runat="server">
-				<tr>
-					<td class="Normal"><asp:label id="lblPassword" runat="server" resourcekey="PasswordSettingsHelp" /></td>
-				</tr>
-				<tr>
-					<td>
-						<dnn:propertyeditorcontrol id="PasswordSettings" runat="Server"
-							valuedatafield="PropertyValue" 
-                            namedatafield="Name" 
-                            helpstyle-cssclass="dnnFormHelpContent dnnClear" 
-							sortmode="SortOrderAttribute"/>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr><td height="10"></td></tr>
-	<tr>
-		<td>
-			<dnn:sectionhead id="Sectionhead1" cssclass="Head" runat="server" 
-				text="User Accounts Settings" section="tblUserAccounts" resourcekey="UserAccounts.Text" 
-				isexpanded="True" includerule="True" />
-			<table id="tblUserAccounts" runat="server">
-				<tr>
-					<td>
-						<dnn:settingseditorcontrol id="UserSettingsEditor" runat="Server" 
-                            helpstyle-cssclass="dnnFormHelpContent dnnClear" 
-							editmode="Edit"/>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-<p>
-	<dnn:commandbutton class="CommandButton" id="cmdUpdate" resourcekey="cmdUpdate" runat="server" ImageUrl="~/images/add.gif" />&nbsp;
-	<dnn:commandbutton class="CommandButton" id="cmdCancel" resourcekey="cmdCancel" runat="server" ImageUrl="~/images/lt.gif" causesvalidation="False" />
-</p>
+<div class="dnnForm dnnUserSettings dnnClear" id="dnnUserSettings">
+    <ul class="dnnAdminTabNav dnnClear">
+		<li><a href="#usProviderSettings"><%=LocalizeString("ProviderSettings")%></a></li>
+		<li><a href="#usPasswordSettings"><%=LocalizeString("PasswordSettings")%></a></li>
+		<li><a href="#usUserAccounts"><%=LocalizeString("UserAccounts")%></a></li>
+	</ul>
+    <div class="usProviderSettings" id="usProviderSettings">
+        <div>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <asp:label id="lblprovider" runat="server" resourcekey="ProviderSettingsHelp" />
+                </div>
+			    <dnn:propertyeditorcontrol id="ProviderSettings" runat="Server"
+                    valuedatafield="PropertyValue" 
+                    namedatafield="Name" 
+                    helpstyle-cssclass="dnnFormHelpContent dnnClear" 
+				    SortMode="SortOrderAttribute"/>
+            </fieldset>
+        </div>
+    </div>
+    <div class="usPasswordSettings" id="usPasswordSettings">
+        <div>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <asp:label id="lblPassword" runat="server" resourcekey="PasswordSettingsHelp" />
+                </div>
+				<dnn:propertyeditorcontrol id="PasswordSettings" runat="Server"
+					valuedatafield="PropertyValue" 
+                    namedatafield="Name" 
+                    helpstyle-cssclass="dnnFormHelpContent dnnClear" 
+					sortmode="SortOrderAttribute"/>
+            </fieldset>
+        </div>
+    </div>
+    <div class="usUserAccounts" id="usUserAccounts">
+        <div>
+            <fieldset>
+				<dnn:settingseditorcontrol id="UserSettingsEditor" runat="Server" 
+                    helpstyle-cssclass="dnnFormHelpContent dnnClear" 
+					editmode="Edit"/>
+            </fieldset>
+        </div>
+    </div>
+    <ul class="dnnActions dnnClear">
+        <li><asp:LinkButton ID="cmdUpdate" resourcekey="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" /></li>
+        <li><asp:LinkButton ID="cmdCancel" resourcekey="cmdCancel" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+    </ul>
+</div>
+<script language="javascript" type="text/javascript">
+    function setUpDnnSettings() {
+        $('#dnnUserSettings').dnnTabs();
+     }
+    $(document).ready(function () {
+        setUpDnnSettings();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setUpDnnSettings();
+        });
+    });
+</script>

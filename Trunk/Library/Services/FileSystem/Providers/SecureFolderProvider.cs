@@ -215,7 +215,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            return ((FileManager)FileManager.Instance).GetHash(FileWrapper.Instance.OpenRead(file.PhysicalPath + ProtectedExtension)) == file.SHA1Hash;
+            return GetHash(file) == file.SHA1Hash;
         }
 
         public override void RenameFile(IFileInfo file, string newFileName)
@@ -306,6 +306,16 @@ namespace DotNetNuke.Services.FileSystem
                     outStream.Dispose();
                 }
             }
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal virtual string GetHash(IFileInfo file)
+        {
+            var fileManager = new FileManager();
+            return fileManager.GetHash(file);
         }
 
         #endregion

@@ -77,6 +77,18 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
         }
 
+        /// <summary>
+        /// Registers the scripts neccesary to make the tri-state controls work inside a RadAjaxPanel
+        /// </summary>
+        /// <remarks>
+        /// No need to call this unless using the PermissionGrid inside an ajax control that omits scripts on postback
+        /// See DesktopModules/Admin/Tabs.ascx.cs for an example of usage
+        /// </remarks>
+        public void RegisterScriptsForAjaxPanel()
+        {
+            PermissionTriState.RegisterScripts(Page, this);
+        }
+
         public TableItemStyle AlternatingItemStyle
         {
             get
@@ -789,10 +801,6 @@ namespace DotNetNuke.Security.Permissions.Controls
                 }
             }
             return arrUsers;
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
         }
 
         protected override void OnPreRender(EventArgs e)

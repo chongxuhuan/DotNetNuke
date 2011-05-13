@@ -1,10 +1,9 @@
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Security.EditGroups" CodeFile="EditGroups.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Security.EditGroups" CodeFile="EditGroups.ascx.cs" %>
-
-
 <div class="dnnForm dnnEditRoleGroups dnnClear" id="dnnEditRoleGroups">
     <fieldset>
+        <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=Localization.GetString("RequiredFields", Localization.SharedResourceFile)%></span></p></div>
         <div class="dnnFormItem">
             <dnn:label id="plRoleGroupName" runat="server" controlname="txtRoleGroupName"/>
 			<asp:textbox id="txtRoleGroupName" cssclass="dnnFormRequired" runat="server" maxlength="50" columns="30" />

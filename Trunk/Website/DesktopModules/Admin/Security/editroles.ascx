@@ -3,7 +3,6 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Url" Src="~/controls/UrlControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
-
 <div class="dnnForm dnnEditRole dnnClear" id="dnnEditRole">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#erBasicSettings"><%=LocalizeString("BasicSettings")%></a></li>
@@ -12,7 +11,6 @@
     <div class="erBasicSettings" id="erBasicSettings">
         <div class="erbsContent dnnClear">
             <fieldset>
-                <asp:Label ID="lblBasicSettingsHelp" runat="server" resourcekey="BasicSettingsDescription" EnableViewState="False" />
                 <div class="dnnFormItem">
                     <dnn:Label ID="plRoleName" runat="server" ResourceKey="RoleName" ControlName="txtRoleName" />
                     <asp:TextBox ID="txtRoleName" runat="server" CssClass="dnnFormRequired" MaxLength="50" />
@@ -42,47 +40,46 @@
     <div class="erAdvancedSettings" id="erAdvancedSettings">
         <div class="erasContent dnnClear">
             <fieldset>
-                <asp:Label ID="lblAdvancedSettingsHelp" runat="server" resourcekey="AdvancedSettingsHelp" EnableViewState="False" />
                 <div class="dnnFormItem">
                     <asp:Label ID="lblProcessorWarning" visible="false" runat="server" resourcekey="ProcessorWarning" EnableViewState="False" />
                 </div>
                 <div class="dnnFormItem" id="divServiceFee" runat="server">
                     <dnn:Label ID="plServiceFee" runat="server" ResourceKey="ServiceFee" Suffix=":" ControlName="txtServiceFee" />
-                    <asp:TextBox ID="txtServiceFee" runat="server" MaxLength="50" Columns="30" Width="100" />
+                    <asp:TextBox ID="txtServiceFee" runat="server" MaxLength="50" Columns="30" />
                     <asp:CompareValidator ID="valServiceFee1" CssClass="dnnFormError" runat="server" resourcekey="valServiceFee1" ControlToValidate="txtServiceFee" Display="Dynamic" Type="Currency" Operator="DataTypeCheck" />
                     <asp:CompareValidator ID="valServiceFee2" CssClass="dnnFormError" runat="server" resourcekey="valServiceFee2" ControlToValidate="txtServiceFee" Display="Dynamic" Operator="GreaterThanEqual" ValueToCompare="0" />
                 </div>
                 <div class="dnnFormItem" id="divBillingPeriod" runat="server">
                     <dnn:Label ID="plBillingPeriod" runat="server" ResourceKey="BillingPeriod" Suffix=":" ControlName="txtBillingPeriod" />
-                    <asp:TextBox ID="txtBillingPeriod" runat="server" MaxLength="50" Columns="30" Width="100" />
-                    <asp:DropDownList ID="cboBillingFrequency" runat="server" Width="100px" DataValueField="value" DataTextField="text" AutoPostBack="true" />
-                    <asp:CompareValidator ID="valBillingPeriod1" CssClass="dnnFormError" runat="server" resourcekey="valBillingPeriod1" ControlToValidate="txtBillingPeriod" Display="Dynamic" Type="Integer" Operator="DataTypeCheck" />
-                    <asp:CompareValidator ID="valBillingPeriod2" CssClass="dnnFormError" runat="server" resourcekey="valBillingPeriod2" ControlToValidate="txtBillingPeriod" Display="Dynamic" Operator="GreaterThan" ValueToCompare="0" />
+                    <asp:TextBox ID="txtBillingPeriod" runat="server" MaxLength="50" Columns="30" />
+                    <asp:DropDownList ID="cboBillingFrequency" runat="server" DataValueField="value" DataTextField="text" AutoPostBack="true" />
+                    <asp:CompareValidator ID="valBillingPeriod1" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valBillingPeriod1" ControlToValidate="txtBillingPeriod" Display="Dynamic" Type="Integer" Operator="DataTypeCheck" />
+                    <asp:CompareValidator ID="valBillingPeriod2" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valBillingPeriod2" ControlToValidate="txtBillingPeriod" Display="Dynamic" Operator="GreaterThan" ValueToCompare="0" />
                 </div>
                 <div class="dnnFormItem" id="divTrialFee" runat="server">
                     <dnn:Label ID="plTrialFee" runat="server" ResourceKey="TrialFee" Suffix=":" ControlName="txtTrialFee" />
                     <asp:TextBox ID="txtTrialFee" runat="server" MaxLength="50" Columns="30" Width="100" />
-                    <asp:CompareValidator ID="valTrialFee1" CssClass="dnnFormError" runat="server" resourcekey="valTrialFee1" ControlToValidate="txtTrialFee" Display="Dynamic" Type="Currency" Operator="DataTypeCheck" />
-                    <asp:CompareValidator ID="valTrialFee2" CssClass="dnnFormError" runat="server" resourcekey="valTrialFee2" ControlToValidate="txtTrialFee" Display="Dynamic" Operator="GreaterThanEqual" ValueToCompare="0" />
+                    <asp:CompareValidator ID="valTrialFee1" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialFee1" ControlToValidate="txtTrialFee" Display="Dynamic" Type="Currency" Operator="DataTypeCheck" />
+                    <asp:CompareValidator ID="valTrialFee2" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialFee2" ControlToValidate="txtTrialFee" Display="Dynamic" Operator="GreaterThanEqual" ValueToCompare="0" />
                 </div>
                 <div class="dnnFormItem" id="divTrialPeriod" runat="server">
                     <dnn:Label ID="plTrialPeriod" runat="server" ResourceKey="TrialPeriod" Suffix=":" ControlName="txtTrialPeriod" />
                     <asp:TextBox ID="txtTrialPeriod" runat="server" MaxLength="50" Columns="30" Width="100" />
                     <asp:DropDownList ID="cboTrialFrequency" runat="server" Width="100px" DataValueField="value" DataTextField="text" AutoPostBack="true" />
-                    <asp:CompareValidator ID="valTrialPeriod1" CssClass="dnnFormError" runat="server" resourcekey="valTrialPeriod1" ControlToValidate="txtTrialPeriod" Display="Dynamic" Type="Integer" Operator="DataTypeCheck" />
-                    <asp:CompareValidator ID="valTrialPeriod2" CssClass="dnnFormError" runat="server" resourcekey="valTrialPeriod2" ControlToValidate="txtTrialPeriod" Display="Dynamic" Operator="GreaterThan" ValueToCompare="0" />
+                    <asp:CompareValidator ID="valTrialPeriod1" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialPeriod1" ControlToValidate="txtTrialPeriod" Display="Dynamic" Type="Integer" Operator="DataTypeCheck" />
+                    <asp:CompareValidator ID="valTrialPeriod2" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialPeriod2" ControlToValidate="txtTrialPeriod" Display="Dynamic" Operator="GreaterThan" ValueToCompare="0" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plRSVPCode" runat="server" ControlName="txtRSVPCode" />
-                    <asp:TextBox ID="txtRSVPCode" runat="server" MaxLength="50" Columns="30" Width="100" AutoPostBack="true" />
+                    <asp:TextBox ID="txtRSVPCode" runat="server" MaxLength="50" Columns="30" AutoPostBack="true" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plRSVPLink" runat="server" ControlName="txtRSVPLink" />
-                    <asp:Label ID="lblRSVPLink" runat="server" Width="325"/>
+                    <asp:Label ID="lblRSVPLink" runat="server" />
                 </div>
                  <div class="dnnFormItem">
                     <dnn:Label ID="plIcon" Text="Icon:" runat="server" ControlName="ctlIcon" />
-                    <dnn:Url ID="ctlIcon" runat="server" Width="325" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False" />
+                    <dnn:Url ID="ctlIcon" runat="server" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False" />
                 </div>
             </fieldset>
         </div>

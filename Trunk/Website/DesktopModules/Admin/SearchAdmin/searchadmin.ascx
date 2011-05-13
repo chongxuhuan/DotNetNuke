@@ -11,6 +11,9 @@
         <div class="dnnFormItem">
             <dnn:label id="plMinWordLength" runat="server" controlname="txtMinWordLength" />
             <asp:textbox id="txtMinWordLength" runat="server" maxlength="128" />
+            <asp:CompareValidator ID="valWordLength" runat="server" ControlToValidate="txtMinWordLength" 
+                ControlToCompare="txtMaxWordLength" Operator="LessThanEqual"  CssClass="dnnFormMessage dnnFormError" 
+                EnableClientScript="true" resourcekey="SearchWordLength"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plIncludeCommon" runat="server" controlname="chkIncludeCommon" text="Include Common Words:"></dnn:label>

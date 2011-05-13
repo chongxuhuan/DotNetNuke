@@ -36,14 +36,18 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Dashboard
 {
+
     public partial class Export : PortalModuleBase
     {
+
+        #region Event Handlers
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdSave.Click += cmdSave_Click;
+            cmdCancel.NavigateUrl = Globals.NavigateURL();
+            cmdSave.Click += OnSaveClick;
 
             if (!UserInfo.IsSuperUser)
             {
@@ -51,12 +55,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
         }
 
-        protected void cmdCancel_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        protected void cmdSave_Click(object sender, EventArgs e)
+        protected void OnSaveClick(object sender, EventArgs e)
         {
             try
             {
@@ -69,5 +68,8 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                 Exceptions.ProcessModuleLoadException(this, ex);
             }
         }
+
+        #endregion
+
     }
 }

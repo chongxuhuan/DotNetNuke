@@ -307,9 +307,80 @@
     <value>Search:</value>
   </data>
   <data name="TypeLabel.Help" xml:space="preserve">
-    <value>Select type of exxtension</value>
+    <value>Select type of extension</value>
   </data>
   <data name="TypeLabel.Text" xml:space="preserve">
     <value>Type:</value>
   </data>
-</root>
+  <data name="ClearSearch.Text" xml:space="preserve">
+    <value>Clear Search</value>
+  </data>
+  <data name="NameAZ.Text" xml:space="preserve">
+    <value>Name: A-Z</value>
+  </data>
+  <data name="NameZA.Text" xml:space="preserve">
+    <value>Name: Z-A</value>
+  </data>
+  <data name="PriceHighLow.Text" xml:space="preserve">
+    <value>Price: High - Low</value>
+  </data>
+  <data name="PriceLowHigh.Text" xml:space="preserve">
+    <value>Price: Low - High</value>
+  </data>
+  <data name="Search.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="By.Text" xml:space="preserve">
+    <value>By</value>
+  </data>
+  <data name="TagCloud.Text" xml:space="preserve">
+    <value>Tag Cloud</value>
+  </data>
+  <data name="VersionNotSpecified.Text" xml:space="preserve">
+    <value>Version Required Not Specified</value>
+  </data>
+  <data name="MoreInformation.Text" xml:space="preserve">
+    <value>More Information</value>
+  </data>
+  <data name="DetailsLabel.Text" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="LicenseLabel.Text" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="TagLabel.Text" xml:space="preserve">
+    <value>Tag:</value>
+  </data>
+    <data name="VendorLabel.Text" xml:space="preserve">
+    <value>Vendor:</value>
+    </data>
+    <data name="ExtensionsLabel.Text" xml:space="preserve">
+    <value>Extensions</value>
+    </data>
+    <data name="NoneLabel.Text" xml:space="preserve">
+    <value>None</value>
+    </data>
+    <data name="ErrorLabel.Text" xml:space="preserve">
+    <value>Error...</value>
+    </data>
+    <data name="LoadingLabel.Text" xml:space="preserve">
+    <value>Loading</value>
+    </data>
+    <data name="OrderLabel.Text" xml:space="preserve">
+    <value>Order:</value>
+    </data>
+
+    <data name="AppgGalleryDisplayName.Text" xml:space="preserve">
+    <value>DotNetNuke App Gallery (SnowCovered)</value>
+    </data>
+    <data name="AppgGalleryUrl.Text" xml:space="preserve">
+    <value>http://www.snowcovered.com/</value>
+    </data>
+    <data name="ForgeDisplayName.Text" xml:space="preserve">
+    <value>The Forge</value>
+    </data>
+    <data name="ForgeUrl.Text" xml:space="preserve">
+    <value>http://forge.dotnetnuke.com</value>
+    </data>
+  
+  </root>

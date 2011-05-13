@@ -44,6 +44,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 {
     public partial class ViewScheduleStatus : PortalModuleBase, IActionable
     {
+
         private ScheduleStatus Status;
 
         #region IActionable Members
@@ -78,6 +79,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         }
 
         #endregion
+
+        #region Private Methods
 
         private void BindData()
         {
@@ -135,25 +138,22 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        protected string GetOverdueText(double OverdueBy)
+        #endregion
+
+        protected string GetOverdueText(double overdueBy)
         {
-            if (OverdueBy > 0)
-            {
-                return OverdueBy.ToString();
-            }
-            else
-            {
-                return "";
-            }
+            return overdueBy > 0 ? overdueBy.ToString() : "";
         }
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdStart.Click += cmdStart_Click;
-            cmdStop.Click += cmdStop_Click;
+
+            cmdStart.Click += OnStartClick;
+            cmdStop.Click += OnStopClick;
 
             try
             {
@@ -177,6 +177,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                     pnlScheduleQueue.Visible = false;
                     pnlScheduleProcessing.Visible = false;
                 }
+
+                cmdCancel.NavigateUrl += Globals.NavigateURL();
             }
             catch (Exception exc)
             {
@@ -184,23 +186,21 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        private void cmdStart_Click(Object sender, EventArgs e)
+        protected void OnStartClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().StartAndWaitForResponse();
             BindData();
             BindStatus();
         }
 
-        private void cmdStop_Click(Object sender, EventArgs e)
+        protected void OnStopClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().Halt(Localization.GetString("ManuallyStopped", LocalResourceFile));
             BindData();
             BindStatus();
         }
 
-        private void cmdCancel_Click(Object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(), true);
-        }
+        #endregion
+
     }
 }

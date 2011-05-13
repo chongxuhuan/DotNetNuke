@@ -7,14 +7,13 @@
 <%@ Register TagPrefix="dnn" TagName="SwitchSite" Src="~/admin/ControlPanel/SwitchSite.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.DDRMenu.TemplateEngine" Assembly="DotNetNuke.Web.DDRMenu" %>
 <%@ Register TagPrefix="dnn" TagName="MENU" src="~/DesktopModules/DDRMenu/Menu.ascx" %>
-
 <asp:Panel id="ControlPanel" runat="server" CssClass="dnnForm dnnControlPanel dnnClear">
     <div class="dnnCPHeader dnnClear">
         <div class="dnnCPHMode dnnLeft">
-            <dnn:MENU ID="adminMenus" MenuStyle="DNNAdmin" IncludeNodes="Admin, Host" IncludeHidden="True" runat="server" />
+            <dnn:MENU ID="adminMenus" MenuStyle="admin/Menus/DNNAdmin" IncludeNodes="Admin, Host" IncludeHidden="True" runat="server" />
             <%--
-            <dnn:DnnRibbonBarTool ID="cmdAdmin" runat="server" ToolName="Console" />
-            <dnn:DnnRibbonBarTool ID="cmdHost" runat="server" ToolName="HostConsole" />
+                <dnn:DnnRibbonBarTool ID="cmdAdmin" runat="server" ToolName="Console" />
+                <dnn:DnnRibbonBarTool ID="cmdHost" runat="server" ToolName="HostConsole" />
             --%>
             <asp:HyperLink ID="hypMessage" runat="server" Target="_new" CssClass="dnnCPHMessage dnnLeft" />
         </div>
@@ -39,36 +38,34 @@
             <div class="cbctAddPage dnnLeft">
                 <div class="cbctActions dnnClear">
                     <h4><dnn:DnnLiteral id="CommonTabActions" runat="server" Text="CommonTabActions" /></h4>
-                    <dnn:DnnRibbonBarTool id="PageSettings" runat="server" ToolName="PageSettings" />
-                    <dnn:DnnRibbonBarTool id="NewPage" runat="server" ToolName="NewPage" />
+                    <dnn:DnnRibbonBarTool id="PageSettings" runat="server" ToolName="PageSettings" ToolCssClass="cpEditPage" />
+                    <dnn:DnnRibbonBarTool id="NewPage" runat="server" ToolName="NewPage" ToolCssClass="cpAddNewPage" />
                 </div>
                 <dnn:AddPage id="AddPage" runat="server" />
             </div>
-            <div class="cbctAddModule dnnRight">
-                <dnn:AddModule id="AddMod" runat="server" />
-            </div>
+            <div class="cbctAddModule dnnLeft"><dnn:AddModule id="AddMod" runat="server" /></div>
         </asp:Panel>
         <asp:Panel ID="CurrentPagePanel" runat="server" CssClass="cpcbCurrentPage dnnClear">
         	<div class="cbcpFiCol dnnLeft">
                 <div class="cbcpPageSettings dnnClear">
                     <h4><dnn:DnnLiteral id="CurrentTabSettings" runat="server" Text="CurrentTabSettings" /></h4>
-                    <dnn:DnnRibbonBarTool id="EditCurrentSettings" runat="server" ToolName="PageSettings" />
+                    <dnn:DnnRibbonBarTool id="EditCurrentSettings" runat="server" ToolName="PageSettings" ToolCssClass="cpEditCurrentPage" />
                 </div>
                 <div class="cbcpPageActions dnnClear">
                     <h4><dnn:DnnLiteral id="CurrentTabActions" runat="server" Text="CurrentTabActions" /></h4>
-                    <dnn:DnnRibbonBarTool id="CopyPage" runat="server" ToolName="CopyPage" ToolCssClass="dnnCopyPage" />
-                    <dnn:DnnRibbonBarTool id="DeletePage" runat="server" ToolName="DeletePage" ToolCssClass="dnnDeletePage" />
-                    <dnn:DnnRibbonBarTool id="ImportPage" runat="server" ToolName="ImportPage" />
-                    <dnn:DnnRibbonBarTool id="ExportPage" runat="server" ToolName="ExportPage" />
+                    <dnn:DnnRibbonBarTool id="CopyPage" runat="server" ToolName="CopyPage" ToolCssClass="cpCopyPage" />
+                    <dnn:DnnRibbonBarTool id="DeletePage" runat="server" ToolName="DeletePage" ToolCssClass="cpDeletePage" />
+                    <dnn:DnnRibbonBarTool id="ImportPage" runat="server" ToolName="ImportPage" ToolCssClass="cpImportPage" />
+                    <dnn:DnnRibbonBarTool id="ExportPage" runat="server" ToolName="ExportPage" ToolCssClass="cpExportPage" />
                 </div>
                 <div class="cbcpPageCopy dnnClear">
                     <h4><dnn:DnnLiteral id="CurrentTabCopyToChildren" runat="server" Text="CurrentTabCopyToChildren" /></h4>
-                    <dnn:DnnRibbonBarTool id="CopyPermissionsToChildren" runat="server" ToolName="CopyPermissionsToChildren" ToolCssClass="dnnCopyPermissions"/>
-                    <dnn:DnnRibbonBarTool id="CopyDesignToChildren" runat="server" ToolName="CopyDesignToChildren" ToolCssClass="dnnCopyDesign" />
+                    <dnn:DnnRibbonBarTool id="CopyPermissionsToChildren" runat="server" ToolName="CopyPermissionsToChildren" ToolCssClass="cpCopyPermissions"/>
+                    <dnn:DnnRibbonBarTool id="CopyDesignToChildren" runat="server" ToolName="CopyDesignToChildren" ToolCssClass="cpCopyDesign" />
                 </div>
                 <div class="cbcpPageHelp dnnClear">
                     <h4><dnn:DnnLiteral id="CurrentTabHelp" runat="server" Text="CurrentTabHelp" /></h4>
-                    <dnn:DnnRibbonBarTool id="Help" runat="server" ToolName="Help" />
+                    <dnn:DnnRibbonBarTool id="Help" runat="server" ToolName="Help" ToolCssClass="cpPageHelp" />
                 </div>
             </div>
             <div class="cbcpPageEdit dnnLeft">
@@ -79,17 +76,17 @@
         <asp:Panel ID="AdminPanel" runat="server" CssClass="cpcbAdmin">
             <div class="cbaManage dnnClear">
 				<h4><dnn:DnnLiteral id="SiteTabManage" runat="server" Text="SiteTabManage" /></h4>
-                <dnn:DnnRibbonBarTool id="NewUser" runat="server" ToolName="NewUser" />
-                <dnn:DnnRibbonBarTool id="NewRole" runat="server" ToolName="NewRole" />
-                <dnn:DnnRibbonBarTool id="SiteNewPage" runat="server" ToolName="NewPage" />
-                <dnn:DnnRibbonBarTool id="UploadFile" runat="server" ToolName="UploadFile" />
+                <dnn:DnnRibbonBarTool id="NewUser" runat="server" ToolName="NewUser" ToolCssClass="cpNewUser" />
+                <dnn:DnnRibbonBarTool id="NewRole" runat="server" ToolName="NewRole" ToolCssClass="cpNewRole" />
+                <dnn:DnnRibbonBarTool id="SiteNewPage" runat="server" ToolName="NewPage" ToolCssClass="cpSiteNewPage" />
+                <dnn:DnnRibbonBarTool id="UploadFile" runat="server" ToolName="UploadFile" ToolCssClass="cpUploadFile" />
             </div>
             <asp:Panel runat="server" ID="AdvancedToolsPanel" CssClass="cbhTools dnnClear">
                 <h4><dnn:DnnLiteral id="SystemTabTools" runat="server" Text="SystemTabTools" /></h4>
-                <dnn:DnnRibbonBarTool id="WebServerManager" runat="server" ToolInfo-ToolName="WebServerManager" ToolInfo-IsHostTool="True" ToolInfo-ModuleFriendlyName="WebServerManager" />
-                <dnn:DnnRibbonBarTool id="SupportTickets" runat="server" ToolInfo-ToolName="SupportTickets" ToolInfo-IsHostTool="True" ToolInfo-LinkWindowTarget="_Blank" NavigateUrl="http://customers.dotnetnuke.com/Main/frmTickets.aspx" />
-                <dnn:DnnRibbonBarTool id="ImpersonateUser" runat="server" ToolInfo-ToolName="ImpersonateUser" ToolInfo-IsHostTool="False" ToolInfo-ModuleFriendlyName="UserSwitcher" />
-                <dnn:DnnRibbonBarTool id="IntegrityChecker" runat="server" ToolInfo-ToolName="IntegrityChecker" ToolInfo-IsHostTool="True" ToolInfo-ModuleFriendlyName="IntegrityChecker" />
+                <dnn:DnnRibbonBarTool id="WebServerManager" runat="server" ToolInfo-ToolName="WebServerManager" ToolInfo-IsHostTool="True" ToolInfo-ModuleFriendlyName="WebServerManager" ToolCssClass="cpWebServerManager" />
+                <dnn:DnnRibbonBarTool id="SupportTickets" runat="server" ToolInfo-ToolName="SupportTickets" ToolInfo-IsHostTool="True" ToolInfo-LinkWindowTarget="_Blank" NavigateUrl="http://customers.dotnetnuke.com/Main/frmTickets.aspx" ToolCssClass="cpSupportTickets" />
+                <dnn:DnnRibbonBarTool id="ImpersonateUser" runat="server" ToolInfo-ToolName="ImpersonateUser" ToolInfo-IsHostTool="False" ToolInfo-ModuleFriendlyName="UserSwitcher" ToolCssClass="cpImpersonateUser" />
+                <dnn:DnnRibbonBarTool id="IntegrityChecker" runat="server" ToolInfo-ToolName="IntegrityChecker" ToolInfo-IsHostTool="True" ToolInfo-ModuleFriendlyName="IntegrityChecker" ToolCssClass="cpIntegrityChecker" />
             </asp:Panel>
             <div class="cbhSwitchSite dnnClear">
                 <h4><dnn:DnnLiteral id="SystemTabSwitchSite" runat="server" Text="SystemTabSwitchSite" /></h4>
@@ -98,13 +95,9 @@
         </asp:Panel>
     </asp:Panel>
 </asp:Panel>
-
 <dnn:DnnWindowManager ID="DnnWindowManager1" runat="server" />
-
 <%--<link rel="Stylesheet" href='<%= ResolveUrl("~/admin/ControlPanel/module.css") %>' type="text/css" />--%>
-
 <script type="text/javascript">
-    $(document).ready(function () {
         $('.dnnCPContent').dnnTabs();
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -127,5 +120,4 @@
             noText: noText,
             title: titleText
         });
-    });
 </script>

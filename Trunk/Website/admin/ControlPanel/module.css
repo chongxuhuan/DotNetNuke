@@ -1,82 +1,90 @@
-
-		/*
-		
-		ul.dnnCPCNav{overflow:hidden;clear:both;border-bottom:2px #343434 solid;font-size:95%;background:#787878;background:-moz-linear-gradient(top, #787878 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#787878), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#787878', endColorstr='#656565',GradientType=0 );}
-			.ui-tabs {position:relative;padding:0;zoom:1;}
-			.ui-tabs .ui-tabs-nav {margin:0;padding:0;}
-			.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:0;margin:0;border-bottom:0 !important;padding:0;white-space:nowrap;border-right:1px #787878 solid}
-			.ui-tabs .ui-tabs-nav li a {float:left;font-weight:bold;color:#fff;text-decoration:none;display:block;margin:0;padding:.6em 2em 0.4em;letter-spacing:-0.03em;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);}
-				.ui-tabs .ui-tabs-nav li.dnnFormExpandContent{float:right;}
-				.ui-tabs .ui-tabs-nav li.dnnFormExpandContent a{background:none;float:right;text-shadow:none;color:#333;}
-				.ui-tabs .ui-tabs-nav li.dnnFormExpandContent a:hover{background:none;text-decoration:underline;color:#000;text-shadow:none;}
-			.ui-tabs .ui-tabs-nav li.ui-tabs-selected {margin-bottom:0;}
-			.ui-tabs .ui-tabs-nav li a:hover, .ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text;color:#fff;text-decoration:none;background: #3f3f3f;background:-moz-linear-gradient(top, #3f3f3f 0%, #343434 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#3f3f3f), color-stop(100%,#343434));filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f3f3f', endColorstr='#343434',GradientType=0 );text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);}
-			.ui-tabs .ui-tabs-nav li a:hover, .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer;}
-			.ui-tabs .ui-tabs-panel {display:block;border-width:0;background:none; }
-			.ui-tabs .ui-tabs-hide {display:none !important;}
-
-		 */	
-		
-/* dnnCPWrap divs are injected for Dockable controlpanels */
-#dnnCPWrap{width:960px;position:fixed;left:50%;margin-left:-480px;top:0;z-index:10;}
-  #dnnCPWrap.Pinned {position:static;margin-left:auto;margin-right:auto;}
-  #dnnCPWrapLeft{}
-  #dnnCPWrapRight{}
-  #dnnCPWrap .dnnCPContent {display:none;} 
-    
-.dnnCPDock {display:inline-block;width:16px;height:16px;cursor:pointer;background: url('images/iconbar_undocked.png') no-repeat;vertical-align:middle;margin:0 2px 5px;}
-  .dnnCPDock.Pinned {background: url('images/iconbar_docked.png') no-repeat;}
-
-.dnnControlPanel{margin:0 auto;font-size:80%;}
+#dnnCPWrap{width:960px;position:fixed;top:0;z-index:10;margin:0 auto}
+	#dnnCPWrap.Pinned {position:static;}
+	#dnnCPWrap .dnnCPContent {display:none;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border-radius:3px;-webkit-border-radius:3px;-moz-border-radius:3px;}
+	.dnnCPDock{display:inline-block;width:16px;height:16px;cursor:pointer;background: url('images/iconbar_undocked.png') no-repeat;vertical-align:middle;margin:3px 15px 0 0;}
+  	.dnnCPDock.Pinned {background: url('images/iconbar_docked.png') no-repeat;}
+.dnnControlPanel{margin:0 auto;font-size:11px;width:960px;}
+	.dnnControlPanel a{font-size:11px;}
 	a.dnnCPHMessagednnLeft, a.dnnCPHMessagednnLeft img{display:block !important;}
-	.dnnControlPanel .dnnFormItem label, .dnnControlPanel .dnnFormItem .dnnFormLabel{margin-top:0;}
-		
-.dnnCPCNav .ui-tabs-nav.ui-helper-reset{font-size:90%;}
-		
-.dnnCPContent .ui-tabs-panel {min-height:185px;}
-		
-.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbCurrentPage.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbAdmin.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbHost.ui-tabs-panel.ui-widget-content.ui-corner-bottom{border:1px #ccc solid;padding:0.5em 1em;background:#fff;}
-	.cpcbCommonTasks .cbctAddPage{width:44%;border-right:1px #ccc solid;}
-	.cpcbCommonTasks .cbctAddModule{width:54%;}
-	.cbctAddModule .dnnFormItem label{float:left;width:auto}
-		.amCatList, .amModuleList, .amPageList{width:50%;float:left}
-				
-.dnnCPHeader .dnnFormItem.dnnCPHMode.dnnLeft label{padding-right:1em;text-transform:uppercase;font-size:90%;}
-.cbctActions h4, .cbctActions span{display:block;float:left;height:2em;line-height:2;margin:0;padding:0;}
-	.cbctActions span a{font-size:100%;}
-.dnnControlPanel h4{width:8%;text-align:right;float:left;font-size:100%;}
-	.dnnControlPanel .cbctActions.dnnClear h4{width:24%;margin-right:2%;}
-	.cbctActions span a{font-weight:bold;margin-right:1.5em;}
-
-.cbcpPageSettingsContent .dnnFormItem.cpIncludeInMenu, .cbcpPageSettingsContent input.dnnPrimaryAction{margin-left:27%;}
-	.cbcpPageSettingsContent .dnnFormItem.cpIncludeInMenu input{margin-right:1em;}
-		.cbcpPageSettingsContent .dnnFormItem.cpIncludeInMenu label{width:auto;text-align:left;}
-			
-		
-.dnnCPAddModule span{display:block;float:left;}
-	.dnnFormItem.dnnCPAddModule input{margin:3px 5px 0 5px;}
+	.dnnControlPanel .dnnFormItem label, .dnnControlPanel .dnnFormItem .dnnFormLabel{margin-top:0;font-size:11px;}
+	.dnnControlPanel .dnnFormItem input{width:45%;padding:2px}
+		.dnnControlPanel .dnnFormItem input[type=checkbox], .dnnControlPanel .dnnFormItem input[type=radio], .dnnControlPanel .dnnFormItem input[type=submit]{width:auto;}
+		.dnnControlPanel .cpamModuleTitle{width:250px;}
+			.dnnControlPanel .dnnFormItem .cpamModuleTitle input, .amCatList select{width:150px}
+		.cpamModuleVisibility{width:250px;}
+		.dnnCPCNav .ui-tabs-nav.ui-helper-reset{font-size:90%;}
+			.dnnCPHNav.dnnRight span{display:inline-block;padding:8px 0 0 0;}
+			.dnnCPHNav label{margin:10px 10px 10px 3px;}			
 	
-.cpamCopyModule, .cbctAddModule.dnnRight .dnnFormItem.dnnActions{margin-left:16%;}
-.dnnForm .cpamCopyModule .dnnFormInput label{width:65%;}
-
-.dnnControlPanel .cbcpPageActions.dnnClear h4, .dnnControlPanel .cbaManage.dnnClear h4, .dnnControlPanel .cbhTools.dnnClear h4, .cbcpPageHelp.dnnClear h4, .cbcpPageCopy.dnnClear h4{margin:0;padding:0;}
-
-.dnnControlPanel .cbaManage.dnnClear{margin:1em 0;}
-.dnnControlPanel .cbaManage.dnnClear h4, .cbaManage.dnnClear span{float:left;display:block;padding:0.5em 1em;}
-.dnnControlPanel .cbhTools.dnnClear h4, .dnnControlPanel .cbhSwitchSite.dnnClear h4{float:left;width:20%;text-align:right;margin-right:2%;}
+	.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbCurrentPage.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbAdmin.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbHost.ui-tabs-panel.ui-widget-content.ui-corner-bottom{border:1px #ccc solid;padding:0;background:#fff;overflow:hidden;}
+	.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom{background:url(images/cp-header-bg.gif) repeat-x top;}
+	.dnnCPContent .ui-tabs-panel {min-height:190px;}
+	.cpcbCommonTasks .cbctAddPage{width:400px;}
+	.cpcbCommonTasks .cbctAddModule{width:550px;overflow:hidden;border-left:1px #ccc solid;min-height:190px;}
+	.cbctAddModule .dnnFormItem label{float:left;width:60px;padding-right:10px;margin-top:0;}
+		.amCatList, .amPageList{width:230px;float:left}
+		.amPageList{width:250px}
+			.dnnControlPanel .dnnFormItem .amCatList label, .dnnControlPanel .cpamModuleTitle label{width:60px;padding-right:10px;}
+		.amModuleList{width:240px;float:left}
+			.dnnControlPanel .dnnFormItem .amModuleList label, .dnnControlPanel .dnnFormItem .amPageList label{margin-top:2px;}	
+.dnnCPHeader .dnnFormItem.dnnCPHMode.dnnLeft label{padding-right:1em;text-transform:uppercase;font-size:90%;}
+.cbctActions, .dnnCPAddModule{height:3em;line-height:3;}
+	.dnnCPAddModule label{font-weight:bold}
+	.dnnCPAddModule .cpamAddNew{padding-right:10px;}
+	.dnnForm.dnnControlPanel input[type="radio"]{margin:0;}
+	.dnnControlPanel h4{padding:0;text-align:right;font-size:11px;text-transform:uppercase;color:#000;float:left;margin:0 10px;}
+		.cbctActions span a{font-weight:bold;margin-right:15px;display:block;float:left;}
+.cbcpPageSettingsContent, .cpAddModuleContent{margin-top:1em;padding-left:10px;}
+	.dnnControlPanel .cbcpPageSettingsContent input[type=text]{width:255px;}
+		.cpAddModuleContent{padding:0 1em;}
+			.cpAddModuleContent .dnnPrimaryAction{margin-left:70px;}
+		.dnnForm .cpAddModuleContent .dnnFormItem{padding-left:0;padding-right:0;}
+		.cpIncludeInMenu{margin-left:27%;}
+			.cpIncludeInMenu label{width:auto;text-align:left;font-size:11px;}
+			.cpIncludeInMenu label.SubHead{font-size:11px;}
+		.mpPaneList{width:180px}
+			.mpPaneList select{width:110px;}
+		.mpPlacementPosition{width:165px;}
+		.mpModuleList{width:180px;}
+			.mpModuleList select{width:100px;}
+		.cpamCopyModule, .cbctAddModule.dnnRight .dnnFormItem.dnnActions{margin-left:70px;}
+		.dnnForm .cpamCopyModule .dnnFormInput label{width:65%;}
+	.cpcbAdmin h4{margin:0 15px 0 0;padding:0;min-width:210px;text-align:right;float:left;}
+	.cbaManage, .cbhTools, .cbhSwitchSite{margin:0;padding:0 0 0 1em;line-height:3;height:3em;}
+		.cbaManage{padding-top:3.5em;}
+		.cbhTools span a{display:block;float:left;}
 	.cbhSwitchSite.dnnClear .dnnFormItem{clear:none;float:left;width:auto;}
 			.cbhSwitchSite.dnnClear .dnnFormItem select{float:left;}
-		
-.dnnControlPanel .cpcbCurrentPage.dnnClear h4{display:block;clear:both;float:none;overflow:hidden;width:65%;text-align:left;padding:0;margin:0;}
-.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div{margin-bottom:1.5em;} .dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettingsContent, .dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettings.dnnClear{margin-botton:0 !important;}
-	.cbcpFiCol.dnnLeft{width:36%;border-right:1px #ccc solid;margin-right:2%;}
-		.cbcpFiCol.dnnLeft a{display:block;padding:0 0.8em 0 0;float:left;}
-	.cbcpPageEdit.dnnLeft{width:56%;}
-.dnnForm .dnnFormItem.cppeNavOptions{margin:0;}
-	.cbcpPageEdit.dnnLeft label{width:21%;}	
-	.dnnForm .dnnFormItem.cppeNavOptions input{width:5%;}
-	.dnnFormItem.cppeNavOptions .dnnFormItem.dnnLeft{width:50%;clear:none;}
-	.dnnFormItem.cppeNavOptions .dnnFormItem.dnnLeft label{width:73%;margin-right:6%;}
-	.dnnFormItem.cppeNavOptions .dnnFormItem.dnnLeft.penoDisabled{width:20%;margin:0;}
-			
-    
+	.dnnControlPanel .cpcbCurrentPage.dnnClear h4{display:block;clear:both;float:none;overflow:hidden;width:65%;text-align:left;padding:0;margin:0;}
+		.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpPageEdit h4{width:auto;padding-left:85px;}
+	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettingsContent, 
+	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettings.dnnClear{margin-botton:0 !important;}
+		.cbcpFiCol.dnnLeft{width:380px;border-right:1px #ccc solid;margin-right:20px;padding:10px 0 10px 20px;height:170px;}
+		.cbcpPageEdit.dnnLeft{width:460px;padding:10px 20px}
+		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:2.5;height:2.5em;padding:0 15px 0 20px;font-weight:bold;float:left;}
+			.cpcbAdmin a {line-height:3;height:3em;}
+			span.cpEditCurrentPage a{background:url(images/iconbar_edittab_16.gif) no-repeat left;}
+			span.cpCopyPage a{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+			a.cpDeletePage{background:url(images/iconbar_deletetab_16.gif) no-repeat left;}
+				a.cpDeletePage.dnnDisabled{background:url(images/iconbar_deletetab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+			span.cpImportPage a{background:url(images/iconbar_importtab_16.gif) no-repeat left;}
+			span.cpExportPage a{background:url(images/iconbar_exporttab_16.gif) no-repeat left;}
+			a.cpCopyPermissions{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+				a.cpCopyPermissions.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+			a.cpCopyDesign{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+				a.cpCopyDesign.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+			span.cpPageHelp a{background:url(images/iconbar_help_16.gif) no-repeat left;}
+			span.cpNewUser a{background:url(images/iconbar_add_users_16.gif) no-repeat left;}
+			span.cpNewRole a{background:url(images/icon_securityroles_16px.gif) no-repeat left;}
+			span.cpSiteNewPage a{background:url(images/iconbar_addtab_16.gif) no-repeat left;}
+			span.cpUploadFile a{background:url(images/action_up.gif) no-repeat left;}
+			span.cpWebServerManager a{background:url(images/icon_webservers_16px.gif) no-repeat left;}
+			span.cpSupportTickets a{background:url(images/icon_mytickets_16px.gif) no-repeat left;}
+			span.cpImpersonateUser a{background:url(images/icon_usersSwitcher_16px.gif) no-repeat left;}
+			span.cpIntegrityChecker a{background:url(images/icon_appintegrity_16px.gif) no-repeat left;}
+	.cppeNavOptions{margin:0 0 0 78px;overflow:hidden;clear:both;}
+		.cbcpPageEdit.dnnLeft label{width:70px;}	
+			.cppeNavOptions .dnnFormItem.dnnLeft{width:150px;clear:none;}
+			.cppeNavOptions .dnnFormItem.dnnLeft label{width:auto}
+			.cppeNavOptions .dnnFormItem.dnnLeft.penoDisabled{width:20%;margin:0;}
+	.cbcpPageEdit.dnnLeft input.dnnPrimaryAction{margin-left:85px;}	

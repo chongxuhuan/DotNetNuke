@@ -39,3 +39,8 @@
 <p>
 	<dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" ImageUrl="~/images/save.gif" ResourceKey="cmdInstall" />
 </p>
+<hr />
+<asp:Button ID="btnSnow" runat="server" Text="Snowcovered records" 
+    onclick="btnSnow_Click" />
+<asp:Label ID="lblMessage" runat="server" Text=""></asp:Label>
+<asp:GridView ID="grdSnow" runat="server"></asp:GridView>

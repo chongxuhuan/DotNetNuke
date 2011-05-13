@@ -48,17 +48,16 @@ namespace DotNetNuke.Services.FileSystem
     /// <remarks>
     /// </remarks>
     /// -----------------------------------------------------------------------------
-    [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager class.")]
     public class FolderController
     {
         #region StorageLocationTypes enum
 
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderMappingInfo class. ")]
         public enum StorageLocationTypes
         {
             InsecureFileSystem = 0,
             SecureFileSystem = 1,
-            DatabaseSecure = 2
+            DatabaseSecure = 2,
+            NonDefault = 3
         }
 
         #endregion
@@ -78,9 +77,7 @@ namespace DotNetNuke.Services.FileSystem
 
             if (folder.FolderID == Null.NullInteger)
             {
-                FolderManager.Instance.AddFolder(FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation), folder.FolderPath);
-
-                folder = (FolderInfo)FolderManager.Instance.GetFolder(folder.PortalID, folder.FolderPath);
+                folder = (FolderInfo)FolderManager.Instance.AddFolder(FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID), folder.FolderPath);
             }
             else
             {

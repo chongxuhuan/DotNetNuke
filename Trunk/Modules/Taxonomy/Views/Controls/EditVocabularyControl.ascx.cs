@@ -52,7 +52,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
 
                 var scopeTypeController = new ScopeTypeController();
                 ScopeType scopeType = null;
-                scopeType = scopeTypeController.GetScopeTypes().Where(s => s.Type == scopeList.SelectedValue).SingleOrDefault();
+                scopeType = scopeTypeController.GetScopeTypes().Where(s => s.ScopeType == scopeList.SelectedValue).SingleOrDefault();
                 vocabulary.ScopeTypeId = scopeType.ScopeTypeId;
 
                 if (typeList.SelectedValue == "Simple")
@@ -72,8 +72,8 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
                 typeList.Items.FindByValue(vocabulary.Type.ToString()).Selected = true;
                 if (vocabulary.ScopeType != null)
                 {
-                    scopeLabel.Text = vocabulary.ScopeType.Type;
-                    scopeList.Items.FindByValue(vocabulary.ScopeType.Type).Selected = true;
+                    scopeLabel.Text = vocabulary.ScopeType.ScopeType;
+                    scopeList.Items.FindByValue(vocabulary.ScopeType.ScopeType).Selected = true;
                 }
                 typeLabel.Text = vocabulary.Type.ToString();
             }

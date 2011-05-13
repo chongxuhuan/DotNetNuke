@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -84,6 +85,10 @@ namespace DotNetNuke.Modules.Admin.Authentication
                     DoLogoff();
                     Redirect();
                 }
+            }
+            catch (ThreadAbortException texc)
+            {
+                //Do nothing Response.redirect
             }
             catch (Exception exc)
             {

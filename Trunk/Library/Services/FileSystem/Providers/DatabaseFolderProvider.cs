@@ -205,7 +205,8 @@ namespace DotNetNuke.Services.FileSystem
                     folder.IsProtected,
                     folder.IsCached,
                     DateTime.Now,
-                    UserControllerWrapper.Instance.GetCurrentUserInfo().UserID);
+                    UserControllerWrapper.Instance.GetCurrentUserInfo().UserID,
+                    folder.FolderMappingID);
             }
         }
 

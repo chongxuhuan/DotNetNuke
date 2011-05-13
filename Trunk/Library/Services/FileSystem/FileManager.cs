@@ -107,17 +107,24 @@ namespace DotNetNuke.Services.FileSystem
                 throw new PermissionsNotMetException(Localization.Localization.GetExceptionMessage("AddFilePermissionsNotMet", "Permissions are not met. The file has not been added."));
             }
 
-            fileContent = GetSeekableStream(folder.PhysicalPath, fileContent);
+            if (!IsAllowedExtension(fileName))
+            {
+                throw new InvalidFileExtensionException(string.Format(Localization.Localization.GetExceptionMessage("AddFileExtensionNotAllowed", "The extension '{0}' is not allowed. The file has not been added."), Path.GetExtension(fileName)));
+            }
+
+            var seekableStreamCreated = false;
+
+            if (!fileContent.CanSeek)
+            {
+                fileContent = GetSeekableStream(folder.PhysicalPath, fileContent);
+                seekableStreamCreated = true;
+            }
+
             var fileLength = fileContent.Length;
 
             if (!PortalControllerWrapper.Instance.HasSpaceAvailable(folder.PortalID, fileLength))
             {
                 throw new NoSpaceAvailableException(Localization.Localization.GetExceptionMessage("AddFileNoSpaceAvailable", "The portal has no space available to store the specified file. The file has not been added."));
-            }
-
-            if (!IsAllowedExtension(fileName))
-            {
-                throw new InvalidFileExtensionException(string.Format(Localization.Localization.GetExceptionMessage("AddFileExtensionNotAllowed", "The extension '{0}' is not allowed. The file has not been added."), Path.GetExtension(fileName)));
             }
 
             var file = new FileInfo
@@ -147,7 +154,7 @@ namespace DotNetNuke.Services.FileSystem
                                                           GetCurrentUserID(),
                                                           file.SHA1Hash);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             try
             {
@@ -167,7 +174,15 @@ namespace DotNetNuke.Services.FileSystem
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("AddFileUnderlyingSystemError", "The underlying system threw an exception. The file has not been added."), ex);
             }
 
-            return UpdateFile(file, fileContent);
+            var addedFile = UpdateFile(file, fileContent);
+
+            if (seekableStreamCreated)
+            {
+                fileContent.Close();
+                fileContent.Dispose();
+            }
+
+            return addedFile;
         }
 
         /// <summary>
@@ -182,9 +197,10 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
-            var fileContent = GetFileContent(file);
-
-            return AddFile(destinationFolder, file.FileName, fileContent, true, true, file.ContentType);
+            using (var fileContent = GetFileContent(file))
+            {
+                return AddFile(destinationFolder, file.FileName, fileContent, true, true, file.ContentType);
+            }
         }
 
         /// <summary>
@@ -197,7 +213,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
 
             try
             {
@@ -242,7 +258,7 @@ namespace DotNetNuke.Services.FileSystem
 
             var file = GetFile(folder, fileName);
             var existsFile = file != null;
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             try
             {
@@ -307,7 +323,7 @@ namespace DotNetNuke.Services.FileSystem
 
             if (folder != null)
             {
-                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.StorageLocation);
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
                 if (folderMapping != null)
                 {
@@ -361,15 +377,15 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNullOrEmpty("newFileName", newFileName);
 
             if (file.FileName == newFileName) return file;
-            
+
             var folder = FolderManager.Instance.GetFolder(file.FolderId);
 
             if (FileExists(folder, newFileName))
             {
                 throw new FileAlreadyExistsException(Localization.Localization.GetExceptionMessage("RenameFileAlreadyExists", "This folder already contains a file with the same name. The file has not been renamed."));
             }
-            
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.StorageLocation);
+
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
 
             try
             {
@@ -484,7 +500,7 @@ namespace DotNetNuke.Services.FileSystem
                 }
             }
 
-            file.SHA1Hash = GetHash(fileContent);
+            file.SHA1Hash = GetHash(file);
 
             return UpdateFile(file);
         }
@@ -500,15 +516,16 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("file", file);
             Requires.NotNull("stream", stream);
 
-            var srcStream = GetFileContent(file);
-
-            const int bufferSize = 4096;
-            var buffer = new byte[bufferSize];
-
-            int bytesRead;
-            while ((bytesRead = srcStream.Read(buffer, 0, bufferSize)) > 0)
+            using (var srcStream = GetFileContent(file))
             {
-                stream.Write(buffer, 0, bytesRead);
+                const int bufferSize = 4096;
+                var buffer = new byte[bufferSize];
+
+                int bytesRead;
+                while ((bytesRead = srcStream.Read(buffer, 0, bufferSize)) > 0)
+                {
+                    stream.Write(buffer, 0, bytesRead);
+                }
             }
         }
 
@@ -545,7 +562,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual void AutoSyncFile(IFileInfo file)
         {
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.StorageLocation);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
 
             var newFileSize = FolderProvider.Instance(folderMapping.FolderProviderType).GetFileLength(file);
             if (newFileSize > 0)
@@ -553,8 +570,11 @@ namespace DotNetNuke.Services.FileSystem
                 if (file.Size != newFileSize)
                 {
                     file.Size = (int)newFileSize;
-                    var fileContent = GetFileContent(file);
-                    UpdateFile(file, fileContent);
+
+                    using (var fileContent = GetFileContent(file))
+                    {
+                        UpdateFile(file, fileContent);
+                    }
                 }
             }
             else
@@ -572,38 +592,41 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                zipInputStream = new ZipInputStream(GetFileContent(file));
-
-                var zipEntry = zipInputStream.GetNextEntry();
-
-                while (zipEntry != null)
+                using (var fileContent = GetFileContent(file))
                 {
-                    if (!zipEntry.IsDirectory)
+                    zipInputStream = new ZipInputStream(fileContent);
+
+                    var zipEntry = zipInputStream.GetNextEntry();
+
+                    while (zipEntry != null)
                     {
-                        var fileName = Path.GetFileName(zipEntry.Name);
+                        if (!zipEntry.IsDirectory)
+                        {
+                            var fileName = Path.GetFileName(zipEntry.Name);
 
-                        IFolderInfo parentFolder;
-                        if (zipEntry.Name.IndexOf("/") == -1)
-                        {
-                            parentFolder = destinationFolder;
-                        }
-                        else
-                        {
-                            var folderPath = destinationFolder.FolderPath + zipEntry.Name.Substring(0, zipEntry.Name.LastIndexOf("/") + 1);
-                            parentFolder = folderManager.GetFolder(file.PortalId, folderPath);
+                            IFolderInfo parentFolder;
+                            if (zipEntry.Name.IndexOf("/") == -1)
+                            {
+                                parentFolder = destinationFolder;
+                            }
+                            else
+                            {
+                                var folderPath = destinationFolder.FolderPath + zipEntry.Name.Substring(0, zipEntry.Name.LastIndexOf("/") + 1);
+                                parentFolder = folderManager.GetFolder(file.PortalId, folderPath);
+                            }
+
+                            try
+                            {
+                                AddFile(parentFolder, fileName, zipInputStream, true);
+                            }
+                            catch (Exception ex)
+                            {
+                                DnnLog.Error(ex);
+                            }
                         }
 
-                        try
-                        {
-                            AddFile(parentFolder, fileName, zipInputStream, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            DnnLog.Error(ex);
-                        }
+                        zipEntry = zipInputStream.GetNextEntry();
                     }
-
-                    zipEntry = zipInputStream.GetNextEntry();
                 }
             }
             finally
@@ -625,57 +648,60 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                zipInputStream = new ZipInputStream(GetFileContent(file));
-
-                var zipEntry = zipInputStream.GetNextEntry();
-                var sortedFolders = new ArrayList();
-
-                while (zipEntry != null)
+                using (var fileContent = GetFileContent(file))
                 {
-                    if (zipEntry.IsDirectory)
+                    zipInputStream = new ZipInputStream(fileContent);
+
+                    var zipEntry = zipInputStream.GetNextEntry();
+                    var sortedFolders = new ArrayList();
+
+                    while (zipEntry != null)
                     {
-                        sortedFolders.Add(zipEntry.Name);
-                    }
-
-                    zipEntry = zipInputStream.GetNextEntry();
-                }
-
-                sortedFolders.Sort();
-
-                string folderPath;
-
-                IFolderInfo parentFolder;
-
-                var folderMappingController = FolderMappingController.Instance;
-                var folderMapping = folderMappingController.GetFolderMapping(destinationFolder.StorageLocation);
-
-                foreach (string zipFolder in sortedFolders)
-                {
-                    folderPath = PathUtils.Instance.RemoveTrailingSlash(zipFolder);
-
-                    if (folderPath.IndexOf("/") == -1)
-                    {
-                        var newFolderPath = destinationFolder.FolderPath + PathUtils.Instance.FormatFolderPath(folderPath);
-                        if (!folderManager.FolderExists(file.PortalId, newFolderPath))
+                        if (zipEntry.IsDirectory)
                         {
-                            folderManager.AddFolder(folderMapping, newFolderPath);
+                            sortedFolders.Add(zipEntry.Name);
                         }
+
+                        zipEntry = zipInputStream.GetNextEntry();
                     }
-                    else
+
+                    sortedFolders.Sort();
+
+                    string folderPath;
+
+                    IFolderInfo parentFolder;
+
+                    var folderMappingController = FolderMappingController.Instance;
+                    var folderMapping = folderMappingController.GetFolderMapping(destinationFolder.FolderMappingID);
+
+                    foreach (string zipFolder in sortedFolders)
                     {
-                        var zipFolders = folderPath.Split('/');
+                        folderPath = PathUtils.Instance.RemoveTrailingSlash(zipFolder);
 
-                        parentFolder = destinationFolder;
-
-                        for (var i = 0; i < zipFolders.Length; i++)
+                        if (folderPath.IndexOf("/") == -1)
                         {
-                            var newFolderPath = parentFolder.FolderPath + PathUtils.Instance.FormatFolderPath(zipFolders[i]);
+                            var newFolderPath = destinationFolder.FolderPath + PathUtils.Instance.FormatFolderPath(folderPath);
                             if (!folderManager.FolderExists(file.PortalId, newFolderPath))
                             {
-                                folderManager.AddFolder(folderMappingController.GetFolderMapping(parentFolder.StorageLocation), newFolderPath);
+                                folderManager.AddFolder(folderMapping, newFolderPath);
                             }
+                        }
+                        else
+                        {
+                            var zipFolders = folderPath.Split('/');
 
-                            parentFolder = folderManager.GetFolder(file.PortalId, newFolderPath);
+                            parentFolder = destinationFolder;
+
+                            for (var i = 0; i < zipFolders.Length; i++)
+                            {
+                                var newFolderPath = parentFolder.FolderPath + PathUtils.Instance.FormatFolderPath(zipFolders[i]);
+                                if (!folderManager.FolderExists(file.PortalId, newFolderPath))
+                                {
+                                    folderManager.AddFolder(folderMappingController.GetFolderMapping(parentFolder.FolderMappingID), newFolderPath);
+                                }
+
+                                parentFolder = folderManager.GetFolder(file.PortalId, newFolderPath);
+                            }
                         }
                     }
                 }
@@ -777,6 +803,7 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        /// <returns>SHA1 hash of the file</returns>
         internal virtual string GetHash(Stream stream)
         {
             Requires.NotNull("stream", stream);
@@ -794,6 +821,19 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             return hashText;
+        }
+
+        /// <summary>
+        /// Gets the hash of a file
+        /// </summary>
+        /// <param name="fileInfo">The file info.</param>
+        /// <returns>SHA1 hash of the file</returns>
+        internal virtual string GetHash(IFileInfo fileInfo)
+        {
+            using (var stream = GetFileContent(fileInfo))
+            {
+                return GetHash(stream);
+            }
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
@@ -884,8 +924,10 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                var fileContent = GetFileContent(file);
-                WriteStream(objResponse, fileContent);
+                using (var fileContent = GetFileContent(file))
+                {
+                    WriteStream(objResponse, fileContent);
+                }
             }
             catch (Exception ex)
             {

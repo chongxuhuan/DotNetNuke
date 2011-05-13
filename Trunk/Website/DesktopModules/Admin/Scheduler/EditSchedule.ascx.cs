@@ -45,8 +45,10 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
+
     public partial class EditSchedule : PortalModuleBase, IActionable
     {
+
         #region IActionable Members
 
         public ModuleActionCollection ModuleActions
@@ -83,6 +85,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         }
 
         #endregion
+
+        #region Private Methods
 
         private void BindData()
         {
@@ -146,12 +150,12 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         private void BindServers(string selectedServers)
         {
-            List<ServerInfo> servers = ServerController.GetServers();
-            foreach (ServerInfo webServer in servers)
+            var servers = ServerController.GetServers();
+            foreach (var webServer in servers)
             {
                 if (webServer.Enabled)
                 {
-                    string serverName = ServerController.GetServerName(webServer);
+                    var serverName = ServerController.GetServerName(webServer);
                     var serverItem = new ListItem(serverName, serverName);
                     if (string.IsNullOrEmpty(selectedServers))
                     {
@@ -160,7 +164,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                     else
                     {
                         serverItem.Selected = Null.NullBoolean;
-                        foreach (string selectedServer in selectedServers.Split(','))
+                        foreach (var selectedServer in selectedServers.Split(','))
                         {
                             if (selectedServer == serverName)
                             {
@@ -202,8 +206,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             objScheduleItem.CatchUpEnabled = chkCatchUpEnabled.Checked;
             objScheduleItem.Enabled = chkEnabled.Checked;
             objScheduleItem.ObjectDependencies = txtObjectDependencies.Text;
-            string servers = Null.NullString;
-            bool bAllSelected = true;
+            var servers = Null.NullString;
+            var bAllSelected = true;
             foreach (ListItem item in lstServers.Items)
             {
                 if (item.Selected)
@@ -226,20 +230,25 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             return objScheduleItem;
         }
 
+        #endregion
+
+        #region Event Handlers
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdDelete.Click += cmdDelete_Click;
-            cmdRun.Click += cmdRun_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
+            jQuery.RequestDnnPluginsRegistration();
+
+            cmdDelete.Click += OnDeleteClick;
+            cmdRun.Click += OnRunClick;
+            cmdUpdate.Click += OnUpdateClick;
 
             try
             {
                 if (!Page.IsPostBack)
                 {
-                    ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
+                    cmdCancel.NavigateUrl = Globals.NavigateURL();
                     BindData();
                 }
             }
@@ -249,32 +258,24 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        private void cmdCancel_Click(Object sender, EventArgs e)
+        protected void OnDeleteClick(Object sender, EventArgs e)
         {
-            Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        private void cmdDelete_Click(Object sender, EventArgs e)
-        {
-            var objScheduleItem = new ScheduleItem();
-            objScheduleItem.ScheduleID = Convert.ToInt32(ViewState["ScheduleID"]);
+            var objScheduleItem = new ScheduleItem {ScheduleID = Convert.ToInt32(ViewState["ScheduleID"])};
             SchedulingProvider.Instance().DeleteSchedule(objScheduleItem);
-            string strMessage;
-            strMessage = Localization.GetString("DeleteSuccess", LocalResourceFile);
+            var strMessage = Localization.GetString("DeleteSuccess", LocalResourceFile);
             UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.GreenSuccess);
         }
 
-        protected void cmdRun_Click(object sender, EventArgs e)
+        protected void OnRunClick(object sender, EventArgs e)
         {
-            string strMessage;
-            ScheduleItem objScheduleItem = CreateScheduleItem();
+            var objScheduleItem = CreateScheduleItem();
             if (ViewState["ScheduleID"] != null)
             {
                 objScheduleItem.ScheduleID = Convert.ToInt32(ViewState["ScheduleID"]);
                 SchedulingProvider.Instance().RunScheduleItemNow(objScheduleItem);
             }
             SchedulingProvider.Instance().RunScheduleItemNow(objScheduleItem);
-            strMessage = Localization.GetString("RunNow", LocalResourceFile);
+            var strMessage = Localization.GetString("RunNow", LocalResourceFile);
             UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.GreenSuccess);
             if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
             {
@@ -282,10 +283,9 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        private void cmdUpdate_Click(Object sender, EventArgs e)
+        protected void OnUpdateClick(Object sender, EventArgs e)
         {
-            string strMessage;
-            ScheduleItem objScheduleItem = CreateScheduleItem();
+            var objScheduleItem = CreateScheduleItem();
             if (ViewState["ScheduleID"] != null)
             {
                 objScheduleItem.ScheduleID = Convert.ToInt32(ViewState["ScheduleID"]);
@@ -295,7 +295,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             {
                 SchedulingProvider.Instance().AddSchedule(objScheduleItem);
             }
-            strMessage = Localization.GetString("UpdateSuccess", LocalResourceFile);
+            var strMessage = Localization.GetString("UpdateSuccess", LocalResourceFile);
             UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.GreenSuccess);
             if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
             {
@@ -303,5 +303,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             Response.Redirect(Globals.NavigateURL(), true);
         }
+
+        #endregion
+
     }
 }

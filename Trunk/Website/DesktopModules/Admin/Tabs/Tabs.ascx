@@ -144,7 +144,7 @@
 
 					<p class="tabhelp"><asp:Label ID="lblhelp_Permissions" runat="server" resourcekey="lblHelp_Permissions"></asp:Label></p>
 
-					<dnn:TabPermissionsGrid ID="dgPermissions" runat="server"/>                    
+					<dnn:TabPermissionsGrid ID="dgPermissions" runat="server" />
 
 				</telerik:RadPageView>
 

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 using System.Web.UI;
 
 using DotNetNuke.Common;
@@ -41,7 +42,7 @@ namespace DotNetNuke.UI.ControlPanel
 
     public partial class SwitchSite : UserControl, IDnnRibbonBarTool
     {
-        #region "Event Handlers"
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
@@ -78,6 +79,10 @@ namespace DotNetNuke.UI.ControlPanel
                     }
                 }
             }
+            catch(ThreadAbortException texc)
+            {
+              //Do nothing we are not logging ThreadAbortxceptions caused by redirects      
+            }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
@@ -86,7 +91,7 @@ namespace DotNetNuke.UI.ControlPanel
 
         #endregion
 
-        #region "Properties"
+        #region Properties
 
         public override bool Visible
         {
@@ -118,7 +123,7 @@ namespace DotNetNuke.UI.ControlPanel
 
         #endregion
 
-        #region "Methods"
+        #region Methods
 
         private void LoadPortalsList()
         {

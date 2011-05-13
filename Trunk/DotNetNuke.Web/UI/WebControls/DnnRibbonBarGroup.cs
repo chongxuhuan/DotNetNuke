@@ -132,7 +132,7 @@ namespace DotNetNuke.Web.UI.WebControls
                     if ((ctrl.Visible))
                     {
                         returnValue = true;
-                        break; // TODO: might not be correct. Was : Exit For
+                        break;
                     }
                 }
                 else
@@ -143,7 +143,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         if ((foundTool))
                         {
                             returnValue = true;
-                            break; // TODO: might not be correct. Was : Exit For
+                            break;
                         }
                     }
                 }

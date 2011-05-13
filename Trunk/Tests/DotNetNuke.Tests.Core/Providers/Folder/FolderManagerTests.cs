@@ -74,7 +74,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             CBOWrapper.RegisterInstance(_cbo.Object);
             PathUtils.RegisterInstance(_pathUtils.Object);
 
-            _mockFolderManager = new Mock<FolderManager>() { CallBase = true };
+            _mockFolderManager = new Mock<FolderManager> { CallBase = true };
 
             _folderManager = new FolderManager();
 
@@ -107,7 +107,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var folderMapping = new FolderMappingInfo
                                     {
-                                        FolderMappingID = Constants.FOLDER_ValidStorageLocation,
+                                        FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
                                         FolderProviderType = Constants.FOLDER_ValidFolderProviderType,
                                         PortalID = Constants.CONTENT_ValidPortalId
                                     };
@@ -116,7 +116,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath)).Returns(Constants.FOLDER_ValidSubFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidSubFolderPath));
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath, Constants.FOLDER_ValidStorageLocation));
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath, Constants.FOLDER_ValidFolderMappingID));
 
             _mockFolderManager.Object.AddFolder(folderMapping, Constants.FOLDER_ValidSubFolderRelativePath);
 
@@ -129,7 +129,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo
                                     {
-                                        FolderMappingID = Constants.FOLDER_ValidStorageLocation,
+                                        FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
                                         FolderProviderType = Constants.FOLDER_ValidFolderProviderType
                                     };
 
@@ -147,7 +147,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var folderMapping = new FolderMappingInfo
                                     {
-                                        FolderMappingID = Constants.FOLDER_ValidStorageLocation,
+                                        FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
                                         FolderProviderType = Constants.FOLDER_ValidFolderProviderType,
                                         PortalID = Constants.CONTENT_ValidPortalId
                                     };
@@ -156,7 +156,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath)).Returns(Constants.FOLDER_ValidSubFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidSubFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath, Constants.FOLDER_ValidStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidSubFolderRelativePath, Constants.FOLDER_ValidFolderMappingID)).Verifiable();
 
             _mockFolderManager.Object.AddFolder(folderMapping, Constants.FOLDER_ValidSubFolderRelativePath);
 
@@ -180,12 +180,11 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
             _folderInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFolderPath);
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMapping);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
             _mockFolder.Setup(mf => mf.DeleteFolder(_folderInfo.Object)).Verifiable();
 
@@ -200,12 +199,11 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [ExpectedException(typeof(FolderProviderException))]
         public void DeleteFolder_Throws_When_FolderProvider_Throws()
         {
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMapping);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
             _mockFolder.Setup(mf => mf.DeleteFolder(_folderInfo.Object)).Throws<Exception>();
 
@@ -218,12 +216,11 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
             _folderInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFolderPath);
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMapping);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
             _mockFolder.Setup(mf => mf.DeleteFolder(_folderInfo.Object));
 
@@ -242,12 +239,11 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
             _folderInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFolderPath);
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMapping);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
             _mockFolder.Setup(mf => mf.DeleteFolder(_folderInfo.Object));
 
@@ -321,7 +317,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var dr = files.CreateDataReader();
 
-            _mockData.Setup(md => md.GetFiles(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderId)).Returns(dr).Verifiable();
+            _mockData.Setup(md => md.GetFiles(Constants.FOLDER_ValidFolderId)).Returns(dr).Verifiable();
 
             var filesList = new List<FileInfo> { new FileInfo() { FileName = Constants.FOLDER_ValidFileName } };
 
@@ -344,10 +340,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var dr = files.CreateDataReader();
 
-            _mockData.Setup(md => md.GetFiles(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderId)).Returns(dr);
+            _mockData.Setup(md => md.GetFiles(Constants.FOLDER_ValidFolderId)).Returns(dr);
 
-            var filesList = new List<FileInfo>();
-            filesList.Add(new FileInfo() { FileName = Constants.FOLDER_ValidFileName });
+            var filesList = new List<FileInfo> { new FileInfo { FileName = Constants.FOLDER_ValidFileName } };
 
             _cbo.Setup(cbo => cbo.FillCollection<FileInfo>(dr)).Returns(filesList);
 
@@ -369,7 +364,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var dr = files.CreateDataReader();
 
-            _mockData.Setup(md => md.GetFiles(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderId)).Returns(dr);
+            _mockData.Setup(md => md.GetFiles(Constants.FOLDER_ValidFolderId)).Returns(dr);
 
             var filesList = new List<FileInfo>
                                 {
@@ -422,6 +417,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             _folderInfo.Setup(fi => fi.FolderName).Returns(Constants.FOLDER_ValidFolderName);
 
+            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
+
             var folderDataTable = new DataTable();
             folderDataTable.Columns.Add("FolderName");
             folderDataTable.Rows.Add(Constants.FOLDER_ValidFolderName);
@@ -430,8 +427,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFolder(Constants.FOLDER_ValidFolderId)).Returns(dr);
 
-            var folderInfo = new FolderInfo();
-            folderInfo.FolderPath = Constants.FOLDER_ValidFolderRelativePath;
+            var folderInfo = new FolderInfo { FolderPath = Constants.FOLDER_ValidFolderRelativePath };
 
             _cbo.Setup(cbo => cbo.FillObject<FolderInfo>(dr)).Returns(folderInfo);
 
@@ -448,24 +444,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        public void GetFolder_Calls_DataProvider_GetFolder_When_IgnoreCache_Is_True()
-        {
-            var folderDataTable = new DataTable();
-            folderDataTable.Columns.Add("FolderName");
-
-            var dr = folderDataTable.CreateDataReader();
-
-            _mockData.Setup(md => md.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(dr).Verifiable();
-
-            _cbo.Setup(cbo => cbo.FillObject<FolderInfo>(dr)).Returns(It.IsAny<FolderInfo>());
-
-            _mockFolderManager.Object.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath);
-
-            _mockData.Verify();
-        }
-
-        [Test]
-        public void GetFolder_Calls_GetFoldersSorted_When_IgnoreCache_Is_False()
+        public void GetFolder_Calls_GetFolders()
         {
             var foldersSorted = new List<IFolderInfo>();
 
@@ -479,6 +458,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolder_Calls_DataProvider_GetFolder_When_Folder_Is_Not_In_Cache()
         {
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderRelativePath);
+
             var foldersSorted = new List<IFolderInfo>();
 
             _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(foldersSorted);
@@ -500,6 +481,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _cbo.Setup(cbo => cbo.FillObject<FolderInfo>(dr)).Returns<FolderInfo>(null);
 
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(new List<IFolderInfo>());
+
             var result = _mockFolderManager.Object.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath);
 
             Assert.IsNull(result);
@@ -508,6 +491,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolder_Returns_Valid_Folder_When_Folder_Exists_Overload()
         {
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
+
             var folderDataTable = new DataTable();
             folderDataTable.Columns.Add("FolderName");
             folderDataTable.Rows.Add(Constants.FOLDER_ValidFolderName);
@@ -519,6 +505,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var folderInfo = new FolderInfo { FolderPath = Constants.FOLDER_ValidFolderRelativePath };
 
             _cbo.Setup(cbo => cbo.FillObject<FolderInfo>(dr)).Returns(folderInfo);
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(new List<IFolderInfo>());
 
             var result = _mockFolderManager.Object.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath);
 
@@ -573,11 +561,11 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFolders
 
         [Test]
-        public void GetFoldersSorted_Calls_CBO_GetCachedObject()
+        public void GetFolders_Calls_CBO_GetCachedObject()
         {
-            var folders = new SortedList<string, FolderInfo>();
+            var folders = new List<FolderInfo>();
 
-            _cbo.Setup(cbo => cbo.GetCachedObject<SortedList<string, FolderInfo>>(It.IsAny<CacheItemArgs>(), It.IsAny<CacheItemExpiredCallback>())).Returns(folders).Verifiable();
+            _cbo.Setup(cbo => cbo.GetCachedObject<List<FolderInfo>>(It.IsAny<CacheItemArgs>(), It.IsAny<CacheItemExpiredCallback>())).Returns(folders).Verifiable();
 
             _mockFolderManager.Object.GetFolders(Constants.CONTENT_ValidPortalId);
 
@@ -607,16 +595,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void RenameFolder_Calls_FolderProvider_RenameFolder_When_NewFolderName_Is_Different_From_FolderName()
         {
-            var folderInfo = new FolderInfo();
-            folderInfo.FolderPath = Constants.FOLDER_ValidFolderRelativePath;
-            folderInfo.StorageLocation = Constants.FOLDER_ValidStorageLocation;
+            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
 
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderInfo = new FolderInfo { FolderPath = Constants.FOLDER_ValidFolderRelativePath, FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMapping);
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _mockFolderManager.Setup(mfm => mfm.RenameSubfolders(folderInfo, Constants.FOLDER_OtherValidFolderName));
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+
+            _mockFolderManager.Setup(mfm => mfm.RenameFolderInFileSystem(folderInfo, It.IsAny<string>()));
+            _mockFolderManager.Setup(mfm => mfm.RenameFolderInDatabase(folderInfo, It.IsAny<string>()));
 
             _mockFolderManager.Object.RenameFolder(folderInfo, Constants.FOLDER_OtherValidFolderName);
 
@@ -626,6 +614,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void RenameFolder_Does_Not_Call_FolderProvider_RenameFolder_When_NewFolderName_Equals_FolderName()
         {
+            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
+
             var folderInfo = new FolderInfo();
             folderInfo.FolderPath = Constants.FOLDER_ValidFolderRelativePath;
 
@@ -663,6 +653,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<DateTime>(),
+                It.IsAny<int>(),
                 It.IsAny<int>()), Times.Once());
         }
 
@@ -826,23 +817,19 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFileSystemFoldersRecursive_Returns_All_The_Folders_In_Folder_Tree()
         {
-            var relativePaths = new Dictionary<string, string>();
-
-            relativePaths.Add(@"C:\folder", "folder/");
-            relativePaths.Add(@"C:\folder\subfolder", "folder/subfolder/");
-            relativePaths.Add(@"C:\folder\subfolder2", "folder/subfolder2/");
-            relativePaths.Add(@"C:\folder\subfolder2\subsubfolder", "folder/subfolder2/subsubfolder/");
-            relativePaths.Add(@"C:\folder\subfolder2\subsubfolder2", "folder/subfolder2/subsubfolder2/");
+            var relativePaths = new Dictionary<string, string>
+                                    {
+                                        {@"C:\folder", "folder/"},
+                                        {@"C:\folder\subfolder", "folder/subfolder/"},
+                                        {@"C:\folder\subfolder2", "folder/subfolder2/"},
+                                        {@"C:\folder\subfolder2\subsubfolder", "folder/subfolder2/subsubfolder/"},
+                                        {@"C:\folder\subfolder2\subsubfolder2", "folder/subfolder2/subsubfolder2/"}
+                                    };
 
             _pathUtils.Setup(pu => pu.GetRelativePath(Constants.CONTENT_ValidPortalId, It.IsAny<string>()))
                 .Returns<int, string>((portalID, physicalPath) => relativePaths[physicalPath]);
 
-            var directories = new List<string>();
-
-            directories.Add(@"C:\folder\subfolder");
-            directories.Add(@"C:\folder\subfolder2");
-            directories.Add(@"C:\folder\subfolder2\subsubfolder");
-            directories.Add(@"C:\folder\subfolder2\subsubfolder2");
+            var directories = new List<string> { @"C:\folder\subfolder", @"C:\folder\subfolder2", @"C:\folder\subfolder2\subsubfolder", @"C:\folder\subfolder2\subsubfolder2" };
 
             _directory.Setup(d => d.GetDirectories(It.IsAny<string>()))
                 .Returns<string>(path => directories.FindAll(sub => sub.StartsWith(path + "\\") && sub.LastIndexOf("\\") == path.Length).ToArray());
@@ -856,31 +843,26 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFileSystemFoldersRecursive_Sets_ExistsInFileSystem_For_All_Items()
         {
-            var relativePaths = new Dictionary<string, string>();
-
-            relativePaths.Add(@"C:\folder", "folder/");
-            relativePaths.Add(@"C:\folder\subfolder", "folder/subfolder/");
-            relativePaths.Add(@"C:\folder\subfolder2", "folder/subfolder2/");
-            relativePaths.Add(@"C:\folder\subfolder2\subsubfolder", "folder/subfolder2/subsubfolder/");
-            relativePaths.Add(@"C:\folder\subfolder2\subsubfolder2", "folder/subfolder2/subsubfolder2/");
+            var relativePaths = new Dictionary<string, string>
+                                    {
+                                        {@"C:\folder", "folder/"},
+                                        {@"C:\folder\subfolder", "folder/subfolder/"},
+                                        {@"C:\folder\subfolder2", "folder/subfolder2/"},
+                                        {@"C:\folder\subfolder2\subsubfolder", "folder/subfolder2/subsubfolder/"},
+                                        {@"C:\folder\subfolder2\subsubfolder2", "folder/subfolder2/subsubfolder2/"}
+                                    };
 
             _pathUtils.Setup(pu => pu.GetRelativePath(Constants.CONTENT_ValidPortalId, It.IsAny<string>()))
                 .Returns<int, string>((portalID, physicalPath) => relativePaths[physicalPath]);
 
-            var directories = new List<string>();
-
-            directories.Add(@"C:\folder");
-            directories.Add(@"C:\folder\subfolder");
-            directories.Add(@"C:\folder\subfolder2");
-            directories.Add(@"C:\folder\subfolder2\subsubfolder");
-            directories.Add(@"C:\folder\subfolder2\subsubfolder2");
+            var directories = new List<string> { @"C:\folder", @"C:\folder\subfolder", @"C:\folder\subfolder2", @"C:\folder\subfolder2\subsubfolder", @"C:\folder\subfolder2\subsubfolder2" };
 
             _directory.Setup(d => d.GetDirectories(It.IsAny<string>()))
                 .Returns<string>(path => directories.FindAll(sub => sub.StartsWith(path + "\\") && sub.LastIndexOf("\\") == path.Length).ToArray());
 
             var result = _mockFolderManager.Object.GetFileSystemFoldersRecursive(Constants.CONTENT_ValidPortalId, @"C:\folder");
 
-            Assert.ForAll<FolderManager.MergedTreeItem>(result.Values, item => item.ExistsInFileSystem);
+            Assert.ForAll(result.Values, item => item.ExistsInFileSystem);
         }
 
         #endregion
@@ -931,7 +913,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         public void GetDatabaseFoldersRecursive_Returns_One_Item_When_Folder_Does_Not_Have_SubFolders()
         {
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
             var subfolders = new List<IFolderInfo>();
 
@@ -946,14 +928,15 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         public void GetDatabaseFoldersRecursive_Returns_All_The_Folders_In_Folder_Tree()
         {
             _folderInfo.Setup(fi => fi.FolderPath).Returns("folder/");
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var subfolders = new List<IFolderInfo>();
-
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/subsubfolder/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/subsubfolder2/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
+            var subfolders = new List<IFolderInfo>
+                                 {
+                                     new FolderInfo {FolderPath = "folder/subfolder/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo {FolderPath = "folder/subfolder2/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo {FolderPath = "folder/subfolder2/subsubfolder/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo {FolderPath = "folder/subfolder2/subsubfolder2/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID}
+                                 };
 
             _mockFolderManager.Setup(mfm => mfm.GetFolders(It.IsAny<IFolderInfo>()))
                 .Returns<IFolderInfo>(parent => subfolders.FindAll(sub =>
@@ -970,14 +953,15 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         public void GetDatabaseFoldersRecursive_Sets_ExistsInDatabase_For_All_Items()
         {
             _folderInfo.Setup(fi => fi.FolderPath).Returns("folder/");
-            _folderInfo.Setup(fi => fi.StorageLocation).Returns(Constants.FOLDER_ValidStorageLocation);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var subfolders = new List<IFolderInfo>();
-
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/subsubfolder/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            subfolders.Add(new FolderInfo() { FolderPath = "folder/subfolder2/subsubfolder2/", StorageLocation = Constants.FOLDER_ValidStorageLocation });
+            var subfolders = new List<IFolderInfo>
+                                 {
+                                     new FolderInfo() {FolderPath = "folder/subfolder/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo() {FolderPath = "folder/subfolder2/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo() {FolderPath = "folder/subfolder2/subsubfolder/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID},
+                                     new FolderInfo() {FolderPath = "folder/subfolder2/subsubfolder2/", FolderMappingID = Constants.FOLDER_ValidFolderMappingID}
+                                 };
 
             _mockFolderManager.Setup(mfm => mfm.GetFolders(It.IsAny<IFolderInfo>()))
                 .Returns<IFolderInfo>(parent => subfolders.FindAll(sub =>
@@ -987,7 +971,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetDatabaseFoldersRecursive(_folderInfo.Object);
 
-            Assert.ForAll<FolderManager.MergedTreeItem>(result.Values, item => item.ExistsInDatabase);
+            Assert.ForAll(result.Values, item => item.ExistsInDatabase);
         }
 
         #endregion
@@ -997,9 +981,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolderMappingFolders_Returns_Empty_List_When_Folder_Does_Not_Exist()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
             _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(false);
 
@@ -1011,24 +993,20 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolderMappingFolders_Returns_One_Item_When_Folder_Exists_And_Is_Not_Recursive()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
             _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
 
             var result = _mockFolderManager.Object.GetFolderMappingFolders(folderMapping, Constants.FOLDER_ValidFolderRelativePath, false);
 
             Assert.Count(1, result);
-            Assert.IsTrue(result.Values[0].ExistsInFolderMappings.Contains(Constants.FOLDER_ValidStorageLocation));
+            Assert.IsTrue(result.Values[0].ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
         }
 
         [Test]
         public void GetFolderMappingFolders_Calls_FolderManager_GetFolderMappingFoldersRecursive_When_Folder_Exists_And_Is_Recursive()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
             _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
 
@@ -1047,9 +1025,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolderMappingFoldersRecursive_Returns_One_Item_When_Folder_Does_Not_Have_SubFolders()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
             var subfolders = new List<string>();
 
@@ -1063,16 +1039,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetFolderMappingFoldersRecursive_Returns_All_The_Folders_In_Folder_Tree()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            var subfolders = new List<string>();
-
-            subfolders.Add("folder/subfolder");
-            subfolders.Add("folder/subfolder2");
-            subfolders.Add("folder/subfolder2/subsubfolder");
-            subfolders.Add("folder/subfolder2/subsubfolder2");
+            var subfolders = new List<string> { "folder/subfolder", "folder/subfolder2", "folder/subfolder2/subsubfolder", "folder/subfolder2/subsubfolder2" };
 
             _mockFolder.Setup(mf => mf.GetSubFolders(It.IsAny<string>(), folderMapping))
                 .Returns<string, FolderMappingInfo>((parent, fm) => subfolders.FindAll(sub =>
@@ -1088,16 +1057,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void GetDatabaseFoldersRecursive_Sets_ExistsInFolderMappings_For_All_Items()
         {
-            var folderMapping = new FolderMappingInfo();
-            folderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMapping.FolderProviderType = Constants.FOLDER_ValidFolderProviderType;
+            var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            var subfolders = new List<string>();
-
-            subfolders.Add("folder/subfolder");
-            subfolders.Add("folder/subfolder2");
-            subfolders.Add("folder/subfolder2/subsubfolder");
-            subfolders.Add("folder/subfolder2/subsubfolder2");
+            var subfolders = new List<string> { "folder/subfolder", "folder/subfolder2", "folder/subfolder2/subsubfolder", "folder/subfolder2/subsubfolder2" };
 
             _mockFolder.Setup(mf => mf.GetSubFolders(It.IsAny<string>(), folderMapping))
                 .Returns<string, FolderMappingInfo>((parent, fm) => subfolders.FindAll(sub =>
@@ -1107,7 +1069,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFolderMappingFoldersRecursive(folderMapping, "folder/");
 
-            Assert.ForAll<FolderManager.MergedTreeItem>(result.Values, item => item.ExistsInFolderMappings.Contains(Constants.FOLDER_ValidStorageLocation));
+            Assert.ForAll(result.Values, item => item.ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
         }
 
         #endregion
@@ -1128,13 +1090,17 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void MergeFolderLists_Count_Equals_The_Intersection_Count_Between_Both_Lists()
         {
-            var list1 = new SortedList<string, FolderManager.MergedTreeItem>();
-            list1.Add("folder1", new FolderManager.MergedTreeItem() { FolderPath = "folder1" });
-            list1.Add("folder2", new FolderManager.MergedTreeItem() { FolderPath = "folder2" });
+            var list1 = new SortedList<string, FolderManager.MergedTreeItem>
+                            {
+                                {"folder1", new FolderManager.MergedTreeItem {FolderPath = "folder1"}},
+                                {"folder2", new FolderManager.MergedTreeItem {FolderPath = "folder2"}}
+                            };
 
-            var list2 = new SortedList<string, FolderManager.MergedTreeItem>();
-            list2.Add("folder1", new FolderManager.MergedTreeItem() { FolderPath = "folder1" });
-            list2.Add("folder3", new FolderManager.MergedTreeItem() { FolderPath = "folder3" });
+            var list2 = new SortedList<string, FolderManager.MergedTreeItem>
+                            {
+                                {"folder1", new FolderManager.MergedTreeItem {FolderPath = "folder1"}},
+                                {"folder3", new FolderManager.MergedTreeItem {FolderPath = "folder3"}}
+                            };
 
             var result = _folderManager.MergeFolderLists(list1, list2);
 
@@ -1144,19 +1110,29 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void MergeFolderLists_Merges_TreeItem_Properties()
         {
-            var list1 = new SortedList<string, FolderManager.MergedTreeItem>();
-            list1.Add("folder1", new FolderManager.MergedTreeItem() { FolderPath = "folder1", ExistsInFileSystem = true, ExistsInDatabase = true, StorageLocation = Constants.FOLDER_ValidStorageLocation });
+            var list1 = new SortedList<string, FolderManager.MergedTreeItem>
+                            {
+                                {
+                                    "folder1",
+                                    new FolderManager.MergedTreeItem {FolderPath = "folder1", ExistsInFileSystem = true, ExistsInDatabase = true, FolderMappingID = Constants.FOLDER_ValidFolderMappingID}
+                                    }
+                            };
 
-            var list2 = new SortedList<string, FolderManager.MergedTreeItem>();
-            list2.Add("folder1", new FolderManager.MergedTreeItem() { FolderPath = "folder1", ExistsInFileSystem = false, ExistsInDatabase = false, ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation } });
+            var list2 = new SortedList<string, FolderManager.MergedTreeItem>
+                            {
+                                {
+                                    "folder1",
+                                    new FolderManager.MergedTreeItem {FolderPath = "folder1", ExistsInFileSystem = false, ExistsInDatabase = false, ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID}}
+                                    }
+                            };
 
             var result = _folderManager.MergeFolderLists(list1, list2);
 
             Assert.Count(1, result);
             Assert.IsTrue(result.Values[0].ExistsInFileSystem);
             Assert.IsTrue(result.Values[0].ExistsInDatabase);
-            Assert.AreEqual(Constants.FOLDER_ValidStorageLocation, result.Values[0].StorageLocation);
-            Assert.IsTrue(result.Values[0].ExistsInFolderMappings.Contains(Constants.FOLDER_ValidStorageLocation));
+            Assert.AreEqual(Constants.FOLDER_ValidFolderMappingID, result.Values[0].FolderMappingID);
+            Assert.IsTrue(result.Values[0].ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
         }
 
         #endregion
@@ -1166,18 +1142,27 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Sets_StorageLocation_To_Default_When_Folder_Exists_Only_In_FileSystem_And_Database_And_FolderMapping_Is_Not_Default_And_Has_SubFolders()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem() { FolderPath = Constants.FOLDER_ValidFolderRelativePath, ExistsInFileSystem = true, ExistsInDatabase = true, StorageLocation = Constants.FOLDER_ValidStorageLocation });
-            mergedTree.Add(Constants.FOLDER_ValidSubFolderRelativePath, new FolderManager.MergedTreeItem() { FolderPath = Constants.FOLDER_ValidSubFolderRelativePath });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         },
+                                     {Constants.FOLDER_ValidSubFolderRelativePath, new FolderManager.MergedTreeItem {FolderPath = Constants.FOLDER_ValidSubFolderRelativePath}}
+                                 };
 
             var folderMappingOfItem = new FolderMappingInfo();
-            var defaultFolderMapping = new FolderMappingInfo();
-            defaultFolderMapping.FolderMappingID = 1;
+            var defaultFolderMapping = new FolderMappingInfo { FolderMappingID = 1 };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetDefaultFolderMapping(Constants.CONTENT_ValidPortalId)).Returns(defaultFolderMapping);
 
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, 1)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, 1)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1192,12 +1177,22 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Deletes_Folder_From_FileSystem_And_Database_When_Folder_Exists_Only_In_FileSystem_And_Database_And_FolderMapping_Is_Not_Default_And_Has_Not_SubFolders()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem() { FolderPath = Constants.FOLDER_ValidFolderRelativePath, ExistsInFileSystem = true, ExistsInDatabase = true, StorageLocation = Constants.FOLDER_ValidStorageLocation });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         }
+                                 };
 
             var folderMappingOfItem = new FolderMappingInfo();
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Verifiable();
@@ -1207,7 +1202,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             Assert.IsNull(result);
             _directory.Verify(d => d.Delete(Constants.FOLDER_ValidFolderPath, false), Times.Once());
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
         }
@@ -1215,18 +1210,27 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Does_Nothing_When_Folder_Exists_Only_In_FileSystem_And_Database_And_FolderMapping_Is_Default()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem() { FolderPath = Constants.FOLDER_ValidFolderRelativePath, ExistsInFileSystem = true, ExistsInDatabase = true, StorageLocation = Constants.FOLDER_ValidStorageLocation });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         }
+                                 };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "StandardFolderProvider" };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.IsNull(result);
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
@@ -1236,35 +1240,34 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Sets_StorageLocation_To_The_Highest_Priority_One_When_Folder_Exists_Only_In_FileSystem_And_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Default_And_Folder_Does_Not_Contain_Files()
         {
-            var externalStorageLocation = 15;
-            var externalMappingName = "External Mapping";
+            const int externalStorageLocation = 15;
+            const string externalMappingName = "External Mapping";
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = "StandardFolderProvider" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, MappingName = externalMappingName };
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
-            externalFolderMapping.MappingName = externalMappingName;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
             _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath))
                 .Returns(_folderInfo.Object);
 
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
 
             var mockFolder = MockComponentProvider.CreateFolderProvider("StandardFolderProvider");
 
@@ -1283,25 +1286,25 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Does_Nothing_When_Folder_Exists_Only_In_FileSystem_And_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Default_And_Folder_Contains_Files()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = "StandardFolderProvider", MappingName = "Default Mapping" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
-            folderMappingOfItem.MappingName = "Default Mapping";
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath))
                 .Returns(_folderInfo.Object);
@@ -1313,7 +1316,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, folderMappingOfItem.MappingName), result);
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
@@ -1323,31 +1326,31 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Sets_StorageLocation_To_The_Highest_Priority_One_When_Folder_Exists_Only_In_FileSystem_And_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Different_From_Actual()
         {
-            var externalStorageLocation = 15;
-            var externalMappingName = "External Mapping";
+            const int externalStorageLocation = 15;
+            const string externalMappingName = "External Mapping";
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, MappingName = externalMappingName };
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
-            externalFolderMapping.MappingName = externalMappingName;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1360,29 +1363,67 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        public void ProcessMergedTreeItem_Returns_Collision_And_Does_Nothing_When_Folder_Exists_Only_In_FileSystem_And_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Equal_Than_Actual()
+        public void ProcessMergedTreeItem_Returns_Collision_And_Does_Nothing_When_Folder_Exists_Only_In_FileSystem_And_Database_And_More_Than_One_FolderMappings_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Equal_Than_Actual()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            const int externalStorageLocation = 15;
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation }
-            });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID, externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMappingOfItem.MappingName = "Default Mapping";
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, Priority = 0, MappingName = "Default Mapping" };
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, Priority = 1, MappingName = "External Mapping" };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, folderMappingOfItem.MappingName), result);
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
+            _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
+        }
+
+        [Test]
+        public void ProcessMergedTreeItem_Returns_Null_And_Does_Nothing_When_Folder_Exists_Only_In_FileSystem_And_Database_And_One_FolderMapping_And_FolderMapping_Is_Not_Default()
+        {
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID}
+                                             }
+                                         }
+                                 };
+
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, MappingName = "Default Mapping" };
+
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
+
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
+
+            var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
+
+            Assert.IsNull(result);
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
@@ -1392,27 +1433,25 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_Database_With_Default_StorageLocation_When_Folder_Exists_Only_In_FileSystem()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {FolderPath = Constants.FOLDER_ValidFolderRelativePath, ExistsInFileSystem = true, ExistsInDatabase = false}
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = false
-            });
-
-            var defaultFolderMapping = new FolderMappingInfo();
-            defaultFolderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
+            var defaultFolderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
 
             _folderMappingController.Setup(fmc => fmc.GetDefaultFolderMapping(Constants.CONTENT_ValidPortalId)).Returns(defaultFolderMapping);
 
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidFolderMappingID)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.IsNull(result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1421,21 +1460,22 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_Database_With_Default_StorageLocation_When_Folder_Exists_Only_In_FileSystem_And_One_Or_More_FolderMappings_And_Folder_Contains_Files()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = false,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = false,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
-
-            var defaultFolderMapping = new FolderMappingInfo();
-            defaultFolderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            defaultFolderMapping.MappingName = "Default Mapping";
+            var defaultFolderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, MappingName = "Default Mapping" };
 
             _folderMappingController.Setup(fmc => fmc.GetDefaultFolderMapping(Constants.CONTENT_ValidPortalId)).Returns(defaultFolderMapping);
 
@@ -1443,13 +1483,13 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _directory.Setup(d => d.GetFiles(Constants.FOLDER_ValidFolderPath)).Returns(new string[1]);
 
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidFolderMappingID)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, defaultFolderMapping.MappingName), result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1458,21 +1498,22 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_Database_With_The_Highest_Priority_StorageLocation_When_Folder_Exists_Only_In_FileSystem_And_One_Or_More_FolderMappings_And_Folder_Does_Not_Contain_Files()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = true,
+                                                 ExistsInDatabase = false,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = true,
-                ExistsInDatabase = false,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
-
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
-            externalFolderMapping.MappingName = "External Mapping";
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, MappingName = "External Mapping" };
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
@@ -1486,7 +1527,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, externalFolderMapping.MappingName), result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1495,20 +1536,22 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_When_Folder_Exists_Only_In_Database_And_FolderMapping_Is_Default()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "StandardFolderProvider" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
@@ -1517,7 +1560,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             Assert.IsNull(result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1526,27 +1569,28 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_Default_When_Folder_Exists_Only_In_Database_And_FolderMapping_Is_Not_Default_And_Folder_Has_SubFolders()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         },
+                                     {Constants.FOLDER_ValidSubFolderRelativePath, new FolderManager.MergedTreeItem {FolderPath = Constants.FOLDER_ValidSubFolderRelativePath}}
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation
-            });
+            var defaultFolderMapping = new FolderMappingInfo { FolderMappingID = 1 };
 
-            mergedTree.Add(Constants.FOLDER_ValidSubFolderRelativePath, new FolderManager.MergedTreeItem() { FolderPath = Constants.FOLDER_ValidSubFolderRelativePath });
-
-            var defaultFolderMapping = new FolderMappingInfo();
-            defaultFolderMapping.FolderMappingID = 1;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(new FolderMappingInfo());
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(new FolderMappingInfo());
             _folderMappingController.Setup(fmc => fmc.GetDefaultFolderMapping(Constants.CONTENT_ValidPortalId)).Returns(defaultFolderMapping);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, defaultFolderMapping.FolderMappingID)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, defaultFolderMapping.FolderMappingID)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1560,17 +1604,20 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Deletes_Folder_In_Database_When_Folder_Exists_Only_In_Database_And_FolderMapping_Is_Not_Default_And_Folder_Has_Not_SubFolders()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation
-            });
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(new FolderMappingInfo());
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(new FolderMappingInfo());
 
             _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Verifiable();
 
@@ -1578,7 +1625,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             Assert.IsNull(result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInFileSystem(It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1587,27 +1634,29 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_The_Only_External_FolderMapping_When_Folder_Exists_Only_In_Database_And_One_FolderMapping_And_FolderMapping_Is_Default_But_Not_Database()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "StandardFolderProvider" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1621,38 +1670,36 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_The_One_With_Highest_Priority_When_Folder_Exists_Only_In_Database_And_More_Than_One_FolderMapping_And_FolderMapping_Is_Default_But_Not_Database()
         {
-            var externalStorageLocation1 = 15;
-            var externalStorageLocation2 = 16;
+            const int externalStorageLocation1 = 15;
+            const int externalStorageLocation2 = 16;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation1, externalStorageLocation2}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation1, externalStorageLocation2 }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "StandardFolderProvider" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "StandardFolderProvider";
+            var externalFolderMapping1 = new FolderMappingInfo { FolderMappingID = externalStorageLocation1, Priority = 0, MappingName = "External Mapping" };
 
-            var externalFolderMapping1 = new FolderMappingInfo();
-            externalFolderMapping1.FolderMappingID = externalStorageLocation1;
-            externalFolderMapping1.Priority = 0;
-            externalFolderMapping1.MappingName = "External Mapping";
+            var externalFolderMapping2 = new FolderMappingInfo { Priority = 1 };
 
-            var externalFolderMapping2 = new FolderMappingInfo();
-            externalFolderMapping2.Priority = 1;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation1)).Returns(externalFolderMapping1);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation2)).Returns(externalFolderMapping2);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation1)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation1)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1666,34 +1713,34 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_The_One_With_Highest_Priority_When_Folder_Exists_Only_In_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Database_And_Folder_Does_Not_Contain_Files()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "DatabaseFolderProvider" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "DatabaseFolderProvider";
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, MappingName = "External Mapping" };
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
-            externalFolderMapping.MappingName = "External Mapping";
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(_folderInfo.Object);
             _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(new List<IFileInfo>());
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1707,35 +1754,36 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_When_Folder_Exists_Only_In_Database_And_One_Or_More_FolderMappings_And_FolderMapping_Is_Database_And_Folder_Contains_Files()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderProviderType = "DatabaseFolderProvider", MappingName = "Database Mapping" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderProviderType = "DatabaseFolderProvider";
-            folderMappingOfItem.MappingName = "Database Mapping";
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(_folderInfo.Object);
-            _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(new List<IFileInfo>() { new FileInfo() });
+            _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(new List<IFileInfo> { new FileInfo() });
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, folderMappingOfItem.MappingName), result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1744,30 +1792,32 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_The_One_With_Highest_Priority_When_Folder_Exists_Only_In_Database_And_One_FolderMapping_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Different_From_Actual()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
-
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation }
-            });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
             var folderMappingOfItem = new FolderMappingInfo();
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1781,37 +1831,36 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_And_Sets_StorageLocation_To_The_One_With_Highest_Priority_When_Folder_Exists_Only_In_Database_And_More_Than_One_FolderMapping_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_IsDifferent_From_Actual()
         {
-            var externalStorageLocation1 = 15;
-            var externalStorageLocation2 = 16;
+            const int externalStorageLocation1 = 15;
+            const int externalStorageLocation2 = 16;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
-
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { externalStorageLocation1, externalStorageLocation2 }
-            });
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {externalStorageLocation1, externalStorageLocation2}
+                                             }
+                                         }
+                                 };
 
             var folderMappingOfItem = new FolderMappingInfo();
 
-            var externalFolderMapping1 = new FolderMappingInfo();
-            externalFolderMapping1.FolderMappingID = externalStorageLocation1;
-            externalFolderMapping1.Priority = 0;
-            externalFolderMapping1.MappingName = "External Mapping";
+            var externalFolderMapping1 = new FolderMappingInfo { FolderMappingID = externalStorageLocation1, Priority = 0, MappingName = "External Mapping" };
 
-            var externalFolderMapping2 = new FolderMappingInfo();
-            externalFolderMapping2.Priority = 1;
+            var externalFolderMapping2 = new FolderMappingInfo { Priority = 1 };
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation1)).Returns(externalFolderMapping1);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation2)).Returns(externalFolderMapping2);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.UpdateStorageLocation(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation1)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, externalStorageLocation1)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
@@ -1825,21 +1874,23 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_When_Folder_Exists_Only_In_Database_And_One_FolderMapping_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Equal_Than_Actual()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
@@ -1848,7 +1899,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             Assert.IsNull(result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1857,29 +1908,27 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_When_Folder_Exists_Only_In_Database_And_More_Than_One_FolderMapping_And_FolderMapping_Is_Not_Default_And_New_FolderMapping_Is_Equal_Than_Actual()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = true,
+                                                 FolderMappingID = Constants.FOLDER_ValidFolderMappingID,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID, externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = true,
-                StorageLocation = Constants.FOLDER_ValidStorageLocation,
-                ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation, externalStorageLocation }
-            });
+            var folderMappingOfItem = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, Priority = 0, MappingName = "External Mapping" };
 
-            var folderMappingOfItem = new FolderMappingInfo();
-            folderMappingOfItem.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            folderMappingOfItem.Priority = 0;
-            folderMappingOfItem.MappingName = "External Mapping";
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = externalStorageLocation, Priority = 1 };
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = externalStorageLocation;
-            externalFolderMapping.Priority = 1;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(folderMappingOfItem);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
@@ -1889,7 +1938,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, folderMappingOfItem.MappingName), result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.CreateFolderInDatabase(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -1898,30 +1947,32 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Null_And_Creates_Folder_In_FileSystem_And_Creates_Folder_In_Database_With_The_Highest_Priority_StorageLocation_When_Folder_Exists_Only_In_One_FolderMapping()
         {
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = false,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = false,
-                ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation }
-            });
+            var externalFolderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
 
-            var externalFolderMapping = new FolderMappingInfo();
-            externalFolderMapping.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(externalFolderMapping);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(externalFolderMapping);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidFolderMappingID)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.IsNull(result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
         }
@@ -1929,39 +1980,37 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [Test]
         public void ProcessMergedTreeItem_Returns_Collision_And_Creates_Folder_In_FileSystem_And_Creates_Folder_In_Database_With_The_Highest_Priority_StorageLocation_When_Folder_Exists_Only_In_More_Than_One_FolderMapping()
         {
-            var externalStorageLocation = 15;
+            const int externalStorageLocation = 15;
 
-            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>();
+            var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
+                                 {
+                                     {
+                                         Constants.FOLDER_ValidFolderRelativePath,
+                                         new FolderManager.MergedTreeItem {
+                                                 FolderPath = Constants.FOLDER_ValidFolderRelativePath,
+                                                 ExistsInFileSystem = false,
+                                                 ExistsInDatabase = false,
+                                                 ExistsInFolderMappings = new List<int> {Constants.FOLDER_ValidFolderMappingID, externalStorageLocation}
+                                             }
+                                         }
+                                 };
 
-            mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, new FolderManager.MergedTreeItem()
-            {
-                FolderPath = Constants.FOLDER_ValidFolderRelativePath,
-                ExistsInFileSystem = false,
-                ExistsInDatabase = false,
-                ExistsInFolderMappings = new List<int> { Constants.FOLDER_ValidStorageLocation, externalStorageLocation }
-            });
+            var externalFolderMapping1 = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, Priority = 0, MappingName = "External Mapping" };
 
-            var externalFolderMapping1 = new FolderMappingInfo();
-            externalFolderMapping1.FolderMappingID = Constants.FOLDER_ValidStorageLocation;
-            externalFolderMapping1.Priority = 0;
-            externalFolderMapping1.MappingName = "External Mapping";
+            var externalFolderMapping2 = new FolderMappingInfo { FolderMappingID = externalStorageLocation, Priority = 1 };
 
-            var externalFolderMapping2 = new FolderMappingInfo();
-            externalFolderMapping2.FolderMappingID = externalStorageLocation;
-            externalFolderMapping2.Priority = 1;
-
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidStorageLocation)).Returns(externalFolderMapping1);
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(externalFolderMapping1);
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(externalStorageLocation)).Returns(externalFolderMapping2);
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.CreateFolderInFileSystem(Constants.FOLDER_ValidFolderPath)).Verifiable();
-            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidStorageLocation)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.CreateFolderInDatabase(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidFolderMappingID)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 
             Assert.AreEqual(string.Format("Collision on path '{0}'. Resolved using '{1}' folder mapping.", Constants.FOLDER_ValidFolderRelativePath, externalFolderMapping1.MappingName), result);
             _mockFolderManager.Verify();
-            _mockFolderManager.Verify(mfm => mfm.UpdateStorageLocation(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
         }

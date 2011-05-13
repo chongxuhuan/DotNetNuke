@@ -113,7 +113,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         ITermController termRep = Util.GetTermController();
                         IVocabularyController vocabRep = Util.GetVocabularyController();
                         _Terms = new List<Term>();
-                        var vocabularies = from v in vocabRep.GetVocabularies() where v.ScopeType.Type == "Application" || (v.ScopeType.Type == "Portal" && v.ScopeId == PortalId) select v;
+                        var vocabularies = from v in vocabRep.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v;
 
                         foreach (Vocabulary v in vocabularies)
                         {

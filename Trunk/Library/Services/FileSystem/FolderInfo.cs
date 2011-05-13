@@ -49,6 +49,7 @@ namespace DotNetNuke.Services.FileSystem
         private string _displayName;
         private string _displayPath;
         private FolderPermissionCollection _folderPermissions;
+        private int _folderMappingID;
 
         #region "Constructors"
 
@@ -88,7 +89,6 @@ namespace DotNetNuke.Services.FileSystem
         [XmlElement("uniqueid")]
         public Guid UniqueId { get; set; }
 
-
         [XmlElement("versionguid")]
         public Guid VersionGuid { get; set; }
 
@@ -123,7 +123,6 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
-
         [XmlElement("folderpath")]
         public string FolderPath { get; set; }
 
@@ -143,7 +142,6 @@ namespace DotNetNuke.Services.FileSystem
                 _displayPath = value;
             }
         }
-
 
         [XmlElement("iscached")]
         public bool IsCached { get; set; }
@@ -209,6 +207,37 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
+        public int FolderMappingID
+        {
+            get
+            {
+                if (_folderMappingID == 0)
+                {
+                    switch (StorageLocation)
+                    {
+                        case (int)FolderController.StorageLocationTypes.InsecureFileSystem:
+                            _folderMappingID = FolderMappingController.Instance.GetFolderMapping(PortalID, "Standard").FolderMappingID;
+                            break;
+                        case (int)FolderController.StorageLocationTypes.SecureFileSystem:
+                            _folderMappingID = FolderMappingController.Instance.GetFolderMapping(PortalID, "Secure").FolderMappingID;
+                            break;
+                        case (int)FolderController.StorageLocationTypes.DatabaseSecure:
+                            _folderMappingID = FolderMappingController.Instance.GetFolderMapping(PortalID, "Database").FolderMappingID;
+                            break;
+                        default:
+                            _folderMappingID = FolderMappingController.Instance.GetDefaultFolderMapping(PortalID).FolderMappingID;
+                            break;
+                    }
+                }
+
+                return _folderMappingID;
+            }
+            set
+            {
+                _folderMappingID = value;
+            }
+        }
+
         #endregion
 
         #region "IHydratable Implementation"
@@ -234,6 +263,7 @@ namespace DotNetNuke.Services.FileSystem
             IsProtected = Null.SetNullBoolean(dr["IsProtected"]);
             StorageLocation = Null.SetNullInteger(dr["StorageLocation"]);
             LastUpdated = Null.SetNullDateTime(dr["LastUpdated"]);
+            FolderMappingID = Null.SetNullInteger(dr["FolderMappingID"]);
         }
 
         /// -----------------------------------------------------------------------------

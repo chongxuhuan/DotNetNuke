@@ -40,6 +40,6 @@
         </Columns>
     </asp:DataGrid>
     <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdCancel" /></li>
+        <li><asp:HyperLink id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li>
     </ul>
 </div>

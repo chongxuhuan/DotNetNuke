@@ -308,7 +308,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
                     var folderMappingController = FolderMappingController.Instance;
                     var folderMappings = folderMappingController.GetFolderMappings(FolderPortalID);
-                    folderMappings.FindAll(f => f.IsEnabled).ForEach(f => m_FolderMappings.Add(f.FolderMappingID, f.MappingName));
+                    folderMappings.ForEach(f => m_FolderMappings.Add(f.FolderMappingID, f.MappingName));
                 }
 
                 return m_FolderMappings;
@@ -397,7 +397,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             string strKey = MaskPath(RootFolderPath + folder.FolderPath);
             var subFolders = FolderManager.Instance.GetFolders(folder);
 
-            var imageIndex = FolderMappings.IndexOfKey(folder.StorageLocation);
+            var imageIndex = FolderMappings.IndexOfKey(folder.FolderMappingID);
 
             objNode = AddNode(strName, strKey, imageIndex, objNodes);
             objNode.HasNodes = subFolders.Count > 0;
@@ -434,9 +434,11 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             ddlStorageLocation.Items.Clear();
 
-            foreach (var folderMapping in FolderMappings)
+            var enabledFolderMappings = FolderMappingController.Instance.GetFolderMappings(FolderPortalID).FindAll(f => f.IsEnabled);
+
+            foreach (var folderMapping in enabledFolderMappings)
             {
-                ddlStorageLocation.Items.Add(new ListItem(folderMapping.Value, folderMapping.Key.ToString()));
+                ddlStorageLocation.Items.Add(new ListItem(folderMapping.MappingName, folderMapping.FolderMappingID.ToString()));
             }
         }
 
@@ -484,9 +486,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var folderPath = PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/");
             dgPermissions.FolderPath = folderPath;
             var objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, folderPath);
-            if (objFolderInfo != null)
+            if (objFolderInfo != null && ddlStorageLocation.Items.FindByValue(Convert.ToString(objFolderInfo.FolderMappingID)) != null)
             {
-                ddlStorageLocation.SelectedValue = Convert.ToString(objFolderInfo.StorageLocation);
+                ddlStorageLocation.SelectedValue = Convert.ToString(objFolderInfo.FolderMappingID);
             }
         }
 

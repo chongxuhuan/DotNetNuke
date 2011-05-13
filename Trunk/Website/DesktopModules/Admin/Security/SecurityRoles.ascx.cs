@@ -1,4 +1,4 @@
-#region Copyright
+    #region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -520,7 +520,14 @@ namespace DotNetNuke.Modules.Admin.Security
 
                 if (cmdDeleteUserRole != null)
                 {
-                    ClientAPI.AddButtonConfirm(cmdDeleteUserRole, String.Format(Localization.GetString("DeleteUsersFromRole.Text", LocalResourceFile), role.FullName, role.RoleName));
+                    if (RoleId == Null.NullInteger)
+                    {
+                        ClientAPI.AddButtonConfirm(cmdDeleteUserRole, String.Format(Localization.GetString("DeleteRoleFromUser.Text", LocalResourceFile), role.FullName, role.RoleName));
+                    }
+                    else
+                    {
+                        ClientAPI.AddButtonConfirm(cmdDeleteUserRole, String.Format(Localization.GetString("DeleteUsersFromRole.Text", LocalResourceFile), role.FullName, role.RoleName));
+                    }
                     cmdDeleteUserRole.Attributes.Add("roleId", role.RoleID.ToString());
                     cmdDeleteUserRole.Attributes.Add("userId", role.UserID.ToString());
                 }

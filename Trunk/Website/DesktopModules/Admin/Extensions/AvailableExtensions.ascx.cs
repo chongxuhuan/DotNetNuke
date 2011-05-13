@@ -44,6 +44,9 @@ using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins.Controls;
 
 using ICSharpCode.SharpZipLib.Zip;
+using System.Net;
+using System.Xml;
+using DotNetNuke.Entities.Host;
 
 #endregion
 
@@ -71,7 +74,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     {
                         string installPath;
                         string type;
-                        switch (packageType.Type)
+                        switch (packageType.PackageType)
                         {
                             case "Auth_System":
                                 type = "AuthSystem";
@@ -81,8 +84,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                             case "Skin":
                             case "Container":
                             case "Provider":
-                                type = packageType.Type;
-                                installPath = Globals.ApplicationMapPath + "\\Install\\" + packageType.Type;
+                                type = packageType.PackageType;
+                                installPath = Globals.ApplicationMapPath + "\\Install\\" + packageType.PackageType;
                                 break;
                             case "CoreLanguagePack":
                                 type = "Language";
@@ -412,5 +415,108 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 BindGrid(kvp.Value, extensionsGrid);
             }
         }
-    }
+
+        protected void btnSnow_Click(object sender, EventArgs e)
+        {
+            if (CheckCanCallSnowcovered()==true)
+            {
+                GetSnowcoveredFiles();
+            }
+
+        }
+
+        private void GetSnowcoveredFiles()
+        {
+            string fileCheck = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+             HttpWebRequest oRequest;
+            WebResponse oResponse;
+            Stream oStream;
+            XmlTextReader oReader;
+            XPathDocument oXMLDocument;
+            string sFeedType;
+            string sCategoryID;
+            string sRequest;
+            try
+            {
+                sRequest = fileCheck;
+                try
+                {
+                    oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
+                    oResponse = oRequest.GetResponse();
+                    oStream = oResponse.GetResponseStream();
+                }
+                catch (Exception oExc)
+                {
+                    throw oExc;
+                }
+                oReader = new XmlTextReader(oStream);
+                oReader.XmlResolver = null;
+                oXMLDocument = new XPathDocument(oReader);
+                //XPathNavigator nav = oXMLDocument.CreateNavigator();
+                //xmlRSS.XPathNavigator = nav;
+                ////xmlRSS.Document = oXMLDocument;
+                //xmlRSS.TransformSource = XSL_PATH;
+                //if (nav.Select(PRODUCT_XMLNODE_PATH).Count == 0)
+                //{
+                //    lblMessage.Text = Localization.GetString("NoProductsFound.Text", LocalResourceFile);
+                //}
+                grdSnow.DataSource = oXMLDocument;
+                grdSnow.DataBind();
+            }
+            catch (Exception oExc)
+            {
+                throw oExc;
+            }
+        }
+
+        private bool CheckCanCallSnowcovered()
+        {
+            if (SecurityPolicy.HasWebPermission()==false)
+            {
+                lblMessage.Text = Localization.GetString("WebservicePermission", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                return false;
+            }
+            string cookieCheck=Localization.GetString("SnowcoveredCookie", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+           
+
+            //check if logged in
+            if (GetExternalRequest(cookieCheck)==null)
+            {
+                    lblMessage.Text = Localization.GetString("SnowcoveredLogin", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                return false;
+            }
+            return true;
+        }
+
+        private HttpWebRequest GetExternalRequest(string Address)
+        {
+            try
+            {
+                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                var objRequest = (HttpWebRequest)WebRequest.Create(Address);
+                objRequest.Timeout = Host.WebRequestTimeout;
+                objRequest.UserAgent = "DotNetNuke";
+                if (!string.IsNullOrEmpty(Host.ProxyServer))
+                {
+                    WebProxy Proxy;
+                    NetworkCredential ProxyCredentials;
+                    Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
+                    if (!string.IsNullOrEmpty(Host.ProxyUsername))
+                    {
+                        ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
+                        Proxy.Credentials = ProxyCredentials;
+                    }
+                    objRequest.Proxy = Proxy;
+                }
+                return objRequest;
+            }
+            catch (Exception)
+            {
+
+                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                return null;
+            }
+            
+        }
+}
 }

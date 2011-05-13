@@ -24,9 +24,9 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 			[TermLeft] [int] NOT NULL CONSTRAINT [DF_{objectQualifier}Taxonomy_Terms_TermLeft]  DEFAULT ((0)),
 			[TermRight] [int] NOT NULL CONSTRAINT [DF_{objectQualifier}Taxonomy_Terms_TermRight]  DEFAULT ((0)),
 			[CreatedByUserID] [int] NULL,
-			[CreatedOnDate] [date] NULL,
+			[CreatedOnDate] [datetime] NULL,
 			[LastModifiedByUserID] [int] NULL,
-			[LastModifiedOnDate] [date] NULL,
+			[LastModifiedOnDate] [datetime] NULL,
 			CONSTRAINT [PK_{objectQualifier}Taxonomy_Terms] PRIMARY KEY CLUSTERED ( [TermID] ASC )
 		)
 

@@ -244,9 +244,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     cmdAdd.Text = Localization.GetString("UploadType" + FileType, LocalResourceFile);
                     if (FileType == UploadType.File)
                     {
-                        trFolders.Visible = true;
-                        trRoot.Visible = true;
-                        trUnzip.Visible = true;
+                        foldersRow.Visible = true;
+                        rootRow.Visible = true;
+                        unzipRow.Visible = true;
                         if (IsHostMenu)
                         {
                             lblRootType.Text = strHost + ":";
@@ -285,7 +285,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         case UploadType.File:
                             try
                             {
-                                var folder = FolderManager.Instance.GetFolder(PortalId, ddlFolders.SelectedValue);
+                                var folder = FolderManager.Instance.GetFolder(FolderPortalID, ddlFolders.SelectedValue);
                                 var fileManager = Services.FileSystem.FileManager.Instance;
                                 var file = fileManager.AddFile(folder, strFileName, postedFile.InputStream, true, true, postedFile.ContentType);
                                 if (chkUnzip.Checked && file.Extension == "zip")

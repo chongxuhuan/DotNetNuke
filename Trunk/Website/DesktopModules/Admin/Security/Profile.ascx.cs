@@ -105,7 +105,7 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             else
             {
-                trTitle.Visible = false;
+                divTitle.Visible = false;
             }
             ProfilePropertyDefinitionCollection properties = UserProfile.ProfileProperties;
             foreach (ProfilePropertyDefinition profProperty in properties)

@@ -11,14 +11,22 @@
             e.stopPropagation();
         });
         $('#dnnLogViewer').dnnPanels();
-        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
         $('#<%= btnClear.ClientID %>').dnnConfirm({
             text: '<%= LocalizeString("ClearLog.Text") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
+            yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
+            title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+        });
+        $('#<%= btnEmail.ClientID %>,#<%= btnDelete.ClientID %>').click(function (e) {
+            var checked = $('#dnnLogViewer input').is(':checked');
+            if (!checked) {
+                e.preventDefault();
+                $.dnnAlert({
+                    closeText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
+                    text: '<%= Localization.GetString("SelectException", this.LocalResourceFile) %>'
+                });
+            }
+            return checked;
         });
     }
     $(document).ready(function () {
@@ -27,13 +35,6 @@
             setUpDnnLogViewer();
         });
     });
-    function dnnLogCheckExceptions() {
-        var checked = $('#dnnLogViewer input').is(':checked');
-        if (!checked) {
-            $.dnnAlert({ text: '<%= Localization.GetString("SelectException", this.LocalResourceFile) %>' });
-        }
-        return checked;
-    }
 </script>
 
 <div class="dnnForm dnnLogViewer dnnClear" id="dnnLogViewer">
@@ -126,10 +127,12 @@
             <dnn:Label ID="plMessage" runat="server" ResourceKey="SendMessage" ControlName="txtMessage" Suffix=":" />
             <asp:TextBox ID="txtMessage" runat="server" Rows="6" Columns="25" TextMode="MultiLine" />
         </div>        
+        <ul class="dnnActions dnnClear">
+            <li><asp:LinkButton ID="btnEmail" runat="server" CssClass="dnnPrimaryAction" resourcekey="btnEmail" /></li>
+        </ul>    
     </fieldset>
     <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton ID="btnEmail" runat="server" CssClass="dnnPrimaryAction" resourcekey="btnEmail" OnClientClick="return dnnLogCheckExceptions();" /></li>
-        <li><asp:LinkButton CssClass="dnnSecondaryAction" ID="btnDelete" resourcekey="btnDelete" runat="server" OnClientClick="return dnnLogCheckExceptions();" /></li>
+        <li><asp:LinkButton CssClass="dnnPrimaryAction" ID="btnDelete" resourcekey="btnDelete" runat="server" /></li>
         <li><asp:LinkButton CssClass="dnnSecondaryAction dnnLogDelete" ID="btnClear" resourcekey="btnClear" runat="server" /></li>
     </ul>
 </div>

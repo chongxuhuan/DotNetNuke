@@ -131,7 +131,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                 if (!Response.IsClientConnected)
                 {
                     //Cancel button was clicked or the browser was closed, so stop processing
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
 
                 progress.TimeEstimated = (total - stepNo)*100;

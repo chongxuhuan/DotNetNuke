@@ -212,6 +212,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
             try
             {
+            	AddActionHandler(OnModuleActionClick);
+
                 CurrentPage = Request.QueryString["CurrentPage"] != null ? Convert.ToInt32(Request.QueryString["CurrentPage"]) : 1;
                 strFilter = Request.QueryString["filter"] ?? "";
                 if (!Page.IsPostBack)

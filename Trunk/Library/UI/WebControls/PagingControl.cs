@@ -43,7 +43,7 @@ namespace DotNetNuke.UI.WebControls
     public class PagingControl : WebControl, IPostBackEventHandler
     {
         protected Repeater PageNumbers;
-        private int TotalPages = -1;
+        private int _totalPages = -1;
         private string _CSSClassLinkActive;
         private string _CSSClassLinkInactive;
         private string _CSSClassPagingStatus;
@@ -135,16 +135,17 @@ namespace DotNetNuke.UI.WebControls
             const int pageLinksPerPage = 10;
             if (TotalRecords < 1 || RecordsPerPage < 1)
             {
+                _totalPages = 1;
                 return;
             }
-            TotalPages = TotalRecords/RecordsPerPage >= 1 ? Convert.ToInt32(Math.Ceiling(Convert.ToDouble(TotalRecords)/RecordsPerPage)) : 0;
-            if (TotalPages > 0)
+            _totalPages = TotalRecords/RecordsPerPage >= 1 ? Convert.ToInt32(Math.Ceiling(Convert.ToDouble(TotalRecords)/RecordsPerPage)) : 0;
+            if (_totalPages > 0)
             {
                 var ht = new DataTable();
                 ht.Columns.Add("PageNum");
                 DataRow tmpRow;
                 var LowNum = 1;
-                var HighNum = Convert.ToInt32(TotalPages);
+                var HighNum = Convert.ToInt32(_totalPages);
                 double tmpNum;
                 tmpNum = CurrentPage - pageLinksPerPage/2;
                 if (tmpNum < 1)
@@ -155,25 +156,25 @@ namespace DotNetNuke.UI.WebControls
                 {
                     LowNum = Convert.ToInt32(Math.Floor(tmpNum));
                 }
-                if (Convert.ToInt32(TotalPages) <= pageLinksPerPage)
+                if (Convert.ToInt32(_totalPages) <= pageLinksPerPage)
                 {
-                    HighNum = Convert.ToInt32(TotalPages);
+                    HighNum = Convert.ToInt32(_totalPages);
                 }
                 else
                 {
                     HighNum = LowNum + pageLinksPerPage - 1;
                 }
-                if (HighNum > Convert.ToInt32(TotalPages))
+                if (HighNum > Convert.ToInt32(_totalPages))
                 {
-                    HighNum = Convert.ToInt32(TotalPages);
+                    HighNum = Convert.ToInt32(_totalPages);
                     if (HighNum - LowNum < pageLinksPerPage)
                     {
                         LowNum = HighNum - pageLinksPerPage + 1;
                     }
                 }
-                if (HighNum > Convert.ToInt32(TotalPages))
+                if (HighNum > Convert.ToInt32(_totalPages))
                 {
-                    HighNum = Convert.ToInt32(TotalPages);
+                    HighNum = Convert.ToInt32(_totalPages);
                 }
                 if (LowNum < 1)
                 {
@@ -233,7 +234,7 @@ namespace DotNetNuke.UI.WebControls
         /// </history>
         private string GetPreviousLink()
         {
-            return CurrentPage > 1 && TotalPages > 0
+            return CurrentPage > 1 && _totalPages > 0
                        ? (CSSClassLinkActive.Trim().Length > 0
                               ? "<a href=\"" + CreateURL((CurrentPage - 1).ToString()) + "\" class=\"" + CSSClassLinkActive + "\">" +
                                 Localization.GetString("Previous", Localization.SharedResourceFile) + "</a>"
@@ -253,7 +254,7 @@ namespace DotNetNuke.UI.WebControls
         /// </history>
         private string GetNextLink()
         {
-            return CurrentPage != TotalPages && TotalPages > 0
+            return CurrentPage != _totalPages && _totalPages > 0
                        ? (CSSClassLinkActive.Trim().Length > 0
                               ? "<a href=\"" + CreateURL((CurrentPage + 1).ToString()) + "\" class=\"" + CSSClassLinkActive + "\">" + Localization.GetString("Next", Localization.SharedResourceFile) +
                                 "</a>"
@@ -273,7 +274,7 @@ namespace DotNetNuke.UI.WebControls
         /// </history>
         private string GetFirstLink()
         {
-            if (CurrentPage > 1 && TotalPages > 0)
+            if (CurrentPage > 1 && _totalPages > 0)
             {
                 return CSSClassLinkActive.Trim().Length > 0
                            ? "<a href=\"" + CreateURL("1") + "\" class=\"" + CSSClassLinkActive + "\">" + Localization.GetString("First", Localization.SharedResourceFile) + "</a>"
@@ -294,11 +295,11 @@ namespace DotNetNuke.UI.WebControls
         /// </history>
         private string GetLastLink()
         {
-            if (CurrentPage != TotalPages && TotalPages > 0)
+            if (CurrentPage != _totalPages && _totalPages > 0)
             {
                 return CSSClassLinkActive.Trim().Length > 0
-                           ? "<a href=\"" + CreateURL(TotalPages.ToString()) + "\" class=\"" + CSSClassLinkActive + "\">" + Localization.GetString("Last", Localization.SharedResourceFile) + "</a>"
-                           : "<a href=\"" + CreateURL(TotalPages.ToString()) + "\">" + Localization.GetString("Last", Localization.SharedResourceFile) + "</a>";
+                           ? "<a href=\"" + CreateURL(_totalPages.ToString()) + "\" class=\"" + CSSClassLinkActive + "\">" + Localization.GetString("Last", Localization.SharedResourceFile) + "</a>"
+                           : "<a href=\"" + CreateURL(_totalPages.ToString()) + "\">" + Localization.GetString("Last", Localization.SharedResourceFile) + "</a>";
             }
             return CSSClassLinkInactive.Trim().Length > 0
                        ? "<span class=\"" + CSSClassLinkInactive + "\">" + Localization.GetString("Last", Localization.SharedResourceFile) + "</span>"
@@ -322,7 +323,7 @@ namespace DotNetNuke.UI.WebControls
             //cellDisplayStatus.Width = new Unit("50%");
             cellDisplayLinks.HorizontalAlign = HorizontalAlign.Right;
             //cellDisplayLinks.Width = new Unit("50%");
-            var intTotalPages = TotalPages;
+            var intTotalPages = _totalPages;
             if (intTotalPages == 0)
             {
                 intTotalPages = 1;

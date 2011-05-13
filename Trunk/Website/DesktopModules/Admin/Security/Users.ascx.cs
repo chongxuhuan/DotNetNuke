@@ -371,7 +371,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             try
             {
-                UserController.RemoveDeletedUsers(PortalId);
+                UserController.RemoveDeletedUsers(UsersPortalId);
                 BindData(Filter, ddlSearchType.SelectedItem.Value);
             }
             catch (Exception exc)   //Module failed to load

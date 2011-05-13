@@ -1,12 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Host.WhatsNew" CodeFile="WhatsNew.ascx.cs" %>
-<p class="Normal" id="header" runat="server"></p>
-
-<script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-        $('.dnnWhatsNew').dnnPanels();
-    });
-</script>
+<p id="header" runat="server"></p>
 <div class="dnnForm dnnWhatsNew dnnClear" id="dnnWhatsNew">
+    <div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
     <asp:Repeater ID="WhatsNewList" runat="server">
         <ItemTemplate>
             <div class="wnContent dnnClear">
@@ -21,5 +16,14 @@
         </ItemTemplate>
     </asp:Repeater>
 </div>
-
-<p class="NormalBold" id="footer" runat="server"></p>
+<p id="footer" runat="server"></p>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $('#dnnWhatsNew').dnnPanels();
+        $('#dnnWhatsNew .dnnFormExpandContent a').dnnExpandAll({
+            expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+            collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+            targetArea: '#dnnWhatsNew'
+        });
+    });
+</script>

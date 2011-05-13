@@ -40,6 +40,7 @@
         <div class="dnnFormItem">
             <dnn:label id="plConfirm" runat="server" controlname="txtConfirm" text="Confirm Password:"></dnn:label>
 			<asp:textbox id="txtConfirm" runat="server" cssclass="dnnFormRequired" textmode="Password" size="12" maxlength="20" />
+            <asp:CustomValidator ID="valPassword" runat="Server" CssClass="dnnFormMessage dnnFormError" />
         </div>
         <div id="questionRow" runat="server"  class="dnnFormItem" visible="false">
             <dnn:label id="plQuestion" runat="server" controlname="lblQuestion" />
@@ -48,9 +49,6 @@
         <div id="answerRow" runat="server" class="dnnFormItem" visible="false">
             <dnn:label id="plAnswer" runat="server" controlname="txtAnswer" />
 			<asp:textbox id="txtAnswer" runat="server" cssclass="dnnFormRequired" size="25" maxlength="128" />
-        </div>
-        <div class="dnnFormItem">
-            <asp:CustomValidator ID="valPassword" runat="Server" CssClass="dnnFormMessage dnnFormError" />
         </div>
     </div>
 </asp:panel>

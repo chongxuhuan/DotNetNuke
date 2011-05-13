@@ -622,7 +622,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<DateTime>(),
-                Constants.USER_AnonymousUserId), Times.Once());
+                Constants.USER_AnonymousUserId,
+                It.IsAny<int>()), Times.Once());
         }
 
         [Test]
@@ -641,6 +642,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<DateTime>(),
+                It.IsAny<int>(),
                 It.IsAny<int>()), Times.Never());
         }
 

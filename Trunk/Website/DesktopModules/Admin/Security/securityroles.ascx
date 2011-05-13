@@ -39,7 +39,7 @@
                     <tr>
                         <td valign="top" width="320">
                             <asp:TextBox ID="txtUsers" runat="server" Width="150" />
-                            <asp:LinkButton ID="cmdValidate" runat="server" CssClass="CommandButton" resourceKey="cmdValidate" />
+                            <asp:LinkButton ID="cmdValidate" runat="server" CssClass="dnnSecondaryAction" resourceKey="cmdValidate" />
                             <asp:DropDownList ID="cboUsers" runat="server" AutoPostBack="True" Width="100%" />
                             <asp:DropDownList ID="cboRoles" runat="server" AutoPostBack="True" DataValueField="RoleID" DataTextField="RoleName" Width="100%" />
                         </td>
@@ -63,13 +63,13 @@
                     </tr>
                 </table>
                 <asp:CompareValidator ID="valEffectiveDate" CssClass="NormalRed" runat="server" resourcekey="valEffectiveDate"
-                    Display="Dynamic" Type="Date" Operator="DataTypeCheck" ErrorMessage="<br>Invalid effective date"
+                    Display="Dynamic" Type="Date" Operator="DataTypeCheck" 
                     ControlToValidate="txtEffectiveDate" />
                 <asp:CompareValidator ID="valExpiryDate" CssClass="NormalRed" runat="server" resourcekey="valExpiryDate"
-                    Display="Dynamic" Type="Date" Operator="DataTypeCheck" ErrorMessage="<br>Invalid expiry date"
+                    Display="Dynamic" Type="Date" Operator="DataTypeCheck" 
                     ControlToValidate="txtExpiryDate" />
                 <asp:CompareValidator ID="valDates" CssClass="NormalRed" runat="server" resourcekey="valDates"
-                    Display="Dynamic" Type="Date" Operator="GreaterThan" ErrorMessage="<br>Expiry Date must be Greater than Effective Date"
+                    Display="Dynamic" Type="Date" Operator="GreaterThan" 
                     ControlToValidate="txtExpiryDate" ControlToCompare="txtEffectiveDate" />
             </asp:Panel>
             <asp:CheckBox ID="chkNotify" resourcekey="SendNotification" runat="server" Checked="True" />
@@ -100,21 +100,18 @@
                         </asp:TemplateColumn>
                         <asp:TemplateColumn HeaderText="UserName">
                             <ItemTemplate>
-                                <asp:Label runat="server" Text='<%#FormatUser(Convert.ToInt32(Eval("UserID")),Eval("FullName").ToString()) %>'
-                                    CssClass="Normal" ID="UserNameLabel" />
+                                <asp:Label runat="server" Text='<%#FormatUser(Convert.ToInt32(Eval("UserID")),Eval("FullName").ToString()) %>' ID="UserNameLabel" />
                             </ItemTemplate>
                         </asp:TemplateColumn>
                         <asp:BoundColumn DataField="RoleName" HeaderText="SecurityRole" />
                         <asp:TemplateColumn HeaderText="EffectiveDate">
                             <ItemTemplate>
-                                <asp:Label runat="server" Text='<%#FormatDate(Convert.ToDateTime(Eval("EffectiveDate"))) %>'
-                                    CssClass="Normal" ID="Label2" name="Label1" />
+                                <asp:Label runat="server" Text='<%#FormatDate(Convert.ToDateTime(Eval("EffectiveDate"))) %>' ID="Label2" name="Label1" />
                             </ItemTemplate>
                         </asp:TemplateColumn>
                         <asp:TemplateColumn HeaderText="ExpiryDate">
                             <ItemTemplate>
-                                <asp:Label runat="server" Text='<%#FormatDate(Convert.ToDateTime(Eval("ExpiryDate"))) %>'
-                                    CssClass="Normal" ID="Label1" name="Label1" />
+                                <asp:Label runat="server" Text='<%#FormatDate(Convert.ToDateTime(Eval("ExpiryDate"))) %>' ID="Label1" name="Label1" />
                             </ItemTemplate>
                         </asp:TemplateColumn>
                     </Columns>

@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
@@ -43,7 +44,13 @@ namespace DotNetNuke.Modules.Admin.SQL
     public partial class SQL : PortalModuleBase
     {
 
+        #region Members
+
         protected Label lblRunAsScript;
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
@@ -85,33 +92,37 @@ namespace DotNetNuke.Modules.Admin.SQL
         {
             try
             {
+
                 if (!String.IsNullOrEmpty(txtQuery.Text))
                 {
-                    string connectionstring = Config.GetConnectionString(cboConnection.SelectedValue);
+                    var connectionstring = Config.GetConnectionString(cboConnection.SelectedValue);
                     if (chkRunAsScript.Checked)
                     {
-                        string strError = DataProvider.Instance().ExecuteScript(connectionstring, txtQuery.Text);
+                        var strError = DataProvider.Instance().ExecuteScript(connectionstring, txtQuery.Text);
                         if (strError == Null.NullString)
                         {
-                            lblMessage.Text = Localization.GetString("QuerySuccess", LocalResourceFile);
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("QuerySuccess", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
                         }
                         else
                         {
-                            lblMessage.Text = strError;
+                            UI.Skins.Skin.AddModuleMessage(this, strError, ModuleMessage.ModuleMessageType.RedError);
                         }
                     }
                     else
                     {
-                        IDataReader dr = DataProvider.Instance().ExecuteSQLTemp(connectionstring, txtQuery.Text);
+                        var dr = DataProvider.Instance().ExecuteSQLTemp(connectionstring, txtQuery.Text);
                         if (dr != null)
                         {
                             gvResults.DataSource = dr;
                             gvResults.DataBind();
                             dr.Close();
+
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("QuerySuccess", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
                         }
                         else
                         {
-                            lblMessage.Text = Localization.GetString("QueryError", LocalResourceFile);
+
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("QueryError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                         }
                     }
                     RecordAuditEventLog(txtQuery.Text);
@@ -120,24 +131,6 @@ namespace DotNetNuke.Modules.Admin.SQL
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        private void RecordAuditEventLog(string query)
-        {
-            var props = new LogProperties();
-            props.Add(new LogDetailInfo("User", UserInfo.Username));
-            props.Add(new LogDetailInfo("SQL Query", query));
-
-            var elc = new EventLogController();
-            elc.AddLog(props, PortalSettings, UserId, EventLogController.EventLogType.HOST_SQL_EXECUTED.ToString(), true);
-        }
-
-        private void CheckSecurity()
-        {
-            if (!UserInfo.IsSuperUser)
-            {
-                Response.Redirect(Globals.NavigateURL("Access Denied"), true);
             }
         }
 
@@ -152,6 +145,28 @@ namespace DotNetNuke.Modules.Admin.SQL
                 }
             }
         }
+
+        #endregion
+
+        #region Private Methods
+
+        private void RecordAuditEventLog(string query)
+        {
+            var props = new LogProperties {new LogDetailInfo("User", UserInfo.Username), new LogDetailInfo("SQL Query", query)};
+
+            var elc = new EventLogController();
+            elc.AddLog(props, PortalSettings, UserId, EventLogController.EventLogType.HOST_SQL_EXECUTED.ToString(), true);
+        }
+
+        private void CheckSecurity()
+        {
+            if (!UserInfo.IsSuperUser)
+            {
+                Response.Redirect(Globals.NavigateURL("Access Denied"), true);
+            }
+        }
+
+        #endregion
 
     }
 }

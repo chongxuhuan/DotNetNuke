@@ -23,9 +23,9 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 			[ContentKey] [nvarchar](250) NULL,
 			[Indexed] [bit] NOT NULL,
 			[CreatedByUserID] [int] NULL,
-			[CreatedOnDate] [date] NULL,
+			[CreatedOnDate] [datetime] NULL,
 			[LastModifiedByUserID] [int] NULL,
-			[LastModifiedOnDate] [date] NULL,
+			[LastModifiedOnDate] [datetime] NULL,
 			CONSTRAINT [PK_{objectQualifier}ContentItems] PRIMARY KEY CLUSTERED ( [ContentItemID] ASC )
 		)
 

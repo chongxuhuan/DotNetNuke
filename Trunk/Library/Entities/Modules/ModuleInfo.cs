@@ -251,6 +251,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+
+        /// <summary>
+        /// Get the ModulePermissions for the Module DO NOT USE THE SETTTER
+        /// <remarks>
+        /// Since 5.0 the setter has been obsolete, directly setting the ModulePermissionCollection is likely an error, change the contenst of the collection instead.
+        /// The setter still exists to preserve binary compatibility without the obsolete attribute since c# will not allow only a setter to be obsolete.
+        /// </remarks>
+        /// </summary>
         [XmlArray("modulepermissions"), XmlArrayItem("permission")]
         public ModulePermissionCollection ModulePermissions
         {

@@ -144,7 +144,7 @@ namespace DotNetNuke.Modules.Html
             }
 
             // process notifications
-            if (arrUsers.Count > 0 | (objHtmlText.IsPublished && objHtmlText.Notify))
+            if (arrUsers.Count > 0 || (objHtmlText.IsPublished && objHtmlText.Notify))
             {
                 // get tabid from module 
                 var objModules = new ModuleController();

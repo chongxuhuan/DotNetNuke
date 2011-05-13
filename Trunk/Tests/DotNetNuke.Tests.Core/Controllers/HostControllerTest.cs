@@ -53,6 +53,8 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockCache = MockComponentProvider.CreateDataCacheProvider();
             MockComponentProvider.CreateEventLogController();
 
+            DataCache.ClearCache();
+
 
             _hostSettingsTable = new DataTable("HostSettings");
 
@@ -186,7 +188,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             _mockData.Verify(c => c.UpdateHostSetting(key, value, false, It.IsAny<int>()), Times.Exactly(1));
-            _mockCache.Verify(c => c.Clear("Host", ""), Times.Exactly(1));
+            _mockCache.Verify(c => c.Clear("Host", ""), Times.Once());
         }
 
         [Test]
@@ -202,7 +204,8 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             _mockData.Verify(c => c.UpdateHostSetting(key, value, false, It.IsAny<int>()));
-            _mockCache.Verify(c => c.Clear(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            //Clear was not called a second time
+            _mockCache.Verify(c => c.Clear("Host", ""), Times.Never());
         }
 
         [Test]
@@ -276,7 +279,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             _mockData.Verify(c => c.AddHostSetting(key, value, false, It.IsAny<int>()));
-            _mockCache.Verify(c => c.Clear("Host", ""), Times.Exactly(1));
+            _mockCache.Verify(c => c.Clear("Host", ""), Times.Once());
         }
 
         [Test]
@@ -292,7 +295,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             _mockData.Verify(c => c.AddHostSetting(key, value, false, It.IsAny<int>()));
-            _mockCache.Verify(c => c.Clear(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            _mockCache.Verify(c => c.Clear("Host", ""), Times.Never());
         }
 
         #endregion

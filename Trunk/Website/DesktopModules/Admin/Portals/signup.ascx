@@ -3,18 +3,6 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 
-<script language="javascript" type="text/javascript">
-    function setUpDnnPortalSignup() {
-        $('#dnnPortalSignup').dnnPanels();
-    }
-    $(document).ready(function () {
-        setUpDnnPortalSignup();
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-            setUpDnnPortalSignup();
-        });
-    });
-</script>
-
 <div class="dnnForm dnnPortalSignup dnnClear" id="dnnPortalSignup">
 	<div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
     <h2 class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("PortalSetup")%></a></h2>

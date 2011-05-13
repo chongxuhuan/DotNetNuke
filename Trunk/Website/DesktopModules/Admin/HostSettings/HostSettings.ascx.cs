@@ -300,24 +300,16 @@ namespace DotNetNuke.Modules.Admin.Host
         private void BindData()
         {
             BindConfiguration();
-
             BindHostDetails();
-
             chkCopyright.Checked = Entities.Host.Host.DisplayCopyright;
             chkUseCustomErrorMessages.Checked = Entities.Host.Host.UseCustomErrorMessages;
             chkUseCustomModuleCssClass.Checked = Entities.Host.Host.EnableCustomModuleCssClass;
             BindSkins();
-
             BindPaymentProcessor();
-
             BindFriendlyUrlsRequestFilters();
-
             BindProxyServer();
-
             BindSmtpServer();
-
             BindPerformance();
-
             BindJQuery();
 
             foreach (KeyValuePair<string, ModuleControlInfo> kvp in ModuleControlController.GetModuleControlsByModuleDefinitionID(Null.NullInteger))
@@ -369,9 +361,6 @@ namespace DotNetNuke.Modules.Admin.Host
             }
 
             chkLogBuffer.Checked = Entities.Host.Host.EventLogBuffer;
-
-
-
             txtHelpURL.Text = Entities.Host.Host.HelpURL;
             chkEnableHelp.Checked = Entities.Host.Host.EnableModuleOnLineHelp;
             chkAutoSync.Checked = Entities.Host.Host.EnableFileAutoSync;
@@ -417,7 +406,7 @@ namespace DotNetNuke.Modules.Admin.Host
             if (cboPageCacheProvider.Items.Count > 0)
             {
                 var defaultPageCache = ComponentFactory.GetComponent<OutputCachingProvider>();
-                string providerKey = (from provider in OutputCachingProvider.GetProviderList() where provider.Value.Equals(defaultPageCache) select provider.Key).SingleOrDefault();
+                var providerKey = (from provider in OutputCachingProvider.GetProviderList() where provider.Value.Equals(defaultPageCache) select provider.Key).SingleOrDefault();
                 if (defaultPageCache != null)
                 {
                     PageCacheRow.Visible = true;
@@ -492,8 +481,6 @@ namespace DotNetNuke.Modules.Admin.Host
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        #endregion
 
         protected void OnUpgradeClick(object sender, EventArgs e)
         {
@@ -666,7 +653,7 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("HostPortalId", hostPortalsCombo.SelectedValue);
                     HostController.Instance.Update("HostTitle", txtHostTitle.Text, false);
                     HostController.Instance.Update("HostURL", txtHostURL.Text, false);
-                    HostController.Instance.Update("HostEmail", txtHostEmail.Text, false);
+                    HostController.Instance.Update("HostEmail", txtHostEmail.Text.Trim(), false);
                     HostController.Instance.Update("PaymentProcessor", processorCombo.SelectedItem.Text, false);
                     HostController.Instance.Update("ProcessorUserId", txtUserId.Text, false);
                     HostController.Instance.Update("ProcessorPassword", txtPassword.Text, false);
@@ -743,6 +730,8 @@ namespace DotNetNuke.Modules.Admin.Host
                 }
             }
         }
+
+        #endregion
 
     }
 }

@@ -165,4 +165,7 @@
   <data name="scriptLabel.Text" xml:space="preserve">
     <value>Script:</value>
   </data>
+  <data name="scriptLabel.Help" xml:space="preserve">
+    <value>Enter the SQL you wish to execute.</value>
+  </data>
 </root>

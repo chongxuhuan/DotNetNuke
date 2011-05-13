@@ -47,39 +47,42 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Newsletters
 {
+
     public partial class Newsletter : PortalModuleBase
     {
-        private string FormatUrls(Match m)
+
+        #region Private Methods
+
+        private static string FormatUrls(Match m)
         {
-            string match = m.Value;
-            string url = m.Groups["url"].Value;
-            string result = match;
+            var match = m.Value;
+            var url = m.Groups["url"].Value;
+            var result = match;
             if (url.StartsWith("/"))
             {
                 return result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + url);
             }
-            else if (url.Contains("://"))
-            {
-                return result;
-            }
-            else
-            {
-                return result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + Globals.ApplicationPath + "/" + url);
-            }
+            return url.Contains("://") ? result : result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + Globals.ApplicationPath + "/" + url);
         }
 
         private string ManageDirectoryBase(string source)
         {
-            string pattern = "<(a|link|img|script|object|table|td|body).[^>]*(href|src|action|background)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
+            const string pattern = "<(a|link|img|script|object|table|td|body).[^>]*(href|src|action|background)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
             return Regex.Replace(source, pattern, FormatUrls);
         }
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdPreview.Click += cmdPreview_Click;
-            cmdSend.Click += cmdSend_Click;
+            cmdPreview.Click += OnPreviewClick;
+            cmdSend.Click += OnSendClick;
+
+            jQuery.RequestDnnPluginsRegistration();
 
             try
             {
@@ -96,19 +99,18 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             }
         }
 
-        private void cmdSend_Click(Object sender, EventArgs e)
+        protected void OnSendClick(Object sender, EventArgs e)
         {
-            string strResult = "";
-            ModuleMessage.ModuleMessageType msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
-            int intMailsSent = -1;
-            bool isValid = true;
+            var strResult = "";
+            var msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
+            var intMailsSent = -1;
+            var isValid = true;
             try
             {
                 if (String.IsNullOrEmpty(txtSubject.Text) || String.IsNullOrEmpty(teMessage.Text))
                 {
                     strResult = Localization.GetString("MessageValidation", LocalResourceFile);
-                    msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                    isValid = false;
+                    msgResult = ModuleMessage.ModuleMessageType.RedError;
                 }
                 else
                 {
@@ -123,10 +125,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                         Array arrEmail = txtEmail.Text.Split(';');
                         foreach (string strEmail in arrEmail)
                         {
-                            var objUser = new UserInfo();
-                            objUser.UserID = Null.NullInteger;
-                            objUser.Email = strEmail;
-                            objUser.DisplayName = strEmail;
+                            var objUser = new UserInfo {UserID = Null.NullInteger, Email = strEmail, DisplayName = strEmail};
                             objUsers.Add(objUser);
                         }
                     }
@@ -134,7 +133,6 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                     {
                         strResult = string.Format(Localization.GetString("NoMessagesSent", LocalResourceFile), intMailsSent);
                         msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                        isValid = false;
                     }
                     else
                     {
@@ -169,18 +167,13 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                         }
                         if (txtFrom.Text != string.Empty && objSendBulkEMail.SendingUser.Email != txtFrom.Text)
                         {
-                            UserInfo myUser = objSendBulkEMail.SendingUser;
-                            if (myUser == null)
-                            {
-                                myUser = new UserInfo();
-                            }
+                            var myUser = objSendBulkEMail.SendingUser ?? new UserInfo();
                             myUser.Email = txtFrom.Text;
                             objSendBulkEMail.SendingUser = myUser;
                         }
                         if (txtReplyTo.Text != string.Empty && objSendBulkEMail.ReplyTo.Email != txtReplyTo.Text)
                         {
-                            var myUser = new UserInfo();
-                            myUser.Email = txtReplyTo.Text;
+                            var myUser = new UserInfo {Email = txtReplyTo.Text};
                             objSendBulkEMail.ReplyTo = myUser;
                         }
                         if (selLanguage.Visible && selLanguage.SelectedLanguages != null)
@@ -278,34 +271,32 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             }
         }
 
-        protected void cmdPreview_Click(object sender, EventArgs e)
+        protected void OnPreviewClick(object sender, EventArgs e)
         {
-            string strResult = "";
-            ModuleMessage.ModuleMessageType msgResult;
             try
             {
                 if (String.IsNullOrEmpty(txtSubject.Text) || String.IsNullOrEmpty(teMessage.Text))
                 {
-                    strResult = Localization.GetString("MessageValidation", LocalResourceFile);
-                    msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
+                    var strResult = Localization.GetString("MessageValidation", LocalResourceFile);
+                    const ModuleMessage.ModuleMessageType msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
                     UI.Skins.Skin.AddModuleMessage(this, strResult, msgResult);
                     ((CDefault) Page).ScrollToControl(Page.Form);
                     return;
                 }
-                string strBody = teMessage.Text;
-                string pattern = "<(a|link|img|script|object).[^>]*(href|src|action)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
+                var strBody = teMessage.Text;
+                const string pattern = "<(a|link|img|script|object).[^>]*(href|src|action)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
                 strBody = Regex.Replace(strBody, pattern, FormatUrls);
                 if (chkReplaceTokens.Checked)
                 {
-                    var objTR = new TokenReplace();
+                    var objTr = new TokenReplace();
                     if (cboSendMethod.SelectedItem.Value == "TO")
                     {
-                        objTR.User = UserInfo;
-                        objTR.AccessingUser = UserInfo;
-                        objTR.DebugMessages = true;
+                        objTr.User = UserInfo;
+                        objTr.AccessingUser = UserInfo;
+                        objTr.DebugMessages = true;
                     }
-                    lblPreviewSubject.Text = objTR.ReplaceEnvironmentTokens(txtSubject.Text);
-                    lblPreviewBody.Text = objTR.ReplaceEnvironmentTokens(strBody);
+                    lblPreviewSubject.Text = objTr.ReplaceEnvironmentTokens(txtSubject.Text);
+                    lblPreviewBody.Text = objTr.ReplaceEnvironmentTokens(strBody);
                 }
                 else
                 {
@@ -319,5 +310,8 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        #endregion
+
     }
 }

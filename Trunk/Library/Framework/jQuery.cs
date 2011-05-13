@@ -62,7 +62,7 @@ namespace DotNetNuke.Framework
         private const string jQueryUIMinFile = "~/Resources/Shared/Scripts/jquery/jquery-ui.min.js";
         private const string jQueryUIVersionKey = "jQueryUIVersionKey";
         private const string jQueryUIVersionMatch = "(?<=version:\\s\")(.*)(?=\")";
-        public const string DefaultUIHostedUrl = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js";
+        public const string DefaultUIHostedUrl = "http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js";
 
         #region Public Properties
 

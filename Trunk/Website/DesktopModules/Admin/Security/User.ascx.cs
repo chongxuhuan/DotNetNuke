@@ -133,7 +133,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 if (createStatus != UserCreateStatus.AddUser)
                 {
                     _IsValid = false;
-                    valPassword.ErrorMessage = @"<br/>" + UserController.GetUserCreateStatus(createStatus);
+                    valPassword.ErrorMessage = UserController.GetUserCreateStatus(createStatus);
                     valPassword.IsValid = false;
                 }
             }
@@ -179,7 +179,7 @@ namespace DotNetNuke.Modules.Admin.Users
             cmdRestore.Visible = false;
             if (!AddUser)
             {
-                var deletePermitted = (User.UserID != PortalSettings.AdministratorId) && !(IsUser & User.IsSuperUser);
+                var deletePermitted = (User.UserID != PortalSettings.AdministratorId) && !(IsUser && User.IsSuperUser);
                 if ((deletePermitted))
                 {
                     if ((User.IsDeleted))

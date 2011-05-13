@@ -10,7 +10,7 @@
 		    <itemstyle horizontalalign="Left" />
 		    <columns>
 		        <dnn:imagecommandcolumn CommandName="Edit" ImageUrl="~/images/edit.gif" KeyField="ID" />
-			    <asp:boundcolumn headertext="LogType" datafield="LogTypeKey" />
+			    <asp:boundcolumn headertext="LogType" datafield="LogTypeFriendlyName" />
 			    <asp:boundcolumn headertext="Portal" datafield="LogTypePortalID" />
 			    <asp:boundcolumn headertext="Active" datafield="LoggingIsActive" />
 			    <asp:boundcolumn headertext="FileName" datafield="LogFilename" />

@@ -33,64 +33,40 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Entities.Content.Taxonomy
 {
+    /// <summary>
+    /// This class exists solely to maintain compatibility between the original VB version
+    /// which supported ScopeType.ScopeType and the c# version which doesn't allow members with
+    /// the same naem as their parent type
+    /// </summary>
+    [Serializable]
+    public abstract class ScopeTypeMemberNameFixer
+    {
+        public string ScopeType { get; set; }
+    }
+
 	/// <summary>
 	/// Class of ScopeType.
 	/// </summary>
 	/// <seealso cref="TermController"/>
     [Serializable]
-    public class ScopeType : IHydratable
+    public class ScopeType : ScopeTypeMemberNameFixer, IHydratable
     {
-        private string _ScopeType;
-        private int _ScopeTypeId;
-
-        #region "Constructors"
-
-        public ScopeType() : this(Null.NullString)
+	    public ScopeType() : this(Null.NullString)
         {
         }
 
         public ScopeType(string scopeType)
         {
-            _ScopeTypeId = Null.NullInteger;
-            _ScopeType = scopeType;
+            ScopeTypeId = Null.NullInteger;
+            ScopeType = scopeType;
         }
 
-        #endregion
+        public int ScopeTypeId { get; set; }
 
-        #region "Public Properties"
-
-        public int ScopeTypeId
-        {
-            get
-            {
-                return _ScopeTypeId;
-            }
-            set
-            {
-                _ScopeTypeId = value;
-            }
-        }
-
-        public string Type
-        {
-            get
-            {
-                return _ScopeType;
-            }
-            set
-            {
-                _ScopeType = value;
-            }
-        }
-
-        #endregion
-
-        #region "IHydratable Implementation"
-
-        public void Fill(IDataReader dr)
+	    public void Fill(IDataReader dr)
         {
             ScopeTypeId = Null.SetNullInteger(dr["ScopeTypeID"]);
-            Type = Null.SetNullString(dr["ScopeType"]);
+            ScopeType = Null.SetNullString(dr["ScopeType"]);
         }
 
         public int KeyID
@@ -105,11 +81,9 @@ namespace DotNetNuke.Entities.Content.Taxonomy
             }
         }
 
-        #endregion
-
         public override string ToString()
         {
-            return Type;
+            return ScopeType;
         }
     }
 }

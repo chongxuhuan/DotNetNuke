@@ -407,13 +407,13 @@ namespace DotNetNuke.Framework
             switch (warningLevel)
             {
                 case "1":
-                    warningMessage = Localization.GetString("InsecureAdmin.Text", Localization.GlobalResourceFile);
+                    warningMessage = Localization.GetString("InsecureAdmin.Text", Localization.SharedResourceFile);
                     break;
                 case "2":
-                    warningMessage = Localization.GetString("InsecureHost.Text", Localization.GlobalResourceFile);
+                    warningMessage = Localization.GetString("InsecureHost.Text", Localization.SharedResourceFile);
                     break;
                 case "3":
-                    warningMessage = Localization.GetString("InsecureDefaults.Text", Localization.GlobalResourceFile);
+                    warningMessage = Localization.GetString("InsecureDefaults.Text", Localization.SharedResourceFile);
                     break;
             }
             return warningMessage;

@@ -317,11 +317,11 @@ namespace DotNetNuke.Services.Exceptions
             PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
             if (!Host.UseCustomErrorMessages)
             {
-                throw new PageLoadException(exc.Message, exc);
+                throw new PageLoadException((exc == null ? "" : exc.Message), exc);
             }
             else
             {
-                var lex = new PageLoadException(exc.Message, exc);
+                var lex = new PageLoadException((exc == null ? "" : exc.Message), exc);
                 var objExceptionLog = new ExceptionLogController();
                 objExceptionLog.AddLog(lex);
                 if (!String.IsNullOrEmpty(URL))

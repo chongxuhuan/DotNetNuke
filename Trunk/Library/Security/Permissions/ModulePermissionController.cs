@@ -244,17 +244,17 @@ namespace DotNetNuke.Security.Permissions
                         }
                         break;
                     case SecurityAccessLevel.Admin:
-                        if (TabPermissionController.CanAdminPage() || CanAdminModule(ModuleConfiguration))
+                        if (TabPermissionController.CanAdminPage())
                         {
                             blnAuthorized = true;
                         }
-                        else if (TabPermissionController.CanAddContentToPage())
+						else if (ModuleConfiguration != null && CanEditModuleContent(ModuleConfiguration))
                         {
                             if (String.IsNullOrEmpty(permissionKey))
                             {
                                 permissionKey = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE";
                             }
-                            if (ModuleConfiguration != null && CanViewModule(ModuleConfiguration) && HasModulePermission(ModuleConfiguration.ModulePermissions, permissionKey))
+                            if (CanViewModule(ModuleConfiguration) && HasModulePermission(ModuleConfiguration.ModulePermissions, permissionKey))
                             {
                                 blnAuthorized = true;
                             }

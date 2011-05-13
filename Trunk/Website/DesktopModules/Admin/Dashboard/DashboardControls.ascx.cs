@@ -42,42 +42,46 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Dashboard
 {
+
     public partial class DashboardControls : PortalModuleBase
     {
+
+        #region Private Members
+
         private const int COLUMN_ENABLED = 5;
         private const int COLUMN_MOVE_DOWN = 1;
         private const int COLUMN_MOVE_UP = 2;
         private List<DashboardControl> _DashboardControls;
 
-        protected List<DashboardControl> DashboardControlList
-        {
-            get
-            {
-                if (_DashboardControls == null)
-                {
-                    _DashboardControls = DashboardController.GetDashboardControls(false);
-                }
-                return _DashboardControls;
-            }
-        }
-
-        private bool SupportsRichClient()
+        private static bool SupportsRichClient()
         {
             return ClientAPI.BrowserSupportsFunctionality(ClientAPI.ClientFunctionality.DHTML);
         }
 
+        #endregion
+
+        protected List<DashboardControl> DashboardControlList
+        {
+            get
+            {
+                return _DashboardControls ?? (_DashboardControls = DashboardController.GetDashboardControls(false));
+            }
+        }
+
+        #region Private Methods
+
         private void DeleteControl(int index)
         {
-            DashboardControl dashboardControl = DashboardControlList[index];
+            var dashboardControl = DashboardControlList[index];
             Response.Redirect(Util.UnInstallURL(TabId, dashboardControl.PackageID, Server.UrlEncode(Globals.NavigateURL(TabId, "DashboardControls", "mid=" + ModuleId))), true);
         }
 
         private void MoveControl(int index, int destIndex)
         {
-            DashboardControl dashboardControl = DashboardControlList[index];
-            DashboardControl nextControl = DashboardControlList[destIndex];
-            int currentOrder = dashboardControl.ViewOrder;
-            int nextOrder = nextControl.ViewOrder;
+            var dashboardControl = DashboardControlList[index];
+            var nextControl = DashboardControlList[destIndex];
+            var currentOrder = dashboardControl.ViewOrder;
+            var nextOrder = nextControl.ViewOrder;
             dashboardControl.ViewOrder = nextOrder;
             nextControl.ViewOrder = currentOrder;
             DashboardControlList.Sort();
@@ -96,8 +100,8 @@ namespace DotNetNuke.Modules.Admin.Dashboard
 
         private void BindGrid()
         {
-            bool allEnabled = true;
-            foreach (DashboardControl dashboardControl in DashboardControlList)
+            var allEnabled = true;
+            foreach (var dashboardControl in DashboardControlList)
             {
                 if (dashboardControl.IsEnabled == false)
                 {
@@ -131,7 +135,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
 
         private void UpdateControls()
         {
-            foreach (DashboardControl dashboardControl in DashboardControlList)
+            foreach (var dashboardControl in DashboardControlList)
             {
                 if (dashboardControl.IsDirty)
                 {
@@ -144,18 +148,18 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             try
             {
-                string[] aryNewOrder = ClientAPI.GetClientSideReorder(grdDashboardControls.ClientID, Page);
+                var aryNewOrder = ClientAPI.GetClientSideReorder(grdDashboardControls.ClientID, Page);
                 DashboardControl dashboardControl;
                 DataGridItem objItem;
                 CheckBox chk;
-                for (int i = 0; i <= grdDashboardControls.Items.Count - 1; i++)
+                for (var i = 0; i <= grdDashboardControls.Items.Count - 1; i++)
                 {
                     objItem = grdDashboardControls.Items[i];
                     dashboardControl = DashboardControlList[i];
                     chk = (CheckBox) objItem.Cells[COLUMN_ENABLED].Controls[0];
                     dashboardControl.IsEnabled = chk.Checked;
                 }
-                for (int i = 0; i <= aryNewOrder.Length - 1; i++)
+                for (var i = 0; i <= aryNewOrder.Length - 1; i++)
                 {
                     DashboardControlList[Convert.ToInt32(aryNewOrder[i])].ViewOrder = i;
                 }
@@ -166,6 +170,10 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                 throw ex;
             }
         }
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void LoadViewState(object savedState)
         {
@@ -202,7 +210,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                     if (SupportsRichClient() == false)
                     {
                         var cbColumn = (CheckBoxColumn) column;
-                        cbColumn.CheckedChanged += grdDashboardControls_ItemCheckedChanged;
+                        cbColumn.CheckedChanged += OnDashboardControlsItemChecked;
                     }
                 }
                 else if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
@@ -229,18 +237,19 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdInstall.Click += cmdInstall_Click;
-            cmdRefresh.Click += cmdRefresh_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
-            grdDashboardControls.ItemCommand += grdDashboardControls_ItemCommand;
-            grdDashboardControls.ItemCreated += grdDashboardControls_ItemCreated;
-            grdDashboardControls.ItemDataBound += grdDashboardControls_ItemDataBound;
+            cmdRefresh.Click += OnRefreshClick;
+            cmdUpdate.Click += OnUpdateClick;
+            grdDashboardControls.ItemCommand += OnDashboardControlsItemCommand;
+            grdDashboardControls.ItemCreated += OnDashboardControlsItemCreated;
+            grdDashboardControls.ItemDataBound += OnDashboardControlsItemDataBound;
 
             try
             {
                 if (!Page.IsPostBack)
                 {
+                    cmdCancel.NavigateUrl = Globals.NavigateURL();
+                    cmdInstall.NavigateUrl = Util.InstallURL(TabId, Server.UrlEncode(Globals.NavigateURL(TabId, "DashboardControls", "mid=" + ModuleId)), "DashboardControl");
+
                     Localization.LocalizeDataGrid(ref grdDashboardControls, LocalResourceFile);
                     BindGrid();
                 }
@@ -255,22 +264,12 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
         }
 
-        protected void cmdCancel_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        protected void cmdInstall_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(Util.InstallURL(TabId, Server.UrlEncode(Globals.NavigateURL(TabId, "DashboardControls", "mid=" + ModuleId)), "DashboardControl"), true);
-        }
-
-        private void cmdRefresh_Click(object sender, EventArgs e)
+        protected void OnRefreshClick(object sender, EventArgs e)
         {
             RefreshGrid();
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
@@ -283,12 +282,12 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
         }
 
-        private void grdDashboardControls_ItemCheckedChanged(object sender, DNNDataGridCheckChangedEventArgs e)
+        protected void OnDashboardControlsItemChecked(object sender, DNNDataGridCheckChangedEventArgs e)
         {
-            string propertyName = e.Field;
-            bool propertyValue = e.Checked;
-            bool isAll = e.IsAll;
-            int index = e.Item.ItemIndex;
+            var propertyName = e.Field;
+            var propertyValue = e.Checked;
+            var isAll = e.IsAll;
+            var index = e.Item.ItemIndex;
             DashboardControl dashboardControl;
             if (isAll)
             {
@@ -315,11 +314,10 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             BindGrid();
         }
 
-        private void grdDashboardControls_ItemCommand(object source, DataGridCommandEventArgs e)
+        protected void OnDashboardControlsItemCommand(object source, DataGridCommandEventArgs e)
         {
-            string commandName = e.CommandName;
-            int commandArgument = Convert.ToInt32(e.CommandArgument);
-            int index = e.Item.ItemIndex;
+            var commandName = e.CommandName;
+            var index = e.Item.ItemIndex;
             switch (commandName)
             {
                 case "Delete":
@@ -334,7 +332,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
         }
 
-        private void grdDashboardControls_ItemCreated(object sender, DataGridItemEventArgs e)
+        protected void OnDashboardControlsItemCreated(object sender, DataGridItemEventArgs e)
         {
             if (SupportsRichClient())
             {
@@ -354,32 +352,41 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
         }
 
-        protected void grdDashboardControls_ItemDataBound(object sender, DataGridItemEventArgs e)
+        protected void OnDashboardControlsItemDataBound(object sender, DataGridItemEventArgs e)
         {
-            DataGridItem item = e.Item;
-            if (item.ItemType == ListItemType.Item || item.ItemType == ListItemType.AlternatingItem || item.ItemType == ListItemType.SelectedItem)
+            var item = e.Item;
+            switch (item.ItemType)
             {
-                Control imgColumnControl = item.Controls[0].Controls[0];
-                if (imgColumnControl is ImageButton)
-                {
-                    var delImage = (ImageButton) imgColumnControl;
-                    var dashboardControl = (DashboardControl) item.DataItem;
-                    switch (dashboardControl.DashboardControlKey)
+                case ListItemType.SelectedItem:
+                case ListItemType.AlternatingItem:
+                case ListItemType.Item:
                     {
-                        case "Server":
-                        case "Database":
-                        case "Host":
-                        case "Portals":
-                        case "Modules":
-                        case "Skins":
-                            delImage.Visible = false;
-                            break;
-                        default:
-                            delImage.Visible = true;
-                            break;
+                        var imgColumnControl = item.Controls[0].Controls[0];
+                        if (imgColumnControl is ImageButton)
+                        {
+                            var delImage = (ImageButton) imgColumnControl;
+                            var dashboardControl = (DashboardControl) item.DataItem;
+                            switch (dashboardControl.DashboardControlKey)
+                            {
+                                case "Server":
+                                case "Database":
+                                case "Host":
+                                case "Portals":
+                                case "Modules":
+                                case "Skins":
+                                    delImage.Visible = false;
+                                    break;
+                                default:
+                                    delImage.Visible = true;
+                                    break;
+                            }
+                        }
                     }
-                }
+                    break;
             }
         }
+
+        #endregion
+
     }
 }

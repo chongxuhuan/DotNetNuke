@@ -90,7 +90,7 @@ namespace DotNetNuke.Services.Localization
                 if (languagePack.LanguageID == languageId)
                 {
                     canDelete = false;
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
             return canDelete;
@@ -208,7 +208,7 @@ namespace DotNetNuke.Services.Localization
                 if (kvp.Value.LanguageId == languageID)
                 {
                     locale = kvp.Value;
-                    break; // TODO: might not be correct. Was : Exit For
+                    break;
                 }
             }
 

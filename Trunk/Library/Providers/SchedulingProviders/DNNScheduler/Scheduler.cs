@@ -560,28 +560,32 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             /// <param name="sourceOfHalt">Initiator of Halt</param>
             public static void Halt(string sourceOfHalt)
             {
-                if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
+				//should do nothing if the scheduler havn't start yet.
+            	var currentStatus = GetScheduleStatus();
+				if(currentStatus == ScheduleStatus.NOT_SET || currentStatus == ScheduleStatus.STOPPED)
+				{
+					return;
+				}
+                var eventLogController = new EventLogController();
+                SetScheduleStatus(ScheduleStatus.SHUTTING_DOWN);
+                var eventLogInfo = new LogInfo();
+                eventLogInfo.AddProperty("Initiator", sourceOfHalt);
+                eventLogInfo.LogTypeKey = "SCHEDULER_SHUTTING_DOWN";
+                eventLogController.AddLog(eventLogInfo);
+
+                KeepRunning = false;
+
+                //wait for up to 120 seconds for thread
+                //to shut down
+                for (int i = 0; i <= 120; i++)
                 {
-                    var eventLogController = new EventLogController();
-                    SetScheduleStatus(ScheduleStatus.SHUTTING_DOWN);
-                    var eventLogInfo = new LogInfo();
-                    eventLogInfo.AddProperty("Initiator", sourceOfHalt);
-                    eventLogInfo.LogTypeKey = "SCHEDULER_SHUTTING_DOWN";
-                    eventLogController.AddLog(eventLogInfo);
-
-                    KeepRunning = false;
-
-                    //wait for up to 120 seconds for thread
-                    //to shut down
-                    for (int i = 0; i <= 120; i++)
+                    if (GetScheduleStatus() == ScheduleStatus.STOPPED)
                     {
-                        if (GetScheduleStatus() == ScheduleStatus.STOPPED)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1000);
+                        return;
                     }
+                    Thread.Sleep(1000);
                 }
+                
                 _activeThreadCount = 0;
             }
 

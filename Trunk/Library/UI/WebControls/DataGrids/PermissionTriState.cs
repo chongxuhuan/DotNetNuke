@@ -25,28 +25,32 @@ namespace DotNetNuke.UI.WebControls
 
         public PermissionTriState()
         {
-            _grantImagePath = ResolveUrl("~/images/grant.gif");
-            _denyImagePath = ResolveUrl("~/images/deny.gif");
-            _nullImagePath = ResolveUrl("~/images/unchecked.gif");
-            _lockImagePath = ResolveUrl("~/images/lock.gif");
-
-            _grantAltText =  Localization.GetString("PermissionTypeGrant");
-            _denyAltText =  Localization.GetString("PermissionTypeDeny");
-            _nullAltText = Localization.GetString("PermissionTypeNull");
+            //kind of ugly to lookup this data each time, but doesn't seem worth the effort to 
+            //maintain statics for the paths but require a control instance to initialize them
+            //and lazy load the text bits when the page instance (or localization) changes 
+            LookupScriptValues(this, out _grantImagePath, out _denyImagePath, out _nullImagePath, out _lockImagePath, out _grantAltText, out _denyAltText, out _nullAltText);
         }
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            if ( ! Page.ClientScript.IsClientScriptBlockRegistered(typeof(PermissionTriState), "initTriState"))
-            {
+            RegisterScripts(Page, this);
+        }
 
+        public static void RegisterScripts(Page page, Control ctl)
+        {
+            const string scriptKey = "initTriState";
+            if( ! ClientAPI.IsClientScriptBlockRegistered(page, scriptKey))
+            {
                 AJAX.RegisterScriptManager();
                 jQuery.RequestRegistration();
-                Page.ClientScript.RegisterClientScriptInclude("permissiontristateajax", ResolveUrl("~/js/MicrosoftAjax.js"));
-                Page.ClientScript.RegisterClientScriptInclude("permissiontristate", ResolveUrl("~/js/dnn.permissiontristate.js"));
+                ClientAPI.RegisterClientScriptBlock(page, "dnn.permissiontristate.js");
+                
+                string grantImagePath, denyImagePath, nullImagePath, lockImagePath, grantAltText, denyAltText, nullAltText;
 
+                LookupScriptValues(ctl, out grantImagePath, out denyImagePath, out nullImagePath, out lockImagePath, out grantAltText, out denyAltText, out nullAltText);
+                
                 string script =
                     String.Format(
                         @"<script type='text/javascript'>
@@ -59,15 +63,27 @@ namespace DotNetNuke.UI.WebControls
                                   tsm.initControl( elem );
                                 }});
                              }});</script>",
-                        _grantImagePath,
-                        _denyImagePath,
-                        _nullImagePath,
-                        _grantAltText,
-                        _denyAltText,
-                        _nullAltText);
+                        grantImagePath,
+                        denyImagePath,
+                        nullImagePath,
+                        grantAltText,
+                        denyAltText,
+                        nullAltText);
 
-                Page.ClientScript.RegisterClientScriptBlock(typeof (PermissionTriState), "initTriState", script);
+                ClientAPI.RegisterStartUpScript(page, scriptKey, script);
             }
+        }
+
+        private static void LookupScriptValues(Control ctl, out string grantImagePath, out string denyImagePath, out string nullImagePath, out string lockImagePath, out string grantAltText, out string denyAltText, out string nullAltText)
+        {
+            grantImagePath = ctl.ResolveUrl("~/images/grant.gif");
+            denyImagePath = ctl.ResolveUrl("~/images/deny.gif");
+            nullImagePath = ctl.ResolveUrl("~/images/unchecked.gif");
+            lockImagePath = ctl.ResolveUrl("~/images/lock.gif");
+
+            grantAltText = Localization.GetString("PermissionTypeGrant");
+            denyAltText = Localization.GetString("PermissionTypeDeny");
+            nullAltText = Localization.GetString("PermissionTypeNull");
         }
 
         protected override void Render(HtmlTextWriter writer)

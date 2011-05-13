@@ -1090,7 +1090,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         {
                             ShowButton(cmdUpload, "Upload");
                         }
-                        break; // TODO: might not be correct. Was : Exit Select
+                        break;
 
                     case FileControlMode.UpLoadFile:
                         cboFiles.Visible = false;
@@ -1098,7 +1098,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         imgPreview.Visible = false;
                         ShowButton(cmdSave, "Save");
                         ShowButton(cmdCancel, "Cancel");
-                        break; // TODO: might not be correct. Was : Exit Select
+                        break;
                 }
             }
             else

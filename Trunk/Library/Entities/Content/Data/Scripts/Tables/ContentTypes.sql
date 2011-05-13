@@ -16,7 +16,7 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 		CREATE TABLE {databaseOwner}[{objectQualifier}ContentTypes]
 		(
 			[ContentTypeID] [int] IDENTITY(1,1) NOT NULL,
-			[Type] [nvarchar](250) NOT NULL,
+			[ContentType] [nvarchar](250) NOT NULL,
 			CONSTRAINT [PK_{objectQualifier}ContentTypes] PRIMARY KEY CLUSTERED ( [ContentTypeID] ASC )
 		)
 	END

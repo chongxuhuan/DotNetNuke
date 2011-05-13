@@ -2,56 +2,33 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 
 <div class="dnnForm dnnScheduleStatus dnnClear" id="dnnScheduleStatus">
-    <table border="0" cellspacing="1" cellpadding="3">
-        <tr>
-            <td class="SubHead">
-                <asp:Label ID="lblStatusLabel" resourcekey="lblStatusLabel" runat="server" />
-            </td>
-            <td class="Normal">
-                <asp:Label CssClass="NormalBold" ID="lblStatus" runat="server" />
-            </td>
-        </tr>
-        <tr>
-            <td class="SubHead">
-                <asp:Label ID="lblMaxThreadsLabel" resourcekey="lblMaxThreadsLabel" runat="server" />
-            </td>
-            <td class="Normal">
-                <asp:Label CssClass="NormalBold" ID="lblMaxThreads" runat="server" />
-            </td>
-        </tr>
-        <tr>
-            <td class="SubHead">
-                <asp:Label ID="lblActiveThreadsLabel" resourcekey="lblActiveThreadsLabel" runat="server" />
-            </td>
-            <td class="Normal">
-                <asp:Label CssClass="NormalBold" ID="lblActiveThreads" runat="server" />
-            </td>
-        </tr>
-        <tr>
-            <td class="SubHead">
-                <asp:Label ID="lblFreeThreadsLabel" resourcekey="lblFreeThreadsLabel" runat="server" />
-            </td>
-            <td class="Normal">
-                <asp:Label CssClass="NormalBold" ID="lblFreeThreads" runat="server" />
-            </td>
-        </tr>
+    <div class="dnnssContent">
+        <div class="dnnFormItem">
+            <asp:Label ID="lblStatusLabel" resourcekey="lblStatusLabel" runat="server" />
+            <asp:Label ID="lblStatus" runat="server" />
+        </div>
+        <div class="dnnFormItem">
+            <asp:Label ID="lblMaxThreadsLabel" resourcekey="lblMaxThreadsLabel" runat="server" />
+            <asp:Label ID="lblMaxThreads" runat="server" />
+        </div>
+         <div class="dnnFormItem">
+            <asp:Label ID="lblActiveThreadsLabel" resourcekey="lblActiveThreadsLabel" runat="server" />
+             <asp:Label ID="lblActiveThreads" runat="server" />
+        </div>
+         <div class="dnnFormItem">
+            <asp:Label ID="lblFreeThreadsLabel" resourcekey="lblFreeThreadsLabel" runat="server" />
+            <asp:Label ID="lblFreeThreads" runat="server" />
+        </div>
         <asp:PlaceHolder ID="placeCommands" runat="server">
-        <tr>
-            <td class="SubHead">
+            <div class="dnnFormItem">
                 <asp:Label ID="lblCommand" resourcekey="lblCommand" runat="server" />
-            </td>
-            <td class="Normal">
-                <asp:LinkButton ID="cmdStart" resourcekey="cmdStart" CssClass="CommandButton" runat="server" />
-                &nbsp;&nbsp;
-                <asp:LinkButton ID="cmdStop" resourcekey="cmdStop" CssClass="CommandButton" runat="server" />
-            </td>
-        </tr>
+                <asp:LinkButton ID="cmdStart" resourcekey="cmdStart" CssClass="dnnSecondaryAction" runat="server" />
+                <asp:LinkButton ID="cmdStop" resourcekey="cmdStop" CssClass="dnnSecondaryAction" runat="server" />
+            </div>
         </asp:PlaceHolder>
-    </table>
-    <br />
-    <asp:Panel ID="pnlScheduleProcessing" runat="server">
-        <asp:Label ID="lblProcessing" runat="server" resourcekey="lblProcessing" CssClass="SubHead" />
-        <hr noshade="noshade" size="1" />
+    </div>
+    <asp:Panel ID="pnlScheduleProcessing" runat="server" CssClass="dnnScheduleProcessing">
+        <h2><asp:Label ID="lblProcessing" runat="server" resourcekey="lblProcessing" /></h2>
         <asp:DataGrid ID="dgScheduleProcessing" runat="server" AutoGenerateColumns="false" CellPadding="4" DataKeyField="ScheduleID" EnableViewState="false" CssClass="dnnScheduleGrid"
             GridLines="None">
             <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
@@ -77,10 +54,8 @@
             </Columns>
         </asp:DataGrid>
     </asp:Panel>
-    <br />
-    <asp:Panel ID="pnlScheduleQueue" runat="server">
-        <asp:Label ID="lblQueue" runat="server" resourcekey="lblQueue" CssClass="SubHead" />
-        <hr noshade="noshade" size="1" />
+    <asp:Panel ID="pnlScheduleQueue" runat="server" CssClass="dnnScheduleQueue">
+        <h2><asp:Label ID="lblQueue" runat="server" resourcekey="lblQueue" /></h2>
         <asp:DataGrid ID="dgScheduleQueue" runat="server" AutoGenerateColumns="false" CellPadding="4" DataKeyField="ScheduleID" EnableViewState="false" CssClass="dnnScheduleGrid"
             GridLines="None">
             <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
@@ -111,6 +86,6 @@
         </asp:DataGrid>
     </asp:Panel>
     <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdCancel" /></li>
+        <li><asp:HyperLink id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li>
     </ul>
 </div>

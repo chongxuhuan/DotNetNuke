@@ -680,7 +680,7 @@ namespace DotNetNuke.UI.UserControls
             var objFolderInfo = FolderManager.Instance.GetFolder(PortalSettings.PortalId, FolderName);
             if (objFolderInfo != null)
             {
-                var folderMapping = FolderMappingController.Instance.GetFolderMapping(objFolderInfo.StorageLocation);
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(objFolderInfo.FolderMappingID);
                 if (folderMapping.MappingName == "Standard")
                 {
                     imgStorageLocationType.Visible = false;

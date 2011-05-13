@@ -514,7 +514,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             var termController = new TermController(mockDataService.Object);
 
             //Act, Arrange
-            Assert.Throws<ArgumentOutOfRangeException>(() => termController.GetTermsByVocabulary(Null.NullString));
+            Assert.Throws<ArgumentException>(() => termController.GetTermsByVocabulary(Null.NullString));
         }
 
         #endregion

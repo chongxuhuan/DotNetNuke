@@ -73,7 +73,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         if (term.TermId == _TermId)
                         {
                             _SelectedTerm = term;
-                            break; // TODO: might not be correct. Was : Exit For
+                            break;
                         }
                     }
                 }

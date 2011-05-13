@@ -706,7 +706,7 @@ namespace DotNetNuke.Security.Membership
                 _dataProvider.RemoveUser(user.UserID, user.PortalID);
                 //Prior to removing membership, ensure user is not present in any other portal
                 UserInfo otherUser = GetUserByUserName(Null.NullInteger, user.Username);
-                if (otherUser != null)
+                if (otherUser == null)
                 {
                     DeleteMembershipUser(user);
                 }   

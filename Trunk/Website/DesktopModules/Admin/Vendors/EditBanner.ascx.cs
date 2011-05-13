@@ -47,6 +47,9 @@ namespace DotNetNuke.Modules.Admin.Vendors
 {
     public partial class EditBanner : PortalModuleBase
     {
+
+        #region Members
+
         private int BannerId = Null.NullInteger;
         private int VendorId = Null.NullInteger;
         protected Label lblBannerGroup;
@@ -66,16 +69,30 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
+        public string FormatItem(int VendorId, int BannerId, int BannerTypeId, string BannerName, string ImageFile, string Description, string URL, int Width, int Height)
+        {
+            var objBanners = new BannerController();
+            return objBanners.FormatBanner(VendorId, BannerId, BannerTypeId, BannerName, ImageFile, Description, URL, Width, Height, PortalId == -1 ? "G" : "L", PortalSettings.HomeDirectory);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdCopy.Click += cmdCopy_Click;
-            cmdDelete.Click += cmdDelete_Click;
-            cmdEmail.Click += cmdEmail_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
-            DNNTxtBannerGroup.PopulateOnDemand += DNNTxtBannerGroup_PopulateOnDemand;
+            cmdCancel.Click += OnCancelClick;
+            cmdCopy.Click += OnCopyClick;
+            cmdDelete.Click += OnDeleteClick;
+            cmdEmail.Click += OnEmailClick;
+            cmdUpdate.Click += OnUpdateClick;
+            DNNTxtBannerGroup.PopulateOnDemand += PopulateBannersOnDemand;
 
             try
             {
@@ -162,7 +179,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
+        protected void OnCancelClick(object sender, EventArgs e)
         {
             try
             {
@@ -174,7 +191,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdDelete_Click(object sender, EventArgs e)
+        protected void OnDeleteClick(object sender, EventArgs e)
         {
             try
             {
@@ -191,7 +208,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
@@ -260,7 +277,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdCopy_Click(object sender, EventArgs e)
+        protected void OnCopyClick(object sender, EventArgs e)
         {
             try
             {
@@ -277,14 +294,14 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdEmail_Click(object sender, EventArgs e)
+        protected void OnEmailClick(object sender, EventArgs e)
         {
             var objBanners = new BannerController();
-            BannerInfo objBanner = objBanners.GetBanner(BannerId);
+            var objBanner = objBanners.GetBanner(BannerId);
             if (objBanner != null)
             {
                 var objVendors = new VendorController();
-                VendorInfo objVendor = objVendors.GetVendor(objBanner.VendorId, PortalId);
+                var objVendor = objVendors.GetVendor(objBanner.VendorId, PortalId);
                 if (objVendor != null)
                 {
                     if (!Null.IsNull(objVendor.Email))
@@ -299,7 +316,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         Custom.Add(objBanner.EndDate.ToShortDateString());
                         Custom.Add(objBanner.Views.ToString());
                         Custom.Add(objBanner.ClickThroughs.ToString());
-                        string errorMsg = Mail.SendMail(PortalSettings.Email,
+                        var errorMsg = Mail.SendMail(PortalSettings.Email,
                                                         objVendor.Email,
                                                         "",
                                                         Localization.GetSystemMessage(PortalSettings, "EMAIL_BANNER_NOTIFICATION_SUBJECT", Localization.GlobalResourceFile, Custom),
@@ -327,27 +344,20 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        protected void DNNTxtBannerGroup_PopulateOnDemand(object source, DNNTextSuggestEventArgs e)
+        protected void PopulateBannersOnDemand(object source, DNNTextSuggestEventArgs e)
         {
-            DataTable dt;
-            DNNNode objNode;
             var objBanners = new BannerController();
-            dt = objBanners.GetBannerGroups(PortalId);
-            DataRow[] dr;
+            var dt = objBanners.GetBannerGroups(PortalId);
             dt.CaseSensitive = false;
-            dr = dt.Select("GroupName like '" + e.Text + "%'");
-            foreach (DataRow d in dr)
+            var dr = dt.Select("GroupName like '" + e.Text + "%'");
+            foreach (var d in dr)
             {
-                objNode = new DNNNode(d["GroupName"].ToString());
-                objNode.ID = e.Nodes.Count.ToString();
+                var objNode = new DNNNode(d["GroupName"].ToString()) {ID = e.Nodes.Count.ToString()};
                 e.Nodes.Add(objNode);
             }
         }
 
-        public string FormatItem(int VendorId, int BannerId, int BannerTypeId, string BannerName, string ImageFile, string Description, string URL, int Width, int Height)
-        {
-            var objBanners = new BannerController();
-            return objBanners.FormatBanner(VendorId, BannerId, BannerTypeId, BannerName, ImageFile, Description, URL, Width, Height, PortalId == -1 ? "G" : "L", PortalSettings.HomeDirectory);
-        }
+        #endregion
+
     }
 }

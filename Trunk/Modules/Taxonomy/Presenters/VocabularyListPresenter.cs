@@ -40,7 +40,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
 {
     public class VocabularyListPresenter : ModulePresenter<IVocabularyListView, VocabularyListModel>
     {
-        private readonly IVocabularyController _VocabularyController;
+        private readonly IVocabularyController _vocabularyController;
 
         #region "Constructors"
 
@@ -52,7 +52,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             Requires.NotNull("vocabularyController", vocabularyController);
 
-            _VocabularyController = vocabularyController;
+            _vocabularyController = vocabularyController;
 
             View.AddVocabulary += AddVocabulary;
         }
@@ -66,7 +66,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             base.OnInit();
 
             View.Model.Vocabularies =
-                (from v in _VocabularyController.GetVocabularies() where v.ScopeType.Type == "Application" || (v.ScopeType.Type == "Portal" && v.ScopeId == PortalId) select v).ToList();
+                (from v in _vocabularyController.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v).ToList();
 
             View.Model.IsEditable = IsEditable;
             View.Model.NavigateUrlFormatString = Globals.NavigateURL(TabId, "EditVocabulary", string.Format("mid={0}", ModuleId), "VocabularyId={0}");

@@ -73,7 +73,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
         {
             //Argument Contract
             Requires.NotNull("scopeType", scopeType);
-            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.Type);
+            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType);
 
             scopeType.ScopeTypeId = _DataService.AddScopeType(scopeType);
 
@@ -110,7 +110,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
             //Argument Contract
             Requires.NotNull("scopeType", scopeType);
             Requires.PropertyNotNegative("scopeType", "ScopeTypeId", scopeType.ScopeTypeId);
-            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.Type);
+            Requires.PropertyNotNullOrEmpty("scopeType", "ScopeType", scopeType.ScopeType);
 
             _DataService.UpdateScopeType(scopeType);
 

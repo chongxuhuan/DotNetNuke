@@ -1,128 +1,223 @@
 ﻿
+//  touch base with dang regarding layout & design
+//  add support for minDnnVersion filtering
+//  finalized support for TagCloud/Type filtering
 
+
+
+Gallery.isDebug = !(typeof console == 'undefined');
+Gallery.log = function () {
+    if (Gallery.isDebug) {
+        for (var i in arguments) console.log(arguments[i]);
+    }
+}
 
 function Gallery(params) {
 
     //defaults
     var options = {
-        rowId : 0,
-        index : 1,
-        pageSize : 10,
-        sortBy : "",
-        sortDir: "",
-        animationSpeed : "fast",
-        action: "none",
-        pageIdx: 1,
-        pageSze: 10,
-        smoothScrolling: true,
-        extensions : new Object(),
-        extensionFilter : "",
-        tagFilter : "",
-        ownerFilter : "",
-        tags : new Object(),
-        loadTags : true,
-        pagedExtensions : new Object(),    
-        protocol : ('https:' == location.protocol ? 'https://' : 'http://'),
-        host: location.host,
-        ServiceRoot : "/AppGalleryService.svc",
-        ExtensionServiceName : "/Extensions",
-        TagsServiceName : "/Tags",
-        ExtensionTagsServiceName: "/ExtensionTags",
-        error : false,
-        extensionDetailDialog : $("#extensionDetail").dialog(this.DefaultDialogOptions),
-        ExtensionPane : $(".ExtensionPane"),
-        loading :  $("#loading")
+        rowId: 0
+        , index: 1
+        , pageSize: 10
+        , sortBy: "extensionName"
+        , sortDir: "asc"
+        , animationSpeed: "slow"
+        , pageIdx: 1
+        , pageSze: 10
+        , smoothScrolling: true
+        , extensions: new Object()
+        , action: "filter"
+        , extensionFilter: "module"
+        , tagFilter: ""
+        , tagFilterName: ""
+        , ownerFilter: ""
+        , tags: new Object()
+        , loadTags: true
+        , pagedExtensions: new Object()
+        , protocol: ('https:' == location.protocol ? 'https://' : 'http://')
+        , host: "appgallery.dotnetnuke.com"
+        , ServiceRoot: "/AppGalleryService.svc"
+        , ExtensionServiceName: "/Extensions"
+        , TagsServiceName: "/Tags"
+        , TagCloudServiceName: "/GetTagCloudData"
+        , extensionDetailDialog: $("#extensionDetail").dialog(this.DefaultDialogOptions)
+        , loading: $("#loading")
+        , NameTextASC: "Name: A-Z"
+        , NameTextDESC: "Name: Z-A"
+        , PriceextASC: "Price: High to Low"
+        , PriceTextDESC: "Price: Low to High"
+        , TagCount: 50
+        , CacheTimeoutMinutes: 1440
+        , searchFilters: $("#searchFilters")
+        , tagLabel: "Tag"
+        , searchLabel: "Search"
+        , vendorLabel: "Vendor"
+        , typeLabel: "Type"
+        , noneLabel: "None"
+        , orderLabel: "Order:"
+        , errorLabel: "Error..."
+        , loadingLabel: "Loading..."
+        , badCharacters: /[^a-zA-Z 0-9]+/g
+        , searchText: ""
+        , versionImages: ["DNN-00.png", "DNN-01.png", "DNN-02.png", "DNN-03.png", "DNN-04.png", "DNN-05.png", "DNN-06.png", ]
     };
-
     //extend defaults with ctor params
     if (params) {
         $.extend(options, params);
     }
-    
-    console.log(options);
 
     //load up our object with default options
     for (var i in options) {
         if (options.hasOwnProperty(i)) this[i] = options[i];
     }
 
+    this.extensionList = $("#extensionList");
     //setup smooth scrolling pager
-//    if (this.smoothScrolling) {
-//        var s = new Scroller(100, false, function (scroller) {
-//            _gallery.index++;
-//            _gallery.action = "page";
-//            _gallery.Search();
-//        }).watch();
-//    }
+    if (this.smoothScrolling) {
+        var s = new Scroller(100, false, function (scroller) {
+            _gallery.index++;
+            _gallery.action = "page";
+            _gallery.Search();
+        }).watch();
+    }
 
-    //hide our extensions pane, for now
-    this.ExtensionPane.hide();
-    
     //load up our urls
     this.ExtensionsUrl = this.getServiceUrl(this.ExtensionServiceName);
-    this.ExtensionTagsUrl = this.getServiceUrl(this.ExtensionTagsServiceName);
+    this.TagCloudUrl = this.getServiceUrl(this.TagCloudServiceName);
     this.TagsUrl = this.getServiceUrl(this.TagsServiceName);
-    
-    //wire up the ajax events
-    this.loading.ajaxStart(function () { _gallery.ajaxStart(arguments) }).ajaxError(function () { _gallery.ajaxError(arguments) }).ajaxStop(function () { _gallery.ajaxStop(arguments) });
+
+    this.Cache = new Cache("_Gallery_", this.CacheTimeoutMinutes);
 
     //bind to our document events
 
-    $(document).bind("scroll", function () {
-        _gallery.reposition();
-    });
-
-    $(document).bind("resize", function () {
-        _gallery.reposition();
-    });
-    this.reposition();
 
     $("#typeDDL").change(function (event) {
         var e = event || window.event;
         _gallery.FilterGallery(e, this);
+        return false;
     });
 
-    $("#tag-list").click(function (event) {
-        var e = event || window.event;
+    $("#tag-list").click(function (e) {
+        e = e || window.event;
         _gallery.TagFilterGallery(e, this);
+        return false;
     });
 
-    $("#search-reset").click(function () {
+    $("#search-reset").click(function (e) {
+        e = e || window.event;
         $('#searchText').val('');
-        _gallery.SearchGallery();
+        _gallery.tagFilter = '';
+        _gallery.tagFilterName = '';
+        _gallery.ownerFilter = '';
+        _gallery.sortBy = 'extensionName';
+        _gallery.sortDir = 'asc';
+        _gallery.extensionFilter = 'module';
+        $("#typeDDL").val('module');
+        _gallery.SearchGallery('');
+        return false;
     });
 
-    $("#searchText").change(function () {
-        $("#search-go").click();
-    });
-    $("#searchText").keyup(function () {
-        if (arguments[0].keyCode == 27) $("#search-reset").click();
-    });
-    $("#search-go").click(function () {
+    $("#searchText").change(function (e) {
+        e = e || window.event;
         _gallery.SearchGallery($('#searchText').val());
+        return false;
+    });
+    $(document).keydown(function (e) {
+        e = e || window.event;
+        if (e.which == 13) {
+            window.stop();
+            e.stopPropagation();
+            e.preventDefault();
+            _gallery.SearchGallery($('#searchText').val());
+        }
+    });
+    $("#searchText").keyup(function (e) {
+        e = e || window.event;
+        if (e.which == 27) {
+            $("#search-reset").click();
+        }
+        return false;
+    });
+    $("#search-go").click(function (e) {
+        e = e || window.event;
+        _gallery.SearchGallery($('#searchText').val());
+        return false;
     });
 
-    $("#NameSorter").click(function () {
+    $("#NameSorter").click(function (e) {
+        e = e || window.event;
         _gallery.SortExtensions('extensionName');
+        return false;
     });
 
-    $("#PriceSorter").click(function () {
+    $("#PriceSorter").click(function (e) {
+        e = e || window.event;
         _gallery.SortExtensions('price');
+        return false;
     });
+}
+
+Gallery.tagSort = function (a, b) {
+    return (0.5 - Math.random());
+}
+Gallery.validTag = function (tag) {
+    return (tag && tag.tagName && (tag.tagName.indexOf("DotNetNuke") < 0) && (tag.TagCount > 0));
+}
+Gallery.prototype.resolveTags = function (msg) {
+    var fixed = new Array();
+    var max = msg.d.length - 1;
+    var biggest = 0;
+    var maxFont = 250;
+    var minFont = 75;
+    var x = 0;
+    var item;
+
+    //first pass to get biggest
+    for (x = max; x >= 0; x--) {
+        item = msg.d[x];
+        if (Gallery.validTag(item)) {
+            if (item.TagCount > biggest) biggest = item.TagCount;
+            fixed.push(item);
+        }
+    }
+
+    //second pass to set sizes
+    max = fixed.length;
+    for (x in fixed) {
+        item = fixed[x];
+        item.fontSize = ((item.TagCount / biggest) * maxFont).toFixed(2);
+        if (item.fontSize < minFont) item.fontSize = minFont;
+    }
+
+
+    this.loadTags = false;
+    this.tags = fixed.sort(Gallery.tagSort);
+    this.Cache.setItem("tags_" + this.extensionFilter, _gallery.tags);
+    this.showTags();
+    this.hideLoading();
 
 }
-Gallery.prototype.ajaxStart = function(a) {
-        this.loading.text("Loading...");
-        this.loading.show();
+Gallery.gotTags = function (msg) {
+    _gallery.resolveTags(msg);
 }
-Gallery.prototype.ajaxStop = function(a) {
-        if (!_gallery.error) this.loading.hide();
+Gallery.prototype.resolveImage = function (img) {
+    return this.imgRoot + img;
 }
-Gallery.prototype.ajaxError = function(a) {
-        this.loading.css("background-color", "red");
-        this.loading.text("Error...");
-        this.loading.attr("title", a[3]);
-        _gallery.error = true;
+
+Gallery.prototype.showLoading = function (a) {
+    this.reposition();
+    this.loading.css("background-color", "");
+    this.loading.text(this.loadingLabel);
+    this.loading.show();
+}
+Gallery.prototype.hideLoading = function (a) {
+    this.loading.hide();
+}
+Gallery.prototype.errorLoading = function (a) {
+    this.loading.css("background-color", "red");
+    this.loading.text(this.errorText);
+    this.loading.attr("title", a[0].statusText);
+    this.loading.attr("alt", a[0].statusText);
 }
 
 Gallery.prototype.reposition = function () {
@@ -146,14 +241,14 @@ Gallery.prototype.SortExtensions = function (fld, order) {
         var PriceSorter = $("#PriceSorter");
         if (this.sortBy == "extensionName") {
             if (this.sortDir == "asc")
-                NameSorter.text("Name: Z-A");
+                NameSorter.text(this.NameTextDESC);
             else
-                NameSorter.text("Name: A-Z");
+                NameSorter.text(this.NameTextASC);
         } else if (this.sortBy == "price") {
             if (this.sortDir == "asc")
-                PriceSorter.text("Price: High to Low");
+                PriceSorter.text(this.PriceTextDESC);
             else
-                PriceSorter.text("Price: Low to High");
+                PriceSorter.text(this.PriceTextASC);
         }
     }
     return this.Search();
@@ -175,102 +270,46 @@ Gallery.prototype.OwnerFilterGallery = function (owner) {
         this.ownerFilter = owner;
 
     this.index = 1;
-    var extensionList = $("#extensionList");
+
     return this.Search();
 }
 
-Gallery.prototype.TagFilterGallery = function(event, caller) {
-    var e = event || window.event;
-    var filter = $((e.srcElement || e.target)).attr('value');
+Gallery.prototype.TagFilterGallery = function (e, caller) {
+    e = e || window.event;
+    var target = $((e.srcElement || e.target));
+    var filter = target.attr('value');
     this.action = "filter";
-    if (filter)
+    if (filter) {
         this.tagFilter = filter;
+        this.tagFilterName = target.html();
+    }
     this.index = 1;
-    var extensionList = $("#extensionList");
     return this.Search();
 }
 
-Gallery.prototype.FilterGallery = function(e, ddl) {
+Gallery.prototype.FilterGallery = function (e, ddl) {
     var filter = $((e.srcElement || e.target)).attr('value');
 
     this.action = "filter";
     if (filter)
         this.extensionFilter = filter;
+
+    this.getTags();
     this.index = 1;
-    var extensionList = $("#extensionList");
     return this.Search();
 }
 
 Gallery.prototype.Search = function () {
 
-    this.getExtensions(function (msg) {
-        _gallery.pagedExtensions = msg.d.results;
-        if (_gallery.extensions && _gallery.extensions.d && _gallery.extensions.d.results && !(_gallery.action == "search" || _gallery.action == "filter" || _gallery.action == "sort"))
-            _gallery.extensions.d.results = _gallery.extensions.d.results.concat(msg.d.results);
-        else
-            _gallery.extensions = msg;
-
-        _gallery.showExtensions(function () {
-            if (_gallery.loadTags) {
-                _gallery.getTags(function (msg) {
-                    _gallery.loadTags = false;
-                    _gallery.tags = msg;
-                    _gallery.showTags(function () {
-                    });
-                });
-            }
-        });
-    });
+    this.getExtensions();
     return this;
 }
 
 
-Gallery.prototype.getTags = function (callback) {
-
-    var url = this.TagsUrl + "?&$inlinecount=allpages&$skip=0&$top=20";
-    url = url + "&callback=?"
-
-    $.ajax({
-        type: "GET",
-        url: url,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (msg) {
-            //fix up the tag size data
-
-            var fixedTags = {
-                __count: msg.d._count,
-                results: []
-            };
-
-            var max = 0;
-            for (var r in msg.d.results) {
-                var count = Math.floor(Math.random() * 10);
-                //var count = msg.d.results[r]["count"];
-                msg.d.results[r]["count"] = count;
-                if (count > max) max = count;
-            }
-            var maxFontSize = 2;
-            var diff = maxFontSize / max;
-            var minThreshold = 0.5;
-            for (var r in msg.d.results) {
-                var count = msg.d.results[r]["count"];
-                var fs = (count * diff);
-                msg.d.results[r]["fontSize"] = fs;
-                if (fs >= minThreshold) fixedTags.results.push(msg.d.results[r]);
-            }
-
-            if (callback)
-                callback(fixedTags);
-            return msg;
-        }
-    });
-}
-
 Gallery.prototype.ToggleSort = function (field) {
     this.sortBy = field;
 
-    if (!this.sortDir || this.sortDir == "" || this.sortDir == "desc") {
+    if (!this.sortDir || this.sortDir === "" || this.sortDir == "desc") {
         this.sortDir = 'asc';
     } else {
         this.sortDir = 'desc';
@@ -281,90 +320,214 @@ Gallery.prototype.getServiceUrl = function (ServiceName) {
     return this.protocol + this.host + this.ServiceRoot + ServiceName;
 }
 
-Gallery.prototype.getByTagID = function (tagID, callback) {
-    var query = this.ExtensionTagsUrl +
-	    	    			"?&$inlinecount=allpages" + 			// get total number of records
-	    	    			"&$skip=" + (this.index - 1) * this.pageSize + 	// skip to first record of page
-	    	    			"&$top=" + this.pageSize +
-	    	    			"&$filter=tagID%20eq%20" + tagID;
-    query = query + "&callback=?"
-
-    $.ajax({
-        type: "GET",
-        url: query,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (msg) {
-            var extensionIDs = [];
-            for (var x = 0; x <= msg.d.results.length; x++) {
-                extensionIDs.push(msg.d.results["extensionID"]);
-            }
-
-            if (callback)
-                callback(extensionIDs);
-
-            return extensionIDs;
-        }
-    });
-
-}
-
 Gallery.prototype.getExtensions = function (callback) {
 
-    var query = this.ExtensionsUrl +
-	    	    			"?&$inlinecount=allpages" + 			// get total number of records
-	    	    			"&$skip=" + (this.index - 1) * this.pageSize + 	// skip to first record of page
+    var filterDesc = this.tagLabel + " ";
+    var url = ""
+    var prefix = "";
+    var skip = (this.index - 1) * this.pageSize;
+    var hasCriteria = (skip > 0);
+
+    //basic sanitization    
+    this.searchText = this.searchText.replace(this.badCharacters, "");
+    this.ownerFilter = this.ownerFilter.replace(this.badCharacters, "");
+
+
+    if (this.tagFilter && this.tagFilter !== "") {
+        url = this.TagsUrl + "(" + this.tagFilter + ")/ExtensionTags/?$expand=Extension";
+        prefix = "Extension/";
+        filterDesc = filterDesc + this.tagFilterName;
+        hasCriteria = true;
+    } else {
+        url = this.ExtensionsUrl + "?";
+        filterDesc = filterDesc + this.noneLabel;
+    }
+    filterDesc = filterDesc + ", " + this.searchLabel + " ";
+    url += "&$inlinecount=allpages" + 			// get total number of records
+	    	    			"&$skip=" + skip + 	// skip to first record of page
 	    	    			"&$top=" + this.pageSize;
 
-    if (this.searchText && this.searchText != "")
-        query = query + "&$filter=(substringof('" + this.searchText + "', extensionName) eq true or substringof('" + this.searchText + "', Description) eq true or substringof('" + this.searchText + "', Title) eq true)";
+    if (this.searchText && this.searchText !== "") {
+        url = url + "&$filter=" + encodeURIComponent("(substringof('" + this.searchText + "', " + prefix + "extensionName) eq true or substringof('" + this.searchText + "', " + prefix + "Description) eq true or substringof('" + this.searchText + "', " + prefix + "Title) eq true)");
+        filterDesc = filterDesc + this.searchText;
+        hasCriteria = true;
+    } else {
+        filterDesc = filterDesc + this.noneLabel;
+    }
 
-    if (this.extensionFilter && this.extensionFilter != "") {
-        if (query.indexOf("$filter") < 0)
-            query = query + "&$filter=";
+
+
+    filterDesc = filterDesc + ", " + this.typeLabel + " ";
+
+    if (this.extensionFilter && this.extensionFilter !== "" && this.extensionFilter !== "all") {
+        if (this.extensionFilter == "module") {
+            filterDesc = filterDesc + "Module";
+        } else {
+            hasCriteria = true;
+            filterDesc = filterDesc + "Skin";
+        }
+        if (url.indexOf("$filter") < 0)
+            url = url + "&$filter=";
         else
-            query = query + "and ";
+            url = url + "and ";
 
-        query = query + "extensionType eq '" + this.extensionFilter + "'";
+        url = url + "" + prefix + "extensionType eq '" + this.extensionFilter + "'";
+    } else {
+        hasCriteria = true;
+        filterDesc = filterDesc + "All";
     }
 
-    if (this.tagFilter && this.tagFilter != "") {
-        if (query.indexOf("$filter") < 0)
-            query = query + "&$filter=";
+    filterDesc = filterDesc + ", " + this.vendorLabel + " ";
+
+    if (this.ownerFilter && this.ownerFilter !== "") {
+        filterDesc = filterDesc + this.ownerFilter;
+        if (url.indexOf("$filter") < 0)
+            url = url + "&$filter=";
         else
-            query = query + "and ";
+            url = url + "and ";
 
-        query = query + "tagid eq '" + this.tagFilter + "'";
+        url = url + encodeURIComponent("" + prefix + "ownerName eq '" + this.ownerFilter + "'");
+        hasCriteria = true;
+    } else {
+        filterDesc = filterDesc + this.noneLabel;
     }
-    if (this.ownerFilter && this.ownerFilter != "") {
-        if (query.indexOf("$filter") < 0)
-            query = query + "&$filter=";
+
+    if (this.DataBaseVersion && this.DataBaseVersion !== "") {
+        if (url.indexOf("$filter") < 0)
+            url = url + "&$filter=";
         else
-            query = query + "and ";
+            url = url + "and ";
 
-        query = query + "ownerName eq '" + this.ownerFilter + "'";
+        url = url + encodeURIComponent("" + prefix + "MinDnnVersion lt '" + this.DataBaseVersion + "'");
+    } else {
+        filterDesc = filterDesc + this.noneLabel;
     }
 
 
+    filterDesc = filterDesc + ", " + this.orderLabel + " ";
 
-    if (this.sortBy != "") {
-        query = query + "&$orderby=" + this.sortBy + " " + this.sortDir;
+
+    if (this.sortBy !== "") {
+
+        url = url + "&$orderby=" + encodeURIComponent(prefix + "" + this.sortBy + " " + this.sortDir);
+
+        if (this.sortBy == "extensionName") {
+            if (this.sortDir == "asc") {
+                filterDesc = filterDesc + this.NameTextASC;
+            } else {
+                hasCriteria = true;
+                filterDesc = filterDesc + this.NameTextDESC;
+            }
+        } else {
+            hasCriteria = true;
+            if (this.sortDir == "asc") {
+                filterDesc = filterDesc + this.PriceextASC;
+            } else {
+                filterDesc = filterDesc + this.PriceTextDESC;
+            }
+        }
+    } else {
+        filterDesc = filterDesc + this.noneLabel;
     }
 
-    query = query + "&callback=?"
 
-    $.ajax({
+    this.searchFilters.text(filterDesc);
+    url = url + "&$callback=Gallery.gotExtensions&$format=json";
+
+    if (!_gallery.extensions.d || !hasCriteria) {
+        var exts = this.Cache.getItem("__FIRSTLOAD");
+        if (exts) {
+            Gallery.gotExtensions(exts);
+            return;
+        }
+    }
+    Gallery.log(url);
+    this.showLoading();
+    this.eXHR = $.ajax({
         type: "GET",
-        url: query,
+        crossDomain: true,
+        jsonp: false,
+        url: url,
         contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (msg) {
-            if (callback)
-                callback(msg);
-            return msg;
+        dataType: "json"
+    }).error(function () {
+        _gallery.errorLoading(arguments);
+    });
+    this.eXHR.url = url;
+}
+
+Gallery.gotExtensions = function () {
+
+    var msg = arguments[0];
+
+    var g = _gallery;
+
+    ////TODO: MOCK DATA  --- REMOVED FOR PROD    
+    if (msg && msg.d && msg.d.results) {
+        for (var i in msg.d.results) {
+            var item = msg.d.results[i];
+            item.catalog = g.catalogs[Math.random.range(0, 1)];
+        }
+    }
+
+
+
+    if (!_gallery.Cache.hasItem("__FIRSTLOAD")) _gallery.Cache.setItem("__FIRSTLOAD", msg);
+
+    if (msg.d.results.length > 0 && (typeof msg.d.results[0].Extension != 'undefined')) {
+        for (var j in msg.d.results) {
+            for (var i in msg.d.results[j].Extension) {
+                if (msg.d.results[j].Extension.hasOwnProperty(i)) msg.d.results[j][i] = msg.d.results[j].Extension[i];
+            }
+        }
+    }
+
+    _gallery.pagedExtensions = msg.d.results;
+    if (_gallery.extensions && _gallery.extensions.d && _gallery.extensions.d.results && !(_gallery.action == "search" || _gallery.action == "filter" || _gallery.action == "sort"))
+        _gallery.extensions.d.results = _gallery.extensions.d.results.concat(msg.d.results);
+    else
+        _gallery.extensions = msg;
+
+
+    _gallery.showExtensions(function () {
+        if (_gallery.loadTags) {
+            _gallery.getTags();
         }
     });
+    _gallery.hideLoading();
 }
+
+Gallery.prototype.getTags = function (callback) {
+
+    var max = (this.TagCount ? this.TagCount : 15);
+    var url = this.TagCloudUrl + "?tagcount=" + max;
+    //url=url + "&$filter=Extension/extensionType eq '" + this.extensionFilter + "'";
+    url = url + "&$callback=Gallery.gotTags&$format=json";
+
+    var tags = this.Cache.getItem("tags_" + this.extensionFilter);
+    if (tags) {
+        _gallery.tags = tags.sort(Gallery.tagSort);
+        _gallery.loadTags = false;
+        _gallery.showTags();
+        return;
+    }
+    this.showLoading();
+
+    Gallery.log(url);
+
+    this.tagXHR = $.ajax({
+        type: "GET",
+        crossDomain: true,
+        jsonp: false,
+        url: url,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+    }).error(function () {
+        _gallery.errorLoading(arguments);
+    });
+}
+
+
 Gallery.prototype.showTags = function (callback) {
     // show tags in template
     var taglist = $("#tag-list");
@@ -372,36 +535,27 @@ Gallery.prototype.showTags = function (callback) {
 
     taglist.empty();
 
-    if (this.tags.results.length > 0) {
-        tagTmpl.tmpl(this.tags.results).appendTo(taglist);
+    if (this.tags) {
+        tagTmpl.tmpl(this.tags).appendTo(taglist);
         taglist.fadeIn(this.animationSpeed);
     } else {
         taglist.fadeOut(this.animationSpeed);
     }
     if (callback) callback(this);
 }
+
+
 Gallery.prototype.showExtensions = function (callback) {
     this.pageCount = Math.ceil(this.extensions.d.__count / this.pageSize);
 
-    var extensionList = $("#extensionList");
-
-    if (this.smoothScrolling) {
-    } else {
-        extensionList.empty();
+    if (!this.smoothScrolling) {
+        this.extensionList.empty();
     }
-    if (this.action == "search" || this.action == "filter" || this.action == "sort") extensionList.empty();
+    if (this.action == "search" || this.action == "filter" || this.action == "sort") this.extensionList.empty();
 
 
     if (this.pagedExtensions.length > 0) {
-        $("#eTmpl")
-			.tmpl(this.pagedExtensions)
-            .find("div")
-			.appendTo(extensionList).fadeIn(this.animationSpeed);
-        this.ExtensionPane.fadeIn(this.animationSpeed);
-
-
-    } else {
-        if (!this.smoothScrolling) this.ExtensionPane.fadeOut(this.animationSpeed);
+        $("#eTmpl").tmpl(this.pagedExtensions).find("div").appendTo(this.extensionList).fadeIn(this.animationSpeed);
     }
     this.pagedExtensions = [];
     if (callback) callback(this);
@@ -415,16 +569,6 @@ Gallery.prototype.getExtensionById = function (extensionID) {
     }
     return;
 }
-
-Gallery.prototype.GetRowClass = function () {
-    this.rowId++;
-    var rowClass = this.rowId % 2 == 0 ? "even-row" : "odd-row";
-    if (this.rowId == 1) {
-        rowClass += " selected";
-    }
-    return rowClass;
-}
-
 Gallery.prototype.FormatCurrency = function (num) {
     num = num.toString().replace(/\$|\,/g, '');
     if (isNaN(num))
@@ -471,6 +615,119 @@ Gallery.prototype.ShowDetails = function (extensionID) {
 }
 
 
+Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {
+    this.StorageType = (StorageType || "localStorage");
+    if (this.StorageType != "localStorage" || this.StorageType != "sessionStorage" || this.StorageType != "globalStorage") this.StorageType = "localStorage";
+    this.Scope = Scope || "";
+    this.TimeoutInMinutes = TimeoutInMinutes;
+    this.expireCallback = ExpireCallback;
+    this.loadStore();
+    Cache.isEnabled = (typeof this.store != 'undefined') && (typeof JSON != 'undefined');
+    if (Cache.isEnabled) {
+        if (this.TimeoutInMinutes != 'undefined') {
+            this.cacheExpire = window.setInterval(Cache.ClearInterval, (TimeoutInMinutes * 60000), this);
+        }
+    }
+    return this;
+}
+Cache.isEnabled = false;
+Cache.prototype.loadStore = function () {
+    switch (this.StorageType) {
+        case "globalStorage":
+            try {
+                if (window.globalStorage) {
+                    this.store = window.globalStorage[window.location.hostname];
+                }
+            } catch (E4) { }
+            break;
+        case "sessionStorage":
+            try {
+                if (window.sessionStorage) {
+                    this.store = window.sessionStorage;
+                }
+            } catch (E3) { }
+            break;
+        default:
+            try {
+                if (window.localStorage) {
+                    this.store = window.localStorage;
+                }
+            } catch (E3) { }
+            break;
+    }
+    return this;
+}
+Cache.ClearInterval = function (source) {
+    if (typeof source.TimeoutInMinutes != 'undefined') {
+        if (source.hasItem(source.Scope + "_expire")) {
+            var exp = source.getItem(source.Scope + "_expire");
+            var mins = ((new Date()) - Date.parse(exp)) / 60000;
+            if (mins > source.TimeoutInMinutes) {
+                source.EmptyCache();
+                if (typeof source.expireCallback != 'undefined') source.expireCallback(i);
+            }
+        } else {
+            source.setItem(source.Scope + "_expire", new Date());
+        }
+    }
+    return this;
+}
+Cache.prototype.EmptyCache = function () {
+
+    var max, i, X;
+    try {
+        for (i in this.store) {
+            if (this.store.hasOwnProperty(i)) {
+                if (i.substr(0, this.Scope.length) == this.Scope) {
+                    this.store.removeItem(i);
+                }
+            }
+        }
+    } catch (E) { //\go figure, FF will throw on the above, but chrome it works
+        try {
+            max = this.store.length - 1;
+            for (x = max; x >= 0; x--) {
+                i = this.store[x];
+                if (this.store.hasOwnProperty(i)) {
+                    if (i.substr(0, this.Scope.length) == this.Scope) {
+                        this.store.removeItem(i);
+                    }
+                }
+            }
+        } catch (EFF) { this.store.clear(); } //worst case
+    }
+    return this;
+}
+Cache.prototype.hasItem = function (key) {
+    var d;
+    if (Cache.isEnabled) {
+        d = this.store.getItem(this.Scope + key);
+        return (d && (d !== null) && !(typeof d === 'undefined'));
+    }
+    return false;
+}
+Cache.prototype.getItem = function (key) {
+    var d, x;
+    if (Cache.isEnabled) {
+        d = this.store.getItem(this.Scope + key);
+        try {
+            x = $.parseJSON(d);
+        } catch (e) {
+            this.store.removeItem(this.Scope + key);
+        }
+    }
+    return x;
+}
+
+Cache.prototype.setItem = function (key, value) {
+    if (Cache.isEnabled) {
+        this.store.setItem(this.Scope + key, JSON.stringify(value));
+    }
+    return this;
+}
+
+
+
 Scroller = function (maxPage, loadScroll, scrollcallback) {
     this.page = 1;
     this.maxPage = (maxPage) ? maxPage : 100;
@@ -509,4 +766,8 @@ Scroller.prototype.watch = function () {
 }
 Scroller.prototype.unwatch = function () {
     $(document).unbind("scroll");
+}
+Math.random.range = function (min, max, inclusive) {
+    if (typeof inclusive !== 'undefined' || !inclusive) min = min - 1; max = max + 1;
+    return Math.floor(max + (1 + min - max) * Math.random());
 }

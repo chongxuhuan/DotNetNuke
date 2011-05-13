@@ -216,7 +216,7 @@ namespace DotNetNuke.Tests.Utilities
 
         public const int FOLDER_ValidFileId = 1;
         public const int FOLDER_ValidFolderId = 3;
-        public const int FOLDER_ValidStorageLocation = 5;
+        public const int FOLDER_ValidFolderMappingID = 5;
         public const string FOLDER_ValidFileName = "file.txt";
         public const string FOLDER_ValidFilePath = "C:\\folder\\file.txt";
         public const string FOLDER_ValidFolderName = "folder";

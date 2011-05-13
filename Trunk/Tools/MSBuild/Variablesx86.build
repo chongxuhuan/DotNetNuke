@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="BlankTarget">
+  <Import Project="AT.MSBuild.Tasks.Targets" />
+  <PropertyGroup>
+    <DotNetNukeMSBuildTasksPath Condition="'$(DotNetNukeMSBuildTasksPath)' == ''">$(MSBuildExtensionsPath)\DotNetNuke.MSBuild.Tasks</DotNetNukeMSBuildTasksPath>
+    <DotNetNukeMSBuildTasksLib>$(DotNetNukeMSBuildTasksPath)\DotNetNuke.MSBuild.Tasks.dll</DotNetNukeMSBuildTasksLib>
+  </PropertyGroup>
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.GenerateSolutionFiles" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.ProcessProjectFileVS2008" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.ProcessSolutionFiles" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.IncrementBuild" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.RemoveTestProjects" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.CIBuildDeploy" />
+  <UsingTask AssemblyFile="$(DotNetNukeMSBuildTasksLib)" TaskName="DotNetNuke.MSBuild.Tasks.DotNetNukeDeploy" />
+  <PropertyGroup>
+    <DefaultVersion>06.00.00.00000</DefaultVersion>
+    <RootFolder>F:\Builds\CSharp\WorkingDirectory</RootFolder>
+    <TestWebsiteFolder>F:\Builds\CSharp\CIBuildTestWebsite</TestWebsiteFolder>
+    <TestsFolder>F:\Tests</TestsFolder>
+    <ReleasesFolder>F:\Releases</ReleasesFolder>
+    <PackagesFolder>F:\Packages\CSharp</PackagesFolder>
+    <PackagingFolder>F:\Packaging\CSharp</PackagingFolder>
+    <AutomationPackagesFolder>\\qa-automation\Packages\CSharp</AutomationPackagesFolder>
+    <CodePlexRootFolder>F:\Builds\Update_CodePlex</CodePlexRootFolder>
+    <TF>C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\TF.exe</TF>
+    <SVNClientPath>C:\Program Files\CollabNet\Subversion Client\</SVNClientPath>
+    <BeyondCompare>C:\Program Files\Beyond Compare 3\BCompare.exe</BeyondCompare>
+    <LastReleasedVersion>05.06.02</LastReleasedVersion>
+    <SmtpServer>mail.dotnetnuke.com</SmtpServer>
+    <EmailUsername>no-reply@dotnetnuke.com</EmailUsername>
+    <EmailPassword>St1lg@r99</EmailPassword>
+    <EamilTo>engineering@dnncorp.com</EamilTo>
+    <EmailFrom>no-reply@dotnetnuke.com</EmailFrom>
+  </PropertyGroup>
+  <ItemGroup>
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_UnitTests.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Community_UnitTests.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Community.sln" />
+
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_UnitTests_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_UnitTests_Elite.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_Elite.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_Source_VS2008.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Enterprise_Elite_VS2008.sln" />
+
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_UnitTests_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_UnitTests_Elite.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_Elite.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_Source_VS2008.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Professional_Elite_VS2008.sln" />
+
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Community_UnitTests_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Community_Source.sln" />
+    <SolutionExclude Include="$(PackagingFolder)\DotNetNuke_Community_Source_VS2008.sln" />
+  </ItemGroup>
+  <!--Dummy projects, remove from all solutions-->
+  <ItemGroup>
+    <AllSolutionsProjects Include="Externally.Sourced"/>
+  </ItemGroup>
+  <ItemGroup>
+    <TestProjects Include="DotNetNuke.Tests.Data"/>
+    <TestProjects Include="DotNetNuke.Tests.UI" />
+    <TestProjects Include="DotNetNuke.Modules.RazorHost" />
+    <TestProjects Include="DotNetNuke.Tests.Utilities"/>
+    <TestProjects Include="DotNetNuke.Tests.Content"/>
+    <TestProjects Include="DotNetNuke.Tests.Core"/>
+    <TestProjects Include="Tests"/>
+    <TestProjects Include="Utilities"/>
+  </ItemGroup>
+  <!--EE Elite only test projects, remove from EE Source and all other solutions-->
+  <ItemGroup>
+    <EETestProjects Include="DotNetNuke.Tests.ContentStaging"/>
+    <EETestProjects Include="DotNetNuke.Tests.SharePoint"/>
+  </ItemGroup>
+  <!--EE Elite only projects, remove from EE Source and all other solutions-->
+  <ItemGroup>
+    <EEProjects Include="DotNetNuke.Enterprise"/>
+    <EEProjects Include="DotNetNuke.Web.Razor" />
+    <EEProjects Include="DotNetNuke.Modules.RazorHost" />
+    <EEProjects Include="DotNetNuke.Enterprise.ContentStaging"/>
+    <EEProjects Include="DotNetNuke.Enterprise.SharePoint"/>
+    <EEProjects Include="DotNetNuke.Enterprise.SharePoint.Contracts"/>
+    <EEProjects Include="Enterprise Projects"/>
+  </ItemGroup>
+  <!--PE Elite only projects, remove from PE Source-->
+  <ItemGroup>
+    <PEProjects Include="DotNetNuke.Professional"/>
+    <PEProjects Include="DotNetNuke.Professional.DocumentLibrary"/>
+    <PEProjects Include="DotNetNuke.Professional.FileIntegrity"/>
+    <PEProjects Include="DotNetNuke.Professional.GoogleAnalyticsPro"/>
+    <PEProjects Include="DotNetNuke.Professional.HealthMonitoring"/>
+    <PEProjects Include="DotNetNuke.Professional.IntegrityChecker"/>
+    <PEProjects Include="DotNetNuke.Professional.LicenseActivation"/>
+    <PEProjects Include="DotNetNuke.Professional.MyModules"/>
+    <PEProjects Include="DotNetNuke.Professional.WebServerManager"/>
+    <PEProjects Include="DotNetNuke.Professional.SecurityCenter"/>
+    <PEProjects Include="DotNetNuke.Professional.UserSwitcher"/>
+    <PEProjects Include="DotNetNuke.Professional.SearchCrawler.Input"/>
+    <PEProjects Include="DotNetNuke.Professional.SearchCrawler.Results"/>
+    <PEProjects Include="DotNetNuke.Professional.SearchCrawler"/>
+    <PEProjects Include="DotNetNuke.Professional.AmazonS3FolderProvider"/>
+    <PEProjects Include="DotNetNuke.Professional.AzureFolderProvider"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PEReplacements Include="DotNetNuke_Enterprise" />
+    <PEReplacements Include="DotNetNuke_Professional" />
+  </ItemGroup>
+  <ItemGroup>
+    <CEReplacements Include="DotNetNuke_Enterprise" />
+    <CEReplacements Include="DotNetNuke_Community" />
+  </ItemGroup>
+  <Target Name="BlankTarget">
+    <!-- Blank Target just to satisfy MSBuild requirements. -->
+  </Target>
+  <Target Name="VersionCheck">
+    <IncrementBuild FilePath="$(RootFolder)\Library\AssemblyInfo.cs" AutoIncrementVersion="false">
+      <Output TaskParameter="BuildVersion" PropertyName="BuildVersion">
+      </Output>
+      <Output TaskParameter="FormattedBuildVersion" PropertyName="FormattedBuildVersion">
+      </Output>
+      <Output TaskParameter="Revision" PropertyName="Revision">
+      </Output>
+    </IncrementBuild>
+    <Message Text="Zip Version : $(BuildVersion)" />
+  </Target>
+</Project>

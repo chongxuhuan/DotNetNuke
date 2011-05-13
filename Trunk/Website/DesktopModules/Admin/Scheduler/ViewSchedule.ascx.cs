@@ -40,84 +40,66 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 {
     public partial class ViewSchedule : PortalModuleBase, IActionable
     {
+
         #region IActionable Members
 
         public ModuleActionCollection ModuleActions
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "add.gif",
-                            EditUrl(),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString(ModuleActionType.ContentOptions, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "icon_scheduler_16px.gif",
-                            EditUrl("", "", "Status"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("ScheduleHistory.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "icon_viewScheduleHistory_16px.gif",
-                            EditUrl("", "", "History"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
-                return Actions;
+                var actionCollection = new ModuleActionCollection
+                                           {
+                                               {
+                                                   GetNextActionID(), Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl(), false,
+                                                   SecurityAccessLevel.Host, true, false
+                                                   },
+                                               {
+                                                   GetNextActionID(), Localization.GetString(ModuleActionType.ContentOptions, LocalResourceFile), ModuleActionType.AddContent, "",
+                                                   "icon_scheduler_16px.gif", EditUrl("", "", "Status"), false, SecurityAccessLevel.Host, true, false
+                                                   },
+                                               {
+                                                   GetNextActionID(), Localization.GetString("ScheduleHistory.Action", LocalResourceFile), ModuleActionType.AddContent, "",
+                                                   "icon_viewScheduleHistory_16px.gif", EditUrl("", "", "History"), false, SecurityAccessLevel.Host, true, false
+                                                   }
+                                           };
+                return actionCollection;
             }
         }
 
         #endregion
 
-        protected string GetTimeLapse(int TimeLapse, string TimeLapseMeasurement)
+        protected string GetTimeLapse(int timeLapse, string timeLapseMeasurement)
         {
-            if (TimeLapse != Null.NullInteger)
+            if (timeLapse != Null.NullInteger)
             {
-                string str = Null.NullString;
-                string strPrefix = Localization.GetString("TimeLapsePrefix", LocalResourceFile);
-                string strSec = Localization.GetString("Second", LocalResourceFile);
-                string strMn = Localization.GetString("Minute", LocalResourceFile);
-                string strHour = Localization.GetString("Hour", LocalResourceFile);
-                string strDay = Localization.GetString("Day", LocalResourceFile);
-                string strSecs = Localization.GetString("Seconds");
-                string strMns = Localization.GetString("Minutes");
-                string strHours = Localization.GetString("Hours");
-                string strDays = Localization.GetString("Days");
-                switch (TimeLapseMeasurement)
+                var str = Null.NullString;
+                var strPrefix = Localization.GetString("TimeLapsePrefix", LocalResourceFile);
+                var strSec = Localization.GetString("Second", LocalResourceFile);
+                var strMn = Localization.GetString("Minute", LocalResourceFile);
+                var strHour = Localization.GetString("Hour", LocalResourceFile);
+                var strDay = Localization.GetString("Day", LocalResourceFile);
+                var strSecs = Localization.GetString("Seconds");
+                var strMns = Localization.GetString("Minutes");
+                var strHours = Localization.GetString("Hours");
+                var strDays = Localization.GetString("Days");
+                switch (timeLapseMeasurement)
                 {
                     case "s":
-                        str = strPrefix + " " + TimeLapse + " " + (TimeLapse > 1 ? strSecs : strSec);
+                        str = strPrefix + " " + timeLapse + " " + (timeLapse > 1 ? strSecs : strSec);
                         break;
                     case "m":
-                        str = strPrefix + " " + TimeLapse + " " + (TimeLapse > 1 ? strMns : strMn);
+                        str = strPrefix + " " + timeLapse + " " + (timeLapse > 1 ? strMns : strMn);
                         break;
                     case "h":
-                        str = strPrefix + " " + TimeLapse + " " + (TimeLapse > 1 ? strHours : strHour);
+                        str = strPrefix + " " + timeLapse + " " + (timeLapse > 1 ? strHours : strHour);
                         break;
                     case "d":
-                        str = strPrefix + " " + TimeLapse + " " + (TimeLapse > 1 ? strDays : strDay);
+                        str = strPrefix + " " + timeLapse + " " + (timeLapse > 1 ? strDays : strDay);
                         break;
                 }
                 return str;
             }
-            else
-            {
-                return Localization.GetString("n/a", LocalResourceFile);
-            }
+            return Localization.GetString("n/a", LocalResourceFile);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -127,7 +109,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             {
                 if (!Page.IsPostBack)
                 {
-                    ArrayList arrSchedule = SchedulingProvider.Instance().GetSchedule();
+                    var arrSchedule = SchedulingProvider.Instance().GetSchedule();
                     Localization.LocalizeDataGrid(ref dgSchedule, LocalResourceFile);
                     dgSchedule.DataSource = arrSchedule;
                     dgSchedule.DataBind();
@@ -138,5 +120,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
     }
 }

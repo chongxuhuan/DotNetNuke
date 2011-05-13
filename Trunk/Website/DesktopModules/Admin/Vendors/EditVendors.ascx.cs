@@ -48,24 +48,24 @@ namespace DotNetNuke.Modules.Admin.Vendors
 {
     public partial class EditVendors : PortalModuleBase
     {
+
         public int VendorID = -1;
+
+        #region Private Methods
 
         private void ReturnUrl(string filter)
         {
-            if (string.IsNullOrEmpty(filter.Trim()))
-            {
-                Response.Redirect(Globals.NavigateURL(), true);
-            }
-            else
-            {
-                Response.Redirect(Globals.NavigateURL(TabId, Null.NullString, "filter=" + filter), true);
-            }
+            Response.Redirect(string.IsNullOrEmpty(filter.Trim()) ? Globals.NavigateURL() : Globals.NavigateURL(TabId, Null.NullString, "filter=" + filter), true);
         }
 
         private void AddModuleMessage(string message, ModuleMessage.ModuleMessageType type)
         {
             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString(message, LocalResourceFile), type);
         }
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {
@@ -79,16 +79,15 @@ namespace DotNetNuke.Modules.Admin.Vendors
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdDelete.Click += cmdDelete_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
+            cmdCancel.Click += OnCancelClick;
+            cmdDelete.Click += OnDeleteClick;
+            cmdUpdate.Click += OnUpdateClick;
 
             try
             {
                 var objTabs = new TabController();
-                TabInfo objTab;
-                bool blnBanner = false;
-                bool blnSignup = false;
+                var blnBanner = false;
+                var blnSignup = false;
                 if ((Request.QueryString["VendorID"] != null))
                 {
                     VendorID = Int32.Parse(Request.QueryString["VendorID"]);
@@ -106,9 +105,9 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     ctlLogo.FileFilter = Globals.glbImageFileTypes;
                     addresssVendor.ModuleId = ModuleId;
                     addresssVendor.StartTabIndex = 4;
-                    ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
+
                     var objClassifications = new ClassificationController();
-                    ArrayList arr = objClassifications.GetVendorClassifications(VendorID);
+                    var arr = objClassifications.GetVendorClassifications(VendorID);
                     int i;
                     for (i = 0; i <= arr.Count - 1; i++)
                     {
@@ -156,13 +155,13 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
                         var banners = ControlUtilities.LoadControl<Banners>(this, TemplateSourceDirectory.Remove(0, Globals.ApplicationPath.Length) + "/Banners.ascx");
                         banners.ID = "/Banners.ascx";
-                        banners.VendorID = this.VendorID;
+                        banners.VendorID = VendorID;
                         banners.ModuleConfiguration = ModuleConfiguration;
                         divBanners.Controls.Add(banners);
 
                         var affiliates = ControlUtilities.LoadControl<Affiliates>(this, TemplateSourceDirectory.Remove(0, Globals.ApplicationPath.Length) + "/Affiliates.ascx");
                         affiliates.ID = "/Affiliates.ascx";
-                        affiliates.VendorID = this.VendorID;
+                        affiliates.VendorID = VendorID;
                         affiliates.ModuleConfiguration = ModuleConfiguration;
                         divAffiliates.Controls.Add(affiliates);
                     }
@@ -192,6 +191,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                     else
                     {
+                        TabInfo objTab;
                         if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
                         {
                             objTab = objTabs.GetTabByName("Vendors", Null.NullInteger);
@@ -213,7 +213,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
+        protected void OnCancelClick(object sender, EventArgs e)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdDelete_Click(object sender, EventArgs e)
+        protected void OnDeleteClick(object sender, EventArgs e)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
@@ -258,27 +258,29 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         intPortalID = PortalId;
                     }
                     var objVendors = new VendorController();
-                    var objVendor = new VendorInfo();
-                    objVendor.PortalId = intPortalID;
-                    objVendor.VendorId = VendorID;
-                    objVendor.VendorName = txtVendorName.Text;
-                    objVendor.Unit = addresssVendor.Unit;
-                    objVendor.Street = addresssVendor.Street;
-                    objVendor.City = addresssVendor.City;
-                    objVendor.Region = addresssVendor.Region;
-                    objVendor.Country = addresssVendor.Country;
-                    objVendor.PostalCode = addresssVendor.Postal;
-                    objVendor.Telephone = addresssVendor.Telephone;
-                    objVendor.Fax = addresssVendor.Fax;
-                    objVendor.Cell = addresssVendor.Cell;
-                    objVendor.Email = txtEmail.Text;
-                    objVendor.Website = txtWebsite.Text;
-                    objVendor.FirstName = txtFirstName.Text;
-                    objVendor.LastName = txtLastName.Text;
-                    objVendor.UserName = UserInfo.UserID.ToString();
-                    objVendor.LogoFile = ctlLogo.Url;
-                    objVendor.KeyWords = txtKeyWords.Text;
-                    objVendor.Authorized = chkAuthorized.Checked;
+                    var objVendor = new VendorInfo
+                                        {
+                                            PortalId = intPortalID,
+                                            VendorId = VendorID,
+                                            VendorName = txtVendorName.Text,
+                                            Unit = addresssVendor.Unit,
+                                            Street = addresssVendor.Street,
+                                            City = addresssVendor.City,
+                                            Region = addresssVendor.Region,
+                                            Country = addresssVendor.Country,
+                                            PostalCode = addresssVendor.Postal,
+                                            Telephone = addresssVendor.Telephone,
+                                            Fax = addresssVendor.Fax,
+                                            Cell = addresssVendor.Cell,
+                                            Email = txtEmail.Text,
+                                            Website = txtWebsite.Text,
+                                            FirstName = txtFirstName.Text,
+                                            LastName = txtLastName.Text,
+                                            UserName = UserInfo.UserID.ToString(),
+                                            LogoFile = ctlLogo.Url,
+                                            KeyWords = txtKeyWords.Text,
+                                            Authorized = chkAuthorized.Checked
+                                        };
                     if (VendorID == -1)
                     {
                         try
@@ -363,5 +365,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        #endregion
+
     }
 }

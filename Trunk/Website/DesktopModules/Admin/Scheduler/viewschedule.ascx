@@ -10,8 +10,7 @@
     <Columns>
         <asp:TemplateColumn>
             <ItemTemplate>
-                <asp:HyperLink ID="editLink" NavigateUrl='<%# EditUrl("ScheduleID",DataBinder.Eval(Container.DataItem,"ScheduleID").ToString()) %>'
-                    Visible="<%# IsEditable %>" runat="server">
+                <asp:HyperLink ID="editLink" NavigateUrl='<%# EditUrl("ScheduleID",DataBinder.Eval(Container.DataItem,"ScheduleID").ToString()) %>' Visible="<%# IsEditable %>" runat="server">
                     <asp:Image ID="editLinkImage" ImageUrl="~/images/edit.gif" Visible="<%# IsEditable %>"
                         AlternateText="Edit" runat="server" resourcekey="Edit" />
                 </asp:HyperLink>
@@ -36,15 +35,11 @@
         </asp:TemplateColumn>
         <asp:TemplateColumn HeaderText="NextStart">
             <ItemTemplate>
-                <asp:Label CssClass="Normal" ID="lblNextStart" runat="server" Visible='<%# Convert.ToBoolean(Eval("Enabled"))%>'><%# DataBinder.Eval(Container.DataItem,"NextStart")%></asp:Label>
+                <asp:Label ID="lblNextStart" runat="server" Visible='<%# Convert.ToBoolean(Eval("Enabled"))%>'><%# DataBinder.Eval(Container.DataItem,"NextStart")%></asp:Label>
             </ItemTemplate>
         </asp:TemplateColumn>
         <asp:TemplateColumn>
             <ItemTemplate>
-                <asp:HyperLink CssClass="dnnSecondaryAction" ID="lnkStatus" runat="server"
-                    NavigateUrl='<%# EditUrl("ScheduleID",DataBinder.Eval(Container.DataItem,"ScheduleID").ToString(), "Status") %>'>
-                    <asp:Image ID=Image2 runat="server" ImageUrl="~/images/icon_scheduler_16px.gif" resourcekey="Status" />
-                </asp:HyperLink>
                 <asp:HyperLink CssClass="dnnSecondaryAction" ID="lnkHistory" runat="server"
                     NavigateUrl='<%# EditUrl("ScheduleID",DataBinder.Eval(Container.DataItem,"ScheduleID").ToString(), "History") %>'>
                     <asp:Image ID=imgHistory runat="server" ImageUrl="~/images/icon_viewScheduleHistory_16px.gif" resourcekey="History" />

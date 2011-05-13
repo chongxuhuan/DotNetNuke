@@ -177,7 +177,7 @@ namespace DotNetNuke.Services.FileSystem
         [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFiles(IFolderInfo folder) ")]
         public IDataReader GetFiles(int portalId, int folderID)
         {
-            return DataProvider.Instance().GetFiles(portalId, folderID);
+            return DataProvider.Instance().GetFiles(folderID);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

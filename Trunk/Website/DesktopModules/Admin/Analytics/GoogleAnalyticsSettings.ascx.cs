@@ -35,23 +35,25 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Analytics
 {
+    
     public partial class GoogleAnalyticsSettings : PortalModuleBase
     {
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cmdUpdate.Click += cmdUpdate_Click;
+            cmdUpdate.Click += OnUpdateClick;
 
             try
             {
                 if (Page.IsPostBack == false)
                 {
-                    AnalyticsConfiguration config = AnalyticsConfiguration.GetConfig("GoogleAnalytics");
+                    var config = AnalyticsConfiguration.GetConfig("GoogleAnalytics");
                     if (config != null)
                     {
-                        string trackingId = "";
-                        string urlParameter = "";
+                        var trackingId = "";
+                        var urlParameter = "";
                         foreach (AnalyticsSetting setting in config.Settings)
                         {
                             switch (setting.SettingName.ToLower())
@@ -75,7 +77,7 @@ namespace DotNetNuke.Modules.Admin.Analytics
             }
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
@@ -97,5 +99,6 @@ namespace DotNetNuke.Modules.Admin.Analytics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
     }
 }

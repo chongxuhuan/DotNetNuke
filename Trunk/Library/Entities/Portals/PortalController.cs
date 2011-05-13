@@ -956,9 +956,13 @@ namespace DotNetNuke.Entities.Portals
             var objPermissionController = new PermissionController();
             foreach (PermissionInfo objpermission in objPermissionController.GetPermissionByCodeAndKey("SYSTEM_FOLDER", ""))
             {
-                objFolderPermission = new FolderPermissionInfo(objpermission);
-                objFolderPermission.FolderID = folder.FolderID;
-                objFolderPermission.RoleID = objPortal.AdministratorRoleId;
+                objFolderPermission = new FolderPermissionInfo(objpermission)
+                                          {
+                                              FolderID = folder.FolderID, 
+                                              RoleID = objPortal.AdministratorRoleId,
+                                              AllowAccess = true
+                                          };
+
                 folder.FolderPermissions.Add(objFolderPermission);
                 if (objpermission.PermissionKey == "READ")
                 {
@@ -1143,13 +1147,13 @@ namespace DotNetNuke.Entities.Portals
 
                         switch (storageLocation)
                         {
-                            case 0:
+                            case (int)FolderController.StorageLocationTypes.InsecureFileSystem:
                                 folderMapping = folderMappingController.GetDefaultFolderMapping(PortalId);
                                 break;
-                            case 1:
+                            case (int)FolderController.StorageLocationTypes.SecureFileSystem:
                                 folderMapping = folderMappingController.GetFolderMapping(PortalId, "Secure");
                                 break;
-                            case 2:
+                            case (int)FolderController.StorageLocationTypes.DatabaseSecure:
                                 folderMapping = folderMappingController.GetFolderMapping(PortalId, "Database");
                                 break;
                             default:
@@ -1159,9 +1163,7 @@ namespace DotNetNuke.Entities.Portals
                         isProtected = XmlUtils.GetNodeValueBoolean(node, "isprotected");
                     }
                     
-                    folderManager.AddFolder(folderMapping, folderPath);
-                    
-                    objInfo = folderManager.GetFolder(PortalId, folderPath);
+                    objInfo = folderManager.AddFolder(folderMapping, folderPath);
                     objInfo.IsProtected = isProtected;
                     
                     folderManager.UpdateFolder(objInfo);
@@ -2329,9 +2331,7 @@ namespace DotNetNuke.Entities.Portals
 
             if (FolderManager.Instance.GetFolder(PortalId, "") == null)
             {
-                FolderManager.Instance.AddFolder(defaultFolderMapping, "");
-
-                objFolder = FolderManager.Instance.GetFolder(PortalId, "");
+                objFolder = FolderManager.Instance.AddFolder(defaultFolderMapping, "");
                 objFolder.IsProtected = true;
                 FolderManager.Instance.UpdateFolder(objFolder);
 
@@ -2340,25 +2340,21 @@ namespace DotNetNuke.Entities.Portals
 
             if (FolderManager.Instance.GetFolder(PortalId, "Templates/") == null)
             {
-                FolderManager.Instance.AddFolder(defaultFolderMapping, "Templates/");
-
-                objFolder = FolderManager.Instance.GetFolder(PortalId, "Templates/");
+                objFolder = FolderManager.Instance.AddFolder(defaultFolderMapping, "Templates/");
                 objFolder.IsProtected = true;
                 FolderManager.Instance.UpdateFolder(objFolder);
 
-                AddFolderPermissions(PortalId, objFolder.FolderID);
+                //AddFolderPermissions(PortalId, objFolder.FolderID);
             }
 
-            // force creation of templates folder if not present on template
+            // force creation of users folder if not present on template
             if (FolderManager.Instance.GetFolder(PortalId, "Users/") == null)
             {
-                FolderManager.Instance.AddFolder(defaultFolderMapping, "Users/");
-
-                objFolder = FolderManager.Instance.GetFolder(PortalId, "Users/");
+                objFolder = FolderManager.Instance.AddFolder(defaultFolderMapping, "Users/");
                 objFolder.IsProtected = true;
                 FolderManager.Instance.UpdateFolder(objFolder);
 
-                AddFolderPermissions(PortalId, objFolder.FolderID);
+                //AddFolderPermissions(PortalId, objFolder.FolderID);
             }
             
             if (mergeTabs == PortalTemplateModuleAction.Replace)

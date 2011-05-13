@@ -41,6 +41,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 {
     public partial class ViewScheduleHistory : PortalModuleBase, IActionable
     {
+
         #region IActionable Members
 
         public ModuleActionCollection ModuleActions
@@ -78,22 +79,22 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-
             try
             {
                 if (!Page.IsPostBack)
                 {
-                    int ScheduleID;
+                    cmdCancel.NavigateUrl += Globals.NavigateURL();
+
+                    int scheduleID;
                     if (Request.QueryString["ScheduleID"] != null)
                     {
-                        ScheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
+                        scheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
                     }
                     else
                     {
-                        ScheduleID = -1;
+                        scheduleID = -1;
                     }
-                    ArrayList arrSchedule = SchedulingProvider.Instance().GetScheduleHistory(ScheduleID);
+                    var arrSchedule = SchedulingProvider.Instance().GetScheduleHistory(scheduleID);
                     arrSchedule.Sort(new ScheduleHistorySortStartDate());
                     Localization.LocalizeDataGrid(ref dgScheduleHistory, LocalResourceFile);
                     dgScheduleHistory.DataSource = arrSchedule;
@@ -106,22 +107,14 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        private void cmdCancel_Click(Object sender, EventArgs e)
+        protected string GetNotesText(string notes)
         {
-            Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        protected string GetNotesText(string Notes)
-        {
-            if (!String.IsNullOrEmpty(Notes))
+            if (!String.IsNullOrEmpty(notes))
             {
-                Notes = "<textarea rows=\"5\" cols=\"65\">" + Notes + "</textarea>";
-                return Notes;
+                notes = "<textarea rows=\"5\" cols=\"65\">" + notes + "</textarea>";
+                return notes;
             }
-            else
-            {
-                return "";
-            }
+            return "";
         }
     }
 }

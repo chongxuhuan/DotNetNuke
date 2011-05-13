@@ -242,7 +242,7 @@ namespace DotNetNuke.Tests.Content
             var scopeTypeController = new ScopeTypeController(mockDataService.Object);
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
-            scopeType.Type = Constants.SCOPETYPE_InValidScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_InValidScopeType;
 
             Assert.Throws<ArgumentException>(() => scopeTypeController.UpdateScopeType(scopeType));
         }
@@ -256,7 +256,7 @@ namespace DotNetNuke.Tests.Content
 
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Constants.SCOPETYPE_UpdateScopeTypeId;
-            scopeType.Type = Constants.SCOPETYPE_UpdateScopeType;
+            scopeType.ScopeType = Constants.SCOPETYPE_UpdateScopeType;
 
             //Act
             scopeTypeController.UpdateScopeType(scopeType);

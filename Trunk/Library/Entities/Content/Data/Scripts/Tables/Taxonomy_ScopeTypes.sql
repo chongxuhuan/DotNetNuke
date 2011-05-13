@@ -16,7 +16,7 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwne
 		CREATE TABLE {databaseOwner}{objectQualifier}Taxonomy_ScopeTypes
 		(
 			[ScopeTypeID] [int] IDENTITY(1,1) NOT NULL,
-			[Type] [nvarchar](250) NULL
+			[ScopeType] [nvarchar](250) NULL
 			CONSTRAINT [PK_{objectQualifier}ScopeTypes] PRIMARY KEY CLUSTERED ( [ScopeTypeID] ASC )
 		)
 	END

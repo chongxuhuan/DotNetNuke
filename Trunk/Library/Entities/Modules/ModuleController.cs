@@ -765,10 +765,13 @@ namespace DotNetNuke.Entities.Modules
                     }
                 }
 
-                var moduleProvider = ModuleCachingProvider.Instance(module.GetEffectiveCacheMethod());
-                if (moduleProvider != null)
+                if (module.CacheTime > 0)
                 {
-                    moduleProvider.Remove(module.TabModuleID);
+                    var moduleProvider = ModuleCachingProvider.Instance(module.GetEffectiveCacheMethod());
+                    if (moduleProvider != null)
+                    {
+                        moduleProvider.Remove(module.TabModuleID);
+                    }
                 }
 
                 //Synchronize module is called when a module needs to indicate that the content

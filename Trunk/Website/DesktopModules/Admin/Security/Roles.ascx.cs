@@ -31,6 +31,7 @@ using System.Web.UI.WebControls;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
+using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
@@ -102,15 +103,7 @@ namespace DotNetNuke.Modules.Admin.Security
         private void BindData()
         {
             var objRoles = new RoleController();
-            ArrayList arrRoles;
-            if (_roleGroupId < -1)
-            {
-                arrRoles = objRoles.GetPortalRoles(PortalId);
-            }
-            else
-            {
-                arrRoles = objRoles.GetRolesByGroup(PortalId, _roleGroupId);
-            }
+            var arrRoles = _roleGroupId < -1 ? objRoles.GetPortalRoles(PortalId) : objRoles.GetRolesByGroup(PortalId, _roleGroupId);
             grdRoles.DataSource = arrRoles;
             if (_roleGroupId < 0)
             {
@@ -122,7 +115,6 @@ namespace DotNetNuke.Modules.Admin.Security
                 lnkEditGroup.Visible = true;
                 lnkEditGroup.NavigateUrl = EditUrl("RoleGroupId", _roleGroupId.ToString(), "EditGroup");
                 cmdDelete.Visible = arrRoles.Count == 0;
-                ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
             }
             Localization.LocalizeDataGrid(ref grdRoles, LocalResourceFile);
             grdRoles.DataBind();
@@ -151,12 +143,12 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                     cboRoleGroups.Items.Add(liItem);
                 }
-                trGroups.Visible = true;
+                divGroups.Visible = true;
             }
             else
             {
                 _roleGroupId = -2;
-                trGroups.Visible = false;
+                divGroups.Visible = false;
             }
             BindData();
         }
@@ -165,36 +157,36 @@ namespace DotNetNuke.Modules.Admin.Security
 
         public string FormatPeriod(int period)
         {
-            string _FormatPeriod = Null.NullString;
+            var formatPeriod = Null.NullString;
             try
             {
                 if (period != Null.NullInteger)
                 {
-                    _FormatPeriod = period.ToString();
+                    formatPeriod = period.ToString();
                 }
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-            return _FormatPeriod;
+            return formatPeriod;
         }
 
         public string FormatPrice(float price)
         {
-            string _FormatPrice = Null.NullString;
+            var formatPrice = Null.NullString;
             try
             {
                 if (price != Null.NullSingle)
                 {
-                    _FormatPrice = price.ToString("##0.00");
+                    formatPrice = price.ToString("##0.00");
                 }
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-            return _FormatPrice;
+            return formatPrice;
         }
 
         #region Event Handlers
@@ -202,6 +194,8 @@ namespace DotNetNuke.Modules.Admin.Security
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            jQuery.RequestDnnPluginsRegistration();
 
             foreach (DataGridColumn column in grdRoles.Columns)
             {
