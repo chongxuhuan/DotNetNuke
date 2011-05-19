@@ -48,9 +48,23 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class ResourceFileInstaller : FileInstaller
     {
+		#region "Public Contants"
         public const string DEFAULT_MANIFESTEXT = ".manifest";
         private string _Manifest;
+		
+		#endregion
+		
+		#region "Protected Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("resourceFiles")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -59,6 +73,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("resourceFile")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get
@@ -67,6 +90,7 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
         protected string Manifest
         {
             get
@@ -74,7 +98,20 @@ namespace DotNetNuke.Services.Installer.Installers
                 return _Manifest;
             }
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -82,11 +119,33 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "resources, zip";
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The CommitFile method commits a single file.
+        /// </summary>
+        /// <param name="insFile">The InstallFile to commit</param>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void CommitFile(InstallFile insFile)
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteFile method deletes a single assembly.
+        /// </summary>
+        /// <param name="file">The InstallFile to delete</param>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void DeleteFile(InstallFile file)
         {
         }
@@ -113,6 +172,8 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 Log.AddInfo(Util.FILES_Expanding);
                 unzip = new ZipInputStream(new FileStream(insFile.TempFileName, FileMode.Open));
+
+                //Create a writer to create the manifest for the resource file                
                 _Manifest = insFile.Name + ".manifest";
                 if (!Directory.Exists(PhysicalBasePath))
                 {
@@ -123,32 +184,51 @@ namespace DotNetNuke.Services.Installer.Installers
                 settings.ConformanceLevel = ConformanceLevel.Fragment;
                 settings.OmitXmlDeclaration = true;
                 settings.Indent = true;
+
                 writer = XmlWriter.Create(fs, settings);
+
+                //Start the new Root Element
                 writer.WriteStartElement("dotnetnuke");
                 writer.WriteAttributeString("type", "ResourceFile");
                 writer.WriteAttributeString("version", "5.0");
+
+                //Start files Element
                 writer.WriteStartElement("files");
+
                 ZipEntry entry = unzip.GetNextEntry();
                 while (entry != null)
                 {
                     if (!entry.IsDirectory)
                     {
                         string fileName = Path.GetFileName(entry.Name);
+
+                        //Start file Element
                         writer.WriteStartElement("file");
+
+                        //Write path
                         writer.WriteElementString("path", entry.Name.Substring(0, entry.Name.IndexOf(fileName)));
+
+                        //Write name
                         writer.WriteElementString("name", fileName);
+
                         string physicalPath = Path.Combine(PhysicalBasePath, entry.Name);
                         if (File.Exists(physicalPath))
                         {
                             Util.BackupFile(new InstallFile(entry.Name, Package.InstallerInfo), PhysicalBasePath, Log);
                         }
                         Util.WriteStream(unzip, physicalPath);
+
+                        //Close files Element
                         writer.WriteEndElement();
+
                         Log.AddInfo(string.Format(Util.FILE_Created, entry.Name));
                     }
                     entry = unzip.GetNextEntry();
                 }
+				
+                //Close files Element
                 writer.WriteEndElement();
+
                 Log.AddInfo(Util.FILES_CreatedResources);
             }
             catch (Exception exc)
@@ -161,10 +241,12 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 if (writer != null)
                 {
+					//Close XmlWriter
                     writer.Close();
                 }
                 if (fs != null)
                 {
+					//Close FileStreams
                     fs.Close();
                 }
                 if (unzip != null)
@@ -175,22 +257,56 @@ namespace DotNetNuke.Services.Installer.Installers
             return retValue;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that determines what type of file this installer supports
+        /// </summary>
+        /// <param name="type">The type of file being processed</param>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool IsCorrectType(InstallFileType type)
         {
             return (type == InstallFileType.Resources);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifestItem method reads a single node
+        /// </summary>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <param name="checkFileExists">Flag that determines whether a check should be made</param>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override InstallFile ReadManifestItem(XPathNavigator nav, bool checkFileExists)
         {
             InstallFile insFile = base.ReadManifestItem(nav, checkFileExists);
+
             _Manifest = Util.ReadElement(nav, "manifest");
+
             if (string.IsNullOrEmpty(_Manifest))
             {
                 _Manifest = insFile.FullName + DEFAULT_MANIFESTEXT;
             }
+			
+            //Call base method
             return base.ReadManifestItem(nav, checkFileExists);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The RollbackFile method rolls back the install of a single file.
+        /// </summary>
+        /// <remarks>For new installs this removes the added file.  For upgrades it restores the
+        /// backup file created during install</remarks>
+        /// <param name="insFile">The InstallFile to commit</param>
+        /// <history>
+        /// 	[cnurse]	01/18/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RollbackFile(InstallFile insFile)
         {
             var unzip = new ZipInputStream(new FileStream(insFile.InstallerInfo.TempInstallFolder + insFile.FullName, FileMode.Open));
@@ -199,12 +315,15 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 if (!entry.IsDirectory)
                 {
+					//Check for Backups
                     if (File.Exists(insFile.BackupPath + entry.Name))
                     {
+						//Restore File
                         Util.RestoreFile(new InstallFile(unzip, entry, Package.InstallerInfo), PhysicalBasePath, Log);
                     }
                     else
                     {
+						//Delete File
                         Util.DeleteFile(entry.Name, PhysicalBasePath, Log);
                     }
                 }
@@ -216,6 +335,7 @@ namespace DotNetNuke.Services.Installer.Installers
         {
             _Manifest = unInstallFile.Name + ".manifest";
             var doc = new XPathDocument(Path.Combine(PhysicalBasePath, Manifest));
+
             foreach (XPathNavigator fileNavigator in doc.CreateNavigator().Select("dotnetnuke/files/file"))
             {
                 string path = XmlUtils.GetNodeValue(fileNavigator, "path");
@@ -238,5 +358,7 @@ namespace DotNetNuke.Services.Installer.Installers
                 Util.DeleteFile(Manifest, PhysicalBasePath, Log);
             }
         }
+		
+		#endregion
     }
 }

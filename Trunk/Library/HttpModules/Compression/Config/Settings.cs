@@ -55,6 +55,9 @@ namespace DotNetNuke.HttpModules.Compression
             _whitespace = false;
         }
 
+        /// <summary>
+        /// The default settings.  Deflate + normal.
+        /// </summary>
         public static Settings Default
         {
             get
@@ -63,6 +66,9 @@ namespace DotNetNuke.HttpModules.Compression
             }
         }
 
+        /// <summary>
+        /// The preferred algorithm to use for compression
+        /// </summary>
         public Algorithms PreferredAlgorithm
         {
             get
@@ -71,6 +77,9 @@ namespace DotNetNuke.HttpModules.Compression
             }
         }
 
+        /// <summary>
+        /// The regular expression used for Whitespace removal
+        /// </summary>
         public Regex Reg
         {
             get
@@ -79,6 +88,9 @@ namespace DotNetNuke.HttpModules.Compression
             }
         }
 
+        /// <summary>
+        /// Determines if Whitespace filtering is enabled
+        /// </summary>
         public bool Whitespace
         {
             get
@@ -87,12 +99,16 @@ namespace DotNetNuke.HttpModules.Compression
             }
         }
 
+        /// <summary>
+        /// Get the current settings from the xml config file
+        /// </summary>
         public static Settings GetSettings()
         {
             var settings = (Settings) DataCache.GetCache("CompressionConfig");
             if (settings == null)
             {
                 settings = Default;
+                //Place this in a try/catch as during install the host settings will not exist
                 try
                 {
                     settings._preferredAlgorithm = (Algorithms) Host.HttpCompressionAlgorithm;
@@ -105,6 +121,7 @@ namespace DotNetNuke.HttpModules.Compression
 
                 string filePath = Common.Utilities.Config.GetPathToFile(Common.Utilities.Config.ConfigFileType.Compression);
 
+                //Create a FileStream for the Config file
                 var fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 var doc = new XPathDocument(fileReader);
                 settings._reg = new Regex(doc.CreateNavigator().SelectSingleNode("compression/whitespace").Value);
@@ -114,12 +131,18 @@ namespace DotNetNuke.HttpModules.Compression
                 }
                 if ((File.Exists(filePath)))
                 {
+                    //Set back into Cache
                     DataCache.SetCache("CompressionConfig", settings, new DNNCacheDependency(filePath));
                 }
             }
             return settings;
         }
 
+        /// <summary>
+        /// Looks for a given path in the list of paths excluded from compression
+        /// </summary>
+        /// <param name="relUrl">the relative url to check</param>
+        /// <returns>true if excluded, false if not</returns>
         public bool IsExcludedPath(string relUrl)
         {
             bool match = false;

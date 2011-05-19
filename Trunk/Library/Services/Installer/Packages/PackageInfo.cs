@@ -38,119 +38,33 @@ namespace DotNetNuke.Services.Installer.Packages
     [Serializable]
     public class PackageInfo : BaseEntityInfo
     {
-        private string _description;
-        private string _email;
-        private string _friendlyName;
-        private string _folderName;
-        private string _iconFile;
-        private Version _installedVersion = new Version(0, 0, 0);
-        private InstallerInfo _installerInfo;
-        private bool _isSystemPackage;
-        private bool _isValid = true;
-        private string _license;
-        private string _manifest;
-        private string _name;
-        private string _organization;
-        private string _owner;
-        private int _packageID = Null.NullInteger;
-        private string _packageType;
-        private int _portalID = Null.NullInteger;
-        private string _releaseNotes;
-        private string _url;
-        private Version _version = new Version(0, 0, 0);
-
-        public PackageInfo(InstallerInfo info)
+        public PackageInfo(InstallerInfo info) : this()
         {
             AttachInstallerInfo(info);
         }
 
         public PackageInfo()
         {
+            PackageID = Null.NullInteger;
+            PortalID = Null.NullInteger;
+            Version = new Version(0, 0, 0);
+            IsValid = true;
+            InstalledVersion = new Version(0, 0, 0);
         }
 
-        public int PackageID
-        {
-            get
-            {
-                return _packageID;
-            }
-            set
-            {
-                _packageID = value;
-            }
-        }
+        public int PackageID { get; set; }
 
-        public int PortalID
-        {
-            get
-            {
-                return _portalID;
-            }
-            set
-            {
-                _portalID = value;
-            }
-        }
+        public int PortalID { get; set; }
 
-        public string Owner
-        {
-            get
-            {
-                return _owner;
-            }
-            set
-            {
-                _owner = value;
-            }
-        }
+        public string Owner { get; set; }
 
-        public string Organization
-        {
-            get
-            {
-                return _organization;
-            }
-            set
-            {
-                _organization = value;
-            }
-        }
+        public string Organization { get; set; }
 
-        public string Url
-        {
-            get
-            {
-                return _url;
-            }
-            set
-            {
-                _url = value;
-            }
-        }
+        public string Url { get; set; }
 
-        public string Email
-        {
-            get
-            {
-                return _email;
-            }
-            set
-            {
-                _email = value;
-            }
-        }
+        public string Email { get; set; }
 
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-            set
-            {
-                _description = value;
-            }
-        }
+        public string Description { get; set; }
 
         [XmlIgnore]
         public Dictionary<string, InstallFile> Files
@@ -161,62 +75,16 @@ namespace DotNetNuke.Services.Installer.Packages
             }
         }
 
-        public string FriendlyName
-        {
-            get
-            {
-                return _friendlyName;
-            }
-            set
-            {
-                _friendlyName = value;
-            }
-        }
+        public string FriendlyName { get; set; }
 
-        public string FolderName
-        {
-            get
-            {
-                return _folderName;
-            }
-            set
-            {
-                _folderName = value;
-            }
-        }
+        public string FolderName { get; set; }
 
-        public string IconFile
-        {
-            get
-            {
-                return _iconFile;
-            }
-            set
-            {
-                _iconFile = value;
-            }
-        }
+        public string IconFile { get; set; }
 
         [XmlIgnore]
-        public InstallerInfo InstallerInfo
-        {
-            get
-            {
-                return _installerInfo;
-            }
-        }
+        public InstallerInfo InstallerInfo { get; private set; }
 
-        public Version InstalledVersion
-        {
-            get
-            {
-                return _installedVersion;
-            }
-            set
-            {
-                _installedVersion = value;
-            }
-        }
+        public Version InstalledVersion { get; set; }
 
         public InstallMode InstallMode
         {
@@ -226,37 +94,12 @@ namespace DotNetNuke.Services.Installer.Packages
             }
         }
 
-        public bool IsSystemPackage
-        {
-            get
-            {
-                return _isSystemPackage;
-            }
-            set
-            {
-                _isSystemPackage = value;
-            }
-        }
+        public bool IsSystemPackage { get; set; }
 
-        public bool IsValid
-        {
-            get
-            {
-                return _isValid;
-            }
-        }
+        [XmlIgnore]
+        public bool IsValid { get; private set; }
 
-        public string License
-        {
-            get
-            {
-                return _license;
-            }
-            set
-            {
-                _license = value;
-            }
-        }
+        public string License { get; set; }
 
         [XmlIgnore]
         public Logger Log
@@ -267,69 +110,19 @@ namespace DotNetNuke.Services.Installer.Packages
             }
         }
 
-        public string Manifest
-        {
-            get
-            {
-                return _manifest;
-            }
-            set
-            {
-                _manifest = value;
-            }
-        }
+        public string Manifest { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+        public string Name { get; set; }
 
-        public string ReleaseNotes
-        {
-            get
-            {
-                return _releaseNotes;
-            }
-            set
-            {
-                _releaseNotes = value;
-            }
-        }
+        public string PackageType { get; set; }
 
-        public string PackageType
-        {
-            get
-            {
-                return _packageType;
-            }
-            set
-            {
-                _packageType = value;
-            }
-        }
+        public string ReleaseNotes { get; set; }
 
-        public Version Version
-        {
-            get
-            {
-                return _version;
-            }
-            set
-            {
-                _version = value;
-            }
-        }
+        public Version Version { get; set; }
 
         public void AttachInstallerInfo(InstallerInfo installer)
         {
-            _installerInfo = installer;
+            InstallerInfo = installer;
         }
     }
 }

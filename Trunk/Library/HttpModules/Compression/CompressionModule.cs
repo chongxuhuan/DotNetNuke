@@ -116,6 +116,7 @@ namespace DotNetNuke.HttpModules.Compression
                 }
                 if (!isOutputCached)
                 {
+                	//Check if page is a content page
                     var page = app.Context.Handler as CDefault;
                     if ((page == null))
                     {
@@ -127,10 +128,23 @@ namespace DotNetNuke.HttpModules.Compression
             {
                 return;
             }
+			
+            //only do this if we havn't already attempted an install.  This prevents PreSendRequestHeaders from
+            //trying to add this item way to late.  We only want the first run through to do anything.
+            //also, we use the context to store whether or not we've attempted an add, as it's thread-safe and
+            //scoped to the request.  An instance of this module can service multiple requests at the same time,
+            //so we cannot use a member variable.
             if (!app.Context.Items.Contains(INSTALLED_KEY))
             {
+                //log the install attempt in the HttpContext
+                //must do this first as several IF statements
+                //below skip full processing of this method
                 app.Context.Items.Add(INSTALLED_KEY, INSTALLED_TAG);
+
+                //path comparison is based on filename and querystring parameters ( ie. default.aspx?tabid=## )
                 string realPath = app.Request.Url.PathAndQuery;
+
+                //get the config settings
                 Settings _Settings = Settings.GetSettings();
                 if (_Settings == null)
                 {
@@ -140,6 +154,8 @@ namespace DotNetNuke.HttpModules.Compression
                 if (_Settings.PreferredAlgorithm == Algorithms.None)
                 {
                     compress = false;
+
+                    //Terminate processing if both compression and whitespace handling are disabled
                     if (!_Settings.Whitespace)
                     {
                         return;
@@ -148,12 +164,22 @@ namespace DotNetNuke.HttpModules.Compression
                 string acceptedTypes = app.Request.Headers["Accept-Encoding"];
                 if (_Settings.IsExcludedPath(realPath) || acceptedTypes == null)
                 {
+                    //skip if the file path excludes compression
+                    //if we couldn't find the header, bail out
                     return;
                 }
+				
+                //fix to handle caching appropriately
+                //see http:'www.pocketsoap.com/weblog/2003/07/1330.html
+                //Note, this header is added only when the request
+                //has the possibility of being compressed...
+                //i.e. it is not added when the request is excluded from
+                //compression by CompressionLevel, Path, or MimeType
                 app.Response.Cache.VaryByHeaders["Accept-Encoding"] = true;
                 CompressingFilter filter = null;
                 if (compress)
                 {
+                    //the actual types could be , delimited.  split 'em out.
                     string[] types = acceptedTypes.Split(',');
                     filter = GetFilterForScheme(types, app.Response.Filter, _Settings);
                     //Add the headers - we do this now - becuase if Output Caching is enabled we need to
@@ -251,18 +277,26 @@ namespace DotNetNuke.HttpModules.Compression
             {
                 gZipQuality = starQuality;
             }
+			
+            //do they support any of our compression methods?
             if ((!(isAcceptableDeflate || isAcceptableGZip || isAcceptableStar)))
             {
                 return null;
             }
+			
+            //if deflate is better according to client
             if ((isAcceptableDeflate && (!isAcceptableGZip || (deflateQuality > gZipQuality))))
             {
                 return new DeflateFilter(output);
             }
+			
+            //if gzip is better according to client
             if ((isAcceptableGZip && (!isAcceptableDeflate || (deflateQuality < gZipQuality))))
             {
                 return new GZipFilter(output);
             }
+			
+            //if we're here, the client either didn't have a preference or they don't support compression
             if ((isAcceptableDeflate && (prefs.PreferredAlgorithm == Algorithms.Deflate || prefs.PreferredAlgorithm == Algorithms.Default)))
             {
                 return new DeflateFilter(output);
@@ -279,6 +313,8 @@ namespace DotNetNuke.HttpModules.Compression
             {
                 return new GZipFilter(output);
             }
+			
+			//return null.  we couldn't find a filter.
             return null;
         }
 

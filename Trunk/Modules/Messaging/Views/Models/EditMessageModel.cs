@@ -36,5 +36,8 @@ namespace DotNetNuke.Modules.Messaging.Views.Models
         public Message Message { get; set; }
 
         public string UserName { get; set; }
+
+        public string InboxUrl { get; set; }
+
     }
 }

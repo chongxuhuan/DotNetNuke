@@ -34,9 +34,20 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Authentication
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The AuthenticationInfo class provides the Entity Layer for the 
+    /// Authentication Systems.
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	07/10/2007  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class AuthenticationInfo : BaseEntityInfo, IHydratable
     {
+		#region "Private Members"
+
         private int _AuthenticationID = Null.NullInteger;
         private string _AuthenticationType = Null.NullString;
         private bool _IsEnabled;
@@ -45,6 +56,18 @@ namespace DotNetNuke.Services.Authentication
         private int _PackageID;
         private string _SettingsControlSrc = Null.NullString;
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the ID of the Authentication System
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int AuthenticationID
         {
             get
@@ -57,6 +80,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the PackageID for the Authentication System
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PackageID
         {
             get
@@ -69,6 +100,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets a flag that determines whether the Authentication System is enabled
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsEnabled
         {
             get
@@ -81,6 +120,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the type (name) of the Authentication System (eg DNN, OpenID, LiveID)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string AuthenticationType
         {
             get
@@ -93,6 +140,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the url for the Settings Control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string SettingsControlSrc
         {
             get
@@ -105,6 +160,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the url for the Login Control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string LoginControlSrc
         {
             get
@@ -117,6 +180,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the url for the Logoff Control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/23/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string LogoffControlSrc
         {
             get
@@ -128,9 +199,20 @@ namespace DotNetNuke.Services.Authentication
                 _LogoffControlSrc = value;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a RoleInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual void Fill(IDataReader dr)
         {
             AuthenticationID = Null.SetNullInteger(dr["AuthenticationID"]);
@@ -140,9 +222,20 @@ namespace DotNetNuke.Services.Authentication
             SettingsControlSrc = Null.SetNullString(dr["SettingsControlSrc"]);
             LoginControlSrc = Null.SetNullString(dr["LoginControlSrc"]);
             LogoffControlSrc = Null.SetNullString(dr["LogoffControlSrc"]);
+
+            //Fill base class fields
             FillInternal(dr);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual int KeyID
         {
             get

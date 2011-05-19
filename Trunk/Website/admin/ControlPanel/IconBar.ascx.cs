@@ -49,13 +49,26 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.UI.ControlPanels
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The IconBar ControlPanel provides an icon bar based Page/Module manager
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/06/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class IconBar : ControlPanelBase
     {
+		#region "Private Methods"
+
         private void BindData()
         {
             switch (optModuleType.SelectedItem.Value)
             {
-                case "0":
+                case "0": //new module
                     cboTabs.Visible = false;
                     cboModules.Visible = false;
                     cboDesktopModules.Visible = true;
@@ -63,9 +76,13 @@ namespace DotNetNuke.UI.ControlPanels
                     lblModule.Text = Localization.GetString("Module", LocalResourceFile);
                     lblTitle.Text = Localization.GetString("Title", LocalResourceFile);
                     cboPermission.Enabled = true;
+
+                    //get list of modules
                     cboDesktopModules.DataSource = DesktopModuleController.GetPortalDesktopModules(PortalSettings.PortalId).Values;
                     cboDesktopModules.DataBind();
                     cboDesktopModules.Items.Insert(0, new ListItem("<" + Localization.GetString("SelectModule", LocalResourceFile) + ">", "-1"));
+
+                    //select default module
                     int intDesktopModuleID = -1;
                     if (!String.IsNullOrEmpty(Localization.GetString("DefaultModule", LocalResourceFile)))
                     {
@@ -86,7 +103,7 @@ namespace DotNetNuke.UI.ControlPanels
                         cboDesktopModules.SelectedIndex = 0;
                     }
                     break;
-                case "1":
+                case "1": //existing module
                     cboTabs.Visible = true;
                     cboModules.Visible = true;
                     cboDesktopModules.Visible = false;
@@ -128,30 +145,43 @@ namespace DotNetNuke.UI.ControlPanels
             lblPane.Text = Localization.GetString("Pane", LocalResourceFile);
             lblTitle.Text = Localization.GetString("Title", LocalResourceFile);
             lblInstance.Text = Localization.GetString("Instance", LocalResourceFile);
+
             imgAddTabIcon.AlternateText = Localization.GetString("AddTab.AlternateText", LocalResourceFile);
             cmdAddTab.Text = Localization.GetString("AddTab", LocalResourceFile);
+
             imgEditTabIcon.AlternateText = Localization.GetString("EditTab.AlternateText", LocalResourceFile);
             cmdEditTab.Text = Localization.GetString("EditTab", LocalResourceFile);
+
             imgDeleteTabIcon.AlternateText = Localization.GetString("DeleteTab.AlternateText", LocalResourceFile);
             cmdDeleteTab.Text = Localization.GetString("DeleteTab", LocalResourceFile);
+
             imgCopyTabIcon.AlternateText = Localization.GetString("CopyTab.AlternateText", LocalResourceFile);
             cmdCopyTab.Text = Localization.GetString("CopyTab", LocalResourceFile);
+
             imgExportTabIcon.AlternateText = Localization.GetString("ExportTab.AlternateText", LocalResourceFile);
             cmdExportTab.Text = Localization.GetString("ExportTab", LocalResourceFile);
+
             imgImportTabIcon.AlternateText = Localization.GetString("ImportTab.AlternateText", LocalResourceFile);
             cmdImportTab.Text = Localization.GetString("ImportTab", LocalResourceFile);
+
             imgAddModule.AlternateText = Localization.GetString("AddModule.AlternateText", LocalResourceFile);
             cmdAddModule.Text = Localization.GetString("AddModule", LocalResourceFile);
+
             imgSiteIcon.AlternateText = Localization.GetString("Site.AlternateText", LocalResourceFile);
             cmdSite.Text = Localization.GetString("Site", LocalResourceFile);
+
             imgUsersIcon.AlternateText = Localization.GetString("Users.AlternateText", LocalResourceFile);
             cmdUsers.Text = Localization.GetString("Users", LocalResourceFile);
+
             imgRolesIcon.AlternateText = Localization.GetString("Roles.AlternateText", LocalResourceFile);
             cmdRoles.Text = Localization.GetString("Roles", LocalResourceFile);
+
             imgFilesIcon.AlternateText = Localization.GetString("Files.AlternateText", LocalResourceFile);
             cmdFiles.Text = Localization.GetString("Files", LocalResourceFile);
+
             imgHelpIcon.AlternateText = Localization.GetString("Help.AlternateText", LocalResourceFile);
             cmdHelp.Text = Localization.GetString("Help", LocalResourceFile);
+
             imgExtensionsIcon.AlternateText = Localization.GetString("Extensions.AlternateText", LocalResourceFile);
             cmdExtensions.Text = Localization.GetString("Extensions", LocalResourceFile);
         }
@@ -227,8 +257,10 @@ namespace DotNetNuke.UI.ControlPanels
             cboInstances.Items.Clear();
             foreach (ModuleInfo objModule in PortalSettings.ActiveTab.Modules)
             {
+				//if user is allowed to view module and module is not deleted
                 if (ModulePermissionController.CanViewModule(objModule) && objModule.IsDeleted == false)
                 {
+					//modules which are displayed on all tabs should not be displayed on the Admin or Super tabs
                     if (objModule.AllTabs == false || PortalSettings.ActiveTab.IsSuperTab == false)
                     {
                         if (objModule.PaneName == cboPanes.SelectedItem.Value)
@@ -295,7 +327,9 @@ namespace DotNetNuke.UI.ControlPanels
                     tblControlPanel.Visible = true;
                     cmdVisibility.Visible = true;
                     rowControlPanel.Visible = true;
+
                     Localize();
+
                     if (Globals.IsAdminControl())
                     {
                         cmdAddModule.Enabled = false;
@@ -303,6 +337,7 @@ namespace DotNetNuke.UI.ControlPanels
                     if (!Page.IsPostBack)
                     {
                         optModuleType.Items.FindByValue("0").Selected = true;
+
                         if (!TabPermissionController.CanAddPage())
                         {
                             DisableAction(imgAddTabIcon, "iconbar_addtab_bw.gif", cmdAddTabIcon, cmdAddTab);
@@ -369,7 +404,7 @@ namespace DotNetNuke.UI.ControlPanels
                                 }
                                 cmdHost.Visible = true;
                             }
-                            else
+                            else //branding
                             {
                                 if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) && Host.DisplayCopyright)
                                 {
@@ -399,9 +434,10 @@ namespace DotNetNuke.UI.ControlPanels
                         }
                         if (cboPermission.Items.Count > 0)
                         {
-                            cboPermission.SelectedIndex = 0;
+                            cboPermission.SelectedIndex = 0; //view
                         }
                         LoadPositions();
+
                         if (!string.IsNullOrEmpty(Host.HelpURL))
                         {
                             cmdHelp.NavigateUrl = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, "");
@@ -417,6 +453,8 @@ namespace DotNetNuke.UI.ControlPanels
                         SetMode(false);
                         SetVisibility(false);
                     }
+					
+                    //Register jQuery
                     jQuery.RequestRegistration();
                 }
                 else if (IsModuleAdmin())
@@ -435,7 +473,7 @@ namespace DotNetNuke.UI.ControlPanels
                     tblControlPanel.Visible = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -443,6 +481,7 @@ namespace DotNetNuke.UI.ControlPanels
 
         protected override void OnPreRender(EventArgs e)
         {
+			//Set initial value
             base.OnPreRender(e);
             DNNClientAPI.EnableMinMax(imgVisibility,
                                       rowControlPanel,
@@ -454,6 +493,17 @@ namespace DotNetNuke.UI.ControlPanels
                                       "ControlPanelVisible" + PortalSettings.PortalId);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// PageFunctions_Click runs when any button in the Page toolbar is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void PageFunctions_Click(object sender, EventArgs e)
         {
             try
@@ -488,12 +538,23 @@ namespace DotNetNuke.UI.ControlPanels
                 }
                 Response.Redirect(URL, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CommonTasks_Click runs when any button in the Common Tasks toolbar is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CommonTasks_Click(object sender, EventArgs e)
         {
             try
@@ -524,12 +585,24 @@ namespace DotNetNuke.UI.ControlPanels
                 }
                 Response.Redirect(URL, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// AddModule_Click runs when the Add Module Icon or text button is clicked
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	10/06/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		///     [vmasanas]  01/07/2005  Modified to add view perm. to all roles with edit perm.
+		/// </history>
+		/// -----------------------------------------------------------------------------
         protected void imgAddModule_Click(object sender, ImageClickEventArgs e)
         {
             AddModule_Click(sender, e);
@@ -542,6 +615,7 @@ namespace DotNetNuke.UI.ControlPanels
                 if (TabPermissionController.CanAddContentToPage())
                 {
                     string title = txtTitle.Text;
+
                     ViewPermissionType permissionType = ViewPermissionType.View;
                     if (cboPermission.SelectedItem != null)
                     {
@@ -582,24 +656,28 @@ namespace DotNetNuke.UI.ControlPanels
                     }
                     switch (optModuleType.SelectedItem.Value)
                     {
-                        case "0":
+                        case "0": //new module
                             if (cboDesktopModules.SelectedIndex > 0)
                             {
                                 AddNewModule(title, int.Parse(cboDesktopModules.SelectedItem.Value), cboPanes.SelectedItem.Text, position, permissionType, "");
+
+                                //Redirect to the same page to pick up changes
                                 Response.Redirect(Request.RawUrl, true);
                             }
                             break;
-                        case "1":
+                        case "1": //existing module
                             if (cboModules.SelectedItem != null)
                             {
                                 AddExistingModule(int.Parse(cboModules.SelectedItem.Value), int.Parse(cboTabs.SelectedItem.Value), cboPanes.SelectedItem.Text, position, "");
+
+                                //Redirect to the same page to pick up changes
                                 Response.Redirect(Request.RawUrl, true);
                             }
                             break;
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -614,6 +692,7 @@ namespace DotNetNuke.UI.ControlPanels
         {
             var objModules = new ModuleController();
             var arrModules = new ArrayList();
+
             ModuleInfo objModule;
             Dictionary<int, ModuleInfo> arrPortalModules = objModules.GetTabModules(int.Parse(cboTabs.SelectedItem.Value));
             foreach (KeyValuePair<int, ModuleInfo> kvp in arrPortalModules)
@@ -668,7 +747,7 @@ namespace DotNetNuke.UI.ControlPanels
             {
                 Response.Redirect(Globals.NavigateURL(PortalSettings.AdminTabId), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -685,10 +764,12 @@ namespace DotNetNuke.UI.ControlPanels
             {
                 Response.Redirect(Globals.NavigateURL(PortalSettings.SuperTabId, true), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

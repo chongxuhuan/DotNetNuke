@@ -51,7 +51,8 @@ namespace DotNetNuke.Services.Installer
     /// -----------------------------------------------------------------------------
     public class Util
     {
-        #region "Constants"
+        #region Constants
+
         public const string DEFAULT_MANIFESTEXT = ".manifest";
         public static string ASSEMBLY_Added = GetLocalizedString("ASSEMBLY_Added");
         public static string ASSEMBLY_InUse = GetLocalizedString("ASSEMBLY_InUse");
@@ -130,6 +131,7 @@ namespace DotNetNuke.Services.Installer
         public static string MODULE_ControlKeyMissing = GetLocalizedString("MODULE_ControlKeyMissing");
         public static string MODULE_ControlTypeMissing = GetLocalizedString("MODULE_ControlTypeMissing");
         public static string MODULE_FriendlyNameMissing = GetLocalizedString("MODULE_FriendlyNameMissing");
+        public static string MODULE_InvalidVersion = GetLocalizedString("MODULE_InvalidVersion");
         public static string MODULE_ReadSuccess = GetLocalizedString("MODULE_ReadSuccess");
         public static string MODULE_Registered = GetLocalizedString("MODULE_Registered");
         public static string MODULE_UnRegistered = GetLocalizedString("MODULE_UnRegistered");
@@ -171,6 +173,8 @@ namespace DotNetNuke.Services.Installer
         public static string REGEX_Version = "\\d{2}.\\d{2}.\\d{2}";
         #endregion
 
+		#region "Private Shared Methods"
+		
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The StreamToStream method reads a source stream and wrtites it to a destination stream
@@ -187,7 +191,10 @@ namespace DotNetNuke.Services.Installer
             int count = 0;
             do
             {
+				//Read the chunk from the source
                 count = SourceStream.Read(buf, 0, 1024);
+
+                //Write the chunk to the destination
                 DestStream.Write(buf, 0, count);
             } while (count > 0);
             DestStream.Flush();
@@ -209,16 +216,22 @@ namespace DotNetNuke.Services.Installer
             {
                 if (isRequired)
                 {
+					//Log Error
                     log.AddFailure(logmessage);
                 }
                 else
                 {
+					//Use Default
                     propValue = defaultValue;
                 }
             }
             return propValue;
         }
+		
+		#endregion
 
+		#region Public Shared Methods
+		
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The BackupFile method backs up a file to the backup folder
@@ -234,10 +247,14 @@ namespace DotNetNuke.Services.Installer
         {
             string fullFileName = Path.Combine(basePath, installFile.FullName);
             string backupFileName = Path.Combine(installFile.BackupPath, installFile.Name + ".config");
+
+            //create the backup folder if neccessary
             if (!Directory.Exists(installFile.BackupPath))
             {
                 Directory.CreateDirectory(installFile.BackupPath);
             }
+			
+            //Copy file to backup location
             FileSystemUtils.CopyFile(fullFileName, backupFileName);
             log.AddInfo(string.Format(FILE_CreateBackup, installFile.FullName));
         }
@@ -257,12 +274,17 @@ namespace DotNetNuke.Services.Installer
         {
             string filePath = Path.Combine(basePath, installFile.Path);
             string fullFileName = Path.Combine(basePath, installFile.FullName);
+
+            //create the folder if neccessary
             if (!Directory.Exists(filePath))
             {
                 log.AddInfo(string.Format(FOLDER_Created, filePath));
                 Directory.CreateDirectory(filePath);
             }
+			
+            //Copy file from temp location
             FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName);
+
             log.AddInfo(string.Format(FILE_Created, installFile.FullName));
         }
 
@@ -282,6 +304,17 @@ namespace DotNetNuke.Services.Installer
             DeleteFile(installFile.FullName, basePath, log);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteFile method deletes a file.
+        /// </summary>
+        /// <param name="fileName">The file to delete</param>
+        /// <param name="basePath">The basePath to the file</param>
+        /// <param name="log">A Logger to log the result</param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static void DeleteFile(string fileName, string basePath, Logger log)
         {
             string fullFileName = Path.Combine(basePath, fileName);
@@ -313,11 +346,15 @@ namespace DotNetNuke.Services.Installer
 
         public static bool IsFileValid(InstallFile file, string packageWhiteList)
         {
+            //Check the White List
             FileExtensionWhitelist whiteList = Host.AllowedExtensionWhitelist;
+
+            //Check the White Lists
             string strExtension = file.Extension.ToLowerInvariant();
             if ((strExtension == "dnn" || whiteList.IsAllowedExtension(strExtension) || packageWhiteList.Contains(strExtension) ||
                  (packageWhiteList.Contains("*dataprovider") && strExtension.EndsWith("dataprovider"))))
             {
+				//Install File is Valid
                 return true;
             }
 
@@ -423,7 +460,11 @@ namespace DotNetNuke.Services.Installer
         {
             return ValidateNode(nav.GetAttribute(attributeName, ""), isRequired, log, logmessage, defaultValue);
         }
+		
+		#endregion
 
+		#region ReadElement
+	
         public static string ReadElement(XPathNavigator nav, string elementName)
         {
             return ValidateNode(XmlUtils.GetNodeValue(nav, elementName), false, null, "", "");
@@ -459,7 +500,10 @@ namespace DotNetNuke.Services.Installer
         {
             string fullFileName = Path.Combine(basePath, installFile.FullName);
             string backupFileName = Path.Combine(installFile.BackupPath, installFile.Name + ".config");
+
+            //Copy File back over install file
             FileSystemUtils.CopyFile(backupFileName, fullFileName);
+
             log.AddInfo(string.Format(FILE_RestoreBackup, installFile.FullName));
         }
 
@@ -495,15 +539,22 @@ namespace DotNetNuke.Services.Installer
         /// -----------------------------------------------------------------------------
         public static void WriteStream(Stream SourceStream, string DestFileName)
         {
+			//Delete the file
             FileSystemUtils.DeleteFile(DestFileName);
+
             var file = new FileInfo(DestFileName);
             if (!file.Directory.Exists)
             {
                 file.Directory.Create();
             }
             Stream fileStrm = file.Create();
+
             StreamToStream(SourceStream, fileStrm);
+
+            //Close the stream
             fileStrm.Close();
         }
+		
+		#endregion
     }
 }

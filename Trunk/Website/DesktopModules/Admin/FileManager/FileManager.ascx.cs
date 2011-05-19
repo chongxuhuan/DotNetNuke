@@ -1572,7 +1572,17 @@ namespace DotNetNuke.Modules.Admin.FileManager
             string strDestPath = Regex.Replace(DestPath, "^0\\\\", "");
             string WebUploadParam = "ftype=" + UploadType.File;
             string returnTab = "rtab=" + TabId;
-            string destUrl = EditUrl("dest", Globals.QueryStringEncode(strDestPath), "Edit", WebUploadParam, returnTab);
+
+            var parameters = new string[3 + ((String.IsNullOrEmpty(strDestPath)) ? 0: 1)];
+            parameters[0] = "mid=" + ModuleId.ToString();
+            parameters[1] = WebUploadParam;
+            parameters[2] = returnTab;
+            if (!String.IsNullOrEmpty(strDestPath))
+            {
+                parameters[3] = "dest=" + Globals.QueryStringEncode(strDestPath);
+            }
+
+            string destUrl = Globals.NavigateURL(TabId, "Edit", parameters);
             Response.Redirect(destUrl);
         }
 

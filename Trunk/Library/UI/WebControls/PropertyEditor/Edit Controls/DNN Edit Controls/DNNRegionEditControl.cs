@@ -46,17 +46,39 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:DNNRegionEditControl runat=server></{0}:DNNRegionEditControl>")]
     public class DNNRegionEditControl : DNNListEditControl
     {
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a DNNRegionEditControl
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DNNRegionEditControl()
         {
             AutoPostBack = false;
             TextField = ListBoundField.Text;
             ValueField = ListBoundField.Text;
         }
+		
+		#endregion
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             if ((List == null) || List.Count == 0)
             {
+				//No List so use a Text Box
                 string propValue = Convert.ToString(Value);
                 ControlStyle.AddAttributesToRender(writer);
                 writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
@@ -67,6 +89,7 @@ namespace DotNetNuke.UI.WebControls
             }
             else
             {
+				//Render the standard List
                 base.RenderEditMode(writer);
             }
         }

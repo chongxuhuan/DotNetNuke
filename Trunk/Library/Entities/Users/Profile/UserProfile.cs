@@ -38,32 +38,75 @@ using System.Xml.Serialization;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      UserProfile
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The UserProfile class provides a Business Layer entity for the Users Profile
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	01/31/2006	documented
+    ///     [cnurse]    02/10/2006  updated with extensible profile enhancment
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class UserProfile
     {
+		#region "Private Constants"
+
+        //Name properties
         private const string cPrefix = "Prefix";
         private const string cFirstName = "FirstName";
         private const string cMiddleName = "MiddleName";
         private const string cLastName = "LastName";
         private const string cSuffix = "Suffix";
+
+        //Address Properties
         private const string cUnit = "Unit";
         private const string cStreet = "Street";
         private const string cCity = "City";
         private const string cRegion = "Region";
         private const string cCountry = "Country";
         private const string cPostalCode = "PostalCode";
+
+        //Phone contact
         private const string cTelephone = "Telephone";
         private const string cCell = "Cell";
         private const string cFax = "Fax";
+
+        //Online contact
         private const string cWebsite = "Website";
         private const string cIM = "IM";
+
+        //Preferences
         private const string cPhoto = "Photo";
         private const string cTimeZone = "TimeZone";
         private const string cPreferredLocale = "PreferredLocale";
-        private const String cPreferredTimeZone = "PreferredTimeZone";
+        private const String cPreferredTimeZone = "TimeZoneInfo";
+
+		#endregion
+		#region "Private Members"
         private bool _IsDirty;
+
+        //collection to store all profile properties.
         private ProfilePropertyDefinitionCollection _profileProperties;
 
+		#endregion
+		
+		#region "Public Properties"
+		
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Cell/Mobile Phone
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Cell
         {
             get
@@ -76,6 +119,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the City part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string City
         {
             get
@@ -88,6 +139,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Country part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Country
         {
             get
@@ -100,6 +159,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Fax Phone
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Fax
         {
             get
@@ -112,6 +179,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the First Name
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FirstName
         {
             get
@@ -124,6 +199,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Full Name
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FullName
         {
             get
@@ -132,6 +215,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Instant Messenger Handle
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string IM
         {
             get
@@ -144,6 +235,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets or sets whether the property has been changed
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsDirty
         {
             get
@@ -152,6 +251,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Last Name
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string LastName
         {
             get
@@ -180,28 +287,32 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                string strPhotoURL = Globals.ApplicationPath + "/images/no_avatar.gif";
-                ProfilePropertyDefinition objProperty = GetProperty(cPhoto);
-                if ((objProperty != null))
+                string photoURL = Globals.ApplicationPath + "/images/no_avatar.gif";
+                ProfilePropertyDefinition photoProperty = GetProperty(cPhoto);
+                if ((photoProperty != null))
                 {
-                    if (!string.IsNullOrEmpty(objProperty.PropertyValue) && objProperty.Visibility == UserVisibilityMode.AllUsers)
+                    if (!string.IsNullOrEmpty(photoProperty.PropertyValue) && photoProperty.Visibility == UserVisibilityMode.AllUsers)
                     {
-                        var objFile = FileManager.Instance.GetFile(int.Parse(objProperty.PropertyValue));
-                        if ((objFile != null))
+                        var fileInfo = FileManager.Instance.GetFile(int.Parse(photoProperty.PropertyValue));
+                        if ((fileInfo != null))
                         {
-                            PortalInfo objPortal = new PortalController().GetPortal(objFile.PortalId);
-                            if (objPortal != null)
-                            {
-                                strPhotoURL = Globals.ApplicationPath + "/" + objFile.RelativePath;
-                            }
+                            photoURL = FileManager.Instance.GetUrl(fileInfo);
                         }
                     }
                 }
-                return strPhotoURL;
+                return photoURL;
             }
         }
 
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the PostalCode part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PostalCode
         {
             get
@@ -214,6 +325,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Preferred Locale
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PreferredLocale
         {
             get
@@ -273,6 +392,15 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Collection of Profile Properties
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        ///     [cnurse]    03/28/2006  Converted to a ProfilePropertyDefinitionCollection
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ProfilePropertyDefinitionCollection ProfileProperties
         {
             get
@@ -285,6 +413,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Region part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Region
         {
             get
@@ -297,6 +433,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Street part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Street
         {
             get
@@ -309,6 +453,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Telephone
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Telephone
         {
             get
@@ -321,6 +473,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Unit part of the Address
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Unit
         {
             get
@@ -333,6 +493,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Website
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/10/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Website
         {
             get
@@ -344,7 +512,18 @@ namespace DotNetNuke.Entities.Users
                 SetProfileProperty(cWebsite, value);
             }
         }
+		#endregion
 
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Clears the IsDirty Flag
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/29/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ClearIsDirty()
         {
             _IsDirty = false;
@@ -354,11 +533,31 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Profile Property from the Profile
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="propName">The name of the property to retrieve.</param>
+        /// <history>
+        /// 	[cnurse]	02/13/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ProfilePropertyDefinition GetProperty(string propName)
         {
             return ProfileProperties[propName];
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Profile Property Value from the Profile
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="propName">The name of the propoerty to retrieve.</param>
+        /// <history>
+        /// 	[cnurse]	02/10/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string GetPropertyValue(string propName)
         {
             string propValue = Null.NullString;
@@ -370,11 +569,33 @@ namespace DotNetNuke.Entities.Users
             return propValue;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initialises the Profile with an empty collection of profile properties
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="portalId">The name of the property to retrieve.</param>
+        /// <history>
+        /// 	[cnurse]	05/18/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void InitialiseProfile(int portalId)
         {
             InitialiseProfile(portalId, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initialises the Profile with an empty collection of profile properties
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="portalId">The name of the property to retrieve.</param>
+        /// <param name="useDefaults">A flag that indicates whether the profile default values should be
+        /// copied to the Profile.</param>
+        /// <history>
+        /// 	[cnurse]	08/04/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void InitialiseProfile(int portalId, bool useDefaults)
         {
             _profileProperties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
@@ -387,20 +608,35 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
-        public void SetProfileProperty(string propName, string propvalue)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets a Profile Property Value in the Profile
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="propName">The name of the propoerty to set.</param>
+        /// <param name="propValue">The value of the propoerty to set.</param>
+        /// <history>
+        /// 	[cnurse]	02/10/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+		public void SetProfileProperty(string propName, string propValue)
         {
             ProfilePropertyDefinition profileProp = GetProperty(propName);
             if (profileProp != null)
             {
-                profileProp.PropertyValue = propvalue;
+				profileProp.PropertyValue = propValue;
+
+                //Set the IsDirty flag
                 if (profileProp.IsDirty)
                 {
                     _IsDirty = true;
                 }
             }
         }
+		
+		#endregion
 
-        #region Obsolete
+        #region "Obsolete"
 
         [Obsolete("Deprecated in DNN 6.0. Replaced by PreferredTimeZone.")]
         [Browsable(false)]

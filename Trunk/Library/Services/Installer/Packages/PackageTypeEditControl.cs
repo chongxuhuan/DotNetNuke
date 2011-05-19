@@ -51,33 +51,61 @@ namespace DotNetNuke.Services.Installer.Packages.WebControls
     [ToolboxData("<{0}:PackageTypeEditControl runat=server></{0}:PackageTypeEditControl>")]
     public class PackageTypeEditControl : TextEditControl
     {
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/27/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             List<PackageType> packageTypes = PackageController.GetPackageTypes();
+
+            //Render the Select Tag
             ControlStyle.AddAttributesToRender(writer);
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
             writer.RenderBeginTag(HtmlTextWriterTag.Select);
+
+            //Add the Not Specified Option
             writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
+
             if (StringValue == Null.NullString)
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
             }
+			
+            //Render Option Tag
             writer.RenderBeginTag(HtmlTextWriterTag.Option);
             writer.Write("<" + DNNLocalization.GetString("Not_Specified", DNNLocalization.SharedResourceFile) + ">");
             writer.RenderEndTag();
+
             foreach (PackageType type in packageTypes)
             {
-                writer.AddAttribute(HtmlTextWriterAttribute.Value, type.Type);
-                if (type.Type == StringValue)
+				//Add the Value Attribute
+                writer.AddAttribute(HtmlTextWriterAttribute.Value, type.PackageType);
+
+                if (type.PackageType == StringValue)
                 {
+					//Add the Selected Attribute
                     writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
                 }
+				
+				//Render Option Tag
                 writer.RenderBeginTag(HtmlTextWriterTag.Option);
-                writer.Write(type.Type);
+                writer.Write(type.PackageType);
                 writer.RenderEndTag();
             }
+			
+            //Close Select Tag
             writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

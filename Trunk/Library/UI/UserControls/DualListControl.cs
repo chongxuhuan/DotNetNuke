@@ -37,6 +37,7 @@ namespace DotNetNuke.UI.UserControls
 {
     public abstract class DualListControl : UserControlBase
     {
+		#region "Private Members"
         protected Label Label1;
         protected Label Label2;
         private string MyFileName = "DualListControl.ascx";
@@ -53,6 +54,10 @@ namespace DotNetNuke.UI.UserControls
         protected LinkButton cmdRemoveAll;
         protected ListBox lstAssigned;
         protected ListBox lstAvailable;
+		
+		#endregion
+		
+		#region "Public Properties"
 
         public string ListBoxWidth
         {
@@ -135,8 +140,13 @@ namespace DotNetNuke.UI.UserControls
                 _Enabled = value;
             }
         }
+		
+		#endregion
+		
+		#region "Protected Event Handlers"
 
-        protected override void OnLoad(EventArgs e)
+        /// <summary>The Page_Load server event handler on this page is used to populate the role information for the page</summary>
+		protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
@@ -147,14 +157,17 @@ namespace DotNetNuke.UI.UserControls
 
             try
             {
+                //Localization
                 Label1.Text = Localization.GetString("Available", Localization.GetResourceFile(this, MyFileName));
                 Label2.Text = Localization.GetString("Assigned", Localization.GetResourceFile(this, MyFileName));
                 cmdAdd.ToolTip = Localization.GetString("Add", Localization.GetResourceFile(this, MyFileName));
                 cmdAddAll.ToolTip = Localization.GetString("AddAll", Localization.GetResourceFile(this, MyFileName));
                 cmdRemove.ToolTip = Localization.GetString("Remove", Localization.GetResourceFile(this, MyFileName));
                 cmdRemoveAll.ToolTip = Localization.GetString("RemoveAll", Localization.GetResourceFile(this, MyFileName));
+
                 if (!Page.IsPostBack)
                 {
+					//set dimensions of control
                     if (!String.IsNullOrEmpty(_ListBoxWidth))
                     {
                         lstAvailable.Width = Unit.Parse(_ListBoxWidth);
@@ -165,23 +178,31 @@ namespace DotNetNuke.UI.UserControls
                         lstAvailable.Height = Unit.Parse(_ListBoxHeight);
                         lstAssigned.Height = Unit.Parse(_ListBoxHeight);
                     }
+					
+                    //load available
                     lstAvailable.DataTextField = _DataTextField;
                     lstAvailable.DataValueField = _DataValueField;
                     lstAvailable.DataSource = _Available;
                     lstAvailable.DataBind();
                     Sort(lstAvailable);
+
+                    //load selected
                     lstAssigned.DataTextField = _DataTextField;
                     lstAssigned.DataValueField = _DataValueField;
                     lstAssigned.DataSource = _Assigned;
                     lstAssigned.DataBind();
                     Sort(lstAssigned);
+
+                    //set enabled
                     lstAvailable.Enabled = _Enabled;
                     lstAssigned.Enabled = _Enabled;
+
+                    //save persistent values
                     ViewState[ClientID + "_ListBoxWidth"] = _ListBoxWidth;
                     ViewState[ClientID + "_ListBoxHeight"] = _ListBoxHeight;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -250,6 +271,10 @@ namespace DotNetNuke.UI.UserControls
             lstAssigned.ClearSelection();
             Sort(lstAvailable);
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         private void Sort(ListBox ctlListBox)
         {
@@ -265,6 +290,8 @@ namespace DotNetNuke.UI.UserControls
                 ctlListBox.Items.Add(objListItem);
             }
         }
+		
+		#endregion
     }
 
     public class ListItemComparer : IComparer

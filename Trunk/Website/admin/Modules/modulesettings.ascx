@@ -8,20 +8,18 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="ModuleLocalization" Src="~/Admin/Modules/ModuleLocalization.ascx" %>
-
 <div class="dnnForm dnnModuleSettings dnnClear" id="dnnModuleSettings">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#msModuleSettings"><%=LocalizeString("ModuleSettings")%></a></li>
         <li><a href="#msPermissions"><%=LocalizeString("Permissions")%></a></li>
 		<li><a href="#msPageSettings"><%=LocalizeString("PageSettings")%></a></li>
 		<li id="specificSettingsTab" runat="server"><asp:HyperLink href="#msSpecificSettings" id="hlSpecificSettings" runat="server" /></li>
-        <li class="dnnFormExpandContent"><a href=""><%=LocalizeString("ExpandAll")%></a></li>
 	</ul>
     <div class="msModuleSettings dnnClear" id="msModuleSettings">
+        <div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
         <div class="msmsContent dnnClear">
             <h2 id="dnnPanel-ModuleGeneralDetails" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("GeneralDetails")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem" id="cultureRow" runat="server">
                     <dnn:Label ID="cultureLabel" runat="server" ControlName="cultureLanguageLabel" />
                     <dnn:DnnLanguageLabel ID="cultureLanguageLabel" runat="server"  />
@@ -41,7 +39,6 @@
             </fieldset>
             <h2 id="dnnPanel-ModuleSecuritySettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Security")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem" id="rowAllTabs" runat="server">
                     <dnn:Label id="plAllTabs" runat="server" controlname="chkAllTabs" />
                     <asp:checkbox id="chkAllTabs" runat="server" AutoPostback="true" />
@@ -78,7 +75,6 @@
             </fieldset>
             <h2 id="dnnPanel-ModuleAdditionalPages" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("ModuleInstalledOn")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div>
                     <dnn:Label ID="lblInstalledOn" runat="server" ResourceKey="InstalledOn" />
                     <asp:DataGrid ID="lstInstalledOnTabs" runat="server" AutoGenerateColumns="False" BorderStyle="None" AllowPaging="true" PageSize="20" EnableViewState="true" ShowHeader="False">
@@ -96,19 +92,18 @@
     <div class="msPermissions dnnClear" id="msPermissions">
         <div class="mspContent dnnClear">
             <fieldset>
-                <legend></legend>
                 <div id="permissionsRow" runat="server">
                     <dnn:modulepermissionsgrid id="dgPermissions" runat="server" />
-                    <asp:checkbox id="chkInheritPermissions" cssclass="Normal" autopostback="true" runat="server" resourcekey="InheritPermissions" />
+                    <asp:checkbox id="chkInheritPermissions" autopostback="true" runat="server" resourcekey="InheritPermissions" />
                 </div>
             </fieldset>
         </div>
     </div>
     <div class="msPageSettings dnnClear" id="msPageSettings">
+        <div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
         <div class="mspsContent dnnClear">
             <h2 id="dnnPanel-ModuleAppearance" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Appearance")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label id="plIcon" runat="server" controlname="ctlIcon" />
                     <dnn:url id="ctlIcon" runat="server" ShowImages="true" showurls="False" showtabs="False" showlog="False" showtrack="False" required="False" ShowNone="true" />
@@ -178,7 +173,6 @@
             </fieldset>
             <h2 id="dnnPanel-ModuleCacheSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("CacheSettings")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="lblCacheProvider" runat="server" ControlName="cboCacheProvider" ResourceKey="CacheProvider"  />
                     <asp:DropDownList ID="cboCacheProvider" runat="server" AutoPostBack="true" DataValueField="Key" DataTextField="filteredkey" />
@@ -193,7 +187,6 @@
             </fieldset>
             <h2 id="dnnPanel-ModuleOtherSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("OtherSettings")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label id="plDefault" runat="server" controlname="chkDefault"  />
                     <asp:CheckBox ID="chkDefault" Runat="server" />
@@ -210,11 +203,7 @@
         </div>
      </div>
     <div class="msSpecificSettings dnnClear" id="msSpecificSettings">
-        <div class="mspsContent dnnClear">
-            <fieldset id="fsSpecific" runat="server">
-                <asp:panel id="pnlSpecific" runat="server" />
-            </fieldset>
-        </div>
+        <div class="mspsContent dnnClear"><fieldset id="fsSpecific" runat="server"><asp:panel id="pnlSpecific" runat="server" /></fieldset></div>
     </div>
     <ul class="dnnActions dnnClear">
         <li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
@@ -223,19 +212,31 @@
     </ul>
     <div class="dnnmsStat dnnClear"><dnn:audit id="ctlAudit" runat="server" /></div>
 </div>
-
 <script language="javascript" type="text/javascript">
     function setUpDnnModuleSettings() {
         $('#dnnModuleSettings').dnnTabs().dnnPanels();
-        $('.dnnContainerPreview').dnnPreview({ containerSelector: 'select' });
-        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+        $('#msModuleSettings .dnnFormExpandContent a').dnnExpandAll({
+            expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+            collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+            targetArea: '#msModuleSettings'
+        });
+        $('#msPageSettings .dnnFormExpandContent a').dnnExpandAll({
+            expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+            collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+            targetArea: '#msPageSettings'
+        });
         $('#<%= cmdDelete.ClientID %>').dnnConfirm({
             text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
+            yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
+            title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+        });
+        $('.dnnContainerPreview').dnnPreview({
+            containerSelector: 'select',
+            baseUrl: '<%= DotNetNuke.Common.Globals.NavigateURL(this.TabId) %>',
+            noSelectionMessage: '<%= LocalizeString("PreviewNoSelectionMessage.Text") %>',
+            alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
+            alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
         });
     }
 

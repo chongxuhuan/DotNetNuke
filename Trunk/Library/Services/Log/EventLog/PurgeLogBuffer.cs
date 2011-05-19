@@ -42,17 +42,19 @@ namespace DotNetNuke.Services.Log.EventLog
         {
             try
             {
-                Progressing();
+				//notification that the event is progressing
+                Progressing(); //OPTIONAL
                 LoggingProvider.Instance().PurgeLogBuffer();
-                ScheduleHistoryItem.Succeeded = true;
-                ScheduleHistoryItem.AddLogNote("Purged log entries successfully");
+                ScheduleHistoryItem.Succeeded = true; //REQUIRED
+                ScheduleHistoryItem.AddLogNote("Purged log entries successfully"); //OPTIONAL
             }
-            catch (Exception exc)
+            catch (Exception exc) //REQUIRED
             {
-                ScheduleHistoryItem.Succeeded = false;
-                ScheduleHistoryItem.AddLogNote("EXCEPTION: " + exc);
-                Errored(ref exc);
-                Exceptions.Exceptions.LogException(exc);
+                ScheduleHistoryItem.Succeeded = false; //REQUIRED
+                ScheduleHistoryItem.AddLogNote("EXCEPTION: " + exc); //OPTIONAL
+                Errored(ref exc); //REQUIRED
+                //log the exception
+                Exceptions.Exceptions.LogException(exc); //OPTIONAL
             }
         }
     }

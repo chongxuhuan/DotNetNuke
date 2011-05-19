@@ -63,6 +63,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The added folder.</returns>
         public virtual IFolderInfo AddFolder(FolderMappingInfo folderMapping, string folderPath)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
@@ -74,6 +76,8 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception ex)
             {
+                DnnLog.Error(ex);
+
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("AddFolderUnderlyingSystemError", "The underlying system threw an exception. The folder has not been added."), ex);
             }
 
@@ -93,17 +97,14 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The added folder.</returns>
         public virtual IFolderInfo AddFolder(int portalID, string folderPath)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNullOrEmpty("folderPath", folderPath);
 
             folderPath = PathUtils.Instance.FormatFolderPath(folderPath);
 
             var parentFolderPath = folderPath.Substring(0, folderPath.Substring(0, folderPath.Length - 1).LastIndexOf("/") + 1);
-            var parentFolder = GetFolder(portalID, parentFolderPath);
-
-            if (parentFolder == null)
-            {
-                parentFolder = AddFolder(portalID, parentFolderPath);
-            }
+            var parentFolder = GetFolder(portalID, parentFolderPath) ?? AddFolder(portalID, parentFolderPath);
 
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(parentFolder.FolderMappingID);
 
@@ -118,6 +119,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
         public virtual void DeleteFolder(IFolderInfo folder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
 
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
@@ -128,6 +131,8 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception ex)
             {
+                DnnLog.Error(ex);
+
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("DeleteFolderUnderlyingSystemError", "The underlying system threw an exception. The folder has not been deleted."), ex);
             }
 
@@ -141,6 +146,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="folderID">The folder identifier.</param>
         public virtual void DeleteFolder(int folderID)
         {
+            DnnLog.MethodEntry();
+
             var folder = GetFolder(folderID);
 
             DeleteFolder(folder);
@@ -154,6 +161,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A bool value indicating whether the folder exists or not in the specified portal.</returns>
         public virtual bool FolderExists(int portalID, string folderPath)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folderPath", folderPath);
 
             return GetFolder(portalID, folderPath) != null;
@@ -166,6 +175,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of files contained in the specified folder.</returns>
         public virtual IList<IFileInfo> GetFiles(IFolderInfo folder)
         {
+            DnnLog.MethodEntry();
+
             return GetFiles(folder, false);
         }
 
@@ -177,6 +188,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of files contained in the specified folder.</returns>
         public virtual IList<IFileInfo> GetFiles(IFolderInfo folder, bool recursive)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
 
             var fileCollection = CBOWrapper.Instance.FillCollection<FileInfo>(DataProvider.Instance().GetFiles(folder.FolderID));
@@ -201,6 +214,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The folder entity or null if the folder cannot be located.</returns>
         public virtual IFolderInfo GetFolder(int folderID)
         {
+            DnnLog.MethodEntry();
+
             return CBOWrapper.Instance.FillObject<FolderInfo>(DataProvider.Instance().GetFolder(folderID));
         }
 
@@ -212,6 +227,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The folder entity or null if the folder cannot be located.</returns>
         public virtual IFolderInfo GetFolder(int portalID, string folderPath)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folderPath", folderPath);
 
             folderPath = PathUtils.Instance.FormatFolderPath(folderPath);
@@ -227,6 +244,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The folder entity or null if the folder cannot be located.</returns>
         public virtual IFolderInfo GetFolder(Guid uniqueId)
         {
+            DnnLog.MethodEntry();
+
             return CBOWrapper.Instance.FillObject<FolderInfo>(DataProvider.Instance().GetFolderByUniqueID(uniqueId));
         }
 
@@ -238,6 +257,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when parentFolder is null.</exception>
         public virtual IList<IFolderInfo> GetFolders(IFolderInfo parentFolder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("parentFolder", parentFolder);
 
             var folders = GetFolders(parentFolder.PortalID);
@@ -276,6 +297,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The sorted list of folders of the provided portal.</returns>
         public virtual IList<IFolderInfo> GetFolders(int portalID)
         {
+            DnnLog.MethodEntry();
+
             var folders = new List<IFolderInfo>();
 
             var cacheKey = string.Format(DataCache.FolderCacheKey, portalID);
@@ -293,6 +316,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of folders that match the provided permissions in the specified portal.</returns>
         public virtual IList<IFolderInfo> GetFolders(int portalID, string permissions, int userID)
         {
+            DnnLog.MethodEntry();
+
             var folders = new List<IFolderInfo>();
 
             var cacheKey = string.Format(DataCache.FolderCacheKey, portalID);
@@ -309,6 +334,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of folders the specified user has read permissions.</returns>
         public virtual IList<IFolderInfo> GetFolders(UserInfo user)
         {
+            DnnLog.MethodEntry();
+
             return GetFolders(user, "READ", true, true);
         }
 
@@ -320,6 +347,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of folders the specified user has the provided permissions.</returns>
         public virtual IList<IFolderInfo> GetFolders(UserInfo user, string permissions)
         {
+            DnnLog.MethodEntry();
+
             return GetFolders(user, permissions, true, true);
         }
 
@@ -333,6 +362,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The list of folders the specified user has the provided permissions, including or not, secure and database folder types.</returns>
         public virtual IList<IFolderInfo> GetFolders(UserInfo user, string permissions, bool includeSecure, bool includeDatabase)
         {
+            DnnLog.MethodEntry();
+
             var userFolders = new List<IFolderInfo>();
 
             var portalID = user.PortalID;
@@ -394,33 +425,36 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
         public virtual void RenameFolder(IFolderInfo folder, string newFolderName)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
             Requires.NotNullOrEmpty("newFolderName", newFolderName);
 
-            if (!folder.FolderName.Equals(newFolderName))
+            if (folder.FolderName.Equals(newFolderName)) return;
+            
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
+
+            if (folderMapping == null) return;
+
+            if (folderMapping.IsEditable)
             {
-                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
-
-                if (folderMapping != null)
+                try
                 {
-                    if (folderMapping.IsEditable)
-                    {
-                        try
-                        {
-                            FolderProvider.Instance(folderMapping.FolderProviderType).RenameFolder(folder, newFolderName);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new FolderProviderException(Localization.Localization.GetExceptionMessage("RenameFolderUnderlyingSystemError", "The underlying system threw an exception. The folder has not been renamed."), ex);
-                        }
-                    }
+                    FolderProvider.Instance(folderMapping.FolderProviderType).RenameFolder(folder, newFolderName);
+                }
+                catch (Exception ex)
+                {
+                    DnnLog.Error(ex);
 
-                    var newFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.LastIndexOf(folder.FolderName)) + PathUtils.Instance.FormatFolderPath(newFolderName);
-
-                    RenameFolderInFileSystem(folder, newFolderPath);
-                    RenameFolderInDatabase(folder, newFolderPath);
+                    throw new FolderProviderException(
+                        Localization.Localization.GetExceptionMessage("RenameFolderUnderlyingSystemError", "The underlying system threw an exception. The folder has not been renamed."), ex);
                 }
             }
+
+            var newFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.LastIndexOf(folder.FolderName)) + PathUtils.Instance.FormatFolderPath(newFolderName);
+
+            RenameFolderInFileSystem(folder, newFolderPath);
+            RenameFolderInDatabase(folder, newFolderPath);
         }
 
         /// <summary>
@@ -430,6 +464,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The number of folder collisions.</returns>
         public virtual int Synchronize(int portalID)
         {
+            DnnLog.MethodEntry();
+
             var folderCollisions = Synchronize(portalID, "", true, true);
 
             DataCache.ClearFolderCache(portalID);
@@ -445,6 +481,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The number of folder collisions.</returns>
         public virtual int Synchronize(int portalID, string relativePath)
         {
+            DnnLog.MethodEntry();
+
             return Synchronize(portalID, relativePath, true, true);
         }
 
@@ -458,12 +496,14 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The number of folder collisions.</returns>
         public virtual int Synchronize(int portalID, string relativePath, bool isRecursive, bool syncFiles)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("relativePath", relativePath);
 
             var collisionNotifications = new List<string>();
             var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
 
-            for (int i = mergedTree.Count - 1; i >= 0; i--)
+            for (var i = mergedTree.Count - 1; i >= 0; i--)
             {
                 var item = mergedTree.Values[i];
 
@@ -495,6 +535,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when folder is null.</exception>
         public virtual IFolderInfo UpdateFolder(IFolderInfo folder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
 
             DataProvider.Instance().UpdateFolder(folder.PortalID,
@@ -592,25 +634,24 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("folder", folder);
 
-            if (!String.IsNullOrEmpty(folder.FolderPath))
+            if (String.IsNullOrEmpty(folder.FolderPath)) return;
+            
+            var parentFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.Substring(0, folder.FolderPath.Length - 1).LastIndexOf("/") + 1);
+
+            foreach (FolderPermissionInfo objPermission in
+                FolderPermissionController.GetFolderPermissionsCollectionByFolder(folder.PortalID, parentFolderPath))
             {
-                var parentFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.Substring(0, folder.FolderPath.Length - 1).LastIndexOf("/") + 1);
-
-                foreach (FolderPermissionInfo objPermission in
-                    FolderPermissionController.GetFolderPermissionsCollectionByFolder(folder.PortalID, parentFolderPath))
-                {
-                    var folderPermission = new FolderPermissionInfo(objPermission)
-                                               {
-                                                   FolderID = folder.FolderID,
-                                                   RoleID = objPermission.RoleID,
-                                                   UserID = objPermission.UserID,
-                                                   AllowAccess = objPermission.AllowAccess
-                                               };
-                    folder.FolderPermissions.Add(folderPermission, true);
-                }
-
-                FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
+                var folderPermission = new FolderPermissionInfo(objPermission)
+                                           {
+                                               FolderID = folder.FolderID,
+                                               RoleID = objPermission.RoleID,
+                                               UserID = objPermission.UserID,
+                                               AllowAccess = objPermission.AllowAccess
+                                           };
+                folder.FolderPermissions.Add(folderPermission, true);
             }
+
+            FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
         }
 
         /// <summary>

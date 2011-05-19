@@ -194,6 +194,7 @@ namespace DotNetNuke.Entities.Portals
             {
                 if (_administratorRoleName == Null.NullString && AdministratorRoleId > Null.NullInteger)
                 {
+					//Get Role Name
                     RoleInfo adminRole = new RoleController().GetRole(AdministratorRoleId, PortalID);
                     if (adminRole != null)
                     {
@@ -303,9 +304,12 @@ namespace DotNetNuke.Entities.Portals
             HomeDirectory = Null.SetNullString(dr["HomeDirectory"]);
             SuperTabId = Null.SetNullInteger(dr["SuperTabId"]);
             CultureCode = Null.SetNullString(dr["CultureCode"]);
+
             FillInternal(dr);
             AdministratorRoleName = Null.NullString;
             RegisteredRoleName = Null.NullString;
+
+            //Aggressively load Users
             Users = UserController.GetUserCountByPortal(PortalID);
             Pages = Null.NullInteger;
         }

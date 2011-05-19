@@ -41,6 +41,17 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class AssemblyInstaller : FileInstaller
     {
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("assemblies")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -49,6 +60,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the default Path for the file - if not present in the manifest
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/10/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string DefaultPath
         {
             get
@@ -57,6 +77,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("assembly")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get
@@ -65,6 +94,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the PhysicalBasePath for the assemblies
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string PhysicalBasePath
         {
             get
@@ -72,7 +110,20 @@ namespace DotNetNuke.Services.Installer.Installers
                 return PhysicalSitePath + "\\";
             }
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -80,12 +131,29 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "dll";
             }
         }
+		
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteFile method deletes a single assembly.
+        /// </summary>
+        /// <param name="file">The InstallFile to delete</param>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void DeleteFile(InstallFile file)
         {
+            //Attempt to unregister assembly this will return False if the assembly is used by another package and
+            //cannot be delete andtrue if it is not being used and can be deleted
             if (DataProvider.Instance().UnRegisterAssembly(Package.PackageID, file.Name))
             {
                 Log.AddInfo(Util.ASSEMBLY_UnRegistered + " - " + file.FullName);
+                //Call base class version to deleteFile file from \bin
                 base.DeleteFile(file);
             }
             else
@@ -94,11 +162,29 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that determines what type of file this installer supports
+        /// </summary>
+        /// <param name="type">The type of file being processed</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool IsCorrectType(InstallFileType type)
         {
             return (type == InstallFileType.Assembly);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The InstallFile method installs a single assembly.
+        /// </summary>
+        /// <param name="file">The InstallFile to install</param>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool InstallFile(InstallFile file)
         {
             bool bSuccess = true;
@@ -108,26 +194,35 @@ namespace DotNetNuke.Services.Installer.Installers
             }
             else
             {
+                //Attempt to register assembly this will return False if the assembly exists and true if it does not or is older
                 int returnCode = DataProvider.Instance().RegisterAssembly(Package.PackageID, file.Name, file.Version.ToString(3));
                 switch (returnCode)
                 {
                     case 0:
+                        //Assembly Does Not Exist
                         Log.AddInfo(Util.ASSEMBLY_Added + " - " + file.FullName);
                         break;
                     case 1:
+                        //Older version of Assembly Exists
                         Log.AddInfo(Util.ASSEMBLY_Updated + " - " + file.FullName);
                         break;
                     case 2:
                     case 3:
+						//Assembly already Registered
                         Log.AddInfo(Util.ASSEMBLY_Registered + " - " + file.FullName);
                         break;
                 }
+				
+                //If assembly not registered, is newer (or is the same version and we are in repair mode)
                 if (returnCode < 2 || (returnCode == 2 && file.InstallerInfo.RepairInstall))
                 {
-                    bSuccess = base.InstallFile(file);
+                    //Call base class version to copy file to \bin
+					bSuccess = base.InstallFile(file);
                 }
             }
             return bSuccess;
         }
+		
+		#endregion
     }
 }

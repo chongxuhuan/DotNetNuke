@@ -41,8 +41,14 @@ namespace DotNetNuke.Services.Analytics.Config
     [Serializable, XmlRoot("AnalyticsConfig")]
     public class AnalyticsConfiguration
     {
+		#region "Private Members"
+
         private AnalyticsRuleCollection _rules;
         private AnalyticsSettingCollection _settings;
+
+		#endregion
+
+		#region "Public Properties"
 
         public AnalyticsSettingCollection Settings
         {
@@ -67,13 +73,19 @@ namespace DotNetNuke.Services.Analytics.Config
                 _rules = value;
             }
         }
+		
+		#endregion
+
+		#region "Shared Methods"
 
         public static AnalyticsConfiguration GetConfig(string analyticsEngineName)
         {
             string cacheKey = analyticsEngineName + "." + PortalSettings.Current.PortalId;
+
             var Config = new AnalyticsConfiguration();
             Config.Rules = new AnalyticsRuleCollection();
             Config.Settings = new AnalyticsSettingCollection();
+
             FileStream fileReader = null;
             string filePath = "";
             try
@@ -82,15 +94,20 @@ namespace DotNetNuke.Services.Analytics.Config
                 if ((Config == null))
                 {
                     filePath = PortalSettings.Current.HomeDirectoryMapPath + "\\" + analyticsEngineName + ".config";
+
                     if (!File.Exists(filePath))
                     {
                         return null;
                     }
+					
+                    //Create a FileStream for the Config file
                     fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
                     var doc = new XPathDocument(fileReader);
                     Config = new AnalyticsConfiguration();
                     Config.Rules = new AnalyticsRuleCollection();
                     Config.Settings = new AnalyticsSettingCollection();
+
                     var allSettings = new Hashtable();
                     foreach (XPathNavigator nav in doc.CreateNavigator().Select("AnalyticsConfig/Settings/AnalyticsSetting"))
                     {
@@ -109,12 +126,14 @@ namespace DotNetNuke.Services.Analytics.Config
                     }
                     if (File.Exists(filePath))
                     {
+						//Set back into Cache
                         DataCache.SetCache(cacheKey, Config, new DNNCacheDependency(filePath));
                     }
                 }
             }
             catch (Exception ex)
             {
+				//log it
                 var objEventLog = new EventLogController();
                 var objEventLogInfo = new LogInfo();
                 objEventLogInfo.AddProperty("Analytics.AnalyticsConfiguration", "GetConfig Failed");
@@ -129,6 +148,7 @@ namespace DotNetNuke.Services.Analytics.Config
             {
                 if (fileReader != null)
                 {
+					//Close the Reader
                     fileReader.Close();
                 }
             }
@@ -140,20 +160,31 @@ namespace DotNetNuke.Services.Analytics.Config
             string cacheKey = analyticsEngineName + "." + PortalSettings.Current.PortalId;
             if (config.Settings != null)
             {
+                //Create a new Xml Serializer
                 var ser = new XmlSerializer(typeof (AnalyticsConfiguration));
                 string filePath = "";
+
+                //Create a FileStream for the Config file
                 filePath = PortalSettings.Current.HomeDirectoryMapPath + "\\" + analyticsEngineName + ".config";
                 if (File.Exists(filePath))
                 {
                     File.SetAttributes(filePath, FileAttributes.Normal);
                 }
                 var fileWriter = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Write);
+
+                //Open up the file to serialize
                 var writer = new StreamWriter(fileWriter);
+
+                //Serialize the AnalyticsConfiguration
                 ser.Serialize(writer, config);
+
+                //Close the Writers
                 writer.Close();
                 fileWriter.Close();
                 DataCache.SetCache(cacheKey, config, new DNNCacheDependency(filePath));
             }
         }
+		
+		#endregion
     }
 }

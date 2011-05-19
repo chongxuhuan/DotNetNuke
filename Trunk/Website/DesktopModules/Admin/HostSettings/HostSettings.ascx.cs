@@ -262,7 +262,7 @@ namespace DotNetNuke.Modules.Admin.Host
 
             if (PortalSettings.EnablePopUps)
             {
-                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings));
+                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true));
             }
         }
 
@@ -671,7 +671,7 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("DefaultDocType", docTypeCombo.SelectedValue, false);
                     HostController.Instance.Update("RememberCheckbox", chkRemember.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("EnableCustomModuleCssClass", chkUseCustomModuleCssClass.Checked ? "Y" : "N", false);
-                    HostController.Instance.Update("DisableUsersOnline", chkUsersOnline.Checked ? "N" : "Y", false);
+                    HostController.Instance.Update("EnableUsersOnline", chkUsersOnline.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("AutoAccountUnlockDuration", txtAutoAccountUnlock.Text, false);
                     HostController.Instance.Update("UsersOnlineTime", txtUsersOnlineTime.Text, false);
                     HostController.Instance.Update("ProxyServer", txtProxyServer.Text, false);

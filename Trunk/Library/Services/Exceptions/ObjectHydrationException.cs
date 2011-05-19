@@ -99,6 +99,7 @@ namespace DotNetNuke.Services.Exceptions
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+			//Serialize this class' state and then call the base class GetObjectData
             base.GetObjectData(info, context);
         }
     }

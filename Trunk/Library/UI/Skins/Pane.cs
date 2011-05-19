@@ -59,22 +59,59 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class Pane
     {
+		#region "Private Members"
+
         private const string CPaneOutline = "paneOutline";
         private HtmlGenericControl _containerWrapperControl;
         private Dictionary<string, Containers.Container> _containers;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new Pane object from the Control in the Skin
+        /// </summary>
+        /// <param name="pane">The HtmlContainerControl in the Skin.</param>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Pane(HtmlContainerControl pane)
         {
             PaneControl = pane;
             Name = pane.ID;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new Pane object from the Control in the Skin
+        /// </summary>
+        /// <param name="name">The name (ID) of the HtmlContainerControl</param>
+        /// <param name="pane">The HtmlContainerControl in the Skin.</param>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Pane(string name, HtmlContainerControl pane)
         {
             PaneControl = pane;
             Name = name;
         }
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Dictionary of Containers.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected Dictionary<string, Containers.Container> Containers
         {
             get
@@ -83,10 +120,34 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the name (ID) of the Pane
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string Name { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the HtmlContainerControl
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected HtmlContainerControl PaneControl { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the PortalSettings of the Portal
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected PortalSettings PortalSettings
         {
             get
@@ -97,6 +158,10 @@ namespace DotNetNuke.UI.Skins
 
         private bool CanCollapsePane()
         {
+			//This section sets the width to "0" on panes that have no modules.
+            //This preserves the integrity of the HTML syntax so we don't have to set
+            //the visiblity of a pane to false. Setting the visibility of a pane to
+            //false where there are colspans and rowspans can render the skin incorrectly.
             bool canCollapsePane = true;
             if (Containers.Count > 0)
             {
@@ -104,10 +169,12 @@ namespace DotNetNuke.UI.Skins
             }
             else if (PaneControl.Controls.Count == 1)
             {
+				//Pane contains 1 control
                 canCollapsePane = false;
                 var literal = PaneControl.Controls[0] as LiteralControl;
                 if (literal != null)
                 {
+					//Check  if the literal control is just whitespace - if so we can collapse panes
                     if (String.IsNullOrEmpty(HtmlUtils.StripWhiteSpace(literal.Text, false)))
                     {
                         canCollapsePane = true;
@@ -116,11 +183,26 @@ namespace DotNetNuke.UI.Skins
             }
             else if (PaneControl.Controls.Count > 1)
             {
+				//Pane contains more than 1 control
                 canCollapsePane = false;
             }
             return canCollapsePane;
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadContainerByPath gets the Container from its Url(Path)
+        /// </summary>
+        /// <param name="containerPath">The Url to the Container control</param>
+        /// <returns>A Container</returns>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private Containers.Container LoadContainerByPath(string containerPath)
         {
             if (containerPath.ToLower().IndexOf("/skins/") != -1 || containerPath.ToLower().IndexOf("/skins\\") != -1 || containerPath.ToLower().IndexOf("\\skins\\") != -1 ||
@@ -140,13 +222,16 @@ namespace DotNetNuke.UI.Skins
                 }
                 container = ControlUtilities.LoadControl<Containers.Container>(PaneControl.Page, containerPath);
                 container.ContainerSrc = containerSrc;
+                //call databind so that any server logic in the container is executed
                 container.DataBind();
             }
             catch (Exception exc)
             {
+				//could not load user control
                 var lex = new ModuleLoadException(Skin.MODULELOAD_ERROR, exc);
                 if (TabPermissionController.CanAdminPage())
                 {
+					//only display the error to administrators
                     _containerWrapperControl.Controls.Add(new ErrorContainer(PortalSettings, string.Format(Skin.CONTAINERLOAD_ERROR, containerPath), lex).Container);
                 }
                 Exceptions.LogException(lex);
@@ -154,6 +239,16 @@ namespace DotNetNuke.UI.Skins
             return container;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadModuleContainer gets the Container for cookie
+        /// </summary>
+		/// <param name="request">Current Http Request.</param>
+        /// <returns>A Container</returns>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private Containers.Container LoadContainerFromCookie(HttpRequest request)
         {
             Containers.Container container = null;
@@ -206,7 +301,8 @@ namespace DotNetNuke.UI.Skins
             {
                 Int32.TryParse(request.QueryString["ModuleId"], out previewModuleId);
             }
-
+			
+			//load user container ( based on cookie )
             if ((request.QueryString["ContainerSrc"] != null) && (module.ModuleID == previewModuleId || previewModuleId == -1))
             {
                 string containerSrc = SkinController.FormatSkinSrc(Globals.QueryStringDecode(request.QueryString["ContainerSrc"]) + ".ascx", PortalSettings);
@@ -220,10 +316,12 @@ namespace DotNetNuke.UI.Skins
             string noContainerSrc = "[G]" + SkinController.RootContainer + "/_default/No Container.ascx";
             Containers.Container container = null;
 
+            //if the module specifies that no container should be used
             if (module.DisplayTitle == false)
             {
+                //always display container if the current user is the administrator or the module is being used in an admin case
                 bool displayTitle = ModulePermissionController.CanEditModuleContent(module) || Globals.IsAdminSkin();
-
+                //unless the administrator is in view mode
                 if (displayTitle)
                 {
                     displayTitle = (PortalSettings.UserMode != PortalSettings.Mode.View);
@@ -244,10 +342,12 @@ namespace DotNetNuke.UI.Skins
 
             Containers.Container container = (LoadContainerFromQueryString(module, request) ?? LoadContainerFromCookie(request)) ?? LoadNoContainer(module);
 
-            if (container == null)
+			if (container == null)
             {
+				//Check Skin for Container
                 if (module.ContainerSrc == PortalSettings.ActiveTab.ContainerSrc)
                 {
+					//look for a container specification in the skin pane
                     if (PaneControl != null)
                     {
                         if ((PaneControl.Attributes["ContainerSrc"] != null))
@@ -257,7 +357,8 @@ namespace DotNetNuke.UI.Skins
                     }
                 }
             }
-
+			
+			//else load assigned container
             if (container == null)
             {
                 containerSrc = module.ContainerSrc;
@@ -268,14 +369,19 @@ namespace DotNetNuke.UI.Skins
                 }
             }
 
-            if (container == null)
+            //error loading container - load default
+			if (container == null)
             {
                 containerSrc = SkinController.FormatSkinSrc(SkinController.GetDefaultPortalContainer(), PortalSettings);
                 container = LoadContainerByPath(containerSrc);
             }
 
+            //Set container path
             module.ContainerPath = SkinController.FormatSkinPath(containerSrc);
+
+            //set container id to an explicit short name to reduce page payload 
             container.ID = "ctr";
+            //make the container id unique for the page
             if (module.ModuleID > -1)
             {
                 container.ID += module.ModuleID.ToString();
@@ -283,6 +389,15 @@ namespace DotNetNuke.UI.Skins
             return container;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ModuleMoveToPanePostBack excutes when a module is moved by Drag-and-Drop
+        /// </summary>
+        /// <param name="args">A ClientAPIPostBackEventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Moved from Skin.vb
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ModuleMoveToPanePostBack(ClientAPIPostBackEventArgs args)
         {
             var portalSettings = (PortalSettings) HttpContext.Current.Items["PortalSettings"];
@@ -296,10 +411,24 @@ namespace DotNetNuke.UI.Skins
                 moduleController.UpdateModuleOrder(portalSettings.ActiveTab.TabID, moduleId, moduleOrder, paneName);
                 moduleController.UpdateTabModuleOrder(portalSettings.ActiveTab.TabID);
 
+                //Redirect to the same page to pick up changes
                 PaneControl.Page.Response.Redirect(PaneControl.Page.Request.RawUrl, true);
             }
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InjectModule injects a Module (and its container) into the Pane
+        /// </summary>
+		/// <param name="module">The Module</param>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void InjectModule(ModuleInfo module)
         {
             _containerWrapperControl = new HtmlGenericControl("div");
@@ -323,15 +452,22 @@ namespace DotNetNuke.UI.Skins
                     _containerWrapperControl.Controls.Add(new LiteralControl("<a name=\"" + module.ModuleID + "\"></a>"));
                 }
 
+                //Load container control
                 Containers.Container container = LoadModuleContainer(module);
+
+                //Add Container to Dictionary
                 Containers.Add(container.ID, container);
 
                 if (Globals.IsLayoutMode() && Globals.IsAdminControl() == false)
                 {
+					//provide Drag-N-Drop capabilities
                     var dragDropContainer = new Panel();
                     Control title = container.FindControl("dnnTitle");
+                    //Assume that the title control is named dnnTitle.  If this becomes an issue we could loop through the controls looking for the title type of skin object
                     dragDropContainer.ID = container.ID + "_DD";
                     _containerWrapperControl.Controls.Add(dragDropContainer);
+
+                    //inject the container into the page pane - this triggers the Pre_Init() event for the user control
                     dragDropContainer.Controls.Add(container);
 
                     if (title != null)
@@ -342,8 +478,10 @@ namespace DotNetNuke.UI.Skins
                         }
                     }
 
-                    if (title != null)
+                    //enable drag and drop
+					if (title != null)
                     {
+                        //The title ID is actually the first child so we need to make sure at least one child exists
                         DNNClientAPI.EnableContainerDragAndDrop(title, dragDropContainer, module.ModuleID);
                         ClientAPI.RegisterPostBackEventHandler(PaneControl, "MoveToPane", ModuleMoveToPanePostBack, false);
                     }
@@ -353,7 +491,10 @@ namespace DotNetNuke.UI.Skins
                     _containerWrapperControl.Controls.Add(container);
                 }
 
+                //Attach Module to Container
                 container.SetModuleConfiguration(module);
+
+                //display collapsible page panes
                 if (PaneControl.Visible == false)
                 {
                     PaneControl.Visible = true;
@@ -364,6 +505,7 @@ namespace DotNetNuke.UI.Skins
                 var lex = new ModuleLoadException(string.Format(Skin.MODULEADD_ERROR, PaneControl.ID), exc);
                 if (TabPermissionController.CanAdminPage())
                 {
+					//only display the error to administrators
                     _containerWrapperControl.Controls.Add(new ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container);
                 }
                 Exceptions.LogException(exc);
@@ -371,10 +513,19 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProcessPane processes the Attributes for the PaneControl
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ProcessPane()
         {
             if (PaneControl != null)
             {
+				//remove excess skin non-validating attributes
                 PaneControl.Attributes.Remove("ContainerType");
                 PaneControl.Attributes.Remove("ContainerName");
                 PaneControl.Attributes.Remove("ContainerSrc");
@@ -382,6 +533,8 @@ namespace DotNetNuke.UI.Skins
                 if (Globals.IsLayoutMode())
                 {
                     PaneControl.Visible = true;
+
+                    //display pane border
                     string cssclass = PaneControl.Attributes["class"];
                     if (string.IsNullOrEmpty(cssclass))
                     {
@@ -391,7 +544,8 @@ namespace DotNetNuke.UI.Skins
                     {
                         PaneControl.Attributes["class"] = cssclass.Replace(CPaneOutline, "").Trim().Replace("  ", " ") + " " + CPaneOutline;
                     }
-                    var ctlLabel = new Label {Text = "<center>" + Name + "</center><br>", CssClass = "SubHead"};
+                    //display pane name
+					var ctlLabel = new Label {Text = "<center>" + Name + "</center><br>", CssClass = "SubHead"};
                     PaneControl.Controls.AddAt(0, ctlLabel);
                 }
                 else
@@ -403,6 +557,7 @@ namespace DotNetNuke.UI.Skins
 
                     if (CanCollapsePane())
                     {
+						//This pane has no controls so set the width to 0
                         if (PaneControl.Attributes["style"] != null)
                         {
                             PaneControl.Attributes.Remove("style");
@@ -419,5 +574,7 @@ namespace DotNetNuke.UI.Skins
                 }
             }
         }
+		
+		#endregion
     }
 }

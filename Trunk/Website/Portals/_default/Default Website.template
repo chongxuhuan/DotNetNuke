@@ -6,10 +6,10 @@
     <userregistration>2</userregistration>
     <banneradvertising>0</banneradvertising>
     <defaultlanguage>en-US</defaultlanguage>
-    <skinsrc>[G]Skins/DarkKnight/Default.ascx</skinsrc>
-    <skinsrcadmin>[G]Skins/DarkKnight/Default.ascx</skinsrcadmin>
-    <containersrc>[G]Containers/DarkKnight/Header_Red.ascx</containersrc>
-    <containersrcadmin>[G]Containers/DarkKnight/Header_Red.ascx</containersrcadmin>
+    <skinsrc>[G]Skins/DarkKnight/2-Column-Right-Mega-Menu.ascx</skinsrc>
+    <skinsrcadmin>[G]Skins/DarkKnight/2-Column-Right-Mega-Menu.ascx</skinsrcadmin>
+    <containersrc>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrc>
+    <containersrcadmin>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrcadmin>
     <enableskinwidgets>True</enableskinwidgets>
     <timezone>Morocco Standard Time</timezone>
     <hostspace>0</hostspace>
@@ -542,7 +542,7 @@
       <permanentredirect>false</permanentredirect>
       <refreshinterval>-1</refreshinterval>
       <sitemappriority>0.5</sitemappriority>
-      <skinsrc>[G]Skins/DarkKnight/Home.ascx</skinsrc>
+      <skinsrc>[G]Skins/DarkKnight/Home-Mega-Menu.ascx</skinsrc>
       <startdate>0001-01-01T00:00:00</startdate>
       <name>Getting Started</name>
       <title />
@@ -669,7 +669,7 @@
               <border />
               <iconfile />
               <visibility>Maximized</visibility>
-              <containersrc>[G]Containers/DarkKnight/Header_Red.ascx</containersrc>
+              <containersrc>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrc>
               <displaytitle>true</displaytitle>
               <displayprint>false</displayprint>
               <displaysyndicate>false</displaysyndicate>
@@ -935,7 +935,7 @@
               <border />
               <iconfile />
               <visibility>Maximized</visibility>
-              <containersrc>[G]Containers/DarkKnight/Invisible.ascx</containersrc>
+              <containersrc>[G]Containers/DarkKnight/Banner.ascx</containersrc>
               <displaytitle>true</displaytitle>
               <displayprint>false</displayprint>
               <displaysyndicate>false</displaysyndicate>
@@ -950,12 +950,10 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div id=&amp;quot;Rotator&amp;quot;&amp;gt;
-&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;
 &amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide02.jpg&amp;quot; /&amp;gt;
 &amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide03.jpg&amp;quot; /&amp;gt;
-&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;
-&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>WorkflowID</settingname>
@@ -993,7 +991,7 @@
       <permanentredirect>false</permanentredirect>
       <refreshinterval>-1</refreshinterval>
       <sitemappriority>0.5</sitemappriority>
-      <skinsrc>[G]Skins/DarkKnight/2-Column-Right.ascx</skinsrc>
+      <skinsrc />
       <startdate>0001-01-01T00:00:00</startdate>
       <name>Home</name>
       <title />
@@ -1178,7 +1176,7 @@
               <border />
               <iconfile />
               <visibility>None</visibility>
-              <containersrc>[G]Containers/DarkKnight/Header_Red.ascx</containersrc>
+              <containersrc>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrc>
               <displaytitle>true</displaytitle>
               <displayprint>false</displayprint>
               <displaysyndicate>false</displaysyndicate>
@@ -1856,7 +1854,7 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
               <startdate>0001-01-01T00:00:00</startdate>
               <enddate>0001-01-01T00:00:00</enddate>
               <cachetime>0</cachetime>
-              <cachemethod />
+              <cachemethod>FileModuleCachingProvider</cachemethod>
               <alignment />
               <color />
               <border />
@@ -3280,7 +3278,7 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
   <folders>
     <folder>
       <folderpath />
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
@@ -3315,6 +3313,14 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       </folderpermissions>
       <files>
         <file>
+          <contenttype>image/gif</contenttype>
+          <extension>gif</extension>
+          <filename>icon_extensions_16px.gif</filename>
+          <height>16</height>
+          <size>972</size>
+          <width>16</width>
+        </file>
+        <file>
           <contenttype>image/png</contenttype>
           <extension>png</extension>
           <filename>Logo.png</filename>
@@ -3334,18 +3340,18 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Cache/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3357,13 +3363,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3371,18 +3377,18 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Cache/Modules/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3394,13 +3400,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3408,18 +3414,18 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Cache/Pages/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3431,13 +3437,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3445,18 +3451,18 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Images/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3468,13 +3474,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3482,7 +3488,7 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Images/DNN/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions />
       <files>
         <file>
@@ -3529,8 +3535,26 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
     </folder>
     <folder>
       <folderpath>Templates/</folderpath>
-      <storagelocation>8</storagelocation>
+      <storagelocation>0</storagelocation>
       <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>WRITE</permissionkey>
@@ -3541,24 +3565,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
           <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3572,6 +3578,172 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
           <width>-1</width>
         </file>
       </files>
+    </folder>
+    <folder>
+      <folderpath>Users/</folderpath>
+      <storagelocation>0</storagelocation>
+      <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+      </folderpermissions>
+      <files />
+    </folder>
+    <folder>
+      <folderpath>Users/001/</folderpath>
+      <storagelocation>0</storagelocation>
+      <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+      </folderpermissions>
+      <files />
+    </folder>
+    <folder>
+      <folderpath>Users/001/01/</folderpath>
+      <storagelocation>0</storagelocation>
+      <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+      </folderpermissions>
+      <files />
+    </folder>
+    <folder>
+      <folderpath>Users/001/01/1/</folderpath>
+      <storagelocation>0</storagelocation>
+      <folderpermissions>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename />
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename />
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename />
+          <allowaccess>true</allowaccess>
+        </permission>
+      </folderpermissions>
+      <files />
     </folder>
   </folders>
 </portal>

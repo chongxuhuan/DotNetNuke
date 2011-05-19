@@ -104,16 +104,20 @@ namespace DotNetNuke.UI.UserControls
                     _LastModifiedByUser = _Entity.LastModifiedByUserID.ToString();
                     _LastModifiedDate = _Entity.LastModifiedOnDate.ToString();
                 }
+				
+                //check to see if updated check is redundant
                 bool isCreatorAndUpdater = false;
                 if (Regex.IsMatch(_CreatedByUser, "^\\d+$") && Regex.IsMatch(_LastModifiedByUser, "^\\d+$") && _CreatedByUser == _LastModifiedByUser)
                 {
                     isCreatorAndUpdater = true;
                 }
-                _SystemUser = Localization.GetString("SystemUser", Localization.GetResourceFile(this, MyFileName));
+
+				_SystemUser = Localization.GetString("SystemUser", Localization.GetResourceFile(this, MyFileName));
+				ShowCreatedString();
                 ShowCreatedString();
                 ShowUpdatedString(isCreatorAndUpdater);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -129,6 +133,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
+					//contains a UserID
                     var objUsers = new UserController();
                     UserInfo objUser = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(_CreatedByUser));
                     if (objUser != null)
@@ -144,11 +149,13 @@ namespace DotNetNuke.UI.UserControls
 
         private void ShowUpdatedString(bool isCreatorAndUpdater)
         {
+			//check to see if audit contains update information
             if (string.IsNullOrEmpty(_LastModifiedDate))
             {
                 return;
             }
             string str = string.Empty;
+
             if (Regex.IsMatch(_LastModifiedByUser, "^\\d+$"))
             {
                 if (isCreatorAndUpdater)
@@ -161,6 +168,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
+					//contains a UserID
                     var objUsers = new UserController();
                     UserInfo objUser = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(_LastModifiedByUser));
                     if (objUser != null)
@@ -169,6 +177,7 @@ namespace DotNetNuke.UI.UserControls
                     }
                 }
             }
+            
             str = Localization.GetString("UpdatedBy", Localization.GetResourceFile(this, MyFileName));
             lblUpdatedBy.Text = string.Format(str, _LastModifiedByUser, _LastModifiedDate);
         }

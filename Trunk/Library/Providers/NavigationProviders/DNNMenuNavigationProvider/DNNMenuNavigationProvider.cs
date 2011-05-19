@@ -66,6 +66,7 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+        //JH - 2/5/07 - support for custom attributes
         public override List<CustomAttribute> CustomAttributes
         {
             get
@@ -521,8 +522,10 @@ namespace DotNetNuke.NavigationControl
             }
             if (!String.IsNullOrEmpty(CSSNodeSelectedRoot) && CSSNodeSelectedRoot == CSSNodeSelectedSub)
             {
-                Menu.DefaultNodeCssClassSelected = CSSNodeSelectedRoot;
+                Menu.DefaultNodeCssClassSelected = CSSNodeSelectedRoot;	//set on parent, thus decreasing overall payload
             }
+			
+            //JH - 2/5/07 - support for custom attributes
             foreach (CustomAttribute objAttr in CustomAttributes)
             {
                 switch (objAttr.Name.ToLower())
@@ -556,7 +559,7 @@ namespace DotNetNuke.NavigationControl
             foreach (DNNNode node in objNodes)
             {
                 objNode = node;
-                if (objNode.Level == 0)
+                if (objNode.Level == 0) //root menu
                 {
                     intIndex = Menu.MenuNodes.Import(objNode, false);
                     objMenuItem = Menu.MenuNodes[intIndex];
@@ -568,7 +571,7 @@ namespace DotNetNuke.NavigationControl
                     {
                         objMenuItem.RightHTML = NodeRightHTMLRoot;
                     }
-                    if (RootFlag)
+                    if (RootFlag) //first root item has already been entered
                     {
                         AddSeparator("All", objPrevNode, objNode, objMenuItem);
                     }
@@ -596,7 +599,7 @@ namespace DotNetNuke.NavigationControl
                     {
                         objMenuItem.CSSClassHover = CSSNodeHoverRoot;
                     }
-                    objMenuItem.CSSIcon = " ";
+                    objMenuItem.CSSIcon = " "; //< ignore for root...???
                     if (objNode.BreadCrumb)
                     {
                         if (!String.IsNullOrEmpty(CSSBreadCrumbRoot))
@@ -609,17 +612,17 @@ namespace DotNetNuke.NavigationControl
                         }
                     }
                 }
-                else
+                else //If Not blnRootOnly Then
                 {
                     try
                     {
                         MenuNode objParent = Menu.MenuNodes.FindNode(objNode.ParentNode.ID);
-                        if (objParent == null)
+                        if (objParent == null) //POD
                         {
                             objParent = Menu.MenuNodes[Menu.MenuNodes.Import(objNode.ParentNode.Clone(), true)];
                         }
                         objMenuItem = objParent.MenuNodes.FindNode(objNode.ID);
-                        if (objMenuItem == null)
+                        if (objMenuItem == null) //POD
                         {
                             objMenuItem = objParent.MenuNodes[objParent.MenuNodes.Import(objNode.Clone(), true)];
                         }
@@ -657,6 +660,7 @@ namespace DotNetNuke.NavigationControl
                     }
                     catch
                     {
+                        //throws exception if the parent tab has not been loaded ( may be related to user role security not allowing access to a parent tab )
                         objMenuItem = null;
                     }
                 }
@@ -684,8 +688,9 @@ namespace DotNetNuke.NavigationControl
                 Bind(objNode.DNNNodes);
                 objPrevNode = objNode;
             }
-            if (objNode != null && objNode.Level == 0)
+            if (objNode != null && objNode.Level == 0) //root menu
             {
+                //solpartactions has a hardcoded image with no path information.  Assume if value is present and no path we need to add one.
                 if (!String.IsNullOrEmpty(IndicateChildImageSub) && IndicateChildImageSub.IndexOf("/") == -1)
                 {
                     IndicateChildImageSub = PathSystemImage + IndicateChildImageSub;

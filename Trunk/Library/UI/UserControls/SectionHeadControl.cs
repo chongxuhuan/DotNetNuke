@@ -50,6 +50,8 @@ namespace DotNetNuke.UI.UserControls
     /// -----------------------------------------------------------------------------
     public class SectionHeadControl : UserControl
     {
+		#region "Private Members"
+
         private bool _includeRule;
         private bool _isExpanded = true;
         private string _javaScript = "__dnn_SectionMaxMin";
@@ -58,6 +60,11 @@ namespace DotNetNuke.UI.UserControls
         protected ImageButton imgIcon;
         protected Label lblTitle;
         protected Panel pnlRule;
+		
+		#endregion
+
+		#region "Public Properties"
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -254,23 +261,52 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+		
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Assign resource key to label for localization
+        /// </summary>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	05/11/2004	Move code to Page_Load for localization
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
+				//set the resourcekey attribute to the label
                 if (!String.IsNullOrEmpty(ResourceKey))
                 {
                     lblTitle.Attributes["resourcekey"] = ResourceKey;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Renders the SectionHeadControl
+        /// </summary>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	04/11/2004	Moved code from Page_Load to PreRender so all other properties are set.
+        ///             This allows to inject this control dynamically on a page using LoadControl
+        ///		[jhenning]	09/06/2005 Utilizing ClientAPI EnableMinMax
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -282,9 +318,11 @@ namespace DotNetNuke.UI.UserControls
                 {
                     DNNClientAPI.EnableMinMax(imgIcon, ctl, !IsExpanded, Page.ResolveUrl(MinImageUrl), Page.ResolveUrl(MaxImageUrl), DNNClientAPI.MinMaxPersistanceType.Page);
                 }
+				
+                //optionlly show hr
                 pnlRule.Visible = _includeRule;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -298,5 +336,7 @@ namespace DotNetNuke.UI.UserControls
                 IsExpanded = !IsExpanded;
             }
         }
+		
+		#endregion
     }
 }

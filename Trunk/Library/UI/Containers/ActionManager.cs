@@ -58,17 +58,54 @@ namespace DotNetNuke.UI.Containers
     /// -----------------------------------------------------------------------------
     public class ActionManager
     {
+		#region "Private Members"
+
         private readonly PortalSettings PortalSettings = PortalController.GetCurrentPortalSettings();
         private readonly HttpRequest Request = HttpContext.Current.Request;
         private readonly HttpResponse Response = HttpContext.Current.Response;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new ActionManager
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ActionManager(IActionControl actionControl)
         {
             ActionControl = actionControl;
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Action Control that is connected to this ActionManager instance
+        /// </summary>
+        /// <returns>An IActionControl object</returns>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IActionControl ActionControl { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ModuleInstanceContext instance that is connected to this ActionManager 
+        /// instance
+        /// </summary>
+        /// <returns>A ModuleInstanceContext object</returns>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ModuleInstanceContext ModuleContext
         {
             get
@@ -77,12 +114,35 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ClearCache clears the Module cache
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ClearCache(ModuleAction Command)
         {
+			//synchronize cache
             ModuleController.SynchronizeModule(ModuleContext.ModuleId);
+
+            //Redirect to the same page to pick up changes
             Response.Redirect(Request.RawUrl, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Delete deletes the associated Module
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void Delete(ModuleAction Command)
         {
             var objModules = new ModuleController();
@@ -94,9 +154,19 @@ namespace DotNetNuke.UI.Containers
                 var objEventLog = new EventLogController();
                 objEventLog.AddLog(objModule, PortalSettings, m_UserInfo.UserID, "", EventLogController.EventLogType.MODULE_SENT_TO_RECYCLE_BIN);
             }
+			
+            //Redirect to the same page to pick up changes
             Response.Redirect(Request.RawUrl, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DoAction redirects to the Url associated with the Action
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DoAction(ModuleAction Command)
         {
             if (Command.NewWindow)
@@ -147,14 +217,33 @@ namespace DotNetNuke.UI.Containers
         }
 
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MoveToPane moves the Module to the relevant Pane
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MoveToPane(ModuleAction Command)
         {
             var objModules = new ModuleController();
+
             objModules.UpdateModuleOrder(ModuleContext.TabId, ModuleContext.ModuleId, -1, Command.CommandArgument);
             objModules.UpdateTabModuleOrder(ModuleContext.TabId);
+
+            //Redirect to the same page to pick up changes
             Response.Redirect(Request.RawUrl, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MoveUpDown moves the Module within its Pane.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MoveUpDown(ModuleAction Command)
         {
             var objModules = new ModuleController();
@@ -174,9 +263,24 @@ namespace DotNetNuke.UI.Containers
                     break;
             }
             objModules.UpdateTabModuleOrder(ModuleContext.TabId);
+
+            //Redirect to the same page to pick up changes
             Response.Redirect(Request.RawUrl, true);
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisplayControl determines whether the associated Action control should be 
+        /// displayed
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool DisplayControl(DNNNodeCollection objNodes)
         {
             if (objNodes != null && objNodes.Count > 0 && PortalSettings.UserMode != PortalSettings.Mode.View)
@@ -184,14 +288,17 @@ namespace DotNetNuke.UI.Containers
                 DNNNode objRootNode = objNodes[0];
                 if (objRootNode.HasNodes && objRootNode.DNNNodes.Count == 0)
                 {
+					//if has pending node then display control
                     return true;
                 }
                 else if (objRootNode.DNNNodes.Count > 0)
                 {
+					//verify that at least one child is not a break
                     foreach (DNNNode childNode in objRootNode.DNNNodes)
                     {
                         if (!childNode.IsBreak)
                         {
+							//Found a child so make Visible
                             return true;
                         }
                     }
@@ -200,16 +307,45 @@ namespace DotNetNuke.UI.Containers
             return false;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetAction gets the action associated with the commandName
+        /// </summary>
+        /// <param name="commandName">The command name</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ModuleAction GetAction(string commandName)
         {
             return ActionControl.ModuleControl.ModuleContext.Actions.GetActionByCommandName(commandName);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetAction gets the action associated with the id
+        /// </summary>
+        /// <param name="id">The Id</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ModuleAction GetAction(int id)
         {
             return ActionControl.ModuleControl.ModuleContext.Actions.GetActionByID(id);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetClientScriptURL gets the client script to attach to the control's client 
+        /// side onclick event
+        /// </summary>
+        /// <param name="action">The Action</param>
+        /// <param name="control">The Control</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void GetClientScriptURL(ModuleAction action, WebControl control)
         {
             if (!String.IsNullOrEmpty(action.ClientScript))
@@ -225,6 +361,15 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsVisible determines whether the action control is Visible
+        /// </summary>
+        /// <param name="action">The Action</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsVisible(ModuleAction action)
         {
             bool _IsVisible = false;
@@ -246,6 +391,15 @@ namespace DotNetNuke.UI.Containers
             return _IsVisible;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProcessAction processes the action
+        /// </summary>
+        /// <param name="id">The Id of the Action</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool ProcessAction(string id)
         {
             bool bProcessed = true;
@@ -257,6 +411,15 @@ namespace DotNetNuke.UI.Containers
             return bProcessed;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProcessAction processes the action
+        /// </summary>
+        /// <param name="action">The Action</param>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool ProcessAction(ModuleAction action)
         {
             bool bProcessed = true;
@@ -302,7 +465,7 @@ namespace DotNetNuke.UI.Containers
                 case ModuleActionType.UnTranslateModule:
                     Translate(action);
                     break;
-                default:
+                default: //custom action
                     if (!String.IsNullOrEmpty(action.Url) && action.UseActionEvent == false)
                     {
                         DoAction(action);
@@ -315,5 +478,7 @@ namespace DotNetNuke.UI.Containers
             }
             return bProcessed;
         }
+		
+		#endregion
     }
 }

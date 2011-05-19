@@ -31,15 +31,24 @@ namespace DotNetNuke.Services.Search
 {
     public abstract class SearchDataStoreProvider
     {
+		#region "Shared/Static Methods"
+
+        //return the provider
         public static SearchDataStoreProvider Instance()
         {
             return ComponentFactory.GetComponent<SearchDataStoreProvider>();
         }
+		
+		#endregion
+
+		#region "Abstract Methods"
 
         public abstract void StoreSearchItems(SearchItemInfoCollection SearchItems);
 
         public abstract SearchResultsInfoCollection GetSearchResults(int PortalID, string Criteria);
 
         public abstract SearchResultsInfoCollection GetSearchItems(int PortalID, int TabID, int ModuleID);
+		
+		#endregion
     }
 }

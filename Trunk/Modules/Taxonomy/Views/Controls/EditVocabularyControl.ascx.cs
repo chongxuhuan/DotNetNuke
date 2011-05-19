@@ -25,17 +25,17 @@
 
 using System.Linq;
 using System.Web.UI;
-
 using DotNetNuke.Entities.Content.Taxonomy;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views.Controls
 {
+
     public partial class EditVocabularyControl : UserControl
     {
-        #region "Public Properties"
+
+        #region Public Properties
 
         public bool IsAddMode { get; set; }
 
@@ -51,18 +51,11 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
                 vocabulary.Description = descriptionTextBox.Text;
 
                 var scopeTypeController = new ScopeTypeController();
-                ScopeType scopeType = null;
+                ScopeType scopeType;
                 scopeType = scopeTypeController.GetScopeTypes().Where(s => s.ScopeType == scopeList.SelectedValue).SingleOrDefault();
                 vocabulary.ScopeTypeId = scopeType.ScopeTypeId;
 
-                if (typeList.SelectedValue == "Simple")
-                {
-                    vocabulary.Type = VocabularyType.Simple;
-                }
-                else
-                {
-                    vocabulary.Type = VocabularyType.Hierarchy;
-                }
+                vocabulary.Type = typeList.SelectedValue == "Simple" ? VocabularyType.Simple : VocabularyType.Hierarchy;
             }
             else
             {
@@ -86,5 +79,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
             typeList.Visible = IsAddMode;
             typeLabel.Visible = !IsAddMode;
         }
+
     }
 }

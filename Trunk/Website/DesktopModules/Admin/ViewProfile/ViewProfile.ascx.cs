@@ -41,25 +41,25 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    ///   The ViewProfile ProfileModuleUserControlBase is used to view a Users Profile
-    /// </summary>
-    /// <history>
-    ///   [jlucarino]	02/25/2010 created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    public partial class ViewProfile : ProfileModuleUserControlBase
-    {
-        public override bool DisplayModule
-        {
-            get
-            {
-                return true;
-            }
-        }
 
-        #region "Event Handlers"
+	/// <summary>
+	///   The ViewProfile ProfileModuleUserControlBase is used to view a Users Profile
+	/// </summary>
+	/// <history>
+	///   [jlucarino]	02/25/2010 created
+	/// </history>
+	public partial class ViewProfile : ProfileModuleUserControlBase
+	{
+
+		public override bool DisplayModule
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+        #region Private Properties
 
         private bool IsAdmin
         {
@@ -77,133 +77,114 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        ///   Page_Load runs when the control is loaded
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        ///   [jlucarino]	02/25/2010 created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnLoad(EventArgs e)
+        #endregion
+
+        private string GetRedirectUrl()
         {
-            base.OnLoad(e);
-            cmdEdit.Click += cmdEdit_Click;
-            try
+            //redirect user to default page if not specific the home tab, do this action to prevent loop redirect.
+            var homeTabId = ModuleContext.PortalSettings.HomeTabId;
+            string redirectUrl;
+
+            if (homeTabId > Null.NullInteger)
             {
-                if (ModuleContext.TabId != ModuleContext.PortalSettings.UserTabId)
-                {
-                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ModuleNotIntended", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                }
-                else
-                {
-                    if (ProfileUserId == Null.NullInteger)
-                    {
-                        //Clicked on breadcrumb - don't know which user
-                        if (Request.IsAuthenticated)
-                        {
-                            Response.Redirect(Globals.UserProfileURL(ModuleContext.PortalSettings.UserId), true);
-                        }
-                        else
-                        {
-                            Response.Redirect(GetRedirectUrl(), true);
-                        }
-                    }
-                    else
-                    {
-                        UserInfo oUser = UserController.GetUserById(ModuleContext.PortalId, ProfileUserId);
-
-                        if (!IsUser)
-                        {
-                            cmdEdit.Visible = false;
-                        }
-
-                        ProfilePropertyDefinitionCollection properties = oUser.Profile.ProfileProperties;
-                        int visibleCount = 0;
-
-                        //loop through properties to see if any are set to visible
-                        foreach (ProfilePropertyDefinition profProperty in properties)
-                        {
-                            if (profProperty.Visible)
-                            {
-                                //Check Visibility
-                                if (profProperty.Visibility == UserVisibilityMode.AdminOnly)
-                                {
-                                    //Only Visible if Admin (or self)
-                                    profProperty.Visible = (IsAdmin || IsUser);
-                                }
-                                else if (profProperty.Visibility == UserVisibilityMode.MembersOnly)
-                                {
-                                    //Only Visible if Is a Member (ie Authenticated)
-                                    profProperty.Visible = Request.IsAuthenticated;
-                                }
-                            }
-                            if (profProperty.Visible)
-                            {
-                                visibleCount += 1;
-                            }
-                        }
-
-                        if (visibleCount == 0)
-                        {
-                            lblNoProperties.Visible = true;
-                        }
-                        else
-                        {
-                            string Template = "";
-                            var oToken = new TokenReplace();
-
-                            oToken.User = oUser;
-                            //user in profile
-                            oToken.AccessingUser = ModuleContext.PortalSettings.UserInfo;
-                            //user browsing the site
-
-                            if ((ModuleContext.Settings["ProfileTemplate"] != null))
-                            {
-                                Template = Convert.ToString(ModuleContext.Settings["ProfileTemplate"]);
-                            }
-                            else
-                            {
-                                Template = Localization.GetString("DefaultTemplate", LocalResourceFile);
-                            }
-
-                            ProfileOutput.Text = oToken.ReplaceEnvironmentTokens(Template);
-                        }
-                    }
-                }
+                redirectUrl = Globals.NavigateURL(homeTabId);
             }
-            catch (Exception exc)
+            else
             {
-                //Module failed to load
-                Exceptions.ProcessModuleLoadException(this, exc);
+                redirectUrl = Globals.GetPortalDomainName(PortalSettings.Current.PortalAlias.HTTPAlias, Request, true) + "/" + Globals.glbDefaultPage;
             }
+
+            return redirectUrl;
         }
 
-        protected void cmdEdit_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3"), true);
-        }
+        #region Event Handlers
 
-		private string GetRedirectUrl()
+		/// <summary>
+		///   Page_Load runs when the control is loaded
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		///   [jlucarino]	02/25/2010 created
+		/// </history>
+		protected override void OnLoad(EventArgs e)
 		{
-			//redirect user to default page if not specific the home tab, do this action to prevent loop redirect.
-			int homeTabId = ModuleContext.PortalSettings.HomeTabId;
-			string redirectUrl = string.Empty;
+			base.OnLoad(e);
 
-			if (homeTabId > Null.NullInteger)
+			try
 			{
-				redirectUrl = Globals.NavigateURL(homeTabId);
-			}
-			else
-			{
-				redirectUrl = Globals.GetPortalDomainName(PortalSettings.Current.PortalAlias.HTTPAlias, this.Request, true) + "/" + Globals.glbDefaultPage;
-			}
+				if (ModuleContext.TabId != ModuleContext.PortalSettings.UserTabId)
+				{
+					UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ModuleNotIntended", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+				}
+				else
+				{
+					if (ProfileUserId == Null.NullInteger)
+					{
+						//Clicked on breadcrumb - don't know which user
+					    Response.Redirect(Request.IsAuthenticated ? Globals.UserProfileURL(ModuleContext.PortalSettings.UserId) : GetRedirectUrl(), true);
+					}
+					else
+					{
+						var oUser = UserController.GetUserById(ModuleContext.PortalId, ProfileUserId);
 
-			return redirectUrl;
+						if (!IsUser)
+						{
+						    hlEdit.Visible = false;
+						}
+
+                        hlEdit.NavigateUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3");
+
+						var properties = oUser.Profile.ProfileProperties;
+						var visibleCount = 0;
+
+						//loop through properties to see if any are set to visible
+						foreach (ProfilePropertyDefinition profProperty in properties)
+						{
+							if (profProperty.Visible)
+							{
+								//Check Visibility
+								if (profProperty.Visibility == UserVisibilityMode.AdminOnly)
+								{
+									//Only Visible if Admin (or self)
+									profProperty.Visible = (IsAdmin || IsUser);
+								}
+								else if (profProperty.Visibility == UserVisibilityMode.MembersOnly)
+								{
+									//Only Visible if Is a Member (ie Authenticated)
+									profProperty.Visible = Request.IsAuthenticated;
+								}
+							}
+							if (profProperty.Visible)
+							{
+								visibleCount += 1;
+							}
+						}
+
+						if (visibleCount == 0)
+						{
+							lblNoProperties.Visible = true;
+						}
+						else
+						{
+							var template = "";
+							var oToken = new TokenReplace {User = oUser, AccessingUser = ModuleContext.PortalSettings.UserInfo};
+
+							template = (ModuleContext.Settings["ProfileTemplate"] != null) ? Convert.ToString(ModuleContext.Settings["ProfileTemplate"]) : Localization.GetString("DefaultTemplate", LocalResourceFile);
+
+							ProfileOutput.Text = oToken.ReplaceEnvironmentTokens(template);
+						}
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				//Module failed to load
+				Exceptions.ProcessModuleLoadException(this, exc);
+			}
 		}
 
-        #endregion
-    }
+		#endregion
+
+	}
 }

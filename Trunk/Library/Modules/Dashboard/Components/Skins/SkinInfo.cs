@@ -39,9 +39,13 @@ namespace DotNetNuke.Modules.Dashboard.Components.Skins
 
         public void WriteXml(XmlWriter writer)
         {
+			//Write start of main elemenst 
             writer.WriteStartElement("skin");
+
             writer.WriteElementString("skinName", SkinName);
             writer.WriteElementString("inUse", InUse.ToString());
+
+            //Write end of Host Info 
             writer.WriteEndElement();
         }
     }

@@ -22,7 +22,7 @@
             <dnn:DnnFormToggleButtonItem ID="IsPremiumm" runat="server" DataField="IsPremium" />
             <dnn:DnnFormTemplateItem ID="PremiumModules" runat="server">
                 <ItemTemplate>
-				    <dnn:Label ID="plPremium" runat="server" cssClass="dnnFormLabel" ControlName="ctlPortals" /><br />
+				    <dnn:Label ID="plPremium" runat="server" ControlName="ctlPortals" />
                     <dnn:DualListBox id="ctlPortals" runat="server" DataValueField="PortalID" DataTextField="PortalName" 
                         AddKey="AddPortal" RemoveKey="RemovePortal" AddAllKey="AddAllPortals" RemoveAllKey="RemoveAllPortals"
                         AddImageURL="~/images/rt.gif" AddAllImageURL="~/images/ffwd.gif" RemoveImageURL="~/images/lt.gif" 

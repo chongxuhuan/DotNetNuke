@@ -119,6 +119,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the current user is modifying their profile
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsProfile
         {
             get
@@ -128,6 +136,7 @@ namespace DotNetNuke.Entities.Modules
                 {
                     if (PortalSettings.UserTabId != -1)
                     {
+						//user defined tab
                         if (PortalSettings.ActiveTab.TabID == PortalSettings.UserTabId)
                         {
                             _IsProfile = true;
@@ -135,6 +144,7 @@ namespace DotNetNuke.Entities.Modules
                     }
                     else
                     {
+						//admin tab
                         if (Request.QueryString["ctl"] != null)
                         {
                             string ctl = Request.QueryString["ctl"];
@@ -149,6 +159,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether an anonymous user is trying to register
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsRegister
         {
             get
@@ -162,6 +180,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the User is editing their own information
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/03/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsUser
         {
             get
@@ -175,6 +201,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the PortalId to use for this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/21/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int UserPortalID
         {
             get
@@ -190,6 +224,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserInfo User
         {
             get
@@ -217,6 +259,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the UserId associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public new int UserId
         {
             get
@@ -319,18 +369,22 @@ namespace DotNetNuke.Entities.Modules
                 newUser.PortalID = PortalId;
             }
 
+            //Initialise the ProfileProperties Collection
             string lc = new Localization().CurrentUICulture;
 
             newUser.Profile.InitialiseProfile(PortalId);
             newUser.Profile.PreferredTimeZone = PortalSettings.TimeZone;
 
             newUser.Profile.PreferredLocale = lc;
+
+            //Set default countr
             string country = Null.NullString;
             country = LookupCountry();
             if (!String.IsNullOrEmpty(country))
             {
                 newUser.Profile.Country = country;
             }
+            //Set AffiliateId
             int AffiliateId = Null.NullInteger;
             if (Request.Cookies["AffiliateId"] != null)
             {
@@ -349,30 +403,47 @@ namespace DotNetNuke.Entities.Modules
             _GeoIPFile = "controls/CountryListBox/Data/GeoIP.dat";
             if (Page.Request.UserHostAddress == "127.0.0.1")
             {
+				//'The country cannot be detected because the user is local.
                 IsLocal = true;
+                //Set the IP address in case they didn't specify LocalhostCountryCode
                 IP = Page.Request.UserHostAddress;
             }
             else
             {
+				//Set the IP address so we can find the country
                 IP = Page.Request.UserHostAddress;
             }
+            //Check to see if we need to generate the Cache for the GeoIPData file
             if (Context.Cache.Get("GeoIPData") == null && _CacheGeoIPData)
             {
+				//Store it as	well as	setting	a dependency on	the	file
                 Context.Cache.Insert("GeoIPData", CountryLookup.FileToMemory(Context.Server.MapPath(_GeoIPFile)), new CacheDependency(Context.Server.MapPath(_GeoIPFile)));
             }
+			
+            //Check to see if the request is a localhost request
+            //and see if the LocalhostCountryCode is specified
             if (IsLocal)
             {
                 return Null.NullString;
             }
+			
+            //Either this is a remote request or it is a local
+            //request with no LocalhostCountryCode specified
             CountryLookup _CountryLookup;
+
+            //Check to see if we are using the Cached
+            //version of the GeoIPData file
             if (_CacheGeoIPData)
             {
+				//Yes, get it from cache
                 _CountryLookup = new CountryLookup((MemoryStream) Context.Cache.Get("GeoIPData"));
             }
             else
             {
+				//No, get it from file
                 _CountryLookup = new CountryLookup(Context.Server.MapPath(_GeoIPFile));
             }
+            //Get the country code based on the IP address
             string country = Null.NullString;
             try
             {
@@ -385,6 +456,18 @@ namespace DotNetNuke.Entities.Modules
             return country;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddLocalizedModuleMessage adds a localized module message
+        /// </summary>
+        /// <param name="message">The localized message</param>
+        /// <param name="type">The type of message</param>
+        /// <param name="display">A flag that determines whether the message should be displayed</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2006
+        /// 	[cnurse]	07/03/2007  Moved to Base Class and changed to Protected
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void AddLocalizedModuleMessage(string message, ModuleMessage.ModuleMessageType type, bool display)
         {
             if (display)
@@ -393,6 +476,18 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleMessage adds a module message
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="type">The type of message</param>
+        /// <param name="display">A flag that determines whether the message should be displayed</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2006
+        /// 	[cnurse]	07/03/2007  Moved to Base Class and changed to Protected
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void AddModuleMessage(string message, ModuleMessage.ModuleMessageType type, bool display)
         {
             AddLocalizedModuleMessage(Localization.GetString(message, LocalResourceFile), type, display);
@@ -404,11 +499,16 @@ namespace DotNetNuke.Entities.Modules
             ModuleMessage.ModuleMessageType message = ModuleMessage.ModuleMessageType.RedError;
             if (register)
             {
+				//send notification to portal administrator of new user registration
                 strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationAdmin, PortalSettings);
+
+                //complete registration
                 switch (PortalSettings.UserRegistration)
                 {
                     case (int) Globals.PortalRegistrationType.PrivateRegistration:
                         strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationPrivate, PortalSettings);
+
+                        //show a message that a portal administrator has to verify the user credentials
                         if (string.IsNullOrEmpty(strMessage))
                         {
                             strMessage += string.Format(Localization.GetString("PrivateConfirmationMessage", Localization.SharedResourceFile), newUser.Email);
@@ -417,11 +517,14 @@ namespace DotNetNuke.Entities.Modules
                         break;
                     case (int) Globals.PortalRegistrationType.PublicRegistration:
                         Mail.SendMail(newUser, MessageType.UserRegistrationPublic, PortalSettings);
+
                         UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
                         UserController.UserLogin(PortalSettings.PortalId, newUser.Username, newUser.Membership.Password, "", PortalSettings.PortalName, "", ref loginStatus, false);
                         break;
                     case (int) Globals.PortalRegistrationType.VerifiedRegistration:
                         strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationVerified, PortalSettings);
+
+                        //show a message that an email has been send with the registration details
                         if (string.IsNullOrEmpty(strMessage))
                         {
                             strMessage += string.Format(Localization.GetString("VerifiedConfirmationMessage", Localization.SharedResourceFile), newUser.Email);
@@ -429,11 +532,13 @@ namespace DotNetNuke.Entities.Modules
                         }
                         break;
                 }
+                //affiliate
                 if (!Null.IsNull(User.AffiliateID))
                 {
                     var objAffiliates = new AffiliateController();
                     objAffiliates.UpdateAffiliateStats(newUser.AffiliateID, 0, 1);
                 }
+                //store preferredlocale in cookie
                 Localization.SetLanguage(newUser.Profile.PreferredLocale);
                 if (IsRegister && message == ModuleMessage.ModuleMessageType.RedError)
                 {
@@ -448,6 +553,7 @@ namespace DotNetNuke.Entities.Modules
             {
                 if (notify)
                 {
+					//Send Notification to User
                     if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
                     {
                         strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationVerified, PortalSettings);
@@ -458,6 +564,7 @@ namespace DotNetNuke.Entities.Modules
                     }
                 }
             }
+            //Log Event to Event Log
             var objEventLog = new EventLogController();
             objEventLog.AddLog(newUser, PortalSettings, UserId, newUser.Username, EventLogController.EventLogType.USER_CREATED);
             return strMessage;

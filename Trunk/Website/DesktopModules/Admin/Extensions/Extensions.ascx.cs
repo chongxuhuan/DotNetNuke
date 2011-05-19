@@ -62,18 +62,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             installedExtensionsControl.LocalResourceFile = LocalResourceFile;
             installedExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
-
-            if (ModuleContext.PortalSettings.UserInfo.IsSuperUser)
+            installedExtensionsTab.Visible = true;
+            installedExtensionsControl.Visible = true;
+ 
+            if (ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
-                avalableExtensionsControl.LocalResourceFile = LocalResourceFile;
-                avalableExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
-                avalableExtensionsTab.Visible = true;
-                avalableExtensionsControl.Visible = true;           
+                availableExtensionsControl.LocalResourceFile = LocalResourceFile;
+                availableExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
+                availableExtensionsTab.Visible = true;
+                availableExtensionsControl.Visible = true;           
             }
 
             string appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
 
-            if (!String.IsNullOrEmpty(appGalleryUri) && ModuleContext.PortalSettings.UserInfo.IsSuperUser)
+            if (!String.IsNullOrEmpty(appGalleryUri) && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
                 moreExtensionsControl.LocalResourceFile = LocalResourceFile;
                 moreExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;

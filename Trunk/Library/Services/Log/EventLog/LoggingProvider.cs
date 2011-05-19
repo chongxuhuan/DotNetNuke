@@ -46,11 +46,18 @@ namespace DotNetNuke.Services.Log.EventLog
         }
 
         #endregion
+		
+		#region "Shared/Static Methods"
 
-        public static LoggingProvider Instance()
+        //return the provider
+		public static LoggingProvider Instance()
         {
             return ComponentFactory.GetComponent<LoggingProvider>();
         }
+		
+		#endregion
+
+		#region "Abstract Methods"
 
         public abstract void AddLog(LogInfo logInfo);
 
@@ -130,5 +137,7 @@ namespace DotNetNuke.Services.Log.EventLog
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Obsolete("Deprecated in 6.0. Replaced by GetLogs().")]
         public abstract LogInfoArray GetLog(int portalID, string logType, int pageSize, int pageIndex, ref int totalRecords);
+		
+		#endregion
     }
 }

@@ -45,7 +45,8 @@ namespace DotNetNuke.UI.Skins.Controls
 {
     public class LanguageTokenReplace : TokenReplace
     {
-        public LanguageTokenReplace() : base(Scope.NoSettings)
+        //see http://support.dotnetnuke.com/issue/ViewIssue.aspx?id=6505
+		public LanguageTokenReplace() : base(Scope.NoSettings)
         {
             UseObjectLessExpression = true;
             PropertySource[ObjectLessToken] = new LanguagePropertyAccess(this, Globals.GetPortalSettings());
@@ -130,10 +131,10 @@ namespace DotNetNuke.UI.Skins.Controls
                     {
                         case "tabid":
                         case "ctl":
-                        case "language":
+                        case "language": //skip parameter
                             break;
                         case "mid":
-                        case "moduleid":
+                        case "moduleid": //start of patch (Manzoni Fausto)
                             if (isLocalized)
                             {
                                 string ModuleIdKey = arrKeys[i].ToLowerInvariant();
@@ -156,6 +157,8 @@ namespace DotNetNuke.UI.Skins.Controls
                         default:
                             if ((arrKeys[i].ToLowerInvariant() == "portalid") && objPortal.ActiveTab.IsSuperTab)
                             {
+								//skip parameter
+                                //navigateURL adds portalid to querystring if tab is superTab
                             }
                             else
                             {
@@ -184,6 +187,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 returnValue += "language=" + newLanguage.ToLower();
             }
 
+            //return the new querystring as a string array
             return returnValue.Split('&');
         }
 

@@ -1,10 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Portals.PortalAliases" CodeFile="PortalAliases.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
-
-<asp:DataGrid ID="dgPortalAlias" Runat="server" AutoGenerateColumns="false" width="74%" GridLines="None" CssClass="dnnPortalAliasGrid">
-    <headerstyle CssClass="dnnPortalAliasGridHeader" />
-    <itemstyle CssClass="dnnPortalAliasGridItem" horizontalalign="Left" />
-    <alternatingitemstyle CssClass="dnnPortalAliasGridAltItem" />
+<asp:DataGrid ID="dgPortalAlias" Runat="server" AutoGenerateColumns="false" width="100%" GridLines="None" CssClass="dnnGrid">
+    <headerstyle CssClass="dnnGridHeader" />
+    <itemstyle CssClass="dnnGridItem" horizontalalign="Left" />
+    <alternatingitemstyle CssClass="dnnGridAltItem" />
     <edititemstyle />
     <selecteditemstyle />
     <footerstyle />
@@ -13,7 +12,7 @@
 		<dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/delete.gif" />
 		<asp:TemplateColumn HeaderText="HTTPAlias">
 		    <HeaderStyle  HorizontalAlign="Left" />
-		    <ItemStyle  HorizontalAlign="Left" Width="82%" />
+		    <ItemStyle  HorizontalAlign="Left" Width="85%" />
 		    <ItemTemplate>
                 <asp:label runat="server" Text='<%#DataBinder.Eval(Container.DataItem, "HTTPAlias") %>' ID="lbHTTPAlias" />
 		    </ItemTemplate>

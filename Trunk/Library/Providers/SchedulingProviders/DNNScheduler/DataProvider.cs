@@ -34,10 +34,18 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 {
     public abstract class DataProvider
     {
+		#region "Shared/Static Methods"
+
+        //return the provider
         public static DataProvider Instance()
         {
             return ComponentFactory.GetComponent<DataProvider>();
         }
+		
+		#endregion
+
+		#region "Abstract methods"
+
 
         public abstract int AddSchedule(string TypeFullName, int TimeLapse, string TimeLapseMeasurement, int RetryTimeLapse, string RetryTimeLapseMeasurement, int RetainHistoryNum,
                                         string AttachToEvent, bool CatchUpEnabled, bool Enabled, string ObjectDependencies, string Servers, int CreatedByUserID, string FriendlyName);
@@ -70,5 +78,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                             string AttachToEvent, bool CatchUpEnabled, bool Enabled, string ObjectDependencies, string Servers, int LastModifiedByUserID, string FriendlyName);
 
         public abstract void UpdateScheduleHistory(int ScheduleHistoryID, DateTime EndDate, bool Succeeded, string LogNotes, DateTime NextStart);
-    }
+    
+		#endregion
+	}
 }

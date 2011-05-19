@@ -42,6 +42,8 @@ namespace DotNetNuke.UI.Skins
 {
     public class SkinControl : UserControlBase
     {
+		#region "Private Members"	
+		
         private string _DefaultKey = "System";
         private string _SkinRoot;
         private string _SkinSrc;
@@ -52,6 +54,10 @@ namespace DotNetNuke.UI.Skins
         protected CommandButton cmdPreview;
         protected RadioButton optHost;
         protected RadioButton optSite;
+		
+		#endregion
+
+		#region "Public Properties"
 
         public string DefaultKey
         {
@@ -128,6 +134,10 @@ namespace DotNetNuke.UI.Skins
                 _localResourceFile = value;
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private void LoadSkins()
         {
@@ -164,8 +174,16 @@ namespace DotNetNuke.UI.Skins
                 }
             }
         }
+		
+		#endregion
 
-        protected override void OnLoad(EventArgs e)
+		#region "Event Handlers"
+
+        /// <summary>
+		/// The Page_Load server event handler on this page is used
+        /// to populate the role information for the page
+		/// </summary>
+		protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
@@ -190,13 +208,18 @@ namespace DotNetNuke.UI.Skins
                 }
                 if (!Page.IsPostBack)
                 {
+					//save persistent values
                     ViewState["SkinControlWidth"] = _Width;
                     ViewState["SkinRoot"] = _SkinRoot;
                     ViewState["SkinSrc"] = _SkinSrc;
+					
+					//set width of control
                     if (!String.IsNullOrEmpty(_Width))
                     {
                         cboSkin.Width = Unit.Parse(_Width);
                     }
+					
+					//set selected skin
                     if (!String.IsNullOrEmpty(_SkinSrc))
                     {
                         switch (_SkinSrc.Substring(0, 3))
@@ -213,6 +236,7 @@ namespace DotNetNuke.UI.Skins
                     }
                     else
                     {
+						//no skin selected, initialized to site skin if any exists
                         string strRoot = _objPortal.HomeDirectoryMapPath + SkinRoot;
                         if (Directory.Exists(strRoot) && Directory.GetDirectories(strRoot).Length > 0)
                         {
@@ -223,7 +247,7 @@ namespace DotNetNuke.UI.Skins
                     LoadSkins();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -244,7 +268,9 @@ namespace DotNetNuke.UI.Skins
             if (!String.IsNullOrEmpty(SkinSrc))
             {
                 string strType = SkinRoot.Substring(0, SkinRoot.Length - 1);
+
                 string strURL = Globals.ApplicationURL() + "&" + strType + "Src=" + Globals.QueryStringEncode(SkinSrc.Replace(".ascx", ""));
+
                 if (SkinRoot == SkinController.RootContainer)
                 {
                     if (Request.QueryString["ModuleId"] != null)
@@ -255,5 +281,7 @@ namespace DotNetNuke.UI.Skins
                 Response.Redirect(strURL, true);
             }
         }
+		
+		#endregion
     }
 }

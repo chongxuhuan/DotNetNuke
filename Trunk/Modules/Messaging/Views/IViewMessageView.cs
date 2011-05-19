@@ -33,12 +33,13 @@ using DotNetNuke.Web.Mvp;
 
 namespace DotNetNuke.Modules.Messaging.Views
 {
+
     public interface IViewMessageView : IModuleView<ViewMessageModel>
     {
+
         void BindMessage(Message message);
 
-        event EventHandler Cancel;
         event EventHandler Delete;
-        event EventHandler Reply;
+
     }
 }

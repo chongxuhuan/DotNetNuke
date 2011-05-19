@@ -40,8 +40,10 @@ using DotNetNuke.UI.Skins;
 
 namespace DotNetNuke.Modules.Admin.Portals
 {
+
     public partial class SiteWizard : PortalModuleBase
     {
+
         #region ContainerType enum
 
         public enum ContainerType
@@ -53,6 +55,8 @@ namespace DotNetNuke.Modules.Admin.Portals
         }
 
         #endregion
+
+        #region Private Methods
 
         private void BindContainers()
         {
@@ -89,10 +93,6 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void GetContainers(ContainerType type, string skinType, string strFolder)
         {
-            var objSkins = new SkinController();
-            ctlPortalContainer.Width = "500px";
-            ctlPortalContainer.Height = "250px";
-            ctlPortalContainer.Border = "black 1px solid";
             ctlPortalContainer.Columns = 3;
             ctlPortalContainer.SkinRoot = SkinController.RootContainer;
             switch (type)
@@ -114,10 +114,6 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void GetSkins()
         {
-            var objSkins = new SkinController();
-            ctlPortalSkin.Width = "500px";
-            ctlPortalSkin.Height = "250px";
-            ctlPortalSkin.Border = "black 1px solid";
             ctlPortalSkin.Columns = 3;
             ctlPortalSkin.SkinRoot = SkinController.RootSkin;
             ctlPortalSkin.LoadAllSkins(false);
@@ -155,16 +151,20 @@ namespace DotNetNuke.Modules.Admin.Portals
             lblTemplateMessage.Text = "";
         }
 
+        #endregion
+
+        #region Event Handlers
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            chkIncludeAll.CheckedChanged += chkIncludeAll_CheckedChanged;
-            chkTemplate.CheckedChanged += chkTemplate_CheckedChanged;
-            lstTemplate.SelectedIndexChanged += lstTemplate_SelectedIndexChanged;
-            Wizard.ActiveStepChanged += Wizard_ActiveStepChanged;
-            Wizard.FinishButtonClick += Wizard_FinishButtonClick;
-            Wizard.NextButtonClick += Wizard_NextButtonClick;
+            chkIncludeAll.CheckedChanged += OnIncludeAllCheckChanged;
+            chkTemplate.CheckedChanged += OnTemplateCheckChanged;
+            lstTemplate.SelectedIndexChanged += OnTemplateSelectedIndexChanged;
+            Wizard.ActiveStepChanged += OnWizardActiveStepChanged;
+            Wizard.FinishButtonClick += OnWizardFinishedClick;
+            Wizard.NextButtonClick += OnWizardNextClick;
 
             try
             {
@@ -180,7 +180,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     lstTemplate.Enabled = false;
                     GetSkins();
                     var objPortalController = new PortalController();
-                    PortalInfo objPortal = objPortalController.GetPortal(PortalId);
+                    var objPortal = objPortalController.GetPortal(PortalId);
                     txtPortalName.Text = objPortal.PortalName;
                     txtDescription.Text = objPortal.Description;
                     txtKeyWords.Text = objPortal.KeyWords;
@@ -195,12 +195,12 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
-        private void chkIncludeAll_CheckedChanged(object sender, EventArgs e)
+        protected void OnIncludeAllCheckChanged(object sender, EventArgs e)
         {
             BindContainers();
         }
 
-        private void chkTemplate_CheckedChanged(object sender, EventArgs e)
+        protected void OnTemplateCheckChanged(object sender, EventArgs e)
         {
             if (chkTemplate.Checked)
             {
@@ -209,14 +209,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             UseTemplate();
         }
 
-        private void lstTemplate_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnTemplateSelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstTemplate.SelectedIndex > -1)
             {
                 var xmlDoc = new XmlDocument();
                 XmlNode node;
-                string strTemplatePath = Globals.HostMapPath;
-                string strTemplateFile = lstTemplate.SelectedItem.Text + ".template";
+                var strTemplatePath = Globals.HostMapPath;
+                var strTemplateFile = lstTemplate.SelectedItem.Text + ".template";
                 try
                 {
                     xmlDoc.Load(strTemplatePath + strTemplateFile);
@@ -237,7 +237,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         var message = PortalController.CheckDesktopModulesInstalled(node.CreateNavigator());
                         if (!string.IsNullOrEmpty(message))
                         {
-                            lblTemplateMessage.Text = string.Format("This template has the following modules that are not installed.<br/>{0}", message);
+                            lblTemplateMessage.Text = string.Format("<p>This template has the following modules that are not installed.</p><p>{0}</p>", message);
                         }
                     }
                 }
@@ -255,7 +255,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
-        protected void Wizard_ActiveStepChanged(object sender, EventArgs e)
+        protected void OnWizardActiveStepChanged(object sender, EventArgs e)
         {
             switch (Wizard.ActiveStepIndex)
             {
@@ -265,7 +265,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
-        protected void Wizard_FinishButtonClick(object sender, WizardNavigationEventArgs e)
+        protected void OnWizardFinishedClick(object sender, WizardNavigationEventArgs e)
         {
             var objPortalController = new PortalController();
             if (lstTemplate.SelectedIndex != -1)
@@ -297,7 +297,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             SkinController.SetSkin(SkinController.RootContainer, PortalId, SkinType.Admin, ctlPortalContainer.SkinSrc);
         }
 
-        protected void Wizard_NextButtonClick(object sender, WizardNavigationEventArgs e)
+        protected void OnWizardNextClick(object sender, WizardNavigationEventArgs e)
         {
             string strMessage;
             switch (e.CurrentStepIndex)
@@ -325,6 +325,10 @@ namespace DotNetNuke.Modules.Admin.Portals
                     }
                     break;
             }
+
         }
+
+        #endregion
+
     }
 }

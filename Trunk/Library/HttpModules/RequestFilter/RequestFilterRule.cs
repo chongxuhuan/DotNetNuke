@@ -41,6 +41,14 @@ namespace DotNetNuke.HttpModules.RequestFilter
         private string _ServerVariable;
         private List<string> _Values = new List<string>();
 
+        /// <summary>
+        /// Initializes a new instance of the RequestFilterRule class.
+        /// </summary>
+        /// <param name="serverVariable"></param>
+        /// <param name="values"></param>
+        /// <param name="op"></param>
+        /// <param name="action"></param>
+        /// <param name="location"></param>
         public RequestFilterRule(string serverVariable, string values, RequestFilterOperatorType op, RequestFilterRuleType action, string location)
         {
             _ServerVariable = serverVariable;
@@ -50,6 +58,9 @@ namespace DotNetNuke.HttpModules.RequestFilter
             _Location = location;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the RequestFilterRule class.
+        /// </summary>
         public RequestFilterRule()
         {
         }

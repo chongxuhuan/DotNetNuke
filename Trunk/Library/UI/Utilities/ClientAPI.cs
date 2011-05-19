@@ -222,10 +222,13 @@ namespace DotNetNuke.UI.Utilities
                             AddAttribute(objButton, "onclick", "if (__dnn_ContainerMaxMin_OnClick(this, '" + objContent.ClientID + "')) return false;");
                             ClientAPI.RegisterClientVariable(objButton.Page, "containerid_" + objContent.ClientID, intModuleId.ToString(), true);
                             ClientAPI.RegisterClientVariable(objButton.Page, "cookieid_" + objContent.ClientID, "_Module" + intModuleId + "_Visible", true);
+
                             ClientAPI.RegisterClientVariable(objButton.Page, "min_icon_" + intModuleId, strMinIconLoc, true);
                             ClientAPI.RegisterClientVariable(objButton.Page, "max_icon_" + intModuleId, strMaxIconLoc, true);
+
                             ClientAPI.RegisterClientVariable(objButton.Page, "max_text", Localization.GetString("Maximize"), true);
                             ClientAPI.RegisterClientVariable(objButton.Page, "min_text", Localization.GetString("Minimize"), true);
+
                             if (blnDefaultMin)
                             {
                                 ClientAPI.RegisterClientVariable(objButton.Page, "__dnn_" + intModuleId + ":defminimized", "true", true);
@@ -233,6 +236,8 @@ namespace DotNetNuke.UI.Utilities
                         }
                         break;
                     case MinMaxPersistanceType.Personalization:
+                        //Regardless if we determine whether or not the browser supports client-side personalization
+                        //we need to store these keys to properly display or hide the content (They are needed in MinMaxContentVisible)
                         AddAttribute(objButton, "userctr", strPersonalizationNamingCtr);
                         AddAttribute(objButton, "userkey", strPersonalizationKey);
                         if (EnableClientPersonalization(strPersonalizationNamingCtr, strPersonalizationKey, objButton.Page))
@@ -451,11 +456,20 @@ namespace DotNetNuke.UI.Utilities
             }
         }
 
+        //enables callbacks for request, and registers personalization key to be accessible from client
+        //returns true when browser is capable of callbacks
         public static bool EnableClientPersonalization(string strNamingContainer, string strKey, Page objPage)
         {
             if (ClientAPI.BrowserSupportsFunctionality(ClientAPI.ClientFunctionality.XMLHTTP))
             {
+				//Instead of sending the callback js function down to the client, we are hardcoding
+                //it on the client.  DNN owns the interface, so there is no worry about an outside
+                //entity changing it on us.  We are simply calling this here to register all the appropriate
+                //js libraries
                 ClientAPI.GetCallbackEventReference(objPage, "", "", "", "");
+
+                //in order to limit the keys that can be accessed and written we are storing the enabled keys
+                //in this shared hash table
                 lock (m_objEnabledClientPersonalizationKeys.SyncRoot)
                 {
                     if (IsPersonalizationKeyRegistered(strNamingContainer + ClientAPI.CUSTOM_COLUMN_DELIMITER + strKey) == false)

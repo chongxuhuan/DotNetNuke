@@ -39,11 +39,16 @@ namespace DotNetNuke.Modules.Dashboard.Components.Modules
 
         public void ExportData(XmlWriter writer)
         {
+            //Write start of Installed Modules 
             writer.WriteStartElement("installedModules");
+
+            //Iterate through Installed Modules 
             foreach (ModuleInfo module in GetInstalledModules())
             {
                 module.WriteXml(writer);
             }
+			
+            //Write end of Installed Modules 
             writer.WriteEndElement();
         }
 

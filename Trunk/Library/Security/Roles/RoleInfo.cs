@@ -47,10 +47,25 @@ namespace DotNetNuke.Security.Roles
         None
     }
 
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Security.Roles
+    /// Class:      RoleInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The RoleInfo class provides the Entity Layer Role object
+    /// </summary>
+    /// <history>
+    ///     [cnurse]    05/23/2005  made compatible with .NET 2.0
+    ///     [cnurse]    01/03/2006  added RoleGroupId property
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class RoleInfo : BaseEntityInfo, IHydratable, IXmlSerializable
     {
-        private bool _AutoAssignment;
+        #region "Private Members"
+		
+		private bool _AutoAssignment;
         private string _BillingFrequency = "N";
         private int _BillingPeriod;
         private string _Description;
@@ -67,7 +82,17 @@ namespace DotNetNuke.Security.Roles
         private float _TrialFee;
         private string _TrialFrequency = "N";
         private int _TrialPeriod;
+		
+		#endregion
+		
+		#region "Public Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Role Id
+        /// </summary>
+        /// <value>An Integer representing the Id of the Role</value>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int RoleID
         {
@@ -81,6 +106,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Portal Id for the Role
+        /// </summary>
+        /// <value>An Integer representing the Id of the Portal</value>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int PortalID
         {
@@ -94,6 +125,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the RoleGroup Id
+        /// </summary>
+        /// <value>An Integer representing the Id of the RoleGroup</value>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int RoleGroupID
         {
@@ -107,6 +144,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Role Name
+        /// </summary>
+        /// <value>A string representing the name of the role</value>
+        /// -----------------------------------------------------------------------------
         public string RoleName
         {
             get
@@ -119,6 +162,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Role Type
+        /// </summary>
+        /// <value>A enum representing the type of the role</value>
+        /// -----------------------------------------------------------------------------
         public RoleType RoleType
         {
             get
@@ -144,6 +193,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an sets the Description of the Role
+        /// </summary>
+        /// <value>A string representing the description of the role</value>
+        /// -----------------------------------------------------------------------------
         public string Description
         {
             get
@@ -156,6 +211,21 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Billing Frequency for the role
+        /// </summary>
+        /// <value>A String representing the Billing Frequency of the Role<br/>
+        /// <ul>
+        /// <list>N - None</list>
+        /// <list>O - One time fee</list>
+        /// <list>D - Daily</list>
+        /// <list>W - Weekly</list>
+        /// <list>M - Monthly</list>
+        /// <list>Y - Yearly</list>
+        /// </ul>
+        /// </value>
+        /// -----------------------------------------------------------------------------
         public string BillingFrequency
         {
             get
@@ -168,6 +238,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the fee for the role
+        /// </summary>
+        /// <value>A single number representing the fee for the role</value>
+        /// -----------------------------------------------------------------------------
         public float ServiceFee
         {
             get
@@ -180,6 +256,21 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Trial Frequency for the role
+        /// </summary>
+        /// <value>A String representing the Trial Frequency of the Role<br/>
+        /// <ul>
+        /// <list>N - None</list>
+        /// <list>O - One time fee</list>
+        /// <list>D - Daily</list>
+        /// <list>W - Weekly</list>
+        /// <list>M - Monthly</list>
+        /// <list>Y - Yearly</list>
+        /// </ul>
+        /// </value>
+        /// -----------------------------------------------------------------------------
         public string TrialFrequency
         {
             get
@@ -192,6 +283,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the length of the trial period
+        /// </summary>
+        /// <value>An integer representing the length of the trial period</value>
+        /// -----------------------------------------------------------------------------
         public int TrialPeriod
         {
             get
@@ -204,6 +301,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the length of the billing period
+        /// </summary>
+        /// <value>An integer representing the length of the billing period</value>
+        /// -----------------------------------------------------------------------------
         public int BillingPeriod
         {
             get
@@ -216,6 +319,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the trial fee for the role
+        /// </summary>
+        /// <value>A single number representing the trial fee for the role</value>
+        /// -----------------------------------------------------------------------------
         public float TrialFee
         {
             get
@@ -228,6 +337,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the role is public
+        /// </summary>
+        /// <value>A boolean (True/False)</value>
+        /// -----------------------------------------------------------------------------
         public bool IsPublic
         {
             get
@@ -240,6 +355,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether users are automatically assigned to the role
+        /// </summary>
+        /// <value>A boolean (True/False)</value>
+        /// -----------------------------------------------------------------------------
         public bool AutoAssignment
         {
             get
@@ -252,6 +373,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the RSVP Code for the role
+        /// </summary>
+        /// <value>A string representing the RSVP Code for the role</value>
+        /// -----------------------------------------------------------------------------
         public string RSVPCode
         {
             get
@@ -264,6 +391,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Icon File for the role
+        /// </summary>
+        /// <value>A string representing the Icon File for the role</value>
+        /// -----------------------------------------------------------------------------
         public string IconFile
         {
             get
@@ -275,9 +408,20 @@ namespace DotNetNuke.Security.Roles
                 _IconFile = value;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a RoleInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual void Fill(IDataReader dr)
         {
             RoleID = Null.SetNullInteger(dr["RoleId"]);
@@ -295,9 +439,20 @@ namespace DotNetNuke.Security.Roles
             AutoAssignment = Null.SetNullBoolean(dr["AutoAssignment"]);
             RSVPCode = Null.SetNullString(dr["RSVPCode"]);
             IconFile = Null.SetNullString(dr["IconFile"]);
+
+            //Fill base class fields
             FillInternal(dr);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual int KeyID
         {
             get
@@ -314,11 +469,28 @@ namespace DotNetNuke.Security.Roles
 
         #region IXmlSerializable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an XmlSchema for the RoleInfo
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlSchema GetSchema()
         {
             return null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a RoleInfo from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ReadXml(XmlReader reader)
         {
             while (reader.Read())
@@ -410,9 +582,21 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Writes a RoleInfo to an XmlWriter
+        /// </summary>
+        /// <param name="writer">The XmlWriter to use</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst
             writer.WriteStartElement("role");
+
+            //write out properties
             writer.WriteElementString("rolename", RoleName);
             writer.WriteElementString("description", Description);
             writer.WriteElementString("billingfrequency", BillingFrequency);
@@ -440,6 +624,8 @@ namespace DotNetNuke.Security.Roles
                     writer.WriteElementString("roletype", "none");
                     break;
             }
+			
+            //Write end of main element
             writer.WriteEndElement();
         }
 

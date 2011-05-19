@@ -43,11 +43,15 @@ namespace DotNetNuke.Modules.Dashboard.Components.Modules
 
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst 
             writer.WriteStartElement("module");
+
             writer.WriteElementString("moduleName", ModuleName);
             writer.WriteElementString("friendlyName", FriendlyName);
             writer.WriteElementString("version", Version);
             writer.WriteElementString("instances", Instances.ToString());
+
+            //Write end of Host Info 
             writer.WriteEndElement();
         }
     }

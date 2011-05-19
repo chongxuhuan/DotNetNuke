@@ -245,11 +245,6 @@ namespace DotNetNuke.Modules.Admin.Languages
         {
             base.OnInit(e);
 
-            addLanguageButton.Command += actionButton_Command;
-            createLanguagePackButton.Command += actionButton_Command;
-            ;
-            verifyLanguageResourcesButton.Command += actionButton_Command;            
-            installLanguagePackButton.Click += installLanguagePackButton_Click;
             languagesComboBox.ModeChanged += languagesComboBox_ModeChanged;
             languagesGrid.ItemCreated += languagesGrid_ItemCreated;
             languagesGrid.PreRender += languagesGrid_PreRender;
@@ -297,14 +292,22 @@ namespace DotNetNuke.Modules.Admin.Languages
                     enabledPublishedPlaceHolder.Visible = false;
                 }
 
-                addLanguageButton.Visible = UserInfo.IsSuperUser;
-                createLanguagePackButton.Visible = UserInfo.IsSuperUser;
-                verifyLanguageResourcesButton.Visible = UserInfo.IsSuperUser;
-                installLanguagePackButton.Visible = UserInfo.IsSuperUser;                
+                addLanguageLink.Visible = UserInfo.IsSuperUser;
+                addLanguageLink.NavigateUrl = ModuleContext.EditUrl("Edit");
+
+                createLanguagePackLink.Visible = UserInfo.IsSuperUser;
+                createLanguagePackLink.NavigateUrl = ModuleContext.EditUrl("PackageWriter");
+
+                verifyLanguageResourcesLink.Visible = UserInfo.IsSuperUser;
+                verifyLanguageResourcesLink.NavigateUrl = ModuleContext.EditUrl("Verify");
+
+                installLanguagePackLink.Visible = UserInfo.IsSuperUser;
+                installLanguagePackLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
 
                 //Add the enable content Localization Button to the ToolTip Manager
                 toolTipManager.TargetControls.Add(enableLocalizedContentButton.ID);
-                //Module failed to load
+                
+
             }
             catch (Exception exc)
             {
@@ -313,10 +316,6 @@ namespace DotNetNuke.Modules.Admin.Languages
         }
 
 
-        protected void actionButton_Command(object sender, CommandEventArgs e)
-        {
-            Response.Redirect(ModuleContext.EditUrl(e.CommandName), true);
-        }
 
         protected void enabledCheckbox_CheckChanged(object sender, EventArgs e)
         {
@@ -371,10 +370,6 @@ namespace DotNetNuke.Modules.Admin.Languages
             }
         }
 
-        protected void installLanguagePackButton_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(Util.InstallURL(ModuleContext.TabId, ""), true);
-        }
 
         protected void languagesComboBox_ModeChanged(object sender, EventArgs e)
         {

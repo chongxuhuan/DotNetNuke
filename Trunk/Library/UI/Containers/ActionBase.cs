@@ -37,8 +37,26 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.UI.Containers
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.UI.Containers
+    /// Class	 : ActionBase
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// ActionBase is an abstract base control for Action objects that inherit from UserControl.
+    /// </summary>
+    /// <remarks>
+    /// ActionBase inherits from UserControl, and implements the IActionControl Interface
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/07/2004	Documented
+    ///     [cnurse]    12/15/2007  Refactored 
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class ActionBase : UserControl, IActionControl
     {
+		#region "Private Members"
+		
         private ActionManager _ActionManager;
         private ModuleAction _ActionRoot;
 
@@ -58,7 +76,20 @@ namespace DotNetNuke.UI.Containers
 
         [Obsolete("Obsoleted in DotNetNuke 5.1.2. No longer neccessary as there is no concept of an Admin Page")]
         protected bool m_tabPreview;
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Actions Collection
+        /// </summary>
+        /// <returns>A ModuleActionCollection</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ModuleActionCollection Actions
         {
             get
@@ -67,6 +98,15 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ActionRoot
+        /// </summary>
+        /// <returns>A ModuleActionCollection</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ModuleAction ActionRoot
         {
             get
@@ -79,6 +119,15 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ModuleContext
+        /// </summary>
+        /// <returns>A ModuleInstanceContext</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ModuleInstanceContext ModuleContext
         {
             get
@@ -87,11 +136,22 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the PortalSettings
+        /// </summary>
+        /// <returns>A PortalSettings object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected PortalSettings PortalSettings
         {
             get
             {
                 PortalSettings _settings = ModuleControl.ModuleContext.PortalSettings;
+                //following If clase left to preserve backwards compatibility
+                //liable to be removed if related obsolete variable gets removed
                 if (!_settings.ActiveTab.IsSuperTab)
                 {
 //still maintaining an obsolete type in public interface to maintain binary compatibility
@@ -102,6 +162,10 @@ namespace DotNetNuke.UI.Containers
                 return _settings;
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public bool EditMode
         {
@@ -149,11 +213,22 @@ namespace DotNetNuke.UI.Containers
                 return Actions;
             }
         }
+		
+		#endregion
 
         #region IActionControl Members
 
         public event ActionEventHandler Action;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ActionManager instance for this Action control
+        /// </summary>
+        /// <returns>An ActionManager object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ActionManager ActionManager
         {
             get
@@ -166,15 +241,42 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ModuleControl instance for this Action control
+        /// </summary>
+        /// <returns>An IModuleControl object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IModuleControl ModuleControl { get; set; }
 
         #endregion
+		
+		#region "Protected Methods"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisplayControl determines whether the control should be displayed
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool DisplayControl(DNNNodeCollection objNodes)
         {
             return ActionManager.DisplayControl(objNodes);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnAction raises the Action Event for this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void OnAction(ActionEventArgs e)
         {
             if (Action != null)
@@ -183,6 +285,14 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProcessAction processes the action event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void ProcessAction(string ActionID)
         {
             int output;
@@ -199,6 +309,16 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the class is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	05/12/2005	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -211,5 +331,8 @@ namespace DotNetNuke.UI.Containers
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		
+		#endregion
     }
 }

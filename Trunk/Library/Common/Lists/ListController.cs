@@ -49,6 +49,7 @@ namespace DotNetNuke.Common.Lists
         private ListInfo FillListInfo(IDataReader dr, bool CheckForOpenDataReader)
         {
             ListInfo objListInfo = null;
+            // read datareader
             bool canContinue = true;
             if (CheckForOpenDataReader)
             {
@@ -84,7 +85,8 @@ namespace DotNetNuke.Common.Lists
             {
                 ListInfo obj;
                 while (dr.Read())
-                {
+				{
+                    // fill business object
                     obj = FillListInfo(dr, false);
                     if (!dic.ContainsKey(obj.Key))
                     {
@@ -97,7 +99,8 @@ namespace DotNetNuke.Common.Lists
                 Exceptions.LogException(exc);
             }
             finally
-            {
+			{
+                // close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return dic;
@@ -147,6 +150,7 @@ namespace DotNetNuke.Common.Lists
         {
             var lists = new SortedList<string, ListInfo>();
             lists.Add(list.Key, list);
+            //add Children
             if (includeChildren)
             {
                 foreach (KeyValuePair<string, ListInfo> listPair in GetListInfoDictionary(list.PortalID))
@@ -157,6 +161,7 @@ namespace DotNetNuke.Common.Lists
                     }
                 }
             }
+            //Delete items in reverse order so deeper descendants are removed before their parents
             for (int i = lists.Count - 1; i >= 0; i += -1)
             {
                 DeleteList(lists.Values[i].Name, lists.Values[i].ParentKey);

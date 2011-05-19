@@ -34,15 +34,42 @@ using DotNetNuke.Entities;
 
 namespace DotNetNuke.Security.Permissions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Security.Permissions
+    /// Class	 : PermissionInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// PermissionInfo provides the Entity Layer for Permissions
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	01/14/2008   Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class PermissionInfo : BaseEntityInfo
     {
+		#region "Private Members"
+
         private int _ModuleDefID;
         private string _PermissionCode;
         private int _PermissionID;
         private string _PermissionKey;
         private string _PermissionName;
+		
+		#endregion
+		
+		#region "Public Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Mdoule Definition ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int ModuleDefID
         {
@@ -56,6 +83,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Permission Code
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("permissioncode")]
         public string PermissionCode
         {
@@ -69,6 +105,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Permission ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("permissionid")]
         public int PermissionID
         {
@@ -82,6 +127,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Permission Key
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("permissionkey")]
         public string PermissionKey
         {
@@ -95,6 +149,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Permission Name
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public string PermissionName
         {
@@ -107,7 +170,20 @@ namespace DotNetNuke.Security.Permissions
                 _PermissionName = value;
             }
         }
+		
+		#endregion
+		
+		#region "Protected methods"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FillInternal fills a PermissionInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void FillInternal(IDataReader dr)
         {
             base.FillInternal(dr);
@@ -116,6 +192,8 @@ namespace DotNetNuke.Security.Permissions
             PermissionCode = Null.SetNullString(dr["PermissionCode"]);
             PermissionKey = Null.SetNullString(dr["PermissionKey"]);
             PermissionName = Null.SetNullString(dr["PermissionName"]);
-        }
-    }
+		}
+
+		#endregion
+	}
 }

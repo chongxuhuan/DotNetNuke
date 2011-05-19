@@ -112,6 +112,7 @@ namespace DotNetNuke.Services.FileSystem
         public void DeleteFiles(int portalId, bool clearCache)
         {
             DataProvider.Instance().DeleteFiles(portalId);
+
             if (clearCache)
             {
                 GetAllFilesRemoveCache();

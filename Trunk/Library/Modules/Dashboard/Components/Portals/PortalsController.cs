@@ -39,11 +39,16 @@ namespace DotNetNuke.Modules.Dashboard.Components.Portals
 
         public void ExportData(XmlWriter writer)
         {
+			//Write start of Portals 
             writer.WriteStartElement("portals");
+			
+			//Iterate through Portals 
             foreach (PortalInfo portal in GetPortals())
             {
                 portal.WriteXml(writer);
             }
+			
+            //Write end of Portals 
             writer.WriteEndElement();
         }
 

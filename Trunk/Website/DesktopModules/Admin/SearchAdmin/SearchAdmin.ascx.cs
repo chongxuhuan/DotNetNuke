@@ -73,16 +73,20 @@ namespace DotNetNuke.Modules.Admin.Search
         {
             try
             {
-                var se = new SearchEngine();
-                if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+                Page.Validate();
+                if (Page.IsValid)
                 {
-                    se.IndexContent();
+                    var se = new SearchEngine();
+                    if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+                    {
+                        se.IndexContent();
+                    }
+                    else
+                    {
+                        se.IndexContent(ModuleContext.PortalId);
+                    }
+                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Indexed", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
                 }
-                else
-                {
-                    se.IndexContent(ModuleContext.PortalId);
-                }
-                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Indexed", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
             }
             catch (Exception exc)
             {
@@ -94,20 +98,24 @@ namespace DotNetNuke.Modules.Admin.Search
         {
             try
             {
-                if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+                Page.Validate();
+                if(Page.IsValid)
                 {
-                    HostController.Instance.Update("MaxSearchWordLength", txtMaxWordLength.Text);
-                    HostController.Instance.Update("MinSearchWordLength", txtMinWordLength.Text);
-                    HostController.Instance.Update("SearchIncludeCommon", chkIncludeCommon.Checked ? "Y" : "N");
-                    HostController.Instance.Update("SearchIncludeNumeric", chkIncludeNumeric.Checked ? "Y" : "N");
-                    DataCache.ClearHostCache(false);
-                }
-                else
-                {
-                    PortalController.UpdatePortalSetting(ModuleContext.PortalId, "MaxSearchWordLength", txtMaxWordLength.Text);
-                    PortalController.UpdatePortalSetting(ModuleContext.PortalId, "MinSearchWordLength", txtMinWordLength.Text);
-                    PortalController.UpdatePortalSetting(ModuleContext.PortalId, "SearchIncludeCommon", chkIncludeCommon.Checked ? "Y" : "N");
-                    PortalController.UpdatePortalSetting(ModuleContext.PortalId, "SearchIncludeNumeric", chkIncludeNumeric.Checked ? "Y" : "N");
+                    if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+                    {
+                        HostController.Instance.Update("MaxSearchWordLength", txtMaxWordLength.Text);
+                        HostController.Instance.Update("MinSearchWordLength", txtMinWordLength.Text);
+                        HostController.Instance.Update("SearchIncludeCommon", chkIncludeCommon.Checked ? "Y" : "N");
+                        HostController.Instance.Update("SearchIncludeNumeric", chkIncludeNumeric.Checked ? "Y" : "N");
+                        DataCache.ClearHostCache(false);
+                    }
+                    else
+                    {
+                        PortalController.UpdatePortalSetting(ModuleContext.PortalId, "MaxSearchWordLength", txtMaxWordLength.Text);
+                        PortalController.UpdatePortalSetting(ModuleContext.PortalId, "MinSearchWordLength", txtMinWordLength.Text);
+                        PortalController.UpdatePortalSetting(ModuleContext.PortalId, "SearchIncludeCommon", chkIncludeCommon.Checked ? "Y" : "N");
+                        PortalController.UpdatePortalSetting(ModuleContext.PortalId, "SearchIncludeNumeric", chkIncludeNumeric.Checked ? "Y" : "N");
+                    }
                 }
             }
             catch (Exception exc)

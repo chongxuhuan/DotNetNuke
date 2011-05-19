@@ -26,6 +26,7 @@
 using System;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Framework;
 using DotNetNuke.Modules.Messaging.Presenters;
 using DotNetNuke.Modules.Messaging.Views.Models;
 using DotNetNuke.UI.Modules;
@@ -41,15 +42,21 @@ using WebFormsMvp;
 
 namespace DotNetNuke.Modules.Messaging.Views
 {
+
     [PresenterBinding(typeof (MessageListPresenter))]
     public partial class MessageList : ModuleView<MessageListModel>, IMessageListView, IProfileModule
     {
+
+        #region Constructor
+
         public MessageList()
         {
             AutoDataBind = false;
         }
 
-        #region "IProfileModule Implementation"
+        #endregion
+
+        #region IProfileModule Implementation
 
         public bool DisplayModule
         {
@@ -63,35 +70,19 @@ namespace DotNetNuke.Modules.Messaging.Views
         {
             get
             {
-                int _ProfileUserId = Null.NullInteger;
+                var profileUserId = Null.NullInteger;
                 if (!string.IsNullOrEmpty(Request.Params["UserId"]))
                 {
-                    _ProfileUserId = Int32.Parse(Request.Params["UserId"]);
+                    profileUserId = Int32.Parse(Request.Params["UserId"]);
                 }
-                return _ProfileUserId;
+                return profileUserId;
             }
         }
 
         #endregion
 
-        #region "Protected Methods"
+        #region IMessageListView Implementation
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            markAsRead.Click += markAsRead_Click;
-            markAsUnread.Click += markAsUnread_Click;
-            addMessageButton.Click += addMessageButton_Click;
-            delete.Click += delete_Click;
-            messagesGrid.ItemDataBound += messagesGrid_ItemDataBound;
-            messagesGrid.NeedDataSource += messagesGrid_NeedDataSource;
-        }
-
-        #endregion
-
-        #region "IMessageListView Implementation"
-
-        public event EventHandler AddMessage;
         public event DnnGridItemSelectedEventHandler DeleteSelectedMessages;
         public event DnnGridItemSelectedEventHandler MarkSelectedMessagesRead;
         public event DnnGridItemSelectedEventHandler MarkSelectedMessagesUnread;
@@ -100,22 +91,32 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            jQuery.RequestDnnPluginsRegistration();
+
+            markAsRead.Click += OnMarkAsReadClick;
+            markAsUnread.Click += OnMarkAsUnreadClick;
+            delete.Click += OnDeleteMessagesClick;
+            messagesGrid.ItemDataBound += OnMessagesItemDataBound;
+            messagesGrid.NeedDataSource += OnMessagesNeedDataSource;
+        }
+
+        public void Refresh()
+        {
+            addMessageButton.NavigateUrl = Model.ComposeMsgUrl;
+        }
 
         private void RefreshInbox()
         {
             Response.Redirect(Request.RawUrl);
         }
 
-        private void addMessageButton_Click(object sender, EventArgs e)
-        {
-            if (AddMessage != null)
-            {
-                AddMessage(this, e);
-            }
-        }
-
-        private void delete_Click(object sender, EventArgs e)
+        protected void OnDeleteMessagesClick(object sender, EventArgs e)
         {
             if (DeleteSelectedMessages != null)
             {
@@ -124,7 +125,7 @@ namespace DotNetNuke.Modules.Messaging.Views
             RefreshInbox();
         }
 
-        private void markAsRead_Click(object sender, EventArgs e)
+        protected void OnMarkAsReadClick(object sender, EventArgs e)
         {
             if (MarkSelectedMessagesRead != null)
             {
@@ -133,7 +134,7 @@ namespace DotNetNuke.Modules.Messaging.Views
             RefreshInbox();
         }
 
-        private void markAsUnread_Click(object sender, EventArgs e)
+        protected void OnMarkAsUnreadClick(object sender, EventArgs e)
         {
             if (MarkSelectedMessagesUnread != null)
             {
@@ -142,7 +143,7 @@ namespace DotNetNuke.Modules.Messaging.Views
             RefreshInbox();
         }
 
-        private void messagesGrid_ItemDataBound(object sender, GridItemEventArgs e)
+        protected void OnMessagesItemDataBound(object sender, GridItemEventArgs e)
         {
             if (MessageDataBound != null)
             {
@@ -150,7 +151,7 @@ namespace DotNetNuke.Modules.Messaging.Views
             }
         }
 
-        private void messagesGrid_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
+        protected void OnMessagesNeedDataSource(object source, GridNeedDataSourceEventArgs e)
         {
             if (MessagesNeedDataSource != null)
             {
@@ -159,5 +160,6 @@ namespace DotNetNuke.Modules.Messaging.Views
         }
 
         #endregion
+
     }
 }

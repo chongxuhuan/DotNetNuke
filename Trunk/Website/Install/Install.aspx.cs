@@ -105,6 +105,7 @@ namespace DotNetNuke.Services.Install
                         return;
                     }
                     Upgrade.Upgrade.InstallDNN(strProviderPath);
+
                     Response.Write("<h2>Installation Complete</h2>");
                     Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
                     Response.Flush();

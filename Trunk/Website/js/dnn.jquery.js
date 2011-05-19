@@ -148,6 +148,8 @@
 
         $wrap.each(function () {
             var $this = $(this);
+
+            // wire up click event to perform slide toggle
             $this.find(opts.clickToToggleSelector).click(function (e) {
                 e.preventDefault();
                 var toggle = $(this).toggleClass(opts.toggleClass).parent().next(opts.regionToToggleSelector).slideToggle(function () {
@@ -155,6 +157,8 @@
                     dnn.dom.setCookie(id, $(this).is(':visible'), 1, '/', '', false);
                 });
             });
+
+            // walk over each selector and check its cookie, expand or collapse as necessary
             $this.find(opts.sectionHeadSelector).each(function (i, v) {
                 var elm = $(v);
                 var id = elm.attr("id");
@@ -168,6 +172,19 @@
                     elm.next(opts.regionToToggleSelector).show();
                 }
             });
+
+            // page validation integration - expand collapsed panels that contain tripped validators
+            $this.find(opts.validationTriggerSelector).click(function(e){
+                if (typeof(Page_ClientValidate) == 'function') {
+                    Page_ClientValidate(opts.validationGroup);
+                    $this.find(opts.invalidItemSelector).each(function(){
+                        var $parent = $(this).closest(opts.regionToToggleSelector);
+                        if ($parent.is(':hidden')){
+                            $parent.prev(opts.sectionHeadSelector).find(opts.clickToToggleIsolatedSelector).click();
+                        }
+                    });
+                }
+            });
         });
 
         return $wrap;
@@ -178,7 +195,10 @@
         sectionHeadSelector: '.dnnFormSectionHead',
         regionToToggleSelector: 'fieldset',
         toggleClass: 'dnnSectionExpanded',
-        clickToToggleIsolatedSelector: 'a'
+        clickToToggleIsolatedSelector: 'a',
+        validationTriggerSelector: '.dnnPrimaryAction',
+        invalidItemSelector: '.dnnFormError[style*="inline"]',
+        validationGroup: '' 
     };
 
 })(jQuery);
@@ -204,7 +224,12 @@
                     }
                     params += "ContainerSrc=" + container;
                 }
-                window.open(encodeURI(opts.baseUrl + params.replace(/.ascx/gi, '')), "skinpreview");
+                if(params != "?"){
+                    window.open(encodeURI(opts.baseUrl + params.replace(/.ascx/gi, '')), "skinpreview");    
+                }
+                else {
+                    $.dnnAlert({text: opts.noSelectionMessage, okText: opts.alertOkText, closeText: opts.alertCloseText });
+                }
             });
         });
 
@@ -212,10 +237,13 @@
     };
 
     $.fn.dnnPreview.defaultOptions = {
-        baseUrl: window.location.protocol + "//" + window.location.host,
+        baseUrl: window.location.protocol + "//" + window.location.host + window.location.pathname,
         linkSelector: 'a.dnnSecondaryAction',
         skinSelector: '',
-        containerSelector: ''
+        containerSelector: '',
+        noSelectionMessage: 'Please select a preview option.',
+        alertOkText: 'Ok',
+        alertCloseText: 'close'
     };
 
 })(jQuery);

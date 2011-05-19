@@ -49,16 +49,38 @@ namespace DotNetNuke.Entities.Users
     /// -----------------------------------------------------------------------------
     public class PurgeUsersOnline : SchedulerClient
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a PurgeUsesOnline SchedulerClient
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="objScheduleHistoryItem">A SchedulerHistiryItem</param>
+        /// <history>
+        ///     [cnurse]	03/14/2006	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PurgeUsersOnline(ScheduleHistoryItem objScheduleHistoryItem)
         {
             ScheduleHistoryItem = objScheduleHistoryItem;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateUsersOnline updates the Users Online information
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UpdateUsersOnline()
         {
             var objUserOnlineController = new UserOnlineController();
+
+            //Is Users Online Enabled?
             if ((objUserOnlineController.IsEnabled()))
             {
+                //Update the Users Online records from Cache
                 Status = "Updating Users Online";
                 objUserOnlineController.UpdateUsersOnline();
                 Status = "Update Users Online Successfully";
@@ -66,20 +88,33 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DoWork does th4 Scheduler work
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DoWork()
         {
             try
             {
-                Progressing();
+                //notification that the event is progressing
+                Progressing(); //OPTIONAL
                 UpdateUsersOnline();
-                ScheduleHistoryItem.Succeeded = true;
+                ScheduleHistoryItem.Succeeded = true; //REQUIRED
                 ScheduleHistoryItem.AddLogNote("UsersOnline purge completed.");
             }
-            catch (Exception exc)
+            catch (Exception exc) //REQUIRED
             {
-                ScheduleHistoryItem.Succeeded = false;
+                ScheduleHistoryItem.Succeeded = false; //REQUIRED
                 ScheduleHistoryItem.AddLogNote("UsersOnline purge failed." + exc);
+
+                //notification that we have errored
                 Errored(ref exc);
+
+                //log the exception
                 Exceptions.LogException(exc);
             }
         }

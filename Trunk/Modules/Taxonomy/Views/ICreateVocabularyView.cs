@@ -24,11 +24,9 @@
 #region Usings
 
 using System;
-
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Web.Mvp;
-
 
 #endregion
 
@@ -36,10 +34,10 @@ namespace DotNetNuke.Modules.Taxonomy.Views
 {
     public interface ICreateVocabularyView : IModuleView<CreateVocabularyModel>
     {
+
         void BindVocabulary(Vocabulary vocabulary, bool showScope);
 
-        event EventHandler Cancel;
-
         event EventHandler Save;
+
     }
 }

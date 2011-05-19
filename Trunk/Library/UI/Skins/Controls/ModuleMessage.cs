@@ -54,10 +54,15 @@ namespace DotNetNuke.UI.Skins.Controls
         }
 
         #endregion
-
+		#region "Private Members"
+		
         protected Panel dnnSkinMessage;
         protected Label lblHeading;
         protected Label lblMessage;
+		
+		#endregion
+		
+		#region "Public Members"
 
         public string Text { get; set; }
 
@@ -67,13 +72,24 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public string IconImage { get; set; }
 
-        protected override void OnLoad(EventArgs e)
+        #endregion
+		
+		#region "Protected Methods"
+		
+		/// <summary>
+		/// The Page_Load server event handler on this page is used
+		/// to populate the role information for the page
+		/// </summary>
+		protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
                 var strMessage = "";
+				
+				//check to see if a url
+                //was passed in for an icon
                 if (!String.IsNullOrEmpty(IconImage))
                 {
                     strMessage += Text;
@@ -109,10 +125,12 @@ namespace DotNetNuke.UI.Skins.Controls
                     lblHeading.Text = Heading;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Control failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc, false);
             }
         }
+		
+		#endregion
     }
 }

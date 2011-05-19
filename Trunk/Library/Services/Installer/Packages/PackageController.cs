@@ -55,7 +55,13 @@ namespace DotNetNuke.Services.Installer.Packages
     /// -----------------------------------------------------------------------------
     public class PackageController
     {
+		#region "Private Members"
+
         private static readonly DataProvider provider = DataProvider.Instance();
+
+		#endregion
+
+		#region "Public Shared Methods"
 
         public static int AddPackage(PackageInfo package, bool includeDetail)
         {
@@ -85,6 +91,7 @@ namespace DotNetNuke.Services.Installer.Packages
                 switch (package.PackageType)
                 {
                     case "Auth_System":
+                        //Create a new Auth System
                         var authSystem = new AuthenticationInfo();
                         authSystem.AuthenticationType = package.Name;
                         authSystem.IsEnabled = Null.NullBoolean;
@@ -116,6 +123,7 @@ namespace DotNetNuke.Services.Installer.Packages
                         LanguagePackController.SaveLanguagePack(languagePack);
                         break;
                     case "Module":
+                        //Create a new DesktopModule
                         var desktopModule = new DesktopModuleInfo();
                         desktopModule.PackageID = packageID;
                         desktopModule.ModuleName = package.Name;
@@ -148,6 +156,7 @@ namespace DotNetNuke.Services.Installer.Packages
             {
                 case "Skin":
                 case "Container":
+                    //Need to get path of skin being deleted so we can call the public CanDeleteSkin function in the SkinController
                     string strFolderPath = string.Empty;
                     string strRootSkin = package.PackageType == "Skin" ? SkinController.RootSkin : SkinController.RootContainer;
                     SkinPackageInfo _SkinPackageInfo = SkinController.GetSkinByPackageID(package.PackageID);
@@ -161,12 +170,15 @@ namespace DotNetNuke.Services.Installer.Packages
                         {
                             strFolderPath = Path.Combine(Path.Combine(portalSettings.HomeDirectoryMapPath, strRootSkin), _SkinPackageInfo.SkinName);
                         }
+						
+						//Only needed to look at the path of one skin/container, so exit loop
                         break;
                     }
 
                     bCanDelete = SkinController.CanDeleteSkin(strFolderPath, portalSettings.HomeDirectoryMapPath);
                     break;
                 case "Provider":
+                    //Check if the provider is the default provider
                     XmlDocument configDoc = Config.Load();
                     string providerName = package.Name;
                     if (providerName.IndexOf(".") > Null.NullInteger)
@@ -324,5 +336,7 @@ namespace DotNetNuke.Services.Installer.Packages
             var objEventLog = new EventLogController();
             objEventLog.AddLog(package, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PACKAGE_UPDATED);
         }
+		
+		#endregion
     }
 }

@@ -36,6 +36,25 @@ using DotNetNuke.Security;
 
 namespace DotNetNuke.Services.Exceptions
 {
+	/// -----------------------------------------------------------------------------
+	/// Project	 : DotNetNuke
+	/// Class	 : ErrorPage
+	/// 
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// Trapped errors are redirected to this universal error page, resulting in a 
+	/// graceful display.
+	/// </summary>
+	/// <remarks>
+	/// 'get the last server error
+	/// 'process this error using the Exception Management Application Block
+	/// 'add to a placeholder and place on page
+	/// 'catch direct access - No exception was found...you shouldn't end up here unless you go to this aspx page URL directly
+	/// </remarks>
+	/// <history>
+	/// 	[sun1]	1/19/2004	Created
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class ErrorPage : Page
     {
         private void ManageError(string status)
@@ -63,6 +82,7 @@ namespace DotNetNuke.Services.Exceptions
             )]
         public string ExtractOSVersion()
         {
+			//default name to OSVersion in case OS not recognised
             string commonName = Environment.OSVersion.ToString();
             switch (Environment.OSVersion.Version.Major)
             {
@@ -116,6 +136,7 @@ namespace DotNetNuke.Services.Exceptions
                 ManageError(status);
             else
             {
+				//get the last server error
                 Exception exc = Server.GetLastError();
                 try
                 {
@@ -124,8 +145,11 @@ namespace DotNetNuke.Services.Exceptions
                     else
                     {
                         PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+
                         var lex = new PageLoadException(exc.Message, exc);
+                        //process this error using the Exception Management Application Block
                         Exceptions.LogException(lex);
+                        //add to a placeholder and place on page
                         strLocalizedMessage = Localization.Localization.GetString("Error.Text",
                                                                                   Localization.Localization.
                                                                                       GlobalResourceFile);
@@ -134,6 +158,8 @@ namespace DotNetNuke.Services.Exceptions
                     }
                 } catch
                 {
+					//No exception was found...you shouldn't end up here
+                    //unless you go to this aspx page URL directly
                     strLocalizedMessage = Localization.Localization.GetString("UnhandledError.Text",
                                                                               Localization.Localization.
                                                                                   GlobalResourceFile);

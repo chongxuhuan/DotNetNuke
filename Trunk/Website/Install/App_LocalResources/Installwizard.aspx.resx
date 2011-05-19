@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -133,10 +133,10 @@
     <value>You must choose a Database Type</value>
   </data>
   <data name="ChooseInstall.Text" xml:space="preserve">
-    <value>&lt;h3&gt;Select Installation Method:&lt;/h3&gt;</value>
+    <value>Select Installation Method:</value>
   </data>
   <data name="ChooseLanguage.Text" xml:space="preserve">
-    <value>&lt;h3&gt;Choose Language:&lt;/h3&gt;</value>
+    <value>Choose Language:</value>
   </data>
   <data name="Complete.Text" xml:space="preserve">
     <value>Installation of Database Complete</value>

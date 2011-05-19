@@ -25,6 +25,7 @@
 
 using System;
 
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Definitions;
 using DotNetNuke.Instrumentation;
@@ -64,8 +65,7 @@ namespace DotNetNuke.Modules.Taxonomy
                         break;
 
                     case "06.00.00":
-                        DesktopModuleController controller = new DesktopModuleController();
-                        DesktopModuleInfo desktopModule = controller.GetDesktopModuleByModuleName("DotNetNuke.Taxonomy");
+                        DesktopModuleInfo desktopModule = DesktopModuleController.GetDesktopModuleByModuleName("DotNetNuke.Taxonomy", Null.NullInteger);
                         desktopModule.Category = "Admin";
                         DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
                         break;

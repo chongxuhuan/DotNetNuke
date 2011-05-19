@@ -1,4 +1,7 @@
 ﻿/* styles used in the FileManager */
+
+.dnnFileUpload .dnnFormItem input[type="checkbox"]{width:auto;}
+
 .FileManager
 {
     border-right: black 1px solid;
@@ -142,6 +145,5 @@ A.FileManagerTreeNode:active, A.FileManagerTreeNodeSelected:active
 .dnnEditFolderMapping div.exFolderMappingSettings{padding:0;margin-top:2.5em;}
 		.dnnEditFolderMapping .dnnFormItem input[type="text"], .dnnEditFolderMapping .dnnFormItem .dnnFormInput, .dnnEditFolderMapping .dnnFormItem textarea{text-align:left;min-width:50%;}
 		.dnnEditFolderMapping textarea{min-height:100px;}
-
 p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 /* ===========   End Edit Folder Mapping Module Styling   =========== */

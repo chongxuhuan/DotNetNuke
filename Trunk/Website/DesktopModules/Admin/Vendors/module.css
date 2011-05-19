@@ -1,3 +1,4 @@
 ﻿
 .vPageSize{float: right;}
-.vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;)
+.vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
+p.dnnFormRequired span {border-left: 5px red solid; padding-left: 0.5em; }

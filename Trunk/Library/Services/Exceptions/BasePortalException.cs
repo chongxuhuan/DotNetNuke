@@ -67,15 +67,18 @@ namespace DotNetNuke.Services.Exceptions
         private int m_UserID;
         private string m_UserName;
 
-        public BasePortalException()
+        //default constructor
+		public BasePortalException()
         {
         }
 
-        public BasePortalException(string message) : base(message)
+        //constructor with exception message
+		public BasePortalException(string message) : base(message)
         {
             InitializePrivateVariables();
         }
 
+        //constructor with message and inner exception
         public BasePortalException(string message, Exception inner) : base(message, inner)
         {
             InitializePrivateVariables();
@@ -254,6 +257,8 @@ namespace DotNetNuke.Services.Exceptions
 
         private void InitializePrivateVariables()
         {
+			//Try and get the Portal settings from context
+            //If an error occurs getting the context then set the variables to -1
             try
             {
                 var context = HttpContext.Current;
@@ -264,6 +269,7 @@ namespace DotNetNuke.Services.Exceptions
                     innerException = innerException.InnerException;
                 }
                 var exceptionInfo = Exceptions.GetExceptionInfo(innerException);
+
                 m_AssemblyVersion = DotNetNukeContext.Current.Application.Version.ToString(3);
                 if (portalSettings != null)
                 {
@@ -400,6 +406,7 @@ namespace DotNetNuke.Services.Exceptions
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+			//Serialize this class' state and then call the base class GetObjectData
             info.AddValue("m_AssemblyVersion", m_AssemblyVersion, typeof (string));
             info.AddValue("m_PortalID", m_PortalID, typeof (Int32));
             info.AddValue("m_PortalName", m_PortalName, typeof (string));

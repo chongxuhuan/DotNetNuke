@@ -42,10 +42,12 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 {
     public class DNNScheduler : SchedulingProvider
     {
+		#region "Constructors"
         public DNNScheduler()
         {
             if (DataProvider.Instance() == null)
             {
+				//get the provider configuration based on the type
                 DataProvider objProvider = null;
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
                 string dataProviderNamespace = "DotNetNuke.Services.Scheduling.DNNScheduling";
@@ -61,6 +63,10 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 ComponentFactory.RegisterComponentInstance<DataProvider>(objProvider);
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public override Dictionary<string, string> Settings
         {
@@ -69,6 +75,10 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 return ComponentFactory.GetComponentSettings<DNNScheduler>() as Dictionary<string, string>;
             }
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         private bool CanRunOnThisServer(string Servers)
         {
@@ -86,10 +96,16 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 return false;
             }
         }
+		
+		#endregion
 
+		#region "Public Methods"
+		
         public override int AddSchedule(ScheduleItem objScheduleItem)
         {
+			//Remove item from queue
             Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
+			//save item
             objScheduleItem.ScheduleID = SchedulingController.AddSchedule(objScheduleItem.TypeFullName,
                                                                           objScheduleItem.TimeLapse,
                                                                           objScheduleItem.TimeLapseMeasurement,
@@ -102,8 +118,11 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                                                           objScheduleItem.ObjectDependencies,
                                                                           objScheduleItem.Servers,
                                                                           objScheduleItem.FriendlyName);
-            RunScheduleItemNow(objScheduleItem);
-            return objScheduleItem.ScheduleID;
+            //Add schedule to queue
+			RunScheduleItemNow(objScheduleItem);
+
+            //Return Id
+			return objScheduleItem.ScheduleID;
         }
 
         public override void AddScheduleItemSetting(int ScheduleID, string Name, string Value)
@@ -224,6 +243,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
         public override void RunScheduleItemNow(ScheduleItem objScheduleItem)
         {
+			//Remove item from queue
             Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
             var objScheduleHistoryItem = new ScheduleHistoryItem(objScheduleItem);
             objScheduleHistoryItem.NextStart = DateTime.Now;
@@ -254,8 +274,10 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 var newThread = new Thread(Start);
                 newThread.IsBackground = true;
                 newThread.Start();
-                int i;
-                for (i = 0; i <= 30; i++)
+
+                //wait for up to 30 seconds for thread
+                //to start up
+                for (int i = 0; i <= 30; i++)
                 {
                     if (GetScheduleStatus() != ScheduleStatus.STOPPED)
                     {
@@ -268,7 +290,9 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
         public override void UpdateSchedule(ScheduleItem objScheduleItem)
         {
+			//Remove item from queue
             Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
+			//save item
             SchedulingController.UpdateSchedule(objScheduleItem.ScheduleID,
                                                 objScheduleItem.TypeFullName,
                                                 objScheduleItem.TimeLapse,
@@ -282,7 +306,10 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                                                 objScheduleItem.ObjectDependencies,
                                                 objScheduleItem.Servers,
                                                 objScheduleItem.FriendlyName);
-            RunScheduleItemNow(objScheduleItem);
+            //Add schedule to queue
+			RunScheduleItemNow(objScheduleItem);
         }
+		
+		#endregion
     }
 }

@@ -40,9 +40,10 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 {
     public class ViewMessagePresenter : ModulePresenter<IViewMessageView, ViewMessageModel>
     {
+
         private readonly IMessagingController _MessagingController;
 
-        #region "Constructors"
+        #region Constructors
 
         public ViewMessagePresenter(IViewMessageView viewView) : this(viewView, new MessagingController(new MessagingDataService()))
         {
@@ -54,46 +55,44 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
             _MessagingController = messagingController;
 
-            View.Cancel += Cancel;
             View.Delete += DeleteMessage;
             View.Load += Load;
-            View.Reply += Reply;
         }
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public int IndexId
         {
             get
             {
-                int _IndexId = Null.NullInteger;
+                var indexId = Null.NullInteger;
                 if (!string.IsNullOrEmpty(Request.Params["MessageId"]))
                 {
-                    _IndexId = Int32.Parse(Request.Params["MessageId"]);
+                    indexId = Int32.Parse(Request.Params["MessageId"]);
                 }
-                return _IndexId;
+                return indexId;
             }
         }
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private string GetInboxUrl()
         {
             return Globals.NavigateURL(TabId, "", string.Format("userId={0}", UserId));
         }
 
+        private string GetReplyUrl()
+        {
+            return Globals.NavigateURL(TabId, "EditMessage", string.Format("mid={0}", ModuleId), string.Format("MessageId={0}", View.Model.Message.MessageID), "IsReply=true");
+        }
+
         #endregion
 
-        #region "Public Methods"
-
-        public void Cancel(object sender, EventArgs e)
-        {
-            Response.Redirect(GetInboxUrl());
-        }
+        #region Public Methods
 
         public void DeleteMessage(object sender, EventArgs e)
         {
@@ -121,15 +120,14 @@ namespace DotNetNuke.Modules.Messaging.Presenters
                     View.Model.Message.Status = MessageStatusType.Read;
                     _MessagingController.UpdateMessage(View.Model.Message);
                 }
+                View.Model.ReplyUrl = GetReplyUrl();
+                View.Model.InboxUrl = GetInboxUrl();
+
                 View.BindMessage(View.Model.Message);
             }
         }
 
-        public void Reply(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(TabId, "EditMessage", string.Format("mid={0}", ModuleId), string.Format("MessageId={0}", View.Model.Message.MessageID), "IsReply=true"));
-        }
-
         #endregion
+
     }
 }

@@ -93,9 +93,11 @@ namespace DotNetNuke.Framework
         [Obsolete("Deprecated in DotNetNuke 6.0.  Replaced by RegisterStyleSheet")]
         public void AddStyleSheet(string id, string href, bool isFirst)
         {
+			//Find the placeholder control
             Control objCSS = FindControl("CSS");
             if (objCSS != null)
             {
+                //First see if we have already added the <LINK> control
                 Control objCtrl = Page.Header.FindControl(id);
                 if (objCtrl == null)
                 {

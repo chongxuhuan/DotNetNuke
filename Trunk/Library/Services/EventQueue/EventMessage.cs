@@ -45,6 +45,8 @@ namespace DotNetNuke.Services.EventQueue
     [Serializable]
     public class EventMessage
     {
+		#region "Private Members"
+		
         private NameValueCollection _attributes;
         private string _authorizedRoles = Null.NullString;
         private string _body = Null.NullString;
@@ -57,11 +59,19 @@ namespace DotNetNuke.Services.EventQueue
         private string _sender = Null.NullString;
         private DateTime _sentDate;
         private string _subscribers = Null.NullString;
+		
+		#endregion
+
+		#region "Constructors"
 
         public EventMessage()
         {
             _attributes = new NameValueCollection();
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public int EventMessageID
         {
@@ -255,6 +265,10 @@ namespace DotNetNuke.Services.EventQueue
                 _attributes = value;
             }
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public void DeserializeAttributes(string configXml)
         {
@@ -266,9 +280,12 @@ namespace DotNetNuke.Services.EventQueue
             reader.ReadStartElement("Attributes");
             if (!reader.IsEmptyElement)
             {
+				//Loop throug the Attributes
                 do
                 {
                     reader.ReadStartElement("Attribute");
+
+                    //Load it from the Xml
                     reader.ReadStartElement("Name");
                     attName = reader.ReadString();
                     reader.ReadEndElement();
@@ -282,6 +299,8 @@ namespace DotNetNuke.Services.EventQueue
                     {
                         reader.Read();
                     }
+					
+                    //Add attribute to the collection
                     _attributes.Add(attName, attValue);
                 } while (reader.ReadToNextSibling("Attribute"));
             }
@@ -292,13 +311,20 @@ namespace DotNetNuke.Services.EventQueue
             var settings = new XmlWriterSettings();
             settings.ConformanceLevel = ConformanceLevel.Fragment;
             settings.OmitXmlDeclaration = true;
+
             var sb = new StringBuilder();
+
             XmlWriter writer = XmlWriter.Create(sb, settings);
             writer.WriteStartElement("Attributes");
+
             foreach (string key in Attributes.Keys)
             {
                 writer.WriteStartElement("Attribute");
+
+                //Write the Name element
                 writer.WriteElementString("Name", key);
+
+                //Write the Value element
                 if (Attributes[key].IndexOfAny("<'>\"&".ToCharArray()) > -1)
                 {
                     writer.WriteStartElement("Value");
@@ -307,13 +333,23 @@ namespace DotNetNuke.Services.EventQueue
                 }
                 else
                 {
+					//Write value
                     writer.WriteElementString("Value", Attributes[key]);
                 }
+				
+                //Close the Attribute node
                 writer.WriteEndElement();
             }
+			
+			//Close the Attributes node
             writer.WriteEndElement();
+
+            //Close Writer
             writer.Close();
+
             return sb.ToString();
         }
+		
+		#endregion
     }
 }

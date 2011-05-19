@@ -56,10 +56,16 @@ namespace DotNetNuke.Security.Roles
     /// -----------------------------------------------------------------------------
     public class RoleController
     {
+		#region "Private Shared Members"
+		
         private static readonly string[] UserRoleActionsCaption = {"ASSIGNMENT", "UPDATE", "UNASSIGNMENT"};
 
         private static readonly RoleProvider provider = RoleProvider.Instance();
         private static MessagingController _messagingController = new MessagingController();
+		
+		#endregion
+		
+		#region "Private Methods"	
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -74,6 +80,7 @@ namespace DotNetNuke.Security.Roles
         {
             if (objRoleInfo.AutoAssignment)
             {
+                //loop through users for portal and add to role
                 ArrayList arrUsers = UserController.GetUsers(objRoleInfo.PortalID);
                 foreach (UserInfo objUser in arrUsers)
                 {
@@ -83,6 +90,7 @@ namespace DotNetNuke.Security.Roles
                     }
                     catch (Exception exc)
                     {
+						//user already belongs to role
                         DnnLog.Error(exc);
 
                     }
@@ -112,6 +120,7 @@ namespace DotNetNuke.Security.Roles
                 AutoAssignUsers(objRoleInfo);
                 roleId = objRoleInfo.RoleID;
             }
+
             return roleId;
         }
 
@@ -290,6 +299,20 @@ namespace DotNetNuke.Security.Roles
             AddUserRole(PortalID, UserId, RoleId, Null.NullDate, ExpiryDate);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds a User to a Role
+        /// </summary>
+        /// <remarks>Overload adds Effective Date</remarks>
+        /// <param name="PortalID">The Id of the Portal</param>
+        /// <param name="UserId">The Id of the User</param>
+        /// <param name="RoleId">The Id of the Role</param>
+        /// <param name="EffectiveDate">The expiry Date of the Role membership</param>
+        /// <param name="ExpiryDate">The expiry Date of the Role membership</param>
+        /// <history>
+        ///     [cnurse]    05/12/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void AddUserRole(int PortalID, int UserId, int RoleId, DateTime EffectiveDate, DateTime ExpiryDate)
         {
             UserInfo objUser = UserController.GetUserById(PortalID, UserId);
@@ -297,6 +320,7 @@ namespace DotNetNuke.Security.Roles
             var objEventLog = new EventLogController();
             if (objUserRole == null)
             {
+				//Create new UserRole
                 objUserRole = new UserRoleInfo();
                 objUserRole.UserID = UserId;
                 objUserRole.RoleID = RoleId;
@@ -384,11 +408,36 @@ namespace DotNetNuke.Security.Roles
             return GetUserRoles(PortalId, -1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of UserRoles for a User
+        /// </summary>
+        /// <param name="PortalId">The Id of the Portal</param>
+        /// <param name="UserId">The Id of the User</param>
+        /// <returns>An ArrayList of UserRoleInfo objects</returns>
+        /// <history>
+        /// 	[Nik Kalyani]	10/15/2004	Created multiple signatures to eliminate Optional parameters
+        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ArrayList GetUserRoles(int PortalId, int UserId)
         {
             return provider.GetUserRoles(PortalId, UserId, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of UserRoles for a User
+        /// </summary>
+        /// <param name="PortalId">The Id of the Portal</param>
+        /// <param name="UserId">The Id of the User</param>
+        /// <param name="includePrivate">Include Private Roles.</param>
+        /// <returns>An ArrayList of UserRoleInfo objects</returns>
+        /// <history>
+        /// 	[Nik Kalyani]	10/15/2004	Created multiple signatures to eliminate Optional parameters
+        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ArrayList GetUserRoles(int PortalId, int UserId, bool includePrivate)
         {
             return provider.GetUserRoles(PortalId, UserId, includePrivate);
@@ -462,6 +511,19 @@ namespace DotNetNuke.Security.Roles
 			UpdateUserRole(portalId, userId, roleId, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a Service (UserRole)
+        /// </summary>
+		/// <param name="PortalId">The Id of the Portal</param>
+        /// <param name="UserId">The Id of the User</param>
+        /// <param name="RoleId">The Id of the Role</param>
+        /// <param name="Cancel">A flag that indicates whether to cancel (delete) the userrole</param>
+        /// <history>
+        /// 	[Nik Kalyani]	10/15/2004	Created multiple signatures to eliminate Optional parameters
+        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void UpdateUserRole(int PortalId, int UserId, int RoleId, bool Cancel)
         {
             UserRoleInfo userRole;
@@ -471,12 +533,14 @@ namespace DotNetNuke.Security.Roles
             {
                 if (userRole != null && userRole.ServiceFee > 0.0 && userRole.IsTrialUsed)
                 {
+					//Expire Role so we retain trial used data
                     userRole.ExpiryDate = DateTime.Now.AddDays(-1);
                     provider.UpdateUserRole(userRole);
                     objEventLog.AddLog(userRole, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_UPDATED);
                 }
                 else
                 {
+					//Delete Role
                     DeleteUserRole(PortalId, UserId, RoleId);
                     objEventLog.AddLog("UserId",
                                        UserId.ToString(),
@@ -671,12 +735,18 @@ namespace DotNetNuke.Security.Roles
             var objRoleController = new RoleController();
             UserRoleInfo objUserRole = objRoleController.GetUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID);
             var objEventLog = new EventLogController();
+
+            //update assignment
             objRoleController.AddUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID, effDate, expDate);
+
+            //Set flag on user to make sure its portal roles cookie is refreshed
             objUser.RefreshRoles = true;
             UserController.UpdateUser(PortalSettings.PortalId, objUser);
             if (objUserRole == null)
             {
                 objEventLog.AddLog("Role", objRole.RoleName, PortalSettings, userId, EventLogController.EventLogType.USER_ROLE_CREATED);
+
+                //send notification
                 if (notifyUser)
                 {
                     SendNotification(objUser, objRole, PortalSettings, UserRoleActions.@add);
@@ -711,6 +781,18 @@ namespace DotNetNuke.Security.Roles
             return DeleteUserRole(objUser, objRole, PortalSettings, notifyUser);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Removes a User from a Role
+        /// </summary>
+        /// <param name="roleId">The Id of the role to remove the user from</param>
+        /// <param name="objUser">The user to remove</param>
+        /// <param name="PortalSettings">The PortalSettings of the Portal</param>
+        /// <param name="notifyUser">A flag that indicates whether the user should be notified</param>
+        /// <history>
+        ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static bool DeleteUserRole(int roleId, UserInfo objUser, PortalSettings PortalSettings, bool notifyUser)
         {
             var objRoleController = new RoleController();
@@ -718,6 +800,18 @@ namespace DotNetNuke.Security.Roles
             return DeleteUserRole(objUser, objRole, PortalSettings, notifyUser);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Removes a User from a Role
+        /// </summary>
+        /// <param name="objUser">The user to remove</param>
+        /// <param name="objRole">The role to remove the use from</param>
+        /// <param name="PortalSettings">The PortalSettings of the Portal</param>
+        /// <param name="notifyUser">A flag that indicates whether the user should be notified</param>
+        /// <history>
+        ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static bool DeleteUserRole(UserInfo objUser, RoleInfo objRole, PortalSettings PortalSettings, bool notifyUser)
         {
             var objRoleController = new RoleController();
@@ -750,12 +844,35 @@ namespace DotNetNuke.Security.Roles
         /// -----------------------------------------------------------------------------
         public static bool CanRemoveUserFromRole(PortalSettings PortalSettings, int UserId, int RoleId)
         {
-            return !((PortalSettings.AdministratorId == UserId && PortalSettings.AdministratorRoleId == RoleId) || PortalSettings.RegisteredRoleId == RoleId);
+            //[DNN-4285] Refactored this check into a method for use in SecurityRoles.ascx.vb
+            //HACK: Duplicated in CanRemoveUserFromRole(PortalInfo, Integer, Integer) method below
+            //changes to this method should be reflected in the other method as well
+			return !((PortalSettings.AdministratorId == UserId && PortalSettings.AdministratorRoleId == RoleId) || PortalSettings.RegisteredRoleId == RoleId);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Determines if the specified user can be removed from a role
+        /// </summary>
+        /// <remarks>
+        /// Roles such as "Registered Users" and "Administrators" can only
+        /// be removed in certain circumstances
+        /// </remarks>
+        /// <param name="PortalInfo">A <see cref="PortalInfo">PortalInfo</see> structure representing the current portal</param>
+        /// <param name="UserId">The Id of the User</param>
+        /// <param name="RoleId">The Id of the Role that should be checked for removability</param>
+        /// <returns></returns>
+        /// <history>
+        /// 	[anurse]	01/12/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static bool CanRemoveUserFromRole(PortalInfo PortalInfo, int UserId, int RoleId)
         {
-            return !((PortalInfo.AdministratorId == UserId && PortalInfo.AdministratorRoleId == RoleId) || PortalInfo.RegisteredRoleId == RoleId);
+        	//[DNN-4285] Refactored this check into a method for use in SecurityRoles.ascx.vb
+            //HACK: Duplicated in CanRemoveUserFromRole(PortalSettings, Integer, Integer) method above
+            //changes to this method should be reflected in the other method as well
+
+			return !((PortalInfo.AdministratorId == UserId && PortalInfo.AdministratorRoleId == RoleId) || PortalInfo.RegisteredRoleId == RoleId);
         }
 
         /// -----------------------------------------------------------------------------
@@ -771,6 +888,15 @@ namespace DotNetNuke.Security.Roles
             DeleteRoleGroup(GetRoleGroup(PortalID, RoleGroupId));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes a Role Group
+        /// </summary>
+        /// <param name="objRoleGroupInfo">The RoleGroup to Delete</param>
+        /// <history>
+        /// 	[cnurse]	01/03/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static void DeleteRoleGroup(RoleGroupInfo objRoleGroupInfo)
         {
             provider.DeleteRoleGroup(objRoleGroupInfo);
@@ -839,11 +965,14 @@ namespace DotNetNuke.Security.Roles
         /// -----------------------------------------------------------------------------
         public static void SerializeRoleGroups(XmlWriter writer, int portalID)
         {
+			//Serialize Role Groups
             writer.WriteStartElement("rolegroups");
             foreach (RoleGroupInfo objRoleGroup in GetRoleGroups(portalID))
             {
                 CBO.SerializeObject(objRoleGroup, writer);
             }
+			
+            //Serialize Global Roles
             var globalRoleGroup = new RoleGroupInfo(Null.NullInteger, portalID, true);
             globalRoleGroup.RoleGroupName = "GlobalRoles";
             globalRoleGroup.Description = "A dummy role group that represents the Global roles";
@@ -863,6 +992,7 @@ namespace DotNetNuke.Security.Roles
         /// -----------------------------------------------------------------------------
         public static void SerializeRoles(XmlWriter writer, int portalId)
         {
+			//Serialize Global Roles
             writer.WriteStartElement("roles");
 			foreach (RoleInfo objRole in new RoleController().GetRolesByGroup(portalId, Null.NullInteger))
             {
@@ -900,6 +1030,8 @@ namespace DotNetNuke.Security.Roles
                 }
             }
         }
+		
+		#endregion
 
         #region "Obsoleted Methods, retained for Binary Compatability"
 

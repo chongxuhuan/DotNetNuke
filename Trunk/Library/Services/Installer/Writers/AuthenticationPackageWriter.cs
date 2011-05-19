@@ -45,6 +45,8 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class AuthenticationPackageWriter : PackageWriterBase
     {
+		#region "Constructors"
+		
         public AuthenticationPackageWriter(PackageInfo package) : base(package)
         {
             AuthSystem = AuthenticationController.GetAuthenticationServiceByPackageID(package.PackageID);
@@ -56,6 +58,10 @@ namespace DotNetNuke.Services.Installer.Writers
             AuthSystem = authSystem;
             Initialize();
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>
@@ -67,6 +73,10 @@ namespace DotNetNuke.Services.Installer.Writers
 		/// </history>
 		/// -----------------------------------------------------------------------------
         public AuthenticationInfo AuthSystem { get; set; }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private void Initialize()
         {
@@ -77,19 +87,30 @@ namespace DotNetNuke.Services.Installer.Writers
 
         private void WriteAuthenticationComponent(XmlWriter writer)
         {
+			//Start component Element
             writer.WriteStartElement("component");
             writer.WriteAttributeString("type", "AuthenticationSystem");
+
+            //Start authenticationService Element
             writer.WriteStartElement("authenticationService");
+
             writer.WriteElementString("type", AuthSystem.AuthenticationType);
             writer.WriteElementString("settingsControlSrc", AuthSystem.SettingsControlSrc);
             writer.WriteElementString("loginControlSrc", AuthSystem.LoginControlSrc);
             writer.WriteElementString("logoffControlSrc", AuthSystem.LogoffControlSrc);
+
+            //End authenticationService Element
             writer.WriteEndElement();
+
+            //End component Element
             writer.WriteEndElement();
         }
+		
+		#endregion
 
         protected override void WriteManifestComponent(XmlWriter writer)
         {
+			//Write Authentication Component
             WriteAuthenticationComponent(writer);
         }
     }

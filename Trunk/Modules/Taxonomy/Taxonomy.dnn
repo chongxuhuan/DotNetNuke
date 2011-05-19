@@ -30,7 +30,7 @@
 									<moduleControl>
 										<controlKey />
 										<controlSrc>DesktopModules/Admin/Taxonomy/VocabularyList.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle />
 										<controlType>View</controlType>
 										<iconFile />
@@ -40,7 +40,7 @@
 									<moduleControl>
 										<controlKey>CreateVocabulary</controlKey>
 										<controlSrc>DesktopModules/Admin/Taxonomy/CreateVocabulary.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle>Create Vocabulary</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />
@@ -50,7 +50,7 @@
 									<moduleControl>
 										<controlKey>EditVocabulary</controlKey>
 										<controlSrc>DesktopModules/Admin/Taxonomy/EditVocabulary.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle>Edit Vocabulary</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />

@@ -5,8 +5,6 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Security.Permissions.Controls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinControl.ascx" %>
-
-<link href="module.css" rel="stylesheet" type="text/css" />
 <telerik:RadScriptBlock ID="RadScriptBlock1" runat="server">
     <script type="text/javascript">
 	    function onContextClicking(sender, eventArgs) {
@@ -42,7 +40,6 @@
 
     </script>
 </telerik:RadScriptBlock>
-
 <div class="dotnetnuke_pagesmain">
 
 	<div class="dotnetnuke_pageshead">

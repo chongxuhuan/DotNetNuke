@@ -46,7 +46,7 @@ namespace DotNetNuke.Services.Log.EventLog
 {
     public class LogController
     {
-        private const int WriterLockTimeout = 10000;
+        private const int WriterLockTimeout = 10000; //milliseconds
         private static readonly ReaderWriterLock LockLog = new ReaderWriterLock();
 
         #region Private Methods

@@ -32,7 +32,13 @@ namespace DotNetNuke.Modules.Messaging.Views.Models
 {
     public class ViewMessageModel
     {
+
         [ViewState]
         public Message Message { get; set; }
+
+        public string ReplyUrl { get; set; }
+
+        public string InboxUrl { get; set; }
+
     }
 }

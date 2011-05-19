@@ -38,11 +38,17 @@ namespace DotNetNuke.Services.Cache
 	/// </remarks>
     public class DNNCacheDependency : IDisposable
     {
+		#region "Private Members"
+
         private readonly DateTime _utcStart = DateTime.MaxValue;
         private DNNCacheDependency _cacheDependency;
         private string[] _cacheKeys;
         private string[] _fileNames;
         private CacheDependency _systemCacheDependency;
+		
+		#endregion
+
+		#region "Constructors"
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DNNCacheDependency"/> class.
@@ -153,6 +159,10 @@ namespace DotNetNuke.Services.Cache
             _cacheKeys = cachekeys;
             _cacheDependency = dependency;
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
 		/// <summary>
 		/// Gets the cache keys.
@@ -251,6 +261,8 @@ namespace DotNetNuke.Services.Cache
                 return SystemCacheDependency.UtcLastModified;
             }
         }
+		
+		#endregion
 
         #region IDisposable Members
 
@@ -263,8 +275,8 @@ namespace DotNetNuke.Services.Cache
             GC.SuppressFinalize(this);
         }
 
-        #endregion
 
+        //Method that does the actual disposal of resources
         protected virtual void Dispose(bool disposing)
         {
             if ((disposing))
@@ -283,5 +295,7 @@ namespace DotNetNuke.Services.Cache
                 _systemCacheDependency = null;
             }
         }
+		
+		#endregion
     }
 }

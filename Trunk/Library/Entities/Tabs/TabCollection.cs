@@ -44,8 +44,11 @@ namespace DotNetNuke.Entities.Tabs
     [Serializable]
     public class TabCollection : Dictionary<int, TabInfo>
     {
+		//This is used to provide a collection of children
         private readonly Dictionary<int, List<TabInfo>> _children;
+        //This is used to return a sorted List
         private readonly List<TabInfo> _list;
+        //This is used to provide a culture based set of tabs
         private readonly Dictionary<String, List<TabInfo>> _localizedTabs;
 
         #region Constructors
@@ -57,6 +60,7 @@ namespace DotNetNuke.Entities.Tabs
             _localizedTabs = new Dictionary<string, List<TabInfo>>();
         }
 
+        //Required for Serialization
         public TabCollection(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
@@ -78,6 +82,8 @@ namespace DotNetNuke.Entities.Tabs
                 childList = new List<TabInfo>();
                 _children.Add(tab.ParentId, childList);
             }
+			
+            //Add tab to end of child list as children are returned in order
             childList.Add(tab);
             return childList.Count;
         }
@@ -163,20 +169,27 @@ namespace DotNetNuke.Entities.Tabs
 
         public void Add(TabInfo tab)
         {
+			//Call base class to add to base Dictionary
             Add(tab.TabID, tab);
             if (tab.ParentId == Null.NullInteger)
             {
+				//Add tab to Children collection
                 AddToChildren(tab);
+
+                //Add to end of List as all zero-level tabs are returned in order first
                 _list.Add(tab);
             }
             else
             {
+				//Find Parent in list
                 for (int index = 0; index <= _list.Count - 1; index++)
                 {
                     TabInfo parentTab = _list[index];
                     if (parentTab.TabID == tab.ParentId)
                     {
                         int childCount = AddToChildren(tab);
+
+                        //Insert tab in master List
                         _list.Insert(index + childCount, tab);
                     }
                 }

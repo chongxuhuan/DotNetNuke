@@ -169,6 +169,11 @@ namespace DotNetNuke.Services.FileSystem
         ///   Gets a file Stream of the specified file.
         /// </summary>
         public abstract Stream GetFileStream(IFolderInfo folder, string fileName);
+
+        /// <summary>
+        /// Gets the direct Url to the file.
+        /// </summary>
+        public abstract string GetFileUrl(IFileInfo file);
         
         /// <summary>
         ///   Gets the URL of the image to display in FileManager tree.

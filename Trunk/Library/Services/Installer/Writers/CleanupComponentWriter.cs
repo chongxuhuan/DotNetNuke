@@ -44,25 +44,50 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class CleanupComponentWriter
     {
+		#region "Private Members"
+		
         private readonly SortedList<string, InstallFile> _Files;
         private string _BasePath;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs the ContainerComponentWriter
+        /// </summary>
+        /// <param name="basePath">Base Path.</param>
+        /// <param name="files">A Dictionary of files</param>
+        /// <history>
+        /// 	[cnurse]	02/21/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public CleanupComponentWriter(string basePath, SortedList<string, InstallFile> files)
         {
             _Files = files;
             _BasePath = basePath;
         }
+		
+		#endregion
 
+		#region "Public Methods"
+		
         public virtual void WriteManifest(XmlWriter writer)
         {
             foreach (KeyValuePair<string, InstallFile> kvp in _Files)
             {
+				//Start component Element
                 writer.WriteStartElement("component");
                 writer.WriteAttributeString("type", "Cleanup");
                 writer.WriteAttributeString("fileName", kvp.Value.Name);
                 writer.WriteAttributeString("version", Path.GetFileNameWithoutExtension(kvp.Value.Name));
+
+                //End component Element
                 writer.WriteEndElement();
             }
         }
+		
+		#endregion
     }
 }

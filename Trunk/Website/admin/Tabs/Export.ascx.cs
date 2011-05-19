@@ -36,36 +36,39 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
 namespace DotNetNuke.Modules.Admin.Tabs
 {
+
     public partial class Export : PortalModuleBase
     {
-        private TabInfo _Tab;
+
+        private TabInfo _tab;
 
         public TabInfo Tab
         {
             get
             {
-                if (_Tab == null)
+                if (_tab == null)
                 {
                     var objTabs = new TabController();
-                    _Tab = objTabs.GetTab(TabId, PortalId, false);
+                    _tab = objTabs.GetTab(TabId, PortalId, false);
                 }
-                return _Tab;
+                return _tab;
             }
         }
 
         private void SerializeTab(XmlDocument xmlTemplate, XmlNode nodeTabs)
         {
-            XmlNode nodeTab;
-            XmlDocument xmlTab;
-            xmlTab = new XmlDocument();
-            nodeTab = TabController.SerializeTab(xmlTab, Tab, chkContent.Checked);
+            var xmlTab = new XmlDocument();
+            var nodeTab = TabController.SerializeTab(xmlTab, Tab, chkContent.Checked);
             nodeTabs.AppendChild(xmlTemplate.ImportNode(nodeTab, true));
         }
+
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {
@@ -81,27 +84,25 @@ namespace DotNetNuke.Modules.Admin.Tabs
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdExport.Click += cmdExport_Click;
+            cmdExport.Click += OnExportClick;
 
             try
             {
                 if (!Page.IsPostBack)
                 {
+                    cmdCancel.NavigateUrl = Globals.NavigateURL();
                     ArrayList folders = FileSystemUtils.GetFoldersByUser(PortalId, false, false, "ADD");
                     foreach (FolderInfo folder in folders)
                     {
-                        var FolderItem = new ListItem();
-                        if (folder.FolderPath == Null.NullString)
-                        {
-                            FolderItem.Text = Localization.GetString("Root", LocalResourceFile);
-                        }
-                        else
-                        {
-                            FolderItem.Text = PathUtils.Instance.RemoveTrailingSlash(folder.DisplayPath);
-                        }
-                        FolderItem.Value = folder.FolderPath;
-                        cboFolders.Items.Add(FolderItem);
+                        var folderItem = new ListItem
+                                             {
+                                                 Text =
+                                                     folder.FolderPath == Null.NullString
+                                                         ? Localization.GetString("Root", LocalResourceFile)
+                                                         : PathUtils.Instance.RemoveTrailingSlash(folder.DisplayPath),
+                                                 Value = folder.FolderPath
+                                             };
+                        cboFolders.Items.Add(folderItem);
                     }
                     if (Tab != null)
                     {
@@ -119,48 +120,36 @@ namespace DotNetNuke.Modules.Admin.Tabs
             }
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
+        protected void OnExportClick(Object sender, EventArgs e)
         {
             try
             {
-                Response.Redirect(Globals.NavigateURL(), true);
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        private void cmdExport_Click(Object sender, EventArgs e)
-        {
-            try
-            {
-                XmlDocument xmlTemplate;
-                XmlNode nodePortal;
                 if (!Page.IsValid)
                 {
                     return;
                 }
-                string filename;
-                filename = PortalSettings.HomeDirectoryMapPath + cboFolders.SelectedItem.Value + txtFile.Text + ".page.template";
+                string filename = PortalSettings.HomeDirectoryMapPath + cboFolders.SelectedItem.Value + txtFile.Text + ".page.template";
                 filename = filename.Replace("/", "\\");
-                xmlTemplate = new XmlDocument();
-                nodePortal = xmlTemplate.AppendChild(xmlTemplate.CreateElement("portal"));
+                var xmlTemplate = new XmlDocument();
+                XmlNode nodePortal = xmlTemplate.AppendChild(xmlTemplate.CreateElement("portal"));
                 nodePortal.Attributes.Append(XmlUtils.CreateAttribute(xmlTemplate, "version", "3.0"));
                 XmlElement node = xmlTemplate.CreateElement("description");
                 node.InnerXml = Server.HtmlEncode(txtDescription.Text);
                 nodePortal.AppendChild(node);
-                XmlNode nodeTabs;
-                nodeTabs = nodePortal.AppendChild(xmlTemplate.CreateElement("tabs"));
+                XmlNode nodeTabs = nodePortal.AppendChild(xmlTemplate.CreateElement("tabs"));
                 SerializeTab(xmlTemplate, nodeTabs);
                 xmlTemplate.Save(filename);
-                lblMessage.Text = string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename);
+                UI.Skins.Skin.AddModuleMessage(this, "", String.Format(Localization.GetString("EmailErrorMessage", LocalResourceFile), string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename)), ModuleMessage.ModuleMessageType.BlueInfo);
                 FileSystemUtils.AddFile(txtFile.Text + ".page.template", PortalId, cboFolders.SelectedItem.Value, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+
         }
+
+        #endregion
+
     }
 }

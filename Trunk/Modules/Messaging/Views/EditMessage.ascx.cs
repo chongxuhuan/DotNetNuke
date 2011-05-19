@@ -25,40 +25,42 @@
 
 using System;
 
+using DotNetNuke.Framework;
 using DotNetNuke.Modules.Messaging.Presenters;
 using DotNetNuke.Modules.Messaging.Views.Models;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.Web.Mvp;
-
 using WebFormsMvp;
 
 #endregion
 
 namespace DotNetNuke.Modules.Messaging.Views
 {
+
     [PresenterBinding(typeof (EditMessagePresenter))]
     public partial class EditMessage : ModuleView<EditMessageModel>, IEditMessageView
     {
-        #region "Protected Methods"
+
+        #region Protected Methods
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cancelEdit.Click += cancelEdit_Click;
-            deleteMessage.Click += deleteMessage_Click;
-            saveDraftButton.Click += saveDraftButton_Click;
-            sendMessageButton.Click += sendMessageButton_Click;
-            validateUserButton.Click += validateUserButton_Click;
+            jQuery.RequestDnnPluginsRegistration();
+
+            deleteMessage.Click += OnDeleteMessage;
+            saveDraftButton.Click += OnSaveDraftClick;
+            sendMessageButton.Click += OnSendMessageClick;
+            validateUserButton.Click += OnValidateUserClick;
         }
 
         #endregion
 
-        #region "IEditMessageView Implementation"
+        #region IEditMessageView Implementation
 
-        public event EventHandler Cancel;
         public event EventHandler Delete;
         public event EventHandler SaveDraft;
         public event EventHandler SendMessage;
@@ -66,16 +68,18 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         public void BindMessage(Message message)
         {
+            cancelEdit.NavigateUrl = Model.InboxUrl;
+
             if (IsPostBack)
             {
-                message.Subject = subjectTextBox.Text;
+                message.Subject = txtSubject.Text;
                 message.Body = messageEditor.Text;
             }
             else
             {
-                toTextBox.Text = message.ToUserName;
-                toTextBox.ToolTip = message.ToUserName;
-                subjectTextBox.Text = message.Subject;
+                txtTo.Text = message.ToUserName;
+                txtTo.ToolTip = message.ToUserName;
+                txtSubject.Text = message.Subject;
                 messageEditor.Text = message.Body;
             }
         }
@@ -83,7 +87,7 @@ namespace DotNetNuke.Modules.Messaging.Views
         public void ShowInvalidUserError()
         {
             //'toTextBox.Text = ""
-            string toError = string.Format(Localization.GetString("Validation.Error.Message", LocalResourceFile), toTextBox.Text);
+            var toError = string.Format(Localization.GetString("Validation.Error.Message", LocalResourceFile), txtTo.Text);
 
             UI.Skins.Skin.AddModuleMessage(this, toError, ModuleMessage.ModuleMessageType.RedError);
 
@@ -92,27 +96,21 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         public void ShowValidUserMessage()
         {
-            string toValid = string.Format(Localization.GetString("Validation.Success.Message", LocalResourceFile), toTextBox.Text);
+            var toValid = string.Format(Localization.GetString("Validation.Success.Message", LocalResourceFile), txtTo.Text);
 
             UI.Skins.Skin.AddModuleMessage(this, toValid, ModuleMessage.ModuleMessageType.GreenSuccess);
         }
 
         public void HideDeleteButton()
         {
-            deleteHolder.Visible = false;
+            liDelete.Visible = false;
         }
 
         #endregion
 
-        private void cancelEdit_Click(object sender, EventArgs e)
-        {
-            if (Cancel != null)
-            {
-                Cancel(this, e);
-            }
-        }
+        #region Event Handlers
 
-        private void deleteMessage_Click(object sender, EventArgs e)
+        protected void OnDeleteMessage(object sender, EventArgs e)
         {
             if (Delete != null)
             {
@@ -120,31 +118,34 @@ namespace DotNetNuke.Modules.Messaging.Views
             }
         }
 
-        private void saveDraftButton_Click(object sender, EventArgs e)
+        protected void OnSaveDraftClick(object sender, EventArgs e)
         {
-            Model.UserName = toTextBox.Text;
+            Model.UserName = txtTo.Text;
             if (SaveDraft != null)
             {
                 SaveDraft(this, e);
             }
         }
 
-        private void sendMessageButton_Click(object sender, EventArgs e)
+        protected void OnSendMessageClick(object sender, EventArgs e)
         {
-            Model.UserName = toTextBox.Text;
+            Model.UserName = txtTo.Text;
             if (SendMessage != null)
             {
                 SendMessage(this, e);
             }
         }
 
-        private void validateUserButton_Click(object sender, EventArgs e)
+        protected void OnValidateUserClick(object sender, EventArgs e)
         {
-            Model.UserName = toTextBox.Text;
+            Model.UserName = txtTo.Text;
             if (ValidateUser != null)
             {
                 ValidateUser(this, e);
             }
         }
+
+        #endregion
+
     }
 }

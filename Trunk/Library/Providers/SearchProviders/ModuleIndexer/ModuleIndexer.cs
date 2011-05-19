@@ -50,6 +50,18 @@ namespace DotNetNuke.Services.Search
     /// -----------------------------------------------------------------------------
     public class ModuleIndexer : IndexingProvider
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetSearchIndexItems gets the SearchInfo Items for the Portal
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="PortalID">The Id of the Portal</param>
+        /// <history>
+        ///		[cnurse]	11/15/2004	documented
+        ///     [vnguyen]   09/07/2010  Modified: Included logic to add TabId to searchItems
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override SearchItemInfoCollection GetSearchIndexItems(int PortalID)
         {
             var SearchItems = new SearchItemInfoCollection();
@@ -78,6 +90,18 @@ namespace DotNetNuke.Services.Search
             return SearchItems;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleList gets a collection of SearchContentModuleInfo Items for the Portal
+        /// </summary>
+        /// <remarks>
+        /// Parses the Modules of the Portal, determining whetehr they are searchable.
+        /// </remarks>
+        /// <param name="PortalID">The Id of the Portal</param>
+        /// <history>
+        ///		[cnurse]	11/15/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected SearchContentModuleInfoCollection GetModuleList(int PortalID)
         {
             var Results = new SearchContentModuleInfoCollection();
@@ -91,15 +115,21 @@ namespace DotNetNuke.Services.Search
                 {
                     try
                     {
+                        //Check if the business controller is in the Hashtable
                         object objController = businessControllers[objModule.DesktopModule.BusinessControllerClass];
                         if (!String.IsNullOrEmpty(objModule.DesktopModule.BusinessControllerClass))
                         {
+							//If nothing create a new instance
                             if (objController == null)
                             {
                                 objController = Reflection.CreateObject(objModule.DesktopModule.BusinessControllerClass, objModule.DesktopModule.BusinessControllerClass);
-                                businessControllers.Add(objModule.DesktopModule.BusinessControllerClass, objController);
+                                
+								//Add to hashtable
+								businessControllers.Add(objModule.DesktopModule.BusinessControllerClass, objController);
                             }
-                            if (objController is ISearchable)
+                            
+							//Double-Check that module supports ISearchable
+							if (objController is ISearchable)
                             {
                                 var ContentInfo = new SearchContentModuleInfo();
                                 ContentInfo.ModControllerType = (ISearchable) objController;

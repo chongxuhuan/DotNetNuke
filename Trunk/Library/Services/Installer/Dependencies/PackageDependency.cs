@@ -58,6 +58,8 @@ namespace DotNetNuke.Services.Installer.Dependencies
             get
             {
                 bool _IsValid = true;
+
+                //Get Package from DataStore
                 PackageInfo package = PackageController.GetPackageByName(PackageName);
                 if (package == null)
                 {

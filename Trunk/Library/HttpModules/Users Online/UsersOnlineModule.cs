@@ -57,14 +57,19 @@ namespace DotNetNuke.HttpModules.UsersOnline
 
         public void OnAuthorizeRequest(object s, EventArgs e)
         {
+            //First check if we are upgrading/installing
             var app = (HttpApplication) s;
             HttpRequest Request = app.Request;
+            //check if we are upgrading/installing or if this is a captcha request
             if (Request.Url.LocalPath.ToLower().EndsWith("install.aspx") || Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") || Request.Url.LocalPath.ToLower().EndsWith("captcha.aspx") ||
                 Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("webresource.axd"))
             {
                 return;
             }
+            //Create a Users Online Controller
             var objUserOnlineController = new UserOnlineController();
+
+            //Is Users Online Enabled?
             if ((objUserOnlineController.IsEnabled()))
             {
                 objUserOnlineController.TrackUsers();

@@ -75,7 +75,7 @@ namespace DotNetNuke.UI.Containers
             {
                 BindDropDown();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -91,7 +91,7 @@ namespace DotNetNuke.UI.Containers
                     ProcessAction(cboActions.SelectedItem.Value);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -106,6 +106,7 @@ namespace DotNetNuke.UI.Containers
                 ProcessNodes(objNode);
             }
             Control.Bind(objNodes);
+
             Visible = DisplayControl(objNodes);
         }
 
@@ -115,7 +116,8 @@ namespace DotNetNuke.UI.Containers
             {
                 ClientAPI.RegisterClientVariable(Page, "__dnn_CSAction_" + Control.NavigationControl.ClientID + "_" + objParent.ID, objParent.JSFunction, true);
             }
-            objParent.ClickAction = eClickAction.None;
+            objParent.ClickAction = eClickAction.None; //since GO button is handling actions dont allow selected index change fire postback
+
             foreach (DNNNode objNode in objParent.DNNNodes)
             {
                 ProcessNodes(objNode);

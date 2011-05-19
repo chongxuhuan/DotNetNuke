@@ -79,10 +79,15 @@ namespace DotNetNuke.Entities.Portals
 
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst
             writer.WriteStartElement("portalAlias");
+
+            //write out properties
             writer.WriteElementString("portalID", PortalID.ToString());
             writer.WriteElementString("portalAliasID", PortalAliasID.ToString());
             writer.WriteElementString("HTTPAlias", HTTPAlias);
+
+            //Write end of main element
             writer.WriteEndElement();
         }
 

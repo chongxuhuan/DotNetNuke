@@ -6,9 +6,7 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="FriendlyUrls" Src="~/DesktopModules/Admin/HostSettings/FriendlyUrls.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="RequestFilters" Src="~/DesktopModules/Admin/HostSettings/RequestFilters.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinControl.ascx" %>
 <%@ Register TagPrefix="asp" Namespace="DotNetNuke.Web.UI.WebControls" %>
-
 <script language="javascript" type="text/javascript">
     function toggleSmtpCredentials(){
         var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
@@ -22,9 +20,14 @@
 
     function setUpDnnHostSettings() {
         $('#dnnHostSettings').dnnTabs().dnnPanels();
-        $('#hostSkinSettings').dnnPreview({skinSelector: 'select:eq(0)', containerSelector: 'select:eq(1)'});
-        $('#adminSkinSettings').dnnPreview({skinSelector: 'select:eq(0)', containerSelector: 'select:eq(1)'});
-
+        $('#hostSkinSettings,#adminSkinSettings').dnnPreview({ 
+            skinSelector: 'select:eq(0)',
+            containerSelector: 'select:eq(1)',
+            baseUrl: '//<%= this.PortalAlias.HTTPAlias %>',
+            noSelectionMessage: '<%= LocalizeString("PreviewNoSelectionMessage.Text") %>',
+            alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
+            alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
+        });
         $('#basicSettings .dnnFormExpandContent a').dnnExpandAll({expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea:'#basicSettings'});
         $('#advancedSettings .dnnFormExpandContent a').dnnExpandAll({expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea:'#advancedSettings'});
 
@@ -134,16 +137,16 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostTitle" ControlName="txtHostTitle" runat="server" />
-                    <asp:TextBox ID="txtHostTitle" runat="server" MaxLength="256" Width="300" />
+                    <asp:TextBox ID="txtHostTitle" runat="server" MaxLength="256" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostURL" ControlName="txtHostURL" runat="server" />
-                    <asp:TextBox ID="txtHostURL" runat="server" MaxLength="256" Width="300" />
+                    <asp:TextBox ID="txtHostURL" runat="server" MaxLength="256" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostEmail" ControlName="txtHostEmail" runat="server" />
                     <div>
-                        <asp:TextBox ID="txtHostEmail" runat="server" MaxLength="256" Width="300" />
+                        <asp:TextBox ID="txtHostEmail" runat="server" MaxLength="256" />
                         <asp:RegularExpressionValidator ID="valHostEmail" CssClass="dnnFormMessage dnnFormError" runat="server" ControlToValidate="txtHostEmail" Display="Dynamic" ResourceKey="HostEmail.Error" />
                     </div>
                 </div>
@@ -202,15 +205,15 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plUserId" ControlName="txtUserId" runat="server" />
-                    <asp:TextBox ID="txtUserId" runat="server" Width="300" MaxLength="50" />
+                    <asp:TextBox ID="txtUserId" runat="server" MaxLength="50" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plPassword" ControlName="txtPassword" runat="server" />
-                    <asp:TextBox ID="txtPassword" runat="server" Width="300" MaxLength="50" TextMode="Password" />
+                    <asp:TextBox ID="txtPassword" runat="server" MaxLength="50" TextMode="Password" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostFee" ControlName="txtHostFee" runat="server" />
-                    <asp:TextBox ID="txtHostFee" runat="server" MaxLength="10" Width="100" />
+                    <asp:TextBox ID="txtHostFee" runat="server" MaxLength="10" />
                     <asp:CompareValidator ID="valHostFee" CssClass="dnnFormMessage dnnFormError" runat="server" ControlToValidate="txtHostFee" Display="Dynamic" ResourceKey="valHostFee.Error" Operator="DataTypeCheck" Type="Currency" />
                 </div>
                 <div class="dnnFormItem">
@@ -219,19 +222,19 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostSpace" ControlName="txtHostSpace" runat="server" />
-                    <asp:TextBox ID="txtHostSpace" runat="server" MaxLength="6" Width="100" />
+                    <asp:TextBox ID="txtHostSpace" runat="server" MaxLength="6" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plPageQuota" ControlName="txtPageQuota" runat="server" />
-                    <asp:TextBox ID="txtPageQuota" runat="server" MaxLength="6" Width="100" />
+                    <asp:TextBox ID="txtPageQuota" runat="server" MaxLength="6" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plUserQuota" ControlName="txtUserQuota" runat="server" />
-                    <asp:TextBox ID="txtUserQuota" runat="server" MaxLength="6" Width="100" />
+                    <asp:TextBox ID="txtUserQuota" runat="server" MaxLength="6" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plDemoPeriod" ControlName="txtDemoPeriod" runat="server" />
-                    <asp:TextBox ID="txtDemoPeriod" runat="server" MaxLength="3" Width="50" />
+                    <asp:TextBox ID="txtDemoPeriod" runat="server" MaxLength="3" />
                     <asp:Label ID="lblDemoPeriod" runat="server" resourcekey="Days" />
                 </div>
                 <div class="dnnFormItem">
@@ -385,98 +388,94 @@
                 </div>        
                 <div class="dnnFormItem">
                     <dnn:Label ID="plJQueryHostUrl" ControlName="txtJQueryHostedUrl" runat="server" />
-                    <asp:TextBox ID="txtJQueryHostedUrl" runat="server" MaxLength="256" Width="300" />
+                    <asp:TextBox ID="txtJQueryHostedUrl" runat="server" MaxLength="256" />
                 </div>        
                 <div class="dnnFormItem">
                     <dnn:Label ID="plJQueryUIHostUrl" ControlName="txtJQueryUIHostedUrl" runat="server" />
-                    <asp:TextBox ID="txtJQueryUIHostedUrl" runat="server" MaxLength="256" Width="300" />
+                    <asp:TextBox ID="txtJQueryUIHostedUrl" runat="server" MaxLength="256" />
                 </div>        
             </fieldset>
         </div>
     </div>
     <div id="otherSettings" class="ssOtherSettings dnnClear">
         <div class="ssosContent dnnClear">
-                <h2 id="Panel-RequestFilter" class="dnnFormSectionHead"><a href="#" class=""><%=LocalizeString("RequestFilter")%></a></h2>
-                <fieldset>
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plEnableRequestFilters" ControlName="chkEnableRequestFilters" runat="server" />
-                        <asp:CheckBox ID="chkEnableRequestFilters" runat="server" onclick="toggleSection('requestFiltersRow', this.checked)" />
-                    </div>        
-                    <div id="requestFiltersRow" class="dnnFormItem"  runat="server">
-                        <dnn:RequestFilters ID="requestFilters" runat="server" />
-                    </div>        
-                </fieldset>
-                <h2 id="Panel-Other" class="dnnFormSectionHead"><a href="" class=""><%=LocalizeString("Other")%></a></h2>
-                <fieldset class="dnnhsOtherSettings">
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plControlPanel" ControlName="cboControlPanel" runat="server" />
-                        <asp:DropDownList ID="cboControlPanel" Width="300" runat="server" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plSiteLogStorage" ControlName="optSiteLogStorage" runat="server" />
-                        <asp:RadioButtonList ID="optSiteLogStorage" CssClass="dnnHSRadioButtons" runat="server" RepeatLayout="Flow">
-                            <asp:ListItem Value="D" resourcekey="Database" />
-                            <asp:ListItem Value="F" resourcekey="FileSystem" />
-                        </asp:RadioButtonList>
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plSiteLogBuffer" ControlName="txtSiteLogBuffer" runat="server" />
-                        <asp:TextBox ID="txtSiteLogBuffer" runat="server" MaxLength="4" Width="50" />
-                        <asp:Label ID="lblSiteLogBuffer" runat="server" resourcekey="Items" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plSiteLogHistory" ControlName="txtSiteLogHistory" runat="server" />
-                        <asp:TextBox ID="txtSiteLogHistory" runat="server" MaxLength="3" Width="50" />
-                        <asp:Label ID="lblSiteLogHistory" runat="server" resourcekey="Days" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plUsersOnline" ControlName="chkUsersOnline" runat="server" />
-                        <asp:CheckBox ID="chkUsersOnline" runat="server" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plUsersOnlineTime" ControlName="txtUsersOnlineTime" runat="server" />
-                        <asp:TextBox ID="txtUsersOnlineTime" runat="server" MaxLength="3" Width="50" />
-                        <asp:Label ID="lblUsersOnlineTime" runat="server" resourcekey="Minutes" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plAutoAccountUnlock" ControlName="txtAutoAccountUnlock" runat="server" />
-                        <asp:TextBox ID="txtAutoAccountUnlock" runat="server" MaxLength="3" Width="50" />
-                        <asp:Label ID="lblAutoAccountUnlock" runat="server" resourcekey="Minutes" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plFileExtensions" ControlName="txtFileExtensions" runat="server" />
-                        <asp:TextBox ID="txtFileExtensions" runat="server" MaxLength="256" Width="300" TextMode="MultiLine" Rows="3" />
-                        <asp:RegularExpressionValidator ID="valFileExtensions" CssClass="dnnFormMessage dnnFormError" runat="server" ControlToValidate="txtFileExtensions" EnableClientScript="true" ValidationExpression="[A-Za-z0-9,_]*" resourceKey="valFileExtensions.Error" Display="Dynamic" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plSchedulerMode" ControlName="cboSchedulerMode" runat="server" />
-                        <asp:DropDownList ID="cboSchedulerMode" runat="server">
-                            <asp:ListItem resourcekey="Disabled" Value="0" />
-                            <asp:ListItem resourcekey="TimerMethod" Value="1" />
-                            <asp:ListItem resourcekey="RequestMethod" Value="2" />
-                        </asp:DropDownList>
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plLogBuffer" ControlName="chkLogBuffer" runat="server" />
-                        <asp:CheckBox ID="chkLogBuffer" runat="server" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plHelpUrl" ControlName="txtHelpURL" runat="server" />
-                        <asp:TextBox ID="txtHelpURL" runat="server" MaxLength="256" Width="300" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plEnableHelp" ControlName="chkEnableHelp" runat="server" />
-                        <asp:CheckBox ID="chkEnableHelp" runat="server" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plAutoSync" ControlName="chkAutoSync" runat="server" />
-                        <asp:CheckBox ID="chkAutoSync" runat="server" />
-                    </div>        
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plEnableContentLocalization" ControlName="chkEnableContentLocalization" runat="server" />
-                        <asp:CheckBox ID="chkEnableContentLocalization" runat="server" />
-                    </div>        
-            </fieldset>
+            <fieldset class="dnnhsOtherSettings">
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plEnableRequestFilters" ControlName="chkEnableRequestFilters" runat="server" />
+                    <asp:CheckBox ID="chkEnableRequestFilters" runat="server" onclick="toggleSection('requestFiltersRow', this.checked)" />
+                </div>        
+                <div id="requestFiltersRow" class="dnnFormItem">
+                    <dnn:RequestFilters ID="requestFilters" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plControlPanel" ControlName="cboControlPanel" runat="server" />
+                    <asp:DropDownList ID="cboControlPanel" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plSiteLogStorage" ControlName="optSiteLogStorage" runat="server" />
+                    <asp:RadioButtonList ID="optSiteLogStorage" CssClass="dnnHSRadioButtons" runat="server" RepeatLayout="Flow">
+                        <asp:ListItem Value="D" resourcekey="Database" />
+                        <asp:ListItem Value="F" resourcekey="FileSystem" />
+                    </asp:RadioButtonList>
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plSiteLogBuffer" ControlName="txtSiteLogBuffer" runat="server" />
+                    <asp:TextBox ID="txtSiteLogBuffer" runat="server" MaxLength="4" />
+                    <asp:Label ID="lblSiteLogBuffer" runat="server" resourcekey="Items" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plSiteLogHistory" ControlName="txtSiteLogHistory" runat="server" />
+                    <asp:TextBox ID="txtSiteLogHistory" runat="server" MaxLength="3" />
+                    <asp:Label ID="lblSiteLogHistory" runat="server" resourcekey="Days" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plUsersOnline" ControlName="chkUsersOnline" runat="server" />
+                    <asp:CheckBox ID="chkUsersOnline" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plUsersOnlineTime" ControlName="txtUsersOnlineTime" runat="server" />
+                    <asp:TextBox ID="txtUsersOnlineTime" runat="server" MaxLength="3" />
+                    <asp:Label ID="lblUsersOnlineTime" runat="server" resourcekey="Minutes" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plAutoAccountUnlock" ControlName="txtAutoAccountUnlock" runat="server" />
+                    <asp:TextBox ID="txtAutoAccountUnlock" runat="server" MaxLength="3" />
+                    <asp:Label ID="lblAutoAccountUnlock" runat="server" resourcekey="Minutes" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plFileExtensions" ControlName="txtFileExtensions" runat="server" />
+                    <asp:TextBox ID="txtFileExtensions" runat="server" MaxLength="256" TextMode="MultiLine" Rows="3" />
+                    <asp:RegularExpressionValidator ID="valFileExtensions" CssClass="dnnFormMessage dnnFormError" runat="server" ControlToValidate="txtFileExtensions" EnableClientScript="true" ValidationExpression="[A-Za-z0-9,_]*" resourceKey="valFileExtensions.Error" Display="Dynamic" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plSchedulerMode" ControlName="cboSchedulerMode" runat="server" />
+                    <asp:DropDownList ID="cboSchedulerMode" runat="server">
+                        <asp:ListItem resourcekey="Disabled" Value="0" />
+                        <asp:ListItem resourcekey="TimerMethod" Value="1" />
+                        <asp:ListItem resourcekey="RequestMethod" Value="2" />
+                    </asp:DropDownList>
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plLogBuffer" ControlName="chkLogBuffer" runat="server" />
+                    <asp:CheckBox ID="chkLogBuffer" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plHelpUrl" ControlName="txtHelpURL" runat="server" />
+                    <asp:TextBox ID="txtHelpURL" runat="server" MaxLength="256" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plEnableHelp" ControlName="chkEnableHelp" runat="server" />
+                    <asp:CheckBox ID="chkEnableHelp" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plAutoSync" ControlName="chkAutoSync" runat="server" />
+                    <asp:CheckBox ID="chkAutoSync" runat="server" />
+                </div>        
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plEnableContentLocalization" ControlName="chkEnableContentLocalization" runat="server" />
+                    <asp:CheckBox ID="chkEnableContentLocalization" runat="server" />
+                </div>        
+			</fieldset>
 		</div>            
 	</div>            
     <ul class="dnnActions dnnClear">

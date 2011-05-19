@@ -159,6 +159,8 @@ namespace DotNetNuke.UI.Modules
         {
             get
             {
+				//Perform tri-state switch check to avoid having to perform a security
+                //role lookup on every property access (instead caching the result)
                 if (!_isEditable.HasValue)
                 {
                     bool blnPreview = (PortalSettings.UserMode == PortalSettings.Mode.View);
@@ -266,7 +268,10 @@ namespace DotNetNuke.UI.Modules
                 var controller = new ModuleController();
                 if (_settings == null)
                 {
+					//we need to make sure we don't directly modify the ModuleSettings so create new HashTable DNN-8715
                     _settings = new Hashtable(controller.GetModuleSettings(ModuleId));
+					
+					//add the TabModuleSettings to the ModuleSettings
                     Hashtable tabModuleSettings = controller.GetTabModuleSettings(TabModuleId);
                     foreach (string strKey in tabModuleSettings.Keys)
                     {
@@ -334,9 +339,23 @@ namespace DotNetNuke.UI.Modules
 
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddHelpActions Adds the Help actions to the Action Menu
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	05/12/2005	Documented
+        ///     [cnurse]    01/19/2006  Moved from ActionBase
+        ///     [cnurse]    12/24/2007  Renamed (from SetHelpVisibility)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddHelpActions()
         {
             var helpAction = new ModuleAction(GetNextActionID());
+
+            //Add Help Menu Action
             helpAction.Title = Localization.GetString(ModuleActionType.ModuleHelp, Localization.GlobalResourceFile);
             helpAction.CommandName = ModuleActionType.ModuleHelp;
             helpAction.CommandArgument = "";
@@ -347,9 +366,12 @@ namespace DotNetNuke.UI.Modules
             helpAction.NewWindow = false;
             helpAction.UseActionEvent = true;
             _actions.Add(helpAction);
+
+            //Add OnLine Help Action
             string helpURL = Globals.GetOnLineHelp(Configuration.ModuleControl.HelpURL, Configuration);
             if (!string.IsNullOrEmpty(helpURL))
             {
+				//Add OnLine Help menu action
                 helpAction = new ModuleAction(GetNextActionID());
                 helpAction.Title = Localization.GetString(ModuleActionType.OnlineHelp, Localization.GlobalResourceFile);
                 helpAction.CommandName = ModuleActionType.OnlineHelp;
@@ -399,8 +421,19 @@ namespace DotNetNuke.UI.Modules
             _actions.Add(action);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddMenuMoveActions Adds the Move actions to the Action Menu
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]    01/04/2008  Refactored from LoadActions
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddMenuMoveActions()
         {
+			//module movement
             _actions.Add(GetNextActionID(), "~", "", "", "", "", false, SecurityAccessLevel.Anonymous, true, false);
             var MoveActionRoot = new ModuleAction(GetNextActionID(),
                                                   Localization.GetString(ModuleActionType.MoveRoot, Localization.GlobalResourceFile),
@@ -413,7 +446,9 @@ namespace DotNetNuke.UI.Modules
                                                   SecurityAccessLevel.View,
                                                   true,
                                                   false);
-            if (Configuration != null)
+            
+			//move module up/down
+			if (Configuration != null)
             {
                 if ((Configuration.ModuleOrder != 0) && (Configuration.PaneModuleIndex > 0))
                 {
@@ -462,6 +497,8 @@ namespace DotNetNuke.UI.Modules
                                                false);
                 }
             }
+			
+			//move module to pane
             foreach (object obj in PortalSettings.ActiveTab.Panes)
             {
                 var pane = obj as string;
@@ -485,6 +522,16 @@ namespace DotNetNuke.UI.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetActionsCount gets the current number of actions
+        /// </summary>
+        /// <param name="actions">The actions collection to count.</param>
+        /// <param name="count">The current count</param>
+        /// <history>
+        ///     [cnurse]    01/04/2008  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static int GetActionsCount(int count, ModuleActionCollection actions)
         {
             foreach (ModuleAction action in actions)
@@ -492,20 +539,35 @@ namespace DotNetNuke.UI.Modules
                 if (action.HasChildren())
                 {
                     count += action.Actions.Count;
+
+                    //Recursively call to see if this collection has any child actions that would affect the count
                     count = GetActionsCount(count, action.Actions);
                 }
             }
             return count;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadActions loads the Actions collections
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]    01/19/2006  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void LoadActions(HttpRequest request)
         {
             _actions = new ModuleActionCollection();
             int maxActionId = Null.NullInteger;
+
+            //check if module Implements Entities.Modules.IActionable interface
             var actionable = _moduleControl as IActionable;
             if (actionable != null)
             {
                 ModuleActionCollection moduleActions = actionable.ModuleActions;
+
                 foreach (ModuleAction action in moduleActions)
                 {
                     if (ModulePermissionController.HasModuleAccess(action.Secure, "CONTENT", Configuration))
@@ -522,6 +584,8 @@ namespace DotNetNuke.UI.Modules
                     }
                 }
             }
+			
+            //Make sure the Next Action Id counter is correct
             int actionCount = GetActionsCount(_actions.Count, _actions);
             if (_nextActionId < maxActionId)
             {
@@ -533,6 +597,7 @@ namespace DotNetNuke.UI.Modules
             }
             if (!string.IsNullOrEmpty(Configuration.DesktopModule.BusinessControllerClass))
             {
+				//check if module implements IPortable interface, and user has Admin permissions
                 if (Configuration.DesktopModule.IsPortable)
                 {
                     if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "EXPORT", Configuration))
@@ -569,13 +634,18 @@ namespace DotNetNuke.UI.Modules
                     AddSyndicateAction();
                 }
             }
+			
+            //help module actions available to content editors and administrators
             string permisisonList = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE";
             if (Configuration.ModuleID > Null.NullInteger && ModulePermissionController.HasModulePermission(Configuration.ModulePermissions, permisisonList) && request.QueryString["ctl"] != "Help")
             {
                 AddHelpActions();
             }
+			
+			//Add Print Action
             if (Configuration.DisplayPrint)
             {
+				//print module action available to everyone
                 AddPrintAction();
             }
             if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Host, "MANAGE", Configuration))
@@ -633,6 +703,8 @@ namespace DotNetNuke.UI.Modules
                                  SecurityAccessLevel.View,
                                  true,
                                  false);
+								 
+					//module movement
                     AddMenuMoveActions();
                 }
             }
@@ -641,7 +713,7 @@ namespace DotNetNuke.UI.Modules
             {
                 if (!UIUtilities.IsLegacyUI(ModuleId, action.ControlKey, PortalId) && action.Url.Contains("ctl"))
                 {
-                    action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings);
+                    action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings, true);
                 }
             }
         }
@@ -684,21 +756,35 @@ namespace DotNetNuke.UI.Modules
                 ModuleIdParam = string.Format("mid={0}", Configuration.ModuleID);
             }
 
+            string url;
+            string[] parameters;
             if (!string.IsNullOrEmpty(KeyName) && !string.IsNullOrEmpty(KeyValue))
             {
-                var parameters = new string[2 + AdditionalParameters.Length];
+                parameters = new string[2 + AdditionalParameters.Length];
                 parameters[0] = ModuleIdParam;
                 parameters[1] = string.Format("{0}={1}", KeyName, KeyValue);
                 Array.Copy(AdditionalParameters, 0, parameters, 2, AdditionalParameters.Length);
-                return Globals.NavigateURL(PortalSettings.ActiveTab.TabID, key, parameters);
             }
             else
             {
-                var parameters = new string[1 + AdditionalParameters.Length];
+                parameters = new string[1 + AdditionalParameters.Length];
                 parameters[0] = ModuleIdParam;
                 Array.Copy(AdditionalParameters, 0, parameters, 1, AdditionalParameters.Length);
-                return Globals.NavigateURL(PortalSettings.ActiveTab.TabID, key, parameters);
+
             }
+
+            url = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, key, parameters);
+
+            // Making URLs call popups
+            if (PortalSettings.EnablePopUps)
+            {
+                if (!UIUtilities.IsLegacyUI(ModuleId, ControlKey, PortalId) && (url.Contains("ctl")))
+                {
+                    url = "javascript:" + UrlUtils.PopUpUrl(url, null, PortalSettings, false);
+                }
+            }
+
+            return url;
         }
 
         public int GetNextActionID()

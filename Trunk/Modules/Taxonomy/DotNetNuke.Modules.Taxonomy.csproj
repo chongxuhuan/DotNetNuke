@@ -134,6 +134,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="license.txt" />
+    <Content Include="module.css" />
     <Content Include="releaseNotes.txt" />
     <Content Include="taxonomy.gif" />
     <Content Include="Views\Controls\EditTermControl.ascx" />

@@ -1,27 +1,5 @@
-﻿/* 
- * Deprecated DNN CSS class names will remain available for some time
- * before being  permanently removed. Removal will occur according to
- * the  following process:
- *
- * 1. Removal will only occur with a major (x.y) release, never
- *    with a maintenance (x.y.z) release.
- * 2. Removal will not occur less than six months after the release
- *    when it was deprecated.
- * 3. Removal will not occur until after deprecation has been noted 
- *    in at least two major releases.
- *
- *                                              |        |Planned |
- *  Name                                        |Release |Removal |
- *----------------------------------------------+--------+--------+
- * Mod{NAME}C                                     5.6.2    6.2
- *   {NAME} = sanitized version of the DesktopModule Name 
- *   Used on <div> tag surrounding Module Content, inside container
- *----------------------------------------------+--------+--------+
- */
- 
 /* background color for the content part of the pages */
 body, html{background:#fff;margin:0;padding:0;font-family:Helvetica, Arial, Verdana, sans-serif;border:0;font-size:12px;vertical-align:baseline;}
-
 /* styles for LANGUAGE skinobject */
 .language-object {white-space:nowrap;overflow:visible;vertical-align:middle;margin:0px;line-height:0.5;}
 .language-object .Language {display:inline;float:left;margin:0 2px;text-align:center;vertical-align:middle;}
@@ -41,7 +19,6 @@ body, html{background:#fff;margin:0;padding:0;font-family:Helvetica, Arial, Verd
 h1, h2{font: #664 normal 20px}
 h3, h4{font: #036 normal 12px}
 h5, h6, dt{font: #036 bold 11px}
-
 tfoot, thead{font-size:12px;color:#036;}
 th{vertical-align:baseline;font-size:12px;font-weight:bold;color:#036;}
 img{border:none;}
@@ -73,8 +50,7 @@ blockquote, pre{font-family:Lucida Console, monospace;}
 .MainMenu_MenuArrow{font-family:webdings;font-size:10px;cursor:pointer;border-right:#fff 1px solid;border-bottom:#fff 1px solid;border-top:#fff 0px solid;}
 .MainMenu_RootMenuArrow{font-family:webdings;font-size:10px;cursor:pointer;}
 
-/*.LabelEditOverClass{cursor: pointer;text-decoration: underline overline;}
-*/
+/*.LabelEditOverClass{cursor: pointer;text-decoration: underline overline;}*/
 .LabelEditTextClass{border:solid 1px red;background-color:transparent;}
 .LabelEditWorkClass{/*background: url(/DotNetNuke/images/dnnanim.gif) no-repeat right;*/border:solid 0px red;background-color:transparent;}
 
@@ -92,7 +68,7 @@ blockquote, pre{font-family:Lucida Console, monospace;}
 .eipborderhover{border:outset 1px;}
 
 /* used to collapse panes without any content in them */
-.DNNEmptyPane{width:0px;}
+.DNNEmptyPane{/*width:0px;border:none;border-collapse:collapse;line-height:0;font-size:0;margin:0;padding:0;*/display:none;}
 
 /* used to set the different module align options - from module settings */
 .DNNAlignleft{text-align:left;}
@@ -117,7 +93,7 @@ div.SearchIcon img{margin-top:3px;}
 #SearchChoices li.searchHilite{background-color:#ddf;border:solid 1px #aaf;}
 #SearchChoices li.searchDefault{background-color:#eee;border:solid 1px #eee;}
 
-#floater{padding-right:0px;padding-left:0px;background:#fff;visibility:hidden;padding-bottom:0px;margin:0px;width:150px;color:#fff;padding-top:0px;position:absolute;height:auto;}
+#floater{padding:0;background:#fff;visibility:hidden;margin:0px;width:150px;color:#fff;position:absolute;height:auto;}
 #tablist {width:120px;margin:0;padding-bottom:10px;float:left;}
 
 .dashboardPanel {margin-left:120px;padding:0 10px 10px 10px;}
@@ -153,24 +129,21 @@ div.SearchIcon img{margin-top:3px;}
 .vertical ul.tags li.add-tags{list-style-image:none;}
 .vertical ul.tags li.add-tags img{vertical-align:middle;}
 
-
 /*  === Common Reusable Selectors === */
 
-.dnnForm{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}
-	.dnnForm h2.dnnFormSectionHead{margin:0.5em auto 0.6em;padding:0;letter-spacing:-0.03em;font-weight:bold;border-bottom:1px #ccc solid;font-size:120%;}
+.dnnForm{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;}
+	.dnnForm h2.dnnFormSectionHead{margin:0.5em auto 0.6em;padding:0;letter-spacing:-0.03em;font-weight:bold;border-bottom:1px #ccc solid;font-size:120%;text-align:left}
 		.dnnForm h2.dnnFormSectionHead a, .dnnForm h2.dnnFormSectionHead a:visited{display:block;text-decoration:none;padding:0.4em 0.8em;color:#000;font-size:1.2em;letter-spacing:-0.03em;font-weight:bold;background:url(../../images/down-icn.png) no-repeat 98% center;display:block}
 			.dnnForm h2.dnnFormSectionHead a:hover{background:#f1f1f1 url(../../images/down-icn.png) no-repeat 98% center;}
-		.dnnForm h2.dnnFormSectionHead a.dnnSectionExpanded{background:url(../../images/up-icn.png) no-repeat 98% center;}
+		.dnnForm h2.dnnFormSectionHead a.dnnSectionExpanded{background:url(../../images/up-icn.png) no-repeat 98% center;text-align:left}
 			.dnnForm h2.dnnFormSectionHead a.dnnSectionExpanded:hover{background:#f1f1f1 url(../../images/up-icn.png) no-repeat 98% center;}
 		.dnnForm .dnnFormExpandContent{position:absolute;top:-35px;right:0;}
 			.dnnForm .dnnFormExpandContent a{font-weight:bold;}
-		
-		.dnnForm .dnnFormItem span.CommandButton input{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
-		
-	.dnnForm .dnnFormItem{padding:4px 6px;clear:both;line-height:1.8;min-height:1.8em;position:relative;}
+		.dnnForm .dnnFormItem span.CommandButton input{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}	
+	.dnnForm .dnnFormItem{padding:4px 6px;clear:both;line-height:1.8;min-height:1.8em;position:relative;text-align:left;}
 		.dnnForm .dnnFormItem label a span{line-height:1.4;}
 	.dnnForm .dnnFormItem:after{clear:both;content:".";display:block;height:0;visibility:hidden;font-size:0;}
-	.dnnForm fieldset{display:block;padding:1em 0;border:none;margin:0;}
+	.dnnForm fieldset{display:block;padding:1em 0;border:none;margin:0;text-align:left;}
 	.dnnFormItem label, .dnnFormItem .dnnFormLabel{display:block;width:24%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
 		.dnnForm .dnnFormSecondItem label{float:none;}
 	.dnnFormItem input, .dnnFormItem .dnnFormInput, .dnnFormItem textarea{float:left;-moz-border-radius:3px;border-radius:3px;padding:5px;background:#fffff5;-moz-box-shadow:inset 0 0 3px 3px #fffbe1;-webkit-box-shadow:inset 0 0 3px 3px #fffbe1;box-shadow:inset 0 0 3px 3px #fffbe1;border-color:#bcb691;border-width:1px;margin:0;width:auto;}
@@ -185,16 +158,19 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnForm .dnnFormItem a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
 		.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 		.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
+	
+	.aspNetDisabled, a.aspNetDisabled, .dnnDisabled, a.dnnDisabled{color:#ccc;cursor:not-allowed;text-decoration:none;}
 				
-	.dnnFormMessage{-moz-border-radius:4px;border-radius:4px;padding:10px 10px 10px 40px;line-height:1.4;margin:1em;}
+	.dnnFormMessage{-moz-border-radius:3px;border-radius:3px;padding:10px 10px 10px 40px;line-height:1.4;margin:0.5em 1em;}
 		.dnnFormMessage span{float:none;padding:0;width:100%;text-align:left;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);}
-			.dnnFormWarning{background:#feffce url(../../images/warning-icn.png) no-repeat 10px center;border:1px #cdb21f solid;color:#41370C;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);}
-			.dnnFormValidationSummary{background:#f7eaea url(../../images/error-icn.png) no-repeat 10px center;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);color:#900;border:1px #df4a40 solid;}
+			.dnnFormWarning{background:#feffce url(../../images/warning-icn.png) no-repeat 10px center;border:2px #cdb21f solid;color:#41370C;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);}
+			.dnnFormValidationSummary{background:#f7eaea url(../../images/error-icn.png) no-repeat 10px center;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);color:#900;border:2px #df4a40 solid;}
 			.dnnFormError{color:#fff !important;background:url(../../images/errorbg.gif) no-repeat left center;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);padding:5px 20px;}
-				.dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:50%;top:0.5em;z-index:9999;}
-			.dnnFormSuccess{background:#ecffeb url(../../images/success-icn.png) no-repeat 10px center;border:1px #64b657 solid;color:#358927}
-		.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 1px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;-moz-border-radius:4px;border-radius:4px;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
-		.dnnFormItem label.dnnFormLabel, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent, .dnnFormItem .dnnFormHelpContent{left:6em;top:2.5em;max-width:30em;position:absolute;z-index:3;}
+				.dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:50%;top:0;z-index:9999;}
+			.dnnFormSuccess{background:#ecffeb url(../../images/success-icn.png) no-repeat 10px center;border:2px #64b657 solid;color:#358927}
+			.dnnFormInfo{background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);}
+		.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #fff;filter:dropshadow(color=#fff, offx=1, offy=1);font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
+		.dnnFormItem label.dnnFormLabel, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent, .dnnFormItem .dnnFormHelpContent{left:15em;bottom:2.5em;max-width:30em;position:absolute;z-index:3;}
 			.dnnFormHelpContent.dnnClear, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent.dnnClear, .dnnFormItem label .dnnFormHelpContent.dnnClear{line-height:1.4;text-align:left;}
 
 	.dnnForm .dnnFormItem.dnnFormHelp, .dnnFormItem.dnnFormHelp{clear:both;overflow:hidden;width:100%;padding:0;}
@@ -205,34 +181,31 @@ div.SearchIcon img{margin-top:3px;}
 		*+html .dnnClear{min-height:1%;}
 	
 	.dnnForm input[type=checkbox]{margin-top:5px;width:auto;}
-	.dnnForm input[type=radio]{margin-top:6px;width:auto;}
+	.dnnForm input[type=radio]{margin-top:4px;width:auto;}
 	
 	ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
 		ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
 		ul.dnnActions li{overflow:hidden;display:block;float:left;}
 		ul.dnnActions li a{padding:0 1.2em;display:block;float:left;line-height:2.5;}
 	ul.dnnActions input{display:none}	
-	a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited{background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius:4px;border-radius:4px;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);color:#fff;text-decoration:none;font-weight:bold;border-color:#fff}
+	a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited{background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);color:#fff;text-decoration:none;font-weight:bold;border-color:#fff}
 		a.dnnPrimaryAction:hover, a.dnnPrimaryAction:visited:hover{background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
 	a.dnnSecondaryAction, a.dnnSecondaryAction:link{font-weight:bold;text-decoration:none;padding:0 1em;}
-		a.dnnSecondaryAction:hover, a.dnnSecondaryAction:visited:hover{text-decoration:underline}
-
+		a.dnnSecondaryAction:hover, a.dnnSecondaryAction:visited:hover{text-decoration:underline;background:none;color:inherit;}
 	.dnnForm.ui-widget-content a.dnnPrimaryAction{color:#fff;}
 	
 /*  === End Common Reusable Selectors === */
 
 
 /*  === Url Control === */
-
-	.urlControlLinkType{}
-		.urlControlLinkType span, .dnnFormItem .urlControlLinkType span{display:block;float:none;text-align:left;}
+	.urlControlLinkType{width:auto;}
+		.urlControlLinkType span, .dnnFormItem .urlControlLinkType span{display:block;float:none;text-align:left;width:auto;}
 		.dnnFormItem .ucLinkTypeRadioButtons label{width:inherit;display:inline}
 		.ucLinkTypeRadioButtons{}
 			.urlControlLinkType span input{width:3%;min-width:3%;}
 			.dnnForm.dnnModuleSettings .dnnFormItem .urlControlLinkType span label{text-align:left;}
-
 	.urlControlFileRow{overflow:hidden;clear:both;}	
-
+		.urlControlFileRow span.dnnFormLabel{width:25%;text-align:right;}
 /*  === End Url Control === */
 
 .dnnGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
@@ -240,8 +213,6 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnGridAltItem{background:#f1f1f1;}
 	.dnnGrid td{padding:3px 5px;}
 		.dnnGrid td input.dnnFormInput{width:42%;}
-
-
 /*======== Legacy CSS Selectors that will be removed ============*/
 
 a.SkinObject:link, a.SkinObject:visited, a.SkinObject:hover, a.SkinObject:active{text-decoration:none;color:#036;}
@@ -278,8 +249,8 @@ textarea.NormalTextBox{width:300px;height:60px;}
 .DataGrid_AlternatingItem{background:#fff;color:Red;font-size:10px;font-weight:normal;}
 .DataGrid_Container{background:transparent;}
 .DataGrid_Footer{background:#fff;}
-.DataGrid_Header{background:transparent;color:#fff;font-size:10px;font-weight:bold;text-align:center;}
-.DataGrid_Item{background:transparent;color:#fff;font-size:10px;font-weight:normal;}
+.DataGrid_Header{background:transparent;color:#000;font-size:10px;font-weight:bold;text-align:center;}
+.DataGrid_Item{background:transparent;color:#000;font-size:10px;font-weight:normal;}
 .DataGrid_SelectedItem{background-color:Silver;color:Blue;font-size:10px;font-weight:normal;}
 
 /* stlyes used by DNNGrids */

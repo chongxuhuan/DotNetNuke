@@ -48,6 +48,8 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class SkinControlPackageWriter : PackageWriterBase
     {
+		#region "Constructors"
+		
         public SkinControlPackageWriter(PackageInfo package) : base(package)
         {
             SkinControl = SkinControlController.GetSkinControlByPackageID(package.PackageID);
@@ -65,16 +67,24 @@ namespace DotNetNuke.Services.Installer.Writers
         public SkinControlPackageWriter(XPathNavigator manifestNav, InstallerInfo installer)
         {
             SkinControl = new SkinControlInfo();
+
+            //Create a Package
             Package = new PackageInfo(installer);
+
             ReadLegacyManifest(manifestNav, true);
+
             Package.Description = Null.NullString;
             Package.Version = new Version(1, 0, 0);
             Package.PackageType = "SkinObject";
             Package.License = Util.PACKAGE_NoLicense;
+
             BasePath = Path.Combine("DesktopModules", Package.Name.ToLower()).Replace("/", "\\");
             AppCodePath = Path.Combine("App_Code", Package.Name.ToLower()).Replace("/", "\\");
         }
+		
+		#endregion
 
+		#region "Public Properties"
 		/// -----------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the associated SkinControl
@@ -85,14 +95,19 @@ namespace DotNetNuke.Services.Installer.Writers
 		/// </history>
 		/// -----------------------------------------------------------------------------
         public SkinControlInfo SkinControl { get; set; }
+		
+		#endregion
 
         private void ReadLegacyManifest(XPathNavigator legacyManifest, bool processModule)
         {
             XPathNavigator folderNav = legacyManifest.SelectSingleNode("folders/folder");
+
             if (processModule)
             {
                 Package.Name = Util.ReadElement(folderNav, "name");
                 Package.FriendlyName = Package.Name;
+
+                //Process legacy controls Node
                 foreach (XPathNavigator controlNav in folderNav.Select("modules/module/controls/control"))
                 {
                     SkinControl.ControlKey = Util.ReadElement(controlNav, "key");
@@ -104,24 +119,38 @@ namespace DotNetNuke.Services.Installer.Writers
                     }
                 }
             }
+			
+            //Process legacy files Node
             foreach (XPathNavigator fileNav in folderNav.Select("files/file"))
             {
                 string fileName = Util.ReadElement(fileNav, "name");
                 string filePath = Util.ReadElement(fileNav, "path");
+
                 AddFile(Path.Combine(filePath, fileName), fileName);
             }
+			
+            //Process resource file Node
             if (!string.IsNullOrEmpty(Util.ReadElement(folderNav, "resourcefile")))
             {
                 AddFile(Util.ReadElement(folderNav, "resourcefile"));
             }
         }
 
+		#region "Protected Methods"
+		
         protected override void WriteManifestComponent(XmlWriter writer)
         {
+			//Start component Element
             writer.WriteStartElement("component");
             writer.WriteAttributeString("type", "SkinObject");
+
+            //Write SkinControl Manifest
             CBO.SerializeObject(SkinControl, writer);
+
+            //End component Element
             writer.WriteEndElement();
         }
+		
+		#endregion
     }
 }

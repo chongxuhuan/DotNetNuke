@@ -1272,9 +1272,9 @@ BEGIN
 
     DECLARE @NumOnline int
     SELECT  @NumOnline = COUNT(*)
-    FROM    dbo.aspnet_Users u(NOLOCK),
-            dbo.aspnet_Applications a(NOLOCK),
-            dbo.aspnet_Membership m(NOLOCK)
+    FROM    dbo.aspnet_Users u WITH (NOLOCK),
+            dbo.aspnet_Applications a WITH (NOLOCK),
+            dbo.aspnet_Membership m WITH (NOLOCK)
     WHERE   u.ApplicationId = a.ApplicationId                  AND
             LastActivityDate > @DateActive                     AND
             a.LoweredApplicationName = LOWER(@ApplicationName) AND

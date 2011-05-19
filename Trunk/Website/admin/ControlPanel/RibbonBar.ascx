@@ -96,8 +96,8 @@
     </asp:Panel>
 </asp:Panel>
 <dnn:DnnWindowManager ID="DnnWindowManager1" runat="server" />
-<%--<link rel="Stylesheet" href='<%= ResolveUrl("~/admin/ControlPanel/module.css") %>' type="text/css" />--%>
 <script type="text/javascript">
+    $(document).ready(function () {
         $('.dnnCPContent').dnnTabs();
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -120,4 +120,5 @@
             noText: noText,
             title: titleText
         });
+	});
 </script>

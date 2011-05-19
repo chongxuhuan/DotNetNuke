@@ -11,7 +11,7 @@
 
 <script language="javascript" type="text/javascript">
     function setUpDnnManageUsers() {
-        $('#dnnManageUsers').dnnTabs().dnnPanels();
+        $('#dnnManageUsers').dnnTabs();
     }
 
     $(document).ready(function () {
@@ -71,7 +71,7 @@
     </div>
 </div>
 <ul id="actionsRow" runat="server" visible="false" class="dnnActions dnnClear">
-    <li><asp:LinkButton id="cmdRegister" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdRegister" /></li>
+    <li><asp:LinkButton id="cmdRegister" runat="server" CssClass="dnnPrimaryAction" /></li>
     <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" CausesValidation="false" /></li>
     <li><asp:LinkButton id="cmdLogin" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdLogin" Visible="false" /></li>
 </ul>  

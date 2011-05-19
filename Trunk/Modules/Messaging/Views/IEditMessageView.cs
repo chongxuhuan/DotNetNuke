@@ -36,6 +36,7 @@ namespace DotNetNuke.Modules.Messaging.Views
 {
     public interface IEditMessageView : IModuleView<EditMessageModel>
     {
+
         void BindMessage(Message message);
 
         void ShowInvalidUserError();
@@ -44,10 +45,10 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         void HideDeleteButton();
 
-        event EventHandler Cancel;
         event EventHandler Delete;
         event EventHandler SaveDraft;
         event EventHandler SendMessage;
         event EventHandler ValidateUser;
+
     }
 }

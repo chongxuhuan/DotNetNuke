@@ -84,13 +84,15 @@ namespace DotNetNuke.Web.UI.WebControls
         #endregion
 
         #region "Controls"
-
+		
+		//Files
         private DropDownList cboFiles;
         private DropDownList cboFolders;
         private CommandButton cmdCancel;
         private CommandButton cmdSave;
         private CommandButton cmdUpload;
         private HtmlTableCell commandCell;
+		//Command Row
         private HtmlTableRow commandRow;
         private HtmlTableCell fileCell;
         private HtmlTableRow fileRow;
@@ -103,6 +105,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
         private Label lblMessage;
         private HtmlTableCell messageCell;
+		//messages
         private HtmlTableRow messageRow;
         private HtmlTableCell preViewCell;
         private HtmlInputFile txtFile;

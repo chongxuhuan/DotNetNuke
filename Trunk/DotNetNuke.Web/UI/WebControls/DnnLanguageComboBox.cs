@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
@@ -49,6 +50,14 @@ namespace DotNetNuke.Web.UI.WebControls
         private DnnComboBox _nativeCombo;
 
         private string _originalValue;
+
+        protected override HtmlTextWriterTag TagKey
+        {
+            get
+            {
+                return HtmlTextWriterTag.Div;
+            }
+        }
 
         #region "Public Events"
 

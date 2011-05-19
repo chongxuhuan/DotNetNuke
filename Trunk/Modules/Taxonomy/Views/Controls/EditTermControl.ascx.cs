@@ -35,15 +35,17 @@ using DotNetNuke.Entities.Content.Taxonomy;
 
 namespace DotNetNuke.Modules.Taxonomy.Views.Controls
 {
+
     public partial class EditTermControl : UserControl
     {
-        #region "Public Properties"
+
+        #region Public Properties
 
         public string LocalResourceFile { get; set; }
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         public void BindTerm(Term term, IEnumerable<Term> terms, bool isHeirarchical, bool loadFromControl, bool editEnabled)
         {
@@ -62,7 +64,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
                 descriptionTextBox.Text = term.Description;
 
                 //Remove this term (and its descendants) from the collection, so we don't get wierd heirarchies
-                List<Term> termsList = (from t in terms where !(t.Left >= term.Left && t.Right <= term.Right) select t).ToList();
+                var termsList = (from t in terms where !(t.Left >= term.Left && t.Right <= term.Right) select t).ToList();
 
                 parentTermCombo.DataSource = termsList;
                 parentTermCombo.DataBind();
@@ -72,7 +74,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
                     parentTermCombo.FindItemByValue(term.ParentTermId.ToString()).Selected = true;
                 }
 
-                parentTermRow.Visible = isHeirarchical && termsList.Count > 0;
+                divParentTerm.Visible = isHeirarchical && termsList.Count > 0;
                 nameTextBox.Enabled = editEnabled;
                 descriptionTextBox.Enabled = editEnabled;
                 parentTermCombo.Enabled = editEnabled;
@@ -80,5 +82,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
         }
 
         #endregion
+
     }
 }

@@ -55,15 +55,9 @@ namespace DotNetNuke.Services.FileSystem
 
         public FolderMappingInfo GetDefaultFolderMapping(int portalID)
         {
-            foreach (var folderMapping in GetFolderMappings(portalID))
-            {
-                if (folderMapping.FolderProviderType == Config.GetDefaultProvider("folder").Name)
-                {
-                    return folderMapping;
-                }
-            }
-
-            return null;
+            return Config.GetSection("folder") != null ? 
+                GetFolderMappings(portalID).Find(fm => fm.FolderProviderType == Config.GetDefaultProvider("folder").Name) : 
+                GetFolderMapping(portalID, "Standard");
         }
 
         public int AddFolderMapping(FolderMappingInfo objFolderMapping)

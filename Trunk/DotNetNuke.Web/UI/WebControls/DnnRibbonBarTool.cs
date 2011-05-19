@@ -143,10 +143,11 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             get
             {
-                if (((_allTools == null)))
+                if (_allTools == null)
                 {
                     _allTools = new Dictionary<string, RibbonBarToolInfo>
                                     {
+										//Framework
                                         {"PageSettings", new RibbonBarToolInfo("PageSettings", false, false, "", "", "", true)},
                                         {"CopyPage", new RibbonBarToolInfo("CopyPage", false, false, "", "", "", true)},
                                         {"DeletePage", new RibbonBarToolInfo("DeletePage", false, true, "", "", "", true)},
@@ -156,11 +157,12 @@ namespace DotNetNuke.Web.UI.WebControls
                                         {"CopyPermissionsToChildren", new RibbonBarToolInfo("CopyPermissionsToChildren", false, true, "", "", "", false)},
                                         {"CopyDesignToChildren", new RibbonBarToolInfo("CopyDesignToChildren", false, true, "", "", "", false)},
                                         {"Help", new RibbonBarToolInfo("Help", false, false, "_Blank", "", "", false)},
+										//Modules On Tabs
                                         {"Console", new RibbonBarToolInfo("Console", false, false, "", "Console", "", false)},
                                         {"HostConsole", new RibbonBarToolInfo("HostConsole", true, false, "", "Console", "", false)},
-                                        {"UploadFile", new RibbonBarToolInfo("UploadFile", false, false, "", "File Manager", "Edit", false)},
-                                        {"NewRole", new RibbonBarToolInfo("NewRole", false, false, "", "Security Roles", "Edit", false)},
-                                        {"NewUser", new RibbonBarToolInfo("NewUser", false, false, "", "User Accounts", "Edit", false)}
+                                        {"UploadFile", new RibbonBarToolInfo("UploadFile", false, false, "", "File Manager", "Edit", true)},
+                                        {"NewRole", new RibbonBarToolInfo("NewRole", false, false, "", "Security Roles", "Edit", true)},
+                                        {"NewUser", new RibbonBarToolInfo("NewUser", false, false, "", "User Accounts", "Edit", true)}
                                     };
                 }
 
@@ -288,7 +290,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         //create popup event 
                         else if (ToolInfo.ShowAsPopUp && PortalSettings.EnablePopUps)
                         {
-                            DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings));
+                            DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true));
                         }
                     }
 

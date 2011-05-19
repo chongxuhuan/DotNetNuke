@@ -184,6 +184,7 @@ namespace DotNetNuke.Entities.Modules
             {
                 var controller = new DesktopModuleController();
                 controller.DeleteDesktopModule(desktopModule.DesktopModuleID);
+                //Delete the Package
                 PackageController.DeletePackage(desktopModule.PackageID);
             }
         }

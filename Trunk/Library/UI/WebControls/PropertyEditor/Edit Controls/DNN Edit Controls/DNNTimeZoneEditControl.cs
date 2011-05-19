@@ -40,11 +40,28 @@ namespace DotNetNuke.UI.WebControls
     [Obsolete("Deprecated in DNN 6.0. Replaced by new DnnTimeZoneComboBox control and use of .NET TimeZoneInfo class")]
     public class DNNTimeZoneEditControl : IntegerEditControl
     {
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderViewMode renders the View (readonly) mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	05/02/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderViewMode(HtmlTextWriter writer)
         {
             PortalSettings _portalSettings = Globals.GetPortalSettings();
+
+            //For convenience create a DropDownList to use
             var cboTimeZones = new DropDownList();
+
+            //Load the List with Time Zones
             Localization.LoadTimeZoneDropDownList(cboTimeZones, ((PageBase) Page).PageCulture.Name, Convert.ToString(_portalSettings.TimeZoneOffset));
+
+            //Select the relevant item
             if (cboTimeZones.Items.FindByValue(StringValue) != null)
             {
                 cboTimeZones.ClearSelection();
@@ -56,34 +73,62 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderEndTag();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/27/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             PortalSettings _portalSettings = Globals.GetPortalSettings();
+
+            //For convenience create a DropDownList to use
             var cboTimeZones = new DropDownList();
+
+            //Load the List with Time Zones
             Localization.LoadTimeZoneDropDownList(cboTimeZones, ((PageBase) Page).PageCulture.Name, Convert.ToString(_portalSettings.TimeZoneOffset));
+
+            //Select the relevant item
             if (cboTimeZones.Items.FindByValue(StringValue) != null)
             {
                 cboTimeZones.ClearSelection();
                 cboTimeZones.Items.FindByValue(StringValue).Selected = true;
             }
+			
+            //Render the Select Tag
             ControlStyle.AddAttributesToRender(writer);
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
             writer.RenderBeginTag(HtmlTextWriterTag.Select);
+
             for (int I = 0; I <= cboTimeZones.Items.Count - 1; I++)
             {
                 string timeZoneValue = cboTimeZones.Items[I].Value;
                 string timeZoneName = cboTimeZones.Items[I].Text;
                 bool isSelected = cboTimeZones.Items[I].Selected;
+
+                //Add the Value Attribute
                 writer.AddAttribute(HtmlTextWriterAttribute.Value, timeZoneValue);
+
                 if (isSelected)
                 {
+					//Add the Selected Attribute
                     writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
                 }
+				
+                //Render Option Tag
                 writer.RenderBeginTag(HtmlTextWriterTag.Option);
                 writer.Write(timeZoneName.PadRight(100).Substring(0, 50));
                 writer.RenderEndTag();
             }
+			
+            //Close Select Tag
             writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

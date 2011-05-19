@@ -2,14 +2,25 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 
-<%-- Uses the jquery template engine in tabs.js --%>
-<div id="dashboardTabs">
+<script language="javascript" type="text/javascript">
+    function setUpDashboardTabs() {
+        $('#dnnDashBoard').dnnTabs();
+    }
+
+    $(document).ready(function () {
+        setUpDashboardTabs();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setUpDashboardTabs();
+        });
+    });
+</script>
+<div class="dnnForm dnnDashBoard dnnClear" id="dnnDashBoard">
     <asp:Repeater ID="rptTabs" runat="server">
         <HeaderTemplate>
-            <ul id="tablist">
+            <ul class="dnnAdminTabNav dnnClear" id="">
         </HeaderTemplate>
         <ItemTemplate>
-            <li><a href='#<%# Eval("DashboardControlKey") %>-tab' class="dashboardTab"><%# Eval("LocalizedTitle")%></a></li>
+            <li><a href='#<%# Eval("DashboardControlKey") %>-tab'><%# Eval("LocalizedTitle")%></a></li>
         </ItemTemplate>
         <FooterTemplate>
             </ul>
@@ -17,7 +28,10 @@
     </asp:Repeater>
     <asp:Repeater ID="rptControls" runat="server">
         <ItemTemplate>
-            <div id='<%# Eval("DashboardControlKey") %>-tab' class="dashboardPanel">
+
+            <div id='<%# Eval("DashboardControlKey") %>-tab' class="dnnDashboardPanel">
+                <div class="dashboardHeader">
+                </div>
                 <asp:PlaceHolder ID="phControl" runat="server" />
             </div>
         </ItemTemplate>

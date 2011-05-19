@@ -5,12 +5,12 @@
     <fieldset>
         <div class="dnnFormItem">
             <dnn:label id="lblTrackingId" runat="server" controlname="txtTrackingId" />
-            <asp:textbox id="txtTrackingId" runat="server" />
+            <asp:textbox id="txtTrackingId" runat="server" Width="280px" />
             <asp:RequiredFieldValidator ID="valTrackingId" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtTrackingId" Display="Dynamic" resourcekey="valTrackingId" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="lblUrlParameter" runat="server" controlname="txtUrlParameter" suffix=":" />
-            <asp:textbox id="txtUrlParameter" runat="server" textmode="multiline" rows="3" />
+            <asp:textbox id="txtUrlParameter" runat="server" textmode="multiline" rows="6" Width="280px" />
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">

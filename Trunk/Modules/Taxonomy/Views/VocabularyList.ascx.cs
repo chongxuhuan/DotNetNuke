@@ -24,65 +24,70 @@
 #region Usings
 
 using System;
+using System.Web.UI.WebControls;
 
+using DotNetNuke.Common;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Web.Mvp;
 using DotNetNuke.Web.UI.WebControls;
 
-using WebFormsMvp;
+using Telerik.Web.UI;
 
+using WebFormsMvp;
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views
 {
+
     [PresenterBinding(typeof (VocabularyListPresenter))]
     public partial class VocabularyList : ModuleView<VocabularyListModel>, IVocabularyListView
     {
-        #region "Protected Methods"
+
+        #region Public Events
+
+        public event GridNeedDataSourceEventHandler GridsNeedDataSource;
+        public event GridItemEventHandler GridsItemDataBound;
+
+        #endregion
+
+        #region Protected Methods
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            addVocabularyButton.Click += addVocabularyButton_Click;
-            vocabulariesGrid.PreRender += vocabulariesGrid_PreRender;
+            vocabulariesGrid.NeedDataSource += VocabularyNeedDataSource;
+            vocabulariesGrid.ItemDataBound += VocabularyGridItemDataBound;
         }
 
         #endregion
 
-        #region "IVocabularyListView Implementation"
-
-        public event EventHandler AddVocabulary;
+        #region IVocabularyListView Implementation
 
         public void ShowAddButton(bool showButton)
         {
-            addVocabularyButton.Visible = showButton;
+            hlAddVocab.Visible = showButton;
+        }
+
+        public void Refresh()
+        {
+            hlAddVocab.NavigateUrl = Model.NewVocabUrl;
+        }
+
+        protected void VocabularyGridItemDataBound(object sender, GridItemEventArgs e)
+        {
+            GridsItemDataBound(sender, e);
+        }
+
+        protected void VocabularyNeedDataSource(object sender, GridNeedDataSourceEventArgs e)
+        {
+            GridsNeedDataSource(sender, e);
         }
 
         #endregion
 
-        #region "Event Handlers"
-
-        private void addVocabularyButton_Click(object sender, EventArgs e)
-        {
-            if (AddVocabulary != null)
-            {
-                AddVocabulary(this, e);
-            }
-        }
-
-        private void vocabulariesGrid_PreRender(object sender, EventArgs e)
-        {
-            var hyperlinkColumn = vocabulariesGrid.Columns[0] as DnnGridHyperLinkColumn;
-            if (hyperlinkColumn != null)
-            {
-                hyperlinkColumn.Visible = Model.IsEditable;
-                hyperlinkColumn.DataNavigateUrlFormatString = Model.NavigateUrlFormatString;
-            }
-        }
-
-        #endregion
     }
 }

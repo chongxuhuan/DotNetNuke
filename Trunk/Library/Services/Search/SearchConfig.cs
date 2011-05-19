@@ -34,13 +34,27 @@ using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Services.Search
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SearchConfig class provides a configuration class for Search
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	07/10/2007  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class SearchConfig
     {
+		#region "Private Members"
+
         private readonly bool _SearchIncludeCommon;
         private readonly bool _SearchIncludeNumeric;
         private readonly int _SearchMaxWordlLength;
         private readonly int _SearchMinWordlLength;
+		
+		#endregion
+
+		#region "Constructor(s)"
 
         public SearchConfig(int portalID) : this(PortalController.GetPortalSettingsDictionary(portalID))
         {
@@ -53,7 +67,20 @@ namespace DotNetNuke.Services.Search
             _SearchMaxWordlLength = GetSettingAsInteger("MaxSearchWordLength", settings, Host.SearchMaxWordlLength);
             _SearchMinWordlLength = GetSettingAsInteger("MinSearchWordLength", settings, Host.SearchMinWordlLength);
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to inlcude Common Words in the Search Index
+        /// </summary>
+        /// <remarks>Defaults to False</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool SearchIncludeCommon
         {
             get
@@ -62,6 +89,15 @@ namespace DotNetNuke.Services.Search
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to inlcude Numbers in the Search Index
+        /// </summary>
+        /// <remarks>Defaults to False</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool SearchIncludeNumeric
         {
             get
@@ -70,6 +106,15 @@ namespace DotNetNuke.Services.Search
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the maximum Search Word length to index
+        /// </summary>
+        /// <remarks>Defaults to 25</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int SearchMaxWordlLength
         {
             get
@@ -78,6 +123,15 @@ namespace DotNetNuke.Services.Search
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the maximum Search Word length to index
+        /// </summary>
+        /// <remarks>Defaults to 3</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int SearchMinWordlLength
         {
             get
@@ -85,6 +139,11 @@ namespace DotNetNuke.Services.Search
                 return _SearchMinWordlLength;
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
+
 
         private bool GetSettingAsBoolean(string key, Dictionary<string, string> settings, bool defaultValue)
         {
@@ -104,6 +163,7 @@ namespace DotNetNuke.Services.Search
             }
             catch (Exception exc)
             {
+                //we just want to trap the error as we may not be installed so there will be no Settings
                 Instrumentation.DnnLog.Error(exc);
 
             }
@@ -128,10 +188,13 @@ namespace DotNetNuke.Services.Search
             }
             catch (Exception exc)
             {
+                //we just want to trap the error as we may not be installed so there will be no Settings
                 Instrumentation.DnnLog.Error(exc);
 
             }
             return retValue;
         }
+		
+		#endregion
     }
 }

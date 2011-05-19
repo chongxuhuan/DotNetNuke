@@ -879,4 +879,7 @@
   <data name="plJQueryUIVersion.Text" xml:space="preserve">
     <value>Installed JQuery UI Version</value>
   </data>
+  <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
+    <value>Please select a skin and/or container to preview.</value>
+  </data>
 </root>

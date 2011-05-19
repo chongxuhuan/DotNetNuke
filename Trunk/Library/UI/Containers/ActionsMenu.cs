@@ -56,11 +56,17 @@ namespace DotNetNuke.UI.Containers
     /// -----------------------------------------------------------------------------
     public class ActionsMenu : Control, IActionControl
     {
+		#region "Private Members"
+
         private ActionManager _ActionManager;
         private ModuleAction _ActionRoot;
         private int _ExpandDepth = -1;
         private NavigationProvider _ProviderControl;
         private string _ProviderName = "DNNMenuNavigationProvider";
+
+		#endregion
+
+		#region "Protected Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -99,6 +105,10 @@ namespace DotNetNuke.UI.Containers
                 return _ProviderControl;
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -125,26 +135,26 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets and Sets the Path to the Script Library for the provider
- /// </summary>
- /// <returns>A String</returns>
- /// <history>
- /// 	[cnurse]	12/24/2007  created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets and Sets the Path to the Script Library for the provider
+		/// </summary>
+		/// <returns>A String</returns>
+		/// <history>
+		/// 	[cnurse]	12/24/2007  created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string PathSystemScript { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets and Sets whether the Menu should be populated from the client
- /// </summary>
- /// <returns>A Boolean</returns>
- /// <history>
- /// 	[cnurse]	12/24/2007  created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets and Sets whether the Menu should be populated from the client
+		/// </summary>
+		/// <returns>A Boolean</returns>
+		/// <history>
+		/// 	[cnurse]	12/24/2007  created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public bool PopulateNodesFromClient { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -172,6 +182,15 @@ namespace DotNetNuke.UI.Containers
 
         public event ActionEventHandler Action;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ActionManager instance for this Action control
+        /// </summary>
+        /// <returns>An ActionManager object</returns>
+        /// <history>
+        /// 	[cnurse]	12/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ActionManager ActionManager
         {
             get
@@ -184,9 +203,23 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ModuleControl instance for this Action control
+        /// </summary>
+        /// <returns>An IModuleControl object</returns>
+        /// <history>
+        /// 	[cnurse]	12/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IModuleControl ModuleControl { get; set; }
 
         #endregion
+		
+		#endregion
+
+		#region "Private Methods"
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -202,6 +235,7 @@ namespace DotNetNuke.UI.Containers
             Visible = ActionManager.DisplayControl(objNodes);
             if (Visible)
             {
+                //since we always bind we need to clear the nodes for providers that maintain their state
                 ProviderControl.ClearNodes();
                 foreach (DNNNode objNode in objNodes)
                 {
@@ -220,7 +254,6 @@ namespace DotNetNuke.UI.Containers
 		/// 	[cnurse]	12/24/2007  created
 		/// </history>
 		/// -----------------------------------------------------------------------------
-
         private void ProcessNodes(DNNNode objParent)
         {
             if (!String.IsNullOrEmpty(objParent.JSFunction))
@@ -245,10 +278,13 @@ namespace DotNetNuke.UI.Containers
         {
             try
             {
+				//--- original page set attributes ---
                 ProviderControl.StyleIconWidth = 15;
                 ProviderControl.MouseOutHideDelay = 500;
                 ProviderControl.MouseOverAction = NavigationProvider.HoverAction.Expand;
                 ProviderControl.MouseOverDisplay = NavigationProvider.HoverDisplay.None;
+
+                //style sheet settings
                 ProviderControl.CSSControl = "ModuleTitle_MenuBar";
                 ProviderControl.CSSContainerRoot = "ModuleTitle_MenuContainer";
                 ProviderControl.CSSNode = "ModuleTitle_MenuItem";
@@ -258,7 +294,9 @@ namespace DotNetNuke.UI.Containers
                 ProviderControl.CSSNodeHover = "ModuleTitle_MenuItemSel";
                 ProviderControl.CSSIndicateChildSub = "ModuleTitle_MenuArrow";
                 ProviderControl.CSSIndicateChildRoot = "ModuleTitle_RootMenuArrow";
-                if (String.IsNullOrEmpty(ProviderControl.PathSystemScript))
+                
+				//generate dynamic menu
+				if (String.IsNullOrEmpty(ProviderControl.PathSystemScript))
                 {
                     ProviderControl.PathSystemScript = Globals.ApplicationPath + "/Controls/SolpartMenu/";
                 }
@@ -269,11 +307,15 @@ namespace DotNetNuke.UI.Containers
                 ProviderControl.StyleRoot = "background-color: Transparent; font-size: 1pt;";
                 ProviderControl.NodeClick += MenuItem_Click;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
+
+		#region "Protected Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -304,6 +346,14 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnInit runs during the controls initialisation phase
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/02/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             _ProviderControl = NavigationProvider.Instance(ProviderName);
@@ -314,19 +364,51 @@ namespace DotNetNuke.UI.Containers
             Controls.Add(ProviderControl.NavigationControl);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnLoad runs during the controls load phase
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/02/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            //Add the Actions to the Action Root
             ActionRoot.Actions.AddRange(ModuleControl.ModuleContext.Actions);
+
+            //Set Menu Defaults
             SetMenuDefaults();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnPreRender runs during the controls pre-render phase
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/02/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
             BindMenu();
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MenuItem_Click handles the Menu Click event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MenuItem_Click(NavigationEventArgs args)
         {
             if (Regex.IsMatch(args.ID, "^\\d+$"))
@@ -339,10 +421,19 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProviderControl_PopulateOnDemand handles the Populate On Demand Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ProviderControl_PopulateOnDemand(NavigationEventArgs args)
         {
             SetMenuDefaults();
-            ActionRoot.Actions.AddRange(ModuleControl.ModuleContext.Actions);
+            ActionRoot.Actions.AddRange(ModuleControl.ModuleContext.Actions); //Modules how add custom actions in control lifecycle will not have those actions populated...
+
             ModuleAction objAction = ActionRoot;
             if (ActionRoot.ID != Convert.ToInt32(args.ID))
             {
@@ -352,8 +443,10 @@ namespace DotNetNuke.UI.Containers
             {
                 args.Node = Navigation.GetActionNode(args.ID, ProviderControl.ID, objAction, this);
             }
-            ProviderControl.ClearNodes();
+            ProviderControl.ClearNodes(); //since we always bind we need to clear the nodes for providers that maintain their state
             BindMenu(Navigation.GetActionNodes(objAction, args.Node, this, ExpandDepth));
         }
+		
+		#endregion
     }
 }

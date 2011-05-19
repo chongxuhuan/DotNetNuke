@@ -159,6 +159,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             {
                 h.Add(r["SettingName"], r["SettingValue"]);
             }
+			//close datareader
             if (r != null)
             {
                 r.Close();

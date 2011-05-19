@@ -36,17 +36,58 @@ using DotNetNuke.UI.Utilities;
 
 namespace DotNetNuke.UI.UserControls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// HelpButtonControl is a user control that provides all the server code to display
+    /// field level help button.
+    /// </summary>
+    /// <remarks>
+    /// To implement help, the control uses the ClientAPI interface.  In particular
+    ///  the javascript function __dnn_Help_OnClick()
+    /// </remarks>
+    /// <history>
+    /// 	[smehaffie]	12/8/2004	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class HelpButtonControl : UserControl
     {
+		#region "Private Members"
+		
         private string _HelpKey;
         private string _ResourceKey;
         protected LinkButton cmdHelp;
         protected Image imgHelp;
         protected Label lblHelp;
         protected Panel pnlHelp;
+		
+		#endregion
+		
+		#region "Public Properties"
 
-        public string ControlName { get; set; }
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ControlName is the Id of the control that is associated with the label
+        /// </summary>
+        /// <value>A string representing the id of the associated control</value>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public string ControlName { get; set; } //Associated Edit Control for this Label
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// HelpKey is the Resource Key for the Help Text
+        /// </summary>
+        /// <value>A string representing the Resource Key for the Help Text</value>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string HelpKey
         {
             get
@@ -59,6 +100,17 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// HelpText is value of the Help Text if no ResourceKey is provided
+        /// </summary>
+        /// <value>A string representing the Text</value>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string HelpText
         {
             get
@@ -69,6 +121,8 @@ namespace DotNetNuke.UI.UserControls
             {
                 lblHelp.Text = value;
                 imgHelp.AlternateText = HtmlUtils.Clean(value, false);
+				
+				//hide the help icon if the help text is ""
                 if (String.IsNullOrEmpty(value))
                 {
                     imgHelp.Visible = false;
@@ -76,6 +130,17 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ResourceKey is the Resource Key for the Help Text
+        /// </summary>
+        /// <value>A string representing the Resource Key for the Label Text</value>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ResourceKey
         {
             get
@@ -87,7 +152,22 @@ namespace DotNetNuke.UI.UserControls
                 _ResourceKey = value;
             }
         }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        ///		[jhenning]	9/6/2005	Utilizingnew EnableMinMax function
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -99,6 +179,7 @@ namespace DotNetNuke.UI.UserControls
                 DNNClientAPI.EnableMinMax(cmdHelp, pnlHelp, true, DNNClientAPI.MinMaxPersistanceType.None);
                 if (String.IsNullOrEmpty(_HelpKey))
                 {
+					//Set Help Key to the Resource Key plus ".Help"
                     _HelpKey = _ResourceKey + ".Help";
                 }
                 string helpText = Localization.GetString(_HelpKey, this);
@@ -107,7 +188,7 @@ namespace DotNetNuke.UI.UserControls
                     HelpText = helpText;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -117,5 +198,7 @@ namespace DotNetNuke.UI.UserControls
         {
             pnlHelp.Visible = true;
         }
+		
+		#endregion
     }
 }

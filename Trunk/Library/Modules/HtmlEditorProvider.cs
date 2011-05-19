@@ -44,7 +44,8 @@ namespace DotNetNuke.Modules.HTMLEditorProvider
         public abstract Unit Width { get; set; }
         public abstract Unit Height { get; set; }
 
-        public static HtmlEditorProvider Instance()
+        //return the provider
+		public static HtmlEditorProvider Instance()
         {
             return ComponentFactory.GetComponent<HtmlEditorProvider>();
         }

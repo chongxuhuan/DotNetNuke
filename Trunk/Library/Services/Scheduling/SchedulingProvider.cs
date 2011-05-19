@@ -39,6 +39,8 @@ namespace DotNetNuke.Services.Scheduling
 {
     public enum EventName
     {
+		//do not add APPLICATION_END
+        //it will not reliably complete
         APPLICATION_START
     }
 
@@ -70,6 +72,7 @@ namespace DotNetNuke.Services.Scheduling
         REQUEST_METHOD = 2
     }
 
+    //set up our delegates so we can track and react to events of the scheduler clients
     public delegate void WorkStarted(SchedulerClient objSchedulerClient);
 
     public delegate void WorkProgressing(SchedulerClient objSchedulerClient);
@@ -78,12 +81,16 @@ namespace DotNetNuke.Services.Scheduling
 
     public delegate void WorkErrored(SchedulerClient objSchedulerClient, Exception objException);
 
+
     public abstract class SchedulingProvider
     {
+		
         private static bool _Debug;
         private static int _MaxThreads;
         private readonly string _providerPath;
         public EventName EventName;
+		
+		
 
         public SchedulingProvider()
         {
@@ -101,6 +108,8 @@ namespace DotNetNuke.Services.Scheduling
                 _MaxThreads = 1;
             }
         }
+		
+		
 
         public static bool Debug
         {
@@ -201,6 +210,7 @@ namespace DotNetNuke.Services.Scheduling
                 return Host.SchedulerMode;
             }
         }
+		
 
         public virtual Dictionary<string, string> Settings
         {
@@ -215,6 +225,7 @@ namespace DotNetNuke.Services.Scheduling
             return ComponentFactory.GetComponent<SchedulingProvider>();
         }
 
+		
         public abstract void Start();
 
         public abstract void ExecuteTasks();
@@ -265,6 +276,8 @@ namespace DotNetNuke.Services.Scheduling
 
         public virtual void RunScheduleItemNow(ScheduleItem objScheduleItem)
         {
+			//Do Nothing
         }
+		
     }
 }

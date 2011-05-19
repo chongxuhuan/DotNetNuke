@@ -60,6 +60,18 @@ using DotNetNuke.Web.UI.WebControls.Extensions;
 
 namespace DotNetNuke.Modules.Admin.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ModuleSettingsPage PortalModuleBase is used to edit the settings for a 
+    /// module.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/18/2004	documented
+    /// 	[cnurse]	10/19/2004	modified to support custm module specific settings
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ModuleSettingsPage : PortalModuleBase
     {
 
@@ -119,6 +131,16 @@ namespace DotNetNuke.Modules.Admin.Modules
 
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData loads the settings from the Database
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/18/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             if (Module != null)
@@ -148,6 +170,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                 chkAllTabs.Checked = Module.AllTabs;
                 cboVisibility.SelectedIndex = (int)Module.Visibility;
                 chkAdminBorder.Checked = Settings["hideadminborder"] != null ? bool.Parse(Settings["hideadminborder"].ToString()) : false;
+
                 if (!IsPostBack)
                 {
                     BindInstalledOnPagesData();
@@ -164,12 +187,16 @@ namespace DotNetNuke.Modules.Admin.Modules
                     txtCacheDuration.Text = Module.CacheTime.ToString();
                 }
                 BindModuleCacheProviderList();
+
                 ShowCacheRows();
+
                 cboAlign.Items.FindByValue(Module.Alignment).Selected = true;
                 txtColor.Text = Module.Color;
                 txtBorder.Text = Module.Border;
+
                 txtHeader.Text = Module.Header;
                 txtFooter.Text = Module.Footer;
+
                 if (!Null.IsNull(Module.StartDate))
                 {
                     txtStartDate.Text = Module.StartDate.ToShortDateString();
@@ -224,6 +251,7 @@ namespace DotNetNuke.Modules.Admin.Modules
         private void BindInstalledOnPagesData()
         {
             lblInstalledOn.HelpText = Localization.GetString("InstalledOn.Help", LocalResourceFile);
+
             var tabsByModule = TabCtrl.GetTabsByModuleID(_moduleId);
             tabsByModule.Remove(TabId);
             if ((tabsByModule.Count == 0))
@@ -332,6 +360,8 @@ namespace DotNetNuke.Modules.Admin.Modules
             
             var objModules = new ModuleController();
             ModuleControlInfo objModuleControlInfo;
+
+            //get ModuleId
             if ((Request.QueryString["ModuleId"] != null))
             {
                 _moduleId = Int32.Parse(Request.QueryString["ModuleId"]);
@@ -343,22 +373,33 @@ namespace DotNetNuke.Modules.Admin.Modules
 
                 objModules.UpdateModule(Module);
             }
+			
+            //Verify that the current user has access to edit this module
             if (!ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "MANAGE", Module))
             {
                 Response.Redirect(Globals.AccessDeniedURL(), true);
             }
             if (Module != null)
             {
+            	//get module
                 TabModuleId = Module.TabModuleID;
+
+                //get Settings Control
                 objModuleControlInfo = ModuleControlController.GetModuleControlByControlKey("Settings", Module.ModuleDefID);
+
                 if (objModuleControlInfo != null)
                 {
                     _control = ControlUtilities.LoadControl<Control>(Page, objModuleControlInfo.ControlSrc);
+
                     var settingsControl = _control as ISettingsControl;
                     if (settingsControl != null)
                     {
+						//Set ID
                         _control.ID = Path.GetFileNameWithoutExtension(objModuleControlInfo.ControlSrc).Replace('.', '-');
+
+                        //add module settings
                         settingsControl.ModuleContext.Configuration = Module;
+
                         hlSpecificSettings.Text = Localization.GetString("ControlTitle_settings", settingsControl.LocalResourceFile);
                         pnlSpecific.Controls.Add(_control);
                     }
@@ -366,6 +407,18 @@ namespace DotNetNuke.Modules.Admin.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/18/2004	documented
+        /// 	[cnurse]	10/19/2004	modified to support custm module specific settings
+        ///     [vmasanas]  11/28/2004  modified to support modules in admin tabs
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -391,17 +444,22 @@ namespace DotNetNuke.Modules.Admin.Modules
                 if (Page.IsPostBack == false)
                 {
                     ctlIcon.FileFilter = Globals.glbImageFileTypes;
+
                     dgPermissions.TabId = PortalSettings.ActiveTab.TabID;
                     dgPermissions.ModuleID = _moduleId;
 
+
                     cboTab.DataSource = TabController.GetPortalTabs(PortalId, -1, false, Null.NullString, true, false, true, false, true);
                     cboTab.DataBind();
+
+                    //if tab is a  host tab, then add current tab
                     if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
                     {
                         cboTab.Items.Insert(0, new ListItem(PortalSettings.ActiveTab.LocalizedTabName, PortalSettings.ActiveTab.TabID.ToString()));
                     }
                     if (Module != null)
                     {
+                    	//parent tab might not be loaded in cbotab if user does not have edit rights on it
                         if (cboTab.Items.FindByValue(Module.TabID.ToString()) == null)
                         {
                             var objtabs = new TabController();
@@ -409,8 +467,11 @@ namespace DotNetNuke.Modules.Admin.Modules
                             cboTab.Items.Add(new ListItem(objTab.LocalizedTabName, objTab.TabID.ToString()));
                         }
                     }
-                    
+					
+                    //only Portal Administrators can manage the visibility on all Tabs
                     rowAllTabs.Visible = PortalSecurity.IsInRole("Administrators"); 
+
+                    //tab administrators can only manage their own tab
                     if (!TabPermissionController.CanAdminPage())
                     {
                         chkAllModules.Enabled = false;
@@ -424,14 +485,18 @@ namespace DotNetNuke.Modules.Admin.Modules
                     }
                     else
                     {
-                        cboVisibility.SelectedIndex = 0;
+                        cboVisibility.SelectedIndex = 0; //maximized
                         chkAllTabs.Checked = false;
                         cmdDelete.Visible = false;
                     }
                     cmdUpdate.Visible = ModulePermissionController.HasModulePermission(Module.ModulePermissions, "EDIT,MANAGE") || TabPermissionController.CanAddContentToPage();
                     permissionsRow.Visible = ModulePermissionController.CanAdminModule(Module) || TabPermissionController.CanAddContentToPage(); 
+
+                    //Set visibility of Specific Settings
                     if (SettingsControl == null == false)
                     {
+						//Get the module settings from the PortalSettings and pass the
+                        //two settings hashtables to the sub control to process
                         SettingsControl.LoadSettings();
                         specificSettingsTab.Visible = true;
                         fsSpecific.Visible = true;
@@ -463,6 +528,17 @@ namespace DotNetNuke.Modules.Admin.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// chkInheritPermissions_CheckedChanged runs when the Inherit View Permissions
+        ///	check box is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/18/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnInheritPermissionsChanged(Object sender, EventArgs e)
         {
             dgPermissions.InheritViewPermissionsFromTab = chkInheritPermissions.Checked;
@@ -481,6 +557,18 @@ namespace DotNetNuke.Modules.Admin.Modules
             ShowCacheRows();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the Delete LinkButton is clicked.
+        /// It deletes the current portal form the Database.  It can only run in Host
+        /// (SuperUser) mode
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/18/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(Object sender, EventArgs e)
         {
             try
@@ -495,6 +583,18 @@ namespace DotNetNuke.Modules.Admin.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update LinkButton is clicked.
+        /// It saves the current Site Settings
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/18/2004	documented
+        /// 	[cnurse]	10/19/2004	modified to support custm module specific settings
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
@@ -503,6 +603,8 @@ namespace DotNetNuke.Modules.Admin.Modules
                 {
                     var objModules = new ModuleController();
                     var allTabsChanged = false;
+
+                    //tab administrators can only manage their own tab
                     if (!TabPermissionController.CanAdminPage())
                     {
                         chkAllTabs.Enabled = false;
@@ -589,7 +691,9 @@ namespace DotNetNuke.Modules.Admin.Modules
                     Module.IsDefaultModule = chkDefault.Checked;
                     Module.AllModules = chkAllModules.Checked;
                     objModules.UpdateModule(Module);
-                    if (SettingsControl != null)
+                    
+					//Update Custom Settings
+					if (SettingsControl != null)
                     {
                         try
                         {
@@ -599,31 +703,42 @@ namespace DotNetNuke.Modules.Admin.Modules
                         {
                             DnnLog.Debug(exc);
 
-                            Thread.ResetAbort();
+                            Thread.ResetAbort(); //necessary
                         }
                         catch (Exception ex)
                         {
                             Exceptions.LogException(ex);
                         }
                     }
+					
+					//These Module Copy/Move statements must be 
+                    //at the end of the Update as the Controller code assumes all the 
+                    //Updates to the Module have been carried out.
+
+                    //Check if the Module is to be Moved to a new Tab
                     if (!chkAllTabs.Checked)
                     {
                         var newTabId = Int32.Parse(cboTab.SelectedItem.Value);
                         if (TabId != newTabId)
                         {
+                            //First check if there already is an instance of the module on the target page
                             var tmpModule = objModules.GetModule(_moduleId, newTabId);
                             if (tmpModule == null)
                             {
+								//Move module
                                 objModules.MoveModule(_moduleId, TabId, newTabId, "");
                             }
                             else
                             {
+								//Warn user
                                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ModuleExists", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                                 return;
                             }
                         }
                     }
-                    if (allTabsChanged)
+                    
+					//Check if Module is to be Added/Removed from all Tabs
+					if (allTabsChanged)
                     {
                         var listTabs = TabController.GetPortalTabs(PortalSettings.PortalId, Null.NullInteger, false, true);
                         if (chkAllTabs.Checked)
@@ -641,6 +756,8 @@ namespace DotNetNuke.Modules.Admin.Modules
                             objModules.DeleteAllModules(_moduleId, TabId, listTabs);
                         }
                     }
+					
+                    //Navigate back to admin page
                     Response.Redirect(Globals.NavigateURL(), true);
                 }
             }

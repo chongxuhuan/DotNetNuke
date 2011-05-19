@@ -87,6 +87,7 @@ namespace DotNetNuke.Security.Membership.Data
             return DatabaseOwner + ObjectQualifier + name;
         }
 
+        //Security
         public override IDataReader UserLogin(string username, string password)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("UserLogin"), username, password);
@@ -97,6 +98,7 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetAuthRoles"), portalId, moduleId);
         }
 
+        //Users
         public int AddUser(int portalID, string username, string firstName, string lastName, int affiliateId, bool isSuperUser, string email, string displayName, bool updatePassword, int createdByUserID)
         {
             return AddUser(portalID, username, firstName, lastName, affiliateId, isSuperUser, email, displayName, updatePassword, false, createdByUserID);
@@ -240,6 +242,7 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetSuperUsers"));
         }
 
+        //Roles
         public override IDataReader GetRolesByUser(int userId, int portalId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRolesByUser"), userId, portalId);
@@ -319,6 +322,7 @@ namespace DotNetNuke.Security.Membership.Data
                                       lastModifiedByUserID);
         }
 
+        //Role Groups
         public override int AddRoleGroup(int portalId, string groupName, string description, int createdByUserID)
         {
             return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, GetFullyQualifiedName("AddRoleGroup"), portalId, groupName, description, createdByUserID));
@@ -349,6 +353,7 @@ namespace DotNetNuke.Security.Membership.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateRoleGroup"), roleGroupId, groupName, description, lastModifiedByUserID);
         }
 
+        //User Roles
         public override IDataReader GetUserRole(int portalID, int userId, int roleId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserRole"), portalID, userId, roleId);
@@ -395,6 +400,7 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsers"), GetNull(portalId));
         }
 
+        //Profile
         public override IDataReader GetUserProfile(int userId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserProfile"), userId);
@@ -405,6 +411,7 @@ namespace DotNetNuke.Security.Membership.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUserProfileProperty"), GetNull(profileId), userId, propertyDefinitionID, propertyValue, visibility, lastUpdatedDate);
         }
 
+        //users online
         public override void DeleteUsersOnline(int timeWindow)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteUsersOnline", timeWindow);
@@ -424,6 +431,7 @@ namespace DotNetNuke.Security.Membership.Data
         {
             if ((userList.Count == 0))
             {
+				//No users to process, quit method
                 return;
             }
             foreach (string key in userList.Keys)

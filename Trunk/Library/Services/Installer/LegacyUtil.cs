@@ -69,6 +69,7 @@ namespace DotNetNuke.Services.Installer
 
         private static PackageInfo CreateSkinPackage(SkinPackageInfo skin)
         {
+			//Create a Package
             var package = new PackageInfo(new InstallerInfo());
             package.Name = skin.SkinName;
             package.FriendlyName = skin.SkinName;
@@ -76,7 +77,10 @@ namespace DotNetNuke.Services.Installer
             package.Version = new Version(1, 0, 0);
             package.PackageType = skin.SkinType;
             package.License = Util.PACKAGE_NoLicense;
+
+            //See if the Skin is using a Namespace (or is a known skin)
             ParsePackageName(package);
+
             return package;
         }
 
@@ -86,10 +90,18 @@ namespace DotNetNuke.Services.Installer
             var skin = new SkinPackageInfo();
             skin.SkinName = skinName;
             skin.SkinType = skinType;
+
+            //Create a Package
             PackageInfo package = CreateSkinPackage(skin);
+
+            //Create a SkinPackageWriter
             var skinWriter = new SkinPackageWriter(skin, package, tempInstallFolder, subFolder);
             skinWriter.GetFiles(false);
+
+            //We need to reset the BasePath so it using the correct basePath rather than the Temp InstallFolder
             skinWriter.SetBasePath();
+
+            //Writer package manifest fragment to writer
             skinWriter.WriteManifest(writer, true);
         }
 
@@ -101,13 +113,26 @@ namespace DotNetNuke.Services.Installer
                 var skin = new SkinPackageInfo();
                 skin.SkinName = skinName;
                 skin.SkinType = skinType;
+
+                //Create a Package
                 PackageInfo package = CreateSkinPackage(skin);
+
+                //Create a SkinPackageWriter
                 var skinWriter = new SkinPackageWriter(skin, package);
                 skinWriter.GetFiles(false);
+
+                //Save the manifest
                 package.Manifest = skinWriter.WriteManifest(true);
+
+                //Save Package
                 PackageController.SavePackage(package);
+
+                //Update Skin Package with new PackageID
                 skin.PackageID = package.PackageID;
+
+                //Save Skin Package
                 skin.SkinPackageID = SkinController.AddSkinPackage(skin);
+
                 foreach (InstallFile skinFile in skinWriter.Files.Values)
                 {
                     if (skinFile.Type == InstallFileType.Ascx)
@@ -127,6 +152,7 @@ namespace DotNetNuke.Services.Installer
 
         private static void ParsePackageName(PackageInfo package, string separator)
         {
+			//See if the Module is using a "Namespace" for its name
             int ownerIndex = package.Name.IndexOf(separator);
             if (ownerIndex > 0)
             {
@@ -136,6 +162,7 @@ namespace DotNetNuke.Services.Installer
 
         public static string CreateSkinManifest(string skinFolder, string skinType, string tempInstallFolder)
         {
+            //Test if there are Skins and Containers folders in TempInstallFolder (ie it is a legacy combi package)
             bool isCombi = false;
             var installFolder = new DirectoryInfo(tempInstallFolder);
             DirectoryInfo[] subFolders = installFolder.GetDirectories();
@@ -146,6 +173,8 @@ namespace DotNetNuke.Services.Installer
                     isCombi = true;
                 }
             }
+			
+            //Create a writer to create the processed manifest
             var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, XmlUtils.GetXmlWriterSettings(ConformanceLevel.Fragment));
             PackageWriterBase.WriteManifestStartElement(writer);
@@ -153,19 +182,26 @@ namespace DotNetNuke.Services.Installer
             {
                 if (Directory.Exists(Path.Combine(tempInstallFolder, "Skins")))
                 {
+					//Add Skin Package Fragment
                     CreateSkinManifest(writer, skinFolder, "Skin", tempInstallFolder.Replace(Globals.ApplicationMapPath + "\\", ""), "Skins");
                 }
                 if (Directory.Exists(Path.Combine(tempInstallFolder, "Containers")))
                 {
+					//Add Container PAckage Fragment
                     CreateSkinManifest(writer, skinFolder, "Container", tempInstallFolder.Replace(Globals.ApplicationMapPath + "\\", ""), "Containers");
                 }
             }
             else
             {
+				//Add Package Fragment
                 CreateSkinManifest(writer, skinFolder, skinType, tempInstallFolder.Replace(Globals.ApplicationMapPath + "\\", ""), "");
             }
             PackageWriterBase.WriteManifestEndElement(writer);
+
+            //Close XmlWriter
             writer.Close();
+
+            //Return new manifest
             return sb.ToString();
         }
 
@@ -225,6 +261,8 @@ namespace DotNetNuke.Services.Installer
             if (File.Exists(filePath))
             {
                 var doc = new XPathDocument(filePath);
+
+                //Check for Browser and Url settings
                 XPathNavigator browserNav = doc.CreateNavigator().SelectSingleNode("root/browserDetection");
                 if (browserNav != null)
                 {
@@ -235,6 +273,8 @@ namespace DotNetNuke.Services.Installer
                 {
                     HostController.Instance.Update("EnableUrlLanguage", Util.ReadAttribute(urlNav, "enabled", false, null, Null.NullString, "true"));
                 }
+				
+                //Process each language
                 foreach (XPathNavigator nav in doc.CreateNavigator().Select("root/language"))
                 {
                     if (nav.NodeType != XPathNodeType.Comment)
@@ -247,6 +287,7 @@ namespace DotNetNuke.Services.Installer
                         Localization.Localization.SaveLanguage(language);
                         if (language.Code != Localization.Localization.SystemLocale)
                         {
+                            //Create a Package
                             var package = new PackageInfo(new InstallerInfo());
                             package.Name = language.Text;
                             package.FriendlyName = language.Text;
@@ -254,9 +295,16 @@ namespace DotNetNuke.Services.Installer
                             package.Version = new Version(1, 0, 0);
                             package.PackageType = "CoreLanguagePack";
                             package.License = Util.PACKAGE_NoLicense;
+
+                            //Create a LanguagePackWriter
                             var packageWriter = new LanguagePackWriter(language, package);
+
+                            //Save the manifest
                             package.Manifest = packageWriter.WriteManifest(true);
+
+                            //Save Package
                             PackageController.SavePackage(package);
+
                             var languagePack = new LanguagePackInfo();
                             languagePack.LanguageID = language.LanguageId;
                             languagePack.PackageID = package.PackageID;
@@ -266,13 +314,18 @@ namespace DotNetNuke.Services.Installer
                     }
                 }
             }
+			
+            //Process Portal Locales files
             foreach (PortalInfo portal in new PortalController().GetPortals())
             {
                 int portalID = portal.PortalID;
                 filePath = string.Format(Globals.ApplicationMapPath + Localization.Localization.ApplicationResourceDirectory.Substring(1).Replace("/", "\\") + "\\Locales.Portal-{0}.xml", portalID);
+
                 if (File.Exists(filePath))
                 {
                     var doc = new XPathDocument(filePath);
+
+                    //Check for Browser and Url settings
                     XPathNavigator browserNav = doc.CreateNavigator().SelectSingleNode("locales/browserDetection");
                     if (browserNav != null)
                     {
@@ -287,6 +340,8 @@ namespace DotNetNuke.Services.Installer
                     {
                         string code = installedLanguage.Code;
                         bool bFound = false;
+
+                        //Check if this language is "inactive"
                         foreach (XPathNavigator inactiveNav in doc.CreateNavigator().Select("locales/inactive/locale"))
                         {
                             if (inactiveNav.Value == code)
@@ -297,6 +352,7 @@ namespace DotNetNuke.Services.Installer
                         }
                         if (!bFound)
                         {
+							//Language is enabled - add to portal
                             Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageId, false);
                         }
                     }
@@ -305,6 +361,7 @@ namespace DotNetNuke.Services.Installer
                 {
                     foreach (Locale installedLanguage in LocaleController.Instance.GetLocales(Null.NullInteger).Values)
                     {
+						//Language is enabled - add to portal
                         Localization.Localization.AddLanguageToPortal(portalID, installedLanguage.LanguageId, false);
                     }
                 }
@@ -317,7 +374,10 @@ namespace DotNetNuke.Services.Installer
             {
                 if (desktopModule.PackageID == Null.NullInteger)
                 {
+                    //Get the Module folder
                     string moduleFolder = Path.Combine(Globals.ApplicationMapPath, Path.Combine("DesktopModules", desktopModule.FolderName));
+
+                    //Find legacy manifest
                     XPathNavigator rootNav = null;
                     try
                     {
@@ -325,11 +385,15 @@ namespace DotNetNuke.Services.Installer
                         string[] files = Directory.GetFiles(moduleFolder, "*.dnn.config");
                         if (files.Length > 0)
                         {
+							//Create an XPathDocument from the Xml
                             var doc = new XPathDocument(new FileStream(files[0], FileMode.Open, FileAccess.Read));
                             rootNav = doc.CreateNavigator().SelectSingleNode("dotnetnuke");
                         }
+						
+                        //Module is not affiliated with a Package
                         var package = new PackageInfo(new InstallerInfo());
                         package.Name = desktopModule.ModuleName;
+
                         package.FriendlyName = desktopModule.FriendlyName;
                         package.Description = desktopModule.Description;
                         package.Version = new Version(1, 0, 0);
@@ -339,6 +403,7 @@ namespace DotNetNuke.Services.Installer
                         }
                         if (hostModules.Contains(desktopModule.ModuleName))
                         {
+							//Host Module so make this a system package
                             package.IsSystemPackage = true;
                             desktopModule.IsAdmin = true;
                         }
@@ -347,7 +412,10 @@ namespace DotNetNuke.Services.Installer
                             desktopModule.IsAdmin = false;
                         }
                         package.PackageType = "Module";
+
+                        //See if the Module is using a "Namespace" for its name
                         ParsePackageName(package);
+
                         if (files.Length > 0)
                         {
                             var modulewriter = new ModulePackageWriter(desktopModule, rootNav, package);
@@ -355,10 +423,16 @@ namespace DotNetNuke.Services.Installer
                         }
                         else
                         {
-                            package.Manifest = "";
+                            package.Manifest = ""; //module has no manifest
                         }
+						
+                        //Save Package
                         PackageController.SavePackage(package);
+
+                        //Update Desktop Module with new PackageID
                         desktopModule.PackageID = package.PackageID;
+
+                        //Save DesktopModule
                         DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
                     }
                     catch (Exception exc)
@@ -378,17 +452,28 @@ namespace DotNetNuke.Services.Installer
                 {
                     try
                     {
+						//SkinControl is not affiliated with a Package
                         var package = new PackageInfo(new InstallerInfo());
                         package.Name = skinControl.ControlKey;
+
                         package.FriendlyName = skinControl.ControlKey;
                         package.Description = Null.NullString;
                         package.Version = new Version(1, 0, 0);
                         package.PackageType = "SkinObject";
+
+                        //See if the SkinControl is using a "Namespace" for its name
                         ParsePackageName(package);
+
                         var skinControlWriter = new SkinControlPackageWriter(skinControl, package);
                         package.Manifest = skinControlWriter.WriteManifest(true);
+
+                        //Save Package
                         PackageController.SavePackage(package);
+
+                        //Update SkinControl with new PackageID
                         skinControl.PackageID = package.PackageID;
+
+                        //Save SkinControl
                         SkinControlController.SaveSkinControl(skinControl);
                     }
                     catch (Exception exc)
@@ -402,11 +487,14 @@ namespace DotNetNuke.Services.Installer
 
         public static void ProcessLegacySkins()
         {
+			//Process Legacy Skins
             string skinRootPath = Path.Combine(Globals.HostMapPath, SkinController.RootSkin);
             foreach (string skinFolder in Directory.GetDirectories(skinRootPath))
             {
                 ProcessLegacySkin(skinFolder, "Skin");
             }
+			
+            //Process Legacy Containers
             skinRootPath = Path.Combine(Globals.HostMapPath, SkinController.RootContainer);
             foreach (string skinFolder in Directory.GetDirectories(skinRootPath))
             {

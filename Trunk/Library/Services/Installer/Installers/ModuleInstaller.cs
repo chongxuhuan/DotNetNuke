@@ -50,10 +50,25 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class ModuleInstaller : ComponentInstallerBase
     {
+		#region Private Properties
+
         private DesktopModuleInfo _desktopModule;
         private EventMessage _eventMessage;
         private DesktopModuleInfo _installedDesktopModule;
+		
+		#endregion
 
+		#region Public Properties
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -61,14 +76,28 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "cshtml, vbhtml, ashx, aspx, ascx, vb, cs, resx, css, js, resources, config, vbproj, csproj, sln, htm, html, xml, psd";
             }
         }
+		
+		#endregion
 
+		#region Private Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteModule method deletes the Module from the data Store.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteModule()
         {
             try
             {
+				//Attempt to get the Desktop Module
                 DesktopModuleInfo tempDesktopModule = DesktopModuleController.GetDesktopModuleByPackageID(Package.PackageID);
                 if (tempDesktopModule != null)
                 {
+					//Remove CodeSubDirectory
                     if ((_desktopModule != null) && (!string.IsNullOrEmpty(_desktopModule.CodeSubDirectory)))
                     {
                         Config.RemoveCodeSubDirectory(_desktopModule.CodeSubDirectory);
@@ -83,9 +112,23 @@ namespace DotNetNuke.Services.Installer.Installers
                 Log.AddFailure(ex);
             }
         }
+		
+		#endregion
 
+		#region Public Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Commit method finalises the Install and commits any pending changes.
+        /// </summary>
+        /// <remarks>In the case of Modules this is not neccessary</remarks>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Commit()
         {
+			//Add CodeSubDirectory
             if (!string.IsNullOrEmpty(_desktopModule.CodeSubDirectory))
             {
                 Config.AddCodeSubDirectory(_desktopModule.CodeSubDirectory);
@@ -108,30 +151,52 @@ namespace DotNetNuke.Services.Installer.Installers
                 //send it to occur on next App_Start Event
                 EventQueueController.SendMessage(oAppStartMessage, "Application_Start_FirstRequest");
             }
+			
+			//Add Event Message
             if (_eventMessage != null)
             {
-                _eventMessage.Attributes.Set("desktopModuleID", _desktopModule.DesktopModuleID.ToString());
-                EventQueueController.SendMessage(_eventMessage, "Application_Start");
+                if (!String.IsNullOrEmpty(_eventMessage.Attributes["UpgradeVersionsList"]))
+                {
+                    _eventMessage.Attributes.Set("desktopModuleID", _desktopModule.DesktopModuleID.ToString());
+                    EventQueueController.SendMessage(_eventMessage, "Application_Start");
+                }
             }
-            if (!_desktopModule.IsPremium)
+            
+			//Add DesktopModule to all portals
+			if (!_desktopModule.IsPremium)
             {
                 DesktopModuleController.AddDesktopModuleToPortals(_desktopModule.DesktopModuleID);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method installs the Module component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Install()
         {
             try
             {
+				//Attempt to get the Desktop Module
                 _installedDesktopModule = DesktopModuleController.GetDesktopModuleByModuleName(_desktopModule.ModuleName, Package.InstallerInfo.PortalID);
+
                 if (_installedDesktopModule != null)
                 {
                     _desktopModule.DesktopModuleID = _installedDesktopModule.DesktopModuleID;
                 }
+				
+                //Clear ModuleControls and Module Definitions caches in case script has modifed the contents
                 DataCache.RemoveCache(DataCache.ModuleDefinitionCacheKey);
                 DataCache.RemoveCache(DataCache.ModuleControlsCacheKey);
+
+                //Save DesktopModule and child objects to database
                 _desktopModule.PackageID = Package.PackageID;
                 _desktopModule.DesktopModuleID = DesktopModuleController.SaveDesktopModule(_desktopModule, true, false);
+
                 Completed = true;
                 Log.AddInfo(string.Format(Util.MODULE_Registered, _desktopModule.ModuleName));
             }
@@ -141,9 +206,19 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifest method reads the manifest file for the Module compoent.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void ReadManifest(XPathNavigator manifestNav)
         {
+            //Load the Desktop Module from the manifest
             _desktopModule = CBO.DeserializeObject<DesktopModuleInfo>(new StringReader(manifestNav.InnerXml));
+
             _desktopModule.FriendlyName = Package.FriendlyName;
             _desktopModule.Description = Package.Description;
             _desktopModule.Version = Globals.FormatVersion(Package.Version);
@@ -166,9 +241,38 @@ namespace DotNetNuke.Services.Installer.Installers
                 _eventMessage.ProcessorCommand = Util.ReadElement(eventMessageNav, "processorCommand", Log, Util.EVENTMESSAGE_CommandMissing);
                 foreach (XPathNavigator attributeNav in eventMessageNav.Select("attributes/*"))
                 {
-                    _eventMessage.Attributes.Add(attributeNav.Name, attributeNav.Value);
+                    var attribName = attributeNav.Name;
+                    var attribValue = attributeNav.Value;
+                    if (attribName == "upgradeVersionsList")
+                    {
+                        if (!String.IsNullOrEmpty(attribValue))
+                        {
+                            string[] upgradeVersions = attribValue.Split(',');
+                            attribValue = ""; foreach (string version in upgradeVersions)
+                            {
+                                Version upgradeVersion = null;
+                                try
+                                {
+                                    upgradeVersion = new Version(version);
+                                }
+                                catch (FormatException fexc)
+                                {
+                                    Log.AddWarning(string.Format(Util.MODULE_InvalidVersion, version));
+                                }
+
+                                if (upgradeVersion != null && upgradeVersion > Package.InstalledVersion)
+                                {
+                                    attribValue += version + ",";
+                                }
+                            }
+                            attribValue = attribValue.TrimEnd(',');
+                        }
+                    }
+                   _eventMessage.Attributes.Add(attribName, attribValue);
                 }
             }
+			
+            //Load permissions (to add)
             foreach (XPathNavigator moduleDefinitionNav in manifestNav.Select("desktopModule/moduleDefinitions/moduleDefinition"))
             {
                 string friendlyName = Util.ReadElement(moduleDefinitionNav, "friendlyName");
@@ -191,21 +295,43 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Rollback method undoes the installation of the component in the event 
+        /// that one of the other components fails
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Rollback()
         {
+			//If Temp Module exists then we need to update the DataStore with this 
             if (_installedDesktopModule == null)
             {
+				//No Temp Module - Delete newly added module
                 DeleteModule();
             }
             else
             {
+				//Temp Module - Rollback to Temp
                 DesktopModuleController.SaveDesktopModule(_installedDesktopModule, true, false);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the Module component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UnInstall()
         {
             DeleteModule();
         }
+		
+		#endregion
     }
 }

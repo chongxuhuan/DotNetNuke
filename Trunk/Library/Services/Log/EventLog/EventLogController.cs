@@ -60,6 +60,7 @@ namespace DotNetNuke.Services.Log.EventLog
 
         public void AddLog(LogProperties properties, PortalSettings portalSettings, int userID, string logTypeKey, bool bypassBuffering)
         {
+			//supports adding a custom string for LogType
             var logInfo = new LogInfo {LogUserID = userID, LogTypeKey = logTypeKey, LogProperties = properties, BypassBuffering = bypassBuffering};
             if (portalSettings != null)
             {
@@ -136,7 +137,15 @@ namespace DotNetNuke.Services.Log.EventLog
                     logInfo.LogProperties.Add(new LogDetailInfo("Description", role.Description));
                     logInfo.LogProperties.Add(new LogDetailInfo("IsPublic", role.IsPublic.ToString()));
                     break;
-                default:
+                case "DotNetNuke.Entities.Modules.DesktopModuleInfo":
+                    var desktopModule = (DesktopModuleInfo)businessObject;
+                    logInfo.LogProperties.Add(new LogDetailInfo("DesktopModuleID", desktopModule.DesktopModuleID.ToString()));
+                    logInfo.LogProperties.Add(new LogDetailInfo("ModuleName", desktopModule.ModuleName));
+                    logInfo.LogProperties.Add(new LogDetailInfo("FriendlyName", desktopModule.FriendlyName));
+                    logInfo.LogProperties.Add(new LogDetailInfo("FolderName", desktopModule.FolderName));
+                    logInfo.LogProperties.Add(new LogDetailInfo("Description", desktopModule.Description));
+                    break;
+                default: //Serialise using XmlSerializer
                     logInfo.LogProperties.Add(new LogDetailInfo("logdetail", XmlUtils.Serialize(businessObject)));
                     break;
             }

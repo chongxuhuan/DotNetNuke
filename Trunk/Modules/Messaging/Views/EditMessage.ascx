@@ -1,43 +1,44 @@
-﻿<%@ Control Language="C#" AutoEventWireup="false" CodeBehind="EditMessage.ascx.cs" Inherits="DotNetNuke.Modules.Messaging.Views.EditMessage" %>
+﻿<%@ Control CodeBehind="EditMessage.ascx.cs" Language="C#" AutoEventWireup="True" Inherits="DotNetNuke.Modules.Messaging.Views.EditMessage" %>
+<%@ Register Src="~/controls/texteditor.ascx" TagName="texteditor" TagPrefix="dnn" %>
+<%@ Import Namespace="DotNetNuke.Services.Localization" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
-<%@ Register TagPrefix="dnn" TagName="TextEditor" Src="~/controls/TextEditor.ascx" %>
-<table cellpadding="2" cellspacing="2">
-    <tr>
-        <td class="SubHead" style="vertical-align:top">
-            <dnn:DnnFieldLabel id="toFieldLabel" runat="server" Text="EmailTo.Text" ToolTip="EmailTo.ToolTip" />
-        </td>
-        <td class="NormalTextBox">
-            <asp:Label ID="toLabel" runat="server" />
-            <dnn:DnnTextBox ID="toTextBox" runat="server" width="350px" />
-			<asp:LinkButton ID="validateUserButton" Runat="server" CssClass="CommandButton" resourceKey="Validate" CausesValidation="false"/>
-            <asp:RequiredFieldValidator ID="toValidator" ControlToValidate="toTextBox" runat="server" ResourceKey="EmailTo.Required" Display="Dynamic" />
-        </td>
-    </tr>
-    <tr> 
-        <td class="SubHead" style="vertical-align:top">
-            <dnn:DnnFieldLabel id="subjectFieldLabel" runat="server" Text="Subject.Text" ToolTip="Subject.ToolTip" />
-        </td>
-        <td class="NormalTextBox">  
-            <dnn:DnnTextBox ID="subjectTextBox" runat="server" cssClass="NormalTextBox" width="550" MaxLength="100"/>
-            <asp:RequiredFieldValidator ID="subjectValidator" ControlToValidate="subjectTextBox" runat="server" ResourceKey="Subject.Required" Display="Dynamic" />
-        </td>
-    </tr>
-    <tr>
-        <td class="SubHead" style="vertical-align:top">
-            <dnn:DnnFieldLabel id="messageFieldLabel" runat="server" Text="Message.Text" ToolTip="Message.ToolTip"/>
-        </td>
-        <td class="NormalTextBox">
-           <dnn:TextEditor ID="messageEditor" runat="server" Width="550" TextRenderMode="Raw" HtmlEncode="False"
-				defaultmode="Rich" height="300" choosemode="False" chooserender="False" />
-       </td>
-    </tr>
-</table>
-<br />
-<p>
-    <asp:Button ID="sendMessageButton" runat="server" resourceKey="SendMessage"/>&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:LinkButton ID="saveDraftButton" runat="server" resourceKey="SaveDraft"/>&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:PlaceHolder ID="deleteHolder" runat="server">
-        <asp:LinkButton ID="deleteMessage" runat="server" resourceKey="DeleteMessage" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
-    </asp:PlaceHolder>
-    <asp:LinkButton ID="cancelEdit" runat="server" resourceKey="CancelEdit" CausesValidation="false" />
-</p>
+<div class="dnnForm dnnEditMessage dnnClear">
+	<div class="dnnFormItem">
+        <dnn:DnnFieldLabel ID="dnnlblTo" runat="server" Text="EmailTo.Text" ToolTip="EmailFrom.ToolTip" />
+		<asp:TextBox ID="txtTo" runat="server" />
+		<asp:LinkButton ID="validateUserButton" Runat="server" CssClass="dnnSecondaryAction" resourceKey="Validate" CausesValidation="false" />
+		<asp:RequiredFieldValidator ID="toValidator" ControlToValidate="txtTo" runat="server" ResourceKey="EmailTo.Required" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" SetFocusOnError="true" />
+	</div>
+	<div class="dnnFormItem">
+        <dnn:DnnFieldLabel ID="dnnlblSubject" runat="server" Text="Subject.Text" />
+		<asp:TextBox ID="txtSubject" runat="server" MaxLength="100" Width="500" />
+		<asp:RequiredFieldValidator ID="subjectValidator" ControlToValidate="txtSubject" runat="server" ResourceKey="Subject.Required" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" SetFocusOnError="true" />
+	</div>
+	<div class="dnnFormItem">
+        <dnn:DnnFieldLabel ID="dnnlblMsg" runat="server" Text="Message.Text" ToolTip="Message.ToolTip" />
+		<dnn:texteditor ID="messageEditor" runat="server" Width="550" TextRenderMode="Raw" HtmlEncode="False" defaultmode="Rich" height="300" choosemode="False" chooserender="False" />
+	</div>
+	<ul class="dnnActions dnnClear">
+		<li><asp:LinkButton ID="sendMessageButton" runat="server" resourceKey="SendMessage" CssClass="dnnPrimaryAction" /></li>
+		<li><asp:LinkButton ID="saveDraftButton" runat="server" resourceKey="SaveDraft" CssClass="dnnSecondaryAction" /></li>
+		<li id="liDelete" runat="server"><asp:LinkButton ID="deleteMessage" runat="server" resourceKey="DeleteMessage" CausesValidation="false" CssClass="dnnSecondaryAction" /></li>
+		<li><asp:HyperLink ID="cancelEdit" runat="server" resourceKey="CancelEdit" CssClass="dnnSecondaryAction" /></li>
+	</ul>
+</div>
+<script language="javascript" type="text/javascript">
+    function setUpEditMessage() {
+        $('#<%= deleteMessage.ClientID %>').dnnConfirm({
+            text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+            yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
+            title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+        });
+    }
+
+    $(document).ready(function () {
+        setUpEditMessage();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setUpEditMessage();
+        });
+    });
+</script>

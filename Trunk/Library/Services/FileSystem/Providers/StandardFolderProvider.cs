@@ -28,6 +28,7 @@ using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Services.FileSystem
@@ -164,6 +165,14 @@ namespace DotNetNuke.Services.FileSystem
             return stream;
         }
 
+        public override string GetFileUrl(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            var portalSettings = GetPortalSettings(file.PortalId);
+            return GlobalsWrapper.Instance.ResolveUrl(portalSettings.HomeDirectory + file.Folder + file.FileName);
+        }
+
         public override string GetImageUrl()
         {
             return GlobalsWrapper.Instance.ResolveUrl("~/images/folder.gif");
@@ -282,6 +291,11 @@ namespace DotNetNuke.Services.FileSystem
         {
             var fileManager = new FileManager();
             return fileManager.GetHash(file);
+        }
+
+        internal virtual PortalSettings GetPortalSettings(int portalId)
+        {
+            return new PortalSettings(portalId);
         }
 
         #endregion

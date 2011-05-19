@@ -28,7 +28,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button saveVocabulary;
+        protected global::System.Web.UI.WebControls.LinkButton saveVocabulary;
         
         /// <summary>
         /// cancelCreate control.
@@ -37,6 +37,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cancelCreate;
+        protected global::System.Web.UI.WebControls.HyperLink cancelCreate;
     }
 }

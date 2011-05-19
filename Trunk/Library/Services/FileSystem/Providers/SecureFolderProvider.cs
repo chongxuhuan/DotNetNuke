@@ -179,6 +179,16 @@ namespace DotNetNuke.Services.FileSystem
             return stream;
         }
 
+        /// <remarks>
+        /// Secure files doesn't have a direct Url.
+        /// </remarks>
+        public override string GetFileUrl(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            return GlobalsWrapper.Instance.LinkClick(String.Format("fileid={0}", file.FileId), Null.NullInteger, Null.NullInteger);
+        }
+
         public override string GetImageUrl()
         {
             return GlobalsWrapper.Instance.ResolveUrl("~/images/icon_securityroles_16px.gif");

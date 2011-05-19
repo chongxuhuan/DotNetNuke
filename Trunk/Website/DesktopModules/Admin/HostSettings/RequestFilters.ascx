@@ -9,48 +9,48 @@
         <table width="100%">
             <tr>
                 <td rowspan="5" valign="top">
-                    <asp:ImageButton ID="cmdEdit" runat="server" CommandName="Edit" ImageUrl="~/images/edit.gif" />
-                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Delete" ImageUrl="~/images/delete.gif" />
+                    <asp:ImageButton ID="cmdEdit" runat="server" CommandName="Edit" ImageUrl="~/images/edit.gif" CausesValidation="false" />
+                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Delete" ImageUrl="~/images/delete.gif" CausesValidation="false" />
                 </td>
-                <td width="188"><dnn:label id="plServerVar" runat="server" controlname="lblServerVar" suffix=":"></dnn:label></td>
-                <td ><asp:label runat="server" Text='<%#Eval("ServerVariable") %>' ID="lblServerVar" Width="250px" /></td>
+                <td width="188"><dnn:label id="plServerVar" runat="server" controlname="lblServerVar" suffix=":" /></td>
+                <td ><asp:label runat="server" Text='<%#Eval("ServerVariable") %>' ID="lblServerVar" /></td>
             </tr>
             <tr>
-                <td><dnn:label id="plOperator" runat="server" controlname="lblOperator" suffix=":"></dnn:label></td>
-                <td><asp:label runat="server" Text='<%#Eval("Operator") %>' ID="lblOperator" Width="250px" /></td>
+                <td><dnn:label id="plOperator" runat="server" controlname="lblOperator" suffix=":" /></td>
+                <td><asp:label runat="server" Text='<%#Eval("Operator") %>' ID="lblOperator" /></td>
             </tr>
             <tr>
-                <td><dnn:label id="plValue" runat="server" controlname="lblValue" suffix=":"></dnn:label></td>
-                <td><asp:label runat="server" Text='<%#Eval("RawValue") %>' ID="lblValue" Width="250px" /></td>
+                <td><dnn:label id="plValue" runat="server" controlname="lblValue" suffix=":" /></td>
+                <td><asp:label runat="server" Text='<%#Eval("RawValue") %>' ID="lblValue" /></td>
             </tr>
             <tr>
-                <td><dnn:label id="plAction" runat="server" controlname="lblAction" suffix=":"></dnn:label></td>
-                <td><asp:label runat="server" Text='<%#Eval("Action") %>' ID="lblAction" Width="250px" /></td>
+                <td><dnn:label id="plAction" runat="server" controlname="lblAction" suffix=":" /></td>
+                <td><asp:label runat="server" Text='<%#Eval("Action") %>' ID="lblAction" /></td>
             </tr>
             <tr>
-                <td><dnn:label id="plLocation" runat="server" controlname="lblLocation" suffix=":"></dnn:label></td>
-                <td><asp:label runat="server" Text='<%#Eval("Location") %>' ID="lblLocation" Width="250px" /></td>
+                <td><dnn:label id="plLocation" runat="server" controlname="lblLocation" suffix=":" /></td>
+                <td><asp:label runat="server" Text='<%#Eval("Location") %>' ID="lblLocation" /></td>
             </tr>
         </table>
     </ItemTemplate>
     <EditItemTemplate>
         <table width="100%">
             <tr>
-                <td colspan="3"><div class="dnnFormMessage dnnFormWarning"><asp:Label ID="lblWarning" runat="server" Text="Simple warning" resourcekey="lblWarning"></asp:Label></div></td>
+                <td colspan="3"><div class="dnnFormMessage dnnFormWarning"><asp:Label ID="lblWarning" runat="server" Text="Simple warning" resourcekey="lblWarning" /></div></td>
             </tr>
             <tr>
                 <td rowspan="5" valign="top">
                     <asp:ImageButton ID="cmdSave" runat="server" CommandName="Update" ImageUrl="~/images/save.gif" CssClass="dnnPrimaryAction" />
-                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Cancel" ImageUrl="~/images/delete.gif" CssClass="dnnSecondaryAction" />
+                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Cancel" ImageUrl="~/images/delete.gif" CssClass="dnnSecondaryAction" CausesValidation="false" />
                 </td>
-                <td width="188"><dnn:label id="plServerVar" runat="server" controlname="txtServerVar" suffix=":"></dnn:label></td>
+                <td width="188"><dnn:label id="plServerVar" runat="server" controlname="txtServerVar" suffix=":" /></td>
                 <td>
-                    <asp:TextBox ID="txtServerVar" runat="server" Text='<%#Eval("ServerVariable") %>' Width="250px" />
-                    <asp:Label ID="lblServerVarLink" runat="server" text="Simple Link" resourcekey="lblServerVarLink"></asp:Label>
+                    <asp:TextBox ID="txtServerVar" runat="server" Text='<%#Eval("ServerVariable") %>' />
+                    <asp:Label ID="lblServerVarLink" runat="server" text="Simple Link" resourcekey="lblServerVarLink" />
                 </td>
             </tr>
             <tr>
-                <td><dnn:label id="plOperator" runat="server" controlname="ddlOperator" suffix=":"></dnn:label></td>
+                <td><dnn:label id="plOperator" runat="server" controlname="ddlOperator" suffix=":" /></td>
                 <td>
                     <asp:DropDownList ID="ddlOperator" runat="server">
                         <asp:ListItem>Equal</asp:ListItem>
@@ -60,11 +60,11 @@
                 </td>
             </tr>
             <tr>
-                <td><dnn:label id="plValue" runat="server" controlname="txtValue" suffix=":"></dnn:label></td>
-                <td><asp:TextBox ID="txtValue" runat="server" Text='<%#Eval("RawValue") %>' Width="250px" /></td>
+                <td><dnn:label id="plValue" runat="server" controlname="txtValue" suffix=":" /></td>
+                <td><asp:TextBox ID="txtValue" runat="server" Text='<%#Eval("RawValue") %>' /></td>
             </tr>
             <tr>
-                <td><dnn:label id="plAction" runat="server" controlname="ddlAction" suffix=":"></dnn:label></td>
+                <td><dnn:label id="plAction" runat="server" controlname="ddlAction" suffix=":" /></td>
                 <td>
                     <asp:DropDownList ID="ddlAction" runat="server">
                         <asp:ListItem>Redirect</asp:ListItem>
@@ -74,11 +74,11 @@
                 </td>
             </tr>
             <tr>
-                <td><dnn:label id="plLocation" runat="server" controlname="txtLocation" suffix=":"></dnn:label></td>
-                <td><asp:TextBox ID="txtLocation" runat="server" Text='<%#Eval("Location") %>' Width="250px" /></td>
+                <td><dnn:label id="plLocation" runat="server" controlname="txtLocation" suffix=":" /></td>
+                <td><asp:TextBox ID="txtLocation" runat="server" Text='<%#Eval("Location") %>' /></td>
             </tr>
         </table>
     </EditItemTemplate>
     <SeparatorTemplate><div></div></SeparatorTemplate>
 </asp:DataList>
-<ul class="dnnActions rfAddRule dnnClear"><li><asp:LinkButton ID="cmdAddRule" runat="server" resourcekey="cmdAdd" CssClass="dnnPrimaryAction" /></li></ul>
+<ul class="dnnActions rfAddRule dnnClear"><li><asp:LinkButton ID="cmdAddRule" runat="server" resourcekey="cmdAdd" CssClass="dnnPrimaryAction" CausesValidation="false" /></li></ul>

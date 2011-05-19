@@ -47,58 +47,51 @@ namespace DotNetNuke.Common.Utilities
     /// -----------------------------------------------------------------------------
     public class CacheItemArgs
     {
-        private readonly string _CacheKey;
-        private ArrayList _ParamList;
+        private ArrayList _paramList;
 
         public CacheItemArgs(string key)
         {
-            _CacheKey = key;
+            CacheKey = key;
             CacheTimeOut = 20;
             CachePriority = CacheItemPriority.Default;
             //_ParamList = new ArrayList();
         }
 
-        public CacheItemArgs(string key, int timeout) : this(key)
+        public CacheItemArgs(string key, int timeout)
+            : this(key)
         {
             CacheTimeOut = timeout;
             CachePriority = CacheItemPriority.Default;
             //_ParamList = new ArrayList();
         }
 
-        public CacheItemArgs(string key, CacheItemPriority priority) : this(key)
+        public CacheItemArgs(string key, CacheItemPriority priority)
+            : this(key)
         {
             CachePriority = priority;
             //_ParamList = new ArrayList();
         }
 
-        public CacheItemArgs(string key, int timeout, CacheItemPriority priority) : this(key)
+        public CacheItemArgs(string key, int timeout, CacheItemPriority priority)
+            : this(key)
         {
             CacheTimeOut = timeout;
             CachePriority = priority;
         }
 
-        public CacheItemArgs(string key, int timeout, CacheItemPriority priority, params object[] parameters) : this(key)
+        public CacheItemArgs(string key, int timeout, CacheItemPriority priority, params object[] parameters)
+            : this(key)
         {
             CacheTimeOut = timeout;
             CachePriority = priority;
-            _ParamList = new ArrayList();
-            foreach (object obj in parameters)
-            {
-                _ParamList.Add(obj);
-            }
+            Params = parameters;
         }
 
         public CacheItemRemovedCallback CacheCallback { get; set; }
 
         public DNNCacheDependency CacheDependency { get; set; }
 
-        public string CacheKey
-        {
-            get
-            {
-                return _CacheKey;
-            }
-        }
+        public string CacheKey { get; private set; }
 
         public CacheItemPriority CachePriority { get; set; }
 
@@ -108,21 +101,20 @@ namespace DotNetNuke.Common.Utilities
         {
             get
             {
-                if (_ParamList == null)
+                if (_paramList == null)
                 {
-                    _ParamList = new ArrayList();
+                    _paramList = new ArrayList();
+                    foreach (object param in Params)
+                    {
+                        _paramList.Add(param);
+                    }
                 }
-                return _ParamList;
+
+                return _paramList;
             }
         }
 
-        public object[] Params
-        {
-            get
-            {
-                return ParamList.ToArray();
-            }
-        }
+        public object[] Params { get; private set; }
 
         public string ProcedureName { get; set; }
     }

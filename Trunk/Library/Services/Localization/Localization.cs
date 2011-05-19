@@ -26,12 +26,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Web.Hosting;
@@ -59,37 +57,38 @@ using DotNetNuke.UI.Modules;
 namespace DotNetNuke.Services.Localization
 {
 	/// <summary>
-	/// Enumeration of Culture display type in drop down list.
+    /// <para>CultureDropDownTypes allows the user to specify which culture name is displayed in the drop down list that is filled 
+    /// by using one of the helper methods.</para>
 	/// </summary>
     [Serializable]
     public enum CultureDropDownTypes
     {
 		/// <summary>
-		/// Display CultureInfo.DisplayName, this will be the default value for culture drop down list.
+        /// Displays the culture name in the format "&lt;languagefull&gt; (&lt;country/regionfull&gt;) in the .NET Framework language
 		/// </summary>
         DisplayName,
 		/// <summary>
-		/// Display CultureInfo.EnglishgName with in title case.
+		/// Displays the culture name in the format "&lt;languagefull&gt; (&lt;country/regionfull&gt;) in English
 		/// </summary>
         EnglishName,
 		/// <summary>
-		/// Display CultureInfo.LCID
+		/// Displays the culture identifier
 		/// </summary>
         Lcid,
 		/// <summary>
-		/// Display CultureInfo.Name
+		/// Displays the culture name in the format "&lt;languagecode2&gt; (&lt;country/regioncode2&gt;)
 		/// </summary>
         Name,
 		/// <summary>
-		/// Display CultureInfo.NativeName
+		/// Displays the culture name in the format "&lt;languagefull&gt; (&lt;country/regionfull&gt;) in the language that the culture is set to display
 		/// </summary>
         NativeName,
 		/// <summary>
-		/// Display CultureInfo.TwoLetterISOLanguageName
+		/// Displays the IS0 639-1 two letter code
 		/// </summary>
         TwoLetterIsoCode,
 		/// <summary>
-		/// Display CultureInfo.ThreeLetterISOLanguageName
+		/// Displays the ISO 629-2 three letter code "&lt;languagefull&gt; (&lt;country/regionfull&gt;)
 		/// </summary>
         ThreeLetterIsoCode
     }
@@ -118,10 +117,17 @@ namespace DotNetNuke.Services.Localization
 	/// </example>
     public class Localization
     {
+		#region "Private Members"
+
         private static string _defaultKeyName = "resourcekey";
         private static string strShowMissingKeys = "";
+	    private static readonly ILocaleController _localeController = LocaleController.Instance;
 
-        public static string ApplicationResourceDirectory
+		#endregion
+
+		#region "Public Shared Properties"
+		
+	    public static string ApplicationResourceDirectory
         {
             get
             {
@@ -192,7 +198,11 @@ namespace DotNetNuke.Services.Localization
                 return "Pacific Standard Time";
             }
         }
+		
+		#endregion
 
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -209,6 +219,7 @@ namespace DotNetNuke.Services.Localization
         {
             get
             {
+				//_CurrentCulture
                 return Thread.CurrentThread.CurrentCulture.ToString();
             }
         }
@@ -299,6 +310,10 @@ namespace DotNetNuke.Services.Localization
                 return ApplicationResourceDirectory + "/TimeZones.xml";
             }
         }
+		
+		#endregion
+
+		#region "Private Shared Methods"
 
         private static object GetResourceFileLookupDictionaryCallback(CacheItemArgs cacheItemArgs)
         {
@@ -318,22 +333,30 @@ namespace DotNetNuke.Services.Localization
         {
             string cacheKey = cacheItemArgs.CacheKey;
             Dictionary<string, string> resources = null;
+
+            //Get resource file lookup to determine if the resource file even exists
             SharedDictionary<string, bool> resourceFileExistsLookup = GetResourceFileLookupDictionary();
 
             if(ResourceFileMayExist(resourceFileExistsLookup, cacheKey))
             {
                 string filePath = null;
+                //check if an absolute reference for the resource file was used
                 if (cacheKey.Contains(":\\") && Path.IsPathRooted(cacheKey))
                 {
+					//if an absolute reference, check that the file exists
                     if (File.Exists(cacheKey))
                     {
                         filePath = cacheKey;
                     }
                 }
+				
+                //no filepath found from an absolute reference, try and map the path to get the file path
                 if (filePath == null)
                 {
                     filePath = HostingEnvironment.MapPath(Globals.ApplicationPath + cacheKey);
                 }
+				
+                //The file is not in the lookup, or we know it exists as we have found it before
                 if (File.Exists(filePath))
                 {
                     XPathDocument doc = null;
@@ -348,6 +371,7 @@ namespace DotNetNuke.Services.Localization
                     }
                     cacheItemArgs.CacheDependency = new DNNCacheDependency(filePath);
 
+                    //File exists so add it to lookup with value true, so we are safe to try again
                     using (resourceFileExistsLookup.GetWriteLock())
                     {
                         resourceFileExistsLookup[cacheKey] = true;    
@@ -355,6 +379,7 @@ namespace DotNetNuke.Services.Localization
                 }
                 else
                 {
+                    //File does not exist so add it to lookup with value false, so we don't try again
                     using (resourceFileExistsLookup.GetWriteLock())
                     {
                         resourceFileExistsLookup[cacheKey] = false;
@@ -420,7 +445,7 @@ namespace DotNetNuke.Services.Localization
                             ResourceFile = ResourceFileRoot + ".resx";
                             break;
                         default:
-                            ResourceFile = ResourceFileRoot + ".ascx.resx";
+                            ResourceFile = ResourceFileRoot + ".ascx.resx"; //a portal module
                             break;
                     }
                 }
@@ -459,12 +484,15 @@ namespace DotNetNuke.Services.Localization
 
         private static string GetStringInternal(string key, string userLanguage, string resourceFileRoot, PortalSettings objPortalSettings, bool disableShowMissngKeys)
         {
+			//make the default translation property ".Text"
             if (key.IndexOf(".") < 1)
             {
                 key += ".Text";
             }
             string resourceValue = Null.NullString;
             bool bFound = TryGetStringInternal(key, userLanguage, resourceFileRoot, objPortalSettings, ref resourceValue);
+
+            //If the key can't be found then it doesn't exist in the Localization Resources
             if (ShowMissingKeys && !disableShowMissngKeys)
             {
                 if (bFound)
@@ -484,6 +512,7 @@ namespace DotNetNuke.Services.Localization
             var fileName = (string) cacheItemArgs.ParamList[0];
             string filePath = HttpContext.Current.Server.MapPath(fileName);
             var dicResources = new Dictionary<string, string>();
+
             if (File.Exists(filePath))
             {
                 XPathDocument doc = null;
@@ -519,6 +548,8 @@ namespace DotNetNuke.Services.Localization
         private static void LocalizeDataControlField(DataControlField controlField, string resourceFile)
         {
             string localizedText;
+
+            //Localize Header Text
             if (!string.IsNullOrEmpty(controlField.HeaderText))
             {
                 localizedText = GetString((controlField.HeaderText + ".Header"), resourceFile);
@@ -530,6 +561,7 @@ namespace DotNetNuke.Services.Localization
             }
             if (controlField is TemplateField)
             {
+				//do nothing
             }
             else if (controlField is ButtonField)
             {
@@ -654,32 +686,71 @@ namespace DotNetNuke.Services.Localization
         /// -----------------------------------------------------------------------------
         private static bool TryGetFromResourceFile(string key, string resourceFile, string userLanguage, string fallbackLanguage, string defaultLanguage, int portalID, ref string resourceValue)
         {
+			//Try the user's language first
             bool bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, userLanguage), portalID, ref resourceValue);
+
             if (!bFound && fallbackLanguage != userLanguage)
             {
+				//Try fallback language next
                 bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, fallbackLanguage), portalID, ref resourceValue);
             }
             if (!bFound && !(defaultLanguage == userLanguage || defaultLanguage == fallbackLanguage))
             {
+				//Try default Language last
                 bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, defaultLanguage), portalID, ref resourceValue);
             }
             return bFound;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// TryGetFromResourceFile is used to get the string from a resource file
+        /// </summary>
+        /// <remarks>This method searches a specific language version of the resource file for 
+        /// the key.  It first checks the Portal version, then the Host version and finally
+        /// the Application version</remarks>
+        /// <param name="key">The resource key</param>
+        /// <param name="resourceFile">The resource file to search</param>
+        /// <param name="portalID">The id of the portal</param>
+        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
+        /// <returns>True if successful, false if not found</returns>
+        /// <history>
+        /// 	[cnurse]	01/30/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static bool TryGetFromResourceFile(string key, string resourceFile, int portalID, ref string resourceValue)
         {
+			//Try Portal Resource File
             bool bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.Portal, ref resourceValue);
             if (!bFound)
             {
+				//Try Host Resource File
                 bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.Host, ref resourceValue);
             }
             if (!bFound)
             {
+				//Try Portal Resource File
                 bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.None, ref resourceValue);
             }
             return bFound;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// TryGetFromResourceFile is used to get the string from a specific resource file
+        /// </summary>
+        /// <remarks>This method searches a specific resource file for  the key.</remarks>
+        /// <param name="key">The resource key</param>
+        /// <param name="resourceFile">The resource file to search</param>
+        /// <param name="portalID">The id of the portal</param>
+        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
+        /// <param name="resourceType">An enumerated CustomizedLocale - Application - 0, 
+        /// Host - 1, Portal - 2 - that identifies the file to search</param>
+        /// <returns>True if successful, false if not found</returns>
+        /// <history>
+        /// 	[cnurse]	01/30/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static bool TryGetFromResourceFile(string key, string resourceFile, int portalID, CustomizedLocale resourceType, ref string resourceValue)
         {
             Dictionary<string, string> dicResources = null;
@@ -694,10 +765,14 @@ namespace DotNetNuke.Services.Localization
                     resourceFileName = resourceFile.Replace(".resx", ".Portal-" + portalID + ".resx");
                     break;
             }
+			
             if (resourceFileName.StartsWith("desktopmodules", StringComparison.InvariantCultureIgnoreCase) || resourceFileName.StartsWith("admin", StringComparison.InvariantCultureIgnoreCase))
             {
                 resourceFileName = "~/" + resourceFileName;
             }
+			
+            //Local resource files are either named ~/... or <ApplicationPath>/...
+            //The following logic creates a cachekey of /....
             string cacheKey = resourceFileName.Replace("~/", "/").ToLowerInvariant();
             if (!string.IsNullOrEmpty(Globals.ApplicationPath))
             {
@@ -717,10 +792,13 @@ namespace DotNetNuke.Services.Localization
                     }
                 }
             }
-            
+			
+            //Get resource file lookup to determine if the resource file even exists
             SharedDictionary<string, bool> resourceFileExistsLookup = GetResourceFileLookupDictionary();
+
             if(ResourceFileMayExist(resourceFileExistsLookup, cacheKey))
             {
+                //File is not in lookup or its value is true so we know it exists
                 dicResources = GetResourceFile(cacheKey);
                 if (dicResources != null)
                 {
@@ -753,15 +831,21 @@ namespace DotNetNuke.Services.Localization
             string defaultLanguage = Null.NullString;
             string fallbackLanguage = SystemLocale;
             int portalId = Null.NullInteger;
+
+            //Get the default language
             if (objPortalSettings != null)
             {
                 defaultLanguage = objPortalSettings.DefaultLanguage;
                 portalId = objPortalSettings.PortalId;
             }
+			
+            //Set the userLanguage if not passed in
             if (string.IsNullOrEmpty(userLanguage))
             {
                 userLanguage = Thread.CurrentThread.CurrentUICulture.ToString();
             }
+			
+            //Default the userLanguage to the defaultLanguage if not set
             if (string.IsNullOrEmpty(userLanguage))
             {
                 userLanguage = defaultLanguage;
@@ -769,7 +853,8 @@ namespace DotNetNuke.Services.Localization
             Locale userLocale = null;
             try
             {
-                userLocale = LocaleController.Instance.GetLocale(userLanguage);
+            	//Get Fallback language
+                userLocale = _localeController.GetLocale(userLanguage);
             }
 			catch (Exception ex)
 			{
@@ -784,12 +869,16 @@ namespace DotNetNuke.Services.Localization
             {
                 resourceFile = SharedResourceFile;
             }
+			
+            //Try the resource file for the key
             bool bFound = TryGetFromResourceFile(key, resourceFile, userLanguage, fallbackLanguage, defaultLanguage, portalId, ref resourceValue);
             if (!bFound)
             {
                 if (!(SharedResourceFile.ToLowerInvariant() == resourceFile.ToLowerInvariant()))
                 {
+					//try to use a module specific shared resource file
                     string localSharedFile = resourceFile.Substring(0, resourceFile.LastIndexOf("/") + 1) + LocalSharedResourceFile;
+
                     if (!(localSharedFile.ToLowerInvariant() == resourceFile.ToLowerInvariant()))
                     {
                         bFound = TryGetFromResourceFile(key, localSharedFile, userLanguage, fallbackLanguage, defaultLanguage, portalId, ref resourceValue);
@@ -806,7 +895,11 @@ namespace DotNetNuke.Services.Localization
             return bFound;
         }
 
-        public string GetFixedCurrency(decimal Expression, string Culture, int NumDigitsAfterDecimal)
+		#endregion
+
+		#region "Public Methods"
+
+		public string GetFixedCurrency(decimal Expression, string Culture, int NumDigitsAfterDecimal)
         {
             string oldCurrentCulture = CurrentUICulture;
             var newCulture = new CultureInfo(Culture);
@@ -833,7 +926,7 @@ namespace DotNetNuke.Services.Localization
             //Default to 1 (maybe called during portal creation before languages are enabled for portal)
 
             int count = 1;
-            Dictionary<string, Locale> locales = LocaleController.Instance.GetLocales(portalID);
+            Dictionary<string, Locale> locales = _localeController.GetLocales(portalID);
             if (locales != null)
             {
                 count = locales.Count;
@@ -844,7 +937,7 @@ namespace DotNetNuke.Services.Localization
         public static void AddLanguageToPortal(int portalID, int languageID, bool clearCache)
         {
             //We need to add a translator role for the language
-            Locale language = LocaleController.Instance.GetLocale(languageID);
+            Locale language = _localeController.GetLocale(languageID);
             bool contentLocalizationEnabled = PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", portalID, false);
             if (language != null && contentLocalizationEnabled)
             {
@@ -878,8 +971,9 @@ namespace DotNetNuke.Services.Localization
 
         public static void AddLanguagesToPortal(int portalID)
         {
-            foreach (Locale language in LocaleController.Instance.GetLocales(Null.NullInteger).Values)
+            foreach (Locale language in _localeController.GetLocales(Null.NullInteger).Values)
             {
+				//Add Portal/Language to PortalLanguages
                 AddLanguageToPortal(portalID, language.LanguageId, false);
             }
             DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portalID));
@@ -890,7 +984,9 @@ namespace DotNetNuke.Services.Localization
             var controller = new PortalController();
             foreach (PortalInfo portal in controller.GetPortals())
             {
+				//Add Portal/Language to PortalLanguages
                 AddLanguageToPortal(portal.PortalID, languageID, false);
+
                 DataCache.RemoveCache(String.Format(DataCache.LocalesCacheKey, portal.PortalID));
             }
         }
@@ -931,7 +1027,7 @@ namespace DotNetNuke.Services.Localization
             Dictionary<string, Locale> enabledLocales = null;
             if (portalId > Null.NullInteger)
             {
-                enabledLocales = LocaleController.Instance.GetLocales(portalId);
+                enabledLocales = _localeController.GetLocales(portalId);
             }
 
             // use Request.UserLanguages to get the preferred language
@@ -945,7 +1041,7 @@ namespace DotNetNuke.Services.Localization
                         {
                             //split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
                             string userlanguage = userLang.Split(';')[0];
-                            if (LocaleController.Instance.IsEnabled(ref userlanguage, portalId))
+                            if (_localeController.IsEnabled(ref userlanguage, portalId))
                             {
                                 browserCulture = new CultureInfo(userlanguage);
                             }
@@ -1049,10 +1145,15 @@ namespace DotNetNuke.Services.Localization
             Dictionary<string, Locale> enabledLocales = null;
             if (portalSettings != null)
             {
-                enabledLocales = LocaleController.Instance.GetLocales(portalSettings.PortalId);
+                enabledLocales = _localeController.GetLocales(portalSettings.PortalId);
             }
+			
+            //used as temporary variable to get info about the preferred locale
             string preferredLocale = "";
+            //used as temporary variable where the language part of the preferred locale will be saved
             string preferredLanguage = "";
+
+            //first try if a specific language is requested by cookie or qs param
             if (HttpContext.Current != null && portalSettings != null)
             {
                 try
@@ -1069,7 +1170,7 @@ namespace DotNetNuke.Services.Localization
                     }
                     if (!String.IsNullOrEmpty(preferredLocale))
                     {
-                        if (LocaleController.Instance.IsEnabled(ref preferredLocale, portalSettings.PortalId))
+                        if (_localeController.IsEnabled(ref preferredLocale, portalSettings.PortalId))
                         {
                             pageCulture = new CultureInfo(preferredLocale);
                         }
@@ -1086,12 +1187,13 @@ namespace DotNetNuke.Services.Localization
             }
             if (pageCulture == null && portalSettings != null)
             {
+				//next try to get the preferred language of the logged on user
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
                 if (objUserInfo.UserID != -1)
                 {
                     if (!String.IsNullOrEmpty(objUserInfo.Profile.PreferredLocale))
                     {
-                        if (LocaleController.Instance.IsEnabled(ref preferredLocale, portalSettings.PortalId))
+                        if (_localeController.IsEnabled(ref preferredLocale, portalSettings.PortalId))
                         {
                             pageCulture = new CultureInfo(objUserInfo.Profile.PreferredLocale);
                         }
@@ -1111,19 +1213,27 @@ namespace DotNetNuke.Services.Localization
             }
             if (pageCulture == null && !String.IsNullOrEmpty(preferredLanguage))
             {
+                //we still don't have a good culture, so we are going to try to get a culture with the preferredlanguage instead
                 foreach (string _localeCode in enabledLocales.Keys)
                 {
                     if (_localeCode.Split('-')[0] == preferredLanguage)
                     {
+                        //the preferredLanguage was found in the enabled locales collection, so we are going to use this one
+                        //eg, requested locale is en-GB, requested language is en, enabled locale is en-US, so en is a match for en-US
                         pageCulture = new CultureInfo(_localeCode);
                         break;
                     }
                 }
             }
+			
+            //we still have no culture info set, so we are going to use the fallback method
             if (pageCulture == null && portalSettings != null)
             {
                 if (String.IsNullOrEmpty(portalSettings.DefaultLanguage))
                 {
+                    //this is a last resort, as the portal default language should always be set
+                    //however if its not set, return the first enabled locale
+                    //if there are no enabled locales, return the systemlocale
                     if (enabledLocales.Count > 0)
                     {
                         foreach (string _localeCode in enabledLocales.Keys)
@@ -1139,19 +1249,29 @@ namespace DotNetNuke.Services.Localization
                 }
                 else
                 {
+                    //as the portal default language can never be disabled, we know this language is available and enabled
                     pageCulture = new CultureInfo(portalSettings.DefaultLanguage);
                 }
             }
             if (pageCulture == null)
             {
+				//just a safeguard, to make sure we return something
                 pageCulture = new CultureInfo(SystemLocale);
             }
+			
+			//finally set the cookie
             SetLanguage(pageCulture.Name);
+			
             return pageCulture;
         }
 
-        public static string GetString(string key, Control ctrl)
+		#endregion
+
+		#region "GetString"
+
+		public static string GetString(string key, Control ctrl)
         {
+			//We need to find the parent module
             Control parentControl = ctrl.Parent;
             string localizedText;
             var moduleControl = parentControl as IModuleControl;
@@ -1160,30 +1280,70 @@ namespace DotNetNuke.Services.Localization
                 PropertyInfo pi = parentControl.GetType().GetProperty("LocalResourceFile");
                 if (pi != null)
                 {
+					//If control has a LocalResourceFile property use this
                     localizedText = GetString(key, pi.GetValue(parentControl, null).ToString());
                 }
                 else
                 {
+					//Drill up to the next level 
                     localizedText = GetString(key, parentControl);
                 }
             }
             else
             {
-                localizedText = GetString(key, moduleControl.LocalResourceFile);
+                //We are at the Module Level so return key
+                //Get Resource File Root from Parents LocalResourceFile Property
+				localizedText = GetString(key, moduleControl.LocalResourceFile);
             }
             return localizedText;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="name">The resourcekey to find</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetString(string name)
         {
             return GetString(name, null, PortalController.GetCurrentPortalSettings(), null, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="name">The resourcekey to find</param>
+        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetString(string name, PortalSettings objPortalSettings)
         {
             return GetString(name, null, objPortalSettings, null, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="name">The resourcekey to find</param>
+        /// <param name="ResourceFileRoot">The Local Resource root</param>
+        /// <param name="disableShowMissingKeys">Disable to show missing key.</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetString(string name, string ResourceFileRoot, bool disableShowMissingKeys)
         {
             return GetString(name, ResourceFileRoot, PortalController.GetCurrentPortalSettings(), null, disableShowMissingKeys);
@@ -1206,21 +1366,68 @@ namespace DotNetNuke.Services.Localization
             return GetString(name, ResourceFileRoot, PortalController.GetCurrentPortalSettings(), null, false);
         }
 
-        public static string GetString(string name, string ResourceFileRoot, string strlanguage)
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="name">The resourcekey to find</param>
+		/// <param name="ResourceFileRoot">The Local Resource root</param>
+		/// <param name="language">A specific language to lookup the string</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static string GetString(string name, string ResourceFileRoot, string language)
         {
-            return GetString(name, ResourceFileRoot, PortalController.GetCurrentPortalSettings(), strlanguage, false);
+            return GetString(name, ResourceFileRoot, PortalController.GetCurrentPortalSettings(), language, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="name">The resourcekey to find</param>
+        /// <param name="ResourceFileRoot">The Local Resource root</param>
+        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <param name="strLanguage">A specific language to lookup the string</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetString(string name, string ResourceFileRoot, PortalSettings objPortalSettings, string strLanguage)
         {
             return GetString(name, ResourceFileRoot, objPortalSettings, strLanguage, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <overloads>One of six overloads</overloads>
+        /// <summary>
+        /// GetString gets the localized string corresponding to the resourcekey
+        /// </summary>
+        /// <param name="key">The resourcekey to find</param>
+        /// <param name="resourceFileRoot">The Local Resource root</param>
+        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <param name="userLanguage">A specific language to lookup the string</param>
+        /// <param name="disableShowMissingKeys">Disables the show missing keys flag</param>
+        /// <returns>The localized Text</returns>
+        /// <history>
+        /// 	[cnurse]	10/06/2004	Documented
+        ///     [cnurse]    01/30/2008  Refactored to use Dictionaries and to cahe the portal and host 
+        ///                             customisations and language versions separately
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetString(string key, string resourceFileRoot, PortalSettings objPortalSettings, string userLanguage, bool disableShowMissingKeys)
         {
             return GetStringInternal(key, userLanguage, resourceFileRoot, objPortalSettings, disableShowMissingKeys);
         }
+		
+		#endregion
 
+		#region "GetStringUrl"
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// GetStringUrl gets the localized string corresponding to the resourcekey
@@ -1242,7 +1449,10 @@ namespace DotNetNuke.Services.Localization
         {
             return GetString(name, ResourceFileRoot, PortalController.GetCurrentPortalSettings(), null, true);
         }
+		
+		#endregion
 
+		#region "Get System Message"
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets a SystemMessage.
@@ -1269,47 +1479,249 @@ namespace DotNetNuke.Services.Localization
             return GetSystemMessage(null, objPortal, MessageName, null, GlobalResourceFile, null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage.
+        /// </summary>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Supported tags:
+        /// - All fields from HostSettings table in the form of: [Host:<b>field</b>]
+        /// - All properties defined in <see cref="T:DotNetNuke.PortalInfo" /> in the form of: [Portal:<b>property</b>]
+        /// - [Portal:URL]: The base URL for the portal
+        /// - All properties defined in <see cref="T:DotNetNuke.UserInfo" /> in the form of: [User:<b>property</b>]
+        /// - All values stored in the user profile in the form of: [Profile:<b>key</b>]
+        /// - [User:VerificationCode]: User verification code for verified registrations
+        /// - [Date:Current]: Current date
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(PortalSettings objPortal, string MessageName, UserInfo objUser)
         {
             return GetSystemMessage(null, objPortal, MessageName, objUser, GlobalResourceFile, null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///         /// Gets a SystemMessage.
+        /// </summary>
+        /// <param name="strLanguage">A specific language to get the SystemMessage for.</param>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Supported tags:
+        /// - All fields from HostSettings table in the form of: [Host:<b>field</b>]
+        /// - All properties defined in <see cref="T:DotNetNuke.PortalInfo" /> in the form of: [Portal:<b>property</b>]
+        /// - [Portal:URL]: The base URL for the portal
+        /// - All properties defined in <see cref="T:DotNetNuke.UserInfo" /> in the form of: [User:<b>property</b>]
+        /// - All values stored in the user profile in the form of: [Profile:<b>key</b>]
+        /// - [User:VerificationCode]: User verification code for verified registrations
+        /// - [Date:Current]: Current date
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(string strLanguage, PortalSettings objPortal, string MessageName, UserInfo objUser)
         {
             return GetSystemMessage(strLanguage, objPortal, MessageName, objUser, GlobalResourceFile, null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage.
+        /// </summary>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Supported tags:
+        /// - All fields from HostSettings table in the form of: [Host:<b>field</b>]
+        /// - All properties defined in <see cref="T:DotNetNuke.PortalInfo" /> in the form of: [Portal:<b>property</b>]
+        /// - [Portal:URL]: The base URL for the portal
+        /// - All properties defined in <see cref="T:DotNetNuke.UserInfo" /> in the form of: [User:<b>property</b>]
+        /// - All values stored in the user profile in the form of: [Profile:<b>key</b>]
+        /// - [User:VerificationCode]: User verification code for verified registrations
+        /// - [Date:Current]: Current date
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(PortalSettings objPortal, string MessageName, string ResourceFile)
         {
             return GetSystemMessage(null, objPortal, MessageName, null, ResourceFile, null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage.
+        /// </summary>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Supported tags:
+        /// - All fields from HostSettings table in the form of: [Host:<b>field</b>]
+        /// - All properties defined in <see cref="T:DotNetNuke.PortalInfo" /> in the form of: [Portal:<b>property</b>]
+        /// - [Portal:URL]: The base URL for the portal
+        /// - All properties defined in <see cref="T:DotNetNuke.UserInfo" /> in the form of: [User:<b>property</b>]
+        /// - All values stored in the user profile in the form of: [Profile:<b>key</b>]
+        /// - [User:VerificationCode]: User verification code for verified registrations
+        /// - [Date:Current]: Current date
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(PortalSettings objPortal, string MessageName, UserInfo objUser, string ResourceFile)
         {
             return GetSystemMessage(null, objPortal, MessageName, objUser, ResourceFile, null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage passing extra custom parameters to personalize.
+        /// </summary>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <param name="Custom">An ArrayList with replacements for custom tags.</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Custom tags are of the form <b>[Custom:n]</b>, where <b>n</b> is the zero based index which 
+        /// will be used to find the replacement value in <b>Custom</b> parameter.
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        ///     [cnurse]    10/06/2004  Moved from SystemMessages to Localization
+        ///     [DanCaron]  10/27/2004  Simplified Profile replacement, added Membership replacement
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(PortalSettings objPortal, string MessageName, string ResourceFile, ArrayList Custom)
         {
             return GetSystemMessage(null, objPortal, MessageName, null, ResourceFile, Custom);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage passing extra custom parameters to personalize.
+        /// </summary>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <param name="Custom">An ArrayList with replacements for custom tags.</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Custom tags are of the form <b>[Custom:n]</b>, where <b>n</b> is the zero based index which 
+        /// will be used to find the replacement value in <b>Custom</b> parameter.
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        ///     [cnurse]    10/06/2004  Moved from SystemMessages to Localization
+        ///     [DanCaron]  10/27/2004  Simplified Profile replacement, added Membership replacement
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(PortalSettings objPortal, string MessageName, UserInfo objUser, string ResourceFile, ArrayList Custom)
         {
             return GetSystemMessage(null, objPortal, MessageName, objUser, ResourceFile, Custom);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage passing extra custom parameters to personalize.
+        /// </summary>
+        /// <param name="strLanguage">A specific language to get the SystemMessage for.</param>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <param name="Custom">An ArrayList with replacements for custom tags.</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Custom tags are of the form <b>[Custom:n]</b>, where <b>n</b> is the zero based index which 
+        /// will be used to find the replacement value in <b>Custom</b> parameter.
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        ///     [cnurse]    10/06/2004  Moved from SystemMessages to Localization
+        ///     [DanCaron]  10/27/2004  Simplified Profile replacement, added Membership replacement
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(string strLanguage, PortalSettings objPortal, string MessageName, UserInfo objUser, string ResourceFile, ArrayList Custom)
         {
             return GetSystemMessage(strLanguage, objPortal, MessageName, objUser, ResourceFile, Custom, null, "", -1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage passing extra custom parameters to personalize.
+        /// </summary>
+        /// <param name="strLanguage">A specific language to get the SystemMessage for.</param>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <param name="Custom">An ArrayList with replacements for custom tags.</param>
+        /// <param name="CustomCaption">prefix for custom tags</param>
+        /// <param name="AccessingUserID">UserID of the user accessing the system message</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Custom tags are of the form <b>[Custom:n]</b>, where <b>n</b> is the zero based index which 
+        /// will be used to find the replacement value in <b>Custom</b> parameter.
+        /// </remarks>
+        /// <history>
+        /// 	[Vicenç]	05/07/2004	Documented
+        ///     [cnurse]    10/06/2004  Moved from SystemMessages to Localization
+        ///     [DanCaron]  10/27/2004  Simplified Profile replacement, added Membership replacement
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(string strLanguage, PortalSettings objPortal, string MessageName, UserInfo objUser, string ResourceFile, ArrayList Custom, string CustomCaption,
                                               int AccessingUserID)
         {
             return GetSystemMessage(strLanguage, objPortal, MessageName, objUser, ResourceFile, Custom, null, CustomCaption, AccessingUserID);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SystemMessage passing extra custom parameters to personalize.
+        /// </summary>
+        /// <param name="strLanguage">A specific language to get the SystemMessage for.</param>
+        /// <param name="objPortal">The portal settings for the portal to which the message will affect.</param>
+        /// <param name="MessageName">The message tag which identifies the SystemMessage.</param>
+        /// <param name="objUser">Reference to the user used to personalize the message.</param>
+        /// <param name="ResourceFile">The root name of the Resource File where the localized
+        ///   text can be found</param>
+        /// <param name="CustomArray">An ArrayList with replacements for custom tags.</param>
+        /// <param name="CustomDictionary">An IDictionary with replacements for custom tags.</param>
+        /// <param name="CustomCaption">prefix for custom tags</param>
+        /// <param name="AccessingUserID">UserID of the user accessing the system message</param>
+        /// <returns>The message body with all tags replaced.</returns>
+        /// <remarks>
+        /// Custom tags are of the form <b>[Custom:n]</b>, where <b>n</b> is the zero based index which 
+        /// will be used to find the replacement value in <b>Custom</b> parameter.
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]    09/09/2009  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetSystemMessage(string strLanguage, PortalSettings objPortal, string MessageName, UserInfo objUser, string ResourceFile, ArrayList CustomArray,
                                               IDictionary CustomDictionary, string CustomCaption, int AccessingUserID)
         {
@@ -1473,11 +1885,11 @@ namespace DotNetNuke.Services.Localization
             Dictionary<string, Locale> enabledLanguages;
             if (Host)
             {
-                enabledLanguages = LocaleController.Instance.GetLocales(Null.NullInteger);
+                enabledLanguages = _localeController.GetLocales(Null.NullInteger);
             }
             else
             {
-                enabledLanguages = LocaleController.Instance.GetLocales(objPortalSettings.PortalId);
+                enabledLanguages = _localeController.GetLocales(objPortalSettings.PortalId);
             }
             var _cultureListItems = new ListItem[enabledLanguages.Count];
             CultureDropDownTypes _cultureListItemsType = displayType;
@@ -1486,6 +1898,7 @@ namespace DotNetNuke.Services.Localization
             {
                 if (kvp.Value.Code != Filter)
                 {
+					//Create and initialize a new ListItem
                     var item = new ListItem();
                     item.Value = kvp.Value.Code;
                     item.Text = GetLocaleName(item.Value, displayType);
@@ -1493,13 +1906,18 @@ namespace DotNetNuke.Services.Localization
                     intAdded += 1;
                 }
             }
+			
+            //If the drop down list already has items, clear the list
             if (list.Items.Count > 0)
             {
                 list.Items.Clear();
             }
             Array.Resize(ref _cultureListItems, intAdded);
+            //add the items to the list
             list.Items.AddRange(_cultureListItems);
-            if (selectedValue != null)
+            
+			//select the default item
+			if (selectedValue != null)
             {
                 ListItem item = list.Items.FindByValue(selectedValue);
                 if (item != null)
@@ -1571,6 +1989,7 @@ namespace DotNetNuke.Services.Localization
             string localizedText;
             foreach (DataGridColumn col in grid.Columns)
             {
+				//Localize Header Text
                 if (!string.IsNullOrEmpty(col.HeaderText))
                 {
                     localizedText = GetString(col.HeaderText + ".Header", ResourceFile);
@@ -1582,21 +2001,29 @@ namespace DotNetNuke.Services.Localization
                 if (col is EditCommandColumn)
                 {
                     var editCol = (EditCommandColumn) col;
+
+                    //Edit Text - maintained for backward compatibility
                     localizedText = GetString(editCol.EditText + ".EditText", ResourceFile);
                     if (!String.IsNullOrEmpty(localizedText))
                     {
                         editCol.EditText = localizedText;
                     }
+					
+                    //Edit Text
                     localizedText = GetString(editCol.EditText, ResourceFile);
                     if (!String.IsNullOrEmpty(localizedText))
                     {
                         editCol.EditText = localizedText;
                     }
+					
+					//Cancel Text
                     localizedText = GetString(editCol.CancelText, ResourceFile);
                     if (!String.IsNullOrEmpty(localizedText))
                     {
                         editCol.CancelText = localizedText;
                     }
+					
+					//Update Text
                     localizedText = GetString(editCol.UpdateText, ResourceFile);
                     if (!String.IsNullOrEmpty(localizedText))
                     {
@@ -1606,6 +2033,8 @@ namespace DotNetNuke.Services.Localization
                 else if (col is ButtonColumn)
                 {
                     var buttonCol = (ButtonColumn) col;
+
+                    //Edit Text
                     localizedText = GetString(buttonCol.Text, ResourceFile);
                     if (!String.IsNullOrEmpty(localizedText))
                     {
@@ -1679,7 +2108,7 @@ namespace DotNetNuke.Services.Localization
         public static void RemoveLanguageFromPortal(int portalID, int languageID)
         {
             //Remove Translator Role from Portal
-            Locale language = LocaleController.Instance.GetLocale(languageID);
+            Locale language = _localeController.GetLocale(languageID);
             if (language != null)
             {
                 //Get Translator Role
@@ -1715,7 +2144,7 @@ namespace DotNetNuke.Services.Localization
 
         public static void RemoveLanguagesFromPortal(int portalID)
         {
-            foreach (Locale locale in LocaleController.Instance.GetLocales(portalID).Values)
+            foreach (Locale locale in _localeController.GetLocales(portalID).Values)
             {
                 RemoveLanguageFromPortal(portalID, locale.LanguageId);
             }
@@ -1746,6 +2175,8 @@ namespace DotNetNuke.Services.Localization
                 {
                     return;
                 }
+				
+                //save the pageculture as a cookie
                 HttpCookie cookie = null;
                 cookie = Response.Cookies.Get("language");
                 if ((cookie == null))
@@ -1796,7 +2227,7 @@ namespace DotNetNuke.Services.Localization
                         HttpContext.Current.Request.IsAuthenticated && 
                         portalSettings.UserMode == PortalSettings.Mode.Edit)
             {
-                Locale locale = LocaleController.Instance.GetCurrentLocale(portalSettings.PortalId);
+                Locale locale = _localeController.GetCurrentLocale(portalSettings.PortalId);
                 Thread.CurrentThread.CurrentCulture = new CultureInfo(locale.Code);
             }
             else
@@ -1804,13 +2235,17 @@ namespace DotNetNuke.Services.Localization
                 Thread.CurrentThread.CurrentCulture = cultureInfo;
             }
         }
+		
+		#endregion
+
+		#region "Obsolete"
 
         [Obsolete("Deprecated in DNN 5.0. Replaced by GetLocales().")]
         public static LocaleCollection GetEnabledLocales()
         {
             PortalSettings objPortalSettings = PortalController.GetCurrentPortalSettings();
             var enabledLocales = new LocaleCollection();
-            foreach (KeyValuePair<string, Locale> kvp in LocaleController.Instance.GetLocales(objPortalSettings.PortalId))
+            foreach (KeyValuePair<string, Locale> kvp in _localeController.GetLocales(objPortalSettings.PortalId))
             {
                 enabledLocales.Add(kvp.Key, kvp.Value);
             }
@@ -1821,7 +2256,7 @@ namespace DotNetNuke.Services.Localization
         public static LocaleCollection GetSupportedLocales()
         {
             var supportedLocales = new LocaleCollection();
-            foreach (KeyValuePair<string, Locale> kvp in LocaleController.Instance.GetLocales(Null.NullInteger))
+            foreach (KeyValuePair<string, Locale> kvp in _localeController.GetLocales(Null.NullInteger))
             {
                 supportedLocales.Add(kvp.Key, kvp.Value);
             }
@@ -1837,7 +2272,7 @@ namespace DotNetNuke.Services.Localization
         [Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocale(portalID, code).")]
         public static Locale GetLocale(int portalID, string code)
         {
-            Dictionary<string, Locale> dicLocales = LocaleController.Instance.GetLocales(portalID);
+            Dictionary<string, Locale> dicLocales = _localeController.GetLocales(portalID);
             Locale language = null;
 
             if (dicLocales != null)
@@ -1851,7 +2286,7 @@ namespace DotNetNuke.Services.Localization
         [Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocale(languageID).")]
         public static Locale GetLocaleByID(int languageID)
         {
-            Dictionary<string, Locale> dicLocales = LocaleController.Instance.GetLocales(Null.NullInteger);
+            Dictionary<string, Locale> dicLocales = _localeController.GetLocales(Null.NullInteger);
             Locale language = null;
 
             foreach (KeyValuePair<string, Locale> kvp in dicLocales)
@@ -1869,7 +2304,7 @@ namespace DotNetNuke.Services.Localization
         [Obsolete("Deprecated in DNN 5.5. Replaced by LocaleController.GetLocales(portalID).")]
         public static Dictionary<string, Locale> GetLocales(int portalID)
         {
-            return LocaleController.Instance.GetLocales(portalID);
+            return _localeController.GetLocales(portalID);
         }
 
         [Obsolete("Deprecated in DNN 5.5.  Replcaed by LocaleController.IsEnabled()")]
@@ -1883,7 +2318,7 @@ namespace DotNetNuke.Services.Localization
         {
             PortalSettings _Settings = PortalController.GetCurrentPortalSettings();
 
-            return LocaleController.Instance.IsEnabled(ref localeCode, _Settings.PortalId);
+            return _localeController.IsEnabled(ref localeCode, _Settings.PortalId);
         }
 
 
@@ -1930,6 +2365,7 @@ namespace DotNetNuke.Services.Localization
         public static void LoadTimeZoneDropDownList(DropDownList list, string language, string selectedValue)
         {
             NameValueCollection timeZones = GetTimeZones(language);
+			//If no Timezones defined get the System Locale Time Zones
             if (timeZones.Count == 0)
             {
                 timeZones = GetTimeZones(SystemLocale.ToLower());
@@ -1939,11 +2375,14 @@ namespace DotNetNuke.Services.Localization
             {
                 list.Items.Add(new ListItem(timeZones.GetKey(i), timeZones.Get(i)));
             }
+			
+			//select the default item
             if (selectedValue != null)
             {
                 ListItem item = list.Items.FindByValue(selectedValue);
                 if (item == null)
                 {
+					//Try system default
                     item = list.Items.FindByValue(SystemTimeZoneOffset.ToString());
                 }
                 if (item != null)
@@ -2082,6 +2521,8 @@ namespace DotNetNuke.Services.Localization
 
             return timeZoneInfo;
         }
+		
+		#endregion
 
         #region Nested type: CustomizedLocale
 

@@ -24,26 +24,26 @@
 #region Usings
 
 using System;
-
 using DotNetNuke.Modules.Messaging.Views.Models;
 using DotNetNuke.Web.Mvp;
 using DotNetNuke.Web.UI.WebControls;
-
 using Telerik.Web.UI;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Messaging.Views
 {
+
     public interface IMessageListView : IModuleView<MessageListModel>
     {
-        event EventHandler AddMessage;
+
         event GridItemEventHandler MessageDataBound;
         event GridNeedDataSourceEventHandler MessagesNeedDataSource;
         event DnnGridItemSelectedEventHandler DeleteSelectedMessages;
         event DnnGridItemSelectedEventHandler MarkSelectedMessagesRead;
-
         event DnnGridItemSelectedEventHandler MarkSelectedMessagesUnread;
+
+        void Refresh();
+
     }
 }

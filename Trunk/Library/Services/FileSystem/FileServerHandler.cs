@@ -63,10 +63,13 @@ namespace DotNetNuke.Services.FileSystem
             int ModuleId = -1;
             try
             {
+				//get TabId
                 if (context.Request.QueryString["tabid"] != null)
                 {
                     Int32.TryParse(context.Request.QueryString["tabid"], out TabId);
                 }
+				
+                //get ModuleId
                 if (context.Request.QueryString["mid"] != null)
                 {
                     Int32.TryParse(context.Request.QueryString["mid"], out ModuleId);
@@ -74,9 +77,12 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception e)
             {
+				//The TabId or ModuleId are incorrectly formatted (potential DOS)
                 DnnLog.Error(e);
                 throw new HttpException(404, "Not Found");
             }
+			
+            //get Language
             string Language = _portalSettings.DefaultLanguage;
             if (context.Request.QueryString["language"] != null)
             {
@@ -94,6 +100,8 @@ namespace DotNetNuke.Services.FileSystem
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo(Language);
                 Localization.Localization.SetLanguage(Language);
             }
+			
+            //get the URL
             string URL = "";
             bool blnClientCache = true;
             bool blnForceDownload = false;
@@ -110,11 +118,12 @@ namespace DotNetNuke.Services.FileSystem
                 URL = context.Request.QueryString["link"];
                 if (URL.ToLowerInvariant().StartsWith("fileid="))
                 {
-                    URL = "";
+                    URL = ""; //restrict direct access by FileID
                 }
             }
             if (!String.IsNullOrEmpty(URL))
             {
+                //update clicks, this must be done first, because the url tracker works with unmodified urls, like tabid, fileid etc
                 var objUrls = new UrlController();
                 objUrls.UpdateUrlTracking(_portalSettings.PortalId, URL, ModuleId, -1);
                 TabType UrlType = Globals.GetURLType(URL);
@@ -122,8 +131,10 @@ namespace DotNetNuke.Services.FileSystem
                 {
                     URL = Globals.LinkClick(URL, TabId, ModuleId, false);
                 }
+				
                 if (UrlType == TabType.File && URL.ToLowerInvariant().StartsWith("fileid=") == false)
                 {
+                    //to handle legacy scenarios before the introduction of the FileServerHandler
                     var fileName = Path.GetFileName(URL);
 
                     var folderPath = URL.Substring(0, URL.LastIndexOf(fileName));
@@ -133,6 +144,8 @@ namespace DotNetNuke.Services.FileSystem
 
                     URL = "FileID=" + file.FileId;
                 }
+				
+				//get optional parameters
                 if (context.Request.QueryString["clientcache"] != null)
                 {
                     blnClientCache = bool.Parse(context.Request.QueryString["clientcache"]);
@@ -142,7 +155,9 @@ namespace DotNetNuke.Services.FileSystem
                     blnForceDownload = bool.Parse(context.Request.QueryString["forcedownload"]);
                 }
                 var contentDisposition = blnForceDownload ? ContentDisposition.Attachment : ContentDisposition.Inline;
-                context.Response.Clear();
+                
+				//clear the current response
+				context.Response.Clear();
                 var fileManager = FileManager.Instance;
                 try
                 {
@@ -150,56 +165,34 @@ namespace DotNetNuke.Services.FileSystem
                     {
                         case TabType.File:
                             var download = false;
-                            if (TabId == Null.NullInteger)
+                            var file = fileManager.GetFile(int.Parse(UrlUtils.GetParameterValue(URL)));
+                            if (file != null)
                             {
-                                var file = fileManager.GetFile(int.Parse(UrlUtils.GetParameterValue(URL)));
-                                if (file != null)
+                                try
                                 {
-                                    try
-                                    {
-                                        fileManager.WriteFileToResponse(file, contentDisposition);
-                                        download = true;
-                                    }
-									catch (Exception ex)
-									{
-										DnnLog.Error(ex);
-									}
+                                    fileManager.WriteFileToResponse(file, contentDisposition);
+                                    download = true;
                                 }
-
-                                if (!download)
-                                {
-                                    throw new HttpException(404, "Not Found:" + URL);
-                                }
+								catch (Exception ex)
+								{
+									DnnLog.Error(ex);
+								}
                             }
-                            else
-                            {
-                                var file = fileManager.GetFile(int.Parse(UrlUtils.GetParameterValue(URL)));
-                                if (file != null)
-                                {
-                                    try
-                                    {
-                                        fileManager.WriteFileToResponse(file, contentDisposition);
-                                        download = true;
-                                    }
-									catch (Exception ex)
-									{
-										DnnLog.Error(ex);
-									}
-                                }
 
-                                if (!download)
-                                {
-                                    throw new HttpException(404, "Not Found:" + URL);
-                                }
+                            if (!download)
+                            {
+                                throw new HttpException(404, "Not Found:" + URL);
                             }
                             break;
                         case TabType.Url:
+                            //prevent phishing by verifying that URL exists in URLs table for Portal
                             if (objUrls.GetUrl(_portalSettings.PortalId, URL) != null)
                             {
                                 context.Response.Redirect(URL, true);
                             }
                             break;
                         default:
+                            //redirect to URL
                             context.Response.Redirect(URL, true);
                             break;
                     }

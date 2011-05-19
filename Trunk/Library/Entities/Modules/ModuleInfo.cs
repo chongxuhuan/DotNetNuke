@@ -49,6 +49,18 @@ using DotNetNuke.Services.Tokens;
 
 namespace DotNetNuke.Entities.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Entities.Modules
+    /// Class	 : ModuleInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// ModuleInfo provides the Entity Layer for Modules
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	01/14/2008   Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [XmlRoot("module", IsNullable = false)]
     [Serializable]
     public class ModuleInfo : ContentItem, IPropertyAccess
@@ -71,6 +83,8 @@ namespace DotNetNuke.Entities.Modules
 
         public ModuleInfo()
         {
+            //initialize the properties that can be null
+            //in the database
             PortalID = Null.NullInteger;
             TabModuleID = Null.NullInteger;
             DesktopModuleID = Null.NullInteger;
@@ -203,10 +217,27 @@ namespace DotNetNuke.Entities.Modules
 
         [XmlElement("versionGuid")]
         public Guid VersionGuid { get; set; }
-
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ID of the Associated Desktop Module
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int DesktopModuleID { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Associated Desktop Module
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public DesktopModuleInfo DesktopModule
         {
@@ -220,9 +251,27 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ID of the Associated Module Definition
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int ModuleDefID { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Associated Module Definition
+        /// </summary>
+        /// <returns>A ModuleDefinitionInfo</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public ModuleDefinitionInfo ModuleDefinition
         {
@@ -484,6 +533,15 @@ namespace DotNetNuke.Entities.Modules
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a ModuleInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Fill(IDataReader dr)
         {
             //Call the base classes fill method to populate base class properties
@@ -556,6 +614,16 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public override int KeyID
         {

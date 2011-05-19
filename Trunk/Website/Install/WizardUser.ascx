@@ -1,27 +1,25 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Services.Install.WizardUser" CodeFile="WizardUser.ascx.cs" %>
-<table cellpadding="0" cellspacing="0" border="0">
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblFirstName" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtFirstName" runat="Server" /></td>
-    </tr>
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblLastName" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtLastName" runat="Server" /></td>
-    </tr>
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblUserName" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtUserName" runat="Server" /></td>
-    </tr>
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblPassword" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtPassword" runat="Server" TextMode="password" /></td>
-    </tr>
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblConfirm" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtConfirm" runat="Server" TextMode="password" /></td>
-    </tr>
-     <tr>
-        <td class="NormalBold" width="150"><asp:Label ID="lblEmail" runat="server" /></td>
-        <td class="Normal" width="250"><asp:TextBox ID="txtEmail" runat="Server" Width="250px" /></td>
-    </tr>
-</table>
+<div class="dnnFormItem">
+    <label for="<%=txtFirstName.ClientID%>"><asp:Label ID="lblFirstName" runat="server" /></label>
+    <asp:TextBox ID="txtFirstName" runat="Server" />
+</div>
+<div class="dnnFormItem">
+    <label for="<%=txtLastName.ClientID%>"><asp:Label ID="lblLastName" runat="server" /></label>
+    <asp:TextBox ID="txtLastName" runat="Server" />
+</div>
+<div class="dnnFormItem">
+    <label for="<%=txtUserName.ClientID%>"><asp:Label ID="lblUserName" runat="server" /></label>
+    <asp:TextBox ID="txtUserName" runat="Server" />
+</div>
+<div class="dnnFormItem">
+    <label for="<%=txtPassword.ClientID%>"><asp:Label ID="lblPassword" runat="server" /></label>
+    <asp:TextBox ID="txtPassword" runat="Server" TextMode="password" />
+</div>
+<div class="dnnFormItem">
+    <label for="<%=txtConfirm.ClientID%>"><asp:Label ID="lblConfirm" runat="server" /></label>
+    <asp:TextBox ID="txtConfirm" runat="Server" TextMode="password" />
+</div>
+<div class="dnnFormItem">
+    <label for="<%=txtEmail.ClientID%>"><asp:Label ID="lblEmail" runat="server" /></label>
+    <asp:TextBox ID="txtEmail" runat="Server"  />
+</div>

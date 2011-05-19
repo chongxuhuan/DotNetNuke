@@ -66,13 +66,13 @@
 			span.cpEditCurrentPage a{background:url(images/iconbar_edittab_16.gif) no-repeat left;}
 			span.cpCopyPage a{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
 			a.cpDeletePage{background:url(images/iconbar_deletetab_16.gif) no-repeat left;}
-				a.cpDeletePage.dnnDisabled{background:url(images/iconbar_deletetab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+				a.cpDeletePage.dnnDisabled{background:url(images/iconbar_deletetab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
 			span.cpImportPage a{background:url(images/iconbar_importtab_16.gif) no-repeat left;}
 			span.cpExportPage a{background:url(images/iconbar_exporttab_16.gif) no-repeat left;}
 			a.cpCopyPermissions{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
-				a.cpCopyPermissions.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+				a.cpCopyPermissions.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
 			a.cpCopyDesign{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
-				a.cpCopyDesign.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;display:none;font-size:0;border-collapse:collapse;line-height:0;}
+				a.cpCopyDesign.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
 			span.cpPageHelp a{background:url(images/iconbar_help_16.gif) no-repeat left;}
 			span.cpNewUser a{background:url(images/iconbar_add_users_16.gif) no-repeat left;}
 			span.cpNewRole a{background:url(images/icon_securityroles_16px.gif) no-repeat left;}

@@ -37,10 +37,16 @@ namespace DotNetNuke.Services.Localization
     [Serializable]
     public class LanguagePackInfo : BaseEntityInfo, IHydratable
     {
+		#region "Private Members"
+
         private int _DependentPackageID = Null.NullInteger;
         private int _LanguageID = Null.NullInteger;
         private int _LanguagePackID = Null.NullInteger;
         private int _PackageID = Null.NullInteger;
+
+		#endregion
+
+		#region "Public Properties"
 
         public int LanguagePackID
         {
@@ -104,6 +110,8 @@ namespace DotNetNuke.Services.Localization
                 }
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
@@ -113,6 +121,7 @@ namespace DotNetNuke.Services.Localization
             LanguageID = Null.SetNullInteger(dr["LanguageID"]);
             PackageID = Null.SetNullInteger(dr["PackageID"]);
             DependentPackageID = Null.SetNullInteger(dr["DependentPackageID"]);
+            //Call the base classes fill method to populate base class proeprties
             base.FillInternal(dr);
         }
 

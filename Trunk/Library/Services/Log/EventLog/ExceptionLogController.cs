@@ -88,6 +88,7 @@ namespace DotNetNuke.Services.Log.EventLog
             objLogInfo.LogTypeKey = LogType.ToString();
             if (LogType == ExceptionLogType.SEARCH_INDEXER_EXCEPTION)
             {
+				//Add SearchException Properties
                 var objSearchException = (SearchException) objException;
                 objLogInfo.LogProperties.Add(new LogDetailInfo("ModuleId", objSearchException.SearchItem.ModuleId.ToString()));
                 objLogInfo.LogProperties.Add(new LogDetailInfo("SearchItemId", objSearchException.SearchItem.SearchItemId.ToString()));
@@ -97,6 +98,7 @@ namespace DotNetNuke.Services.Log.EventLog
             }
             else if (LogType == ExceptionLogType.MODULE_LOAD_EXCEPTION)
             {
+				//Add ModuleLoadException Properties
                 var objModuleLoadException = (ModuleLoadException) objException;
                 objLogInfo.LogProperties.Add(new LogDetailInfo("ModuleId", objModuleLoadException.ModuleId.ToString()));
                 objLogInfo.LogProperties.Add(new LogDetailInfo("ModuleDefId", objModuleLoadException.ModuleDefId.ToString()));
@@ -105,10 +107,13 @@ namespace DotNetNuke.Services.Log.EventLog
             }
             else if (LogType == ExceptionLogType.SECURITY_EXCEPTION)
             {
+				//Add SecurityException Properties
                 var objSecurityException = (SecurityException) objException;
                 objLogInfo.LogProperties.Add(new LogDetailInfo("Querystring", objSecurityException.Querystring));
                 objLogInfo.LogProperties.Add(new LogDetailInfo("IP", objSecurityException.IP));
             }
+			
+			//Add BasePortalException Properties
             var objBasePortalException = new BasePortalException(objException.ToString(), objException);
             objLogInfo.LogProperties.Add(new LogDetailInfo("AssemblyVersion", objBasePortalException.AssemblyVersion));
             objLogInfo.LogProperties.Add(new LogDetailInfo("PortalID", objBasePortalException.PortalID.ToString()));

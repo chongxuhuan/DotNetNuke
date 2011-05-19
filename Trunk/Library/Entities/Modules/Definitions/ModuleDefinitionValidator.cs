@@ -88,6 +88,8 @@ namespace DotNetNuke.Entities.Modules.Definitions
             xmlStream.Seek(0, SeekOrigin.Begin);
             var xmlReader = new XmlTextReader(xmlStream);
             xmlReader.MoveToContent();
+
+            //This test assumes provides a simple validation 
             switch (xmlReader.LocalName.ToLower())
             {
                 case "module":

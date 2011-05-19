@@ -41,17 +41,26 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
         internal const string CacheFileExtension = ".resources";
         internal static string CachingDirectory = "Cache\\";
 
+		#region "Abstract Method Implementation"
         public override void Insert(string Key, object Value, DNNCacheDependency Dependency, DateTime AbsoluteExpiration, TimeSpan SlidingExpiration, CacheItemPriority Priority,
                                     CacheItemRemovedCallback OnRemoveCallback)
         {
+			//initialize cache dependency
             DNNCacheDependency d = Dependency;
+
+            //if web farm is enabled
             if (IsWebFarm())
             {
+                //get hashed file name
                 var f = new string[1];
                 f[0] = GetFileName(Key);
+                //create a cache file for item
                 CreateCacheFile(f[0], Key);
+                //create a cache dependency on the cache file
                 d = new DNNCacheDependency(f, null, Dependency);
             }
+			
+            //Call base class method to add obect to cache
             base.Insert(Key, Value, d, AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
         }
 
@@ -67,18 +76,27 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
 
         public override string PurgeCache()
         {
+            //called by scheduled job to remove cache files which are no longer active
             return PurgeCacheFiles(Globals.HostMapPath + CachingDirectory);
         }
 
         public override void Remove(string Key)
         {
             base.Remove(Key);
+
+            //if web farm is enabled in config file
             if (IsWebFarm())
             {
+                //get hashed filename
                 string f = GetFileName(Key);
+                //delete cache file - this synchronizes the cache across servers in the farm
                 DeleteCacheFile(f);
             }
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         private static string ByteArrayToString(byte[] arrInput)
         {
@@ -93,17 +111,23 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
 
         private static void CreateCacheFile(string FileName, string CacheKey)
         {
+			//declare stream
             StreamWriter s = null;
             try
             {
+				//if the cache file does not already exist
                 if (!File.Exists(FileName))
                 {
+					//create the cache file
                     s = File.CreateText(FileName);
+                    //write the CacheKey to the file to provide a documented link between cache item and cache file
                     s.Write(CacheKey);
+					//close the stream
                 }
             }
             catch (Exception ex)
             {
+                //permissions issue creating cache file or more than one thread may have been trying to write the cache file simultaneously
                 Exceptions.Exceptions.LogException(ex);
             }
             finally
@@ -126,12 +150,14 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
             }
             catch (Exception ex)
             {
+                //an error occurred when trying to delete the cache file - this is serious as it means that the cache will not be synchronized
                 Exceptions.Exceptions.LogException(ex);
             }
         }
 
         private static string GetFileName(string CacheKey)
         {
+            //cache key may contain characters invalid for a filename - this method creates a valid filename
             byte[] FileNameBytes = Encoding.ASCII.GetBytes(CacheKey);
             var md5 = new MD5CryptoServiceProvider();
             FileNameBytes = md5.ComputeHash(FileNameBytes);
@@ -141,27 +167,38 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
 
         private string PurgeCacheFiles(string Folder)
         {
+            //declare counters
             int PurgedFiles = 0;
             int PurgeErrors = 0;
             int i;
+			
+            //get list of cache files
             string[] f;
             f = Directory.GetFiles(Folder);
+
+            //loop through cache files
             for (i = 0; i <= f.Length - 1; i++)
             {
+                //get last write time for file
                 DateTime dtLastWrite;
                 dtLastWrite = File.GetLastWriteTime(f[i]);
+                //if the cache file is more than 2 hours old ( no point in checking most recent cache files )
                 if (dtLastWrite < DateTime.Now.Subtract(new TimeSpan(2, 0, 0)))
                 {
+					//get cachekey
                     string strCacheKey = Path.GetFileNameWithoutExtension(f[i]);
+                    //if the cache key does not exist in memory
                     if (DataCache.GetCache(strCacheKey) == null)
                     {
                         try
                         {
+							//delete the file
                             File.Delete(f[i]);
                             PurgedFiles += 1;
                         }
                         catch (Exception exc)
                         {
+							//an error occurred
                             Instrumentation.DnnLog.Error(exc);
 
                             PurgeErrors += 1;
@@ -169,7 +206,11 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
                     }
                 }
             }
+			
+        	//return a summary message for the job
             return string.Format("Cache Synchronization Files Processed: " + f.Length + ", Purged: " + PurgedFiles + ", Errors: " + PurgeErrors);
-        }
-    }
+		}
+
+		#endregion
+	}
 }

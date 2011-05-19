@@ -37,6 +37,18 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.WebControls
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.UI.WebControls
+    /// Class:      LanguageSelector
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Language Selector control
+    /// </summary>
+    /// <history>
+    ///     [sleupold]	2007-11-10 created
+    ///     [sleupold]  2007-12-08 Support for Languages ("de", "en") and Locales ("de-DE", "en-US") added
+    /// </history>
     public class LanguageSelector : Control, INamingContainer
     {
         #region LanguageItemStyle enum
@@ -62,6 +74,9 @@ namespace DotNetNuke.UI.WebControls
 
         #region LanguageSelectionMode enum
 
+        /// <summary>
+        /// Language Selection mode, offered to the user: single select or multiple select.
+        /// </summary>
         public enum LanguageSelectionMode
         {
             Multiple = 1,
@@ -72,6 +87,9 @@ namespace DotNetNuke.UI.WebControls
 
         #region LanguageSelectionObject enum
 
+        /// <summary>
+        /// Selection object: Language ("de", "en") or Locale ("de-DE", "en-US")
+        /// </summary>
         public enum LanguageSelectionObject
         {
             NeutralCulture = 1,
@@ -82,6 +100,11 @@ namespace DotNetNuke.UI.WebControls
 
         private Panel pnlControl;
 
+		#region "Public Properties"
+		
+        /// <summary>
+        /// Gets or sets selection mode (single, multiple)
+        /// </summary>
         public LanguageSelectionMode SelectionMode
         {
             get
@@ -102,12 +125,15 @@ namespace DotNetNuke.UI.WebControls
                     ViewState["SelectionMode"] = value;
                     if (Controls.Count > 0)
                     {
-                        CreateChildControls();
+                        CreateChildControls(); //Recreate if already created
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the type of objects to be selectable: NeutralCulture ("de") or SpecificCulture ("de-DE")
+        /// </summary>
         public LanguageSelectionObject SelectionObject
         {
             get
@@ -128,12 +154,15 @@ namespace DotNetNuke.UI.WebControls
                     ViewState["SelectionObject"] = value;
                     if (Controls.Count > 0)
                     {
-                        CreateChildControls();
+                        CreateChildControls(); //Recreate if already created 
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the style of the language items
+        /// </summary>
         public LanguageItemStyle ItemStyle
         {
             get
@@ -154,12 +183,15 @@ namespace DotNetNuke.UI.WebControls
                     ViewState["ItemStyle"] = value;
                     if (Controls.Count > 0)
                     {
-                        CreateChildControls();
+                        CreateChildControls(); //Recreate if already created 
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the direction of the language list
+        /// </summary>
         public LanguageListDirection ListDirection
         {
             get
@@ -180,12 +212,15 @@ namespace DotNetNuke.UI.WebControls
                     ViewState["ListDirection"] = value;
                     if (Controls.Count > 0)
                     {
-                        CreateChildControls();
+                        CreateChildControls(); //Recreate if already created 
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the list of selected languages
+        /// </summary>
         public string[] SelectedLanguages
         {
             get
@@ -194,6 +229,7 @@ namespace DotNetNuke.UI.WebControls
                 var a = new ArrayList();
                 if (GetCultures(SelectionObject == LanguageSelectionObject.SpecificCulture).Length < 2)
                 {
+					//return single language
                     PortalSettings _Settings = PortalController.GetCurrentPortalSettings();
                     foreach (string strLocale in LocaleController.Instance.GetLocales(_Settings.PortalId).Keys)
                     {
@@ -202,6 +238,7 @@ namespace DotNetNuke.UI.WebControls
                 }
                 else
                 {
+					//create list of selected languages
                     foreach (CultureInfo c in GetCultures(SelectionObject == LanguageSelectionObject.SpecificCulture))
                     {
                         if (SelectionMode == LanguageSelectionMode.Single)
@@ -261,12 +298,20 @@ namespace DotNetNuke.UI.WebControls
                 }
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// <summary>
+        /// Create Child Controls
+        /// </summary>
         protected override void CreateChildControls()
         {
             Controls.Clear();
             pnlControl = new Panel();
             Controls.Add(pnlControl);
+
             foreach (CultureInfo c in GetCultures(SelectionObject == LanguageSelectionObject.SpecificCulture))
             {
                 var lblLocale = new HtmlGenericControl("label");
@@ -312,12 +357,22 @@ namespace DotNetNuke.UI.WebControls
                     pnlControl.Controls.Add(new LiteralControl(" "));
                 }
             }
+			
+			//Hide if not more than one language
             if (GetCultures(SelectionObject == LanguageSelectionObject.SpecificCulture).Length < 2)
             {
                 Visible = false;
             }
         }
+		
+		#endregion
 
+		#region " Private Methods "
+        /// <summary>
+        /// retrieve the cultures, currently supported by the portal
+        /// </summary>
+        /// <param name="specific">true: locales, false: neutral languages</param>
+        /// <returns>Array of cultures</returns>
         private CultureInfo[] GetCultures(bool specific)
         {
             var a = new ArrayList();
@@ -340,5 +395,7 @@ namespace DotNetNuke.UI.WebControls
             }
             return (CultureInfo[]) a.ToArray(typeof (CultureInfo));
         }
+		
+		#endregion
     }
 }

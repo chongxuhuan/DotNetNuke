@@ -45,6 +45,7 @@ namespace DotNetNuke.Services.Installer.Dependencies
     /// -----------------------------------------------------------------------------
     public class DependencyFactory
     {
+		#region "Public Shared Methods"
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The GetDependency method instantiates (and returns) the relevant Dependency
@@ -74,20 +75,27 @@ namespace DotNetNuke.Services.Installer.Dependencies
                     dependency = new TypeDependency();
                     break;
                 default:
+                    //Dependency type is defined in the List
                     var listController = new ListController();
                     ListEntryInfo entry = listController.GetListEntryInfo("Dependency", dependencyType);
                     if (entry != null && !string.IsNullOrEmpty(entry.Text))
                     {
+						//The class for the Installer is specified in the Text property
                         dependency = (DependencyBase) Reflection.CreateObject(entry.Text, "Dependency_" + entry.Value);
                     }
                     break;
             }
             if (dependency == null)
             {
+				//Could not create dependency, show generic error message
                 dependency = new InvalidDependency(Util.INSTALL_Dependencies);
             }
+            //Read Manifest
             dependency.ReadManifest(dependencyNav);
+
             return dependency;
         }
+		
+		#endregion
     }
 }

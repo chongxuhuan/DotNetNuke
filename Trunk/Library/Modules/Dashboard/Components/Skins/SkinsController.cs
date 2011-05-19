@@ -41,11 +41,16 @@ namespace DotNetNuke.Modules.Dashboard.Components.Skins
 
         public void ExportData(XmlWriter writer)
         {
+			//Write start of Installed Skins 
             writer.WriteStartElement("installedSkins");
+			
+			//Iterate through Installed Skins 
             foreach (SkinInfo skin in GetInstalledSkins())
             {
                 skin.WriteXml(writer);
             }
+			
+			//Write end of Installed Skins 
             writer.WriteEndElement();
         }
 

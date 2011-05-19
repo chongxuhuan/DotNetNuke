@@ -25,24 +25,29 @@
 
 using System;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Web.Mvp;
 
+using Telerik.Web.UI;
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Presenters
 {
+
     public class VocabularyListPresenter : ModulePresenter<IVocabularyListView, VocabularyListModel>
     {
+
         private readonly IVocabularyController _vocabularyController;
 
-        #region "Constructors"
+        #region Constructors
 
         public VocabularyListPresenter(IVocabularyListView view) : this(view, new VocabularyController(new DataService()))
         {
@@ -53,41 +58,47 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             Requires.NotNull("vocabularyController", vocabularyController);
 
             _vocabularyController = vocabularyController;
-
-            View.AddVocabulary += AddVocabulary;
         }
 
         #endregion
 
-        #region "Protected Methods"
-
-        protected override void OnInit()
-        {
-            base.OnInit();
-
-            View.Model.Vocabularies =
-                (from v in _vocabularyController.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v).ToList();
-
-            View.Model.IsEditable = IsEditable;
-            View.Model.NavigateUrlFormatString = Globals.NavigateURL(TabId, "EditVocabulary", string.Format("mid={0}", ModuleId), "VocabularyId={0}");
-        }
-
-        #endregion
+        #region Event Handlers
 
         protected override void OnLoad()
         {
             base.OnLoad();
 
+            View.Model.IsEditable = IsEditable;
+            View.Model.NewVocabUrl = Globals.NavigateURL(TabId, "CreateVocabulary", "mid=" + ModuleId);
             View.ShowAddButton(IsEditable);
+            View.GridsNeedDataSource += GridNeedDataSource;
+            View.GridsItemDataBound += GridItemDataBound;
+            View.Refresh();
         }
 
-        #region "Public Methods"
-
-        public void AddVocabulary(object sender, EventArgs e)
+        protected void GridNeedDataSource(object sender, GridNeedDataSourceEventArgs e)
         {
-            Response.Redirect(Globals.NavigateURL(TabId, "CreateVocabulary", string.Format("mid={0}", ModuleId)));
+            var objGrid = (RadGrid)sender;
+
+            objGrid.DataSource = (from v in _vocabularyController.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v).ToList();
+        }
+
+        protected void GridItemDataBound(object sender, GridItemEventArgs e)
+        {
+            if (!(e.Item is GridDataItem)) return;
+            var vocabKey = (int)e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["VocabularyId"];
+
+            var dataItem = (GridDataItem)e.Item;
+
+            var hlEdit = ((HyperLink)(dataItem)["EditItem"].FindControl("hlEdit"));
+            hlEdit.NavigateUrl = Globals.NavigateURL(ModuleContext.TabId, "EditVocabulary", "mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
+
+            var imgEdit = ((Image)(dataItem)["EditItem"].FindControl("imgEdit"));
+            imgEdit.AlternateText = Localization.GetString("Edit", LocalResourceFile);
+            imgEdit.ToolTip = Localization.GetString("Edit", LocalResourceFile);
         }
 
         #endregion
+
     }
 }

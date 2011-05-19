@@ -34,15 +34,43 @@ using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Security.Permissions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Security.Permissions
+    /// Class	 : PermissionInfoBase
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// PermissionInfoBase provides a base class for PermissionInfo classes
+    /// </summary>
+    /// <remarks>All Permission calsses have  a common set of properties
+    ///   - AllowAccess
+    ///   - RoleID
+    ///   - RoleName
+    ///   - UserID
+    ///   - Username
+    ///   - DisplayName
+    /// 
+    /// and these are implemented in this base class
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	01/14/2008   Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public abstract class PermissionInfoBase : PermissionInfo
     {
+		#region "Private Members"
+
         private bool _AllowAccess;
         private string _DisplayName;
         private int _RoleID;
         private string _RoleName;
         private int _UserID;
         private string _Username;
+		
+		#endregion
+		
+		#region "Constructors"
 
         public PermissionInfoBase()
         {
@@ -53,7 +81,20 @@ namespace DotNetNuke.Security.Permissions
             _Username = Null.NullString;
             _DisplayName = Null.NullString;
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets  aflag that indicates whether the user or role has permission
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("allowaccess")]
         public bool AllowAccess
         {
@@ -67,6 +108,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User's DisplayName
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("displayname")]
         public string DisplayName
         {
@@ -80,6 +130,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Role ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("roleid")]
         public int RoleID
         {
@@ -93,6 +152,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Role Name
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("rolename")]
         public string RoleName
         {
@@ -106,6 +174,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("userid")]
         public int UserID
         {
@@ -119,6 +196,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User Name
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("username")]
         public string Username
         {
@@ -131,10 +217,25 @@ namespace DotNetNuke.Security.Permissions
                 _Username = value;
             }
         }
+		
+		#endregion
+		
+		#region "Protected Methods"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FillInternal fills the PermissionInfoBase from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void FillInternal(IDataReader dr)
         {
+            //Call the base classes fill method to populate base class proeprties
             base.FillInternal(dr);
+
             UserID = Null.SetNullInteger(dr["UserID"]);
             Username = Null.SetNullString(dr["Username"]);
             DisplayName = Null.SetNullString(dr["DisplayName"]);
@@ -150,5 +251,7 @@ namespace DotNetNuke.Security.Permissions
             }
             AllowAccess = Null.SetNullBoolean(dr["AllowAccess"]);
         }
+		
+		#endregion
     }
 }

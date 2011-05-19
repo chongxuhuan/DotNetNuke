@@ -71,16 +71,17 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             ddlLogType.Items.Add(new ListItem(Localization.GetString("All"), "*"));
             var logController = new LogController();
 
-            List<LogTypeInfo> logTypes;
+            List<LogTypeConfigInfo> logTypes;
             if (String.IsNullOrEmpty(EventFilter))
             {
-                logTypes = logController.GetLogTypeInfoDictionary().Values
+                logTypes = logController.GetLogTypeConfigInfo().Cast<LogTypeConfigInfo>()
+                    .Where(l => l.LoggingIsActive)
                     .OrderBy(l => l.LogTypeFriendlyName).ToList();
             }
             else
             {
-                logTypes = logController.GetLogTypeInfoDictionary().Values
-                    .Where(l => l.LogTypeKey.StartsWith(EventFilter))
+                logTypes = logController.GetLogTypeConfigInfo().Cast<LogTypeConfigInfo>()
+                    .Where(l => l.LogTypeKey.StartsWith(EventFilter) && l.LoggingIsActive)
                     .OrderBy(l => l.LogTypeFriendlyName).ToList();
             }
 

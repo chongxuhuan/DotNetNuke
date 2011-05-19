@@ -52,19 +52,25 @@ namespace DotNetNuke.Common.Utilities
         /// -----------------------------------------------------------------------------
         public static string InvokePopupCal(TextBox Field)
         {
+            //Define character array to trim from language strings
             char[] TrimChars = {',', ' '};
+            //Get culture array of month names and convert to string for
+            //passing to the popup calendar
             string MonthNameString = "";
             foreach (string Month in DateTimeFormatInfo.CurrentInfo.MonthNames)
             {
                 MonthNameString += Month + ",";
             }
             MonthNameString = MonthNameString.TrimEnd(TrimChars);
+            //Get culture array of day names and convert to string for
+            //passing to the popup calendar
             string DayNameString = "";
             foreach (string Day in DateTimeFormatInfo.CurrentInfo.AbbreviatedDayNames)
             {
                 DayNameString += Day + ",";
             }
             DayNameString = DayNameString.TrimEnd(TrimChars);
+            //Get the short date pattern for the culture
             string FormatString = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
             if (!ClientAPI.IsClientScriptBlockRegistered(Field.Page, "PopupCalendar.js"))
             {

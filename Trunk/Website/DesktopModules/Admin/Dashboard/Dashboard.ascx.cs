@@ -93,10 +93,10 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+            jQuery.RequestDnnPluginsRegistration();
 
-            jQuery.RequestRegistration();
-            string dashboardJs = ResolveUrl("~/resources/dashboard/jquery.dashboard.js");
-            Page.ClientScript.RegisterClientScriptInclude("DashboardJS", dashboardJs);
+            //string dashboardJs = ResolveUrl("~/resources/dashboard/jquery.dashboard.js");
+            //Page.ClientScript.RegisterClientScriptInclude("DashboardJS", dashboardJs);
             ClientAPI.RegisterClientVariable(Page, "dashboardBaseUrl", ControlPath, false);
             ClientAPI.RegisterClientVariable(Page, "appBaseUrl", Globals.ApplicationPath, false);
         }

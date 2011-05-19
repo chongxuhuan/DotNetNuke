@@ -37,8 +37,14 @@ namespace DotNetNuke.UI.WebControls
 {
     public abstract class WebControlBase : WebControl
     {
+		#region "Private Members"
+
         private string _styleSheetUrl = "";
         private string _theme = "";
+		
+		#endregion
+
+		#region "Public Properties"
 
         public string Theme
         {
@@ -100,6 +106,8 @@ namespace DotNetNuke.UI.WebControls
                 return PortalController.GetCurrentPortalSettings();
             }
         }
+		
+		#endregion
 
         public abstract string HtmlOutput { get; }
 

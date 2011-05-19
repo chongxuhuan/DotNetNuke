@@ -11,9 +11,12 @@
         <div class="dnnFormItem">
             <dnn:label id="plMinWordLength" runat="server" controlname="txtMinWordLength" />
             <asp:textbox id="txtMinWordLength" runat="server" maxlength="128" />
-            <asp:CompareValidator ID="valWordLength" runat="server" ControlToValidate="txtMinWordLength" 
+            <asp:CompareValidator ID="valWordLength" runat="server" ControlToValidate="txtMinWordLength" Display="Dynamic" 
                 ControlToCompare="txtMaxWordLength" Operator="LessThanEqual"  CssClass="dnnFormMessage dnnFormError" 
                 EnableClientScript="true" resourcekey="SearchWordLength"/>
+            <asp:CompareValidator ID="valMinValue" runat="server" ControlToValidate="txtMinWordLength" Display="Dynamic"
+                 ValueToCompare="1" Operator="GreaterThanEqual"  CssClass="dnnFormMessage dnnFormError" 
+                EnableClientScript="true" resourcekey="SearchWordMinLength"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plIncludeCommon" runat="server" controlname="chkIncludeCommon" text="Include Common Words:"></dnn:label>
@@ -25,7 +28,7 @@
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">
-    	<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
-        <li><asp:LinkButton id="cmdReIndex" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReIndex" Causesvalidation="False" /></li>
+    	<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" CausesValidation="true" /></li>
+        <li><asp:LinkButton id="cmdReIndex" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReIndex" CausesValidation="true" /></li>
     </ul>
 </div>

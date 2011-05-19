@@ -26,22 +26,23 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 using DotNetNuke.Services.Localization;
 
 #endregion
 
 namespace DotNetNuke.Web.UI.WebControls
 {
+
     public class DnnLabel : Label, ILocalizable
     {
-        private bool _Localize = true;
 
-        #region "Constructors"
+        private bool _localize = true;
+
+        #region Constructors
 
         public DnnLabel()
         {
-            CssClass = "SubHead dnnLabel";
+            CssClass = "dnnFormLabel";
         }
 
         #endregion
@@ -62,21 +63,17 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #endregion
 
-        #region "ILocalizable Implementation"
+        #region ILocalizable Implementation
 
         public bool Localize
         {
             get
             {
-                if (DesignMode)
-                {
-                    return false;
-                }
-                return _Localize;
+                return !DesignMode && _localize;
             }
             set
             {
-                _Localize = value;
+                _localize = value;
             }
         }
 
@@ -104,5 +101,6 @@ namespace DotNetNuke.Web.UI.WebControls
         }
 
         #endregion
+
     }
 }

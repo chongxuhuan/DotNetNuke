@@ -39,8 +39,28 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.UI.Containers
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : Containers.Visibility
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Handles the events for collapsing and expanding modules, 
+    /// Showing or hiding admin controls when preview is checked
+    /// if personalization of the module container and title is allowed for that module.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[sun1]	    2/1/2004	Created
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Visibility : SkinObjectBase
     {
+#region "Private Members"
+
         private int _animationFrames = 5;
         private Panel _pnlModuleContent;
 
@@ -53,7 +73,7 @@ namespace DotNetNuke.UI.Containers
                     return ModulePath + minIcon;
                 }
                 
-                return Globals.ApplicationPath + "/images/min.gif";
+                return Globals.ApplicationPath + "/images/min.gif"; //is ~/ the same as ApplicationPath in all cases?
             }
         }
 
@@ -66,7 +86,7 @@ namespace DotNetNuke.UI.Containers
                     return ModulePath + MaxIcon;
                 }
                 
-                return Globals.ApplicationPath + "/images/max.gif";
+                return Globals.ApplicationPath + "/images/max.gif"; //is ~/ the same as ApplicationPath in all cases?
             }
         }
 
@@ -93,6 +113,11 @@ namespace DotNetNuke.UI.Containers
                 return ModuleControl.ModuleContext.Configuration.ContainerPath.Substring(0, ModuleControl.ModuleContext.Configuration.ContainerPath.LastIndexOf("/") + 1);
             }
         }
+		
+		#endregion
+
+		#region "Public Members"
+
 
         public int AnimationFrames
         {
@@ -159,12 +184,14 @@ namespace DotNetNuke.UI.Containers
             {
                 if (!Page.IsPostBack)
                 {
+					//public attributes
                     if (!String.IsNullOrEmpty(BorderWidth))
                     {
                         cmdVisibility.BorderWidth = Unit.Parse(BorderWidth);
                     }
                     if (ModuleControl.ModuleContext.Configuration != null)
                     {
+						//check if Personalization is allowed
                         if (ModuleControl.ModuleContext.Configuration.Visibility == VisibilityState.None)
                         {
                             cmdVisibility.Enabled = false;
@@ -172,6 +199,8 @@ namespace DotNetNuke.UI.Containers
                         }
                         if (ModuleControl.ModuleContext.Configuration.Visibility == VisibilityState.Minimized)
                         {
+							//if visibility is set to minimized, then the client needs to set the cookie for maximized only and delete the cookie for minimized,
+                            //instead of the opposite.  We need to notify the client of this
                             ClientAPI.RegisterClientVariable(Page, "__dnn_" + ModuleControl.ModuleContext.ModuleId + ":defminimized", "true", true);
                         }
                         if (!Globals.IsAdminControl())
@@ -180,6 +209,7 @@ namespace DotNetNuke.UI.Containers
                             {
                                 if (ModuleContent != null)
                                 {
+									//EnableMinMax now done in prerender
                                 }
                                 else
                                 {
@@ -199,6 +229,7 @@ namespace DotNetNuke.UI.Containers
                 }
                 else
                 {
+                    //since we disabled viewstate on the cmdVisibility control we need to check to see if we need hide this on postbacks as well
                     if (ModuleControl.ModuleContext.Configuration != null)
                     {
                         if (ModuleControl.ModuleContext.Configuration.Visibility == VisibilityState.None)
@@ -209,7 +240,7 @@ namespace DotNetNuke.UI.Containers
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -253,10 +284,12 @@ namespace DotNetNuke.UI.Containers
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

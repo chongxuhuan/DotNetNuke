@@ -24,20 +24,19 @@
 #region Usings
 
 using System.Collections.Generic;
-
 using DotNetNuke.Entities.Content.Taxonomy;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views.Models
 {
+
     public class VocabularyListModel
     {
+
         public bool IsEditable { get; set; }
 
-        public string NavigateUrlFormatString { get; set; }
+        public string NewVocabUrl { get; set; }
 
-        public IList<Vocabulary> Vocabularies { get; set; }
     }
 }

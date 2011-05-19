@@ -52,12 +52,33 @@ namespace DotNetNuke.Services.Installer
     /// -----------------------------------------------------------------------------
     public class Installer
     {
+		#region Private Members
         private readonly InstallerInfo _InstallerInfo;
         private readonly SortedList<int, PackageInstaller> _Packages = new SortedList<int, PackageInstaller>();
 
+		#endregion
+
+		#region Constructors
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new Installer instance from a string representing
+        /// the physical path to the temporary install folder and a string representing 
+        /// the physical path to the root of the site
+        /// </summary>
+        /// <param name="tempFolder">The physical path to the zip file containg the package</param>
+        /// <param name="manifest">The manifest filename</param>
+        /// <param name="physicalSitePath">The physical path to the root of the site</param>
+        /// <param name="loadManifest">Flag that determines whether the manifest will be loaded</param>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Installer(string tempFolder, string manifest, string physicalSitePath, bool loadManifest)
         {
             _InstallerInfo = new InstallerInfo(tempFolder, manifest, physicalSitePath);
+
+            //Called from Interactive installer - default IgnoreWhiteList to false
             _InstallerInfo.IgnoreWhiteList = false;
             if (loadManifest)
             {
@@ -65,23 +86,62 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new Installer instance from a Stream and a
+        /// string representing the physical path to the root of the site
+        /// </summary>
+        /// <param name="inputStream">The Stream to use to create this InstallerInfo instance</param>
+        /// <param name="physicalSitePath">The physical path to the root of the site</param>
+        /// <param name="loadManifest">Flag that determines whether the manifest will be loaded</param>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Installer(Stream inputStream, string physicalSitePath, bool loadManifest) : this(inputStream, physicalSitePath, loadManifest, true)
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new Installer instance from a Stream and a
+        /// string representing the physical path to the root of the site
+        /// </summary>
+        /// <param name="inputStream">The Stream to use to create this InstallerInfo instance</param>
+        /// <param name="physicalSitePath">The physical path to the root of the site</param>
+        /// <param name="loadManifest">Flag that determines whether the manifest will be loaded</param>
+        /// <param name="deleteTemp">Whether delete the temp folder.</param>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Installer(Stream inputStream, string physicalSitePath, bool loadManifest, bool deleteTemp)
         {
             _InstallerInfo = new InstallerInfo(inputStream, physicalSitePath);
+
+            //Called from Batch installer - default IgnoreWhiteList to true
             _InstallerInfo.IgnoreWhiteList = true;
+
             if (loadManifest)
             {
                 ReadManifest(deleteTemp);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new Installer instance from a PackageInfo object
+        /// </summary>
+        /// <param name="package">The PackageInfo instance</param>
+        /// <param name="physicalSitePath">The physical path to the root of the site</param>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Installer(PackageInfo package, string physicalSitePath)
         {
             _InstallerInfo = new InstallerInfo(package, physicalSitePath);
+
             Packages.Add(Packages.Count, new PackageInstaller(package));
         }
 
@@ -93,7 +153,20 @@ namespace DotNetNuke.Services.Installer
                 ReadManifest(new FileStream(manifest, FileMode.Open, FileAccess.Read));
             }
         }
+		
+		#endregion
 
+		#region Public Properties
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the associated InstallerInfo object
+        /// </summary>
+        /// <value>An InstallerInfo</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo InstallerInfo
         {
             get
@@ -102,6 +175,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the associated InstallerInfo is valid
+        /// </summary>
+        /// <value>True - if valid, False if not</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsValid
         {
             get
@@ -111,6 +193,15 @@ namespace DotNetNuke.Services.Installer
         }
 
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a SortedList of Packages that are included in the Package Zip
+        /// </summary>
+        /// <value>A SortedList(Of Integer, PackageInstaller)</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public SortedList<int, PackageInstaller> Packages
         {
             get
@@ -119,6 +210,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets 
+        /// </summary>
+        /// <value>A Dictionary(Of String, PackageInstaller)</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string TempInstallFolder
         {
             get
@@ -127,11 +227,25 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+		#endregion
+
+		#region Private Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The InstallPackages method installs the packages
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void InstallPackages()
         {
+			//Iterate through all the Packages
             for (int index = 0; index <= Packages.Count - 1; index++)
             {
                 PackageInstaller installer = Packages.Values[index];
+				//Check if package is valid
                 if (installer.Package.IsValid)
                 {
                     InstallerInfo.Log.AddInfo(Util.INSTALL_Start + " - " + installer.Package.Name);
@@ -152,6 +266,16 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Logs the Install event to the Event Log
+        /// </summary>
+        /// <param name="package">The name of the package</param>
+        /// <param name="eventType">Event Type.</param>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void LogInstallEvent(string package, string eventType)
         {
             try
@@ -173,8 +297,17 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ProcessPackages method processes the packages nodes in the manifest
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ProcessPackages(XPathNavigator rootNav)
         {
+			//Parse the package nodes
             foreach (XPathNavigator nav in rootNav.Select("packages/package"))
             {
                 int order = Packages.Count;
@@ -191,6 +324,8 @@ namespace DotNetNuke.Services.Installer
         private void ReadManifest(Stream stream)
         {
             var doc = new XPathDocument(stream);
+
+            //Read the root node to determine what version the manifest is
             XPathNavigator rootNav = doc.CreateNavigator();
             rootNav.MoveToFirstChild();
             string packageType = Null.NullString;
@@ -211,6 +346,7 @@ namespace DotNetNuke.Services.Installer
             {
                 case "package":
                     InstallerInfo.IsLegacyMode = false;
+                    //Parse the package nodes
                     ProcessPackages(rootNav);
                     break;
                 case "module":
@@ -262,38 +398,59 @@ namespace DotNetNuke.Services.Installer
                 case "module":
                     var sb = new StringBuilder();
                     var writer = XmlWriter.Create(sb, XmlUtils.GetXmlWriterSettings(ConformanceLevel.Fragment));
+
+                    //Write manifest start element
                     PackageWriterBase.WriteManifestStartElement(writer);
+
+                    //Legacy Module - Process each folder
                     foreach (XPathNavigator folderNav in rootNav.Select("folders/folder"))
                     {
                         var modulewriter = new ModulePackageWriter(folderNav, info);
                         modulewriter.WriteManifest(writer, true);
                     }
 
+                    //Write manifest end element
                     PackageWriterBase.WriteManifestEndElement(writer);
+
+                    //Close XmlWriter
                     writer.Close();
+
+                    //Load manifest into XPathDocument for processing
                     legacyDoc = new XPathDocument(new StringReader(sb.ToString()));
+
+                    //Parse the package nodes
                     nav = legacyDoc.CreateNavigator().SelectSingleNode("dotnetnuke");
                     break;
                 case "languagepack":
+                    //Legacy Language Pack
                     var languageWriter = new LanguagePackWriter(rootNav, info);
                     info.LegacyError = languageWriter.LegacyError;
                     if (string.IsNullOrEmpty(info.LegacyError))
                     {
                         legacyManifest = languageWriter.WriteManifest(false);
                         legacyDoc = new XPathDocument(new StringReader(legacyManifest));
+
+                        //Parse the package nodes
                         nav = legacyDoc.CreateNavigator().SelectSingleNode("dotnetnuke");
                     }
                     break;
                 case "skinobject":
+                    //Legacy Skin Object
                     var skinControlwriter = new SkinControlPackageWriter(rootNav, info);
                     legacyManifest = skinControlwriter.WriteManifest(false);
                     legacyDoc = new XPathDocument(new StringReader(legacyManifest));
+
+                    //Parse the package nodes
                     nav = legacyDoc.CreateNavigator().SelectSingleNode("dotnetnuke");
                     break;
             }
 
             return nav;
         }
+		
+		#endregion
+
+		#region Public Methods
 
         public void DeleteTempFolder()
         {
@@ -303,6 +460,14 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method installs the feature.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool Install()
         {
             InstallerInfo.Log.StartJob(Util.INSTALL_Start);
@@ -319,6 +484,7 @@ namespace DotNetNuke.Services.Installer
             }
             finally
             {
+				//Delete Temp Folder
                 if (!string.IsNullOrEmpty(TempInstallFolder))
                 {
                     Globals.DeleteFolderRecursive(TempInstallFolder);
@@ -334,11 +500,24 @@ namespace DotNetNuke.Services.Installer
                 InstallerInfo.Log.EndJob(Util.INSTALL_Failed);
                 bStatus = false;
             }
+			
+            //log installation event
             LogInstallEvent("Package", "Install");
+
+            //Clear Host Cache
             DataCache.ClearHostCache(true);
+
             return bStatus;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifest method reads the manifest file and parses it into packages.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ReadManifest(bool deleteTemp)
         {
             InstallerInfo.Log.StartJob(Util.DNN_Reading);
@@ -352,10 +531,22 @@ namespace DotNetNuke.Services.Installer
             }
             else if (deleteTemp)
             {
+				//Delete Temp Folder
                 DeleteTempFolder();
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the feature
+        /// </summary>
+        /// <param name="deleteFiles">A flag that indicates whether the files should be
+        /// deleted</param>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        ///     [cnurse]    01/31/2008  added deleteFiles parameter
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool UnInstall(bool deleteFiles)
         {
             InstallerInfo.Log.StartJob(Util.UNINSTALL_Start);
@@ -377,8 +568,11 @@ namespace DotNetNuke.Services.Installer
             {
                 InstallerInfo.Log.EndJob(Util.UNINSTALL_Success);
             }
+            //log installation event
             LogInstallEvent("Package", "UnInstall");
             return true;
         }
+		
+		#endregion
     }
 }

@@ -26,46 +26,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Framework;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Web.Mvp;
 using DotNetNuke.Web.UI.WebControls;
-
 using WebFormsMvp;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views
 {
+
     [PresenterBinding(typeof (EditVocabularyPresenter))]
     public partial class EditVocabulary : ModuleView<EditVocabularyModel>, IEditVocabularyView
     {
-        #region "Protected Methods"
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            addTermButton.Click += addTermButton_Click;
-            cancelEdit.Click += cancelEdit_Click;
-            cancelTermButton.Click += cancelTermButton_Click;
-            deleteTermButton.Click += deleteTermButton_Click;
-            deleteVocabulary.Click += deleteVocabulary_Click;
-            saveTermButton.Click += saveTermButton_Click;
-            saveVocabulary.Click += saveVocabulary_Click;
-            termsList.SelectedTermChanged += termsList_SelectedTermChanged;
-        }
-
-        #endregion
-
-        #region "IEditVocabularyView Implementation"
+        #region IEditVocabularyView Implementation
 
         public event EventHandler AddTerm;
-        public event EventHandler Cancel;
         public event EventHandler CancelTerm;
         public event EventHandler Delete;
         public event EventHandler DeleteTerm;
@@ -92,12 +73,14 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             addTermButton.Enabled = editEnabled;
             saveTermButton.Enabled = editEnabled;
             deleteTermButton.Enabled = editEnabled;
+            cancelEdit.NavigateUrl = Model.CancelUrl;
         }
 
         public void ClearSelectedTerm()
         {
             termsList.ClearSelectedTerm();
-            termEditor.Visible = false;
+            pnlTermEditor.Visible = false;
+            pnlVocabTerms.Visible = true;
         }
 
         public void SetTermEditorMode(bool isAddMode, int termId)
@@ -113,19 +96,35 @@ namespace DotNetNuke.Modules.Taxonomy.Views
                 saveTermButton.Text = "SaveTerm";
             }
 
-            deleteTermPlaceHolder.Visible = !isAddMode;
+            deleteVocabulary.Visible = !isAddMode;
         }
 
         public void ShowTermEditor(bool showEditor)
         {
-            termEditor.Visible = showEditor;
+            pnlTermEditor.Visible = showEditor;
+            pnlVocabTerms.Visible = !showEditor;
         }
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
-        private void addTermButton_Click(object sender, EventArgs e)
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            jQuery.RequestDnnPluginsRegistration();
+
+            addTermButton.Click += OnAddTermClick;
+            cancelTermButton.Click += OnCancelTermClick;
+            deleteTermButton.Click += OnDeleteTermClick;
+            deleteVocabulary.Click += OnDeleteVocabClick;
+            saveTermButton.Click += OnSaveTermClick;
+            saveVocabulary.Click += OnSaveVocabClick;
+            termsList.SelectedTermChanged += OnTermsListIndexChanged;
+        }
+
+        protected void OnAddTermClick(object sender, EventArgs e)
         {
             if (AddTerm != null)
             {
@@ -133,15 +132,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void cancelEdit_Click(object sender, EventArgs e)
-        {
-            if (Cancel != null)
-            {
-                Cancel(this, e);
-            }
-        }
-
-        private void cancelTermButton_Click(object sender, EventArgs e)
+        protected void OnCancelTermClick(object sender, EventArgs e)
         {
             if (CancelTerm != null)
             {
@@ -149,7 +140,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void deleteTermButton_Click(object sender, EventArgs e)
+        protected void OnDeleteTermClick(object sender, EventArgs e)
         {
             if (DeleteTerm != null)
             {
@@ -157,7 +148,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void deleteVocabulary_Click(object sender, EventArgs e)
+        protected void OnDeleteVocabClick(object sender, EventArgs e)
         {
             if (Delete != null)
             {
@@ -165,7 +156,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void saveTermButton_Click(object sender, EventArgs e)
+        protected void OnSaveTermClick(object sender, EventArgs e)
         {
             if (SaveTerm != null)
             {
@@ -173,7 +164,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void saveVocabulary_Click(object sender, EventArgs e)
+        protected void OnSaveVocabClick(object sender, EventArgs e)
         {
             if (Save != null)
             {
@@ -181,7 +172,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             }
         }
 
-        private void termsList_SelectedTermChanged(object sender, TermsEventArgs e)
+        protected void OnTermsListIndexChanged(object sender, TermsEventArgs e)
         {
             if (SelectTerm != null)
             {
@@ -190,5 +181,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views
         }
 
         #endregion
+
     }
 }

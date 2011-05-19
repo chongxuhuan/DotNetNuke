@@ -44,11 +44,17 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class WidgetPackageWriter : PackageWriterBase
     {
+		#region "Constructors"
+		
         public WidgetPackageWriter(PackageInfo package) : base(package)
         {
             string company = package.Name.Substring(0, package.Name.IndexOf("."));
             BasePath = Path.Combine("Resources\\Widgets\\User", company);
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public override bool IncludeAssemblies
         {
@@ -57,9 +63,12 @@ namespace DotNetNuke.Services.Installer.Writers
                 return false;
             }
         }
+		
+		#endregion
 
         protected override void GetFiles(bool includeSource, bool includeAppCode)
         {
+			//Call base class method with includeAppCode = false
             base.GetFiles(includeSource, false);
         }
 

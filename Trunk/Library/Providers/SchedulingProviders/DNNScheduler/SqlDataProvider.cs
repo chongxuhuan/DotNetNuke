@@ -63,6 +63,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 
         private DateTime FixDate(DateTime dateToFix)
         {
+			//Fix for Sql Dates having a minimum value of 1/1/1753
             if (dateToFix < SqlDateTime.MinValue.Value)
             {
                 dateToFix = SqlDateTime.MinValue.Value;

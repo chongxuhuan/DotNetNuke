@@ -40,8 +40,21 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.UI.UserControls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Address UserControl is used to manage User Addresses
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/08/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class Address : UserControlBase
     {
+		#region "Private Members"
+		
         private string MyFileName = "Address.ascx";
         private string _Cell;
         private string _City;
@@ -120,11 +133,19 @@ namespace DotNetNuke.UI.UserControls
         protected RequiredFieldValidator valRegion2;
         protected RequiredFieldValidator valStreet;
         protected RequiredFieldValidator valTelephone;
+		
+		#endregion
+
+		#region "Constructors"
 
         public Address()
         {
             StartTabIndex = 1;
         }
+		
+		#endregion
+
+		#region "Properties"
 
         public int ModuleId
         {
@@ -210,7 +231,7 @@ namespace DotNetNuke.UI.UserControls
                     switch (_CountryData.ToLower())
                     {
                         case "text":
-                            if (cboCountry.SelectedIndex == 0)
+                            if (cboCountry.SelectedIndex == 0) //Return blank if 'Not_Specified' selected 
                             {
                                 retValue = "";
                             }
@@ -410,13 +431,30 @@ namespace DotNetNuke.UI.UserControls
                 return Localization.GetResourceFile(this, MyFileName);
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Localize correctly sets up the control for US/Canada/Other Countries
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/08/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void Localize()
         {
             string countryCode = cboCountry.SelectedItem.Value;
             var ctlEntry = new ListController();
+            //listKey in format "Country.US:Region"
             string listKey = "Country." + countryCode;
             ListEntryInfoCollection entryCollection = ctlEntry.GetListEntryInfoCollection("Region", listKey);
+
             if (entryCollection.Count != 0)
             {
                 cboRegion.Visible = true;
@@ -468,9 +506,21 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ShowRequiredFields sets up displaying which fields are required
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/08/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ShowRequiredFields()
         {
             Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(PortalSettings.PortalId);
+
             lblStreetRequired.Text = PortalController.GetPortalSettingAsBoolean("addressstreet", PortalSettings.PortalId, true) ? "*" : "";
             lblCityRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscity", PortalSettings.PortalId, true) ? "*" : "";
             lblCountryRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscountry", PortalSettings.PortalId, true) ? "*" : "";
@@ -479,6 +529,7 @@ namespace DotNetNuke.UI.UserControls
             lblTelephoneRequired.Text = PortalController.GetPortalSettingAsBoolean("addresstelephone", PortalSettings.PortalId, true) ? "*" : "";
             lblCellRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscell", PortalSettings.PortalId, true) ? "*" : "";
             lblFaxRequired.Text = PortalController.GetPortalSettingAsBoolean("addressfax", PortalSettings.PortalId, true) ? "*" : "";
+
             if (TabPermissionController.CanAdminPage())
             {
                 if (lblCountryRequired.Text == "*")
@@ -566,6 +617,17 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateRequiredFields updates which fields are required
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/08/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UpdateRequiredFields()
         {
             if (chkCountry.Checked == false)
@@ -583,6 +645,17 @@ namespace DotNetNuke.UI.UserControls
             ShowRequiredFields();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/08/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -643,11 +716,19 @@ namespace DotNetNuke.UI.UserControls
                     txtTelephone.TabIndex = Convert.ToInt16(StartTabIndex + 7);
                     txtCell.TabIndex = Convert.ToInt16(StartTabIndex + 8);
                     txtFax.TabIndex = Convert.ToInt16(StartTabIndex + 9);
+
+                    //<tam:note modified to test Lists
+                    //Dim objRegionalController As New RegionalController
+                    //cboCountry.DataSource = objRegionalController.GetCountries
+                    //<this test using method 2: get empty collection then get each entry list on demand & store into cache
+
                     var ctlEntry = new ListController();
                     ListEntryInfoCollection entryCollection = ctlEntry.GetListEntryInfoCollection("Country");
+
                     cboCountry.DataSource = entryCollection;
                     cboCountry.DataBind();
                     cboCountry.Items.Insert(0, new ListItem("<" + Localization.GetString("Not_Specified", Localization.SharedResourceFile) + ">", ""));
+
                     switch (_CountryData.ToLower())
                     {
                         case "text":
@@ -673,6 +754,7 @@ namespace DotNetNuke.UI.UserControls
                             break;
                     }
                     Localize();
+
                     if (cboRegion.Visible)
                     {
                         switch (_RegionData.ToLower())
@@ -709,6 +791,7 @@ namespace DotNetNuke.UI.UserControls
                     txtTelephone.Text = _Telephone;
                     txtCell.Text = _Cell;
                     txtFax.Text = _Fax;
+
                     rowStreet.Visible = _ShowStreet;
                     rowUnit.Visible = _ShowUnit;
                     rowCity.Visible = _ShowCity;
@@ -718,6 +801,7 @@ namespace DotNetNuke.UI.UserControls
                     rowTelephone.Visible = _ShowTelephone;
                     rowCell.Visible = _ShowCell;
                     rowFax.Visible = _ShowFax;
+
                     if (TabPermissionController.CanAdminPage())
                     {
                         chkStreet.Visible = true;
@@ -732,10 +816,11 @@ namespace DotNetNuke.UI.UserControls
                     ViewState["ModuleId"] = Convert.ToString(_ModuleId);
                     ViewState["LabelColumnWidth"] = _LabelColumnWidth;
                     ViewState["ControlColumnWidth"] = _ControlColumnWidth;
+
                     ShowRequiredFields();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -747,7 +832,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 Localize();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -759,7 +844,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -771,7 +856,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -783,7 +868,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -795,7 +880,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -807,7 +892,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -819,7 +904,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -831,7 +916,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -843,10 +928,12 @@ namespace DotNetNuke.UI.UserControls
             {
                 UpdateRequiredFields();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

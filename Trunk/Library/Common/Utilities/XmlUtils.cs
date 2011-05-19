@@ -157,13 +157,23 @@ namespace DotNetNuke.Common.Utilities
         {
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(objStream);
+
             var objDictionary = new Dictionary<int, TValue>();
+
             foreach (XmlElement xmlItem in xmlDoc.SelectNodes(rootname + "/item"))
             {
                 int key = Convert.ToInt32(xmlItem.GetAttribute("key"));
+
                 var objValue = Activator.CreateInstance<TValue>();
+
+                //Create the XmlSerializer
                 var xser = new XmlSerializer(objValue.GetType());
+
+                //A reader is needed to read the XML document.
                 var reader = new XmlTextReader(new StringReader(xmlItem.InnerXml));
+
+                //Use the Deserialize method to restore the object's state, and store it
+                //in the Hashtable
                 objDictionary.Add(key, (TValue) xser.Deserialize(reader));
             }
             return objDictionary;
@@ -175,14 +185,23 @@ namespace DotNetNuke.Common.Utilities
             if (!String.IsNullOrEmpty(xmlSource))
             {
                 objHashTable = new Hashtable();
+
                 var xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(xmlSource);
+
                 foreach (XmlElement xmlItem in xmlDoc.SelectNodes(rootname + "/item"))
                 {
                     string key = xmlItem.GetAttribute("key");
                     string typeName = xmlItem.GetAttribute("type");
+
+                    //Create the XmlSerializer
                     var xser = new XmlSerializer(Type.GetType(typeName));
+
+                    //A reader is needed to read the XML document.
                     var reader = new XmlTextReader(new StringReader(xmlItem.InnerXml));
+
+                    //Use the Deserialize method to restore the object's state, and store it
+                    //in the Hashtable
                     objHashTable.Add(key, xser.Deserialize(reader));
                 }
             }
@@ -442,22 +461,32 @@ namespace DotNetNuke.Common.Utilities
             {
                 XmlSerializer xser;
                 StringWriter sw;
+
                 var xmlDoc = new XmlDocument();
                 XmlElement xmlRoot = xmlDoc.CreateElement(rootName);
                 xmlDoc.AppendChild(xmlRoot);
+
                 foreach (var key in source.Keys)
                 {
+					//Create the item Node
                     XmlElement xmlItem = xmlDoc.CreateElement("item");
+
+                    //Save the key name and the object type
                     xmlItem.SetAttribute("key", Convert.ToString(key));
                     xmlItem.SetAttribute("type", source[key].GetType().AssemblyQualifiedName);
+
+                    //Serialize the object
                     var xmlObject = new XmlDocument();
                     xser = new XmlSerializer(source[key].GetType());
                     sw = new StringWriter();
                     xser.Serialize(sw, source[key]);
                     xmlObject.LoadXml(sw.ToString());
+
+                    //import and append the node to the root
                     xmlItem.AppendChild(xmlDoc.ImportNode(xmlObject.DocumentElement, true));
                     xmlRoot.AppendChild(xmlItem);
                 }
+                //Return the OuterXml of the profile
                 strString = xmlDoc.OuterXml;
             }
             else

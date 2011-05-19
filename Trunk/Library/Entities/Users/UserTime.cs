@@ -33,7 +33,6 @@ using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Entities.Users
 {
-    [Obsolete("Deprecated in DNN 6.0.")]
     public class UserTime
     {
         public DateTime CurrentUserTime
@@ -41,14 +40,16 @@ namespace DotNetNuke.Entities.Users
             get
             {
                 HttpContext context = HttpContext.Current;
+            	//Obtain PortalSettings from Current Context
                 PortalSettings objSettings = PortalController.GetCurrentPortalSettings();
                 if (!context.Request.IsAuthenticated)
-                {
-                    return DateTime.UtcNow.AddMinutes(objSettings.TimeZoneOffset);
+                {                    
+                    return TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Utc, objSettings.TimeZone);
                 }
                 else
                 {
-                    return DateTime.UtcNow.AddMinutes(objSettings.TimeZoneOffset).AddMinutes(ClientToServerTimeZoneFactor);
+                    UserInfo objUserInfo = UserController.GetCurrentUserInfo();                    
+                    return TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Utc, objUserInfo.Profile.PreferredTimeZone);
                 }
             }
         }
@@ -57,9 +58,9 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
-                return FromClientToServerFactor(objUserInfo.Profile.TimeZone, _portalSettings.TimeZoneOffset);
+                return FromClientToServerFactor(objUserInfo.Profile.PreferredTimeZone.BaseUtcOffset.TotalMinutes, portalSettings.TimeZone.BaseUtcOffset.TotalMinutes);
             }
         }
 
@@ -68,43 +69,37 @@ namespace DotNetNuke.Entities.Users
             get
             {
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
-                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-                return FromServerToClientFactor(objUserInfo.Profile.TimeZone, _portalSettings.TimeZoneOffset);
+                PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
+                return FromServerToClientFactor(objUserInfo.Profile.PreferredTimeZone.BaseUtcOffset.TotalMinutes, portalSettings.TimeZone.BaseUtcOffset.TotalMinutes);
             }
         }
 
-        public DateTime ConvertToUserTime(DateTime dt, double ClientTimeZone)
+        [Obsolete("Deprecated in DNN 6.0.")]
+        public DateTime ConvertToUserTime(DateTime dt, double clientTimeZone)
         {
-            PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-            return dt.AddMinutes(FromClientToServerFactor(ClientTimeZone, _portalSettings.TimeZoneOffset));
+            PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
+            return dt.AddMinutes(FromClientToServerFactor(clientTimeZone, portalSettings.TimeZone.BaseUtcOffset.TotalMinutes));            
         }
 
-        public DateTime ConvertToServerTime(DateTime dt, double ClientTimeZone)
+        [Obsolete("Deprecated in DNN 6.0.")]
+        public DateTime ConvertToServerTime(DateTime dt, double clientTimeZone)
         {
-            PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-            return dt.AddMinutes(FromServerToClientFactor(ClientTimeZone, _portalSettings.TimeZoneOffset));
+        	//Obtain PortalSettings from Current Context
+            PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
+            return dt.AddMinutes(FromServerToClientFactor(clientTimeZone, portalSettings.TimeZone.BaseUtcOffset.TotalMinutes));
         }
 
-        public static DateTime CurrentTimeForUser(UserInfo User)
+        public static DateTime CurrentTimeForUser(UserInfo userInfo)
         {
-            if (User == null || User.UserID == -1 || User.Profile.TimeZone == Null.NullInteger)
+            if (userInfo == null || userInfo.UserID == -1)
             {
-                int intOffset = 0;
+				//Obtain PortalSettings from Current Context             
                 PortalSettings objSettings = PortalController.GetCurrentPortalSettings();
-                if (objSettings != null)
-                {
-                    intOffset = objSettings.TimeZoneOffset;
-                }
-                else
-                {
-                    PortalInfo objPCtr = new PortalController().GetPortal(User.PortalID);
-                    intOffset = objPCtr.TimeZoneOffset;
-                }
-                return DateTime.UtcNow.AddMinutes(intOffset);
+                return TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Utc, objSettings.TimeZone);
             }
             else
-            {
-                return DateTime.UtcNow.AddMinutes(User.Profile.TimeZone);
+            {                
+                return TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Utc, userInfo.Profile.PreferredTimeZone);
             }
         }
 

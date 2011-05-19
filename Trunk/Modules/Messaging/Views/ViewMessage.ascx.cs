@@ -26,57 +26,50 @@
 using System;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Framework;
 using DotNetNuke.Modules.Messaging.Presenters;
 using DotNetNuke.Modules.Messaging.Views.Models;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Web.Mvp;
-
 using WebFormsMvp;
 
 #endregion
 
 namespace DotNetNuke.Modules.Messaging.Views
 {
+
     [PresenterBinding(typeof (ViewMessagePresenter))]
     public partial class ViewMessage : ModuleView<ViewMessageModel>, IViewMessageView
     {
-        #region "Protected Methods"
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+        #region IViewMessageView Implementation
 
-            cancelView.Click += cancelView_Click;
-            deleteMessage.Click += deleteMessage_Click;
-            replyMessage.Click += ReplyMessage_Click;
-        }
-
-        #endregion
-
-        #region "IViewMessageView Implementation"
-
-        public event EventHandler Cancel;
         public event EventHandler Delete;
-        public event EventHandler Reply;
 
         public void BindMessage(Message message)
         {
             fromLabel.Text = message.FromUserName;
             subjectLabel.Text = message.Subject;
             messageLabel.Text = HtmlUtils.ConvertToHtml(message.Body);
+
+            hlReplyMessage.NavigateUrl = Model.ReplyUrl;
+            hlCancel.NavigateUrl = Model.InboxUrl;
         }
 
         #endregion
 
-        private void cancelView_Click(object sender, EventArgs e)
+        #region Event Handlers
+
+        protected override void OnLoad(EventArgs e)
         {
-            if (Cancel != null)
-            {
-                Cancel(this, e);
-            }
+            base.OnLoad(e);
+
+            jQuery.RequestDnnPluginsRegistration();
+
+            deleteMessage.Click += OnDeleteMessageClick;
         }
 
-        private void deleteMessage_Click(object sender, EventArgs e)
+        protected void OnDeleteMessageClick(object sender, EventArgs e)
         {
             if (Delete != null)
             {
@@ -84,12 +77,7 @@ namespace DotNetNuke.Modules.Messaging.Views
             }
         }
 
-        private void ReplyMessage_Click(object sender, EventArgs e)
-        {
-            if (Reply != null)
-            {
-                Reply(this, e);
-            }
-        }
+        #endregion
+
     }
 }

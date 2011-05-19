@@ -24,18 +24,23 @@
 #region Usings
 
 using System;
-
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Web.Mvp;
+
+using Telerik.Web.UI;
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views
 {
+
     public interface IVocabularyListView : IModuleView<VocabularyListModel>
     {
-        event EventHandler AddVocabulary;
 
+        event GridNeedDataSourceEventHandler GridsNeedDataSource;
+        event GridItemEventHandler GridsItemDataBound;
         void ShowAddButton(bool showButton);
+        void Refresh();
+
     }
 }

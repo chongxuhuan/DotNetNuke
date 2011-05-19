@@ -51,11 +51,34 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:IntegerEditControl runat=server></{0}:IntegerEditControl>")]
     public class IntegerEditControl : EditControl
     {
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs an IntegerEditControl
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/22/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IntegerEditControl()
         {
             SystemType = "System.Int32";
         }
 
+		#endregion
+
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StringValue is the value of the control expressed as a String
+        /// </summary>
+        /// <value>A string representing the Value</value>
+        /// <history>
+        ///     [cnurse]	02/21/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string StringValue
         {
             get
@@ -69,6 +92,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IntegerValue returns the Integer representation of the Value
+        /// </summary>
+        /// <value>An integer representing the Value</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int IntegerValue
         {
             get
@@ -76,6 +108,7 @@ namespace DotNetNuke.UI.WebControls
                 int intValue = Null.NullInteger;
                 try
                 {
+					//Try and cast the value to an Integer
                     int.TryParse(Value.ToString(), out intValue);
                 }
                 catch (Exception exc)
@@ -87,6 +120,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldIntegerValue returns the Integer representation of the OldValue
+        /// </summary>
+        /// <value>An integer representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int OldIntegerValue
         {
             get
@@ -94,6 +136,7 @@ namespace DotNetNuke.UI.WebControls
                 int intValue = Null.NullInteger;
                 try
                 {
+					//Try and cast the value to an Integer
                     int.TryParse(OldValue.ToString(), out intValue);
                 }
                 catch (Exception exc)
@@ -105,6 +148,19 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnDataChanged runs when the PostbackData has changed.  It raises the ValueChanged
+        /// Event
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/21/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnDataChanged(EventArgs e)
         {
             var args = new PropertyEditorEventArgs(Name);
@@ -114,6 +170,15 @@ namespace DotNetNuke.UI.WebControls
             base.OnValueChanged(args);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/27/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             ControlStyle.AddAttributesToRender(writer);
@@ -124,5 +189,7 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

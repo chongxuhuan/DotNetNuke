@@ -265,16 +265,16 @@
     <value>Edit Page</value>
   </data>
   <data name="valTabName.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Page Name Is Required</value>
+    <value>Page Name Is Required</value>
   </data>
   <data name="DeleteSpecialPage.Text" xml:space="preserve">
     <value>A page defined as Home, Splash, Login or User Page for the portal, or the last visible Page in the portal cannot be deleted. Also the Admin and Host Page can not be deleted.</value>
   </data>
   <data name="valStartDate.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Invalid Start Date</value>
+    <value>Invalid Start Date</value>
   </data>
   <data name="valEndDate.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Invalid End Date</value>
+    <value>Invalid End Date</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;Page Management&lt;/h1&gt;&lt;p&gt;This module allows you to modify the settings for an existing page, delete the page, or submit it to Google for indexing.&lt;/p&gt;</value>
@@ -361,7 +361,7 @@
     <value>Before</value>
   </data>
   <data name="valEndDate2.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;End Date must be after Start Date</value>
+    <value>End Date must be after Start Date</value>
   </data>
   <data name="InsertAtEnd.Text" xml:space="preserve">
     <value>Add to End</value>
@@ -439,13 +439,13 @@
     <value>Current Cache Count: {0} variations for this page</value>
   </data>
   <data name="valCacheTime.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Cache Duration must be a number</value>
+    <value>Cache Duration must be a number</value>
   </data>
   <data name="valCacheVaryByLimit.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Cache Vary ByLimit must be a number</value>
+    <value>Cache Vary ByLimit must be a number</value>
   </data>
   <data name="CacheDurationInfo.Text" xml:space="preserve">
-    <value>&lt;br&gt;*Note, there is a Scheduled Task for purging the Output Cache. The task must run more frequently than the Cache Duration you specify here.</value>
+    <value>Note, there is a Scheduled Task for purging the Output Cache. The task must run more frequently than the Cache Duration you specify here.</value>
   </data>
   <data name="BadTemplate.Text" xml:space="preserve">
     <value>The page template is not a valid xml document.  Please select a different template and try again.</value>
@@ -557,10 +557,13 @@ Page: &lt;a href='{1}'&gt;{0}&lt;/a&gt;</value>
   <data name="CacheSettings.Text" xml:space="preserve">
     <value>Cache Settings</value>
   </data>
-  <data name="ExpandAll.Text" xml:space="preserve">
-    <value>Expand All</value>
-  </data>
   <data name="RequiredFields.Text" xml:space="preserve">
     <value>Indicates required fields</value>
+  </data>
+  <data name="SkinPreview.Text" xml:space="preserve">
+    <value>Preview Skin and Container</value>
+  </data>
+  <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
+    <value>Please select a skin and/or container to preview.</value>
   </data>
 </root>

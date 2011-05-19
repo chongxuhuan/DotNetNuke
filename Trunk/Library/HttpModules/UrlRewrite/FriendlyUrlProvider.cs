@@ -54,7 +54,10 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
 
         public DNNFriendlyUrlProvider()
         {
+            //Read the configuration specific information for this provider
             var objProvider = (Provider) _providerConfiguration.Providers[_providerConfiguration.DefaultProvider];
+
+            //Read the attributes for this provider
             if (!String.IsNullOrEmpty(objProvider.Attributes["includePageName"]))
             {
                 _includePageName = bool.Parse(objProvider.Attributes["includePageName"]);
@@ -296,6 +299,8 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                     }
                     if ((String.IsNullOrEmpty(matchString)))
                     {
+                        //Manage the special case where original url contains the alias as
+                        //http://www.domain.com/Default.aspx?alias=www.domain.com/child"
                         Match portalMatch = Regex.Match(originalUrl, "^?alias=" + portalAlias, RegexOptions.IgnoreCase);
                         if (!ReferenceEquals(portalMatch, Match.Empty))
                         {
@@ -389,6 +394,8 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                 {
                     string pathToAppend = "";
                     string[] pair = nameValuePairs[i].Split(Convert.ToChar("="));
+
+                    //Add name part of name/value pair
                     if ((friendlyPath.EndsWith("/")))
                     {
                         pathToAppend = pathToAppend + pair[0];
@@ -403,6 +410,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                         {
                             if ((Regex.IsMatch(pair[1], _regexMatch) == false))
                             {
+                                //Contains Non-AlphaNumeric Characters
                                 if ((pair[0].ToLower() == "tabid"))
                                 {
                                     if ((Regex.IsMatch(pair[1], "^\\d+$")))
@@ -424,6 +432,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                             }
                             else
                             {
+                                //Rewrite into URL, contains only alphanumeric and the % or space
                                 if (String.IsNullOrEmpty(queryStringSpecialChars))
                                 {
                                     queryStringSpecialChars = pair[0] + "=" + pair[1];

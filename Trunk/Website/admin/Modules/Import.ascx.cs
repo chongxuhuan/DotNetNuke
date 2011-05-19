@@ -142,6 +142,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                 Int32.TryParse(Request.QueryString["moduleid"], out ModuleId);
             }
 
+			//Verify that the current user has access to edit this module
             if (!ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "IMPORT", Module))
             {
                 Response.Redirect(Globals.AccessDeniedURL(), true);
@@ -194,6 +195,8 @@ namespace DotNetNuke.Modules.Admin.Modules
                 {
                     cboFiles.Items.Add(new ListItem(objFile.Text.Replace("content." + Globals.CleanName(Module.DesktopModule.ModuleName) + ".", ""), objFile.Text));
                 }
+				
+                //legacy support for files which used the FriendlyName
                 if (Globals.CleanName(Module.DesktopModule.ModuleName) == Globals.CleanName(Module.DesktopModule.FriendlyName))
                 {
                     continue;

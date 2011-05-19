@@ -53,12 +53,7 @@
 		    </asp:TemplateColumn>
 		    <asp:BoundColumn DataField="Telephone" HeaderText="Telephone" />
 		    <asp:BoundColumn DataField="Fax" HeaderText="Fax" />
-		    <asp:TemplateColumn HeaderText="Email">
-			    <ItemTemplate>
-				    <asp:Label ID="lblEmail" Runat="server" Text='<%# DisplayEmail(DataBinder.Eval(Container.DataItem, "Email").ToString()) %>'>
-				    </asp:Label>
-			    </ItemTemplate>
-		    </asp:TemplateColumn>
+		    <asp:BoundColumn DataField="Email" HeaderText="Email" />
 		    <asp:TemplateColumn HeaderText="Authorized">
 			    <ItemTemplate>
 				    <asp:Image Runat="server" ID="Image1" ImageUrl="~/images/checked.gif" Visible='<%# DataBinder.Eval(Container.DataItem,"Authorized") %>'/>

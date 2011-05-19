@@ -260,11 +260,11 @@ namespace DotNetNuke.NavigationControl
             }
             if (!String.IsNullOrEmpty(CSSNodeSelectedRoot) && CSSNodeSelectedRoot == CSSNodeSelectedSub)
             {
-                Tree.DefaultNodeCssClassSelected = CSSNodeSelectedRoot;
+                Tree.DefaultNodeCssClassSelected = CSSNodeSelectedRoot; //set on parent, thus decreasing overall payload
             }
             foreach (DNNNode objNode in objNodes)
             {
-                if (objNode.Level == 0)
+                if (objNode.Level == 0) //root Tree
                 {
                     int intIndex = Tree.TreeNodes.Import(objNode, true);
                     objTreeItem = Tree.TreeNodes[intIndex];
@@ -284,7 +284,7 @@ namespace DotNetNuke.NavigationControl
                     {
                         objTreeItem.CSSClassSelected = CSSNodeSelectedRoot;
                     }
-                    objTreeItem.CSSIcon = " ";
+                    objTreeItem.CSSIcon = " "; //< ignore for root...???
                     if (objNode.BreadCrumb)
                     {
                         objTreeItem.CssClass = CSSBreadCrumbRoot;
@@ -295,12 +295,12 @@ namespace DotNetNuke.NavigationControl
                     try
                     {
                         TreeNode objParent = Tree.TreeNodes.FindNode(objNode.ParentNode.ID);
-                        if (objParent == null)
+                        if (objParent == null) //POD
                         {
                             objParent = Tree.TreeNodes[Tree.TreeNodes.Import(objNode.ParentNode.Clone(), true)];
                         }
                         objTreeItem = objParent.TreeNodes.FindNode(objNode.ID);
-                        if (objTreeItem == null)
+                        if (objTreeItem == null) //POD
                         {
                             objTreeItem = objParent.TreeNodes[objParent.TreeNodes.Import(objNode.Clone(), true)];
                         }
@@ -323,6 +323,7 @@ namespace DotNetNuke.NavigationControl
                     }
                     catch
                     {
+                        //throws exception if the parent tab has not been loaded ( may be related to user role security not allowing access to a parent tab )
                         objTreeItem = null;
                     }
                 }
@@ -339,6 +340,8 @@ namespace DotNetNuke.NavigationControl
                     objTreeItem.Image = objNode.Image;
                 }
                 objTreeItem.ToolTip = objNode.ToolTip;
+
+                //End Select
                 if (objNode.Selected)
                 {
                     Tree.SelectNode(objNode.ID);

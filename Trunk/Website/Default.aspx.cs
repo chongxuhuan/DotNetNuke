@@ -43,6 +43,7 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.SiteLog;
 using DotNetNuke.Services.Personalization;
@@ -58,8 +59,35 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Framework
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : CDefault
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[sun1]	1/19/2004	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class DefaultPage : CDefault, IClientAPICallbackEventHandler
     {
+		#region "Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Property to allow the programmatic assigning of ScrollTop position
+        /// </summary>
+        /// <value></value>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	3/23/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PageScrollTop
         {
             get
@@ -107,6 +135,8 @@ namespace DotNetNuke.Framework
                 return "";
             }
         }
+		
+		#endregion
 
         #region IClientAPICallbackEventHandler Members
 
@@ -135,17 +165,38 @@ namespace DotNetNuke.Framework
 
         #endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// - Obtain PortalSettings from Current Context
+        /// - redirect to a specific tab based on name
+        /// - if first time loading this page then reload to avoid caching
+        /// - set page title and stylesheet
+        /// - check to see if we should show the Assembly Version in Page Title 
+        /// - set the background image if there is one selected
+        /// - set META tags, copyright, keywords and description
+        /// </remarks>
+        /// <history>
+        /// 	[sun1]	1/19/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void InitializePage()
         {
             var objTabs = new TabController();
             TabInfo objTab;
+
+            //redirect to a specific tab based on name
             if (!String.IsNullOrEmpty(Request.QueryString["tabname"]))
             {
                 objTab = objTabs.GetTabByName(Request.QueryString["TabName"],
                                               ((PortalSettings) HttpContext.Current.Items["PortalSettings"]).PortalId);
                 if (objTab != null)
                 {
-                    var parameters = new List<string>();
+                    var parameters = new List<string>(); //maximum number of elements
                     for (int intParam = 0; intParam <= Request.QueryString.Count - 1; intParam++)
                     {
                         switch (Request.QueryString.Keys[intParam].ToLower())
@@ -163,6 +214,7 @@ namespace DotNetNuke.Framework
                 }
                 else
                 {
+					//404 Error - Redirect to ErrorPage
                     throw new HttpException(404, "Not Found");
                 }
             }
@@ -190,6 +242,8 @@ namespace DotNetNuke.Framework
                         break;
                 }
             }
+			
+            //page comment
             if (Host.DisplayCopyright)
             {
                 Comment += string.Concat(Environment.NewLine,
@@ -205,31 +259,40 @@ namespace DotNetNuke.Framework
                                          Environment.NewLine);
             }
             Page.Header.Controls.AddAt(0, new LiteralControl(Comment));
+
             if (PortalSettings.ActiveTab.PageHeadText != Null.NullString && !Globals.IsAdminControl())
             {
                 Page.Header.Controls.Add(new LiteralControl(PortalSettings.ActiveTab.PageHeadText));
             }
+			
+            //set page title
             string strTitle = PortalSettings.PortalName;
             
             foreach (TabInfo tab in PortalSettings.ActiveTab.BreadCrumbs)
             {
                 strTitle += string.Concat(" > ", tab.TabName);
             }
-            
+			
+            //tab title override
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Title))
             {
                 strTitle = PortalSettings.ActiveTab.Title;
             }
             Title = strTitle;
+			
+			//set the background image if there is one selected
             if (FindControl("Body") != null)
             {
                 if (!string.IsNullOrEmpty(PortalSettings.BackgroundFile))
                 {
-                    ((HtmlGenericControl) FindControl("Body")).Attributes["style"] =
-                        string.Concat("background-image:url(",
-                                      PortalSettings.HomeDirectory + PortalSettings.BackgroundFile, ");");
+                    var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.BackgroundFile);
+                    var url = FileManager.Instance.GetUrl(fileInfo);
+
+                    ((HtmlGenericControl)FindControl("Body")).Attributes["style"] = string.Concat("background-image:url(", url, ");");
                 }
             }
+			
+            //META Refresh
             if (PortalSettings.ActiveTab.RefreshInterval > 0 && Request.QueryString["ctl"] == null)
             {
                 MetaRefresh.Content = PortalSettings.ActiveTab.RefreshInterval.ToString();
@@ -238,6 +301,8 @@ namespace DotNetNuke.Framework
             {
                 MetaRefresh.Visible = false;
             }
+			
+            //META description
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Description))
             {
                 Description = PortalSettings.ActiveTab.Description;
@@ -246,6 +311,8 @@ namespace DotNetNuke.Framework
             {
                 Description = PortalSettings.Description;
             }
+			
+            //META keywords
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.KeyWords))
             {
                 KeyWords = PortalSettings.ActiveTab.KeyWords;
@@ -258,6 +325,8 @@ namespace DotNetNuke.Framework
             {
                 KeyWords += ",DotNetNuke,DNN";
             }
+			
+            //META copyright
             if (!string.IsNullOrEmpty(PortalSettings.FooterText))
             {
                 Copyright = PortalSettings.FooterText;
@@ -266,6 +335,8 @@ namespace DotNetNuke.Framework
             {
                 Copyright = string.Concat("Copyright (c) ", DateTime.Now.Year, " by ", PortalSettings.PortalName);
             }
+			
+            //META generator
             if (Host.DisplayCopyright)
             {
                 Generator = "DotNetNuke ";
@@ -274,6 +345,8 @@ namespace DotNetNuke.Framework
             {
                 Generator = "";
             }
+			
+            //META Robots
             if (Request.QueryString["ctl"] != null &&
                 (Request.QueryString["ctl"] == "Login" || Request.QueryString["ctl"] == "Register"))
             {
@@ -283,12 +356,16 @@ namespace DotNetNuke.Framework
             {
                 MetaRobots.Content = "INDEX, FOLLOW";
             }
+			
+            //NonProduction Label Injection
             if (NonProductionVersion() && Host.DisplayBetaNotice)
             {
                 string versionString = string.Format(" ({0} Version: {1})", DotNetNukeContext.Current.Application.Status,
                                                      DotNetNukeContext.Current.Application.Version);
                 Title += versionString;
             }
+			
+            //register DNN SkinWidgets Inititialization scripts
             if (PortalSettings.EnableSkinWidgets)
             {
                 jQuery.RequestRegistration();
@@ -299,30 +376,60 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Look for skin level doctype configuration file, and inject the value into the top of default.aspx
+        /// when no configuration if found, the doctype for versions prior to 4.4 is used to maintain backwards compatibility with existing skins.
+        /// Adds xmlns and lang parameters when appropiate.
+        /// </summary>
+        /// <param name="Skin">The currently loading skin</param>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[cathal]	11/29/2006	Created
+        ///     [cniknet]   05/20/2009  Refactored to use HtmlAttributes collection
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void SetSkinDoctype()
         {
             string strLang = CultureInfo.CurrentCulture.ToString();
             string strDocType = PortalSettings.ActiveTab.SkinDoctype;
             if (strDocType.Contains("XHTML 1.0"))
             {
+				//XHTML 1.0
                 HtmlAttributes.Add("xml:lang", strLang);
                 HtmlAttributes.Add("lang", strLang);
                 HtmlAttributes.Add("xmlns", "http://www.w3.org/1999/xhtml");
             }
             else if (strDocType.Contains("XHTML 1.1"))
             {
+				//XHTML 1.1
                 HtmlAttributes.Add("xml:lang", strLang);
                 HtmlAttributes.Add("xmlns", "http://www.w3.org/1999/xhtml");
             }
             else
             {
+				//other
                 HtmlAttributes.Add("lang", strLang);
             }
-            skinDocType.Text = PortalSettings.ActiveTab.SkinDoctype;
+            //Find the placeholder control and render the doctype
+			skinDocType.Text = PortalSettings.ActiveTab.SkinDoctype;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// - manage affiliates
+        /// - log visit to site
+        /// </remarks>
+        /// <history>
+        /// 	[sun1]	1/19/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ManageRequest()
         {
+            //affiliate processing
             int affiliateId = -1;
             if (Request.QueryString["AffiliateId"] != null)
             {
@@ -331,17 +438,24 @@ namespace DotNetNuke.Framework
                     affiliateId = Int32.Parse(Request.QueryString["AffiliateId"]);
                     var objAffiliates = new AffiliateController();
                     objAffiliates.UpdateAffiliateStats(affiliateId, 1, 0);
-                    if (Request.Cookies["AffiliateId"] == null)
+
+                    //save the affiliateid for acquisitions
+                    if (Request.Cookies["AffiliateId"] == null) //do not overwrite
                     {
                         var objCookie = new HttpCookie("AffiliateId");
                         objCookie.Value = affiliateId.ToString();
-                        objCookie.Expires = DateTime.Now.AddYears(1);
+                        objCookie.Expires = DateTime.Now.AddYears(1); //persist cookie for one year
                         Response.Cookies.Add(objCookie);
                     }
                 }
             }
+			
+            //site logging
             if (PortalSettings.SiteLogHistory != 0)
             {
+				//get User ID
+				
+				//URL Referrer
                 string urlReferrer = "";
                 try
                 {
@@ -357,7 +471,10 @@ namespace DotNetNuke.Framework
                 }
                 string strSiteLogStorage = Host.SiteLogStorage;
                 int intSiteLogBuffer = Host.SiteLogBuffer;
+
+                //log visit
                 var objSiteLogs = new SiteLogController();
+
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
                 objSiteLogs.AddSiteLog(PortalSettings.PortalId, objUserInfo.UserID, urlReferrer, Request.Url.ToString(),
                                        Request.UserAgent, Request.UserHostAddress, Request.UserHostName,
@@ -376,6 +493,9 @@ namespace DotNetNuke.Framework
             }
         }
 
+        //I realize the parsing of this is rather primitive.  A better solution would be to use json serialization
+        //unfortunately, I don't have the time to write it.  When we officially adopt MS AJAX, we will get this type of 
+        //functionality and this should be changed to utilize it for its plumbing.
         private Dictionary<string, string> ParsePageCallBackArgs(string strArg)
         {
             string[] aryVals = strArg.Split(new[] {ClientAPI.COLUMN_DELIMITER}, StringSplitOptions.None);
@@ -400,6 +520,14 @@ namespace DotNetNuke.Framework
             return objDict;
         }
 
+        /// <summary>
+        /// check if a warning about account defaults needs to be rendered
+        /// </summary>
+        /// <returns>localised error message</returns>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[cathal]	2/28/2007	Created
+        /// </history>
         private string RenderDefaultsWarning()
         {
             string warningLevel = Request.QueryString["runningDefault"];
@@ -419,18 +547,51 @@ namespace DotNetNuke.Framework
             return warningMessage;
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
         protected bool NonProductionVersion()
         {
             return DotNetNukeContext.Current.Application.Status != ReleaseMode.Stable;
         }
+		
+		#endregion
 
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Contains the functionality to populate the Root aspx page with controls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// - obtain PortalSettings from Current Context
+        /// - set global page settings.
+        /// - initialise reference paths to load the cascading style sheets
+        /// - add skin control placeholder.  This holds all the modules and content of the page.
+        /// </remarks>
+        /// <history>
+        /// 	[sun1]	1/19/2004	Created
+        ///		[jhenning] 8/24/2005 Added logic to look for post originating from a ClientCallback
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
+
+            //set global page settings
             InitializePage();
+
+            //load skin control
             UI.Skins.Skin ctlSkin = UI.Skins.Skin.GetSkin(this);
+
+            //check for and read skin package level doctype
             SetSkinDoctype();
+
+            //Manage disabled pages
             if (PortalSettings.ActiveTab.DisableLink)
             {
                 if (TabPermissionController.CanAdminPage())
@@ -470,10 +631,12 @@ namespace DotNetNuke.Framework
                 Page.Header.Controls.Add(canonicalLink);
             }
 
+            //check if running with known account defaults
             string messageText = "";
             if (Request.IsAuthenticated && string.IsNullOrEmpty(Request.QueryString["runningDefault"]) == false)
             {
                 var userInfo = HttpContext.Current.Items["UserInfo"] as UserInfo;
+                //only show message to default users
                 if ((userInfo.Username.ToLower() == "admin") || (userInfo.Username.ToLower() == "host"))
                 {
                     messageText = RenderDefaultsWarning();
@@ -484,16 +647,22 @@ namespace DotNetNuke.Framework
                 }
             }
 
-            RegisterStyleSheet(this, Globals.HostPath + "default.css");
+            //add CSS links
+			RegisterStyleSheet(this, Globals.HostPath + "default.css");
             RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css");
             RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"));
 
+            //add skin to page
             SkinPlaceHolder.Controls.Add(ctlSkin);
 
             RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css");
  
+            //add Favicon
             ManageFavicon();
+
+            //ClientCallback Logic 
             ClientAPI.HandleClientAPICallbackEvent(this);
+
             //add viewstateuserkey to protect against CSRF attacks
             if (User.Identity.IsAuthenticated)
             {
@@ -507,6 +676,19 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initialize the Scrolltop html control which controls the open / closed nature of each module 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[sun1]	1/19/2004	Created
+        ///		[jhenning] 3/23/2005 No longer passing in parameter to __dnn_setScrollTop, instead pulling value from textbox on client
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -521,11 +703,14 @@ namespace DotNetNuke.Framework
         {
             base.OnPreRender(evt);
 
+            //process the current request
             if (!Globals.IsAdminControl())
             {
                 ManageRequest();
             }
-            Page.Header.Title = Title;
+            
+			//Set the Head tags
+			Page.Header.Title = Title;
             MetaGenerator.Content = Generator;
             MetaGenerator.Visible = (!String.IsNullOrEmpty(Generator));
             MetaAuthor.Content = PortalSettings.PortalName;
@@ -535,6 +720,11 @@ namespace DotNetNuke.Framework
             MetaKeywords.Visible = (!String.IsNullOrEmpty(KeyWords));
             MetaDescription.Content = Description;
             MetaDescription.Visible = (!String.IsNullOrEmpty(Description));
+			
+			//Because we have delayed registration of the jQuery script,
+            //Modules can override the standard behavior by including their own script on the page.
+            //The module must register the script with the "jQuery" key and should notify user
+            //of potential version conflicts with core jQuery support.
             if (jQuery.IsRequested)
             {
                 jQuery.RegisterJQuery(Page);
@@ -548,5 +738,7 @@ namespace DotNetNuke.Framework
                 jQuery.RegisterDnnJQueryPlugins(Page);
             }
         }
+		
+		#endregion
     }
 }

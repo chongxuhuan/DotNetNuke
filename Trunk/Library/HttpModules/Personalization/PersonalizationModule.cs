@@ -61,13 +61,17 @@ namespace DotNetNuke.HttpModules.Personalization
         {
             HttpContext Context = ((HttpApplication) s).Context;
             HttpRequest Request = Context.Request;
+            //exit if a request for a .net mapping that isn't a content page is made i.e. axd
             if (Request.Url.LocalPath.ToLower().EndsWith(".aspx") == false && Request.Url.LocalPath.ToLower().EndsWith(".asmx") == false && Request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
             {
                 return;
             }
+			
+            //Obtain PortalSettings from Current Context
             var _portalSettings = (PortalSettings) Context.Items["PortalSettings"];
             if (_portalSettings != null)
             {
+                //load the user info object
                 UserInfo UserInfo = UserController.GetCurrentUserInfo();
                 var objPersonalization = new PersonalizationController();
                 objPersonalization.SaveProfile(Context, UserInfo.UserID, _portalSettings.PortalId);

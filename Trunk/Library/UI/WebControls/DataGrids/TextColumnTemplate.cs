@@ -47,7 +47,13 @@ namespace DotNetNuke.UI.WebControls
     /// -----------------------------------------------------------------------------
     public class TextColumnTemplate : ITemplate
     {
+		#region "Private Members"
+
         private ListItemType mItemType = ListItemType.Item;
+		
+		#endregion
+
+		#region "Constructors"
 
         public TextColumnTemplate() : this(ListItemType.Item)
         {
@@ -57,27 +63,31 @@ namespace DotNetNuke.UI.WebControls
         {
             ItemType = itemType;
         }
+		
+		#endregion
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// The Data Field is the field that binds to the Text Column
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/20/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		#region "Public Properties"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// The Data Field is the field that binds to the Text Column
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/20/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string DataField { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the Design Mode of the Column
- /// </summary>
- /// <value>A Boolean</value>
- /// <history>
- /// 	[cnurse]	02/24/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Design Mode of the Column
+		/// </summary>
+		/// <value>A Boolean</value>
+		/// <history>
+		/// 	[cnurse]	02/24/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public bool DesignMode { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -101,27 +111,29 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the Text (for Header/Footer Templates)
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/20/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Text (for Header/Footer Templates)
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/20/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string Text { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the Width of the Column
- /// </summary>
- /// <value>A Unit</value>
- /// <history>
- /// 	[cnurse]	02/20/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Width of the Column
+		/// </summary>
+		/// <value>A Unit</value>
+		/// <history>
+		/// 	[cnurse]	02/20/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public Unit Width { get; set; }
+		
+		#endregion
 
         #region ITemplate Members
 
@@ -151,6 +163,8 @@ namespace DotNetNuke.UI.WebControls
         }
 
         #endregion
+
+		#region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -217,5 +231,7 @@ namespace DotNetNuke.UI.WebControls
                     break;
             }
         }
+		
+		#endregion
     }
 }

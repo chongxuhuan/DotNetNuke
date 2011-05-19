@@ -563,6 +563,32 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _mockData.Verify();
         }
 
+        [Test]
+        public void GetFile_Handles_Path_In_Portal_Root()
+        {
+            _folderInfo.Setup(fi => fi.FolderID).Returns(Constants.FOLDER_ValidFolderId);
+            _folderManager.Setup(x => x.GetFolder(Constants.CONTENT_ValidPortalId, "")).Returns(_folderInfo.Object).Verifiable();
+            _mockData.Setup(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId)).Returns(It.IsAny<IDataReader>()).Verifiable();
+
+            _fileManager.GetFile(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFileName);
+
+            _folderManager.Verify();
+            _mockData.Verify();
+        }
+
+        [Test]
+        public void GetFile_Handles_Path_Beyond_Portal_Root()
+        {
+            _folderInfo.Setup(fi => fi.FolderID).Returns(Constants.FOLDER_ValidFolderId);
+            _folderManager.Setup(x => x.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(_folderInfo.Object).Verifiable();
+            _mockData.Setup(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId)).Returns(It.IsAny<IDataReader>()).Verifiable();
+
+            _fileManager.GetFile(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath + Constants.FOLDER_ValidFileName);
+
+            _folderManager.Verify();
+            _mockData.Verify();
+        }
+
         #endregion
 
         #region GetFile

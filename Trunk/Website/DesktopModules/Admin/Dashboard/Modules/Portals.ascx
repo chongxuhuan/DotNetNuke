@@ -6,10 +6,10 @@
 <asp:DataGrid ID="grdPortals" runat="server" GridLines="None"
     AutoGenerateColumns="false" EnableViewState="False">
     <Columns>
-        <asp:BoundColumn DataField="PortalName" HeaderText="PortalName" />
-        <asp:BoundColumn DataField="GUID" HeaderText="GUID" />
-        <asp:BoundColumn DataField="Pages" HeaderText="Pages" />
-        <asp:BoundColumn DataField="Roles" HeaderText="Roles" />
-        <asp:BoundColumn DataField="Users" HeaderText="Users" />
+        <asp:BoundColumn DataField="PortalName" HeaderText="PortalName" ItemStyle-Width="200px"/>
+        <asp:BoundColumn DataField="GUID" HeaderText="GUID" ItemStyle-Width="300px"/>
+        <asp:BoundColumn DataField="Pages" HeaderText="Pages" ItemStyle-Width="100px"/>
+        <asp:BoundColumn DataField="Roles" HeaderText="Roles" ItemStyle-Width="100px"/>
+        <asp:BoundColumn DataField="Users" HeaderText="Users" ItemStyle-Width="100px" />
     </Columns>
 </asp:DataGrid>

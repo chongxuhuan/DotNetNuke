@@ -33,12 +33,18 @@ namespace DotNetNuke.Services.Personalization
     [Serializable]
     public class PersonalizationInfo
     {
-        private bool _IsModified;
+        #region "Private Members"
+		
+		private bool _IsModified;
         private int _PortalId;
         private Hashtable _Profile;
         private int _UserId;
+		
+		#endregion
 
-        public int UserId
+        #region "Public Properties"
+		
+		public int UserId
         {
             get
             {
@@ -85,5 +91,7 @@ namespace DotNetNuke.Services.Personalization
                 _Profile = value;
             }
         }
+		
+		#endregion
     }
 }

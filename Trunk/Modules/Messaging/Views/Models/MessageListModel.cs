@@ -31,8 +31,13 @@ using DotNetNuke.Services.Messaging.Data;
 
 namespace DotNetNuke.Modules.Messaging.Views.Models
 {
+
     public class MessageListModel
     {
+
         public IList<Message> Messages { get; set; }
+
+        public string ComposeMsgUrl { get; set; }
+
     }
 }

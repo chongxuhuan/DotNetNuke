@@ -34,6 +34,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
 {
     public abstract class DataProvider
     {
+        //return the provider
         public static DataProvider Instance()
         {
             return ComponentFactory.GetComponent<DataProvider>();

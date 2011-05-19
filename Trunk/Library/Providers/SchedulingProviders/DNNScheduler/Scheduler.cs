@@ -55,6 +55,8 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             private static int _maxThreadCount;
             private static int _activeThreadCount;
 
+            //If KeepRunning gets switched to false, 
+            //the scheduler stops running.
             private static bool _forceReloadSchedule;
             private static bool _debug;
 

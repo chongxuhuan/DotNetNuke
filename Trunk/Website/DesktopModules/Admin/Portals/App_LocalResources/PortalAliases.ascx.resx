@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -128,5 +128,20 @@
   </data>
   <data name="InvalidAlias.Text" xml:space="preserve">
     <value>The Portal Alias is invalid&lt;br/&gt;</value>
+  </data>
+  <data name="saveRule.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Child.Text" xml:space="preserve">
+    <value>Child</value>
+  </data>
+  <data name="Parent.Text" xml:space="preserve">
+    <value>Parent</value>
+  </data>
+  <data name="ChildExists.Text" xml:space="preserve">
+    <value>The Child Portal Name You Specified Already Exists. Please Choose A Different Child Portal Name.&lt;br/&gt;</value>
+  </data>
+  <data name="createChild.Text" xml:space="preserve">
+    <value>Create child folder in website root?</value>
   </data>
 </root>

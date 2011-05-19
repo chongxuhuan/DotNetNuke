@@ -36,6 +36,8 @@ namespace DotNetNuke.NavigationControl
 {
     public class ASP2MenuNavigationProvider : NavigationProvider
     {
+		#region "Member Variables"
+		
         private Menu m_objMenu;
         private string m_strControlID;
         private string m_strNodeLeftHTMLBreadCrumbRoot = "";
@@ -48,7 +50,13 @@ namespace DotNetNuke.NavigationControl
         private string m_strNodeRightHTMLSub = "";
         private string m_strPathImage = "";
         private string m_strSystemPathImage = "";
-
+		
+		#endregion
+		
+		#region "Properties"
+		
+		#region "General"
+		
         public Menu Menu
         {
             get
@@ -85,6 +93,10 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+		#endregion
+		
+		#region "Paths"
+		
         public override string PathImage
         {
             get
@@ -108,6 +120,10 @@ namespace DotNetNuke.NavigationControl
                 m_strSystemPathImage = value;
             }
         }
+		
+		#endregion
+		
+		#region "Rendering"
 
         public override string ForceDownLevel
         {
@@ -153,6 +169,10 @@ namespace DotNetNuke.NavigationControl
                 }
             }
         }
+		
+		#endregion
+
+		#region "Mouse Properties"
 
         public override decimal MouseOutHideDelay
         {
@@ -165,6 +185,10 @@ namespace DotNetNuke.NavigationControl
                 Menu.DisappearAfter = Convert.ToInt32(value);
             }
         }
+		
+		#endregion
+		
+		#region "Indicate Children"
 
         public override bool IndicateChildren
         {
@@ -201,6 +225,10 @@ namespace DotNetNuke.NavigationControl
                 Menu.StaticPopOutImageUrl = value;
             }
         }
+		
+		#endregion
+		
+		#region "Custom HTML"
 
         public override string NodeLeftHTMLRoot
         {
@@ -298,6 +326,10 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+		#endregion
+		
+		#region "CSS"
+		
         public override string CSSControl
         {
             get
@@ -365,6 +397,7 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+        //* Same as CSSNodeHoverSub
         public override string CSSNodeHover
         {
             get
@@ -401,17 +434,34 @@ namespace DotNetNuke.NavigationControl
                 Menu.StaticHoverStyle.CssClass = value;
             }
         }
+		
+		#endregion
 
+		#endregion
+
+		#region "Event Handlers"
+		
+        /// <summary>
+        /// This method is called by the provider to allow for the control to default values and set up
+        /// event handlers
+        /// </summary>
+        /// <remarks></remarks>
         public override void Initialize()
         {
             m_objMenu = new Menu();
             Menu.ID = m_strControlID;
-            Menu.EnableViewState = false;
+            Menu.EnableViewState = false;	//Not sure why, but when we disable viewstate the menuitemclick does not fire...
+            
+			//default properties to match DNN defaults 
             Menu.DynamicPopOutImageUrl = "";
             Menu.StaticPopOutImageUrl = "";
             ControlOrientation = Orientation.Horizontal;
+
+            //add event handlers
             Menu.MenuItemClick += Menu_NodeClick;
             Menu.PreRender += Menu_PreRender;
+			
+			//add how many levels worth of styles???
             for (int i = 0; i <= 6; i++)
             {
                 Menu.LevelMenuItemStyles.Add(new MenuItemStyle());
@@ -419,6 +469,11 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+        /// <summary>
+        /// Responsible for the populating of the underlying navigation control 
+        /// </summary>
+        /// <param name="objNodes">Node hierarchy used in control population</param>
+        /// <remarks></remarks>
         public override void Bind(DNNNodeCollection objNodes)
         {
             MenuItem objMenuItem = null;
@@ -439,7 +494,7 @@ namespace DotNetNuke.NavigationControl
                 {
                     strLeftHTML = "";
                     strRightHTML = "";
-                    if (objNode.Level == 0)
+                    if (objNode.Level == 0) //root menu
                     {
                         Menu.Items.Add(GetMenuItem(objNode));
                         objMenuItem = Menu.Items[Menu.Items.Count - 1];
@@ -492,11 +547,13 @@ namespace DotNetNuke.NavigationControl
                         }
                         catch
                         {
+                            //throws exception if the parent tab has not been loaded ( may be related to user role security not allowing access to a parent tab )
                             objMenuItem = null;
                         }
                     }
                     if (objMenuItem != null)
                     {
+						//Append LeftHTML/RightHTML to menu's text property
                         if (!String.IsNullOrEmpty(strLeftHTML))
                         {
                             objMenuItem.Text = strLeftHTML + objMenuItem.Text;
@@ -506,6 +563,8 @@ namespace DotNetNuke.NavigationControl
                             objMenuItem.Text = objMenuItem.Text + strRightHTML;
                         }
                     }
+					
+					//Figure out image paths
                     if (!String.IsNullOrEmpty(objNode.Image))
                     {
                         if (objNode.Image.StartsWith("~/images/"))
@@ -541,6 +600,20 @@ namespace DotNetNuke.NavigationControl
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+		/// <summary>
+        /// Loops through each of the nodes parents and concatenates the keys to derive its valuepath
+        /// </summary>
+        /// <param name="objNode">DNNNode object to obtain valuepath from</param>
+        /// <returns>ValuePath of node</returns>
+        /// <remarks>
+        /// the ASP.NET Menu creates a unique key based off of all the menuitem's parents, delimited by a string.
+        /// I wish there was a way around this, for we are already guaranteeing the uniqueness of the key since is it pulled from the
+        /// database.  
+        /// </remarks>
         private string GetValuePath(DNNNode objNode)
         {
             DNNNode objParent = objNode.ParentNode;
@@ -557,6 +630,15 @@ namespace DotNetNuke.NavigationControl
             return strPath;
         }
 
+        /// <summary>
+        /// Create a ASP.NET Menu item for a given DNNNode
+        /// </summary>
+        /// <param name="objNode">Node to create item off of</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Due to ValuePath needed for postback routine, there is a HACK to replace out the 
+        /// id with the valuepath if a JSFunciton is specified
+        /// </remarks>
         private MenuItem GetMenuItem(DNNNode objNode)
         {
             var objItem = new MenuItem();
@@ -564,6 +646,8 @@ namespace DotNetNuke.NavigationControl
             objItem.Value = objNode.Key;
             if (!String.IsNullOrEmpty(objNode.JSFunction))
             {
+                //HACK...  The postback event needs to have the entire ValuePath to the menu item, not just the unique id
+                //__doPostBack('dnn:ctr365:dnnACTIONS:ctldnnACTIONS','6') -> __doPostBack('dnn:ctr365:dnnACTIONS:ctldnnACTIONS','0\\6')}
                 objItem.NavigateUrl = "javascript:" + objNode.JSFunction.Replace(Menu.ID + "','" + objNode.Key + "'", Menu.ID + "'.'" + GetValuePath(objNode).Replace("/", "\\\\") + "'") +
                                       objNode.NavigateURL;
             }
@@ -573,10 +657,12 @@ namespace DotNetNuke.NavigationControl
             }
             objItem.Target = objNode.Target;
             objItem.Selectable = objNode.Enabled;
-            objItem.ImageUrl = objNode.Image;
+            objItem.ImageUrl = objNode.Image; //possibly fix for path
             objItem.Selected = objNode.Selected;
             objItem.ToolTip = objNode.ToolTip;
             return objItem;
-        }
-    }
+		}
+
+		#endregion
+	}
 }

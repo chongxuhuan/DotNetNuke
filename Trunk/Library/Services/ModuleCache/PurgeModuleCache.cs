@@ -38,7 +38,7 @@ namespace DotNetNuke.Services.ModuleCache
     {
         public PurgeModuleCache(ScheduleHistoryItem objScheduleHistoryItem)
         {
-            ScheduleHistoryItem = objScheduleHistoryItem;
+            ScheduleHistoryItem = objScheduleHistoryItem; //REQUIRED
         }
 
         public override void DoWork()
@@ -60,18 +60,24 @@ namespace DotNetNuke.Services.ModuleCache
                     }
                     catch (NotSupportedException exc)
                     {
+						//some Module caching providers don't use this feature
                         Instrumentation.DnnLog.Debug(exc);
 
                     }
                 }
-                ScheduleHistoryItem.Succeeded = true;
+                ScheduleHistoryItem.Succeeded = true; //REQUIRED
             }
-            catch (Exception exc)
+            catch (Exception exc) //REQUIRED
             {
-                ScheduleHistoryItem.Succeeded = false;
+                ScheduleHistoryItem.Succeeded = false; //REQUIRED
+
                 ScheduleHistoryItem.AddLogNote(string.Format("Purging Module cache task failed.", exc.ToString()));
-                Errored(ref exc);
-                Exceptions.Exceptions.LogException(exc);
+
+                //notification that we have errored
+                Errored(ref exc); //REQUIRED
+				
+				//log the exception
+                Exceptions.Exceptions.LogException(exc); //OPTIONAL
             }
         }
     }

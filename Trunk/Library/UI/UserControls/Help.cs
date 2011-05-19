@@ -49,6 +49,15 @@ namespace DotNetNuke.UI.UserControls
         protected Label lblHelp;
         protected Label lblInfo;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -63,6 +72,7 @@ namespace DotNetNuke.UI.UserControls
                 FriendlyName = objModule.DesktopModule.FriendlyName;
             }
             int ModuleControlId = Null.NullInteger;
+
             if (Request.QueryString["ctlid"] != null)
             {
                 ModuleControlId = Int32.Parse(Request.QueryString["ctlid"]);
@@ -81,6 +91,7 @@ namespace DotNetNuke.UI.UserControls
                     lblHelp.Text = Localization.GetString("lblHelp.Text", Localization.GetResourceFile(this, MyFileName));
                 }
                 _key = objModuleControl.ControlKey;
+
                 string helpUrl = Globals.GetOnLineHelp(objModuleControl.HelpURL, ModuleConfiguration);
                 if (!string.IsNullOrEmpty(helpUrl))
                 {
@@ -91,6 +102,8 @@ namespace DotNetNuke.UI.UserControls
                 {
                     cmdHelp.Visible = false;
                 }
+				
+                //display module info to Host users
                 if (UserInfo.IsSuperUser)
                 {
                     string strInfo = Localization.GetString("lblInfo.Text", Localization.GetResourceFile(this, MyFileName));
@@ -131,13 +144,22 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void cmdCancel_Click(Object sender, EventArgs e)
         {
             try
             {
                 Response.Redirect(Convert.ToString(ViewState["UrlReferrer"]), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

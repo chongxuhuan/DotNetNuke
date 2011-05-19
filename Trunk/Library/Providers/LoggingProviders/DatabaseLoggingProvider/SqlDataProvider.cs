@@ -174,6 +174,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
 
         public override void PurgeLog()
         {
+			//Because event log is run on application end, app may not be fully installed, so check for the sproc first
             string sql = "IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'" + DatabaseOwner + ObjectQualifier + "PurgeEventLog') AND OBJECTPROPERTY(id, N'IsProcedure') = 1) " + " BEGIN " +
                          "    EXEC " + DatabaseOwner + ObjectQualifier + "PurgeEventLog" + " END ";
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.Text, sql);

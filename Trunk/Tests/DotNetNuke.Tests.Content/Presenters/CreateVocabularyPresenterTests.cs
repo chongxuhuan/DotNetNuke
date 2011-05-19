@@ -131,24 +131,24 @@ namespace DotNetNuke.Tests.Content.Presenters
 
         #region Cancel Tests
 
-        [Test]
-        public void CreateVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
-        {
-            // Arrange
-            var mockView = new Mock<ICreateVocabularyView>();
-            mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
+        //[Test]
+        //public void CreateVocabularyPresenter_Cancel_Redirects_To_Vocabulary_List_View()
+        //{
+        //    // Arrange
+        //    var mockView = new Mock<ICreateVocabularyView>();
+        //    mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
 
-            var mockHttpResponse = new Mock<HttpResponseBase>();
+        //    var mockHttpResponse = new Mock<HttpResponseBase>();
 
-            var presenter = CreatePresenter(mockView, mockHttpResponse);
-            presenter.TabId = Constants.TAB_ValidId;
+        //    var presenter = CreatePresenter(mockView, mockHttpResponse);
+        //    presenter.TabId = Constants.TAB_ValidId;
 
-            // Act (Raise the Cancel Event)
-            mockView.Raise(v => v.Cancel += null, EventArgs.Empty);
+        //    // Act (Raise the Cancel Event)
+        //    //mockView.Raise(v => v.Cancel += null, EventArgs.Empty);
 
-            // Assert
-            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
-        }
+        //    // Assert
+        //    //mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+        //}
 
         #endregion
 

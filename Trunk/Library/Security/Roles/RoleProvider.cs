@@ -34,11 +34,19 @@ namespace DotNetNuke.Security.Roles
 {
     public abstract class RoleProvider
     {
+		#region "Shared/Static Methods"
+
+        //return the provider
         public static RoleProvider Instance()
         {
             return ComponentFactory.GetComponent<RoleProvider>();
         }
+		
+		#endregion
 
+		#region "Abstract Methods"
+
+        //Roles
         public abstract bool CreateRole(int portalId, ref RoleInfo role);
 
         public abstract void DeleteRole(int portalId, ref RoleInfo role);
@@ -57,6 +65,7 @@ namespace DotNetNuke.Security.Roles
 
         public abstract void UpdateRole(RoleInfo role);
 
+        //Role Groups
         public abstract int CreateRoleGroup(RoleGroupInfo roleGroup);
 
         public abstract void DeleteRoleGroup(RoleGroupInfo roleGroup);
@@ -67,6 +76,7 @@ namespace DotNetNuke.Security.Roles
 
         public abstract void UpdateRoleGroup(RoleGroupInfo roleGroup);
 
+        //User Roles
         public abstract bool AddUserToRole(int portalId, UserInfo user, UserRoleInfo userRole);
 
         public abstract UserRoleInfo GetUserRole(int PortalId, int UserId, int RoleId);
@@ -87,5 +97,7 @@ namespace DotNetNuke.Security.Roles
         {
             return null;
         }
+		
+		#endregion
     }
 }

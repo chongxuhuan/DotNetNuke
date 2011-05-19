@@ -41,6 +41,8 @@ namespace DotNetNuke.UI.WebControls
 {
     public class RolesSelectionGrid : Control, INamingContainer
     {
+		#region "Private Members"
+
         private readonly DataTable _dtRoleSelections = new DataTable();
         private ArrayList _roles;
         private ArrayList _selectedRoles;
@@ -48,6 +50,13 @@ namespace DotNetNuke.UI.WebControls
         private DataGrid dgRoleSelection;
         private Label lblGroups;
         private Panel pnlRoleSlections;
+		
+		#endregion
+
+		#region "Public Properties"
+
+		#region "DataGrid Properties"
+
 
         public TableItemStyle AlternatingItemStyle
         {
@@ -140,6 +149,8 @@ namespace DotNetNuke.UI.WebControls
                 return dgRoleSelection.SelectedItemStyle;
             }
         }
+		
+		#endregion
 
         /// <summary>
         /// List of the Names of the selected Roles
@@ -205,7 +216,11 @@ namespace DotNetNuke.UI.WebControls
                 ViewState["ShowAllUsers"] = value;
             }
         }
+		
+		#endregion
 
+		#region "Private Properties"
+		
         private DataTable dtRolesSelection
         {
             get
@@ -241,6 +256,10 @@ namespace DotNetNuke.UI.WebControls
                 _selectedRoles = value;
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
 
         /// <summary>
         /// Bind the data to the controls
@@ -248,6 +267,7 @@ namespace DotNetNuke.UI.WebControls
         private void BindData()
         {
             EnsureChildControls();
+
             BindRolesGrid();
         }
 
@@ -258,14 +278,23 @@ namespace DotNetNuke.UI.WebControls
         {
             dtRolesSelection.Columns.Clear();
             dtRolesSelection.Rows.Clear();
+
             DataColumn col;
+
+            //Add Roles Column
             col = new DataColumn("RoleId", typeof (string));
             dtRolesSelection.Columns.Add(col);
+
+            //Add Roles Column
             col = new DataColumn("RoleName", typeof (string));
             dtRolesSelection.Columns.Add(col);
+
+            //Add Selected Column
             col = new DataColumn("Selected", typeof (bool));
             dtRolesSelection.Columns.Add(col);
+
             GetRoles();
+
             UpdateRoleSelections();
             DataRow row;
             for (int i = 0; i <= Roles.Count - 1; i++)
@@ -275,6 +304,7 @@ namespace DotNetNuke.UI.WebControls
                 row["RoleId"] = role.RoleID;
                 row["RoleName"] = Localization.LocalizeRole(role.RoleName);
                 row["Selected"] = GetSelection(role.RoleName);
+
                 dtRolesSelection.Rows.Add(row);
             }
             dgRoleSelection.DataSource = dtRolesSelection;
@@ -360,15 +390,28 @@ namespace DotNetNuke.UI.WebControls
             dgRoleSelection.Columns.Add(checkCol);
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// <summary>
+        /// Load the ViewState
+        /// </summary>
+        /// <param name="savedState">The saved state</param>
         protected override void LoadViewState(object savedState)
         {
             if (savedState != null)
             {
+				//Load State from the array of objects that was saved with SaveViewState.
                 var myState = (object[]) savedState;
+				
+				//Load Base Controls ViewState
                 if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
+				
+				//Load TabPermissions
                 if (myState[1] != null)
                 {
                     string state = Convert.ToString(myState[1]);
@@ -384,10 +427,16 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// Saves the ViewState
+        /// </summary>
         protected override object SaveViewState()
         {
             var allStates = new object[2];
+
+            //Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
+            //Persist the TabPermisisons
             var sb = new StringBuilder();
             bool addDelimiter = false;
             foreach (string role in CurrentRoleSelection)
@@ -406,10 +455,15 @@ namespace DotNetNuke.UI.WebControls
             return allStates;
         }
 
+        /// <summary>
+        /// Creates the Child Controls
+        /// </summary>
         protected override void CreateChildControls()
         {
             pnlRoleSlections = new Panel();
             pnlRoleSlections.CssClass = "DataGrid_Container";
+
+            //Optionally Add Role Group Filter
             PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
             ArrayList arrGroups = RoleController.GetRoleGroups(_portalSettings.PortalId);
             if (arrGroups.Count > 0)
@@ -418,9 +472,12 @@ namespace DotNetNuke.UI.WebControls
                 lblGroups.Text = Localization.GetString("RoleGroupFilter");
                 lblGroups.CssClass = "SubHead";
                 pnlRoleSlections.Controls.Add(lblGroups);
+
                 pnlRoleSlections.Controls.Add(new LiteralControl("&nbsp;&nbsp;"));
+
                 cboRoleGroups = new DropDownList();
                 cboRoleGroups.AutoPostBack = true;
+
                 cboRoleGroups.Items.Add(new ListItem(Localization.GetString("AllRoles"), "-2"));
                 var liItem = new ListItem(Localization.GetString("GlobalRoles"), "-1");
                 liItem.Selected = true;
@@ -430,6 +487,7 @@ namespace DotNetNuke.UI.WebControls
                     cboRoleGroups.Items.Add(new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString()));
                 }
                 pnlRoleSlections.Controls.Add(cboRoleGroups);
+
                 pnlRoleSlections.Controls.Add(new LiteralControl("<br/><br/>"));
             }
             dgRoleSelection = new DataGrid();
@@ -442,14 +500,28 @@ namespace DotNetNuke.UI.WebControls
             dgRoleSelection.AlternatingItemStyle.CssClass = "DataGrid_AlternatingItem";
             SetUpRolesGrid();
             pnlRoleSlections.Controls.Add(dgRoleSelection);
+
             Controls.Add(pnlRoleSlections);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Overrides the base OnPreRender method to Bind the Grid to the Permissions
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             BindData();
         }
 
+        /// <summary>
+        /// Updates a Selection
+        /// </summary>
+        /// <param name="roleName">The name of the role</param>
+        /// <param name="Selected"></param>
         protected virtual void UpdateSelection(string roleName, bool Selected)
         {
             bool isMatch = false;
@@ -457,26 +529,38 @@ namespace DotNetNuke.UI.WebControls
             {
                 if (currentRoleName == roleName)
                 {
+					//role is in collection
                     if (!Selected)
                     {
+						//Remove from collection as we only keep selected roles
                         CurrentRoleSelection.Remove(currentRoleName);
                     }
                     isMatch = true;
                     break;
                 }
             }
+			
+			//Rolename not found so add new
             if (!isMatch && Selected)
             {
                 CurrentRoleSelection.Add(roleName);
             }
         }
 
+        /// <summary>
+        /// Updates the Selections
+        /// </summary>
         protected void UpdateSelections()
         {
             EnsureChildControls();
+
             UpdateRoleSelections();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates the permissions
+        /// </summary>
         protected void UpdateRoleSelections()
         {
             if (dgRoleSelection != null)
@@ -493,9 +577,23 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RoleGroupsSelectedIndexChanged runs when the Role Group is changed
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/06/2006  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void RoleGroupsSelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateSelections();
         }
+		
+		#endregion
     }
 }

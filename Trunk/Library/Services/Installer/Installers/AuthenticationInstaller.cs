@@ -45,9 +45,24 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class AuthenticationInstaller : ComponentInstallerBase
     {
+		#region "Private Properties"
+
         private AuthenticationInfo AuthSystem;
         private AuthenticationInfo TempAuthSystem;
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -55,7 +70,21 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "ashx, aspx, ascx, vb, cs, resx, css, js, resources, config, vbproj, csproj, sln, htm, html";
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteAuthentiation method deletes the Authentication System
+        /// from the data Store.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteAuthentiation()
         {
             try
@@ -72,19 +101,44 @@ namespace DotNetNuke.Services.Installer.Installers
                 Log.AddFailure(ex);
             }
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Commit method finalises the Install and commits any pending changes.
+        /// </summary>
+        /// <remarks>In the case of Authentication systems this is not neccessary</remarks>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Commit()
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method installs the authentication component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Install()
         {
             bool bAdd = Null.NullBoolean;
             try
             {
+				//Attempt to get the Authentication Service
                 TempAuthSystem = AuthenticationController.GetAuthenticationServiceByType(AuthSystem.AuthenticationType);
+
                 if (TempAuthSystem == null)
                 {
+					//Enable by default
                     AuthSystem.IsEnabled = true;
                     bAdd = true;
                 }
@@ -96,10 +150,12 @@ namespace DotNetNuke.Services.Installer.Installers
                 AuthSystem.PackageID = Package.PackageID;
                 if (bAdd)
                 {
+                    //Add new service
                     AuthenticationController.AddAuthentication(AuthSystem);
                 }
                 else
                 {
+					//Update service
                     AuthenticationController.UpdateAuthentication(AuthSystem);
                 }
                 Completed = true;
@@ -112,34 +168,73 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifest method reads the manifest file for the Authentication compoent.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void ReadManifest(XPathNavigator manifestNav)
         {
             AuthSystem = new AuthenticationInfo();
+
+            //Get the type
             AuthSystem.AuthenticationType = Util.ReadElement(manifestNav, "authenticationService/type", Log, Util.AUTHENTICATION_TypeMissing);
+
+            //Get the SettingsSrc
             AuthSystem.SettingsControlSrc = Util.ReadElement(manifestNav, "authenticationService/settingsControlSrc", Log, Util.AUTHENTICATION_SettingsSrcMissing);
+
+            //Get the LoginSrc
             AuthSystem.LoginControlSrc = Util.ReadElement(manifestNav, "authenticationService/loginControlSrc", Log, Util.AUTHENTICATION_LoginSrcMissing);
+
+            //Get the LogoffSrc
             AuthSystem.LogoffControlSrc = Util.ReadElement(manifestNav, "authenticationService/logoffControlSrc");
+
             if (Log.Valid)
             {
                 Log.AddInfo(Util.AUTHENTICATION_ReadSuccess);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Rollback method undoes the installation of the component in the event 
+        /// that one of the other components fails
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Rollback()
         {
+			//If Temp Auth System exists then we need to update the DataStore with this 
             if (TempAuthSystem == null)
             {
+				//No Temp Auth System - Delete newly added system
                 DeleteAuthentiation();
             }
             else
             {
+				//Temp Auth System - Rollback to Temp
                 AuthenticationController.UpdateAuthentication(TempAuthSystem);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the authentication component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UnInstall()
         {
             DeleteAuthentiation();
         }
+		
+		#endregion
     }
 }

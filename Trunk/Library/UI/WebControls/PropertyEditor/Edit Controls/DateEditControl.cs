@@ -61,6 +61,8 @@ namespace DotNetNuke.UI.WebControls
         private TextBox dateField;
         private HyperLink linkCalendar;
 
+		#region "Protected Properties"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// DateValue returns the Date representation of the Value
@@ -155,6 +157,7 @@ namespace DotNetNuke.UI.WebControls
                 DateTime dteValue = Null.NullDate;
                 try
                 {
+					//Try and cast the value to an DateTime
                     var dteString = OldValue as string;
                     dteValue = DateTime.Parse(dteString, CultureInfo.InvariantCulture);
                 }
@@ -167,6 +170,9 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// The Value expressed as a String
+        /// </summary>
         protected override string StringValue
         {
             get
@@ -183,15 +189,20 @@ namespace DotNetNuke.UI.WebControls
                 Value = DateTime.Parse(value);
             }
         }
+		
+		#endregion
 
         protected override void CreateChildControls()
         {
             base.CreateChildControls();
+
             dateField = new TextBox();
             dateField.ControlStyle.CopyFrom(ControlStyle);
             dateField.ID = ID + "date";
             Controls.Add(dateField);
+
             Controls.Add(new LiteralControl("&nbsp;"));
+
             linkCalendar = new HyperLink();
             linkCalendar.CssClass = "CommandButton";
             linkCalendar.Text = "<img src=\"" + Globals.ApplicationPath + "/images/calendar.png\" border=\"0\" />&nbsp;&nbsp;" + Localization.GetString("Calendar");
@@ -222,6 +233,10 @@ namespace DotNetNuke.UI.WebControls
             return dataChanged;
         }
 
+        /// <summary>
+        /// OnDataChanged is called by the PostBack Handler when the Data has changed
+        /// </summary>
+        /// <param name="e">An EventArgs object</param>
         protected override void OnDataChanged(EventArgs e)
         {
             var args = new PropertyEditorEventArgs(Name);
@@ -234,18 +249,33 @@ namespace DotNetNuke.UI.WebControls
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
             LoadDateControls();
+
             if (Page != null && EditMode == PropertyEditorMode.Edit)
             {
                 Page.RegisterRequiresPostBack(this);
             }
         }
 
+        /// <summary>
+        /// RenderEditMode is called by the base control to render the control in Edit Mode
+        /// </summary>
+        /// <param name="writer"></param>
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             RenderChildren(writer);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderViewMode renders the View (readonly) mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	06/11/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderViewMode(HtmlTextWriter writer)
         {
             ControlStyle.AddAttributesToRender(writer);

@@ -34,18 +34,54 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Security.Permissions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Security.Permissions
+    /// Class	 : TabPermissionInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// TabPermissionInfo provides the Entity Layer for Tab Permissions
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	01/14/2008   Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class TabPermissionInfo : PermissionInfoBase, IHydratable
     {
+		#region "Private Members"
+		
         private int _TabID;
-        private int _TabPermissionID;
+        //local property declarations
+		private int _TabPermissionID;
+		
+		#endregion
+		
+		#region "Constructors"
 
-        public TabPermissionInfo()
+         /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new TabPermissionInfo
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+       public TabPermissionInfo()
         {
             _TabPermissionID = Null.NullInteger;
             _TabID = Null.NullInteger;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new TabPermissionInfo
+        /// </summary>
+        /// <param name="permission">A PermissionInfo object</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public TabPermissionInfo(PermissionInfo permission) : this()
         {
             ModuleDefID = permission.ModuleDefID;
@@ -54,7 +90,20 @@ namespace DotNetNuke.Security.Permissions
             PermissionKey = permission.PermissionKey;
             PermissionName = permission.PermissionName;
         }
+		
+		#endregion
+		
+		#region "Public Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Tab Permission ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("tabpermissionid")]
         public int TabPermissionID
         {
@@ -68,6 +117,15 @@ namespace DotNetNuke.Security.Permissions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Tab ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlElement("tabid")]
         public int TabID
         {
@@ -80,16 +138,37 @@ namespace DotNetNuke.Security.Permissions
                 _TabID = value;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a TabPermissionInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void Fill(IDataReader dr)
         {
-            base.FillInternal(dr);
+            //Call the base classes fill method to ppoulate base class proeprties
+			base.FillInternal(dr);
             TabPermissionID = Null.SetNullInteger(dr["TabPermissionID"]);
             TabID = Null.SetNullInteger(dr["TabID"]);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int KeyID
         {

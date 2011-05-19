@@ -35,6 +35,7 @@ namespace DotNetNuke.UI.WebControls.Design
     {
         public override string GetDesignTimeHtml()
         {
+            //TODO:  There is a bug here somewhere that results in a design-time rendering error when the control is re-rendered [jmb]
             string DesignTimeHtml = null;
             if (DesignTimeHtml == null)
             {

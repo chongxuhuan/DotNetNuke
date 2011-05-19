@@ -52,11 +52,18 @@ namespace DotNetNuke.UI.Containers
     /// -----------------------------------------------------------------------------
     public class ActionButtonList : CompositeControl, IActionControl
     {
+		#region "Private Members"
+		
         private ActionManager _ActionManager;
         private ModuleActionCollection _ModuleActions;
         private string _buttonSeparator = "&nbsp;&nbsp;";
         private string _commandName = "";
         private bool _displayLink = true;
+
+
+		#endregion
+
+		#region "Protected Members"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -78,6 +85,10 @@ namespace DotNetNuke.UI.Containers
                 return _ModuleActions;
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -173,6 +184,15 @@ namespace DotNetNuke.UI.Containers
 
         public event ActionEventHandler Action;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ActionManager instance for this Action control
+        /// </summary>
+        /// <returns>An ActionManager object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ActionManager ActionManager
         {
             get
@@ -185,9 +205,22 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ModuleControl instance for this Action control
+        /// </summary>
+        /// <returns>An IModuleControl object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IModuleControl ModuleControl { get; set; }
 
         #endregion
+		
+		#endregion
+
+		#region "Protected Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -205,14 +238,26 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnLoad runs when the control is loaded into the Control Tree
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             foreach (ModuleAction action in ModuleActions)
             {
                 if (action != null && ActionManager.IsVisible(action))
                 {
+					//Create a new ActionCommandButton
                     var actionButton = new ActionCommandButton();
+
+                    //Set all the properties
                     actionButton.ModuleAction = action;
                     actionButton.ModuleControl = ModuleControl;
                     actionButton.CommandName = CommandName;
@@ -220,17 +265,35 @@ namespace DotNetNuke.UI.Containers
                     actionButton.DisplayLink = DisplayLink;
                     actionButton.DisplayIcon = DisplayIcon;
                     actionButton.ImageUrl = ImageURL;
+
+                    //Add a handler for the Action Event
                     actionButton.Action += ActionButtonClick;
+
                     Controls.Add(actionButton);
+
                     Controls.Add(new LiteralControl(ButtonSeparator));
                 }
             }
             Visible = (Controls.Count > 0);
         }
+		
+		#endregion
 
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ActionButtonClick handles the Action event of the contained ActionCommandButton(s)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ActionButtonClick(object sender, ActionEventArgs e)
         {
             OnAction(e);
         }
+		
+		#endregion
     }
 }

@@ -41,5 +41,8 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Models
         public List<Term> Terms { get; set; }
 
         public Vocabulary Vocabulary { get; set; }
+
+        public string CancelUrl { get; set; }
+
     }
 }

@@ -1,0 +1,8 @@
+
+.dnnEditVocabControl{width:900px;margin:2em auto;}
+	.dnnEditVocabControl .dnnFormItem textarea{width:45%;}
+		.dnnEditVocabControl .dnnFormItem textarea{min-height:8em;}
+	.dnnFormItem .dnnVocabRadioButtons input[type=radio]{width:auto;}
+	.dnnFormItem .dnnVocabRadioButtons label, .dnnFormItem .dnnVocabRadioButtons input{float:left;padding:0;width:3%;text-align:left;}
+	.dnnFormItem .dnnVocabRadioButtons br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
+	.dnnFormItem .dnnVocabRadioButtons label{width:20%;padding-left:3px;font-weight:normal;}

@@ -52,12 +52,22 @@ namespace DotNetNuke.Services.Authentication
     /// -----------------------------------------------------------------------------
     public class AuthenticationController
     {
+		#region "Private Members"
+
         private static readonly DataProvider provider = DataProvider.Instance();
+
+		#endregion
+
+		#region "Private Shared Methods"
 
         private static object GetAuthenticationServicesCallBack(CacheItemArgs cacheItemArgs)
         {
             return CBO.FillCollection<AuthenticationInfo>(provider.GetAuthenticationServices());
         }
+		
+		#endregion
+
+		#region "Public Shared Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -133,6 +143,7 @@ namespace DotNetNuke.Services.Authentication
             }
             if (authInfo == null)
             {
+				//Go to database
                 return CBO.FillObject<AuthenticationInfo>(provider.GetAuthenticationService(authenticationID));
             }
             return authInfo;
@@ -161,6 +172,7 @@ namespace DotNetNuke.Services.Authentication
             }
             if (authInfo == null)
             {
+				//Go to database
                 return CBO.FillObject<AuthenticationInfo>(provider.GetAuthenticationServiceByPackageID(packageID));
             }
             return authInfo;
@@ -189,6 +201,7 @@ namespace DotNetNuke.Services.Authentication
             }
             if (authInfo == null)
             {
+				//Go to database
                 return CBO.FillObject<AuthenticationInfo>(provider.GetAuthenticationServiceByType(authenticationType));
             }
             return authInfo;
@@ -281,18 +294,20 @@ namespace DotNetNuke.Services.Authentication
             {
                 if (TabPermissionController.CanViewPage())
                 {
+					//redirect to current page
                     _RedirectURL = Globals.NavigateURL(settings.ActiveTab.TabID);
                 }
                 else if (settings.HomeTabId != -1)
                 {
+					//redirect to portal home page specified
                     _RedirectURL = Globals.NavigateURL(settings.HomeTabId);
                 }
-                else
+                else //redirect to default portal root
                 {
                     _RedirectURL = Globals.GetPortalDomainName(settings.PortalAlias.HTTPAlias, request, true) + "/" + Globals.glbDefaultPage;
                 }
             }
-            else
+            else //redirect to after logout page
             {
                 _RedirectURL = Globals.NavigateURL(Convert.ToInt32(setting));
             }
@@ -323,6 +338,8 @@ namespace DotNetNuke.Services.Authentication
                 {
                     return;
                 }
+				
+                //save the authenticationmethod as a cookie
                 HttpCookie cookie = null;
                 cookie = Response.Cookies.Get("authentication");
                 if ((cookie == null))
@@ -382,5 +399,7 @@ namespace DotNetNuke.Services.Authentication
             var objEventLog = new EventLogController();
             objEventLog.AddLog(authSystem, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.AUTHENTICATION_UPDATED);
         }
+		
+		#endregion
     }
 }

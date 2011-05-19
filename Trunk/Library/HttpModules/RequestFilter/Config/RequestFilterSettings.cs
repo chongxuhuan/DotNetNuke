@@ -77,6 +77,7 @@ namespace DotNetNuke.HttpModules.RequestFilter
                 settings = new RequestFilterSettings();
                 string filePath = Common.Utilities.Config.GetPathToFile(Common.Utilities.Config.ConfigFileType.DotNetNuke);
 
+                //Create a FileStream for the Config file
                 var fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 var doc = new XPathDocument(fileReader);
                 XPathNodeIterator ruleList = doc.CreateNavigator().Select("/configuration/blockrequests/rule");
@@ -99,6 +100,7 @@ namespace DotNetNuke.HttpModules.RequestFilter
                 }
                 if ((File.Exists(filePath)))
                 {
+                    //Set back into Cache
                     DataCache.SetCache(RequestFilterConfig, settings, new DNNCacheDependency(filePath));
                 }
             }

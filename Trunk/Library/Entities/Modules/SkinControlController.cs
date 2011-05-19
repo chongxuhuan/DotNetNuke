@@ -137,6 +137,7 @@ namespace DotNetNuke.Entities.Modules
             var eventLogController = new EventLogController();
             if (skinControlID == Null.NullInteger)
             {
+				//Add new Skin Control
                 skinControlID = dataProvider.AddSkinControl(skinControl.PackageID,
                                                             skinControl.ControlKey,
                                                             skinControl.ControlSrc,
@@ -146,6 +147,7 @@ namespace DotNetNuke.Entities.Modules
             }
             else
             {
+				//Upgrade Skin Control
                 dataProvider.UpdateSkinControl(skinControl.SkinControlID,
                                                skinControl.PackageID,
                                                skinControl.ControlKey,

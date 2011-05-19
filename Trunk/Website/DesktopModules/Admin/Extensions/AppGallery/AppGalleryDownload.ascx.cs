@@ -154,7 +154,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                 }
                 catch (Exception e)
                 {
-
+                    throw;
                 }
                 finally
                 {
@@ -300,55 +300,6 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             return Localization.GetString(key, LocalResourceFile);
         }
 
-        //public static HttpWebRequest GetExternalRequest(string Address)
-        //{
-        //    PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-        //    var objRequest = (HttpWebRequest)WebRequest.Create(Address);
-        //    objRequest.Timeout = Host.WebRequestTimeout;
-        //    objRequest.UserAgent = "DotNetNuke";
-        //    if (!string.IsNullOrEmpty(Host.ProxyServer))
-        //    {
-        //        WebProxy Proxy;
-        //        NetworkCredential ProxyCredentials;
-        //        Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
-        //        if (!string.IsNullOrEmpty(Host.ProxyUsername))
-        //        {
-        //            ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
-        //            Proxy.Credentials = ProxyCredentials;
-        //        }
-        //        objRequest.Proxy = Proxy;
-        //    }
-        //    return objRequest;
-        //}
-
-        ///// <summary>
-        ///// Gets the external request.
-        ///// </summary>
-        ///// <param name="Address">The address.</param>
-        ///// <param name="Credentials">The credentials.</param>
-        ///// <returns>Web Request</returns>
-        //public static HttpWebRequest GetExternalRequest(string Address, NetworkCredential Credentials)
-        //{
-        //    var objRequest = (HttpWebRequest)WebRequest.Create(Address);
-        //    objRequest.Timeout = Host.WebRequestTimeout;
-        //    objRequest.UserAgent = "DotNetNuke";
-        //    if (Credentials.UserName != null)
-        //    {
-        //        objRequest.Credentials = Credentials;
-        //    }
-        //    if (!string.IsNullOrEmpty(Host.ProxyServer))
-        //    {
-        //        WebProxy Proxy;
-        //        NetworkCredential ProxyCredentials;
-        //        Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
-        //        if (!string.IsNullOrEmpty(Host.ProxyUsername))
-        //        {
-        //            ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
-        //            Proxy.Credentials = ProxyCredentials;
-        //        }
-        //        objRequest.Proxy = Proxy;
-        //    }
-        //    return objRequest;
-        //}
+     
     }
 }

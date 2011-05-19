@@ -59,9 +59,12 @@ namespace DotNetNuke.UI.WebControls
         public static EditControl CreateEditControl(EditorInfo editorInfo)
         {
             EditControl propEditor;
+
             if (editorInfo.Editor == "UseSystemType")
             {
                 Type type = Type.GetType(editorInfo.Type);
+                //Use System Type
+
                 switch (type.FullName)
                 {
                     case "System.DateTime":
@@ -88,16 +91,21 @@ namespace DotNetNuke.UI.WebControls
             }
             else
             {
+				//Use Editor
                 Type editType = Type.GetType(editorInfo.Editor, true, true);
                 propEditor = (EditControl) Activator.CreateInstance(editType);
             }
             propEditor.ID = editorInfo.Name;
             propEditor.Name = editorInfo.Name;
+
             propEditor.EditMode = editorInfo.EditMode;
             propEditor.Required = editorInfo.Required;
+
             propEditor.Value = editorInfo.Value;
             propEditor.OldValue = editorInfo.Value;
+
             propEditor.CustomAttributes = editorInfo.Attributes;
+
             return propEditor;
         }
     }

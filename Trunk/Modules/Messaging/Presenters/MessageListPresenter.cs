@@ -25,7 +25,6 @@
 
 using System;
 using System.Web.UI.WebControls;
-
 using DotNetNuke.Common;
 using DotNetNuke.Modules.Messaging.Views;
 using DotNetNuke.Modules.Messaging.Views.Models;
@@ -33,22 +32,23 @@ using DotNetNuke.Services.Messaging;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Web.Mvp;
 using DotNetNuke.Web.UI.WebControls;
-
 using Telerik.Web.UI;
 
 #endregion
 
 namespace DotNetNuke.Modules.Messaging.Presenters
 {
+
     public class MessageListPresenter : ModulePresenter<IMessageListView, MessageListModel>
     {
-        #region "Private Fields"
+
+        #region Private Fields
 
         private readonly IMessagingController _MessagingController;
 
         #endregion
 
-        #region "Constructors"
+        #region Constructors
 
         public MessageListPresenter(IMessageListView listView) : this(listView, new MessagingController(new MessagingDataService()))
         {
@@ -59,7 +59,6 @@ namespace DotNetNuke.Modules.Messaging.Presenters
             Requires.NotNull("messagingController", messagingController);
             _MessagingController = messagingController;
 
-            View.AddMessage += AddMessage;
             View.DeleteSelectedMessages += DeleteSelectedMessages;
             View.MarkSelectedMessagesRead += MarkSelectedMessagesRead;
             View.MarkSelectedMessagesUnread += MarkSelectedMessagesUnread;
@@ -74,19 +73,16 @@ namespace DotNetNuke.Modules.Messaging.Presenters
             base.OnInit();
 
             View.Model.Messages = _MessagingController.GetUserInbox(PortalId, UserId, 1, 999);
-        }
-
-        public void AddMessage(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(TabId, "EditMessage", string.Format("mid={0}", ModuleId)));
+            View.Model.ComposeMsgUrl = Globals.NavigateURL(TabId, "EditMessage", string.Format("mid={0}", ModuleId));
+            View.Refresh();
         }
 
         public void DeleteSelectedMessages(object sender, DnnGridItemSelectedEventArgs e)
         {
             foreach (GridItem c in e.SelectedItems)
             {
-                int messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
-                Message message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
+                var messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
+                var message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
                 message.Status = MessageStatusType.Deleted;
                 _MessagingController.UpdateMessage(message);
             }
@@ -96,8 +92,8 @@ namespace DotNetNuke.Modules.Messaging.Presenters
         {
             foreach (GridItem c in e.SelectedItems)
             {
-                int messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
-                Message message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
+                var messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
+                var message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
 
                 if ((message.Status == MessageStatusType.Unread))
                 {
@@ -111,8 +107,8 @@ namespace DotNetNuke.Modules.Messaging.Presenters
         {
             foreach (GridItem c in e.SelectedItems)
             {
-                int messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
-                Message message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
+                var messageID = Convert.ToInt32(c.OwnerTableView.DataKeyValues[c.ItemIndex]["MessageID"]);
+                var message = _MessagingController.GetMessageByID(PortalId, UserId, messageID);
 
                 if ((message.Status == MessageStatusType.Read))
                 {
@@ -162,5 +158,6 @@ namespace DotNetNuke.Modules.Messaging.Presenters
             mGrid.VirtualItemCount = _MessagingController.GetInboxCount(PortalId, UserId);
             mGrid.DataSource = _MessagingController.GetUserInbox(PortalId, UserId, mGrid.CurrentPageIndex + 1, mGrid.PageSize);
         }
+
     }
 }

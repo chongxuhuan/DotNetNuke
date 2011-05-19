@@ -120,6 +120,7 @@
     <Content Include="App_LocalResources\ViewMessage.ascx.resx" />
     <Content Include="license.txt" />
     <Content Include="messaging.gif" />
+    <Content Include="module.css" />
     <Content Include="releaseNotes.txt" />
     <Content Include="Views\EditMessage.ascx" />
     <Content Include="Views\ViewMessage.ascx" />

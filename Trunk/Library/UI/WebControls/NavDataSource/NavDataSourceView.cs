@@ -30,6 +30,7 @@ using System.Web.UI;
 
 namespace DotNetNuke.UI.WebControls
 {
+	/// <summary>The NavDataSourceView class encapsulates the capabilities of the NavDataSource data source control.</summary>
     public class NavDataSourceView : HierarchicalDataSourceView
     {
         private readonly string m_sKey;
@@ -63,6 +64,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// Starting with the rootNode, recursively build a list of
+        /// PageInfo nodes, create PageHierarchyData
+        /// objects, add them all to the PageHierarchicalEnumerable,
+        /// and return the list.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks></remarks>
         public override IHierarchicalEnumerable Select()
         {
             var objPages = new NavDataPageHierarchicalEnumerable();

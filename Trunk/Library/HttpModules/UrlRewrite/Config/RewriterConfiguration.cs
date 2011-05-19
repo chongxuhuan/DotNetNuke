@@ -68,6 +68,7 @@ namespace DotNetNuke.HttpModules.Config
                 {
                     filePath = Common.Utilities.Config.GetPathToFile(Common.Utilities.Config.ConfigFileType.SiteUrls);
 
+                    //Create a FileStream for the Config file
                     fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     var doc = new XPathDocument(fileReader);
                     config = new RewriterConfiguration {Rules = new RewriterRuleCollection()};
@@ -78,12 +79,14 @@ namespace DotNetNuke.HttpModules.Config
                     }
                     if (File.Exists(filePath))
                     {
+						//Set back into Cache
                         DataCache.SetCache("RewriterConfig", config, new DNNCacheDependency(filePath));
                     }
                 }
             }
             catch (Exception ex)
             {
+				//log it
                 var objEventLog = new EventLogController();
                 var objEventLogInfo = new LogInfo();
                 objEventLogInfo.AddProperty("UrlRewriter.RewriterConfiguration", "GetConfig Failed");
@@ -98,6 +101,7 @@ namespace DotNetNuke.HttpModules.Config
             {
                 if (fileReader != null)
                 {
+					//Close the Reader
                     fileReader.Close();
                 }
             }
@@ -109,17 +113,30 @@ namespace DotNetNuke.HttpModules.Config
             if (rules != null)
             {
                 var config = new RewriterConfiguration {Rules = rules};
-                var ser = new XmlSerializer(typeof (RewriterConfiguration));
-                string filePath = Globals.ApplicationMapPath + "\\SiteUrls.config";
+                
+				//Create a new Xml Serializer
+				var ser = new XmlSerializer(typeof (RewriterConfiguration));
+                
+				//Create a FileStream for the Config file
+				string filePath = Globals.ApplicationMapPath + "\\SiteUrls.config";
                 if (File.Exists(filePath))
                 {
+					//make sure file is not read-only
                     File.SetAttributes(filePath, FileAttributes.Normal);
                 }
                 var fileWriter = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Write);
+
+                //Open up the file to serialize
                 var writer = new StreamWriter(fileWriter);
+
+                //Serialize the RewriterConfiguration
                 ser.Serialize(writer, config);
+
+                //Close the Writers
                 writer.Close();
                 fileWriter.Close();
+
+                //Set Cache
                 DataCache.SetCache("RewriterConfig", config, new DNNCacheDependency(filePath));
             }
         }

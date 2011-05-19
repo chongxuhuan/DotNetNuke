@@ -46,6 +46,14 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Export : PortalModuleBase
     {
 
@@ -76,20 +84,28 @@ namespace DotNetNuke.Modules.Admin.Modules
                     try
                     {
                         var objObject = Reflection.CreateObject(Module.DesktopModule.BusinessControllerClass, Module.DesktopModule.BusinessControllerClass);
-                        if (objObject is IPortable)
+                        
+						//Double-check
+						if (objObject is IPortable)
                         {
                             var content = Convert.ToString(((IPortable)objObject).ExportModule(moduleID));
                             if (!String.IsNullOrEmpty(content))
                             {
+								//add attributes to XML document
                                 content = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + "<content type=\"" + CleanName(Module.DesktopModule.ModuleName) + "\" version=\"" +
                                           Module.DesktopModule.Version + "\">" + content + "</content>";
+
+                                //First check the Portal limits will not be exceeded (this is approximate)
                                 var objPortalController = new PortalController();
                                 var strFile = PortalSettings.HomeDirectoryMapPath + folder + fileName;
                                 if (objPortalController.HasSpaceAvailable(PortalId, content.Length))
                                 {
+									//save the file
                                     var objStream = File.CreateText(strFile);
                                     objStream.WriteLine(content);
                                     objStream.Close();
+
+                                    //add file to Files table
                                     FileSystemUtils.AddFile(fileName, PortalId, folder, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");
                                 }
                                 else
@@ -124,6 +140,7 @@ namespace DotNetNuke.Modules.Admin.Modules
         {
             var strName = name;
             const string strBadChars = ". ~`!@#$%^&*()-_+={[}]|\\:;<,>?/\"'";
+
             int intCounter;
             for (intCounter = 0; intCounter <= strBadChars.Length - 1; intCounter++)
             {

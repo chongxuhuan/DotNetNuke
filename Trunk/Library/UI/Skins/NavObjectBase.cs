@@ -38,12 +38,15 @@ namespace DotNetNuke.UI.Skins
 {
     public class NavObjectBase : SkinObjectBase
     {
+		#region "Private Members"
+		
         private readonly List<CustomAttribute> m_objCustomAttributes = new List<CustomAttribute>();
         private bool m_blnPopulateNodesFromClient = true;
         private int m_intExpandDepth = -1;
         private int m_intStartTabId = -1;
         private NavigationProvider m_objControl;
         private string m_strCSSBreadCrumbRoot;
+
         private string m_strCSSBreadCrumbSub;
         private string m_strCSSBreak;
         private string m_strCSSContainerRoot;
@@ -121,7 +124,11 @@ namespace DotNetNuke.UI.Skins
         private string m_strToolTip = "";
         private string m_strWorkImage;
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty)]
+		#endregion
+
+		#region "Public Properties"
+		//JH - 2/5/07 - support for custom attributes
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty)]
         public List<CustomAttribute> CustomAttributes
         {
             get
@@ -2246,7 +2253,11 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
-        public DNNNodeCollection GetNavigationNodes(DNNNode objNode)
+		#endregion
+
+		#region "Public Methods"
+
+		public DNNNodeCollection GetNavigationNodes(DNNNode objNode)
         {
             int intRootParent = PortalSettings.ActiveTab.TabID;
             DNNNodeCollection objNodes = null;
@@ -2311,7 +2322,11 @@ namespace DotNetNuke.UI.Skins
             return objNodes;
         }
 
-        protected string GetValue(string strVal, string strDefault)
+		#endregion
+
+		#region "Protected Methods"
+
+		protected string GetValue(string strVal, string strDefault)
         {
             if (String.IsNullOrEmpty(strVal))
             {
@@ -2336,7 +2351,11 @@ namespace DotNetNuke.UI.Skins
             objParent.Controls.Add(Control.NavigationControl);
         }
 
-        private void AssignControlProperties()
+		#endregion
+
+		#region "Private Methods"
+
+		private void AssignControlProperties()
         {
             if (!String.IsNullOrEmpty(m_strPathSystemImage))
             {
@@ -2692,8 +2711,10 @@ namespace DotNetNuke.UI.Skins
                 }
             }
             return strPath;
-        }
-    }
+		}
+
+		#endregion
+	}
 
     public class CustomAttribute
     {

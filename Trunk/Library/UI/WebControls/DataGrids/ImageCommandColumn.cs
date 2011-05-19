@@ -45,18 +45,29 @@ namespace DotNetNuke.UI.WebControls
     /// -----------------------------------------------------------------------------
     public class ImageCommandColumn : TemplateColumn
     {
+		#region "Private Members"
+
         private ImageCommandColumnEditMode mEditMode = ImageCommandColumnEditMode.Command;
         private bool mShowImage = true;
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the CommandName for the Column
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/17/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		#endregion
+
+		#region "Constructors"
+
+
+		#endregion
+
+		#region "Public Properties"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the CommandName for the Column
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/17/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string CommandName { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -80,59 +91,59 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the URL of the Image
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/17/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the URL of the Image
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/17/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string ImageURL { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// The Key Field that provides a Unique key to the data Item
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/16/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// The Key Field that provides a Unique key to the data Item
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/16/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string KeyField { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the URL of the Link (unless DataBinding through KeyField)
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/17/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the URL of the Link (unless DataBinding through KeyField)
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/17/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string NavigateURL { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the URL Formatting string
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	01/06/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the URL Formatting string
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	01/06/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string NavigateURLFormatString { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Javascript text to attach to the OnClick Event
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/16/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Javascript text to attach to the OnClick Event
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/16/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string OnClickJS { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -157,26 +168,26 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the Text (for Header/Footer Templates)
- /// </summary>
- /// <value>A String</value>
- /// <history>
- /// 	[cnurse]	02/16/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Text (for Header/Footer Templates)
+		/// </summary>
+		/// <value>A String</value>
+		/// <history>
+		/// 	[cnurse]	02/16/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string Text { get; set; }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// An flag that indicates whether the buttons are visible.
- /// </summary>
- /// <value>A Boolean</value>
- /// <history>
- /// 	[cnurse]	02/20/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// An flag that indicates whether the buttons are visible.
+		/// </summary>
+		/// <value>A Boolean</value>
+		/// <history>
+		/// 	[cnurse]	02/20/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string VisibleField { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -212,6 +223,7 @@ namespace DotNetNuke.UI.WebControls
             template.OnClickJS = OnClickJS;
             template.ShowImage = ShowImage;
             template.Visible = Visible;
+
             if (type == ListItemType.Header)
             {
                 template.Text = HeaderText;
@@ -220,15 +232,31 @@ namespace DotNetNuke.UI.WebControls
             {
                 template.Text = Text;
             }
+			
+            //Set Design Mode to True
             template.DesignMode = isDesignMode;
+
             return template;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initialises the Column
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/16/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Initialize()
         {
             ItemTemplate = CreateTemplate(ListItemType.Item);
             EditItemTemplate = CreateTemplate(ListItemType.EditItem);
             HeaderTemplate = CreateTemplate(ListItemType.Header);
+
             if (HttpContext.Current == null)
             {
                 HeaderStyle.Font.Names = new[] {"Tahoma, Verdana, Arial"};
@@ -238,5 +266,7 @@ namespace DotNetNuke.UI.WebControls
             ItemStyle.HorizontalAlign = HorizontalAlign.Center;
             HeaderStyle.HorizontalAlign = HorizontalAlign.Center;
         }
+		
+		#endregion
     }
 }

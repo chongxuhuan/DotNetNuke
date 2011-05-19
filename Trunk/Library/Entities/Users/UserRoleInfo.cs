@@ -33,6 +33,20 @@ using DotNetNuke.Security.Roles;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      UserRoleInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The UserRoleInfo class provides Business Layer model for a User/Role
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	01/03/2006	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class UserRoleInfo : RoleInfo
     {
@@ -143,7 +157,10 @@ namespace DotNetNuke.Entities.Users
 
         public override void Fill(IDataReader dr)
         {
+			//Fill base class properties
             base.Fill(dr);
+
+			//Fill this class properties
             UserRoleID = Null.SetNullInteger(dr["UserRoleID"]);
             UserID = Null.SetNullInteger(dr["UserID"]);
             FullName = Null.SetNullString(dr["DisplayName"]);

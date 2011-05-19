@@ -21,6 +21,8 @@
 
 #endregion
 
+using System;
+
 using DotNetNuke.Common;
 using DotNetNuke.ComponentModel;
 
@@ -45,6 +47,11 @@ namespace DotNetNuke.Services.FileSystem
         public string GetSubFolderPath(string strFileNamePath, int portalId)
         {
             return Globals.GetSubFolderPath(strFileNamePath, portalId);
+        }
+
+        public string LinkClick(string link, int tabId, int moduleId)
+        {
+            return Globals.LinkClick(link, tabId, moduleId);
         }
 
         public string ResolveUrl(string url)

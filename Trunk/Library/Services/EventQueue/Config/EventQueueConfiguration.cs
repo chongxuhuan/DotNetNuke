@@ -39,15 +39,24 @@ namespace DotNetNuke.Services.EventQueue.Config
 {
     internal class EventQueueConfiguration
     {
+		#region "Constructors"
+		
         internal EventQueueConfiguration()
         {
             PublishedEvents = new Dictionary<string, PublishedEvent>();
             EventQueueSubscribers = new Dictionary<string, SubscriberInfo>();
         }
+		
+		#endregion
 
+		#region "Public Properties"
         internal Dictionary<string, SubscriberInfo> EventQueueSubscribers { get; set; }
 
         internal Dictionary<string, PublishedEvent> PublishedEvents { get; set; }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private void Deserialize(string configXml)
         {
@@ -94,22 +103,29 @@ namespace DotNetNuke.Services.EventQueue.Config
             settings.Indent = true;
             settings.CloseOutput = true;
             settings.OmitXmlDeclaration = false;
+
             var sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, settings);
+
+			XmlWriter writer = XmlWriter.Create(sb, settings);
             writer.WriteStartElement("EventQueueConfig");
+
             writer.WriteStartElement("PublishedEvents");
             foreach (string key in PublishedEvents.Keys)
             {
                 writer.WriteStartElement("Event");
+
                 writer.WriteElementString("EventName", PublishedEvents[key].EventName);
                 writer.WriteElementString("Subscribers", PublishedEvents[key].Subscribers);
+
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
+
             writer.WriteStartElement("EventQueueSubscribers");
             foreach (string key in EventQueueSubscribers.Keys)
             {
                 writer.WriteStartElement("Subscriber");
+
                 writer.WriteElementString("ID", EventQueueSubscribers[key].ID);
                 writer.WriteElementString("Name", EventQueueSubscribers[key].Name);
                 writer.WriteElementString("Address", EventQueueSubscribers[key].Address);
@@ -118,11 +134,15 @@ namespace DotNetNuke.Services.EventQueue.Config
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
+
+            //Close EventQueueConfig
             writer.WriteEndElement();
+
             writer.Close();
+
             return sb.ToString();
         }
-
+		#endregion
         internal static EventQueueConfiguration GetConfig()
         {
             var config = (EventQueueConfiguration) DataCache.GetCache("EventQueueConfig");
@@ -132,12 +152,14 @@ namespace DotNetNuke.Services.EventQueue.Config
                 if (File.Exists(filePath))
                 {
                     config = new EventQueueConfiguration();
+                    //Deserialize into EventQueueConfiguration
                     config.Deserialize(FileSystemUtils.ReadFile(filePath));
                     //Set back into Cache
                     DataCache.SetCache("EventQueueConfig", config, new DNNCacheDependency(filePath));
                 }
                 else
                 {
+					//make a default config file
                     config = new EventQueueConfiguration();
                     config.PublishedEvents = new Dictionary<string, PublishedEvent>();
                     config.EventQueueSubscribers = new Dictionary<string, SubscriberInfo>();

@@ -32,5 +32,8 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Models
     public class CreateVocabularyModel
     {
         public Vocabulary Vocabulary { get; set; }
+
+        public string TaxonomyHomeUrl { get; set; }
+
     }
 }

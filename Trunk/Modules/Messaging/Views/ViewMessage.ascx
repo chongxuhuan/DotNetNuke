@@ -1,31 +1,39 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="false" CodeBehind="ViewMessage.ascx.cs" Inherits="DotNetNuke.Modules.Messaging.Views.ViewMessage" %>
+<%@ Import Namespace="DotNetNuke.Services.Localization" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="TextEditor" Src="~/controls/TextEditor.ascx" %>
-<table cellpadding="2" cellspacing="2">
-    <tr>
-        <td style="vertical-align: top">
-            <dnn:DnnFieldLabel ID="fromFieldLabel" runat="server" Text="EmailFrom.Text" ToolTip="EmailFrom.ToolTip"
-                class="SubHead" />
-            <asp:Label ID="fromLabel" runat="server" class="NormalTextBox" />
-        </td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">
-            <dnn:DnnFieldLabel ID="subjectFieldLabel" runat="server" Text="Subject.Text" ToolTip="Subject.ToolTip"
-                class="SubHead" />
-            <asp:Label ID="subjectLabel" runat="server" class="NormalTextBox" />
-        </td>
-    </tr>
-    <tr>
-        <td class="NormalTextBox">
-            <br />
-            <asp:Label ID="messageLabel" runat="server" />
-        </td>
-    </tr>
-</table>
-<br />
-<p>
-    <asp:Button ID="replyMessage" runat="server" resourceKey="ReplyMessage" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:LinkButton ID="deleteMessage" runat="server" resourceKey="DeleteMessage" CausesValidation="false" />&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:LinkButton ID="cancelView" runat="server" resourceKey="CancelView" CausesValidation="false" />
-</p>
+<div class="dnnForm dnnViewMessage dnnClear">
+    <div class="dnnFormItem">
+        <dnn:DnnFieldLabel ID="fromFieldLabel" runat="server" Text="EmailFrom.Text" />
+        <asp:Label ID="fromLabel" runat="server" />
+    </div>
+    <div class="dnnFormItem">
+        <dnn:DnnFieldLabel ID="subjectFieldLabel" runat="server" Text="Subject.Text" />
+        <asp:Label ID="subjectLabel" runat="server" />
+    </div>
+    <div class="dnnFormItem">
+        <asp:Label ID="messageLabel" runat="server" resourcekey="Message" CssClass="dnnFormLabel" />
+    </div>
+    <ul class="dnnActions dnnClear">
+        <li><asp:HyperLink ID="hlReplyMessage" runat="server" resourceKey="ReplyMessage" CausesValidation="false" CssClass="dnnPrimaryAction" /></li>
+        <li><asp:LinkButton ID="deleteMessage" runat="server" resourceKey="DeleteMessage" CausesValidation="false" CssClass="dnnSecondaryAction" /></li>
+        <li><asp:HyperLink ID="hlCancel" runat="server" resourceKey="CancelView" CausesValidation="false" CssClass="dnnSecondaryAction" /></li>
+    </ul>
+</div>
+<script language="javascript" type="text/javascript">
+    function setUpViewMessage() {
+        $('#<%= deleteMessage.ClientID %>').dnnConfirm({
+            text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+            yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
+            title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+        });
+    }
+
+    $(document).ready(function () {
+        setUpViewMessage();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setUpViewMessage();
+        });
+    });
+</script>

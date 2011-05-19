@@ -16,7 +16,7 @@
         <div class="dnnFormItem">
             <dnn:Label ID="siteDefaultLabel" runat="server" />
             <dnn:DnnLanguageLabel ID="defaultLanguageLabel" runat="server" />
-            <dnn:DnnLanguageComboBox ID="languagesComboBox" runat="server" LanguagesListType="Supported" Width="300px" />
+            <dnn:DnnLanguageComboBox ID="languagesComboBox" runat="server" LanguagesListType="Supported" cssClass="dnnLanguageCombo" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="detectBrowserLable" runat="server" />
@@ -215,9 +215,9 @@
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">
-    	<li><asp:LinkButton id="addLanguageButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="AddLanguage" CommandName="Edit"/></li>
-    	<li><asp:LinkButton id="installLanguagePackButton" runat="server" CssClass="dnnSecondaryAction" ResourceKey="InstallLanguage" CommandName="InstallLanguage" /></li>
-    	<li><asp:LinkButton id="createLanguagePackButton" runat="server" CssClass="dnnSecondaryAction" ResourceKey="CreateLanguage" CommandName="PackageWriter" /></li>
-    	<li><asp:LinkButton id="verifyLanguageResourcesButton" runat="server" CssClass="dnnSecondaryAction" ResourceKey="Verify" CommandName="Verify" /></li>
+    	<li><asp:Hyperlink id="addLanguageLink" runat="server" CssClass="dnnPrimaryAction" resourcekey="AddLanguage" /></li>
+    	<li><asp:Hyperlink id="installLanguagePackLink" runat="server" CssClass="dnnSecondaryAction" ResourceKey="InstallLanguage" /></li>
+    	<li><asp:Hyperlink id="createLanguagePackLink" runat="server" CssClass="dnnSecondaryAction" ResourceKey="CreateLanguage"  /></li>
+    	<li><asp:Hyperlink id="verifyLanguageResourcesLink" runat="server" CssClass="dnnSecondaryAction" ResourceKey="Verify"  /></li>
     </ul>
 </div>

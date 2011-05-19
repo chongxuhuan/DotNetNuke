@@ -35,7 +35,9 @@ namespace DotNetNuke.Security.Membership
 {
     public abstract class MembershipProvider
     {
-        public abstract bool CanEditProviderProperties { get; }
+        #region "Abstract Properties"
+		
+		public abstract bool CanEditProviderProperties { get; }
         public abstract int MaxInvalidPasswordAttempts { get; set; }
         public abstract int MinPasswordLength { get; set; }
         public abstract int MinNonAlphanumericCharacters { get; set; }
@@ -46,11 +48,20 @@ namespace DotNetNuke.Security.Membership
         public abstract string PasswordStrengthRegularExpression { get; set; }
         public abstract bool RequiresQuestionAndAnswer { get; set; }
         public abstract bool RequiresUniqueEmail { get; set; }
+		
+		#endregion
+		
+		#region "Shared/Static Methods"
 
-        public static MembershipProvider Instance()
+        //return the provider
+		public static MembershipProvider Instance()
         {
             return ComponentFactory.GetComponent<MembershipProvider>();
         }
+		
+		#endregion
+		
+		#region "Abstract Methods"
 
         // Users
         public abstract bool ChangePassword(UserInfo user, string oldPassword, string newPassword);
@@ -91,6 +102,8 @@ namespace DotNetNuke.Security.Membership
         public abstract ArrayList GetUsersByUserName(int portalId, string userNameToMatch, int pageIndex, int pageSize, ref int totalRecords);       
         public abstract ArrayList GetUsersByProfileProperty(int portalId, string propertyName, string propertyValue, int pageIndex, int pageSize, ref int totalRecords);
         
+		#endregion
+		
         #region "Virtual Methods"
         public virtual ArrayList GetUsers(int portalId, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {

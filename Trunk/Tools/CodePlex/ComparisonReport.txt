@@ -1,0 +1,6 @@
+load %1 %2
+expand all
+folder-report layout:summary options:display-orphans output-to:%3
+
+
+

@@ -117,6 +117,20 @@ namespace DotNetNuke.Entities.Portals
             GetPortalSettings(tabID, portal);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The PortalSettings Constructor encapsulates all of the logic
+        /// necessary to obtain configuration settings necessary to render
+        /// a Portal Tab view for a given request.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+		///	<param name="tabID">The current tab</param>
+        ///	<param name="objPortalAliasInfo">The current portal</param>
+        /// <history>
+        /// 	[cnurse]	10/21/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PortalSettings(int tabID, PortalAliasInfo objPortalAliasInfo)
         {
             ActiveTab = new TabInfo();
@@ -275,6 +289,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Default Module Id
+        /// </summary>
+        /// <remarks>Defaults to Null.NullInteger</remarks>
+        /// <history>
+        /// 	[cnurse]	05/02/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int DefaultModuleId
         {
             get
@@ -307,6 +330,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Default Tab Id
+        /// </summary>
+        /// <remarks>Defaults to Null.NullInteger</remarks>
+        /// <history>
+        /// 	[cnurse]	05/02/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int DefaultTabId
         {
             get
@@ -315,6 +347,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether Browser Language Detection is Enabled
+        /// </summary>
+        /// <remarks>Defaults to True</remarks>
+        /// <history>
+        /// 	[cnurse]	02/19/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool EnableBrowserLanguage
         {
             get
@@ -323,7 +364,13 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        public bool EnablePopUps
+         /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to use the popup.
+        /// </summary>
+        /// <remarks>Defaults to True</remarks>
+        /// -----------------------------------------------------------------------------
+       public bool EnablePopUps
         {
             get
             {
@@ -331,6 +378,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Skin Widgets are enabled/supported
+        /// </summary>
+        /// <remarks>Defaults to True</remarks>
+        /// <history>
+        /// 	[cnurse]	07/03/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool EnableSkinWidgets
         {
             get
@@ -339,6 +395,12 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether enable url language.
+        /// </summary>
+        /// <remarks>Defaults to True</remarks>
+        /// -----------------------------------------------------------------------------
         public bool EnableUrlLanguage
         {
             get
@@ -402,6 +464,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to inlcude Common Words in the Search Index
+        /// </summary>
+        /// <remarks>Defaults to False</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool SearchIncludeCommon
         {
             get
@@ -437,6 +508,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the maximum Search Word length to index
+        /// </summary>
+        /// <remarks>Defaults to 3</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int SearchMaxWordlLength
         {
             get
@@ -445,6 +525,16 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the minum Search Word length to index
+        /// </summary>
+        /// <remarks>Defaults to 3</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int SearchMinWordlLength
         {
             get
@@ -832,9 +922,13 @@ namespace DotNetNuke.Entities.Portals
             {
                 tabFound = hostTabs.TryGetValue(tabId, out tab);
             }
+            //if tab was found
             if (tabFound)
             {
+				//add tab to breadcrumb collection
                 breadCrumbs.Insert(0, tab.Clone());
+
+                //get the tab parent
                 if (!Null.IsNull(tab.ParentId) && tabId != tab.ParentId)
                 {
                     GetBreadCrumbsRecursively(ref breadCrumbs, tab.ParentId);
@@ -842,6 +936,17 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The GetPortalSettings method builds the site Settings
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="tabID">The current tabs id</param>
+        ///	<param name="portal">The Portal object</param>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GetPortalSettings(int tabID, PortalInfo portal)
         {
             PortalId = portal.PortalID;
@@ -885,6 +990,7 @@ namespace DotNetNuke.Entities.Portals
             Users = portal.Users;
             CultureCode = portal.CultureCode;
 
+            //update properties with default values
             if (Null.IsNull(HostSpace))
             {
                 HostSpace = 0;
@@ -894,6 +1000,8 @@ namespace DotNetNuke.Entities.Portals
                 DefaultLanguage = Localization.SystemLocale;
             }
             HomeDirectory = Globals.ApplicationPath + "/" + portal.HomeDirectory + "/";
+
+            //verify tab for portal. This assigns the Active Tab based on the Tab Id/PortalId
             if (VerifyPortalTab(PortalId, tabID))
             {
                 if (ActiveTab != null)
@@ -928,6 +1036,19 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The VerifyPortalTab method verifies that the TabId/PortalId combination
+        /// is allowed and returns default/home tab ids if not
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+		///	<param name="portalId">The Portal's id</param>
+		///	<param name="tabId">The current tab's id</param>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool VerifyPortalTab(int portalId, int tabId)
         {
             var tabController = new TabController();

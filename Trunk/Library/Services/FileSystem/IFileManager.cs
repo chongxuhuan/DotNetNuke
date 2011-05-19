@@ -104,11 +104,27 @@ namespace DotNetNuke.Services.FileSystem
         IFileInfo GetFile(IFolderInfo folder, string fileName);
 
         /// <summary>
+        /// Gets the file metadata for the specified file.
+        /// </summary>
+        /// <param name="portalId">The portal ID or Null.NullInteger for the Host</param>
+        /// <param name="relativePath">Relative path to the file.</param>
+        /// <remarks>Host and portal settings commonly return a relative path to a file.  This method uses that relative path to fetch file metadata.</remarks>
+        /// <returns>The <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> object with the metadata of the specified file.</returns>
+        IFileInfo GetFile(int portalId, string relativePath);
+
+        /// <summary>
         /// Gets the content of the specified file.
         /// </summary>
         /// <param name="file">The file to get the content from.</param>
         /// <returns>A stream with the content of the file.</returns>
         Stream GetFileContent(IFileInfo file);
+
+        /// <summary>
+        /// Gets the direct Url to the file.
+        /// </summary>
+        /// <param name="file">The file to get the Url.</param>
+        /// <returns>The direct Url to the file.</returns>
+        string GetUrl(IFileInfo file);
 
         /// <summary>
         /// Moves the specified file into the specified folder.

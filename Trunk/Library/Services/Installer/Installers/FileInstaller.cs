@@ -46,9 +46,15 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class FileInstaller : ComponentInstallerBase
     {
+		#region "Private Members"
+		
         private readonly List<InstallFile> _Files = new List<InstallFile>();
         private string _BasePath;
         private bool _DeleteFiles = Null.NullBoolean;
+
+		#endregion
+
+		#region "Protected Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -157,6 +163,10 @@ namespace DotNetNuke.Services.Installer.Installers
                 return _PhysicalBasePath.Replace("/", "\\");
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -180,6 +190,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Installer supports Manifest only installs
+        /// </summary>
+        /// <value>A Boolean</value>
+        /// <history>
+        /// 	[cnurse]	02/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override bool SupportsManifestOnlyInstall
         {
             get
@@ -187,11 +206,33 @@ namespace DotNetNuke.Services.Installer.Installers
                 return Null.NullBoolean;
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The CommitFile method commits a single file.
+        /// </summary>
+        /// <param name="insFile">The InstallFile to commit</param>
+        /// <history>
+        /// 	[cnurse]	08/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void CommitFile(InstallFile insFile)
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteFile method deletes a single file.
+        /// </summary>
+        /// <param name="insFile">The InstallFile to delete</param>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void DeleteFile(InstallFile insFile)
         {
             if (DeleteFiles)
@@ -200,17 +241,30 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The InstallFile method installs a single file.
+        /// </summary>
+        /// <param name="insFile">The InstallFile to install</param>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual bool InstallFile(InstallFile insFile)
         {
             try
             {
+				//Check the White Lists
                 if ((Package.InstallerInfo.IgnoreWhiteList || Util.IsFileValid(insFile, Package.InstallerInfo.AllowableFiles)))
                 {
+					//Install File
                     if (File.Exists(PhysicalBasePath + insFile.FullName))
                     {
                         Util.BackupFile(insFile, PhysicalBasePath, Log);
                     }
-                    Util.CopyFile(insFile, PhysicalBasePath, Log);
+                    
+					//Copy file from temp location
+					Util.CopyFile(insFile, PhysicalBasePath, Log);
                     return true;
                 }
                 else
@@ -226,27 +280,70 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that determines what type of file this installer supports
+        /// </summary>
+        /// <param name="type">The type of file being processed</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual bool IsCorrectType(InstallFileType type)
         {
             return true;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ProcessFile method determines what to do with parsed "file" node
+        /// </summary>
+        /// <param name="file">The file represented by the node</param>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void ProcessFile(InstallFile file, XPathNavigator nav)
         {
             if (file != null && IsCorrectType(file.Type))
             {
                 Files.Add(file);
+
+                //Add to the
                 Package.InstallerInfo.Files[file.FullName.ToLower()] = file;
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadCustomManifest method reads the custom manifest items (that subclasses
+        /// of FileInstaller may need)
+        /// </summary>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <history>
+        /// 	[cnurse]	08/22/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void ReadCustomManifest(XPathNavigator nav)
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifestItem method reads a single node
+        /// </summary>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <param name="checkFileExists">Flag that determines whether a check should be made</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual InstallFile ReadManifestItem(XPathNavigator nav, bool checkFileExists)
         {
             string fileName = Null.NullString;
+
+            //Get the path
             XPathNavigator pathNav = nav.SelectSingleNode("path");
             if (pathNav == null)
             {
@@ -256,12 +353,16 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 fileName = pathNav.Value + "\\";
             }
+			
+            //Get the name
             XPathNavigator nameNav = nav.SelectSingleNode("name");
             if (nameNav != null)
             {
                 fileName += nameNav.Value;
             }
-            string sourceFileName = Util.ReadElement(nav, "sourceFileName");
+            
+			//Get the sourceFileName
+			string sourceFileName = Util.ReadElement(nav, "sourceFileName");
             var file = new InstallFile(fileName, sourceFileName, Package.InstallerInfo);
             if ((!string.IsNullOrEmpty(BasePath)) && (BasePath.ToLowerInvariant().StartsWith("app_code") && file.Type == InstallFileType.Other))
             {
@@ -269,7 +370,8 @@ namespace DotNetNuke.Services.Installer.Installers
             }
             if (file != null)
             {
-                string strVersion = XmlUtils.GetNodeValue(nav, "version");
+                //Set the Version
+				string strVersion = XmlUtils.GetNodeValue(nav, "version");
                 if (!string.IsNullOrEmpty(strVersion))
                 {
                     file.SetVersion(new Version(strVersion));
@@ -278,7 +380,9 @@ namespace DotNetNuke.Services.Installer.Installers
                 {
                     file.SetVersion(Package.Version);
                 }
-                string strAction = XmlUtils.GetAttributeValue(nav, "action");
+                
+				//Set the Action
+				string strAction = XmlUtils.GetAttributeValue(nav, "action");
                 if (!string.IsNullOrEmpty(strAction))
                 {
                     file.Action = strAction;
@@ -298,6 +402,17 @@ namespace DotNetNuke.Services.Installer.Installers
             return file;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The RollbackFile method rolls back the install of a single file.
+        /// </summary>
+        /// <remarks>For new installs this removes the added file.  For upgrades it restores the
+        /// backup file created during install</remarks>
+        /// <param name="installFile">The InstallFile to commit</param>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void RollbackFile(InstallFile installFile)
         {
             if (File.Exists(installFile.BackupFileName))
@@ -310,11 +425,34 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstallFile method unInstalls a single file.
+        /// </summary>
+        /// <param name="unInstallFile">The InstallFile to unInstall.</param>
+        /// <history>
+        /// 	[cnurse]	01/07/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void UnInstallFile(InstallFile unInstallFile)
         {
             DeleteFile(unInstallFile);
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Commit method finalises the Install and commits any pending changes.
+        /// </summary>
+        /// <remarks>In the case of Files this is not neccessary</remarks>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Commit()
         {
             try
@@ -331,6 +469,14 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method installs the file component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Install()
         {
             try
@@ -352,6 +498,14 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifest method reads the manifest file for the file compoent.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void ReadManifest(XPathNavigator manifestNav)
         {
             XPathNavigator rootNav = manifestNav.SelectSingleNode(CollectionNodeName);
@@ -370,6 +524,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Rollback method undoes the installation of the file component in the event 
+        /// that one of the other components fails
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Rollback()
         {
             try
@@ -386,6 +549,14 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the file component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UnInstall()
         {
             try
@@ -401,5 +572,7 @@ namespace DotNetNuke.Services.Installer.Installers
                 Log.AddFailure(Util.EXCEPTION + " - " + ex.Message);
             }
         }
+		
+		#endregion
     }
 }

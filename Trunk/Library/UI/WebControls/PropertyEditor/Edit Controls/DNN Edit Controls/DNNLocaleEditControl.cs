@@ -119,12 +119,14 @@ namespace DotNetNuke.UI.WebControls
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
+
             writer.Write(Localization.GetString("DisplayNative", Localization.SharedResourceFile));
         }
 
         private void RenderOption(HtmlTextWriter writer, CultureInfo culture)
         {
             string localeName;
+
             if (DisplayMode == "Native")
             {
                 localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.NativeName);
@@ -133,18 +135,34 @@ namespace DotNetNuke.UI.WebControls
             {
                 localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.EnglishName);
             }
+			
+            //Add the Value Attribute
             writer.AddAttribute(HtmlTextWriterAttribute.Value, culture.Name);
+
             if (IsSelected(culture.Name))
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
             }
+			
+            //Render Option Tag
             writer.RenderBeginTag(HtmlTextWriterTag.Option);
             writer.Write(localeName);
             writer.RenderEndTag();
         }
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnAttributesChanged runs when the CustomAttributes property has changed.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/18/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnAttributesChanged()
         {
+			//Get the List settings out of the "Attributes"
             if ((CustomAttributes != null))
             {
                 foreach (Attribute attribute in CustomAttributes)
@@ -159,9 +177,19 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderViewMode renders the View (readonly) mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	05/02/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderViewMode(HtmlTextWriter writer)
         {
             Locale locale = LocaleController.Instance.GetLocale(StringValue);
+
             ControlStyle.AddAttributesToRender(writer);
             writer.RenderBeginTag(HtmlTextWriterTag.Span);
             if (locale != null)
@@ -171,18 +199,38 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderEndTag();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/27/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
+            //Render div
             ControlStyle.AddAttributesToRender(writer);
             writer.RenderBeginTag(HtmlTextWriterTag.Div);
+
+            //Render Button Row
             RenderModeButtons(writer);
+
+            //Render break
             writer.WriteBreak();
+
+            //Render the Select Tag
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
             writer.RenderBeginTag(HtmlTextWriterTag.Select);
 
+            //Render None selected option
+            //Add the Value Attribute
             writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
+
             if (StringValue == Null.NullString)
             {
+				//Add the Selected Attribute
                 writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Option);
@@ -235,5 +283,7 @@ namespace DotNetNuke.UI.WebControls
             //close div
             writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

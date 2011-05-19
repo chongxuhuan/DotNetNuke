@@ -69,6 +69,8 @@ namespace DotNetNuke.UI
 
         #endregion
 
+		#region "Private Shared Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Recursive function to add module's actions to the DNNNodeCollection based off of passed in ModuleActions
@@ -87,8 +89,24 @@ namespace DotNetNuke.UI
             AddChildActions(objParentAction, objParentNode, objParentNode, objActionControl, -1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Recursive function to add module's actions to the DNNNodeCollection based off of passed in ModuleActions
+        /// </summary>
+        /// <param name="objParentAction">Parent action</param>
+        /// <param name="objParentNode">Parent node</param>
+        /// <param name="objRootNode">Root Node.</param>
+        /// <param name="objActionControl">ActionControl to base actions off of</param>
+        /// <param name="intDepth">How many levels deep should be populated</param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	5/15/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void AddChildActions(ModuleAction objParentAction, DNNNode objParentNode, DNNNode objRootNode, IActionControl objActionControl, int intDepth)
         {
+			//Add Menu Items
             bool blnPending;
             foreach (ModuleAction objAction in objParentAction.Actions)
             {
@@ -97,11 +115,13 @@ namespace DotNetNuke.UI
                 {
                     if (blnPending == false)
                     {
+						//A title (text) of ~ denotes a break
                         objParentNode.DNNNodes.AddBreak();
                     }
                 }
                 else
                 {
+					//if action is visible and user has permission 
                     if (objAction.Visible &&
                         (objAction.Secure != SecurityAccessLevel.Anonymous ||
                          ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", objActionControl.ModuleControl.ModuleContext.Configuration)) &&
@@ -118,7 +138,7 @@ namespace DotNetNuke.UI
                             objNode = objParentNode.DNNNodes[i];
                             objNode.ID = objAction.ID.ToString();
                             objNode.Key = objAction.ID.ToString();
-                            objNode.Text = objAction.Title;
+                            objNode.Text = objAction.Title; //no longer including SPACE in generic node collection, each control must handle how they want to display
                             if (!String.IsNullOrEmpty(objAction.ClientScript))
                             {
                                 objNode.JSFunction = objAction.ClientScript;
@@ -141,7 +161,7 @@ namespace DotNetNuke.UI
                                 }
                             }
                             objNode.Image = objAction.Icon;
-                            if (objAction.HasChildren())
+                            if (objAction.HasChildren()) //if action has children then call function recursively
                             {
                                 AddChildActions(objAction, objNode, objRootNode, objActionControl, intDepth);
                             }
@@ -170,12 +190,14 @@ namespace DotNetNuke.UI
         private static void AddNode(TabInfo objTab, DNNNodeCollection objNodes, Hashtable objBreadCrumbs, PortalSettings objPortalSettings, ToolTipSource eToolTips)
         {
             var objNode = new DNNNode();
-            if (objTab.Title == "~")
+            if (objTab.Title == "~") //NEW!
             {
+				//A title (text) of ~ denotes a break
                 objNodes.AddBreak();
             }
             else
             {
+				//assign breadcrumb and selected properties
                 if (objBreadCrumbs.Contains(objTab.TabID))
                 {
                     objNode.BreadCrumb = true;
@@ -213,10 +235,14 @@ namespace DotNetNuke.UI
 
         private static bool IsActionPending(DNNNode objParentNode, DNNNode objRootNode, int intDepth)
         {
+			//if we aren't restricting depth then its never pending
             if (intDepth == -1)
             {
                 return false;
             }
+			
+			//parents level + 1 = current node level
+            //if current node level - (roots node level) <= the desired depth then not pending
             if (objParentNode.Level + 1 - objRootNode.Level <= intDepth)
             {
                 return false;
@@ -226,20 +252,68 @@ namespace DotNetNuke.UI
 
         private static bool IsTabPending(TabInfo objTab, DNNNode objParentNode, DNNNode objRootNode, int intDepth, Hashtable objBreadCrumbs, int intLastBreadCrumbId, bool blnPOD)
         {
+			//
+            //A
+            //|
+            //--B
+            //| |
+            //| --B-1
+            //| | |
+            //| | --B-1-1
+            //| | |
+            //| | --B-1-2
+            //| |
+            //| --B-2
+            //|   |
+            //|   --B-2-1
+            //|   |
+            //|   --B-2-2
+            //|
+            //--C
+            //  |
+            //  --C-1
+            //  | |
+            //  | --C-1-1
+            //  | |
+            //  | --C-1-2
+            //  |
+            //  --C-2
+            //    |
+            //    --C-2-1
+            //    |
+            //    --C-2-2
+
+            //if we aren't restricting depth then its never pending
             if (intDepth == -1)
             {
                 return false;
             }
+			
+			//parents level + 1 = current node level
+            //if current node level - (roots node level) <= the desired depth then not pending
             if (objParentNode.Level + 1 - objRootNode.Level <= intDepth)
             {
                 return false;
             }
+			
+			
+            //--- These checks below are here so tree becomes expands to selected node ---
             if (blnPOD)
             {
+                //really only applies to controls with POD enabled, since the root passed in may be some node buried down in the chain
+                //and the depth something like 1.  We need to include the appropriate parent's and parent siblings
+                //Why is the check for POD required?  Well to allow for functionality like RootOnly requests.  We do not want any children
+                //regardless if they are a breadcrumb
+
+                //if tab is in the breadcrumbs then obviously not pending
                 if (objBreadCrumbs.Contains(objTab.TabID))
                 {
                     return false;
                 }
+				
+				//if parent is in the breadcrumb and it is not the last breadcrumb then not pending
+                //in tree above say we our breadcrumb is (A, B, B-2) we want our tree containing A, B, B-2 AND B-1 AND C since A and B are expanded
+                //we do NOT want B-2-1 and B-2-2, thus the check for Last Bread Crumb
                 if (objBreadCrumbs.Contains(objTab.ParentId) && intLastBreadCrumbId != objTab.ParentId)
                 {
                     return false;
@@ -275,11 +349,12 @@ namespace DotNetNuke.UI
                                        int intDepth, int intNavNodeOptions)
         {
             PortalSettings objPortalSettings = PortalController.GetCurrentPortalSettings();
+
             DNNNodeCollection objRootNodes = objRootNode.DNNNodes;
 
             bool showHidden = (intNavNodeOptions & (int)NavNodeOptions.IncludeHiddenNodes) == (int)NavNodeOptions.IncludeHiddenNodes;
 
-            if (CanShowTab(objTab, TabPermissionController.CanAdminPage(), true, showHidden))
+            if (CanShowTab(objTab, TabPermissionController.CanAdminPage(), true, showHidden)) //based off of tab properties, is it shown
             {
                 DNNNodeCollection objParentNodes;
                 DNNNode objParentNode = objRootNodes.FindNode(objTab.ParentId.ToString());
@@ -291,8 +366,10 @@ namespace DotNetNuke.UI
                 objParentNodes = objParentNode.DNNNodes;
                 if (objTab.TabID == intStartTabId)
                 {
+					//is this the starting tab
                     if ((intNavNodeOptions & (int) NavNodeOptions.IncludeParent) != 0)
                     {
+						//if we are including parent, make sure there is one, then add
                         if (objTabLookup[objTab.ParentId] != null)
                         {
                             AddNode((TabInfo) objTabLookup[objTab.ParentId], objParentNodes, objBreadCrumbs, objPortalSettings, eToolTips);
@@ -302,25 +379,29 @@ namespace DotNetNuke.UI
                     }
                     if ((intNavNodeOptions & (int) NavNodeOptions.IncludeSelf) != 0)
                     {
+						//if we are including our self (starting tab) then add
                         AddNode(objTab, objParentNodes, objBreadCrumbs, objPortalSettings, eToolTips);
                     }
                 }
                 else if (((intNavNodeOptions & (int) NavNodeOptions.IncludeSiblings) != 0) && IsTabSibling(objTab, intStartTabId, objTabLookup))
                 {
+					//is this a sibling of the starting node, and we are including siblings, then add it
                     AddNode(objTab, objParentNodes, objBreadCrumbs, objPortalSettings, eToolTips);
                 }
                 else
                 {
-                    if (blnParentFound)
+                    if (blnParentFound) //if tabs parent already in hierarchy (as is the case when we are sending down more than 1 level)
                     {
+						//parent will be found for siblings.  Check to see if we want them, if we don't make sure tab is not a sibling
                         if (((intNavNodeOptions & (int) NavNodeOptions.IncludeSiblings) != 0) || IsTabSibling(objTab, intStartTabId, objTabLookup) == false)
                         {
+							//determine if tab should be included or marked as pending
                             bool blnPOD = (intNavNodeOptions & (int) NavNodeOptions.MarkPendingNodes) != 0;
                             if (IsTabPending(objTab, objParentNode, objRootNode, intDepth, objBreadCrumbs, intLastBreadCrumbId, blnPOD))
                             {
                                 if (blnPOD)
                                 {
-                                    objParentNode.HasNodes = true;
+                                    objParentNode.HasNodes = true; //mark it as a pending node
                                 }
                             }
                             else
@@ -331,11 +412,16 @@ namespace DotNetNuke.UI
                     }
                     else if ((intNavNodeOptions & (int) NavNodeOptions.IncludeSelf) == 0 && objTab.ParentId == intStartTabId)
                     {
+						//if not including self and parent is the start id then add 
                         AddNode(objTab, objParentNodes, objBreadCrumbs, objPortalSettings, eToolTips);
                     }
                 }
             }
         }
+		
+		#endregion
+
+		#region "Public Shared Methods"
 
         public static bool CanShowTab(TabInfo objTab, bool isAdminMode, bool showDisabled)
         {
@@ -345,6 +431,7 @@ namespace DotNetNuke.UI
 
         public static bool CanShowTab(TabInfo objTab, bool isAdminMode, bool showDisabled, bool showHidden)
         {
+			//if tab is visible, not deleted, not expired (or admin), and user has permission to see it...
             if ((objTab.IsVisible || showHidden) && !objTab.IsDeleted && (!objTab.DisableLink || showDisabled) &&
                 (((objTab.StartDate < DateTime.Now || objTab.StartDate == Null.NullDate) && (objTab.EndDate > DateTime.Now || objTab.EndDate == Null.NullDate)) || isAdminMode) &&
                 TabPermissionController.CanNavigateToPage(objTab))
@@ -402,9 +489,25 @@ namespace DotNetNuke.UI
             return GetActionNodes(objActionRoot, objControl, -1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This function provides a central location to obtain a generic node collection of the actions associated 
+        /// to a module based off of the current user's context
+        /// </summary>
+        /// <param name="objActionRoot">Root module action</param>
+        /// <param name="objControl">ActionControl to base actions off of</param>
+        /// <param name="intDepth">How many levels deep should be populated</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	5/15/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static DNNNodeCollection GetActionNodes(ModuleAction objActionRoot, Control objControl, int intDepth)
         {
             var objCol = new DNNNodeCollection(objControl.ClientID);
+
             var objActionControl = objControl as IActionControl;
             if (objActionControl != null)
             {
@@ -424,6 +527,22 @@ namespace DotNetNuke.UI
             return objCol;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This function provides a central location to obtain a generic node collection of the actions associated 
+        /// to a module based off of the current user's context
+        /// </summary>
+        /// <param name="objActionRoot">Root module action</param>
+        /// <param name="objRootNode">Root node on which to populate children</param>
+        /// <param name="objControl">ActionControl to base actions off of</param>
+        /// <param name="intDepth">How many levels deep should be populated</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	5/15/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static DNNNodeCollection GetActionNodes(ModuleAction objActionRoot, DNNNode objRootNode, Control objControl, int intDepth)
         {
             DNNNodeCollection objCol = objRootNode.ParentNode.DNNNodes;
@@ -451,6 +570,7 @@ namespace DotNetNuke.UI
         /// -----------------------------------------------------------------------------
         public static DNNNode GetNavigationNode(string strID, string strNamespace)
         {
+			//TODO:  FIX THIS MESS!
             DNNNodeCollection objNodes = GetNavigationNodes(strNamespace);
             DNNNode objNode = objNodes.FindNode(strID);
             var objReturnNodes = new DNNNodeCollection(strNamespace);
@@ -478,21 +598,60 @@ namespace DotNetNuke.UI
             return GetNavigationNodes(strNamespace, ToolTipSource.None, -1, -1, 0);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This function provides a central location to obtain a generic node collection of the pages/tabs included in
+        /// the current context's (user) navigation hierarchy
+        /// </summary>
+        /// <param name="strNamespace">Namespace (typically control's ClientID) of node collection to create</param>
+        /// <param name="eToolTips">Enumerator to determine what text to display in the tooltips</param>
+        /// <param name="intStartTabId">If using Populate On Demand, then this is the tab id of the root element to retrieve (-1 for no POD)</param>
+        /// <param name="intDepth">If Populate On Demand is enabled, then this parameter determines the number of nodes to retrieve beneath the starting tab passed in (intStartTabId) (-1 for no POD)</param>
+        /// <param name="intNavNodeOptions">Bitwise integer containing values to determine what nodes to display (self, siblings, parent)</param>
+        /// <returns>Collection of DNNNodes</returns>
+        /// <remarks>
+        /// Returns a subset of navigation nodes based off of passed in starting node id and depth
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	8/9/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static DNNNodeCollection GetNavigationNodes(string strNamespace, ToolTipSource eToolTips, int intStartTabId, int intDepth, int intNavNodeOptions)
         {
             var objCol = new DNNNodeCollection(strNamespace);
             return GetNavigationNodes(new DNNNode(objCol.XMLNode), eToolTips, intStartTabId, intDepth, intNavNodeOptions);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This function provides a central location to obtain a generic node collection of the pages/tabs included in
+        /// the current context's (user) navigation hierarchy
+        /// </summary>
+        /// <param name="objRootNode">Node in which to add children to</param>
+        /// <param name="eToolTips">Enumerator to determine what text to display in the tooltips</param>
+        /// <param name="intStartTabId">If using Populate On Demand, then this is the tab id of the root element to retrieve (-1 for no POD)</param>
+        /// <param name="intDepth">If Populate On Demand is enabled, then this parameter determines the number of nodes to retrieve beneath the starting tab passed in (intStartTabId) (-1 for no POD)</param>
+        /// <param name="intNavNodeOptions">Bitwise integer containing values to determine what nodes to display (self, siblings, parent)</param>
+        /// <returns>Collection of DNNNodes</returns>
+        /// <remarks>
+        /// Returns a subset of navigation nodes based off of passed in starting node id and depth
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	8/9/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static DNNNodeCollection GetNavigationNodes(DNNNode objRootNode, ToolTipSource eToolTips, int intStartTabId, int intDepth, int intNavNodeOptions)
         {
             int i;
             PortalSettings objPortalSettings = PortalController.GetCurrentPortalSettings();
             bool blnFoundStart = intStartTabId == -1;
+
             var objBreadCrumbs = new Hashtable();
             var objTabLookup = new Hashtable();
             DNNNodeCollection objRootNodes = objRootNode.DNNNodes;
             int intLastBreadCrumbId = 0;
+
+            //--- cache breadcrumbs in hashtable so we can easily set flag on node denoting it as a breadcrumb node (without looping multiple times) ---
             for (i = 0; i <= (objPortalSettings.ActiveTab.BreadCrumbs.Count - 1); i++)
             {
                 objBreadCrumbs.Add(((TabInfo) objPortalSettings.ActiveTab.BreadCrumbs[i]).TabID, 1);
@@ -533,5 +692,7 @@ namespace DotNetNuke.UI
             }
             return objRootNodes;
         }
+		
+		#endregion
     }
 }

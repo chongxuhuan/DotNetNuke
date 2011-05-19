@@ -130,7 +130,7 @@
     <value>Hierarchy</value>
   </data>
   <data name="Name.Required" xml:space="preserve">
-    <value>&lt;br/&gt;A name is required for a vocabulary</value>
+    <value>A name is required for a vocabulary</value>
   </data>
   <data name="Name.Text" xml:space="preserve">
     <value>Name</value>

@@ -65,26 +65,34 @@ namespace DotNetNuke.Common.Utilities
     /// -----------------------------------------------------------------------------
     public class DataCache
     {
+        //Host keys
         public const string SecureHostSettingsCacheKey = "SecureHostSettings";
         public const string UnSecureHostSettingsCacheKey = "UnsecureHostSettings";
         public const string HostSettingsCacheKey = "HostSettings";
         public const CacheItemPriority HostSettingsCachePriority = CacheItemPriority.NotRemovable;
         public const int HostSettingsCacheTimeOut = 20;
+
+        //Portal keys
         public const string PortalAliasCacheKey = "PortalAlias";
         public const CacheItemPriority PortalAliasCachePriority = CacheItemPriority.NotRemovable;
         public const int PortalAliasCacheTimeOut = 200;
+
         public const string PortalSettingsCacheKey = "PortalSettings{0}";
         public const CacheItemPriority PortalSettingsCachePriority = CacheItemPriority.NotRemovable;
         public const int PortalSettingsCacheTimeOut = 20;
+
         public const string PortalDictionaryCacheKey = "PortalDictionary";
         public const CacheItemPriority PortalDictionaryCachePriority = CacheItemPriority.High;
         public const int PortalDictionaryTimeOut = 20;
+
         public const string PortalCacheKey = "Portal{0}_{1}";
         public const CacheItemPriority PortalCachePriority = CacheItemPriority.High;
         public const int PortalCacheTimeOut = 20;
         public const string PortalUserCountCacheKey = "PortalUserCount{0}";
         public const CacheItemPriority PortalUserCountCachePriority = CacheItemPriority.High;
         public const int PortalUserCountCacheTimeOut = 20;
+
+        //Tab cache keys
         public const string TabCacheKey = "Tab_Tabs{0}";
         public const CacheItemPriority TabCachePriority = CacheItemPriority.High;
         public const int TabCacheTimeOut = 20;
@@ -94,58 +102,78 @@ namespace DotNetNuke.Common.Utilities
         public const string TabPermissionCacheKey = "Tab_TabPermissions{0}";
         public const CacheItemPriority TabPermissionCachePriority = CacheItemPriority.High;
         public const int TabPermissionCacheTimeOut = 20;
+
         public const string AuthenticationServicesCacheKey = "AuthenticationServices";
         public const CacheItemPriority AuthenticationServicesCachePriority = CacheItemPriority.NotRemovable;
         public const int AuthenticationServicesCacheTimeOut = 20;
+
         public const string DesktopModulePermissionCacheKey = "DesktopModulePermissions";
         public const CacheItemPriority DesktopModulePermissionCachePriority = CacheItemPriority.High;
         public const int DesktopModulePermissionCacheTimeOut = 20;
+
         public const string DesktopModuleCacheKey = "DesktopModulesByPortal{0}";
         public const CacheItemPriority DesktopModuleCachePriority = CacheItemPriority.High;
         public const int DesktopModuleCacheTimeOut = 20;
+
         public const string PortalDesktopModuleCacheKey = "PortalDesktopModules{0}";
         public const CacheItemPriority PortalDesktopModuleCachePriority = CacheItemPriority.AboveNormal;
         public const int PortalDesktopModuleCacheTimeOut = 20;
+
         public const string ModuleDefinitionCacheKey = "ModuleDefinitions";
         public const CacheItemPriority ModuleDefinitionCachePriority = CacheItemPriority.High;
         public const int ModuleDefinitionCacheTimeOut = 20;
+
         public const string ModuleControlsCacheKey = "ModuleControls";
         public const CacheItemPriority ModuleControlsCachePriority = CacheItemPriority.High;
         public const int ModuleControlsCacheTimeOut = 20;
+
         public const string TabModuleCacheKey = "TabModules{0}";
         public const CacheItemPriority TabModuleCachePriority = CacheItemPriority.AboveNormal;
         public const int TabModuleCacheTimeOut = 20;
+
         public const string ModulePermissionCacheKey = "ModulePermissions{0}";
         public const CacheItemPriority ModulePermissionCachePriority = CacheItemPriority.AboveNormal;
         public const int ModulePermissionCacheTimeOut = 20;
+
         public const string ModuleCacheKey = "Modules{0}";
         public const int ModuleCacheTimeOut = 20;
+
         public const string FolderCacheKey = "Folders{0}";
         public const int FolderCacheTimeOut = 20;
         public const CacheItemPriority FolderCachePriority = CacheItemPriority.Normal;
+
         public const string FolderPermissionCacheKey = "FolderPermissions{0}";
         public const CacheItemPriority FolderPermissionCachePriority = CacheItemPriority.Normal;
         public const int FolderPermissionCacheTimeOut = 20;
+
         public const string ListsCacheKey = "Lists{0}";
         public const CacheItemPriority ListsCachePriority = CacheItemPriority.Normal;
         public const int ListsCacheTimeOut = 20;
+
         public const string ProfileDefinitionsCacheKey = "ProfileDefinitions{0}";
         public const int ProfileDefinitionsCacheTimeOut = 20;
+
         public const string UserCacheKey = "UserInfo|{0}|{1}";
         public const int UserCacheTimeOut = 1;
         public const CacheItemPriority UserCachePriority = CacheItemPriority.Normal;
+
         public const string LocalesCacheKey = "Locales{0}";
         public const CacheItemPriority LocalesCachePriority = CacheItemPriority.Normal;
         public const int LocalesCacheTimeOut = 20;
+
         public const string SkinDefaultsCacheKey = "SkinDefaults_{0}";
         public const CacheItemPriority SkinDefaultsCachePriority = CacheItemPriority.Normal;
         public const int SkinDefaultsCacheTimeOut = 20;
+
         public const CacheItemPriority ResourceFilesCachePriority = CacheItemPriority.Normal;
         public const int ResourceFilesCacheTimeOut = 20;
+
         public const string ResourceFileLookupDictionaryCacheKey = "ResourceFileLookupDictionary";
         public const CacheItemPriority ResourceFileLookupDictionaryCachePriority = CacheItemPriority.NotRemovable;
         public const int ResourceFileLookupDictionaryTimeOut = 200;
+
         public const string SkinsCacheKey = "GetSkins{0}";
+
         public const string BannersCacheKey = "Banners:{0}:{1}:{2}";
         public const CacheItemPriority BannersCachePriority = CacheItemPriority.Normal;
         public const int BannersCacheTimeOut = 20;
@@ -187,6 +215,7 @@ namespace DotNetNuke.Common.Utilities
 
         internal static void ItemRemovedCallback(string key, object value, CacheItemRemovedReason removedReason)
         {
+            //if the item was removed from the cache, log the key and reason to the event log
             try
             {
                 if (Globals.Status == Globals.UpgradeStatus.None)
@@ -214,6 +243,7 @@ namespace DotNetNuke.Common.Utilities
             }
             catch (Exception exc)
             {
+                //Swallow exception            
                 DnnLog.Error(exc);
             }
         }
@@ -225,6 +255,8 @@ namespace DotNetNuke.Common.Utilities
             {
                 dictionaryCache.Clear();
             }
+
+            //log the cache clear event
             var objEventLogInfo = new LogInfo();
             objEventLogInfo.LogTypeKey = EventLogController.EventLogType.CACHE_REFRESH.ToString();
             objEventLogInfo.LogProperties.Add(new LogDetailInfo("*", "Refresh"));
@@ -364,7 +396,7 @@ namespace DotNetNuke.Common.Utilities
                         }
 
                         // set cache timeout
-                        int timeOut = cacheItemArgs.CacheTimeOut*Convert.ToInt32(Host.PerformanceSetting);
+                        int timeOut = cacheItemArgs.CacheTimeOut * Convert.ToInt32(Host.PerformanceSetting);
 
                         // if we retrieved a valid object and we are using caching
                         if (objObject != null && timeOut > 0)
@@ -402,32 +434,27 @@ namespace DotNetNuke.Common.Utilities
 
         private static object GetCachedDataFromDictionary(CacheItemArgs cacheItemArgs, CacheItemExpiredCallback cacheItemExpired)
         {
-            object objObject = null;
+            object cachedObject = null;
 
-            bool idFound = Null.NullBoolean;
+            bool isFound;
             using (ISharedCollectionLock readLock = dictionaryCache.GetReadLock())
             {
-                if (dictionaryCache.ContainsKey(cacheItemArgs.CacheKey))
-                {
-                    //Return value
-                    objObject = dictionaryCache[cacheItemArgs.CacheKey];
-                    idFound = true;
-                }
+                isFound = dictionaryCache.TryGetValue(cacheItemArgs.CacheKey, out cachedObject);
             }
 
-            if (!idFound)
+            if (!isFound)
             {
                 // get object from data source using delegate
                 try
                 {
                     if (cacheItemExpired != null)
-                        objObject = cacheItemExpired(cacheItemArgs);
+                        cachedObject = cacheItemExpired(cacheItemArgs);
                     else
-                        objObject = null;
+                        cachedObject = null;
                 }
                 catch (Exception ex)
                 {
-                    objObject = null;
+                    cachedObject = null;
                     Exceptions.LogException(ex);
                 }
 
@@ -435,15 +462,15 @@ namespace DotNetNuke.Common.Utilities
                 {
                     if (!dictionaryCache.ContainsKey(cacheItemArgs.CacheKey))
                     {
-                        if (objObject != null)
+                        if (cachedObject != null)
                         {
-                            dictionaryCache[cacheItemArgs.CacheKey] = objObject;
+                            dictionaryCache[cacheItemArgs.CacheKey] = cachedObject;
                         }
                     }
                 }
             }
 
-            return objObject;
+            return cachedObject;
         }
 
         public static TObject GetCachedData<TObject>(CacheItemArgs cacheItemArgs, CacheItemExpiredCallback cacheItemExpired)
@@ -474,7 +501,7 @@ namespace DotNetNuke.Common.Utilities
             }
             else
             {
-                return (TObject) objObject;
+                return (TObject)objObject;
             }
         }
 
@@ -484,6 +511,7 @@ namespace DotNetNuke.Common.Utilities
             dictionaryLock.AcquireReaderLock(new TimeSpan(0, 0, 5));
             try
             {
+                //Try to get lock Object (for key) from Dictionary
                 if (lockDictionary.ContainsKey(key))
                 {
                     @lock = lockDictionary[key];
@@ -498,10 +526,13 @@ namespace DotNetNuke.Common.Utilities
                 dictionaryLock.AcquireWriterLock(new TimeSpan(0, 0, 5));
                 try
                 {
+                    //Double check dictionary
                     if (!lockDictionary.ContainsKey(key))
                     {
+                        //Create new lock
                         lockDictionary[key] = new object();
                     }
+                    //Retrieve lock
                     @lock = lockDictionary[key];
                 }
                 finally
@@ -517,8 +548,10 @@ namespace DotNetNuke.Common.Utilities
             dictionaryLock.AcquireWriterLock(new TimeSpan(0, 0, 5));
             try
             {
+                //check dictionary
                 if (lockDictionary.ContainsKey(key))
                 {
+                    //Remove lock
                     lockDictionary.Remove(key);
                 }
             }
@@ -535,7 +568,7 @@ namespace DotNetNuke.Common.Utilities
             {
                 return default(TObject);
             }
-            return (TObject) objObject;
+            return (TObject)objObject;
         }
 
         public static object GetCache(string CacheKey)
@@ -589,6 +622,7 @@ namespace DotNetNuke.Common.Utilities
         {
             if (objObject != null)
             {
+                //if no OnRemoveCallback value is specified, use the default method
                 if (OnRemoveCallback == null)
                 {
                     OnRemoveCallback = ItemRemovedCallback;

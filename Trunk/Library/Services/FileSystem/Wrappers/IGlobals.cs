@@ -28,6 +28,7 @@ namespace DotNetNuke.Services.FileSystem
         string GetImageFileTypes();
         string GetProtectedExtension();
         string GetSubFolderPath(string strFileNamePath, int portalId);
+        string LinkClick(string link, int tabId, int moduleId);
         string ResolveUrl(string url);
     }
 }

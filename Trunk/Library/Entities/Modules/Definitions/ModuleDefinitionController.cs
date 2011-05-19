@@ -75,11 +75,21 @@ namespace DotNetNuke.Entities.Modules.Definitions
 
         #endregion
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleDefinitionByID gets a Module Definition by its ID
+        /// </summary>
+		/// <param name="objModuleDefinition">The object of the Module Definition</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void DeleteModuleDefinition(ModuleDefinitionInfo objModuleDefinition)
         {
             DeleteModuleDefinition(objModuleDefinition.ModuleDefID);
         }
 
+            //Try Cached Dictionary first
         public void DeleteModuleDefinition(int moduleDefinitionId)
         {
             var permissionController = new PermissionController();
@@ -118,6 +128,17 @@ namespace DotNetNuke.Entities.Modules.Definitions
                    .FirstOrDefault();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleDefinitionByFriendlyName gets a Module Definition by its Friendly
+        /// Name (and DesktopModuleID)
+        /// </summary>
+        /// <param name="friendlyName">The friendly name</param>
+        /// <param name="desktopModuleID">The ID of the Dekstop Module</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static ModuleDefinitionInfo GetModuleDefinitionByFriendlyName(string friendlyName, int desktopModuleID)
         {
             Requires.NotNullOrEmpty("friendlyName", friendlyName);
@@ -129,6 +150,14 @@ namespace DotNetNuke.Entities.Modules.Definitions
                    .FirstOrDefault();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleDefinitions gets a Dictionary of Module Definitions.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static Dictionary<int, ModuleDefinitionInfo> GetModuleDefinitions()
         {
             return CBO.GetCachedObject<Dictionary<int, ModuleDefinitionInfo>>(new CacheItemArgs(DataCache.ModuleDefinitionCacheKey, 
@@ -136,17 +165,40 @@ namespace DotNetNuke.Entities.Modules.Definitions
                                                                               GetModuleDefinitionsCallBack);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleDefinitionsByDesktopModuleID gets a Dictionary of Module Definitions
+        /// with a particular DesktopModuleID, keyed by the FriendlyName.
+        /// </summary>
+        /// <param name="desktopModuleID">The ID of the Desktop Module</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static Dictionary<string, ModuleDefinitionInfo> GetModuleDefinitionsByDesktopModuleID(int desktopModuleID)
         {
+            //Iterate through cached Dictionary to get all Module Definitions with the correct DesktopModuleID
             return GetModuleDefinitions().Where(kvp => kvp.Value.DesktopModuleID == desktopModuleID)
                     .ToDictionary(kvp => kvp.Value.FriendlyName, kvp => kvp.Value);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// SaveModuleDefinition saves the Module Definition to the database
+        /// </summary>
+        /// <param name="moduleDefinition">The Module Definition to save</param>
+        /// <param name="saveChildren">A flag that determines whether the child objects are also saved</param>
+        /// <param name="clearCache">A flag that determines whether to clear the host cache</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static int SaveModuleDefinition(ModuleDefinitionInfo moduleDefinition, bool saveChildren, bool clearCache)
         {
             int moduleDefinitionID = moduleDefinition.ModuleDefID;
             if (moduleDefinitionID == Null.NullInteger)
             {
+				//Add new Module Definition
                 moduleDefinitionID = dataProvider.AddModuleDefinition(moduleDefinition.DesktopModuleID,
                                                                       moduleDefinition.FriendlyName,
                                                                       moduleDefinition.DefaultCacheTime,
@@ -154,6 +206,7 @@ namespace DotNetNuke.Entities.Modules.Definitions
             }
             else
             {
+				//Upgrade Module Definition
                 dataProvider.UpdateModuleDefinition(moduleDefinition.ModuleDefID, moduleDefinition.FriendlyName, moduleDefinition.DefaultCacheTime, UserController.GetCurrentUserInfo().UserID);
             }
             if (saveChildren)
@@ -161,6 +214,8 @@ namespace DotNetNuke.Entities.Modules.Definitions
                 foreach (KeyValuePair<string, PermissionInfo> kvp in moduleDefinition.Permissions)
                 {
                     kvp.Value.ModuleDefID = moduleDefinitionID;
+
+                    //check if permission exists
                     var permissionController = new PermissionController();
                     ArrayList permissions = permissionController.GetPermissionByCodeAndKey(kvp.Value.PermissionCode, kvp.Value.PermissionKey);
                     if (permissions != null && permissions.Count == 1)
@@ -177,6 +232,8 @@ namespace DotNetNuke.Entities.Modules.Definitions
                 foreach (KeyValuePair<string, ModuleControlInfo> kvp in moduleDefinition.ModuleControls)
                 {
                     kvp.Value.ModuleDefID = moduleDefinitionID;
+
+                    //check if definition exists
                     ModuleControlInfo moduleControl = ModuleControlController.GetModuleControlByControlKey(kvp.Value.ControlKey, kvp.Value.ModuleDefID);
                     if (moduleControl != null)
                     {

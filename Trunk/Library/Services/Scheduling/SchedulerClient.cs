@@ -32,6 +32,9 @@ using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Services.Scheduling
 {
+	/// <summary>
+	/// This class is inherited by any class that wants to run tasks in the scheduler.
+	/// </summary>
     public abstract class SchedulerClient
     {
         public SchedulerClient()
@@ -96,6 +99,12 @@ namespace DotNetNuke.Services.Scheduling
             }
         }
 
-        public abstract void DoWork();
+        /// '''''''''''''''''''''''''''''''''''''''''''''''''''
+		/// <summary>
+        /// This is the sub that kicks off the actual
+        /// work within the SchedulerClient's subclass
+		/// </summary>
+		/// '''''''''''''''''''''''''''''''''''''''''''''''''''
+		public abstract void DoWork();
     }
 }

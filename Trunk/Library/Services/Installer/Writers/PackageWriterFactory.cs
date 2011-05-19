@@ -44,6 +44,8 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class PackageWriterFactory
     {
+		#region "Public Shared Methods"
+		
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The GetWriter method instantiates the relevant PackageWriter Installer
@@ -87,15 +89,20 @@ namespace DotNetNuke.Services.Installer.Writers
                     writer = new WidgetPackageWriter(package);
                     break;
                 default:
+                    //PackageType is defined in the List
                     var listController = new ListController();
                     ListEntryInfo entry = listController.GetListEntryInfo("PackageWriter", package.PackageType);
+
                     if (entry != null && !string.IsNullOrEmpty(entry.Text))
                     {
+						//The class for the Installer is specified in the Text property
                         writer = (PackageWriterBase) Reflection.CreateObject(entry.Text, "PackageWriter_" + entry.Value);
                     }
                     break;
             }
             return writer;
         }
+		
+		#endregion
     }
 }

@@ -1,10 +1,10 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Host.FriendlyUrls" CodeFile="FriendlyUrls.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <asp:DataGrid ID="grdRules" AutoGenerateColumns="false" width="100%" GridLines="None" 
-    CssClass="dnnUrlFriendlyGrid" Runat="server">
-    <headerstyle CssClass="dnnUrlFriendlyGridHeader" />
-    <itemstyle CssClass="dnnUrlFriendlyGridItem" />
-    <alternatingitemstyle CssClass="dnnUrlFriendlyGridAltItem" />
+    CssClass="dnnGrid" Runat="server">
+    <headerstyle CssClass="dnnGridHeader" />
+    <itemstyle CssClass="dnnGridItem" />
+    <alternatingitemstyle CssClass="dnnGridAltItem" />
     <edititemstyle />
     <selecteditemstyle />
     <footerstyle />

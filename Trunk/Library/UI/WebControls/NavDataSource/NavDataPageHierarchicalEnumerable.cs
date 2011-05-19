@@ -30,6 +30,7 @@ using System.Web.UI;
 
 namespace DotNetNuke.UI.WebControls
 {
+	/// <summary>A collection of PageHierarchyData objects</summary>
     public class NavDataPageHierarchicalEnumerable : ArrayList, IHierarchicalEnumerable
     {
         #region IHierarchicalEnumerable Members

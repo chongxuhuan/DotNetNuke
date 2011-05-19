@@ -43,21 +43,25 @@ namespace DotNetNuke.Services.Exceptions
         private int m_ModuleDefId;
         private int m_ModuleId;
 
-        public ModuleLoadException()
+        //default constructor
+		public ModuleLoadException()
         {
         }
 
+        //constructor with exception message
         public ModuleLoadException(string message) : base(message)
         {
             InitilizePrivateVariables();
         }
 
+        //constructor with exception message
         public ModuleLoadException(string message, Exception inner, ModuleInfo ModuleConfiguration) : base(message, inner)
         {
             m_ModuleConfiguration = ModuleConfiguration;
             InitilizePrivateVariables();
         }
 
+        //constructor with message and inner exception
         public ModuleLoadException(string message, Exception inner) : base(message, inner)
         {
             InitilizePrivateVariables();
@@ -109,6 +113,8 @@ namespace DotNetNuke.Services.Exceptions
 
         private void InitilizePrivateVariables()
         {
+			//Try and get the Portal settings from context
+            //If an error occurs getting the context then set the variables to -1
             if ((m_ModuleConfiguration != null))
             {
                 m_ModuleId = m_ModuleConfiguration.ModuleID;
@@ -126,6 +132,7 @@ namespace DotNetNuke.Services.Exceptions
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+			//Serialize this class' state and then call the base class GetObjectData
             info.AddValue("m_ModuleId", m_ModuleId, typeof (Int32));
             info.AddValue("m_ModuleDefId", m_ModuleDefId, typeof (Int32));
             info.AddValue("m_FriendlyName", m_FriendlyName, typeof (string));

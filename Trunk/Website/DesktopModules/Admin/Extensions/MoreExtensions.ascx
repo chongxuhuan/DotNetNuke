@@ -69,7 +69,7 @@
     </script>
     <script id="eTmpl" type="text/html">
 	<div>    
-	    <div class="dnnProduct ${catalog.cssClass} ext-${extensionID}">    
+	    <div class="dnnProduct ${catalog.catalogCSS} ext-${extensionID}">    
             <a name="ext-${extensionID}"></a>
             <a href="javascript:void(0);" class="dnnProductImage" onclick="return _gallery.ShowDetails(${extensionID})">
                 {{if imageURL}}
@@ -130,7 +130,7 @@
     </script>
     
     <script id="extDetailTmpl" type="text/html">
-	<div class="extension ${_gallery.GetRowClass()} ext-${extensionID}">    
+	<div class="extension ${catalog.catalogCSS} ext-${extensionID}">    
             <a name="ext-${extensionID}"></a>
             <div class="extDetailTmpl-header">
                 <span class="extDetailTmpl-header-left">
@@ -208,11 +208,12 @@
                     , errorLabel: '<%=LocalizeString("ErrorLabel") %>'
                     , loadingLabel: '<%=LocalizeString("LoadingLabel") %>'
                     , sortingByLabel: '<%=LocalizeString("SortingByLabel") %>'
-                    , catalogs : [{name:"<%=LocalizeString("AppgGalleryDisplayName") %>", id:0, cssClass: "AppGallery", icon : "AppGallery.png", url:"<%=LocalizeString("AppgGalleryUrl") %>"},{name:"<%=LocalizeString("ForgeDisplayName") %>", id:1, cssClass:"Forge", icon : "Forge.png", url:"<%=LocalizeString("ForgeUrl") %>"}]
                     , imgRoot : "<%=ResolveUrl("~/images/")%>"
                     , DataBaseVersion : "<%=DotNetNuke.Common.Globals.DataBaseVersion%>"
 
                 });
+            _gallery.getCatalogs();
+            _gallery.getTags();
             _gallery.Search();
         });
     </script>

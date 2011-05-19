@@ -38,6 +38,7 @@ namespace DotNetNuke.Services.Personalization
 {
     public class PersonalizationController
     {
+        //default implementation relies on HTTPContext
         public void LoadProfile(HttpContext objHTTPContext, int UserId, int PortalId)
         {
             if (HttpContext.Current.Items["Personalization"] == null)
@@ -46,12 +47,15 @@ namespace DotNetNuke.Services.Personalization
             }
         }
 
+        //override allows for manipulation of PersonalizationInfo outside of HTTPContext
         public PersonalizationInfo LoadProfile(int UserId, int PortalId)
         {
             var objPersonalization = new PersonalizationInfo();
+
             objPersonalization.UserId = UserId;
             objPersonalization.PortalId = PortalId;
             objPersonalization.IsModified = false;
+
             string profileData = Null.NullString;
             if (UserId > Null.NullInteger)
             {
@@ -63,7 +67,7 @@ namespace DotNetNuke.Services.Personalization
                     {
                         profileData = dr["ProfileData"].ToString();
                     }
-                    else
+                    else //does not exist
                     {
                         DataProvider.Instance().AddProfile(UserId, PortalId);
                     }
@@ -79,6 +83,7 @@ namespace DotNetNuke.Services.Personalization
             }
             else
             {
+				//Anon User - so try and use cookie.
                 HttpContext context = HttpContext.Current;
                 if (context != null && context.Request != null && context.Request.Cookies["DNNPersonalization"] != null)
                 {
@@ -101,12 +106,14 @@ namespace DotNetNuke.Services.Personalization
             SaveProfile(objPersonalization, objPersonalization.UserId, objPersonalization.PortalId);
         }
 
+        //default implementation relies on HTTPContext
         public void SaveProfile(HttpContext objHTTPContext, int UserId, int PortalId)
         {
             var objPersonalization = (PersonalizationInfo) objHTTPContext.Items["Personalization"];
             SaveProfile(objPersonalization, UserId, PortalId);
         }
 
+        //override allows for manipulation of PersonalizationInfo outside of HTTPContext
         public void SaveProfile(PersonalizationInfo objPersonalization, int UserId, int PortalId)
         {
             if (objPersonalization != null)
@@ -120,6 +127,7 @@ namespace DotNetNuke.Services.Personalization
                     }
                     else
                     {
+						//Anon User - so try and use cookie.
                         HttpContext context = HttpContext.Current;
                         if (context != null && context.Response != null)
                         {

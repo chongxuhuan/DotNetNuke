@@ -48,7 +48,16 @@ using DotNetNuke.UI.Skins;
 
 #endregion
 
+//Legacy Support
 namespace DotNetNuke
+{
+    [Obsolete("This class is obsolete.  Please use DotNetNuke.UI.Containers.Container.")]
+    public class Container : UI.Containers.Container
+    {
+    }
+}
+
+namespace DotNetNuke.UI.Containers
 {
     /// -----------------------------------------------------------------------------
     /// Project	 : DotNetNuke
@@ -64,20 +73,18 @@ namespace DotNetNuke
     /// 	[cnurse]	07/04/2005	Documented
     /// </history>
     /// -----------------------------------------------------------------------------
-    [Obsolete("This class is obsolete.  Please use DotNetNuke.UI.Containers.Container.")]
-    public class Container : UI.Containers.Container
-    {
-    }
-}
-
-namespace DotNetNuke.UI.Containers
-{
     public class Container : UserControl
     {
-        private const string ContainerAdminBorder = "containerAdminBorder";
+		#region "Private Members"
+		
+        //private const string ContainerAdminBorder = "containerAdminBorder";
         private HtmlContainerControl _contentPane;
         private ModuleInfo _moduleConfiguration;
         private ModuleHost _moduleHost;
+
+		#endregion
+
+		#region "Protected Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -112,6 +119,10 @@ namespace DotNetNuke.UI.Containers
                 return PortalController.GetCurrentPortalSettings();
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -182,6 +193,7 @@ namespace DotNetNuke.UI.Containers
         {
             get
             {
+				//This finds a reference to the containing skin
                 return Skins.Skin.GetParentSkin(this);
             }
         }
@@ -222,20 +234,24 @@ namespace DotNetNuke.UI.Containers
                 return ContainerPath;
             }
         }
+		
+		#endregion
+
+		#region "Private Helper Methods"
 
         private void AddAdministratorOnlyHighlighting(string message)
         {
-            string cssclass = ContentPane.Attributes["class"];
-            if (string.IsNullOrEmpty(cssclass))
-            {
-                ContentPane.Attributes["class"] = ContainerAdminBorder;
-            }
-            else
-            {
-                ContentPane.Attributes["class"] = string.Format("{0} {1}", cssclass.Replace(ContainerAdminBorder, "").Trim().Replace(" ", " "), ContainerAdminBorder);
-            }
+            //string cssclass = ContentPane.Attributes["class"];
+            //if (string.IsNullOrEmpty(cssclass))
+            //{
+            //    ContentPane.Attributes["class"] = ContainerAdminBorder;
+            //}
+            //else
+            //{
+            //    ContentPane.Attributes["class"] = string.Format("{0} {1}", cssclass.Replace(ContainerAdminBorder, "").Trim().Replace(" ", " "), ContainerAdminBorder);
+            //}
 
-            ContentPane.Controls.Add(new LiteralControl(string.Format("<div class=\"NormalRed DNNAligncenter\">{0}</div>", message)));
+            ContentPane.Controls.Add(new LiteralControl(string.Format("<div class=\"dnnFormMessage dnnFormInfo\">{0}</div>", message)));
         }
 
         /// -----------------------------------------------------------------------------
@@ -255,12 +271,15 @@ namespace DotNetNuke.UI.Containers
             ISkinControl skinControl;
             foreach (Control childControl in control.Controls)
             {
+				//check if control is an action control
                 actions = childControl as IActionControl;
                 if (actions != null)
                 {
                     actions.ModuleControl = ModuleControl;
                     actions.Action += ModuleActionClick;
                 }
+				
+				//check if control is a skin control
                 skinControl = childControl as ISkinControl;
                 if (skinControl != null)
                 {
@@ -268,6 +287,7 @@ namespace DotNetNuke.UI.Containers
                 }
                 if (childControl.HasControls())
                 {
+					//recursive call for child controls
                     ProcessChildControls(childControl);
                 }
             }
@@ -290,7 +310,8 @@ namespace DotNetNuke.UI.Containers
 
             SetBorder();
 
-            string viewRoles = ModuleConfiguration.InheritViewPermissions
+            //display visual indicator if module is only visible to administrators
+			string viewRoles = ModuleConfiguration.InheritViewPermissions
                                    ? TabPermissionController.GetTabPermissions(ModuleConfiguration.TabID, ModuleConfiguration.PortalID).ToString("VIEW")
                                    : ModuleConfiguration.ModulePermissions.ToString("VIEW");
             viewRoles = viewRoles.Replace(";", string.Empty).Trim().ToLowerInvariant();
@@ -305,12 +326,12 @@ namespace DotNetNuke.UI.Containers
             if (ModuleConfiguration.StartDate >= DateTime.Now)
             {
                 adminMessage = string.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString());
-                showMessage = true;
+                showMessage = !Globals.IsAdminControl();
             }
             if (ModuleConfiguration.EndDate <= DateTime.Now)
             {
                 adminMessage = string.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate.ToShortDateString());
-                showMessage = true;
+                showMessage = !Globals.IsAdminControl();
             }
             if (showMessage)
             {
@@ -328,11 +349,14 @@ namespace DotNetNuke.UI.Containers
         /// -----------------------------------------------------------------------------
         private void ProcessFooter()
         {
+			//inject the footer
             if (!String.IsNullOrEmpty(ModuleConfiguration.Footer))
             {
                 var objLabel = new Label {Text = ModuleConfiguration.Footer, CssClass = "Normal"};
                 ContentPane.Controls.Add(objLabel);
             }
+			
+            //inject an end comment around the module content
             if (!Globals.IsAdminControl())
             {
                 ContentPane.Controls.Add(new LiteralControl("<!-- End_Module_" + ModuleConfiguration.ModuleID + " -->"));
@@ -351,8 +375,11 @@ namespace DotNetNuke.UI.Containers
         {
             if (!Globals.IsAdminControl())
             {
+				//inject a start comment around the module content
                 ContentPane.Controls.Add(new LiteralControl("<!-- Start_Module_" + ModuleConfiguration.ModuleID + " -->"));
             }
+			
+            //inject the header
             if (!String.IsNullOrEmpty(ModuleConfiguration.Header))
             {
                 var objLabel = new Label {Text = ModuleConfiguration.Header, CssClass = "Normal"};
@@ -372,15 +399,26 @@ namespace DotNetNuke.UI.Containers
         {
             if (ContentPane != null)
             {
+				//Process Content Pane Attributes
                 ProcessContentPane();
+
+                //Process Module Header
                 ProcessHeader();
+
+                //Try to load the module control
                 _moduleHost = new ModuleHost(ModuleConfiguration, ParentSkin, this);
                 ContentPane.Controls.Add(ModuleHost);
+
+                //Process Module Footer
                 ProcessFooter();
+				
+				//Process the Action Controls
                 if (ModuleHost != null && ModuleControl != null)
                 {
                     ProcessChildControls(this);
                 }
+				
+				//Add Module Stylesheets
                 ProcessStylesheets(ModuleHost != null);
             }
         }
@@ -401,6 +439,7 @@ namespace DotNetNuke.UI.Containers
 
             PageBase.RegisterStyleSheet(Page,ContainerSrc.Replace(".ascx", ".css"));
 
+            //process the base class module properties 
             if (includeModuleCss)
             {
                 string controlSrc = ModuleConfiguration.ModuleControl.ControlSrc;
@@ -448,42 +487,87 @@ namespace DotNetNuke.UI.Containers
                 ContentPane.Style["border-left"] = String.Format("{0}px #000000 solid", ModuleConfiguration.Border);
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnInit runs when the Container is initialised.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/04/2005	Documented
+        ///     [cnurse]    12/05/2007  Refactored
+        ///     [cnurse]    04/17/2009  Refactored to use ContainerAdapter
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
             foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerInit))
             {
                 listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
             }
         }
 
+        /// <summary>
+        /// OnLoad runs when the Container is loaded.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    04/17/2009  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerLoad))
             {
                 listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnLoad runs just before the Container is rendered.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    04/17/2009  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
             foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerPreRender))
             {
                 listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnUnLoad runs when the Container is unloaded.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    04/17/2009  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnUnload(EventArgs e)
         {
             base.OnUnload(e);
+
             foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerUnLoad))
             {
                 listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
             }
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public void SetModuleConfiguration(ModuleInfo configuration)
         {
@@ -491,16 +575,43 @@ namespace DotNetNuke.UI.Containers
             ProcessModule();
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ModuleAction_Click runs when a ModuleAction is clicked.
+        /// </summary>
+        /// <remarks>The Module Action must be configured to fire an event (it may be configured 
+        /// to redirect to a new url).  The event handler finds the Parent Container and invokes each
+        /// registered ModuleActionEventListener delegate.
+        /// 
+        /// Note: with the refactoring of this to the Container, this could be handled at the container level.
+        /// However, for legacy purposes this is left this way, as many moodules would have registered their
+        /// listeners on the Container directly, rather than through the helper method in PortalModuleBase.</remarks>
+        /// <history>
+        /// 	[cnurse]	07/04/2005	Documented
+        ///     [cnurse]    12/05/2007  Moved from Container.vb
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ModuleActionClick(object sender, ActionEventArgs e)
         {
+			//Search through the listeners
             foreach (ModuleActionEventListener listener in ParentSkin.ActionEventListeners)
-            {
+            {			
+				//If the associated module has registered a listener
                 if (e.ModuleConfiguration.ModuleID == listener.ModuleID)
                 {
+					//Invoke the listener to handle the ModuleAction_Click event
                     listener.ActionEvent.Invoke(sender, e);
                 }
             }
         }
+		
+		#endregion
+
+		#region "Obsolete"
 
         [Obsolete("Deprecated in 5.0. Shouldn't need to be used any more.  ContainerObjects (IContainerControl implementations) have a property ModuleControl.")]
         public static PortalModuleBase GetPortalModuleBase(UserControl control)
@@ -523,6 +634,7 @@ namespace DotNetNuke.UI.Containers
                 }
                 catch
                 {
+					//check if it is nested within an UpdatePanel 
                     try
                     {
                         moduleControl = (PortalModuleBase) panel.Controls[0].Controls[0].Controls[1];
@@ -535,5 +647,7 @@ namespace DotNetNuke.UI.Containers
             }
             return moduleControl ?? (new PortalModuleBase {ModuleConfiguration = new ModuleInfo()});
         }
+		
+		#endregion
     }
 }

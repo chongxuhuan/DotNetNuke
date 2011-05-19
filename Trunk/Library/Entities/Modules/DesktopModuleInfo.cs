@@ -244,10 +244,23 @@ namespace DotNetNuke.Entities.Modules
                 }
             }
         }
+		
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Writes a DesktopModuleInfo to an XmlWriter
+        /// </summary>
+        /// <param name="writer">The XmlWriter to use</param>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
 
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst
             writer.WriteStartElement("desktopModule");
+
+            //write out properties
             writer.WriteElementString("moduleName", ModuleName);
             writer.WriteElementString("foldername", FolderName);
             writer.WriteElementString("businessControllerClass", BusinessControllerClass);
@@ -255,6 +268,8 @@ namespace DotNetNuke.Entities.Modules
             {
                 writer.WriteElementString("codeSubDirectory", CodeSubDirectory);
             }
+			
+            //Write out Supported Features
             writer.WriteStartElement("supportedFeatures");
             if (IsPortable)
             {
@@ -274,13 +289,21 @@ namespace DotNetNuke.Entities.Modules
                 writer.WriteAttributeString("type", "Upgradeable");
                 writer.WriteEndElement();
             }
+            //Write end of Supported Features
             writer.WriteEndElement();
+
+            //Write start of Module Definitions
             writer.WriteStartElement("moduleDefinitions");
+
+            //Iterate through definitions
             foreach (ModuleDefinitionInfo definition in ModuleDefinitions.Values)
             {
                 definition.WriteXml(writer);
             }
+            //Write end of Module Definitions
             writer.WriteEndElement();
+
+            //Write end of main element
             writer.WriteEndElement();
         }
 

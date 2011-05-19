@@ -57,6 +57,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
         {
             if (DataProvider.Instance() == null)
             {
+				//get the provider configuration based on the type
                 DataProvider dataProvider;
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
                 const string dataProviderNamespace = "DotNetNuke.Services.Log.EventLog.DBLoggingProvider.Data";
@@ -259,22 +260,25 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
 
         public override void AddLog(LogInfo logInfo)
         {
-            string configPortalID = logInfo.LogPortalID != Null.NullInteger ? logInfo.LogPortalID.ToString() : "*";
+            string configPortalID = logInfo.LogPortalID != Null.NullInteger 
+                                        ? logInfo.LogPortalID.ToString() 
+                                        : "*";
             var logTypeConfigInfo = GetLogTypeConfigInfoByKey(logInfo.LogTypeKey, configPortalID);
-            if (logTypeConfigInfo.LoggingIsActive == false)
+            if (logTypeConfigInfo == null || logTypeConfigInfo.LoggingIsActive == false)
             {
                 return;
             }
             logInfo.LogConfigID = logTypeConfigInfo.ID;
-            var objLogQueueItem = new LogQueueItem {LogInfo = logInfo, LogTypeConfigInfo = logTypeConfigInfo};
+            var logQueueItem = new LogQueueItem {LogInfo = logInfo, LogTypeConfigInfo = logTypeConfigInfo};
             SchedulingProvider scheduler = SchedulingProvider.Instance();
-            if (logInfo.BypassBuffering || SchedulingProvider.Enabled == false || scheduler.GetScheduleStatus() == ScheduleStatus.STOPPED || !Host.EventLogBuffer)
+            if (scheduler == null || logInfo.BypassBuffering || SchedulingProvider.Enabled == false 
+                || scheduler.GetScheduleStatus() == ScheduleStatus.STOPPED || !Host.EventLogBuffer)
             {
-                WriteLog(objLogQueueItem);
+                WriteLog(logQueueItem);
             }
             else
             {
-                LogQueue.Add(objLogQueueItem);
+                LogQueue.Add(logQueueItem);
             }
         }
 
@@ -438,6 +442,8 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                 for (int i = LogQueue.Count - 1; i >= 0; i += -1)
                 {
                     LogQueueItem logQueueItem = LogQueue[i];
+                    //in case the log was removed
+                    //by another thread simultaneously
                     if (logQueueItem != null)
                     {
                         WriteLog(logQueueItem);

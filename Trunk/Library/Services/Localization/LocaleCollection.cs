@@ -48,6 +48,7 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        //Gets or sets the value associated with the specified key.
         public Locale this[string key]
         {
             get
@@ -60,6 +61,7 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        //Gets a String array that contains all the keys in the collection.
         public string[] AllKeys
         {
             get
@@ -68,6 +70,7 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        //Gets an Object array that contains all the values in the collection.
         public Array AllValues
         {
             get
@@ -76,6 +79,7 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        //Gets a value indicating if the collection contains keys that are not null.
         public Boolean HasKeys
         {
             get
@@ -84,11 +88,13 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        //Adds an entry to the collection.
         public void Add(String key, Object value)
         {
             BaseAdd(key, value);
         }
 
+        //Removes an entry with the specified key from the collection.
         public void Remove(String key)
         {
             BaseRemove(key);

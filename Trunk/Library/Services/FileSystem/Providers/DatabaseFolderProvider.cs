@@ -152,6 +152,16 @@ namespace DotNetNuke.Services.FileSystem
             return null;
         }
 
+        /// <remarks>
+        /// Database files doesn't have a direct Url.
+        /// </remarks>
+        public override string GetFileUrl(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            return GlobalsWrapper.Instance.LinkClick(String.Format("fileid={0}", file.FileId), Null.NullInteger, Null.NullInteger);
+        }
+
         public override string GetImageUrl()
         {
             return GlobalsWrapper.Instance.ResolveUrl("~/images/icon_sql_16px.gif");

@@ -36,6 +36,8 @@ namespace DotNetNuke.ComponentModel
 {
     public class ProviderInstaller : IComponentInstaller
     {
+        //TODO: Rewrite Provider Loading code in here instead of calling the old code
+
         private readonly ComponentLifeStyleType _ComponentLifeStyle;
         private readonly Type _ProviderInterface;
         private readonly string _ProviderType;
@@ -59,11 +61,15 @@ namespace DotNetNuke.ComponentModel
         public void InstallComponents(IContainer container)
         {
             ProviderConfiguration config = ProviderConfiguration.GetProviderConfiguration(_ProviderType);
-            if (config != null)
+            //Register the default provider first (so it is the first component registered for its service interface
+			if (config != null)
             {
                 InstallProvider(container, (Provider) config.Providers[config.DefaultProvider]);
+
+                //Register the others
                 foreach (Provider provider in config.Providers.Values)
                 {
+					//Skip the default because it was registered above
                     if (!config.DefaultProvider.Equals(provider.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         InstallProvider(container, provider);
@@ -78,18 +84,23 @@ namespace DotNetNuke.ComponentModel
         {
             if (provider != null)
             {
+                //Get the provider type
                 Type type = BuildManager.GetType(provider.Type, false, true);
                 if (type == null)
                 {
                     throw new ConfigurationErrorsException(string.Format("Could not load provider {0}", provider.Type));
                 }
+				//Register the component
                 container.RegisterComponent(provider.Name, _ProviderInterface, type, _ComponentLifeStyle);
+
+                //Load the settings into a dictionary
                 var settingsDict = new Dictionary<string, string>();
                 settingsDict.Add("providerName", provider.Name);
                 foreach (string key in provider.Attributes.Keys)
                 {
                     settingsDict.Add(key, provider.Attributes.Get(key));
                 }
+                //Register the settings as dependencies
                 container.RegisterComponentSettings(type.FullName, settingsDict);
             }
         }

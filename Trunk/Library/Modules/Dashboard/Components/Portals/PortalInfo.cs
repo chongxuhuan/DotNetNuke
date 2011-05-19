@@ -89,12 +89,15 @@ namespace DotNetNuke.Modules.Dashboard.Components.Portals
 
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst 
             writer.WriteStartElement("portal");
             writer.WriteElementString("portalName", PortalName);
             writer.WriteElementString("GUID", GUID.ToString());
             writer.WriteElementString("pages", Pages.ToString());
             writer.WriteElementString("users", Users.ToString());
             writer.WriteElementString("roles", Roles.ToString());
+
+            //Write end of Host Info 
             writer.WriteEndElement();
         }
     }

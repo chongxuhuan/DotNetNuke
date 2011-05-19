@@ -43,6 +43,8 @@ namespace DotNetNuke.UI.UserControls
 {
     public abstract class URLTrackingControl : UserControlBase
     {
+		#region "Private Members"
+		
         protected Label Label1;
         protected Label Label2;
         protected Label Label3;
@@ -71,6 +73,10 @@ namespace DotNetNuke.UI.UserControls
         protected TextBox txtStartDate;
         protected CompareValidator valEndDate;
         protected CompareValidator valStartDate;
+		
+		#endregion
+
+		#region "Public Properties"
 
         public string FormattedURL
         {
@@ -148,6 +154,10 @@ namespace DotNetNuke.UI.UserControls
                 _localResourceFile = value;
             }
         }
+		
+		#endregion
+
+		#region "Event Handlers"
 
         protected override void OnLoad(EventArgs e)
         {
@@ -157,16 +167,18 @@ namespace DotNetNuke.UI.UserControls
 
             try
             {
+				//this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdStartCalendar.NavigateUrl = Calendar.InvokePopupCal(txtStartDate);
                 cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
                 if (!Page.IsPostBack)
                 {
                     if (!String.IsNullOrEmpty(_URL))
                     {
-                        lblLogURL.Text = URL;
+                        lblLogURL.Text = URL; //saved for loading Log grid
                         TabType URLType = Globals.GetURLType(_URL);
                         if (URLType == TabType.File && _URL.ToLower().StartsWith("fileid=") == false)
                         {
+                            //to handle legacy scenarios before the introduction of the FileServerHandler
                             var fileName = Path.GetFileName(_URL);
 
                             var folderPath = _URL.Substring(0, _URL.LastIndexOf(fileName));
@@ -218,6 +230,7 @@ namespace DotNetNuke.UI.UserControls
                             if (objUrlTracking.LogActivity)
                             {
                                 pnlLog.Visible = true;
+
                                 txtStartDate.Text = DateTime.Today.AddDays(-6).ToShortDateString();
                                 txtEndDate.Text = DateTime.Today.AddDays(1).ToShortDateString();
                             }
@@ -229,7 +242,7 @@ namespace DotNetNuke.UI.UserControls
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -250,14 +263,17 @@ namespace DotNetNuke.UI.UserControls
                     strEndDate = strEndDate + " 23:59";
                 }
                 var objUrls = new UrlController();
+                //localize datagrid
                 Localization.LocalizeDataGrid(ref grdLog, LocalResourceFile);
                 grdLog.DataSource = objUrls.GetUrlLog(PortalSettings.PortalId, lblLogURL.Text, ModuleID, Convert.ToDateTime(strStartDate), Convert.ToDateTime(strEndDate));
                 grdLog.DataBind();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

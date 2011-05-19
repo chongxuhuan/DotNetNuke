@@ -30,6 +30,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
+using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -41,9 +42,14 @@ namespace DotNetNuke.Services.ModuleCache
 {
     public class FileProvider : ModuleCachingProvider
     {
+		#region "Private Members"
         private const string DataFileExtension = ".data.resources";
         private const string AttribFileExtension = ".attrib.resources";
-
+        private static readonly SharedDictionary<int, string> CacheFolderPath = new SharedDictionary<int, string>(LockingStrategy.ReaderWriter);
+		
+		#endregion
+		
+		#region "Private Methods"
         private string GenerateCacheKeyHash(int tabModuleId, string cacheKey)
         {
             byte[] hash = Encoding.ASCII.GetBytes(cacheKey);
@@ -69,21 +75,36 @@ namespace DotNetNuke.Services.ModuleCache
 
         private static string GetCacheFolder(int portalId)
         {
+            string cacheFolder;
+
+            using (var readerLock = CacheFolderPath.GetReadLock())
+            {
+                if (CacheFolderPath.TryGetValue(portalId, out cacheFolder))
+                {
+                    return cacheFolder;
+                }
+            }
+
             var portalController = new PortalController();
             PortalInfo portalInfo = portalController.GetPortal(portalId);
 
             string homeDirectoryMapPath = portalInfo.HomeDirectoryMapPath;
-            string cacheFolder = Null.NullString;
 
-            if ((!string.IsNullOrEmpty(homeDirectoryMapPath)))
+
+            if (!(string.IsNullOrEmpty(homeDirectoryMapPath)))
             {
                 cacheFolder = string.Concat(homeDirectoryMapPath, "Cache\\Pages\\");
-                if (!Directory.Exists(cacheFolder))
+                if (!(Directory.Exists(cacheFolder)))
                 {
                     Directory.CreateDirectory(cacheFolder);
                 }
             }
 
+            using (var writerLock = CacheFolderPath.GetWriteLock())
+            {
+                CacheFolderPath.Add(portalId, cacheFolder);
+
+            }
 
             return cacheFolder;
         }
@@ -144,6 +165,10 @@ namespace DotNetNuke.Services.ModuleCache
         {
             return cacheFolder.Contains(Globals.ApplicationMapPath);
         }
+		
+		#endregion
+		
+		#region "Abstract Method Implementation"
 
         public override string GenerateCacheKey(int tabModuleId, SortedDictionary<string, string> varyBy)
         {
@@ -251,6 +276,11 @@ namespace DotNetNuke.Services.ModuleCache
             }
             catch (Exception ex)
             {
+                //TODO: Need to implement multi-threading.  
+                //The current code is not thread safe and threw error if two threads tried creating cache file
+                //A thread could create a file between the time another thread deleted it and tried to create new cache file.
+                //This would result in a system.IO.IOException.  Also, there was no error handling in place so the 
+                //Error would bubble up to the user and provide details on the file structure of the site.
                 Exceptions.Exceptions.LogException(ex);
             }
         }
@@ -278,5 +308,7 @@ namespace DotNetNuke.Services.ModuleCache
                 throw new IOException("Deleted " + i + " files, however, some files are locked.  Could not delete the following files: " + filesNotDeleted);
             }
         }
+		
+		#endregion
     }
 }

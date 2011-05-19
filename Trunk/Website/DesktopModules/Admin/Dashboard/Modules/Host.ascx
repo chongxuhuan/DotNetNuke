@@ -7,12 +7,7 @@
     autogenerate = "false"
     enableclientvalidation = "true"
     sortmode="SortOrderAttribute" 
-    labelstyle-cssclass="SubHead" 
-    helpstyle-cssclass="Help" 
-    editcontrolstyle-cssclass="NormalTextBox" 
-    labelwidth="200px" 
-    editcontrolwidth="450px" 
-    width="650px" 
+    helpstyle-cssclass="dnnFormHelpContent dnnClear" 
     editmode="Edit" 
     errorstyle-cssclass="NormalRed">
     <Fields>

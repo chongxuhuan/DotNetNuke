@@ -44,6 +44,7 @@ namespace DotNetNuke.Entities.Modules
             {
                 if (_moduleSettings == null)
                 {
+					//Get ModuleSettings
                     _moduleSettings = new ModuleController().GetModuleSettings(ModuleId);
                 }
                 return _moduleSettings;
@@ -56,6 +57,7 @@ namespace DotNetNuke.Entities.Modules
             {
                 if (_tabModuleSettings == null)
                 {
+					//Get TabModuleSettings
                     _tabModuleSettings = new ModuleController().GetTabModuleSettings(TabModuleId);
                 }
                 return _tabModuleSettings;
@@ -70,6 +72,7 @@ namespace DotNetNuke.Entities.Modules
                 if (_settings == null)
                 {
                     _settings = new Hashtable();
+					//Merge the TabModuleSettings and ModuleSettings
                     foreach (string strKey in TabModuleSettings.Keys)
                     {
                         _settings[strKey] = TabModuleSettings[strKey];

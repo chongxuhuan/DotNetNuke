@@ -61,6 +61,7 @@ namespace DotNetNuke.Modules.Dashboard.Components
             var settings = new XmlWriterSettings();
             using (XmlWriter writer = XmlWriter.Create(fullName, settings))
             {
+                //Write start of Dashboard 
                 writer.WriteStartElement("dashboard");
                 foreach (DashboardControl dashboard in GetDashboardControls(true))
                 {
@@ -70,6 +71,8 @@ namespace DotNetNuke.Modules.Dashboard.Components
                         controller.ExportData(writer);
                     }
                 }
+				
+                //Write end of Host 
                 writer.WriteEndElement();
                 writer.Flush();
             }

@@ -76,6 +76,16 @@ namespace DotNetNuke.UI.Modules
 
         #region Constructors
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Creates a Module Host control using the ModuleConfiguration for the Module
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/16/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ModuleHost(ModuleInfo moduleConfiguration, Skins.Skin skin, Containers.Container container)
         {
             ID = "ModuleContent";
@@ -90,15 +100,33 @@ namespace DotNetNuke.UI.Modules
 
         public Containers.Container Container { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the attached ModuleControl
+        /// </summary>
+        /// <returns>An IModuleControl</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IModuleControl ModuleControl
         {
             get
             {
+				//Make sure the Control tree has been created
                 EnsureChildControls();
                 return _control as IModuleControl;
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the current POrtal Settings
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PortalSettings PortalSettings
         {
             get
@@ -117,6 +145,7 @@ namespace DotNetNuke.UI.Modules
         {
             if (_moduleConfiguration.IsWebSlice && !Globals.IsAdminControl())
             {
+				//Assign the class - hslice to the Drag-N-Drop Panel
                 CssClass = "hslice";
                 var titleLabel = new Label
                                      {
@@ -162,8 +191,18 @@ namespace DotNetNuke.UI.Modules
             }
         }
 
+        /// ----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that indicates whether the Module Content should be displayed
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// [cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool DisplayContent()
         {
+			//module content visibility options
             var content = PortalSettings.UserMode != PortalSettings.Mode.Layout;
             if (Page.Request.QueryString["content"] != null)
             {
@@ -188,39 +227,63 @@ namespace DotNetNuke.UI.Modules
 
         private static void InjectMessageControl(Control container)
         {
+            //inject a message placeholder for common module messaging - UI.Skins.Skin.AddModuleMessage
             var messagePlaceholder = new PlaceHolder {ID = "MessagePlaceHolder", Visible = false};
             container.Controls.Add(messagePlaceholder);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that indicates whether the Module is in View Mode
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool IsViewMode()
         {
             return !(ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, Null.NullString, _moduleConfiguration)) || PortalSettings.UserMode == PortalSettings.Mode.View;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadModuleControl loads the ModuleControl (PortalModuelBase)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/15/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void LoadModuleControl()
         {
             try
             {
                 if (DisplayContent())
                 {
+                    //if the module supports caching and caching is enabled for the instance and the user does not have Edit rights or is currently in View mode
                     if (SupportsCaching() && IsViewMode())
                     {
+						//attempt to load the cached content
                         _isCached = TryLoadCached();
                     }
                     if (!_isCached)
                     {
-                    // load the control dynamically
+                    	// load the control dynamically
                         _control = ModuleControlFactory.LoadModuleControl(Page, _moduleConfiguration);
                     }
                 }
-                else
+                else //content placeholder
                 {
                     _control = ModuleControlFactory.CreateModuleControl(_moduleConfiguration);
                 }
                 if (Skin != null)
                 {
+				
+                	//check for IMC
                     Skin.Communicator.LoadCommunicator(_control);
                 }
+				
+                //add module settings
                 ModuleControl.ModuleContext.Configuration = _moduleConfiguration;
             }
             catch (ThreadAbortException exc)
@@ -232,10 +295,13 @@ namespace DotNetNuke.UI.Modules
             catch (Exception exc)
             {
                 DnnLog.Error(exc);
+				
+				//add module settings
                 _control = ModuleControlFactory.CreateModuleControl(_moduleConfiguration);
                 ModuleControl.ModuleContext.Configuration = _moduleConfiguration;
                 if (TabPermissionController.CanAdminPage())
                 {
+					//only display the error to page administrators
                     Exceptions.ProcessModuleLoadException(_control, exc);
                 }
             }
@@ -259,32 +325,52 @@ namespace DotNetNuke.UI.Modules
 
         }
 
+        /// <summary>
+        /// LoadUpdatePanel optionally loads an AJAX Update Panel
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/16/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void LoadUpdatePanel()
         {
+			//register AJAX
             AJAX.RegisterScriptManager();
+
+            //enable Partial Rendering
             var scriptManager = AJAX.GetScriptManager(Page);
             if (scriptManager != null)
             {
                 scriptManager.EnablePartialRendering = true;
             }
+			
+            //create update panel
             var updatePanel = new UpdatePanel
                                   {
                                       UpdateMode = UpdatePanelUpdateMode.Conditional, 
                                       ID = _control.ID + "_UP"
                                   };
 
+            //get update panel content template
             var templateContainer = updatePanel.ContentTemplateContainer;
+
+            //inject a message placeholder for common module messaging - UI.Skins.Skin.AddModuleMessage
             InjectMessageControl(templateContainer);
+
+            //inject module into update panel content template
             templateContainer.Controls.Add(_control);
 
+            //inject the update panel into the panel
             InjectModuleContent(updatePanel);
 
-            var image = new Image
+            //create image for update progress control
+			var image = new Image
                             {
-                                ImageUrl = "~/images/progressbar.gif", 
+                                ImageUrl = "~/images/progressbar.gif", //hardcoded
                                 AlternateText = "ProgressBar"
                             };
 
+            //inject updateprogress into the panel
             var updateProgress = new UpdateProgress
                                      {
                                          AssociatedUpdatePanelID = updatePanel.ID, 
@@ -294,11 +380,29 @@ namespace DotNetNuke.UI.Modules
             Controls.Add(updateProgress);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that indicates whether the Module Instance supports Caching
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool SupportsCaching()
         {
             return _moduleConfiguration.CacheTime > 0;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Trys to load previously cached Module Content
+        /// </summary>
+        /// <returns>A Boolean that indicates whether the cahed content was loaded</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool TryLoadCached()
         {
             bool success = false;
@@ -335,19 +439,35 @@ namespace DotNetNuke.UI.Modules
 
         #region Protected Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateChildControls builds the control tree
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void CreateChildControls()
         {
             Controls.Clear();
+
+            //Load Module Control (or cached control)
             LoadModuleControl();
+			
+			//Optionally Inject AJAX Update Panel
             if (ModuleControl != null)
             {
+                //if module is dynamically loaded and AJAX is installed and the control supports partial rendering (defined in ModuleControls table )
                 if (!_isCached && _moduleConfiguration.ModuleControl.SupportsPartialRendering && AJAX.IsInstalled())
                 {
                     LoadAjaxPanel();
                 }
                 else
                 {
+                    //inject a message placeholder for common module messaging - UI.Skins.Skin.AddModuleMessage
                     InjectMessageControl(this);
+
+                    //inject the module into the panel
                     InjectModuleContent(_control);
                 }
             }
@@ -356,6 +476,7 @@ namespace DotNetNuke.UI.Modules
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
             if (Host.EnableCustomModuleCssClass)
             {
                 string moduleName = ModuleControl.ModuleContext.Configuration.DesktopModule.ModuleName;
@@ -367,16 +488,26 @@ namespace DotNetNuke.UI.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderContents renders the contents of the control to the output stream
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderContents(HtmlTextWriter writer)
         {
             if (_isCached)
             {
+				//Render the cached control to the output stream
                 base.RenderContents(writer);
             }
             else
             {
                 if (SupportsCaching() && IsViewMode() && !Globals.IsAdminControl())
                 {
+					//Render to cache
                     var tempWriter = new StringWriter();
 
                     _control.RenderControl(new HtmlTextWriter(tempWriter));
@@ -384,6 +515,7 @@ namespace DotNetNuke.UI.Modules
 
                     if (!string.IsNullOrEmpty(cachedOutput) && (!HttpContext.Current.Request.Browser.Crawler))
                     {
+						//Save content to cache
                         var moduleContent = Encoding.UTF8.GetBytes(cachedOutput);
                         var cache = ModuleCachingProvider.Instance(_moduleConfiguration.GetEffectiveCacheMethod());
 
@@ -392,10 +524,13 @@ namespace DotNetNuke.UI.Modules
                         var cacheKey = cache.GenerateCacheKey(_moduleConfiguration.TabModuleID, varyBy);
                         cache.SetModule(_moduleConfiguration.TabModuleID, cacheKey, new TimeSpan(0, 0, _moduleConfiguration.CacheTime), moduleContent);
                     }
+					
+                    //Render the cached content to Response
                     writer.Write(cachedOutput);
                 }
                 else
                 {
+					//Render the control to Response
                     base.RenderContents(writer);
                 }
             }

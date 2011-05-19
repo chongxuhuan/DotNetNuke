@@ -33,10 +33,17 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
 {
     public abstract class FriendlyUrlProvider
     {
+		#region "Shared/Static Methods"
+
+        //return the provider
         public static FriendlyUrlProvider Instance()
         {
             return ComponentFactory.GetComponent<FriendlyUrlProvider>();
         }
+		
+		#endregion
+
+		#region "Abstract Methods"
 
         public abstract string FriendlyUrl(TabInfo tab, string path);
 
@@ -45,5 +52,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
         public abstract string FriendlyUrl(TabInfo tab, string path, string pageName, PortalSettings settings);
 
         public abstract string FriendlyUrl(TabInfo tab, string path, string pageName, string portalAlias);
+		
+		#endregion
     }
 }

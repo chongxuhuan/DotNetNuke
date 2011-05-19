@@ -83,14 +83,20 @@ namespace DotNetNuke.UI.WebControls
             object newValue = e.Value;
             object stringValue = e.StringValue;
             bool _IsDirty = Null.NullBoolean;
+			
+			//Get the Name Property
             objProperty = DataSource.GetType().GetProperty(NameDataField);
             if (objProperty != null)
             {
                 PropertyName = Convert.ToString(objProperty.GetValue(DataSource, null));
+				//Do we have the item in the IEnumerable Collection being changed
                 PropertyName = PropertyName.Replace(" ", "_");
                 if (PropertyName == name)
                 {
+					//Get the Value Property
                     objProperty = DataSource.GetType().GetProperty(ValueDataField);
+					
+					//Set the Value property to the new value
                     if ((!(ReferenceEquals(newValue, oldValue))) || changed)
                     {
                         if (objProperty.PropertyType.FullName == "System.String")
@@ -117,14 +123,19 @@ namespace DotNetNuke.UI.WebControls
             string name = e.Name;
             object newValue = e.Value;
             bool _IsDirty = Null.NullBoolean;
+			
+			//Get the Name Property
             objProperty = DataSource.GetType().GetProperty(NameDataField);
             if (objProperty != null)
             {
                 PropertyName = Convert.ToString(objProperty.GetValue(DataSource, null));
+				//Do we have the item in the IEnumerable Collection being changed
                 PropertyName = PropertyName.Replace(" ", "_");
                 if (PropertyName == name)
                 {
+					//Get the Value Property
                     objProperty = DataSource.GetType().GetProperty(VisibilityDataField);
+					//Set the Value property to the new value
                     objProperty.SetValue(DataSource, newValue, null);
                     _IsDirty = true;
                 }
@@ -153,8 +164,11 @@ namespace DotNetNuke.UI.WebControls
             string ValueDataField = Convert.ToString(FieldNames["Value"]);
             string VisibilityDataField = Convert.ToString(FieldNames["Visibility"]);
             string MaxLengthDataField = Convert.ToString(FieldNames["Length"]);
+
             var editInfo = new EditorInfo();
             PropertyInfo objProperty;
+
+            //Get the Name of the property
             editInfo.Name = string.Empty;
             if (!String.IsNullOrEmpty(NameDataField))
             {
@@ -164,7 +178,11 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Name = Convert.ToString(objProperty.GetValue(DataSource, null));
                 }
             }
+			
+            //Get the Category of the property
             editInfo.Category = string.Empty;
+			
+			//Get Category Field
             if (!String.IsNullOrEmpty(CategoryDataField))
             {
                 objProperty = DataSource.GetType().GetProperty(CategoryDataField);
@@ -173,7 +191,9 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Category = Convert.ToString(objProperty.GetValue(DataSource, null));
                 }
             }
-            editInfo.Value = string.Empty;
+            
+			//Get Value Field
+			editInfo.Value = string.Empty;
             if (!String.IsNullOrEmpty(ValueDataField))
             {
                 objProperty = DataSource.GetType().GetProperty(ValueDataField);
@@ -182,7 +202,9 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Value = Convert.ToString(objProperty.GetValue(DataSource, null));
                 }
             }
-            editInfo.Type = "System.String";
+            
+			//Get the type of the property
+			editInfo.Type = "System.String";
             if (!String.IsNullOrEmpty(TypeDataField))
             {
                 objProperty = DataSource.GetType().GetProperty(TypeDataField);
@@ -191,7 +213,9 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Type = Convert.ToString(objProperty.GetValue(DataSource, null));
                 }
             }
-            editInfo.Editor = "DotNetNuke.UI.WebControls.TextEditControl, DotNetNuke";
+            
+			//Get Editor Field
+			editInfo.Editor = "DotNetNuke.UI.WebControls.TextEditControl, DotNetNuke";
             if (!String.IsNullOrEmpty(EditorDataField))
             {
                 objProperty = DataSource.GetType().GetProperty(EditorDataField);
@@ -200,7 +224,11 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Editor = EditorInfo.GetEditor(Convert.ToInt32(objProperty.GetValue(DataSource, null)));
                 }
             }
+			
+            //Get LabelMode Field
             editInfo.LabelMode = LabelMode.Left;
+
+            //Get Required Field
             editInfo.Required = false;
             if (!String.IsNullOrEmpty(RequiredDataField))
             {
@@ -210,9 +238,15 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Required = Convert.ToBoolean(objProperty.GetValue(DataSource, null));
                 }
             }
+			
+            //Set ResourceKey Field
             editInfo.ResourceKey = editInfo.Name;
             editInfo.ResourceKey = string.Format("{0}_{1}", Name, editInfo.Name);
+
+            //Set Style
             editInfo.ControlStyle = new Style();
+
+            //Get Visibility Field
             editInfo.Visibility = UserVisibilityMode.AllUsers;
             if (!String.IsNullOrEmpty(VisibilityDataField))
             {
@@ -222,6 +256,8 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Visibility = (UserVisibilityMode) objProperty.GetValue(DataSource, null);
                 }
             }
+			
+            //Get Validation Expression Field
             editInfo.ValidationExpression = string.Empty;
             if (!String.IsNullOrEmpty(ValidationExpressionDataField))
             {
@@ -231,6 +267,8 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.ValidationExpression = Convert.ToString(objProperty.GetValue(DataSource, null));
                 }
             }
+			
+			//Get Length Field
             if (!String.IsNullOrEmpty(MaxLengthDataField))
             {
                 objProperty = DataSource.GetType().GetProperty(MaxLengthDataField);
@@ -242,6 +280,8 @@ namespace DotNetNuke.UI.WebControls
                     editInfo.Attributes = attributes;
                 }
             }
+			
+			//Remove spaces from name
             editInfo.Name = editInfo.Name.Replace(" ", "_");
             return editInfo;
         }

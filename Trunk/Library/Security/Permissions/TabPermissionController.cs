@@ -47,23 +47,13 @@ namespace DotNetNuke.Security.Permissions
     /// -----------------------------------------------------------------------------
     public class TabPermissionController
     {
+		#region Private Members
+		
         private static readonly PermissionProvider provider = PermissionProvider.Instance();
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// ClearPermissionCache clears the Tab Permission Cache
-        /// </summary>
-        /// <param name="tabId">The ID of the Tab</param>
-        /// <history>
-        /// 	[cnurse]	01/15/2008   Documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void ClearPermissionCache(int tabId)
-        {
-            var objTabs = new TabController();
-            TabInfo objTab = objTabs.GetTab(tabId, Null.NullInteger, false);
-            DataCache.ClearTabPermissionsCache(objTab.PortalID);
-        }
+		
+		#endregion
+		
+		#region Public Shared Methods
 
         public static bool CanAddContentToPage()
         {
@@ -214,6 +204,19 @@ namespace DotNetNuke.Security.Permissions
             return HasTabPermission(PortalController.GetCurrentPortalSettings().ActiveTab.TabPermissions, permissionKey);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// HasTabPermission checks whether the current user has a specific Tab Permission
+        /// </summary>
+        /// <remarks>If you pass in a comma delimited list of permissions (eg "ADD,DELETE", this will return
+        /// true if the user has any one of the permissions.</remarks>
+        /// <param name="objTabPermissions">The Permissions for the Tab</param>
+        /// <param name="permissionKey">The Permission(s) to check</param>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Documented
+        /// 	[cnurse]	04/22/2009   Added multi-permisison support
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static bool HasTabPermission(TabPermissionCollection objTabPermissions, string permissionKey)
         {
             bool hasPermission = provider.HasTabPermission(objTabPermissions, "EDIT");
@@ -242,17 +245,18 @@ namespace DotNetNuke.Security.Permissions
         /// <summary>
         /// SaveTabPermissions saves a Tab's permissions
         /// </summary>
-        /// <param name="objTab">The Tab to update</param>
+        /// <param name="tabInfo">The Tab to update</param>
         /// <history>
         /// 	[cnurse]	04/15/2009   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void SaveTabPermissions(TabInfo objTab)
+        public static void SaveTabPermissions(TabInfo tabInfo)
         {
-            provider.SaveTabPermissions(objTab);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TABPERMISSION_UPDATED);
-            ClearPermissionCache(objTab.TabID);
+            provider.SaveTabPermissions(tabInfo);
+            new EventLogController().AddLog(tabInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TABPERMISSION_UPDATED);
+            DataCache.ClearTabPermissionsCache(tabInfo.PortalID);
         }
+		
+		#endregion
     }
 }

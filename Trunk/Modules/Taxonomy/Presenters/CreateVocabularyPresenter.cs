@@ -40,12 +40,14 @@ using DotNetNuke.Web.Validators;
 
 namespace DotNetNuke.Modules.Taxonomy.Presenters
 {
+
     public class CreateVocabularyPresenter : ModulePresenter<ICreateVocabularyView, CreateVocabularyModel>
     {
-        private readonly IScopeTypeController _ScopeTypeController;
-        private readonly IVocabularyController _VocabularyController;
 
-        #region "Constructors"
+        private readonly IScopeTypeController _scopeTypeController;
+        private readonly IVocabularyController _vocabularyController;
+
+        #region Constructors
 
         public CreateVocabularyPresenter(ICreateVocabularyView createView) : this(createView, new VocabularyController(new DataService()), new ScopeTypeController(new DataService()))
         {
@@ -56,23 +58,22 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             Requires.NotNull("vocabularyController", vocabularyController);
             Requires.NotNull("scopeTypeController", scopeTypeController);
 
-            _VocabularyController = vocabularyController;
-            _ScopeTypeController = scopeTypeController;
+            _vocabularyController = vocabularyController;
+            _scopeTypeController = scopeTypeController;
 
-            View.Cancel += Cancel;
             View.Save += Save;
             View.Model.Vocabulary = GetVocabulary();
         }
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public IScopeTypeController ScopeTypeController
         {
             get
             {
-                return _ScopeTypeController;
+                return _scopeTypeController;
             }
         }
 
@@ -80,26 +81,18 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                return _VocabularyController;
+                return _vocabularyController;
             }
         }
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private Vocabulary GetVocabulary()
         {
             var vocabulary = new Vocabulary();
-            ScopeType scopeType = null;
-            if (IsSuperUser)
-            {
-                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Application").SingleOrDefault();
-            }
-            else
-            {
-                scopeType = ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Portal").SingleOrDefault();
-            }
+            var scopeType = IsSuperUser ? ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Application").SingleOrDefault() : ScopeTypeController.GetScopeTypes().Where(s => s.ScopeType == "Portal").SingleOrDefault();
 
             if (scopeType != null)
             {
@@ -115,15 +108,11 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         protected override void OnLoad()
         {
             base.OnLoad();
+            View.Model.TaxonomyHomeUrl = Globals.NavigateURL(TabId);
             View.BindVocabulary(View.Model.Vocabulary, IsSuperUser);
         }
 
-        #region "Public Methods"
-
-        public void Cancel(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(TabId));
-        }
+        #region Public Methods
 
         public void Save(object sender, EventArgs e)
         {
@@ -135,7 +124,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             }
 
             //Validate Model
-            ValidationResult result = Validator.ValidateObject(View.Model.Vocabulary);
+            var result = Validator.ValidateObject(View.Model.Vocabulary);
 
             if (result.IsValid)
             {
@@ -152,5 +141,6 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         }
 
         #endregion
+
     }
 }

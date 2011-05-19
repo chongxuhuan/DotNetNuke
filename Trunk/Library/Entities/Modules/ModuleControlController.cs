@@ -182,6 +182,7 @@ namespace DotNetNuke.Entities.Modules
             int moduleControlID = moduleControl.ModuleControlID;
             if (moduleControlID == Null.NullInteger)
             {
+				//Add new Module Definition
                 moduleControlID = dataProvider.AddModuleControl(moduleControl.ModuleDefID,
                                                                 moduleControl.ControlKey,
                                                                 moduleControl.ControlTitle,
@@ -196,6 +197,7 @@ namespace DotNetNuke.Entities.Modules
             }
             else
             {
+				//Upgrade Module Control
                 dataProvider.UpdateModuleControl(moduleControl.ModuleControlID,
                                                  moduleControl.ModuleDefID,
                                                  moduleControl.ControlKey,

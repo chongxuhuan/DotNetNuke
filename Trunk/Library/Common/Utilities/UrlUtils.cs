@@ -57,6 +57,7 @@ namespace DotNetNuke.Common.Utilities
         public static string DecryptParameter(string value, string encryptionKey)
         {
             var objSecurity = new PortalSecurity();
+            //[DNN-8257] - Can't do URLEncode/URLDecode as it introduces issues on decryption (with / = %2f), so we use a modifed Base64
             value = value.Replace("_", "/");
             value = value.Replace("-", "+");
             value = value.Replace("%3d", "=");
@@ -80,6 +81,8 @@ namespace DotNetNuke.Common.Utilities
         {
             var objSecurity = new PortalSecurity();
             string strParameter = objSecurity.Encrypt(encryptionKey, value);
+
+            //[DNN-8257] - Can't do URLEncode/URLDecode as it introduces issues on decryption (with / = %2f), so we use a modifed Base64
             strParameter = strParameter.Replace("/", "_");
             strParameter = strParameter.Replace("+", "-");
             strParameter = strParameter.Replace("=", "%3d");
@@ -126,10 +129,14 @@ namespace DotNetNuke.Common.Utilities
                         case "tabid":
                         case "ctl":
                         case "language":
+							//skip parameter
                             break;
                         default:
                             if ((keys[i].ToLower() == "portalid") && Globals.GetPortalSettings().ActiveTab.IsSuperTab)
                             {
+								//skip parameter
+                                //navigateURL adds portalid to querystring if tab is superTab
+
                             }
                             else
                             {
@@ -147,6 +154,7 @@ namespace DotNetNuke.Common.Utilities
                     }
                 }
             }
+            //return the new querystring as a string array
             return returnValue.Split('&');
         }
 
@@ -161,7 +169,12 @@ namespace DotNetNuke.Common.Utilities
             const string containerSrc = "[G]Containers/_default/popUpContainer";
             var skinSrc = string.Empty;
 
-            var skin = ControlUtilities.FindParentControl<UI.Skins.Skin>(control);
+            UI.Skins.Skin skin = null;
+            if (control != null)
+            {
+                skin = ControlUtilities.FindParentControl<UI.Skins.Skin>(control);
+            }
+            
             if (skin != null)
             {
                 skinSrc = skin.SkinPath.Replace(Globals.HostPath, "[G]").Replace(portalSettings.HomeDirectory, "[L]");
@@ -176,17 +189,34 @@ namespace DotNetNuke.Common.Utilities
             return popUpSkin;
         }
 
-        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings)
+        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent)
         {
             var popUpScriptFormat = String.Empty;
             var popUpUrl = url;
 
-            string popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
-            if (!String.IsNullOrEmpty(popUpSkinSrc))
+            if (!popUpUrl.Contains("dnnModal.show"))
             {
-                popUpScriptFormat += "__dnn_ShowModalPopUp('{0}{1}popUp=true&" + popUpSkinSrc + "')";
-                string delimiter = url.Contains("?") ? "&" : "?";
-                popUpUrl = String.Format(popUpScriptFormat, url, delimiter);
+                var popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
+                if (!String.IsNullOrEmpty(popUpSkinSrc))
+                {
+                    popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2})";
+                    var delimiter = popUpUrl.Contains("?") ? "&" : "?";
+                    popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
+                }
+            }
+            else
+            {
+                // Removes the javascript txt for onClick scripts
+                if (onClickEvent && popUpUrl.StartsWith("javascript:")) popUpUrl = popUpUrl.Replace("javascript:", "");
+                
+                if (popUpUrl.Contains("/*showReturn*/false"))
+                {
+                    popUpUrl = popUpUrl.Replace("/*showReturn*/false", "/*showReturn*/" + onClickEvent.ToString().ToLower());
+                }
+                else
+                {
+                    popUpUrl = popUpUrl.Replace("/*showReturn*/true", "/*showReturn*/" + onClickEvent.ToString().ToLower());
+                }               
             }
             return popUpUrl;
         }

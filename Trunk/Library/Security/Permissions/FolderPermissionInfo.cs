@@ -37,11 +37,26 @@ namespace DotNetNuke.Security.Permissions
     [Serializable]
     public class FolderPermissionInfo : PermissionInfoBase, IHydratable
     {
+		#region "Private Members"
+		
+        //local property declarations
         private int _folderID;
         private string _folderPath;
         private int _folderPermissionID;
         private int _portalID;
+		
+		#endregion
+		
+		#region "Constructors"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new FolderPermissionInfo
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public FolderPermissionInfo()
         {
             _folderPermissionID = Null.NullInteger;
@@ -50,6 +65,15 @@ namespace DotNetNuke.Security.Permissions
             _folderID = Null.NullInteger;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new FolderPermissionInfo
+        /// </summary>
+        /// <param name="permission">A PermissionInfo object</param>
+        /// <history>
+        /// 	[cnurse]	01/14/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public FolderPermissionInfo(PermissionInfo permission) : this()
         {
             ModuleDefID = permission.ModuleDefID;
@@ -58,6 +82,10 @@ namespace DotNetNuke.Security.Permissions
             PermissionKey = permission.PermissionKey;
             PermissionName = permission.PermissionName;
         }
+		
+		#endregion
+		
+		#region "Public Properties"
 
         [XmlIgnore]
         public int FolderPermissionID
@@ -110,9 +138,20 @@ namespace DotNetNuke.Security.Permissions
                 _folderPath = value;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a FolderPermissionInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	05/23/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void Fill(IDataReader dr)
         {
             base.FillInternal(dr);
@@ -122,6 +161,15 @@ namespace DotNetNuke.Security.Permissions
             FolderPath = Null.SetNullString(dr["FolderPath"]);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	05/23/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public int KeyID
         {

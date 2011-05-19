@@ -50,6 +50,16 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:ProfileEditorControl runat=server></{0}:ProfileEditorControl>")]
     public class ProfileEditorControl : CollectionEditorControl
     {
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateEditor creates the control collection.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/08/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void CreateEditor()
         {
             CategoryDataField = "PropertyCategory";
@@ -61,12 +71,16 @@ namespace DotNetNuke.UI.WebControls
             VisibleDataField = "Visible";
             VisibilityDataField = "Visibility";
             LengthDataField = "Length";
+
             base.CreateEditor();
+
+            //We need to wire up the RegionControl to the CountryControl
             foreach (FieldEditorControl editor in Fields)
             {
                 if (editor.Editor is DNNRegionEditControl)
                 {
                     ListEntryInfo country = null;
+
                     foreach (FieldEditorControl checkEditor in Fields)
                     {
                         if (checkEditor.Editor is DNNCountryEditControl)
@@ -84,6 +98,8 @@ namespace DotNetNuke.UI.WebControls
                             }
                         }
                     }
+					
+                    //Create a ListAttribute for the Region
                     string countryKey;
                     if (country != null)
                     {
@@ -99,5 +115,7 @@ namespace DotNetNuke.UI.WebControls
                 }
             }
         }
+		
+		#endregion
     }
 }

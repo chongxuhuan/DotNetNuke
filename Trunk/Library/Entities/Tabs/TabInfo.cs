@@ -30,14 +30,17 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 
+using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
@@ -61,6 +64,8 @@ namespace DotNetNuke.Entities.Tabs
         private Hashtable _settings;
         private string _skinDoctype;
         private bool _superTabIdSet = Null.NullBoolean;
+        private readonly SharedDictionary<string, string> LocalizedTabNameDictionary = new SharedDictionary<string, string>();
+        private readonly SharedDictionary<string, string> FullUrlDictionary = new SharedDictionary<string, string>();
 
         #region Constructors
 
@@ -85,6 +90,8 @@ namespace DotNetNuke.Entities.Tabs
             RefreshInterval = Null.NullInteger;
             PageHeadText = Null.NullString;
             SiteMapPriority = 0.5F;
+
+            //UniqueId, Version Guid, and Localized Version Guid should be initialised to a new value
             UniqueId = Guid.NewGuid();
             VersionGuid = Guid.NewGuid();
             LocalizedVersionGuid = Guid.NewGuid();
@@ -237,23 +244,43 @@ namespace DotNetNuke.Entities.Tabs
         {
             get
             {
-                string strUrl = "";
-                switch (TabType)
+                var key = Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias);
+
+                string fullUrl;
+                using (FullUrlDictionary.GetReadLock())
                 {
-                    case TabType.Normal:
-                        strUrl = Globals.NavigateURL(TabID, IsSuperTab);
-                        break;
-                    case TabType.Tab:
-                        strUrl = Globals.NavigateURL(Convert.ToInt32(Url));
-                        break;
-                    case TabType.File:
-                        strUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
-                        break;
-                    case TabType.Url:
-                        strUrl = Url;
-                        break;
+                    FullUrlDictionary.TryGetValue(key, out fullUrl);
                 }
-                return strUrl;
+
+                if (String.IsNullOrEmpty(fullUrl))
+                {
+                    using (FullUrlDictionary.GetWriteLock())
+                    {
+                        switch (TabType)
+                        {
+                            case TabType.Normal:
+                                //normal tab
+                                fullUrl = Globals.NavigateURL(TabID, IsSuperTab);
+                                break;
+                            case TabType.Tab:
+                                //alternate tab url
+                                fullUrl = Globals.NavigateURL(Convert.ToInt32(Url));
+                                break;
+                            case TabType.File:
+                                //file url
+                                fullUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
+                                break;
+                            case TabType.Url:
+                                //external url
+                                fullUrl = Url;
+                                break;
+                        }
+
+                        FullUrlDictionary.Add(key, fullUrl);
+                    }
+                }
+
+                return fullUrl;
             }
         }
 
@@ -328,11 +355,27 @@ namespace DotNetNuke.Entities.Tabs
         {
             get
             {
-                string localizedTabName = Localization.GetString(TabPath + ".String", Localization.GlobalResourceFile, true);
-                if (string.IsNullOrEmpty(localizedTabName))
+                var key = Thread.CurrentThread.CurrentUICulture.ToString();
+                string localizedTabName;
+                using (LocalizedTabNameDictionary.GetReadLock())
                 {
-                    localizedTabName = TabName;
+                    LocalizedTabNameDictionary.TryGetValue(key, out localizedTabName);
                 }
+
+                if (String.IsNullOrEmpty(localizedTabName))
+                {
+                    using (LocalizedTabNameDictionary.GetWriteLock())
+                    {
+                        localizedTabName = Localization.GetString(TabPath + ".String", Localization.GlobalResourceFile, true);
+                        if (string.IsNullOrEmpty(localizedTabName))
+                        {
+                            localizedTabName = TabName;
+                        }
+
+                        LocalizedTabNameDictionary.Add(key, localizedTabName);
+                    }
+                }
+
                 return localizedTabName;
             }
         }

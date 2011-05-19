@@ -33,6 +33,9 @@ namespace DotNetNuke.Entities.Portals
     [Serializable]
     public class PortalAliasCollection : DictionaryBase
     {
+		/// <summary>
+		/// Gets or sets the value associated with the specified key.
+		/// </summary>
         public PortalAliasInfo this[string key]
         {
             get
@@ -45,6 +48,9 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+		/// <summary>
+		/// Gets a value indicating if the collection contains keys that are not null.
+		/// </summary>
         public Boolean HasKeys
         {
             get
@@ -74,6 +80,9 @@ namespace DotNetNuke.Entities.Portals
             return Dictionary.Contains(key);
         }
 
+		/// <summary>
+		/// Adds an entry to the collection.
+		/// </summary>
         public void Add(String key, PortalAliasInfo value)
         {
             Dictionary.Add(key, value);

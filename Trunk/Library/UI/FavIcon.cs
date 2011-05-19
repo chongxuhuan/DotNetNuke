@@ -4,6 +4,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.UI.Internals
 {
@@ -26,20 +27,14 @@ namespace DotNetNuke.UI.Internals
         }
 
         /// <summary>
-        /// Get the relative file path to the favicon file
+        /// Get the path of the favicon file relative to the portal root
         /// </summary>
-        /// <returns>Relative path to the favicon file, or empty string when there is no favicon set</returns>
-        public string GetFilePath()
+        /// <remarks>This relative path is only relevant to use with Host/Portal Settings the path is not guaranteed any 
+        /// physical relevance in the local file system</remarks>
+        /// <returns>Path to the favicon file relative to portal root, or empty string when there is no favicon set</returns>
+        public string GetSettingPath()
         {
-            var portalSettings = new PortalSettings(_portalId);
-        	var filePath = string.Empty;
-        	var favIcon = PortalController.GetPortalSetting(SettingName, _portalId, "");
-			if(!string.IsNullOrEmpty(favIcon))
-			{
-				filePath = Globals.ResolveUrl("~" + portalSettings.HomeDirectory + favIcon);
-			}
-
-        	return filePath;
+            return PortalController.GetPortalSetting(SettingName, _portalId, "");
         }
 
         /// <summary>
@@ -65,7 +60,7 @@ namespace DotNetNuke.UI.Internals
             if (fromCache == null)
             {
                 //only create an instance of FavIcon when there is a cache miss
-                string favIconPath = new FavIcon(portalId).GetFilePath();
+                string favIconPath = new FavIcon(portalId).GetRelativeUrl();
                 if (!string.IsNullOrEmpty(favIconPath))
                 {
                     headerLink = string.Format("<link rel='SHORTCUT ICON' href='{0}' type='image/x-icon' />", favIconPath);
@@ -85,6 +80,23 @@ namespace DotNetNuke.UI.Internals
             }
 
             return headerLink;
+        }
+
+        private string GetRelativeUrl()
+        {
+            var fileInfo = GetFileInfo();
+            return fileInfo == null ? string.Empty : FileManager.Instance.GetUrl(fileInfo);
+        }
+
+        private IFileInfo GetFileInfo()
+        {
+            var path = GetSettingPath();
+            if( ! String.IsNullOrEmpty(path) )
+            { 
+                return FileManager.Instance.GetFile(_portalId, path);
+            }
+
+            return null;
         }
 
         private static void UpdateCachedHeaderLink(int portalId, string headerLink)

@@ -65,6 +65,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as specified by the parameters.</returns>
         public virtual IFileInfo AddFile(IFolderInfo folder, string fileName, Stream fileContent)
         {
+            DnnLog.MethodEntry();
+
             return AddFile(folder, fileName, fileContent, true);
         }
 
@@ -78,6 +80,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as specified by the parameters.</returns>
         public virtual IFileInfo AddFile(IFolderInfo folder, string fileName, Stream fileContent, bool overwrite)
         {
+            DnnLog.MethodEntry();
+
             return AddFile(folder, fileName, fileContent, overwrite, false, GetContentType(Path.GetExtension(fileName)));
         }
 
@@ -98,6 +102,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as specified by the parameters.</returns>
         public virtual IFileInfo AddFile(IFolderInfo folder, string fileName, Stream fileContent, bool overwrite, bool checkPermissions, string contentType)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
             Requires.NotNullOrEmpty("fileName", fileName);
             Requires.NotNull("fileContent", fileContent);
@@ -194,6 +200,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> with the information of the copied file.</returns>
         public virtual IFileInfo CopyFile(IFileInfo file, IFolderInfo destinationFolder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
@@ -211,6 +219,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
         public virtual void DeleteFile(IFileInfo file)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
 
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
@@ -221,6 +231,8 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception ex)
             {
+                DnnLog.Error(ex);
+
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("DeleteFileUnderlyingSystemError", "The underlying system threw an exception. The file has not been deleted."), ex);
             }
 
@@ -234,6 +246,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when files is null.</exception>
         public virtual void DeleteFiles(IEnumerable<IFileInfo> files)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("files", files);
 
             foreach (var file in files)
@@ -253,6 +267,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
         public virtual bool FileExists(IFolderInfo folder, string fileName)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("folder", folder);
             Requires.NotNullOrEmpty("fileName", fileName);
 
@@ -266,6 +282,8 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception ex)
             {
+                DnnLog.Error(ex);
+
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception."), ex);
             }
 
@@ -279,6 +297,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> object with the metadata of the specified file.</returns>
         public virtual IFileInfo GetFile(int fileID)
         {
+            DnnLog.MethodEntry();
+
             var strCacheKey = "GetFileById" + fileID;
             var file = DataCache.GetCache(strCacheKey);
             if (file == null)
@@ -301,9 +321,39 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>The <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> object with the metadata of the specified file.</returns>
         public virtual IFileInfo GetFile(IFolderInfo folder, string fileName)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNullOrEmpty("fileName", fileName);
 
             return CBOWrapper.Instance.FillObject<FileInfo>(DataProvider.Instance().GetFile(fileName, folder.FolderID));
+        }
+
+        /// <summary>
+        /// Gets the file metadata for the specified file.
+        /// </summary>
+        /// <param name="portalId">The portal ID or Null.NullInteger for the Host</param>
+        /// <param name="relativePath">Relative path to the file.</param>
+        /// <remarks>Host and portal settings commonly return a relative path to a file.  This method uses that relative path to fetch file metadata.</remarks>
+        /// <returns>The <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> object with the metadata of the specified file.</returns>
+        public virtual IFileInfo GetFile(int portalId, string relativePath)
+        {
+            DnnLog.MethodEntry();
+
+            Requires.NotNullOrEmpty("relateivePath", relativePath);
+
+            var folderPath = "";
+            var seperatorIndex = relativePath.LastIndexOf('/');
+            
+            if(seperatorIndex > 0)
+            {
+                folderPath = relativePath.Substring(0, seperatorIndex + 1);
+            }
+            
+            var folderInfo = FolderManager.Instance.GetFolder(portalId, folderPath);
+
+            var fileName = relativePath.Substring(folderPath.Length);
+            
+            return GetFile(folderInfo, fileName);
         }
 
         /// <summary>
@@ -315,6 +365,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
         public virtual Stream GetFileContent(IFileInfo file)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
 
             Stream stream = null;
@@ -333,12 +385,41 @@ namespace DotNetNuke.Services.FileSystem
                     }
                     catch (Exception ex)
                     {
+                        DnnLog.Error(ex);
+
                         throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception"), ex);
                     }
                 }
             }
 
             return stream;
+        }
+
+        /// <summary>
+        /// Gets the direct Url to the file.
+        /// </summary>
+        /// <param name="file">The file to get the Url.</param>
+        /// <returns>The direct Url to the file.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when file is null.</exception>
+        /// <exception cref="DotNetNuke.Services.FileSystem.FolderProviderException">Thrown when the underlying system throw an exception.</exception>
+        public string GetUrl(IFileInfo file)
+        {
+            DnnLog.MethodEntry();
+
+            Requires.NotNull("file", file);
+
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+
+            try
+            {
+                return FolderProvider.Instance(folderMapping.FolderProviderType).GetFileUrl(file);
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+
+                throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception."), ex);
+            }
         }
 
         /// <summary>
@@ -354,6 +435,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>An <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> with the information of the moved file.</returns>
         public virtual IFileInfo MoveFile(IFileInfo file, IFolderInfo destinationFolder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
@@ -373,6 +456,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>An <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> with the information of the renamed file.</returns>
         public virtual IFileInfo RenameFile(IFileInfo file, string newFileName)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNullOrEmpty("newFileName", newFileName);
 
@@ -393,6 +478,8 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception ex)
             {
+                DnnLog.Error(ex);
+
                 throw new FolderProviderException(Localization.Localization.GetExceptionMessage("RenameFileUnderlyingSystemError", "The underlying system threw an exception. The file has not been renamed."), ex);
             }
 
@@ -408,6 +495,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when file or destination folder are null.</exception>
         public virtual void UnzipFile(IFileInfo file)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
 
             var destinationFolder = FolderManager.Instance.GetFolder(file.FolderId);
@@ -424,6 +513,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when file or destination folder are null.</exception>
         public virtual void UnzipFile(IFileInfo file, IFolderInfo destinationFolder)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
@@ -444,6 +535,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as the updated file.</returns>
         public virtual IFileInfo UpdateFile(IFileInfo file)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
 
             DataProvider.Instance().UpdateFile(file.FileId,
@@ -473,6 +566,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as the updated file.</returns>
         public virtual IFileInfo UpdateFile(IFileInfo file, Stream fileContent)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNull("fileContent", fileContent);
 
@@ -513,6 +608,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="System.ArgumentNullException">Thrown when file or stream are null.</exception>
         public virtual void WriteFile(IFileInfo file, Stream stream)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
             Requires.NotNull("stream", stream);
 
@@ -538,6 +635,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <exception cref="DotNetNuke.Services.FileSystem.PermissionsNotMetException">Thrown when permissions are not met.</exception>
         public virtual void WriteFileToResponse(IFileInfo file, ContentDisposition contentDisposition)
         {
+            DnnLog.MethodEntry();
+
             Requires.NotNull("file", file);
 
             var folder = FolderManager.Instance.GetFolder(file.FolderId);

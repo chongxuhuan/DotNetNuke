@@ -1437,4 +1437,7 @@
   <data name="Ok.Text" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="MODULE_InvalidVersion.Text" xml:space="preserve">
+    <value>Version {0} is invalid - not adding to UpgradeVersions list.</value>
+  </data>
 </root>

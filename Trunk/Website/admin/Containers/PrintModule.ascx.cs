@@ -36,9 +36,32 @@ using DotNetNuke.Services.Exceptions;
 
 namespace DotNetNuke.UI.Containers
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : Containers.Icon
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Contains the attributes of an Icon.  
+    /// These are read into the PortalModuleBase collection as attributes for the icons within the module controls.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[sun1]	        2/1/2004	Created
+    /// 	[Nik Kalyani]	10/15/2004	Replaced public members with properties and removed
+    ///                                 brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class PrintModule : ActionBase
     {
+		#region "Public Members"
+		
         public string PrintIcon { get; set; }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
         protected override void OnLoad(EventArgs e)
         {
@@ -67,13 +90,17 @@ namespace DotNetNuke.UI.Containers
                                     ModuleActionIcon.ToolTip = action.Title;
                                     ModuleActionIcon.ID = "ico" + action.ID;
                                     ModuleActionIcon.CausesValidation = false;
+
                                     ModuleActionIcon.Click += IconAction_Click;
+
                                     Controls.Add(ModuleActionIcon);
                                 }
                             }
                         }
                     }
                 }
+				
+                //set visibility
                 if (Controls.Count > 0)
                 {
                     Visible = true;
@@ -83,7 +110,7 @@ namespace DotNetNuke.UI.Containers
                     Visible = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -95,10 +122,12 @@ namespace DotNetNuke.UI.Containers
             {
                 ProcessAction(((ImageButton) sender).ID.Substring(3));
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

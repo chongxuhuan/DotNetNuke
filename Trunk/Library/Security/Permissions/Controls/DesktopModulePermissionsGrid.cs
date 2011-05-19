@@ -38,9 +38,15 @@ namespace DotNetNuke.Security.Permissions.Controls
 {
     public class DesktopModulePermissionsGrid : PermissionsGrid
     {
+		#region "Private Members"
+		
         private DesktopModulePermissionCollection _DesktopModulePermissions;
         private List<PermissionInfoBase> _PermissionsList;
         private int _PortalDesktopModuleID = -1;
+		
+		#endregion
+		
+		#region "Protected Properties"
 
         protected override List<PermissionInfoBase> PermissionsList
         {
@@ -53,6 +59,10 @@ namespace DotNetNuke.Security.Permissions.Controls
                 return _PermissionsList;
             }
         }
+		
+		#endregion
+		
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -66,7 +76,10 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             get
             {
+				//First Update Permissions in case they have been changed
                 UpdatePermissions();
+
+                //Return the DesktopModulePermissions
                 return _DesktopModulePermissions;
             }
         }
@@ -95,6 +108,10 @@ namespace DotNetNuke.Security.Permissions.Controls
                 }
             }
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -121,6 +138,8 @@ namespace DotNetNuke.Security.Permissions.Controls
         private DesktopModulePermissionInfo ParseKeys(string[] Settings)
         {
             var objDesktopModulePermission = new DesktopModulePermissionInfo();
+
+            //Call base class to load base properties
             base.ParsePermissionKeys(objDesktopModulePermission, Settings);
             if (String.IsNullOrEmpty(Settings[2]))
             {
@@ -133,6 +152,10 @@ namespace DotNetNuke.Security.Permissions.Controls
             objDesktopModulePermission.PortalDesktopModuleID = PortalDesktopModuleID;
             return objDesktopModulePermission;
         }
+		
+		#endregion
+		
+		#region "Protected Methods"
 
         protected override void AddPermission(PermissionInfo permission, int roleId, string roleName, int userId, string displayName, bool allowAccess)
         {
@@ -144,12 +167,25 @@ namespace DotNetNuke.Security.Permissions.Controls
             objPermission.UserID = userId;
             objPermission.DisplayName = displayName;
             _DesktopModulePermissions.Add(objPermission, true);
+
+            //Clear Permission List
             _PermissionsList = null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a Permission
+        /// </summary>
+        /// <param name="permissions">The permissions collection</param>
+        /// <param name="user">The user to add</param>
+        /// <history>
+        ///     [cnurse]    02/22/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void AddPermission(ArrayList permissions, UserInfo user)
         {
-            bool isMatch = false;
+            //Search DesktopModulePermission Collection for the user 
+			bool isMatch = false;
             foreach (DesktopModulePermissionInfo objDesktopModulePermission in _DesktopModulePermissions)
             {
                 if (objDesktopModulePermission.UserID == user.UserID)
@@ -158,6 +194,8 @@ namespace DotNetNuke.Security.Permissions.Controls
                     break;
                 }
             }
+			
+            //user not found so add new
             if (!isMatch)
             {
                 foreach (PermissionInfo objPermission in permissions)
@@ -170,30 +208,55 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the permissions from the Database
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    02/22/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override ArrayList GetPermissions()
         {
             return PermissionController.GetPermissionsByPortalDesktopModule();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Load the ViewState
+        /// </summary>
+        /// <param name="savedState">The saved state</param>
+        /// <history>
+        ///     [cnurse]    02/22/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void LoadViewState(object savedState)
         {
             if (savedState != null)
             {
+				//Load State from the array of objects that was saved with SaveViewState.
                 var myState = (object[]) savedState;
-                if (myState[0] != null)
+				
+                //Load Base Controls ViewState
+				if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
+				
+				//Load DesktopModuleId
                 if (myState[1] != null)
                 {
                     PortalDesktopModuleID = Convert.ToInt32(myState[1]);
                 }
+				
+				//Load DesktopModulePermissions
                 if (myState[2] != null)
                 {
                     _DesktopModulePermissions = new DesktopModulePermissionCollection();
                     string state = Convert.ToString(myState[2]);
                     if (!String.IsNullOrEmpty(state))
                     {
+						//First Break the String into individual Keys
                         string[] permissionKeys = state.Split(new[] {"##"}, StringSplitOptions.None);
                         foreach (string key in permissionKeys)
                         {
@@ -210,12 +273,26 @@ namespace DotNetNuke.Security.Permissions.Controls
             _DesktopModulePermissions.Remove(permissionID, roleID, userID);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Saves the ViewState
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    02/22/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override object SaveViewState()
         {
             var allStates = new object[3];
+			
+			//Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
-            allStates[1] = PortalDesktopModuleID;
-            var sb = new StringBuilder();
+            
+			//Save the DesktopModule Id
+			allStates[1] = PortalDesktopModuleID;
+            
+			//Persist the DesktopModulePermisisons
+			var sb = new StringBuilder();
             if (_DesktopModulePermissions != null)
             {
                 bool addDelimiter = false;
@@ -242,10 +319,22 @@ namespace DotNetNuke.Security.Permissions.Controls
             return allStates;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// returns whether or not the derived grid supports Deny permissions
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool SupportsDenyPermissions()
         {
             return true;
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
         public void ResetPermissions()
         {
@@ -256,5 +345,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         public override void GenerateDataGrid()
         {
         }
+		
+		#endregion
     }
 }

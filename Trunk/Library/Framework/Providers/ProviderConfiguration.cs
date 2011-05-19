@@ -61,7 +61,11 @@ namespace DotNetNuke.Framework.Providers
         internal void LoadValuesFromConfigurationXml(XmlNode node)
         {
             XmlAttributeCollection attributeCollection = node.Attributes;
+
+			//Get the default provider
             _DefaultProvider = attributeCollection["defaultProvider"].Value;
+
+			//Read child nodes
             foreach (XmlNode child in node.ChildNodes)
             {
                 if (child.Name == "providers")

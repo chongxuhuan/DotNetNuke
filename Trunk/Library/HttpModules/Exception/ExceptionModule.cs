@@ -63,12 +63,16 @@ namespace DotNetNuke.HttpModules.Exceptions
                 HttpContext Context = HttpContext.Current;
                 HttpServerUtility Server = Context.Server;
                 HttpRequest Request = Context.Request;
+				
+                //exit if a request for a .net mapping that isn't a content page is made i.e. axd
                 if (Request.Url.LocalPath.ToLower().EndsWith(".aspx") == false && Request.Url.LocalPath.ToLower().EndsWith(".asmx") == false &&
                     Request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
                 {
                     return;
                 }
                 Exception lastException = Server.GetLastError();
+
+                //HttpExceptions are logged elsewhere
                 if (!(lastException is HttpException))
                 {
                     var lex = new Exception("Unhandled Error: ", Server.GetLastError());
@@ -86,6 +90,8 @@ namespace DotNetNuke.HttpModules.Exceptions
             }
             catch (Exception exc)
             {
+                //it is possible when terminating the request for the context not to exist
+                //in this case we just want to exit since there is nothing else we can do
                 DnnLog.Error(exc);
 
             }

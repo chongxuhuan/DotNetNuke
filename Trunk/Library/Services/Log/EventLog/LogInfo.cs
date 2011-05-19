@@ -35,6 +35,8 @@ namespace DotNetNuke.Services.Log.EventLog
     [Serializable]
     public class LogInfo
     {
+		#region "Private Members"
+
         private bool _BypassBuffering;
         private string _LogConfigID;
         private DateTime _LogCreateDate;
@@ -48,6 +50,10 @@ namespace DotNetNuke.Services.Log.EventLog
         private string _LogTypeKey;
         private int _LogUserID;
         private string _LogUserName;
+		
+		#endregion
+
+		#region "Constructors"
 
         public LogInfo()
         {
@@ -64,6 +70,10 @@ namespace DotNetNuke.Services.Log.EventLog
         {
             Deserialize(content);
         }
+		
+		#endregion
+
+		#region "Properties"
 
         public string LogGUID
         {
@@ -220,6 +230,10 @@ namespace DotNetNuke.Services.Log.EventLog
                 _LogConfigID = value;
             }
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public void AddProperty(string PropertyName, string PropertyValue)
         {
@@ -307,6 +321,8 @@ namespace DotNetNuke.Services.Log.EventLog
                     }
                 }
             }
+			
+            //Check for LogProperties child node
             reader.Read();
             if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "LogProperties")
             {
@@ -383,5 +399,7 @@ namespace DotNetNuke.Services.Log.EventLog
             LogProperties.WriteXml(writer);
             writer.WriteEndElement();
         }
+		
+		#endregion
     }
 }

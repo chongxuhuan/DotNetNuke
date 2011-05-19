@@ -56,16 +56,48 @@ namespace DotNetNuke.UI.Skins.Controls
     public class SkinsEditControl : EditControl, IPostBackEventHandler
     {
         private string _AddedItem = Null.NullString;
+		
+		#region "Constructors"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a SkinsEditControl
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public SkinsEditControl()
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a SkinsEditControl
+        /// </summary>
+        /// <param name="type">The type of the property</param>
+        /// <history>
+        ///     [cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public SkinsEditControl(string type)
         {
             SystemType = type;
         }
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DictionaryValue returns the Dictionary(Of Integer, String) representation of the Value
+        /// </summary>
+        /// <value>A Dictionary(Of Integer, String) representing the Value</value>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected Dictionary<int, string> DictionaryValue
         {
             get
@@ -78,6 +110,15 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldDictionaryValue returns the Dictionary(Of Integer, String) representation of the OldValue
+        /// </summary>
+        /// <value>A Dictionary(Of Integer, String) representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected Dictionary<int, string> OldDictionaryValue
         {
             get
@@ -90,6 +131,15 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldStringValue returns the String representation of the OldValue
+        /// </summary>
+        /// <value>A String representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string OldStringValue
         {
             get
@@ -106,6 +156,15 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StringValue is the value of the control expressed as a String
+        /// </summary>
+        /// <value>A string representing the Value</value>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string StringValue
         {
             get
@@ -164,7 +223,20 @@ namespace DotNetNuke.UI.Skins.Controls
         }
 
         #endregion
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnDataChanged runs when the PostbackData has changed.  It raises the ValueChanged
+        /// Event
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnDataChanged(EventArgs e)
         {
             var args = new PropertyEditorEventArgs(Name);
@@ -175,12 +247,31 @@ namespace DotNetNuke.UI.Skins.Controls
             base.OnValueChanged(args);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnPreRender runs just before the control is due to be rendered
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
+            //Register control for PostBack
             Page.RegisterRequiresPostBack(this);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/05/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             int length = Null.NullInteger;
@@ -200,15 +291,23 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 foreach (KeyValuePair<int, string> kvp in DictionaryValue)
                 {
+					//Render Hyperlink
                     writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink(this, "Delete_" + kvp.Key, false));
                     writer.AddAttribute(HtmlTextWriterAttribute.Onclick, "javascript:return confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("DeleteItem")) + "');");
                     writer.AddAttribute(HtmlTextWriterAttribute.Title, Localization.GetString("cmdDelete", LocalResourceFile));
                     writer.RenderBeginTag(HtmlTextWriterTag.A);
+
+                    //Render Image
                     writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl("~/images/delete.gif"));
                     writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
                     writer.RenderBeginTag(HtmlTextWriterTag.Img);
+
+                    //Render end of Image
                     writer.RenderEndTag();
+
+                    //Render end of Hyperlink
                     writer.RenderEndTag();
+
                     ControlStyle.AddAttributesToRender(writer);
                     writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
                     writer.AddAttribute(HtmlTextWriterAttribute.Value, kvp.Value);
@@ -219,17 +318,28 @@ namespace DotNetNuke.UI.Skins.Controls
                     writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + "_skin" + kvp.Key);
                     writer.RenderBeginTag(HtmlTextWriterTag.Input);
                     writer.RenderEndTag();
+
                     writer.WriteBreak();
                 }
                 writer.WriteBreak();
+
+                //Create Add Row
+                //Render Hyperlink
                 writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink(this, "Add", false));
                 writer.AddAttribute(HtmlTextWriterAttribute.Title, Localization.GetString("cmdAdd", LocalResourceFile));
                 writer.RenderBeginTag(HtmlTextWriterTag.A);
+
+                //Render Image
                 writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl("~/images/add.gif"));
                 writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
                 writer.RenderBeginTag(HtmlTextWriterTag.Img);
+
+                //Render end of Image
                 writer.RenderEndTag();
+
+                //Render end of Hyperlink
                 writer.RenderEndTag();
+
                 ControlStyle.AddAttributesToRender(writer);
                 writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
                 writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
@@ -244,6 +354,15 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderViewMode renders the View (readonly) mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderViewMode(HtmlTextWriter writer)
         {
             if (DictionaryValue != null)
@@ -258,6 +377,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
             }
         }
+		
+		#endregion
 
         public override bool LoadPostData(string postDataKey, NameValueCollection postCollection)
         {

@@ -50,8 +50,14 @@ namespace DotNetNuke.UI.Containers
     /// -----------------------------------------------------------------------------
     public class ActionCommandButton : CommandButton, IActionControl
     {
+		#region "Private Members"
+
         private ActionManager _ActionManager;
         private ModuleAction _ModuleAction;
+
+		#endregion
+
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -82,6 +88,15 @@ namespace DotNetNuke.UI.Containers
 
         public event ActionEventHandler Action;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ActionManager instance for this Action control
+        /// </summary>
+        /// <returns>An ActionManager object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public ActionManager ActionManager
         {
             get
@@ -94,17 +109,49 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ModuleControl instance for this Action control
+        /// </summary>
+        /// <returns>An IModuleControl object</returns>
+        /// <history>
+        /// 	[cnurse]	12/15/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public IModuleControl ModuleControl { get; set; }
 
         #endregion
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateChildControls builds the control tree
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void CreateChildControls()
         {
+			//Call base class method to ensure Control Tree is built
             base.CreateChildControls();
+
+            //Set Causes Validation and Enables ViewState to false
             CausesValidation = false;
             EnableViewState = false;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnAction raises the Action Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void OnAction(ActionEventArgs e)
         {
             if (Action != null)
@@ -113,6 +160,14 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnButtonClick runs when the underlying CommandButton is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnButtonClick(EventArgs e)
         {
             base.OnButtonClick(e);
@@ -122,13 +177,23 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnPreRender runs when just before the Render phase of the Page Lifecycle
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/23/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
             if (ModuleAction != null && ActionManager.IsVisible(ModuleAction))
             {
                 Text = ModuleAction.Title;
                 CommandArgument = ModuleAction.ID.ToString();
+
                 if (DisplayIcon && (!string.IsNullOrEmpty(ModuleAction.Icon) || !string.IsNullOrEmpty(ImageUrl)))
                 {
                     if (!string.IsNullOrEmpty(ImageUrl))
@@ -154,5 +219,7 @@ namespace DotNetNuke.UI.Containers
                 Visible = false;
             }
         }
+		
+		#endregion
     }
 }

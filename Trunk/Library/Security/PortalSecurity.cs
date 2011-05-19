@@ -71,6 +71,8 @@ namespace DotNetNuke.Security
         }
 
         #endregion
+		
+		#region "Private Methods"
 
         ///-----------------------------------------------------------------------------
         /// <summary>
@@ -89,6 +91,7 @@ namespace DotNetNuke.Security
         ///-----------------------------------------------------------------------------
         private string FilterStrings(string strInput)
         {
+			//setup up list of search terms as items may be used twice
             string TempInput = strInput;
             var listStrings = new List<string>();
             listStrings.Add("<script[^>]*>.*?</script[^><]*>");
@@ -111,15 +114,21 @@ namespace DotNetNuke.Security
             listStrings.Add("javascript:");
             listStrings.Add("vbscript:");
             listStrings.Add("alert[\\s(&nbsp;)]*\\([\\s(&nbsp;)]*'?[\\s(&nbsp;)]*[\"(&quot;)]?");
+
             RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
             string strReplacement = " ";
+
+            //check if text contains encoded angle brackets, if it does it we decode it to check the plain text
             if (TempInput.Contains("&gt;") && TempInput.Contains("&lt;"))
             {
+				//text is encoded, so decode and try again
                 TempInput = HttpContext.Current.Server.HtmlDecode(TempInput);
                 foreach (string s in listStrings)
                 {
                     TempInput = Regex.Replace(TempInput, s, strReplacement, options);
                 }
+				
+                //Re-encode
                 TempInput = HttpContext.Current.Server.HtmlEncode(TempInput);
             }
             else
@@ -235,6 +244,10 @@ namespace DotNetNuke.Security
             string strPattern = "<[^<>]*>";
             return Regex.IsMatch(strInput, strPattern, options);
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
         ///-----------------------------------------------------------------------------
         /// <summary>
@@ -288,6 +301,7 @@ namespace DotNetNuke.Security
             string strValue = "";
             if (!String.IsNullOrEmpty(strKey))
             {
+				//convert key to 16 characters for simplicity
                 if (strKey.Length < 16)
                 {
                     strKey = strKey + "XXXXXXXXXXXXXXXX".Substring(0, 16 - strKey.Length);
@@ -296,14 +310,18 @@ namespace DotNetNuke.Security
                 {
                     strKey = strKey.Substring(0, 16);
                 }
+				
+                //create encryption keys
                 byte[] byteKey = Encoding.UTF8.GetBytes(strKey.Substring(0, 8));
                 byte[] byteVector = Encoding.UTF8.GetBytes(strKey.Substring(strKey.Length - 8, 8));
+
+                //convert data to byte array and Base64 decode
                 var byteData = new byte[strData.Length];
                 try
                 {
                     byteData = Convert.FromBase64String(strData);
                 }
-                catch
+                catch //invalid length
                 {
                     strValue = strData;
                 }
@@ -311,15 +329,18 @@ namespace DotNetNuke.Security
                 {
                     try
                     {
+						//decrypt
                         var objDES = new DESCryptoServiceProvider();
                         var objMemoryStream = new MemoryStream();
                         var objCryptoStream = new CryptoStream(objMemoryStream, objDES.CreateDecryptor(byteKey, byteVector), CryptoStreamMode.Write);
                         objCryptoStream.Write(byteData, 0, byteData.Length);
                         objCryptoStream.FlushFinalBlock();
+
+                        //convert to string
                         Encoding objEncoding = Encoding.UTF8;
                         strValue = objEncoding.GetString(objMemoryStream.ToArray());
                     }
-                    catch
+                    catch //decryption error
                     {
                         strValue = "";
                     }
@@ -337,6 +358,7 @@ namespace DotNetNuke.Security
             string strValue = "";
             if (!String.IsNullOrEmpty(strKey))
             {
+                //convert key to 16 characters for simplicity
                 if (strKey.Length < 16)
                 {
                     strKey = strKey + "XXXXXXXXXXXXXXXX".Substring(0, 16 - strKey.Length);
@@ -345,14 +367,22 @@ namespace DotNetNuke.Security
                 {
                     strKey = strKey.Substring(0, 16);
                 }
+				
+                //create encryption keys
                 byte[] byteKey = Encoding.UTF8.GetBytes(strKey.Substring(0, 8));
                 byte[] byteVector = Encoding.UTF8.GetBytes(strKey.Substring(strKey.Length - 8, 8));
+
+                //convert data to byte array
                 byte[] byteData = Encoding.UTF8.GetBytes(strData);
+
+                //encrypt 
                 var objDES = new DESCryptoServiceProvider();
                 var objMemoryStream = new MemoryStream();
                 var objCryptoStream = new CryptoStream(objMemoryStream, objDES.CreateEncryptor(byteKey, byteVector), CryptoStreamMode.Write);
                 objCryptoStream.Write(byteData, 0, byteData.Length);
                 objCryptoStream.FlushFinalBlock();
+
+                //convert to string and Base64 encode
                 strValue = Convert.ToBase64String(objMemoryStream.ToArray());
             }
             else
@@ -420,16 +450,28 @@ namespace DotNetNuke.Security
 
         public void SignOut()
         {
+			//Log User Off from Cookie Authentication System
             FormsAuthentication.SignOut();
+
+            //remove language cookie
             HttpContext.Current.Response.Cookies["language"].Value = "";
+
+            //remove authentication type cookie
             HttpContext.Current.Response.Cookies["authentication"].Value = "";
+
+            //expire cookies
             HttpContext.Current.Response.Cookies["portalaliasid"].Value = null;
             HttpContext.Current.Response.Cookies["portalaliasid"].Path = "/";
             HttpContext.Current.Response.Cookies["portalaliasid"].Expires = DateTime.Now.AddYears(-30);
+
             HttpContext.Current.Response.Cookies["portalroles"].Value = null;
             HttpContext.Current.Response.Cookies["portalroles"].Path = "/";
             HttpContext.Current.Response.Cookies["portalroles"].Expires = DateTime.Now.AddYears(-30);
         }
+		
+		#endregion
+		
+		#region "Public Shared/Static Methods"
 
         public static void ClearRoles()
         {
@@ -440,10 +482,14 @@ namespace DotNetNuke.Security
 
         public static void ForceSecureConnection()
         {
+			//get current url
             string URL = HttpContext.Current.Request.Url.ToString();
+			//if unsecure connection
             if (URL.StartsWith("http://"))
             {
+				//switch to secure connection
                 URL = URL.Replace("http://", "https://");
+                //append ssl parameter to querystring to indicate secure connection processing has already occurred
                 if (URL.IndexOf("?") == -1)
                 {
                     URL = URL + "?ssl=1";
@@ -452,6 +498,7 @@ namespace DotNetNuke.Security
                 {
                     URL = URL + "&ssl=1";
                 }
+                //redirect to secure connection
                 HttpContext.Current.Response.Redirect(URL, true);
             }
         }
@@ -473,18 +520,25 @@ namespace DotNetNuke.Security
         public static bool IsInRoles(string roles)
         {
             UserInfo objUserInfo = UserController.GetCurrentUserInfo();
+
+            //super user always has full access
             bool blnIsInRoles = objUserInfo.IsSuperUser;
+
             if (!blnIsInRoles)
             {
                 if (roles != null)
                 {
                     HttpContext context = HttpContext.Current;
+
+                    //permissions strings are encoded with Deny permissions at the beginning and Grant permissions at the end for optimal performance
                     foreach (string role in roles.Split(new[] {';'}))
                     {
                         if (!string.IsNullOrEmpty(role))
                         {
+							//Deny permission
                             if (role.StartsWith("!"))
                             {
+                                //Portal Admin cannot be denied from his/her portal (so ignore deny permissions if user is portal admin)
                                 PortalSettings settings = PortalController.GetCurrentPortalSettings();
                                 if (!(settings.PortalId == objUserInfo.PortalID && settings.AdministratorId == objUserInfo.UserID))
                                 {
@@ -497,7 +551,7 @@ namespace DotNetNuke.Security
                                     }
                                 }
                             }
-                            else
+                            else //Grant permission
                             {
                                 if (((context.Request.IsAuthenticated == false && role == Globals.glbRoleUnauthUserName) || role == Globals.glbRoleAllUsersName || objUserInfo.IsInRole(role)))
                                 {
@@ -511,6 +565,10 @@ namespace DotNetNuke.Security
             }
             return blnIsInRoles;
         }
+		
+		#endregion
+		
+		#region "Obsoleted Methods, retained for Binary Compatability"
 
         [Obsolete("Deprecated in DNN 5.0.  Please use HasModuleAccess(SecurityAccessLevel.Edit, PortalSettings, ModuleInfo, Username)")]
         public static bool HasEditPermissions(int ModuleId)
@@ -568,5 +626,7 @@ namespace DotNetNuke.Security
             }
             return UserId;
         }
+		
+		#endregion
     }
 }

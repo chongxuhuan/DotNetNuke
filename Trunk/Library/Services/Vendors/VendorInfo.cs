@@ -32,330 +32,54 @@ namespace DotNetNuke.Services.Vendors
     [Serializable]
     public class VendorInfo
     {
-        private bool _Authorized;
-        private int _Banners;
-        private string _Cell;
-        private string _City;
-        private int _ClickThroughs;
-        private string _Country;
-        private string _CreatedByUser;
-        private DateTime _CreatedDate;
-        private string _Email;
-        private string _Fax;
-        private string _FirstName;
-        private string _KeyWords;
-        private string _LastName;
-        private string _LogoFile;
-        private int _PortalId;
-        private string _PostalCode;
-        private string _Region;
-        private string _Street;
-        private string _Telephone;
-        private string _Unit;
-        private string _UserName;
-        private int _VendorId;
-        private string _VendorName;
-        private int _Views;
-        private string _Website;
+        public int VendorId { get; set; }
 
-        public int VendorId
-        {
-            get
-            {
-                return _VendorId;
-            }
-            set
-            {
-                _VendorId = value;
-            }
-        }
+        public string VendorName { get; set; }
 
-        public string VendorName
-        {
-            get
-            {
-                return _VendorName;
-            }
-            set
-            {
-                _VendorName = value;
-            }
-        }
+        public string Street { get; set; }
 
-        public string Street
-        {
-            get
-            {
-                return _Street;
-            }
-            set
-            {
-                _Street = value;
-            }
-        }
+        public string City { get; set; }
 
-        public string City
-        {
-            get
-            {
-                return _City;
-            }
-            set
-            {
-                _City = value;
-            }
-        }
+        public string Region { get; set; }
 
-        public string Region
-        {
-            get
-            {
-                return _Region;
-            }
-            set
-            {
-                _Region = value;
-            }
-        }
+        public string Country { get; set; }
 
-        public string Country
-        {
-            get
-            {
-                return _Country;
-            }
-            set
-            {
-                _Country = value;
-            }
-        }
+        public string PostalCode { get; set; }
 
-        public string PostalCode
-        {
-            get
-            {
-                return _PostalCode;
-            }
-            set
-            {
-                _PostalCode = value;
-            }
-        }
+        public string Telephone { get; set; }
 
-        public string Telephone
-        {
-            get
-            {
-                return _Telephone;
-            }
-            set
-            {
-                _Telephone = value;
-            }
-        }
+        public int PortalId { get; set; }
 
-        public int PortalId
-        {
-            get
-            {
-                return _PortalId;
-            }
-            set
-            {
-                _PortalId = value;
-            }
-        }
+        public string Fax { get; set; }
 
-        public string Fax
-        {
-            get
-            {
-                return _Fax;
-            }
-            set
-            {
-                _Fax = value;
-            }
-        }
+        public string Cell { get; set; }
 
-        public string Cell
-        {
-            get
-            {
-                return _Cell;
-            }
-            set
-            {
-                _Cell = value;
-            }
-        }
+        public string Email { get; set; }
 
-        public string Email
-        {
-            get
-            {
-                return _Email;
-            }
-            set
-            {
-                _Email = value;
-            }
-        }
+        public string Website { get; set; }
 
-        public string Website
-        {
-            get
-            {
-                return _Website;
-            }
-            set
-            {
-                _Website = value;
-            }
-        }
+        public int ClickThroughs { get; set; }
 
-        public int ClickThroughs
-        {
-            get
-            {
-                return _ClickThroughs;
-            }
-            set
-            {
-                _ClickThroughs = value;
-            }
-        }
+        public int Views { get; set; }
 
-        public int Views
-        {
-            get
-            {
-                return _Views;
-            }
-            set
-            {
-                _Views = value;
-            }
-        }
+        public string CreatedByUser { get; set; }
 
-        public string CreatedByUser
-        {
-            get
-            {
-                return _CreatedByUser;
-            }
-            set
-            {
-                _CreatedByUser = value;
-            }
-        }
+        public DateTime CreatedDate { get; set; }
 
-        public DateTime CreatedDate
-        {
-            get
-            {
-                return _CreatedDate;
-            }
-            set
-            {
-                _CreatedDate = value;
-            }
-        }
+        public string LogoFile { get; set; }
 
-        public string LogoFile
-        {
-            get
-            {
-                return _LogoFile;
-            }
-            set
-            {
-                _LogoFile = value;
-            }
-        }
+        public string KeyWords { get; set; }
 
-        public string KeyWords
-        {
-            get
-            {
-                return _KeyWords;
-            }
-            set
-            {
-                _KeyWords = value;
-            }
-        }
+        public string Unit { get; set; }
 
-        public string Unit
-        {
-            get
-            {
-                return _Unit;
-            }
-            set
-            {
-                _Unit = value;
-            }
-        }
+        public bool Authorized { get; set; }
 
-        public bool Authorized
-        {
-            get
-            {
-                return _Authorized;
-            }
-            set
-            {
-                _Authorized = value;
-            }
-        }
+        public string FirstName { get; set; }
 
-        public string FirstName
-        {
-            get
-            {
-                return _FirstName;
-            }
-            set
-            {
-                _FirstName = value;
-            }
-        }
+        public string LastName { get; set; }
 
-        public string LastName
-        {
-            get
-            {
-                return _LastName;
-            }
-            set
-            {
-                _LastName = value;
-            }
-        }
+        public int Banners { get; set; }
 
-        public int Banners
-        {
-            get
-            {
-                return _Banners;
-            }
-            set
-            {
-                _Banners = value;
-            }
-        }
-
-        public string UserName
-        {
-            get
-            {
-                return _UserName;
-            }
-            set
-            {
-                _UserName = value;
-            }
-        }
+        public string UserName { get; set; }
     }
 }

@@ -9,3 +9,9 @@
 
 .dnnFormItem .lpwRadioButtons label {width:auto;}
 .dnnFormItem .lpwCheckBoxes label {width:auto;margin-left: 10px;}
+
+.dnnLanguageCombo {width:450px; float:left;}
+
+.dnnFormItem .dnnLanguageCombo label { width:auto; padding-right: 15px; padding-left:5px;}
+
+.dnnFormItem label {width: 30%;}

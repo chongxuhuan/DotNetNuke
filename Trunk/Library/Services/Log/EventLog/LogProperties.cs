@@ -37,6 +37,8 @@ namespace DotNetNuke.Services.Log.EventLog
 {
     public class LogProperties : ArrayList
     {
+		#region "Public Properties"
+		
         public string Summary
         {
             get
@@ -49,6 +51,10 @@ namespace DotNetNuke.Services.Log.EventLog
                 return summary;
             }
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public void Deserialize(string content)
         {
@@ -68,9 +74,16 @@ namespace DotNetNuke.Services.Log.EventLog
             do
             {
                 reader.ReadStartElement("LogProperty");
+
+                //Create new LogDetailInfo object
                 var logDetail = new LogDetailInfo();
+
+                //Load it from the Xml
                 logDetail.ReadXml(reader);
+
+                //Add to the collection
                 Add(logDetail);
+
             } while (reader.ReadToNextSibling("LogProperty"));
         }
 
@@ -105,5 +118,7 @@ namespace DotNetNuke.Services.Log.EventLog
             }
             writer.WriteEndElement();
         }
+		
+		#endregion
     }
 }

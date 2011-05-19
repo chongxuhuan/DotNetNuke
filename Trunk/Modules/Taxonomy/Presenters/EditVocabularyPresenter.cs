@@ -42,13 +42,14 @@ using DotNetNuke.Web.Validators;
 
 namespace DotNetNuke.Modules.Taxonomy.Presenters
 {
+
     public class EditVocabularyPresenter : ModulePresenter<IEditVocabularyView, EditVocabularyModel>
     {
-        private readonly ITermController _TermController;
 
-        private readonly IVocabularyController _VocabularyController;
+        private readonly ITermController _termController;
+        private readonly IVocabularyController _vocabularyController;
 
-        #region "Constructors"
+        #region Constructors
 
         public EditVocabularyPresenter(IEditVocabularyView editView) : this(editView, new VocabularyController(new DataService()), new TermController(new DataService()))
         {
@@ -59,11 +60,10 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             Requires.NotNull("vocabularyController", vocabularyController);
             Requires.NotNull("termController", termController);
 
-            _VocabularyController = vocabularyController;
-            _TermController = termController;
+            _vocabularyController = vocabularyController;
+            _termController = termController;
 
             View.AddTerm += AddTerm;
-            View.Cancel += Cancel;
             View.CancelTerm += CancelTerm;
             View.Delete += DeleteVocabulary;
             View.DeleteTerm += DeleteTerm;
@@ -74,21 +74,21 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public bool IsDeleteEnabled
         {
             get
             {
-                bool _isEnabled = IsEditEnabled;
-                if (_isEnabled)
+                var isEnabled = IsEditEnabled;
+                if (isEnabled)
                 {
                     if (View.Model != null && View.Model.Vocabulary != null && View.Model.Vocabulary.IsSystem)
                     {
-                        _isEnabled = Null.NullBoolean;
+                        isEnabled = Null.NullBoolean;
                     }
                 }
-                return _isEnabled;
+                return isEnabled;
             }
         }
 
@@ -96,16 +96,16 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                bool _isEnabled = IsSuperUser;
-                if (!_isEnabled)
+                var isEnabled = IsSuperUser;
+                if (!isEnabled)
                 {
                     //Check Portal Scope
                     if (View.Model != null && View.Model.Vocabulary != null && View.Model.Vocabulary.ScopeType != null)
                     {
-                        _isEnabled = String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", false) == 0;
+                        isEnabled = String.Compare(View.Model.Vocabulary.ScopeType.ScopeType, "Portal", false) == 0;
                     }
                 }
-                return _isEnabled;
+                return isEnabled;
             }
         }
 
@@ -113,12 +113,12 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                bool _IsHeirarchical = Null.NullBoolean;
+                var isHeirarchical = Null.NullBoolean;
                 if (View.Model.Vocabulary != null)
                 {
-                    _IsHeirarchical = (View.Model.Vocabulary.Type == VocabularyType.Hierarchy);
+                    isHeirarchical = (View.Model.Vocabulary.Type == VocabularyType.Hierarchy);
                 }
-                return _IsHeirarchical;
+                return isHeirarchical;
             }
         }
 
@@ -126,7 +126,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                return _TermController;
+                return _termController;
             }
         }
 
@@ -134,7 +134,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                return _VocabularyController;
+                return _vocabularyController;
             }
         }
 
@@ -142,36 +142,31 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         {
             get
             {
-                int _VocabularyId = Null.NullInteger;
+                var vocabularyId = Null.NullInteger;
                 if (!string.IsNullOrEmpty(Request.Params["VocabularyId"]))
                 {
-                    _VocabularyId = Int32.Parse(Request.Params["VocabularyId"]);
+                    vocabularyId = Int32.Parse(Request.Params["VocabularyId"]);
                 }
-                return _VocabularyId;
+                return vocabularyId;
             }
         }
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private void RefreshTerms()
         {
-            //Refresh Terms
             View.Model.Terms = TermController.GetTermsByVocabulary(VocabularyId).ToList();
             View.BindTerms(View.Model.Terms, IsHeirarchical, true);
-
-            //Clear Selected Term
             View.Model.Term = null;
             View.ClearSelectedTerm();
-
-            //Hide Term Editor
             View.ShowTermEditor(false);
         }
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         protected override void OnInit()
         {
@@ -187,62 +182,40 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         protected override void OnLoad()
         {
             base.OnLoad();
-            //Bind Vocabulary to View
-            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsDeleteEnabled, IsSuperUser);
 
-            //Bind Terms to View
+            View.Model.CancelUrl = Globals.NavigateURL(TabId);
+            View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsDeleteEnabled, IsSuperUser);
             View.BindTerms(View.Model.Terms, IsHeirarchical, !IsPostBack);
         }
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         public void AddTerm(object sender, EventArgs e)
         {
-            //Set term to be a new term
             View.Model.Term = new Term(View.Model.Vocabulary.VocabularyId);
-
-            //Bind Term
             View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, false, IsEditEnabled);
-
-            //Display Term Editor
             View.ShowTermEditor(true);
-
-            //Set Term Editor's mode
             View.SetTermEditorMode(true, Null.NullInteger);
-        }
-
-        public void Cancel(object sender, EventArgs e)
-        {
-            Response.Redirect(Globals.NavigateURL(TabId));
         }
 
         public void CancelTerm(object sender, EventArgs e)
         {
-            //Clear Selected Term
             View.Model.Term = null;
             View.ClearSelectedTerm();
-
-            //Hide Term Editor
             View.ShowTermEditor(false);
         }
 
         public void DeleteTerm(object sender, EventArgs e)
         {
-            //Delete Term
             TermController.DeleteTerm(View.Model.Term);
-
-            //Refresh Terms
             RefreshTerms();
         }
 
         public void DeleteVocabulary(object sender, EventArgs e)
         {
-            //Delete Vocabulary
             VocabularyController.DeleteVocabulary(View.Model.Vocabulary);
-
-            //Redirect to List
             Response.Redirect(Globals.NavigateURL(TabId));
         }
 
@@ -251,22 +224,18 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             //First Bind the term so we can get the current values from the View
             View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, true, IsEditEnabled);
 
-            ValidationResult result = Validator.ValidateObject(View.Model.Term);
+            var result = Validator.ValidateObject(View.Model.Term);
             if (result.IsValid)
             {
-                //Save Term
                 if (View.Model.Term.TermId == Null.NullInteger)
                 {
-                    //Add
                     TermController.AddTerm(View.Model.Term);
                 }
                 else
                 {
-                    //Update
                     TermController.UpdateTerm(View.Model.Term);
                 }
 
-                //Refresh Terms
                 RefreshTerms();
             }
             else
@@ -277,16 +246,12 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
 
         public void SaveVocabulary(object sender, EventArgs e)
         {
-            //Bind Vocabulary to View
             View.BindVocabulary(View.Model.Vocabulary, IsEditEnabled, IsDeleteEnabled, IsSuperUser);
 
-            ValidationResult result = Validator.ValidateObject(View.Model.Vocabulary);
+            var result = Validator.ValidateObject(View.Model.Vocabulary);
             if (result.IsValid)
             {
-                //Save Vocabulary
                 VocabularyController.UpdateVocabulary(View.Model.Vocabulary);
-
-                //Redirect to Vocabulary List
                 Response.Redirect(Globals.NavigateURL(TabId));
             }
             else
@@ -298,17 +263,12 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
         public void SelectTerm(object sender, TermsEventArgs e)
         {
             View.Model.Term = e.SelectedTerm;
-
-            //Bind Term
             View.BindTerm(View.Model.Term, View.Model.Terms, IsHeirarchical, false, IsEditEnabled);
-
-            //Display Term Editor
             View.ShowTermEditor(true);
-
-            //Set Term Editor's mode
             View.SetTermEditorMode(false, View.Model.Term.TermId);
         }
 
         #endregion
+
     }
 }

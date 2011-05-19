@@ -65,18 +65,39 @@ namespace DotNetNuke.UI.WebControls
 
         public EditorInfo CreateEditControl()
         {
+
             var info = (SettingInfo) DataMember;
             var editInfo = new EditorInfo();
+
+            //Get the Name of the property
             editInfo.Name = info.Name;
-            editInfo.Category = string.Empty;
+
+			editInfo.Category = string.Empty;
+
+            //Get Value Field
             editInfo.Value = info.Value;
+
+            //Get the type of the property
             editInfo.Type = info.Type.AssemblyQualifiedName;
+
+            //Get Editor Field
             editInfo.Editor = info.Editor;
+
+            //Get LabelMode Field
             editInfo.LabelMode = LabelMode.Left;
+
+            //Get Required Field
             editInfo.Required = false;
+
+            //Set ResourceKey Field
             editInfo.ResourceKey = editInfo.Name;
+
+            //Get Style
             editInfo.ControlStyle = new Style();
+
+            //Get Validation Expression Field
             editInfo.ValidationExpression = string.Empty;
+
             return editInfo;
         }
 
@@ -89,13 +110,16 @@ namespace DotNetNuke.UI.WebControls
             object newValue = e.Value;
             object stringValue = e.StringValue;
             bool _IsDirty = Null.NullBoolean;
+
             var settings = (Hashtable) DataSource;
             IDictionaryEnumerator settingsEnumerator = settings.GetEnumerator();
             while (settingsEnumerator.MoveNext())
             {
                 key = Convert.ToString(settingsEnumerator.Key);
+                //Do we have the item in the Hashtable being changed
                 if (key == name)
                 {
+					//Set the Value property to the new value
                     if ((!(ReferenceEquals(newValue, oldValue))) || changed)
                     {
                         settings[key] = newValue;

@@ -66,6 +66,12 @@ namespace DotNetNuke.Framework
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the HostSetting for the URL of the hosted version of the jQuery script.
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks>This is a simple wrapper around the Host.jQueryUrl property</remarks>
         public static string HostedUrl
         {
             get
@@ -74,6 +80,12 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// <summary>
+        /// Gets the HostSetting for the URL of the hosted version of the jQuery UI script.
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks>This is a simple wrapper around the Host.jQueryUIUrl property</remarks>
         public static string HostedUIUrl
         {
             get
@@ -99,6 +111,13 @@ namespace DotNetNuke.Framework
             }
         }
 
+		/// <summary>
+        /// Checks whether the jQuery UI core script file exists locally.
+        /// </summary>
+        /// <remarks>
+        /// This property checks for both the minified version and the full uncompressed version of jQuery UI.
+        /// These files should exist in the /Resources/Shared/Scripts/jquery directory.
+        /// </remarks>
         public static bool IsUIInstalled
         {
             get
@@ -160,6 +179,15 @@ namespace DotNetNuke.Framework
             }
         }
 
+		/// <summary>
+        /// Gets the version string for the local jQuery script
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks>
+        /// This only evaluates the version in the full jQuery file and assumes that the minified script
+        /// is the same version as the full script.
+        /// </remarks>
         public static string Version
         {
             get
@@ -191,6 +219,15 @@ namespace DotNetNuke.Framework
             }
         }
 
+		/// <summary>
+        /// Gets the version string for the local jQuery UI script
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks>
+        /// This only evaluates the version in the full jQuery UI file and assumes that the minified script
+        /// is the same version as the full script.
+        /// </remarks>
         public static string UIVersion
         {
             get

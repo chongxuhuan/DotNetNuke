@@ -3,14 +3,8 @@
 //  add support for minDnnVersion filtering
 //  finalized support for TagCloud/Type filtering
 
-
-
-Gallery.isDebug = !(typeof console == 'undefined');
-Gallery.log = function () {
-    if (Gallery.isDebug) {
-        for (var i in arguments) console.log(arguments[i]);
-    }
-}
+if (typeof dnn === 'undefined') dnn = {};
+if (!dnn.log) dnn.log = function () { for (var a in arguments) { if (console) console.log(arguments[a]); } }
 
 function Gallery(params) {
 
@@ -40,6 +34,8 @@ function Gallery(params) {
         , ExtensionServiceName: "/Extensions"
         , TagsServiceName: "/Tags"
         , TagCloudServiceName: "/GetTagCloudData"
+        , CatalogServiceName: "/Catalogs"
+        , ExtensionSearchName: "/SearchExtensions"
         , extensionDetailDialog: $("#extensionDetail").dialog(this.DefaultDialogOptions)
         , loading: $("#loading")
         , NameTextASC: "Name: A-Z"
@@ -59,7 +55,6 @@ function Gallery(params) {
         , loadingLabel: "Loading..."
         , badCharacters: /[^a-zA-Z 0-9]+/g
         , searchText: ""
-        , versionImages: ["DNN-00.png", "DNN-01.png", "DNN-02.png", "DNN-03.png", "DNN-04.png", "DNN-05.png", "DNN-06.png", ]
     };
     //extend defaults with ctor params
     if (params) {
@@ -85,7 +80,8 @@ function Gallery(params) {
     this.ExtensionsUrl = this.getServiceUrl(this.ExtensionServiceName);
     this.TagCloudUrl = this.getServiceUrl(this.TagCloudServiceName);
     this.TagsUrl = this.getServiceUrl(this.TagsServiceName);
-
+    this.CatalogsUrl = this.getServiceUrl(this.CatalogServiceName);
+    this.SearchUrl = this.getServiceUrl(this.ExtensionSearchName);
     this.Cache = new Cache("_Gallery_", this.CacheTimeoutMinutes);
 
     //bind to our document events
@@ -441,7 +437,7 @@ Gallery.prototype.getExtensions = function (callback) {
             return;
         }
     }
-    Gallery.log(url);
+    dnn.log(url);
     this.showLoading();
     this.eXHR = $.ajax({
         type: "GET",
@@ -455,18 +451,22 @@ Gallery.prototype.getExtensions = function (callback) {
     });
     this.eXHR.url = url;
 }
-
+Gallery.prototype.getCatalog = function (id) {
+    for (var i in this.cats.d) {
+        if (this.cats.d[i].catalogID == id) return this.cats.d[i];
+    }
+    return null;
+}
 Gallery.gotExtensions = function () {
 
     var msg = arguments[0];
-
     var g = _gallery;
 
     ////TODO: MOCK DATA  --- REMOVED FOR PROD    
     if (msg && msg.d && msg.d.results) {
         for (var i in msg.d.results) {
             var item = msg.d.results[i];
-            item.catalog = g.catalogs[Math.random.range(0, 1)];
+            item.catalog = g.getCatalog(item.catalogID);
         }
     }
 
@@ -490,11 +490,39 @@ Gallery.gotExtensions = function () {
 
 
     _gallery.showExtensions(function () {
-        if (_gallery.loadTags) {
-            _gallery.getTags();
-        }
     });
     _gallery.hideLoading();
+}
+Gallery.gotCatalogs = function (msg) {
+    var msg = arguments[0];
+    var g = _gallery;
+    g.cats = msg;
+
+    if (!_gallery.Cache.hasItem("catalogs")) _gallery.Cache.setItem("catalogs", msg);
+}
+Gallery.prototype.getCatalogs = function () {
+    var url = this.CatalogsUrl;
+    url = url + "?$callback=Gallery.gotCatalogs&$format=json";
+
+    var cats = this.Cache.getItem("catalogs");
+    if (cats) {
+        Gallery.gotCatalogs(cats);
+        return;
+    }
+    this.showLoading();
+
+    dnn.log(url);
+
+    this.tagXHR = $.ajax({
+        type: "GET",
+        crossDomain: true,
+        jsonp: false,
+        url: url,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+    }).error(function () {
+        _gallery.errorLoading(arguments);
+    });
 }
 
 Gallery.prototype.getTags = function (callback) {
@@ -513,7 +541,7 @@ Gallery.prototype.getTags = function (callback) {
     }
     this.showLoading();
 
-    Gallery.log(url);
+    dnn.log(url);
 
     this.tagXHR = $.ajax({
         type: "GET",

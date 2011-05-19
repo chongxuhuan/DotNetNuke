@@ -46,23 +46,67 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class LanguageComponentWriter : FileComponentWriter
     {
+		#region "Private Members"
+
         private readonly int _DependentPackageID;
         private readonly Locale _Language;
         private readonly LanguagePackType _PackageType;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs the LanguageComponentWriter
+        /// </summary>
+        /// <param name="language">Language Info.</param>
+        /// <param name="basePath">Base Path.</param>
+        /// <param name="files">A Dictionary of files</param>
+        /// <param name="package">Package Info.</param>
+        /// <history>
+        /// 	[cnurse]	02/08/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public LanguageComponentWriter(Locale language, string basePath, Dictionary<string, InstallFile> files, PackageInfo package) : base(basePath, files, package)
         {
             _Language = language;
             _PackageType = LanguagePackType.Core;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs the LanguageComponentWriter
+        /// </summary>
+        /// <param name="languagePack">Language Package info.</param>
+        /// <param name="basePath">Base Path.</param>
+        /// <param name="files">A Dictionary of files</param>
+        /// <param name="package">Package Info.</param>
+        /// <history>
+        /// 	[cnurse]	02/08/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public LanguageComponentWriter(LanguagePackInfo languagePack, string basePath, Dictionary<string, InstallFile> files, PackageInfo package) : base(basePath, files, package)
         {
             _Language = LocaleController.Instance.GetLocale(languagePack.LanguageID);
             _PackageType = languagePack.PackageType;
             _DependentPackageID = languagePack.DependentPackageID;
         }
+		
+		#endregion
 
+		#region "Protected Properties"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("languageFiles")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/08/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -71,6 +115,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Component Type ("CoreLanguage/ExtensionLanguage")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/08/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ComponentType
         {
             get
@@ -86,6 +139,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("languageFile")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/08/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get
@@ -94,8 +156,18 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The WriteCustomManifest method writes the custom manifest items
+        /// </summary>
+        /// <param name="writer">The Xmlwriter to use</param>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void WriteCustomManifest(XmlWriter writer)
         {
+			//Write language Elements
             writer.WriteElementString("code", _Language.Code);
             if (_PackageType == LanguagePackType.Core)
             {
@@ -108,5 +180,7 @@ namespace DotNetNuke.Services.Installer.Writers
                 writer.WriteElementString("package", package.Name);
             }
         }
+		
+		#endregion
     }
 }

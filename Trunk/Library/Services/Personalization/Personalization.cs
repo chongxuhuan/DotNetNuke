@@ -34,21 +34,36 @@ namespace DotNetNuke.Services.Personalization
 {
     public class Personalization
     {
+		#region "Private Methods"
+
         private static PersonalizationInfo LoadProfile()
         {
             HttpContext context = HttpContext.Current;
+
+            //First try and load Personalization object from the Context
             var objPersonalization = (PersonalizationInfo) context.Items["Personalization"];
+
+            //If the Personalization object is nothing load it and store it in the context for future calls
             if (objPersonalization == null)
             {
                 var _portalSettings = (PortalSettings) context.Items["PortalSettings"];
+
+                //load the user info object
                 UserInfo UserInfo = UserController.GetCurrentUserInfo();
+
+                //get the personalization object
                 var objPersonalizationController = new PersonalizationController();
                 objPersonalization = objPersonalizationController.LoadProfile(UserInfo.UserID, _portalSettings.PortalId);
+
+                //store it in the context
                 context.Items.Add("Personalization", objPersonalization);
             }
             return objPersonalization;
         }
+		
+		#endregion
 
+		#region "Public Shared Methods"
         public static object GetProfile(string NamingContainer, string Key)
         {
             return GetProfile(LoadProfile(), NamingContainer, Key);
@@ -93,5 +108,7 @@ namespace DotNetNuke.Services.Personalization
                 objPersonalization.IsModified = true;
             }
         }
+		
+		#endregion
     }
 }

@@ -426,4 +426,7 @@
   <data name="ExpandAll.Text" xml:space="preserve">
     <value>Expand All</value>
   </data>
+  <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
+    <value>Please select a container to preview.</value>
+  </data>
 </root>

@@ -48,6 +48,8 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class InstallerFactory
     {
+		#region "Public Shared Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The GetInstaller method instantiates the relevant Component Installer
@@ -112,10 +114,13 @@ namespace DotNetNuke.Services.Installer.Installers
                     installer = new WidgetInstaller();
                     break;
                 default:
+                    //Installer type is defined in the List
                     var listController = new ListController();
                     ListEntryInfo entry = listController.GetListEntryInfo("Installer", installerType);
+
                     if (entry != null && !string.IsNullOrEmpty(entry.Text))
                     {
+						//The class for the Installer is specified in the Text property
                         installer = (ComponentInstallerBase) Reflection.CreateObject(entry.Text, "Installer_" + entry.Value);
                     }
                     break;
@@ -123,15 +128,30 @@ namespace DotNetNuke.Services.Installer.Installers
             return installer;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The GetInstaller method instantiates the relevant Component Installer
+        /// </summary>
+        /// <param name="manifestNav">The manifest (XPathNavigator) for the component</param>
+        /// <param name="package">The associated PackageInfo instance</param>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static ComponentInstallerBase GetInstaller(XPathNavigator manifestNav, PackageInfo package)
         {
             string installerType = Util.ReadAttribute(manifestNav, "type");
             string componentVersion = Util.ReadAttribute(manifestNav, "version");
+
             ComponentInstallerBase installer = GetInstaller(installerType);
             if (installer != null)
             {
+                //Set package
                 installer.Package = package;
+
+                //Set type
                 installer.Type = installerType;
+
                 if (!string.IsNullOrEmpty(componentVersion))
                 {
                     installer.Version = new Version(componentVersion);
@@ -140,6 +160,8 @@ namespace DotNetNuke.Services.Installer.Installers
                 {
                     installer.Version = package.Version;
                 }
+				
+                //Read Manifest
                 if (package.InstallerInfo.InstallMode != InstallMode.ManifestOnly || installer.SupportsManifestOnlyInstall)
                 {
                     installer.ReadManifest(manifestNav);
@@ -147,5 +169,7 @@ namespace DotNetNuke.Services.Installer.Installers
             }
             return installer;
         }
+		
+		#endregion
     }
 }

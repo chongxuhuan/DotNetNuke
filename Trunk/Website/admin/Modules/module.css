@@ -1,8 +1,8 @@
 /* ===========   Module Settings Styling   =========== */
 
-.dnnModuleSettings{width:900px;margin:2em auto;}
-    .dnnModuleSettings div.msModuleSettings, .dnnModuleSettings div.msPermissions, .dnnModuleSettings div.msPageSettings, .dnnModuleSettings div.msSpecificSettings{padding:0;margin-top:2.5em;}
-	.dnnModuleSettings .dnnFormItem input[type="text"], .dnnModuleSettings .dnnFormItem .dnnFormInput, .dnnModuleSettings .dnnFormItem textarea{min-width:50%;}
+.dnnModuleSettings{width:100%;margin:2em auto;}
+    .dnnModuleSettings div.msModuleSettings, .dnnModuleSettings div.msPermissions, .dnnModuleSettings div.msPageSettings, .dnnModuleSettings div.msSpecificSettings{padding:0;}
+	.dnnModuleSettings .dnnFormItem input[type="text"], .dnnModuleSettings .dnnFormItem .dnnFormInput, .dnnModuleSettings .dnnFormItem textarea, .dnnExport .dnnFormItem input[type="text"], .dnnExport .dnnFormItem .dnnFormInput, .dnnExport .dnnFormItem textarea{width:50%;}
 .dnnFormInput.dnnHSRadioButtons{display:block;overflow:hidden;}
 	.mspsContent .dnnMSRadioButtons{display:block;overflow:hidden;float:left;padding:0;width:50%;}
 		.msPageSettings .dnnMSRadioButtons br, .msPageSettings .urlControlLinkType br {display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
@@ -15,10 +15,10 @@
 
 	.dnnFormItem input[type="checkbox"]{width:auto;}
 
-	.mspsContent .urlControl{width:70%;}
-	.mspsContent .urlControlLinkType{float:left;width:50%;}
+	.mspsContent .urlControl{overflow:hidden;}
+	.mspsContent .urlControlLinkType{float:left;width:100%;}
+		.mspsContent .urlControlLinkType .dnnFormLabel{float:left;width:auto;}
 	.mspsContent .urlControlFileRow a.dnnSecondaryAction{margin-left:25%;}
-	.mspsContent .urlControlLinkType input[type="radio"]{width:auto}
-	
+	.mspsContent .urlControlLinkType input[type="radio"]{width:auto;margin-right:5px;}
 
 /* ===========   End Module Settings Styling   =========== */

@@ -46,17 +46,32 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class LanguageInstaller : FileInstaller
     {
+		#region "Private Members"
+
         private readonly LanguagePackType LanguagePackType;
         private LanguagePackInfo InstalledLanguagePack;
         private Locale Language;
         private LanguagePackInfo LanguagePack;
         private Locale TempLanguage;
 
+		#endregion
         public LanguageInstaller(LanguagePackType type)
         {
             LanguagePackType = type;
         }
+		
+		
+		#region "Protected Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("languageFiles")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -65,6 +80,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("languageFile")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get
@@ -73,6 +97,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -80,12 +113,28 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "resx, xml";
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteLanguage method deletes the Language
+        /// from the data Store.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/11/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteLanguage()
         {
             try
             {
+				//Attempt to get the LanguagePack
                 LanguagePackInfo tempLanguagePack = LanguagePackController.GetLanguagePackByPackage(Package.PackageID);
+
+                //Attempt to get the Locale
                 Locale language = LocaleController.Instance.GetLocale(tempLanguagePack.LanguageID);
                 if (tempLanguagePack != null)
                 {
@@ -102,19 +151,45 @@ namespace DotNetNuke.Services.Installer.Installers
                 Log.AddFailure(ex);
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ProcessFile method determines what to do with parsed "file" node
+        /// </summary>
+        /// <param name="file">The file represented by the node</param>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void ProcessFile(InstallFile file, XPathNavigator nav)
         {
             base.ProcessFile(file, nav);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadCustomManifest method reads the custom manifest items
+        /// </summary>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <history>
+        /// 	[cnurse]	08/22/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void ReadCustomManifest(XPathNavigator nav)
         {
             Language = new Locale();
             LanguagePack = new LanguagePackInfo();
+
+            //Get the Skin name
             Language.Code = Util.ReadElement(nav, "code");
             Language.Text = Util.ReadElement(nav, "displayName");
             Language.Fallback = Util.ReadElement(nav, "fallback");
+
             if (LanguagePackType == LanguagePackType.Core)
             {
                 LanguagePack.DependentPackageID = -2;
@@ -125,22 +200,48 @@ namespace DotNetNuke.Services.Installer.Installers
                 PackageInfo package = PackageController.GetPackageByName(packageName);
                 LanguagePack.DependentPackageID = package.PackageID;
             }
+			
+            //Call base class
             base.ReadCustomManifest(nav);
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Commit method finalises the Install and commits any pending changes.
+        /// </summary>
+        /// <remarks>In the case of Modules this is not neccessary</remarks>
+        /// <history>
+        /// 	[cnurse]	01/15/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Commit()
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method installs the language component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/11/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Install()
         {
             try
             {
+				//Attempt to get the LanguagePack
                 InstalledLanguagePack = LanguagePackController.GetLanguagePackByPackage(Package.PackageID);
                 if (InstalledLanguagePack != null)
                 {
                     LanguagePack.LanguagePackID = InstalledLanguagePack.LanguagePackID;
                 }
+				
+                //Attempt to get the Locale
                 TempLanguage = LocaleController.Instance.GetLocale(Language.Code);
                 if (TempLanguage != null)
                 {
@@ -148,6 +249,7 @@ namespace DotNetNuke.Services.Installer.Installers
                 }
                 if (LanguagePack.PackageType == LanguagePackType.Core)
                 {
+					//Update language
                     Localization.Localization.SaveLanguage(Language);
                 }
                 PortalSettings _settings = PortalController.GetCurrentPortalSettings();
@@ -161,11 +263,18 @@ namespace DotNetNuke.Services.Installer.Installers
                     }
                 }
 
+                //Set properties for Language Pack
                 LanguagePack.PackageID = Package.PackageID;
                 LanguagePack.LanguageID = Language.LanguageId;
+
+                //Update LanguagePack
                 LanguagePackController.SaveLanguagePack(LanguagePack);
+
                 Log.AddInfo(string.Format(Util.LANGUAGE_Registered, Language.Text));
+
+                //install (copy the files) by calling the base class
                 base.Install();
+
                 Completed = true;
             }
             catch (Exception ex)
@@ -174,23 +283,48 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Rollback method undoes the installation of the component in the event 
+        /// that one of the other components fails
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/11/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Rollback()
         {
+			//If Temp Language exists then we need to update the DataStore with this 
             if (TempLanguage == null)
             {
+				//No Temp Language - Delete newly added Language
                 DeleteLanguage();
             }
             else
             {
+				//Temp Language - Rollback to Temp
                 Localization.Localization.SaveLanguage(TempLanguage);
             }
-            base.Rollback();
+            
+			//Call base class to prcoess files
+			base.Rollback();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the language component
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/11/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UnInstall()
         {
             DeleteLanguage();
+
+            //Call base class to prcoess files
             base.UnInstall();
         }
+		#endregion
     }
 }

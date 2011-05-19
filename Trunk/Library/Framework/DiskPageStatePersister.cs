@@ -48,10 +48,29 @@ namespace DotNetNuke.Framework
     /// -----------------------------------------------------------------------------
     public class DiskPageStatePersister : PageStatePersister
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Creates the DiskPageStatePersister
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	    11/30/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DiskPageStatePersister(Page page) : base(page)
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The CacheDirectory property is used to return the location of the "Cache"
+        /// Directory for the Portal
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 11/30/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CacheDirectory
         {
             get
@@ -60,6 +79,16 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The StateFileName property is used to store the FileName for the State
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 11/30/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string StateFileName
         {
             get
@@ -75,14 +104,28 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Loads the Page State from the Cache
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	    11/30/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Load()
         {
             StreamReader reader = null;
+			//Read the state string, using the StateFormatter.
             try
             {
                 reader = new StreamReader(StateFileName);
+
                 string serializedStatePair = reader.ReadToEnd();
+
                 IStateFormatter formatter = StateFormatter;
+
+            	//Deserialize returns the Pair object that is serialized in
+                //the Save method.      
                 var statePair = (Pair) formatter.Deserialize(serializedStatePair);
                 ViewState = statePair.First;
                 ControlState = statePair.Second;
@@ -96,8 +139,17 @@ namespace DotNetNuke.Framework
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Saves the Page State to the Cache
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	    11/30/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Save()
         {
+			//No processing needed if no states available
             if (ViewState == null && ControlState == null)
             {
                 return;
@@ -108,6 +160,8 @@ namespace DotNetNuke.Framework
                 {
                     Directory.CreateDirectory(CacheDirectory);
                 }
+				
+                //Write a state string, using the StateFormatter.
                 var writer = new StreamWriter(StateFileName, false);
                 IStateFormatter formatter = StateFormatter;
                 var statePair = new Pair(ViewState, ControlState);

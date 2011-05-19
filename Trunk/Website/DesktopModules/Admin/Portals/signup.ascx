@@ -9,7 +9,6 @@
     <fieldset>
         <asp:label id="lblInstructions" runat="server" />
         <div class="dnnFormItem">
-			<asp:label id="lblMessage" runat="server"></asp:label>
 			<asp:datalist id="lstResults" runat="server" cellspacing="0" borderwidth="0" visible="False" width="100%">
 				<headertemplate><asp:label id="lblValidationResults" runat="server" resourcekey="ValidationResults"/></headertemplate>
 				<itemtemplate><%# Container.DataItem %></itemtemplate>

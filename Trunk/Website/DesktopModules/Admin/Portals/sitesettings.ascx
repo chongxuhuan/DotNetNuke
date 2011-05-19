@@ -2,12 +2,10 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
-
 <div class="dnnForm dnnSiteSettings dnnClear" id="dnnSiteSettings">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#ssBasicSettings"><%=LocalizeString("BasicSettings") %></a></li>
@@ -20,7 +18,6 @@
         <div class="ssbsContent dnnClear">
             <h2 id="dnnSitePanel-SiteDetails" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("SiteDetails")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plPortalName" runat="server" ControlName="txtPortalName" />
                     <asp:TextBox ID="txtPortalName" CssClass="dnnFormRequired" runat="server" MaxLength="128" />
@@ -45,7 +42,6 @@
             </fieldset>
             <h2 id="dnnSitePanel-Marketing" class="dnnFormSectionHead"><a href=""><%=LocalizeString("Marketing")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plSearchEngine" runat="server" ControlName="cboSearchEngine" />
                     <asp:DropDownList ID="cboSearchEngine" runat="server" DataTextField="Key" DataValueField="Value" />
@@ -72,8 +68,7 @@
                 </div>
             </fieldset>
             <h2 id="dnnSitePanel-Appearance" class="dnnFormSectionHead"><a href=""><%=LocalizeString("Appearance")%></a></h2>
-            <fieldset>
-                <legend></legend>
+            <fieldset class="ssbsPortalAppearance">
                 <div class="dnnFormItem">
                     <dnn:Label ID="plLogo" runat="server" ControlName="ctlLogo" />
                     <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" ShowSecure="True" ShowDatabase="False" />
@@ -120,7 +115,6 @@
         <div class="ssasContent">
             <h2 id="dnnSitePanel-Pages" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Pages")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plSplashTabId" runat="server" ControlName="cboSplashTabId" />
                     <asp:DropDownList ID="cboSplashTabId" runat="server" DataTextField="IndentedTabName" DataValueField="TabId" />
@@ -152,7 +146,6 @@
             </fieldset>        
 	        <h2 id="dnnSitePanel-SecuritySettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SecuritySettings")%></a></h2>
             <fieldset class="ssasSecuritySettings">
-              <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plUserRegistration" runat="server" ControlName="optUserRegistration" />
                     <asp:RadioButtonList ID="optUserRegistration" CssClass="dnnSSRadioButtons" runat="server" EnableViewState="False" RepeatLayout="Flow">
@@ -173,7 +166,6 @@
             </fieldset>
             <h2 id="dnnSitePanel-Payment" class="dnnFormSectionHead"><a href=""><%=LocalizeString("Payment")%></a></h2>
             <fieldset>
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plCurrency" runat="server" ControlName="currencyCombo" />
                     <asp:DropDownList ID="currencyCombo" runat="server" DataTextField="text" DataValueField="value" />
@@ -206,7 +198,6 @@
             </fieldset>
             <h2 id="dnnSitePanel-Usability" class="dnnFormSectionHead"><a href=""><%=LocalizeString("Usability")%></a></h2>
             <fieldset class="ssasUsabilitySettings">
-                <legend></legend>
                 <div class="dnnFormItem">
                     <dnn:Label ID="enablePopUpsLabel" runat="server" ControlName="enablePopUpsCheckBox" />
                     <asp:CheckBox ID="enablePopUpsCheckBox" runat="server" />
@@ -244,7 +235,6 @@
             <div id="hostSections" runat="server">
                 <h2 id="dnnSitePanel-PortalAliases" class="dnnFormSectionHead"><a href=""><%=LocalizeString("PortalAliases")%></a></h2>
                 <fieldset class="ssasPortalAlias">
-                    <legend></legend>
           		    <div class="dnnFormItem">
                         <dnn:Label ID="portalAliasModeButtonListLabel" runat="server" ControlName="portalAliasModeButtonList" />
                         <asp:RadioButtonList ID="portalAliasModeButtonList" runat="server" EnableViewState="False" RepeatLayout="Flow" CssClass="dnnSSRadioButtons">
@@ -265,7 +255,6 @@
                 </fieldset>
                 <h2 id="dnnSitePanel-SSLSettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SSLSettings")%></a></h2>
                 <fieldset>
-                    <legend></legend>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plSSLEnabled" runat="server" ControlName="chkSSLEnabled" />
                         <asp:CheckBox ID="chkSSLEnabled" runat="server" />
@@ -285,12 +274,11 @@
                 </fieldset>
                 <h2 id="dnnSitePanel-HostSettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("HostSettings")%></a></h2>
                 <fieldset>
-                    <legend></legend>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plExpiryDate" runat="server" ControlName="txtExpiryDate" />
                         <asp:TextBox ID="txtExpiryDate" runat="server" MaxLength="150" />
                         <asp:HyperLink ID="cmdExpiryCalendar" runat="server" resourcekey="Calendar" CssClass="dnnSecondaryAction" />
-                        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" ControlToValidate="txtExpiryDate" ErrorMessage="<br>Invalid expiry date!" Operator="DataTypeCheck" Type="Date" Display="Dynamic" />
+                        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" ControlToValidate="txtExpiryDate" ErrorMessage="Invalid expiry date!" Operator="DataTypeCheck" Type="Date" Display="Dynamic" />
 				    </div>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plHostFee" runat="server" ControlName="txtHostFee" />
@@ -313,12 +301,12 @@
                         <dnn:Label ID="plSiteLogHistory" runat="server" ControlName="txtSiteLogHistory" />
                         <asp:TextBox ID="txtSiteLogHistory" runat="server" MaxLength="3" />
                     </div>
-                    <div class="dnnFormItem">
+                    <div class="dnnFormItem ssasPremiumModule">
                         <dnn:Label ID="plDesktopModules" runat="server" ControlName="ctlDesktopModules" />
                         <dnn:DualListBox id="ctlDesktopModules" runat="server" DataValueField="DesktopModuleID" DataTextField="FriendlyName" AddKey="AddModule" RemoveKey="RemoveModule" AddAllKey="AddAllModules" RemoveAllKey="RemoveAllModules" AddImageURL="~/images/rt.gif" AddAllImageURL="~/images/ffwd.gif" RemoveImageURL="~/images/lt.gif" RemoveAllImageURL="~/images/frev.gif" >
-                            <AvailableListBoxStyle Height="130px" Width="130px" />
+                            <AvailableListBoxStyle Height="130px" Width="180px" />
                             <HeaderStyle CssClass="dnnFormLabel" />
-                            <SelectedListBoxStyle Height="130px" Width="130px"  />
+                            <SelectedListBoxStyle Height="130px" Width="180px"  />
                         </dnn:DualListBox>
                     </div>
                 </fieldset>
@@ -328,7 +316,6 @@
     <div class="ssStylesheetEditor dnnClear" id="ssStylesheetEditor">
         <div class="ssseContent dnnClear">
             <fieldset>
-                <legend></legend>
                 <asp:TextBox ID="txtStyleSheet" runat="server" Rows="30" TextMode="MultiLine" Wrap="False" Columns="100" />
                 <ul class="dnnActions dnnClear">
                   <li><asp:LinkButton ID="cmdSave" CssClass="dnnPrimaryAction" runat="server" resourcekey="SaveStyleSheet" EnableViewState="False" /></li>
@@ -343,11 +330,8 @@
         <li><asp:Hyperlink id="cancelHyperLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
         <li><asp:Hyperlink ID="uploadSkinLink" CssClass="dnnSecondaryAction" ResourceKey="SkinUpload" runat="server" /></li>
     </ul>
-    <div class="dnnssStat dnnClear">
-        <dnn:audit id="ctlAudit" runat="server" />
-    </div>
+    <div class="dnnssStat dnnClear"><dnn:audit id="ctlAudit" runat="server" /></div>
 </div>
-
 <script language="javascript" type="text/javascript">
     function setupDnnSiteSettings() {
         $('#dnnSiteSettings').dnnTabs().dnnPanels();

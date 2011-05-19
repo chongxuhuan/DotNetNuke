@@ -39,11 +39,13 @@ using DotNetNuke.Web.Mvp;
 
 namespace DotNetNuke.Modules.Messaging.Presenters
 {
+
     public class EditMessagePresenter : ModulePresenter<IEditMessageView, EditMessageModel>
     {
-        private readonly IMessagingController _MessagingController;
 
-        #region "Constructors"
+        private readonly IMessagingController _messagingController;
+
+        #region Constructors
 
         public EditMessagePresenter(IEditMessageView editView) : this(editView, new MessagingController(new MessagingDataService()))
         {
@@ -53,9 +55,8 @@ namespace DotNetNuke.Modules.Messaging.Presenters
         {
             Requires.NotNull("messagingController", messagingController);
 
-            _MessagingController = messagingController;
+            _messagingController = messagingController;
 
-            View.Cancel += Cancel;
             View.Delete += DeleteMessage;
             View.Load += Load;
             View.SaveDraft += SaveDraft;
@@ -65,18 +66,18 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public long MessageId
         {
             get
             {
-                long _IndexId = Null.NullInteger;
+                long indexId = Null.NullInteger;
                 if (!string.IsNullOrEmpty(Request.Params["MessageId"]))
                 {
-                    _IndexId = Int32.Parse(Request.Params["MessageId"]);
+                    indexId = Int32.Parse(Request.Params["MessageId"]);
                 }
-                return _IndexId;
+                return indexId;
             }
         }
 
@@ -85,18 +86,18 @@ namespace DotNetNuke.Modules.Messaging.Presenters
         {
             get
             {
-                bool _isReply = false;
+                var isReply = false;
                 if (!string.IsNullOrEmpty(Request.Params["IsReply"]))
                 {
-                    bool.TryParse(Request.Params["IsReply"], out _isReply);
+                    bool.TryParse(Request.Params["IsReply"], out isReply);
                 }
-                return _isReply;
+                return isReply;
             }
         }
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private string GetInboxUrl()
         {
@@ -105,20 +106,14 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
         #endregion
 
-        #region "Public Methods"
-
-        public void Cancel(object sender, EventArgs e)
-        {
-            Response.Redirect(GetInboxUrl());
-        }
-
+        #region Public Methods
 
         public void DeleteMessage(object sender, EventArgs e)
         {
             View.BindMessage(View.Model.Message);
 
             View.Model.Message.Status = MessageStatusType.Deleted;
-            _MessagingController.UpdateMessage(View.Model.Message);
+            _messagingController.UpdateMessage(View.Model.Message);
 
             //Redirect to List
             Response.Redirect(GetInboxUrl());
@@ -126,20 +121,22 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
         public void Load(object sender, EventArgs e)
         {
+            View.Model.InboxUrl = GetInboxUrl();
+
             if (!IsPostBack)
             {
                 if ((MessageId > 0))
                 {
-                    Message orgMessage = _MessagingController.GetMessageByID(PortalId, UserId, (int) MessageId);
+                    var orgMessage = _messagingController.GetMessageByID(PortalId, UserId, (int) MessageId);
                     AuthorizeUser(orgMessage);
                     if (IsReplyMode)
                     {
-                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, (int) MessageId).GetReplyMessage();
+                        View.Model.Message = _messagingController.GetMessageByID(PortalId, UserId, (int) MessageId).GetReplyMessage();
                         View.HideDeleteButton();
                     }
                     else
                     {
-                        View.Model.Message = _MessagingController.GetMessageByID(PortalId, UserId, (int) MessageId);
+                        View.Model.Message = _messagingController.GetMessageByID(PortalId, UserId, (int) MessageId);
                     }
                 }
                 else
@@ -189,7 +186,6 @@ namespace DotNetNuke.Modules.Messaging.Presenters
             SubmitMessage(MessageStatusType.Unread);
         }
 
-
         private void SubmitMessage(MessageStatusType status)
         {
             View.BindMessage(View.Model.Message);
@@ -208,11 +204,11 @@ namespace DotNetNuke.Modules.Messaging.Presenters
                 //Save Message
                 if ((View.Model.Message.MessageID == 0))
                 {
-                    _MessagingController.SaveMessage(View.Model.Message);
+                    _messagingController.SaveMessage(View.Model.Message);
                 }
                 else
                 {
-                    _MessagingController.UpdateMessage(View.Model.Message);
+                    _messagingController.UpdateMessage(View.Model.Message);
                 }
 
                 //Redirect to Message List
@@ -233,11 +229,11 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
         private int ValidateUserName(string userName)
         {
-            int userId = Null.NullInteger;
+            var userId = Null.NullInteger;
             if (!string.IsNullOrEmpty(userName))
             {
                 // validate username
-                UserInfo objUser = UserController.GetUserByName(PortalId, userName);
+                var objUser = UserController.GetUserByName(PortalId, userName);
                 if (objUser != null)
                 {
                     userId = objUser.UserID;
@@ -251,5 +247,6 @@ namespace DotNetNuke.Modules.Messaging.Presenters
 
             return userId;
         }
+
     }
 }

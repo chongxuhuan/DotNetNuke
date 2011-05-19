@@ -38,6 +38,20 @@ using DotNetNuke.Services.Log.EventLog;
 
 namespace DotNetNuke.HttpModules.Analytics
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.HttpModules.Analytics
+    /// Project:    HttpModules
+    /// Module:     AnalyticsModule
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// This module contains functionality for injecting web analytics scripts into the page
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cniknet]	05/03/2009	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public class AnalyticsModule : IHttpModule
     {
         public string ModuleName
@@ -65,12 +79,17 @@ namespace DotNetNuke.HttpModules.Analytics
         {
             try
             {
+                //First check if we are upgrading/installing or if it is a non-page request
                 var app = (HttpApplication) sender;
                 HttpRequest Request = app.Request;
+
+                //First check if we are upgrading/installing
                 if (Request.Url.LocalPath.ToLower().EndsWith("install.aspx") || Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
                 {
                     return;
                 }
+				
+                //exit if a request for a .net mapping that isn't a content page is made i.e. axd
                 if (Request.Url.LocalPath.ToLower().EndsWith(".aspx") == false && Request.Url.LocalPath.ToLower().EndsWith(".asmx") == false &&
                     Request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
                 {

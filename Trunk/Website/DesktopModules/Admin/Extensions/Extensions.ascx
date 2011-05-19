@@ -10,16 +10,17 @@
 <div class="dnnForm dnnExtensions dnnClear" id="dnnExtensions">
 	<ul class="dnnAdminTabNav dnnClear">
         <li id="installedExtensionsTab" runat="server" visible="false"><a href="#installedExtensions"><%=LocalizeString("InstalledExtensions")%></a></li>
-        <li id="avalableExtensionsTab" runat="server" visible="false"><a href="#avalableExtensions"><%=LocalizeString("AvailableExtensions")%></a></li>
+        <li id="availableExtensionsTab" runat="server" visible="false"><a href="#availableExtensions"><%=LocalizeString("AvailableExtensions")%></a></li>
         <li id="moreExtensionsTab" runat="server" visible="false"><a href="#moreExtensions"><%=LocalizeString("MoreExtensions")%></a></li>
-        <li class="dnnFormExpandContent"><a href=""><%=LocalizeString("ExpandAll")%></a></li>
     </ul>
     <div id="installedExtensions" class="exInstalledExtensions dnnClear">
+        <div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
         <dnn:InstalledExtensions id="installedExtensionsControl" runat="Server"/>
     </div>
-    <div id="avalableExtensions" class="exAvailableExtensions dnnClear">
+    <div id="availableExtensions" class="exAvailableExtensions dnnClear">
+        <div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
         <div class="exaeContent dnnClear">
-            <dnn:AvailableExtensions id="avalableExtensionsControl" runat="Server" Visible="false"/>
+            <dnn:AvailableExtensions id="availableExtensionsControl" runat="Server" Visible="false"/>
         </div>
     </div>
     <div id="moreExtensions" class="exMoreExtensions dnnClear">
@@ -32,6 +33,16 @@
 <script language="javascript" type="text/javascript">
     function setUpDnnExtensions() {
         $('#dnnExtensions').dnnTabs().dnnPanels();
+        $('#availableExtensions .dnnFormExpandContent a').dnnExpandAll({
+            expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+            collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+            targetArea: '#availableExtensions'
+        });
+        $('#installedExtensions .dnnFormExpandContent a').dnnExpandAll({
+            expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+            collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+            targetArea: '#installedExtensions'
+        });
     }
     $(document).ready(function () {
         setUpDnnExtensions();

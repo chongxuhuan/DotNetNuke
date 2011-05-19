@@ -33,8 +33,23 @@ using DotNetNuke.ComponentModel;
 
 namespace DotNetNuke.Security.Membership.Data
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Security.Membership
+    /// Class:      DataProvider
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The DataProvider provides the abstract Data Access Layer for the project
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	03/28/2006	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class DataProvider
     {
+        //return the provider
         public static DataProvider Instance()
         {
             return ComponentFactory.GetComponent<DataProvider>();

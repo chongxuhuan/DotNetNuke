@@ -61,8 +61,14 @@ namespace DotNetNuke.Services.Cache
 	/// </example>
     public abstract class CachingProvider
     {
+		#region "Private Members"
+		
         private static System.Web.Caching.Cache _objCache;
         private const string CachePrefix = "DNN_";
+		
+		#endregion
+
+		#region "Protected Properties"
 
 		/// <summary>
 		/// Gets the default cache provider.
@@ -79,6 +85,10 @@ namespace DotNetNuke.Services.Cache
                 return _objCache;
             }
         }
+		
+		#endregion
+
+		#region "Shared/Static Methods"
 
 		/// <summary>
 		/// Cleans the cache key by remove cache key prefix.
@@ -118,7 +128,11 @@ namespace DotNetNuke.Services.Cache
         {
             return ComponentFactory.GetComponent<CachingProvider>();
         }
+		
+	#endregion
 
+	#region "Private Methods"
+	
         private void ClearCacheInternal(string prefix, bool clearRuntime)
         {
             foreach (DictionaryEntry objDictionaryEntry in HttpRuntime.Cache)
@@ -127,10 +141,12 @@ namespace DotNetNuke.Services.Cache
                 {
                     if (clearRuntime)
                     {
+						//remove item from runtime cache
                         RemoveInternal(Convert.ToString(objDictionaryEntry.Key));
                     }
                     else
                     {
+						//Call provider's remove method
                         Remove(Convert.ToString(objDictionaryEntry.Key));
                     }
                 }
@@ -169,6 +185,8 @@ namespace DotNetNuke.Services.Cache
             RemoveCacheKey(DataCache.DesktopModulePermissionCacheKey, clearRuntime);
             RemoveCacheKey("GetRoles", clearRuntime);
             RemoveCacheKey("CompressionConfig", clearRuntime);
+
+            //Clear "portal keys" for Host
             ClearFolderCacheInternal(-1, clearRuntime);
             ClearDesktopModuleCacheInternal(-1, clearRuntime);
             ClearCacheKeysByPortalInternal(-1, clearRuntime);
@@ -192,6 +210,7 @@ namespace DotNetNuke.Services.Cache
         private void ClearPortalCacheInternal(int portalId, bool cascade, bool clearRuntime)
         {
             RemoveFormattedCacheKey(DataCache.PortalSettingsCacheKey, clearRuntime, portalId);
+
             Dictionary<string, Locale> locales = LocaleController.Instance.GetLocales(portalId);
             if (locales == null || locales.Count == 0)
             {
@@ -219,6 +238,8 @@ namespace DotNetNuke.Services.Cache
                     RemoveCacheKey("GetModuleSettings" + moduleInfo.ModuleID, clearRuntime);
                 }
             }
+			
+            //Clear "portal keys" for Portal
             ClearFolderCacheInternal(portalId, clearRuntime);
             ClearCacheKeysByPortalInternal(portalId, clearRuntime);
             ClearDesktopModuleCacheInternal(portalId, clearRuntime);
@@ -251,10 +272,12 @@ namespace DotNetNuke.Services.Cache
         {
             if (clearRuntime)
             {
+				//remove item from runtime cache
                 RemoveInternal(GetCacheKey(CacheKey));
             }
             else
             {
+				//Call provider's remove method
                 Remove(GetCacheKey(CacheKey));
             }
         }
@@ -263,13 +286,19 @@ namespace DotNetNuke.Services.Cache
         {
             if (clearRuntime)
             {
+				//remove item from runtime cache
                 RemoveInternal(string.Format(GetCacheKey(CacheKeyBase), parameters));
             }
             else
             {
+				//Call provider's remove method
                 Remove(string.Format(GetCacheKey(CacheKeyBase), parameters));
             }
         }
+		
+		#endregion
+
+		#region "Protected Methods"
 
 		/// <summary>
 		/// Clears the cache internal.
@@ -314,7 +343,9 @@ namespace DotNetNuke.Services.Cache
 		/// <param name="CacheKey">The cache key.</param>
         protected void RemoveInternal(string CacheKey)
         {
+			//attempt remove from private dictionary
             DataCache.RemoveFromPrivateDictionary(CacheKey);
+            //remove item from memory
             if (Cache[CacheKey] != null)
             {
                 Cache.Remove(CacheKey);
@@ -432,5 +463,7 @@ namespace DotNetNuke.Services.Cache
         {
             RemoveInternal(CacheKey);
         }
+		
+		#endregion
     }
 }

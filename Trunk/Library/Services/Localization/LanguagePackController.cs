@@ -60,6 +60,7 @@ namespace DotNetNuke.Services.Localization
             var objEventLog = new EventLogController();
             if (languagePack.LanguagePackID == Null.NullInteger)
             {
+				//Add Language Pack
                 languagePack.LanguagePackID = DataProvider.Instance().AddLanguagePack(languagePack.PackageID,
                                                                                       languagePack.LanguageID,
                                                                                       languagePack.DependentPackageID,
@@ -68,6 +69,7 @@ namespace DotNetNuke.Services.Localization
             }
             else
             {
+				//Update LanguagePack
                 DataProvider.Instance().UpdateLanguagePack(languagePack.LanguagePackID,
                                                            languagePack.PackageID,
                                                            languagePack.LanguageID,

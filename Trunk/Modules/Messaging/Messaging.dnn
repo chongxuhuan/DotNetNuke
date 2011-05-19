@@ -32,7 +32,7 @@
 									<moduleControl>
 										<controlKey />
 										<controlSrc>DesktopModules/Admin/Messaging/MessageList.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle />
 										<controlType>View</controlType>
 										<iconFile />
@@ -42,7 +42,7 @@
 									<moduleControl>
 										<controlKey>EditMessage</controlKey>
 										<controlSrc>DesktopModules/Admin/Messaging/EditMessage.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle>Edit Message</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />
@@ -52,7 +52,7 @@
 									<moduleControl>
 										<controlKey>ViewMessage</controlKey>
 										<controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
-										<supportsPartialRendering>False</supportsPartialRendering>
+										<supportsPartialRendering>True</supportsPartialRendering>
 										<controlTitle>View Message</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />

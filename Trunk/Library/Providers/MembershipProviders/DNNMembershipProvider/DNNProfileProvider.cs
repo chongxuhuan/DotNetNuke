@@ -65,6 +65,7 @@ namespace DotNetNuke.Security.Profile
             dataProvider = DataProvider.Instance();
             if (dataProvider == null)
             {
+				//get the provider configuration based on the type
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
                 string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
                 if (defaultprovider == "SqlDataProvider")
@@ -80,6 +81,15 @@ namespace DotNetNuke.Security.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Provider Properties can be edited
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	03/29/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override bool CanEditProviderProperties
         {
             get
@@ -88,6 +98,17 @@ namespace DotNetNuke.Security.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUserProfile retrieves the UserProfile information from the Data Store
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="user">The user whose Profile information we are retrieving.</param>
+        /// <history>
+        /// 	[cnurse]	03/29/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void GetUserProfile(ref UserInfo user)
         {
             int portalId;
@@ -108,6 +129,8 @@ namespace DotNetNuke.Security.Profile
                 portalId = user.PortalID;
             }
             properties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
+
+            //Load the Profile properties
             if (user.UserID > Null.NullInteger)
             {
                 IDataReader dr = dataProvider.GetUserProfile(user.UserID);
@@ -115,6 +138,7 @@ namespace DotNetNuke.Security.Profile
                 {
                     while (dr.Read())
                     {
+						//Ensure the data reader returned is valid
                         if (!string.Equals(dr.GetName(0), "ProfileID", StringComparison.InvariantCultureIgnoreCase))
                         {
                             break;
@@ -159,8 +183,12 @@ namespace DotNetNuke.Security.Profile
                     CBO.CloseDataReader(dr, true);
                 }
             }
+			
+            //Clear the profile
             user.Profile.ProfileProperties.Clear();
-            foreach (ProfilePropertyDefinition property in properties)
+            
+			//Add the properties to the profile
+			foreach (ProfilePropertyDefinition property in properties)
             {
                 profProperty = property;
                 if (string.IsNullOrEmpty(profProperty.PropertyValue) && !string.IsNullOrEmpty(profProperty.DefaultValue))
@@ -169,9 +197,22 @@ namespace DotNetNuke.Security.Profile
                 }
                 user.Profile.ProfileProperties.Add(profProperty);
             }
+			
+            //Clear IsDirty Flag
             user.Profile.ClearIsDirty();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateUserProfile persists a user's Profile to the Data Store
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="user">The user to persist to the Data Store.</param>
+        /// <history>
+        /// 	[cnurse]	03/29/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UpdateUserProfile(UserInfo user)
         {
             ProfilePropertyDefinitionCollection properties = user.Profile.ProfileProperties;

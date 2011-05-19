@@ -43,6 +43,7 @@ namespace DotNetNuke.Common.Controls
             var htmlWriter = new HtmlTextWriter(stringWriter);
             base.RenderAttributes(htmlWriter);
             string html = stringWriter.ToString();
+            // Locate and replace action attribute
             int StartPoint = html.IndexOf("action=\"");
             if (StartPoint >= 0)
             {
@@ -52,6 +53,7 @@ namespace DotNetNuke.Common.Controls
             }
             if (base.ID != null)
             {
+            // Locate and replace id attribute
                 StartPoint = html.IndexOf("id=\"");
                 if (StartPoint >= 0)
                 {

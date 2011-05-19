@@ -46,8 +46,23 @@ namespace DotNetNuke.Services.Installer.Installers
     /// -----------------------------------------------------------------------------
     public class CleanupInstaller : FileInstaller
     {
+		#region "Private Members"
+
         private string _FileName;
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -55,6 +70,10 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "*";
             }
         }
+		
+		#endregion
+
+	#region "Private Methods"
 
         private bool ProcessCleanupFile()
         {
@@ -76,15 +95,31 @@ namespace DotNetNuke.Services.Installer.Installers
             }
             return bSuccess;
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The CleanupFile method cleansup a single file.
+        /// </summary>
+        /// <param name="insFile">The InstallFile to clean up</param>
+        /// <history>
+        /// 	[cnurse]	09/05/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool CleanupFile(InstallFile insFile)
         {
             try
             {
+				//Backup File
                 if (File.Exists(PhysicalBasePath + insFile.FullName))
                 {
                     Util.BackupFile(insFile, PhysicalBasePath, Log);
                 }
+				
+				//Delete file
                 Util.DeleteFile(insFile, PhysicalBasePath, Log);
                 return true;
             }
@@ -96,6 +131,16 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ProcessFile method determines what to do with parsed "file" node
+        /// </summary>
+        /// <param name="file">The file represented by the node</param>
+        /// <param name="nav">The XPathNavigator representing the node</param>
+        /// <history>
+        /// 	[cnurse]	08/07/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void ProcessFile(InstallFile file, XPathNavigator nav)
         {
             if (file != null)
@@ -109,6 +154,15 @@ namespace DotNetNuke.Services.Installer.Installers
             return base.ReadManifestItem(nav, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The RollbackFile method rolls back the cleanup of a single file.
+        /// </summary>
+        /// <param name="installFile">The InstallFile to commit</param>
+        /// <history>
+        /// 	[cnurse]	09/05/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RollbackFile(InstallFile installFile)
         {
             if (File.Exists(installFile.BackupFileName))
@@ -116,12 +170,35 @@ namespace DotNetNuke.Services.Installer.Installers
                 Util.RestoreFile(installFile, PhysicalBasePath, Log);
             }
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Commit method finalises the Install and commits any pending changes.
+        /// </summary>
+        /// <remarks>In the case of Clenup this is not neccessary</remarks>
+        /// <history>
+        /// 	[cnurse]	09/05/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Commit()
         {
+			//Do nothing
             base.Commit();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Install method cleansup the files
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	09/05/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Install()
         {
             try
@@ -156,8 +233,19 @@ namespace DotNetNuke.Services.Installer.Installers
             base.ReadManifest(manifestNav);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UnInstall method uninstalls the file component
+        /// </summary>
+        /// <remarks>There is no uninstall for this component</remarks>
+        /// <history>
+        /// 	[cnurse]	09/05/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UnInstall()
         {
         }
+		
+		#endregion
     }
 }

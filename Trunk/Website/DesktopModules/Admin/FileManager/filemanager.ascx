@@ -716,19 +716,15 @@ function gridCheckAll(sender)
     <asp:linkbutton id="lnkCancelMoveFiles" Runat="server" EnableViewState="False"/>
     <asp:hyperlink id="lnkUploadRedir" Runat="server" EnableViewState="False" Visible="False"/>
 </div>
-<asp:panel id="pnlSecurity" Runat="server" Visible="False" HorizontalAlign="Left">
-    <dnn:sectionhead id="dshSecurity" runat="server" resourcekey="Security" cssclass="Head" text="Security Settings" section="tblSecurity"/>
-    <table id="tblSecurity" cellspacing="2" cellpadding="2" summary="Security Details Design Table" border="0" runat="server">
-		<tr>
-			<td class="SubHead" valign="top"><br/><dnn:label id="plPermissions" runat="server" controlname="ctlPermissions"/></td>
-		</tr>
-		<tr style="text-align:left">
-			<td>
-				<dnn:folderpermissionsgrid id="dgPermissions" runat="server"/>
-			</td>
-		</tr>
-	</table>
-	<br>
-    <dnn:CommandButton ID="cmdUpdate" resourcekey="cmdUpdate" runat="server" CssClass="CommandButton" ImageUrl="~/images/save.gif" />
+<asp:panel id="pnlSecurity" Runat="server" Visible="False" CssClass="dnnForm">
+    <div class="dnnFormItem">
+        <dnn:label id="plPermissions" runat="server" controlname="ctlPermissions"/>
+    </div>
+    <div class="dnnFormItem">
+        <dnn:folderpermissionsgrid id="dgPermissions" runat="server"/>
+    </div>
+    <ul class="dnnActions dnnClear">
+    	<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
+    </ul>
 </asp:panel>
 <asp:panel id="pnlScripts2" Runat="server" EnableViewState="False"></asp:panel>

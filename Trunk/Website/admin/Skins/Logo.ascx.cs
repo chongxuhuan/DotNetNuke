@@ -29,6 +29,7 @@ using System.Web.UI.WebControls;
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -49,7 +50,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 if (!String.IsNullOrEmpty(PortalSettings.LogoFile))
                 {
-                    imgLogo.ImageUrl = PortalSettings.HomeDirectory + PortalSettings.LogoFile;
+                    var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.LogoFile);
+                    imgLogo.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
                 }
                 else
                 {

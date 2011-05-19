@@ -24,12 +24,10 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls;
-
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Content;
@@ -38,45 +36,46 @@ using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
 
-
 #endregion
 
 namespace DotNetNuke.Modules.ContentList
 {
+
     public partial class ContentList : PortalModuleBase
     {
-        protected int TotalPages = -1;
 
-        protected int TotalRecords;
-        private int _CurrentPage = 1;
+        #region Private Members
 
-        private string _TagQuery = Null.NullString;
+        private int _currentPage = 1;
+        private string _tagQuery = Null.NullString;
+
+        #endregion
+
+        #region Properties
 
         protected int CurrentPage
         {
             get
             {
-                return _CurrentPage;
+                return _currentPage;
             }
             set
             {
-                _CurrentPage = value;
+                _currentPage = value;
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         ///   Gets the Page Size for the Grid
         /// </summary>
         /// <history>
         ///   [cnurse]	03/12/2008  Created
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected int PageSize
         {
             get
             {
-                int itemsPage = 10;
+                var itemsPage = 10;
                 if (!string.IsNullOrEmpty(Convert.ToString(Settings["perpage"])))
                 {
                     itemsPage = int.Parse(Convert.ToString(Settings["perpage"]));
@@ -85,7 +84,9 @@ namespace DotNetNuke.Modules.ContentList
             }
         }
 
-        #region "Private Methods"
+        #endregion
+
+        #region Private Methods
 
         private void BindData()
         {
@@ -97,13 +98,13 @@ namespace DotNetNuke.Modules.ContentList
                 dt.Columns.Add(new DataColumn("Description", typeof (String)));
                 dt.Columns.Add(new DataColumn("PubDate", typeof (DateTime)));
 
-                List<ContentItem> Results = new ContentController().GetContentItemsByTerm(_TagQuery).ToList();
+                var results = new ContentController().GetContentItemsByTerm(_tagQuery).ToList();
 
-                if (_TagQuery.Length > 0)
+                if (_tagQuery.Length > 0)
                 {
-                    foreach (ContentItem item in Results)
+                    foreach (var item in results)
                     {
-                        DataRow dr = dt.NewRow();
+                        var dr = dt.NewRow();
                         dr["TabId"] = item.TabID;
                         dr["ContentKey"] = item.ContentKey;
                         dr["Title"] = item.Content;
@@ -125,16 +126,16 @@ namespace DotNetNuke.Modules.ContentList
                 dgResults.PageSize = PageSize;
                 dgResults.DataSource = dv;
                 dgResults.DataBind();
-                if (Results.Count == 0)
+                if (results.Count == 0)
                 {
                     dgResults.Visible = false;
-                    lblMessage.Text = string.Format(Localization.GetString("NoResults", LocalResourceFile), _TagQuery);
+                    lblMessage.Text = string.Format(Localization.GetString("NoResults", LocalResourceFile), _tagQuery);
                 }
                 else
                 {
-                    lblMessage.Text = string.Format(Localization.GetString("Results", LocalResourceFile), _TagQuery);
+                    lblMessage.Text = string.Format(Localization.GetString("Results", LocalResourceFile), _tagQuery);
                 }
-                if (Results.Count <= dgResults.PageSize)
+                if (results.Count <= dgResults.PageSize)
                 {
                     ctlPagingControl.Visible = false;
                 }
@@ -142,7 +143,7 @@ namespace DotNetNuke.Modules.ContentList
                 {
                     ctlPagingControl.Visible = true;
                 }
-                ctlPagingControl.TotalRecords = Results.Count;
+                ctlPagingControl.TotalRecords = results.Count;
             }
             ctlPagingControl.PageSize = dgResults.PageSize;
             ctlPagingControl.CurrentPage = CurrentPage;
@@ -150,62 +151,39 @@ namespace DotNetNuke.Modules.ContentList
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         protected string FormatDate(DateTime pubDate)
         {
             return pubDate.ToString();
         }
 
-        protected string FormatURL(int TabID, string Link)
+        protected string FormatURL(int tabID, string link)
         {
-            string strURL = null;
-
-            if (string.IsNullOrEmpty(Link))
-            {
-                strURL = Globals.NavigateURL(TabID);
-            }
-            else
-            {
-                strURL = Globals.NavigateURL(TabID, "", Link);
-            }
+            var strURL = string.IsNullOrEmpty(link) ? Globals.NavigateURL(tabID) : Globals.NavigateURL(tabID, "", link);
 
             return strURL;
         }
 
         protected bool ShowDescription()
         {
-            bool show = false;
+            bool show;
 
-            if (!string.IsNullOrEmpty(Convert.ToString(Settings["showdescription"])))
-            {
-                if (Convert.ToString(Settings["showdescription"]) == "Y")
-                {
-                    show = true;
-                }
-                else
-                {
-                    show = false;
-                }
-            }
-            else
-            {
-                show = true;
-            }
+            show = string.IsNullOrEmpty(Convert.ToString(Settings["showdescription"])) || Convert.ToString(Settings["showdescription"]) == "Y";
 
             return show;
         }
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            ctlPagingControl.PageChanged += ctlPagingControl_PageChanged;
-            dgResults.PageIndexChanged += dgResults_PageIndexChanged;
+            ctlPagingControl.PageChanged += OnPagerIndexChanged;
+            dgResults.PageIndexChanged += OnGridPageIndexChanged;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -215,10 +193,10 @@ namespace DotNetNuke.Modules.ContentList
             var objSecurity = new PortalSecurity();
             if ((Request.Params["Tag"] != null))
             {
-                _TagQuery = HttpContext.Current.Server.HtmlEncode(objSecurity.InputFilter(Request.Params["Tag"], PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoMarkup));
+                _tagQuery = HttpContext.Current.Server.HtmlEncode(objSecurity.InputFilter(Request.Params["Tag"], PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoMarkup));
             }
 
-            if (_TagQuery.Length > 0)
+            if (_tagQuery.Length > 0)
             {
                 if (!Page.IsPostBack)
                 {
@@ -238,13 +216,13 @@ namespace DotNetNuke.Modules.ContentList
             }
         }
 
-        private void dgResults_PageIndexChanged(object source, DataGridPageChangedEventArgs e)
+        protected void OnGridPageIndexChanged(object source, DataGridPageChangedEventArgs e)
         {
             dgResults.CurrentPageIndex = e.NewPageIndex;
             BindData();
         }
 
-        protected void ctlPagingControl_PageChanged(object sender, EventArgs e)
+        protected void OnPagerIndexChanged(object sender, EventArgs e)
         {
             CurrentPage = ctlPagingControl.CurrentPage;
 
@@ -253,5 +231,6 @@ namespace DotNetNuke.Modules.ContentList
         }
 
         #endregion
+
     }
 }

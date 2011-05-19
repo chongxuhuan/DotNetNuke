@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -36,6 +37,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -63,12 +65,6 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 return result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + url);
             }
             return url.Contains("://") ? result : result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + Globals.ApplicationPath + "/" + url);
-        }
-
-        private string ManageDirectoryBase(string source)
-        {
-            const string pattern = "<(a|link|img|script|object|table|td|body).[^>]*(href|src|action|background)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
-            return Regex.Replace(source, pattern, FormatUrls);
         }
 
         #endregion
@@ -101,173 +97,243 @@ namespace DotNetNuke.Modules.Admin.Newsletters
 
         protected void OnSendClick(Object sender, EventArgs e)
         {
-            var strResult = "";
-            var msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
-            var intMailsSent = -1;
-            var isValid = true;
+            var message = "";
+            var messageType = ModuleMessage.ModuleMessageType.GreenSuccess;
+
             try
             {
-                if (String.IsNullOrEmpty(txtSubject.Text) || String.IsNullOrEmpty(teMessage.Text))
+                List<string> roleNames;
+                List<UserInfo> users;
+                GetRecipients(out roleNames, out users);
+
+                if(IsReadyToSend(roleNames, users, ref message, ref messageType))
                 {
-                    strResult = Localization.GetString("MessageValidation", LocalResourceFile);
-                    msgResult = ModuleMessage.ModuleMessageType.RedError;
+                    SendEmail(roleNames, users, ref message, ref messageType);
                 }
-                else
-                {
-                    var objRoleNames = new List<string>();
-                    foreach (string strRoleName in dgSelectedRoles.SelectedRoleNames)
-                    {
-                        objRoleNames.Add(strRoleName);
-                    }
-                    var objUsers = new List<UserInfo>();
-                    if (!String.IsNullOrEmpty(txtEmail.Text))
-                    {
-                        Array arrEmail = txtEmail.Text.Split(';');
-                        foreach (string strEmail in arrEmail)
-                        {
-                            var objUser = new UserInfo {UserID = Null.NullInteger, Email = strEmail, DisplayName = strEmail};
-                            objUsers.Add(objUser);
-                        }
-                    }
-                    if (objUsers.Count == 0 && objRoleNames.Count == 0)
-                    {
-                        strResult = string.Format(Localization.GetString("NoMessagesSent", LocalResourceFile), intMailsSent);
-                        msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                    }
-                    else
-                    {
-                        var objSendBulkEMail = new SendTokenizedBulkEmail(objRoleNames, objUsers, false, txtSubject.Text, teMessage.Text);
-                        switch (teMessage.Mode)
-                        {
-                            case "RICH":
-                                objSendBulkEMail.BodyFormat = MailFormat.Html;
-                                break;
-                            default:
-                                objSendBulkEMail.BodyFormat = MailFormat.Text;
-                                break;
-                        }
-                        if (objSendBulkEMail.SuppressTokenReplace != !chkReplaceTokens.Checked)
-                        {
-                            objSendBulkEMail.SuppressTokenReplace = !chkReplaceTokens.Checked;
-                        }
-                        switch (cboPriority.SelectedItem.Value)
-                        {
-                            case "1":
-                                objSendBulkEMail.Priority = MailPriority.High;
-                                break;
-                            case "2":
-                                objSendBulkEMail.Priority = MailPriority.Normal;
-                                break;
-                            case "3":
-                                objSendBulkEMail.Priority = MailPriority.Low;
-                                break;
-                            default:
-                                isValid = false;
-                                break;
-                        }
-                        if (txtFrom.Text != string.Empty && objSendBulkEMail.SendingUser.Email != txtFrom.Text)
-                        {
-                            var myUser = objSendBulkEMail.SendingUser ?? new UserInfo();
-                            myUser.Email = txtFrom.Text;
-                            objSendBulkEMail.SendingUser = myUser;
-                        }
-                        if (txtReplyTo.Text != string.Empty && objSendBulkEMail.ReplyTo.Email != txtReplyTo.Text)
-                        {
-                            var myUser = new UserInfo {Email = txtReplyTo.Text};
-                            objSendBulkEMail.ReplyTo = myUser;
-                        }
-                        if (selLanguage.Visible && selLanguage.SelectedLanguages != null)
-                        {
-                            objSendBulkEMail.LanguageFilter = selLanguage.SelectedLanguages;
-                        }
-                        if (ctlAttachment.Url.StartsWith("FileID="))
-                        {
-                            int fileId = int.Parse(ctlAttachment.Url.Substring(7));
-                            var objFileInfo = FileManager.Instance.GetFile(fileId);
-                            objSendBulkEMail.AddAttachment(PortalSettings.HomeDirectoryMapPath + objFileInfo.Folder + objFileInfo.FileName);
-                        }
-                        switch (cboSendMethod.SelectedItem.Value)
-                        {
-                            case "TO":
-                                objSendBulkEMail.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_TO;
-                                break;
-                            case "BCC":
-                                objSendBulkEMail.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_BCC;
-                                break;
-                            case "RELAY":
-                                objSendBulkEMail.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_Relay;
-                                if (string.IsNullOrEmpty(txtRelayAddress.Text))
-                                {
-                                    strResult = string.Format(Localization.GetString("MessagesSentCount", LocalResourceFile), intMailsSent);
-                                    msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                                    isValid = false;
-                                }
-                                else
-                                {
-                                    objSendBulkEMail.RelayEmailAddress = txtRelayAddress.Text;
-                                }
-                                break;
-                        }
-                        if (!chkReplaceTokens.Checked)
-                        {
-                            objSendBulkEMail.SuppressTokenReplace = true;
-                        }
-                        objSendBulkEMail.RemoveDuplicates = true;
-                        if (!isValid)
-                        {
-                        }
-                        else if (optSendAction.SelectedItem.Value == "S")
-                        {
-                            intMailsSent = objSendBulkEMail.SendMails();
-                            if (intMailsSent > 0)
-                            {
-                                strResult = string.Format(Localization.GetString("MessagesSentCount", LocalResourceFile), intMailsSent);
-                                msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
-                            }
-                            else
-                            {
-                                strResult = Localization.GetString("NoMessagesSent", LocalResourceFile);
-                                msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                            }
-                        }
-                        else
-                        {
-                            string strMessage = Mail.SendMail(Host.HostEmail,
-                                                              Host.HostEmail,
-                                                              "",
-                                                              "",
-                                                              MailPriority.Normal,
-                                                              Localization.GetSystemMessage(PortalSettings, "EMAIL_SMTP_TEST_SUBJECT"),
-                                                              MailFormat.Text,
-                                                              Encoding.UTF8,
-                                                              "",
-                                                              "",
-                                                              Host.SMTPServer,
-                                                              Host.SMTPAuthentication,
-                                                              Host.SMTPUsername,
-                                                              Host.SMTPPassword,
-                                                              Host.EnableSMTPSSL);
-                            if (string.IsNullOrEmpty(strMessage))
-                            {
-                                var objThread = new Thread(objSendBulkEMail.Send);
-                                objThread.Start();
-                                strResult = Localization.GetString("MessageSent", LocalResourceFile);
-                                msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
-                            }
-                            else
-                            {
-                                strResult = Localization.GetString("NoMessagesSent", LocalResourceFile);
-                                msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
-                            }
-                        }
-                    }
-                }
-                UI.Skins.Skin.AddModuleMessage(this, strResult, msgResult);
+                
+                UI.Skins.Skin.AddModuleMessage(this, message, messageType);
                 ((CDefault) Page).ScrollToControl(Page.Form);
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
+        private void SendEmail(List<string> roleNames, List<UserInfo> users, ref string message, ref ModuleMessage.ModuleMessageType messageType)
+        {
+            //it is awkward to ensure that email is disposed correctly because when sent asynch it should be disposed by the  asynch thread
+            var email = new SendTokenizedBulkEmail(roleNames, users, /*removeDuplicates*/ true, txtSubject.Text, teMessage.Text);
+
+            bool isValid;
+            try
+            {
+                isValid = PrepareEmail(email, ref message, ref messageType);
+            }
+            catch(Exception)
+            {
+                email.Dispose();
+                throw;
+            }
+
+            if (isValid)
+            {
+
+                if (optSendAction.SelectedItem.Value == "S")
+                {
+                    try
+                    {
+                        SendMailSynchronously(email, out message, out messageType);
+                    }
+                    finally
+                    {
+                        email.Dispose();
+                    }
+                }
+                else
+                {
+                    SendMailAsyncronously(email, out message, out messageType);
+                    //dispose will be handled by async thread
+                }
+            }
+        }
+
+        private void SendMailAsyncronously(SendTokenizedBulkEmail email, out string message, out ModuleMessage.ModuleMessageType messageType)
+        {
+            string sendMailResult = Mail.SendMail(Host.HostEmail,
+                                              Host.HostEmail,
+                                              "",
+                                              "",
+                                              MailPriority.Normal,
+                                              Localization.GetSystemMessage(PortalSettings, "EMAIL_SMTP_TEST_SUBJECT"),
+                                              MailFormat.Text,
+                                              Encoding.UTF8,
+                                              "",
+                                              "",
+                                              Host.SMTPServer,
+                                              Host.SMTPAuthentication,
+                                              Host.SMTPUsername,
+                                              Host.SMTPPassword,
+                                              Host.EnableSMTPSSL);
+
+            if (string.IsNullOrEmpty(sendMailResult))
+            {
+                var objThread = new Thread(() => SendAndDispose(email));
+                objThread.Start();
+                message = Localization.GetString("MessageSent", LocalResourceFile);
+                messageType = ModuleMessage.ModuleMessageType.GreenSuccess;
+            }
+            else
+            {
+                message = Localization.GetString("NoMessagesSent", LocalResourceFile);
+                messageType = ModuleMessage.ModuleMessageType.YellowWarning;
+            }
+        }
+
+        private void SendAndDispose(SendTokenizedBulkEmail email)
+        {
+            using(email)
+            {
+                email.Send();
+            }
+        }
+
+        private void SendMailSynchronously(SendTokenizedBulkEmail email, out string strResult, out ModuleMessage.ModuleMessageType msgResult)
+        {
+            int mailsSent = email.SendMails();
+
+            if (mailsSent > 0)
+            {
+                strResult = string.Format(Localization.GetString("MessagesSentCount", LocalResourceFile), mailsSent);
+                msgResult = ModuleMessage.ModuleMessageType.GreenSuccess;
+            }
+            else
+            {
+                strResult = Localization.GetString("NoMessagesSent", LocalResourceFile);
+                msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
+            }
+        }
+
+        private bool PrepareEmail(SendTokenizedBulkEmail email, ref string message, ref ModuleMessage.ModuleMessageType messageType)
+        {
+            bool isValid = true;
+
+            switch (teMessage.Mode)
+            {
+                case "RICH":
+                    email.BodyFormat = MailFormat.Html;
+                    break;
+                default:
+                    email.BodyFormat = MailFormat.Text;
+                    break;
+            }
+                        
+            switch (cboPriority.SelectedItem.Value)
+            {
+                case "1":
+                    email.Priority = MailPriority.High;
+                    break;
+                case "2":
+                    email.Priority = MailPriority.Normal;
+                    break;
+                case "3":
+                    email.Priority = MailPriority.Low;
+                    break;
+                default:
+                    isValid = false;
+                    break;
+            }
+
+            if (txtFrom.Text != string.Empty && email.SendingUser.Email != txtFrom.Text)
+            {
+                var myUser = email.SendingUser ?? new UserInfo();
+                myUser.Email = txtFrom.Text;
+                email.SendingUser = myUser;
+            }
+
+            if (txtReplyTo.Text != string.Empty && email.ReplyTo.Email != txtReplyTo.Text)
+            {
+                var myUser = new UserInfo {Email = txtReplyTo.Text};
+                email.ReplyTo = myUser;
+            }
+
+            if (selLanguage.Visible && selLanguage.SelectedLanguages != null)
+            {
+                email.LanguageFilter = selLanguage.SelectedLanguages;
+            }
+
+            if (ctlAttachment.Url.StartsWith("FileID="))
+            {
+                int fileId = int.Parse(ctlAttachment.Url.Substring(7));
+                var objFileInfo = FileManager.Instance.GetFile(fileId);
+                email.AddAttachment(FileManager.Instance.GetFileContent(objFileInfo), 
+                                               new ContentType { MediaType = objFileInfo.ContentType, Name = objFileInfo.FileName });
+            }
+
+            switch (cboSendMethod.SelectedItem.Value)
+            {
+                case "TO":
+                    email.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_TO;
+                    break;
+                case "BCC":
+                    email.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_BCC;
+                    break;
+                case "RELAY":
+                    email.AddressMethod = SendTokenizedBulkEmail.AddressMethods.Send_Relay;
+                    if (string.IsNullOrEmpty(txtRelayAddress.Text))
+                    {
+                        message = string.Format(Localization.GetString("MessagesSentCount", LocalResourceFile), -1);
+                        messageType = ModuleMessage.ModuleMessageType.YellowWarning;
+                        isValid = false;
+                    }
+                    else
+                    {
+                        email.RelayEmailAddress = txtRelayAddress.Text;
+                    }
+                    break;
+            }
+
+            email.SuppressTokenReplace = !chkReplaceTokens.Checked;
+            
+            return isValid;
+        }
+
+        private bool IsReadyToSend(List<string> roleNames, List<UserInfo> users, ref string message, ref ModuleMessage.ModuleMessageType messageType)
+        {
+             if (String.IsNullOrEmpty(txtSubject.Text) || String.IsNullOrEmpty(teMessage.Text))
+            {
+                message = Localization.GetString("MessageValidation", LocalResourceFile);
+                messageType = ModuleMessage.ModuleMessageType.RedError;
+                return false;
+            }
+                 
+            if (users.Count == 0 && roleNames.Count == 0)
+            {
+                message = string.Format(Localization.GetString("NoMessagesSent", LocalResourceFile), -1);
+                messageType = ModuleMessage.ModuleMessageType.YellowWarning;
+                return false;
+            }
+
+            return true;
+        }
+
+        private void GetRecipients(out List<string> objRoleNames, out List<UserInfo> objUsers)
+        {
+            objRoleNames = new List<string>();
+            foreach (string strRoleName in dgSelectedRoles.SelectedRoleNames)
+            {
+                objRoleNames.Add(strRoleName);
+            }
+
+            objUsers = new List<UserInfo>();
+            if (!String.IsNullOrEmpty(txtEmail.Text))
+            {
+                Array arrEmail = txtEmail.Text.Split(';');
+                foreach (string strEmail in arrEmail)
+                {
+                    var objUser = new UserInfo {UserID = Null.NullInteger, Email = strEmail, DisplayName = strEmail};
+                    objUsers.Add(objUser);
+                }
             }
         }
 

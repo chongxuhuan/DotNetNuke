@@ -465,9 +465,9 @@ namespace DotNetNuke.Modules.Admin.Users
                 ctlProfile.DataBind(); 
             }
 
-            dnnRoleDetails.Visible = IsEdit && !User.IsSuperUser;
-            dnnServicesDetails.Visible = DisplayServices && !IsRegister;
-            dnnPasswordDetails.Visible = IsAdmin || IsUser;
+            dnnRoleDetails.Visible = IsEdit && !User.IsSuperUser && !AddUser;
+            dnnServicesDetails.Visible = DisplayServices && !IsRegister && !AddUser;
+            dnnPasswordDetails.Visible = (IsAdmin || IsUser) && !AddUser;
         }
 
         protected override void OnInit(EventArgs e)

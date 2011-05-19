@@ -39,9 +39,22 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace DotNetNuke.Services.Installer
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The InstallerInfo class holds all the information associated with a
+    /// Installation.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	07/24/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class InstallerInfo
     {
+		#region "Private Members"
+		
         private readonly Dictionary<string, InstallFile> _Files = new Dictionary<string, InstallFile>();
         private readonly InstallMode _InstallMode = InstallMode.Install;
         private readonly Logger _Log = new Logger();
@@ -56,11 +69,34 @@ namespace DotNetNuke.Services.Installer
         private bool _RepairInstall = Null.NullBoolean;
         private SecurityAccessLevel _SecurityAccessLevel = SecurityAccessLevel.Host;
         private string _TempInstallFolder = Null.NullString;
+		
+		#endregion
 
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new InstallerInfo instance
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/26/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo()
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new InstallerInfo instance from a 
+        /// string representing the physical path to the root of the site
+        /// </summary>
+        /// <param name="sitePath">The physical path to the root of the site</param>
+        /// <param name="mode">Install Mode.</param>
+        /// <history>
+        /// 	[cnurse]	02/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo(string sitePath, InstallMode mode)
         {
             _TempInstallFolder = Globals.InstallMapPath + "Temp\\" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
@@ -68,14 +104,40 @@ namespace DotNetNuke.Services.Installer
             _InstallMode = mode;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new InstallerInfo instance from a Stream and a
+        /// string representing the physical path to the root of the site
+        /// </summary>
+        /// <param name="inputStream">The Stream to use to create this InstallerInfo instance</param>
+        /// <param name="sitePath">The physical path to the root of the site</param>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo(Stream inputStream, string sitePath)
         {
             _TempInstallFolder = Globals.InstallMapPath + "Temp\\" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
             _PhysicalSitePath = sitePath;
             _InstallMode = InstallMode.Install;
+
+            //Read the Zip file into its component entries
             ReadZipStream(inputStream, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new InstallerInfo instance from a string representing
+        /// the physical path to the temporary install folder and a string representing 
+        /// the physical path to the root of the site
+        /// </summary>
+        /// <param name="tempFolder">The physical path to the zip file containg the package</param>
+        /// <param name="manifest">The manifest filename</param>
+        /// <param name="sitePath">The physical path to the root of the site</param>
+        /// <history>
+        /// 	[cnurse]	08/13/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo(string tempFolder, string manifest, string sitePath)
         {
             _TempInstallFolder = tempFolder;
@@ -87,6 +149,16 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This Constructor creates a new InstallerInfo instance from a PackageInfo object
+        /// </summary>
+        /// <param name="package">The PackageInfo instance</param>
+        /// <param name="sitePath">The physical path to the root of the site</param>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallerInfo(PackageInfo package, string sitePath)
         {
             _PhysicalSitePath = sitePath;
@@ -94,7 +166,19 @@ namespace DotNetNuke.Services.Installer
             _InstallMode = InstallMode.UnInstall;
             package.AttachInstallerInfo(this);
         }
+		
+		#endregion
 
+		#region "Public Properties"
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string AllowableFiles
         {
             get
@@ -107,6 +191,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Dictionary of Files that are included in the Package
+        /// </summary>
+        /// <value>A Dictionary(Of String, InstallFile)</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, InstallFile> Files
         {
             get
@@ -115,6 +208,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the package contains Valid Files
+        /// </summary>
+        /// <value>A Boolean</value>
+        /// <history>
+        /// 	[cnurse]	09/24/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool HasValidFiles
         {
             get
@@ -132,6 +234,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Package is installed
+        /// </summary>
+        /// <value>A Boolean value</value>
+        /// <history>
+        /// 	[cnurse]	09/24/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool Installed
         {
             get
@@ -144,6 +255,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the InstallMode
+        /// </summary>
+        /// <value>A InstallMode value</value>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallMode InstallMode
         {
             get
@@ -152,6 +272,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Invalid File Extensions
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/12/2009  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string InvalidFileExtensions
         {
             get
@@ -172,6 +301,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the File Extension WhiteList is ignored
+        /// </summary>
+        /// <value>A Boolean value</value>
+        /// <history>
+        /// 	[cnurse]	05/06/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IgnoreWhiteList
         {
             get
@@ -184,6 +322,14 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Installer is in legacy mode
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/20/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsLegacyMode
         {
             get
@@ -196,6 +342,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the InstallerInfo instance is Valid
+        /// </summary>
+        /// <value>A Boolean value</value>
+        /// <history>
+        /// 	[cnurse]	08/13/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsValid
         {
             get
@@ -204,6 +359,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the associated Logger
+        /// </summary>
+        /// <value>A Logger</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string LegacyError { get; set; }
 
         public Logger Log
@@ -214,6 +378,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the Manifest File for the Package
+        /// </summary>
+        /// <value>An InstallFile</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallFile ManifestFile
         {
             get
@@ -222,6 +395,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Id of the package after installation (-1 if fail)
+        /// </summary>
+        /// <value>An Integer</value>
+        /// <history>
+        /// 	[cnurse]	08/22/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PackageID
         {
             get
@@ -234,6 +416,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Physical Path to the root of the Site (eg D:\Websites\DotNetNuke")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PhysicalSitePath
         {
             get
@@ -242,6 +433,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Id of the current portal (-1 if Host)
+        /// </summary>
+        /// <value>An Integer</value>
+        /// <history>
+        /// 	[cnurse]	08/22/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PortalID
         {
             get
@@ -254,6 +454,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Package Install is being repaird
+        /// </summary>
+        /// <value>A Boolean value</value>
+        /// <history>
+        /// 	[cnurse]	09/24/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool RepairInstall
         {
             get
@@ -266,6 +475,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the security Access Level of the user that is calling the INstaller
+        /// </summary>
+        /// <value>A SecurityAccessLevel enumeration</value>
+        /// <history>
+        /// 	[cnurse]	08/22/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public SecurityAccessLevel SecurityAccessLevel
         {
             get
@@ -278,6 +496,16 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Temporary Install Folder used to unzip the archive (and to place the 
+        /// backups of existing files) during InstallMode
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/01/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string TempInstallFolder
         {
             get
@@ -285,7 +513,19 @@ namespace DotNetNuke.Services.Installer
                 return _TempInstallFolder;
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadZipStream reads a zip stream, and loads the Files Dictionary
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ReadZipStream(Stream inputStream, bool isEmbeddedZip)
         {
             Log.StartJob(Util.FILES_Reading);
@@ -295,14 +535,26 @@ namespace DotNetNuke.Services.Installer
             {
                 if (!entry.IsDirectory)
                 {
+					//Add file to list
                     var file = new InstallFile(unzip, entry, this);
                     if (file.Type == InstallFileType.Resources && (file.Name.ToLowerInvariant() == "containers.zip" || file.Name.ToLowerInvariant() == "skins.zip"))
                     {
+						//Temporarily save the TempInstallFolder
                         string tmpInstallFolder = TempInstallFolder;
+
+                        //Create Zip Stream from File
                         var zipStream = new FileStream(file.TempFileName, FileMode.Open, FileAccess.Read);
+
+                        //Set TempInstallFolder
                         _TempInstallFolder = Path.Combine(TempInstallFolder, Path.GetFileNameWithoutExtension(file.Name));
+
+                        //Extract files from zip
                         ReadZipStream(zipStream, true);
+
+                        //Restore TempInstallFolder
                         _TempInstallFolder = tmpInstallFolder;
+
+                        //Delete zip file
                         var zipFile = new FileInfo(file.TempFileName);
                         zipFile.Delete();
                     }
@@ -345,7 +597,11 @@ namespace DotNetNuke.Services.Installer
                 Log.AddFailure(new Exception(Util.EXCEPTION_FileLoad));
                 Log.EndJob(Util.FILES_ReadingEnd);
             }
+			
+            //Close the Zip Input Stream as we have finished with it
             inputStream.Close();
         }
+		
+		#endregion
     }
 }

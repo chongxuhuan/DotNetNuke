@@ -50,22 +50,62 @@ using DotNetNuke.UI.Modules;
 
 namespace DotNetNuke.Framework
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Framework
+    /// Project:    DotNetNuke
+    /// Class:      PageBase
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// PageBase provides a custom DotNetNuke base class for pages
+    /// </summary>
+    /// <history>
+    ///		[cnurse]	11/30/2006	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class PageBase : Page
     {
+		#region "Private Members"
+		
         private readonly NameValueCollection _htmlAttributes = new NameValueCollection();
         private readonly ArrayList _localizedControls;
         private CultureInfo _pageCulture;
         private string _localResourceFile;
+		
+		#endregion
+		
+		#region "Constructors"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Creates the Page
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	    11/30/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected PageBase()
         {
             _localizedControls = new ArrayList();
         }
+		
+		#endregion
+		
 
+		#region "Protected Properties"
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// PageStatePersister returns an instance of the class that will be used to persist the Page State
+        /// </summary>
+        /// <returns>A System.Web.UI.PageStatePersister</returns>
+        /// <history>
+        /// 	[cnurse]	    11/30/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override PageStatePersister PageStatePersister
         {
             get
             {
+				//Set ViewState Persister to default (as defined in Base Class)
                 PageStatePersister persister = base.PageStatePersister;
                 switch (Host.PageStatePersister)
                 {
@@ -79,6 +119,10 @@ namespace DotNetNuke.Framework
                 return persister;
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public PortalSettings PortalSettings
         {
@@ -125,6 +169,10 @@ namespace DotNetNuke.Framework
                 _localResourceFile = value;
             }
         }
+		
+		#endregion
+		
+		#region "Private Methpds"
 
         private static void AddStyleSheetInternal(Page page, string key, bool isFirst)
         {
@@ -269,6 +317,10 @@ namespace DotNetNuke.Framework
             AJAX.RemoveScriptManager(this);
             base.Render(writer);
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
         internal static string GetControlAttribute(Control c, ArrayList affectedControls)
         {
@@ -318,11 +370,20 @@ namespace DotNetNuke.Framework
             return key;
         }
 
+        /// <summary>
+        /// <para>ProcessControl peforms the high level localization for a single control and optionally it's children.</para>
+        /// </summary>
+        /// <param name="c">Control to find the AttributeCollection on</param>
+        /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
+        /// <param name="includeChildren">If true, causes this method to process children of this controls.</param>
+        /// <param name="ResourceFileRoot">Root Resource File.</param>
         internal void ProcessControl(Control c, ArrayList affectedControls, bool includeChildren, string ResourceFileRoot)
         {
+			//Perform the substitution if a key was found
             string key = GetControlAttribute(c, affectedControls);
             if (!string.IsNullOrEmpty(key))
             {
+				//Translation starts here ....
                 string value;
                 value = Localization.GetString(key, ResourceFileRoot);
                 if (c is Label)
@@ -421,6 +482,8 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
+			
+            //Translate radiobuttonlist items here 
             if (c is RadioButtonList)
             {
                 RadioButtonList ctrl;
@@ -445,6 +508,8 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
+			
+            //Translate dropdownlist items here 
             if (c is DropDownList)
             {
                 DropDownList ctrl;
@@ -469,6 +534,9 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
+			
+			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+            //Manual Override to ResolveUrl
             if (c is Image)
             {
                 Image ctrl;
@@ -478,6 +546,9 @@ namespace DotNetNuke.Framework
                     ctrl.ImageUrl = Page.ResolveUrl(ctrl.ImageUrl);
                 }
             }
+			
+			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+            //Manual Override to ResolveUrl
             if (c is HtmlImage)
             {
                 HtmlImage ctrl;
@@ -487,6 +558,9 @@ namespace DotNetNuke.Framework
                     ctrl.Src = Page.ResolveUrl(ctrl.Src);
                 }
             }
+			
+			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+            //Manual Override to ResolveUrl
             if (c is HyperLink)
             {
                 HyperLink ctrl;
@@ -500,6 +574,8 @@ namespace DotNetNuke.Framework
                     ctrl.ImageUrl = Page.ResolveUrl(ctrl.ImageUrl);
                 }
             }
+			
+			//Process child controls
             if (includeChildren && c.HasControls())
             {
                 var objModuleControl = c as IModuleControl;
@@ -508,15 +584,18 @@ namespace DotNetNuke.Framework
                     PropertyInfo pi = c.GetType().GetProperty("LocalResourceFile");
                     if (pi != null && pi.GetValue(c, null) != null)
                     {
+						//If controls has a LocalResourceFile property use this
                         IterateControls(c.Controls, affectedControls, pi.GetValue(c, null).ToString());
                     }
                     else
                     {
+						//Pass Resource File Root through
                         IterateControls(c.Controls, affectedControls, ResourceFileRoot);
                     }
                 }
                 else
                 {
+					//Get Resource File Root from Controls LocalResourceFile Property
                     IterateControls(c.Controls, affectedControls, objModuleControl.LocalResourceFile);
                 }
             }
@@ -537,6 +616,11 @@ namespace DotNetNuke.Framework
             AddStyleSheetInternal(page, styleSheet, isFirst);
         }
 
+        /// <summary>
+        /// <para>RemoveKeyAttribute remove the key attribute from the control. If this isn't done, then the HTML output will have 
+        /// a bad attribute on it which could cause some older browsers problems.</para>
+        /// </summary>
+        /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>		
         public static void RemoveKeyAttribute(ArrayList affectedControls)
         {
             if (affectedControls == null)
@@ -549,8 +633,8 @@ namespace DotNetNuke.Framework
                 var ac = (AttributeCollection)affectedControls[i];
                 ac.Remove(Localization.KeyName);
             }
-        }
+		}
 
-
-    }
+		#endregion
+	}
 }

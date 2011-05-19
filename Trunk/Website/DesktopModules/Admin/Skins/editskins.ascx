@@ -17,8 +17,8 @@
             <dnn:label id="plContainers" controlname="cboContainers" runat="server" />
             <asp:dropdownlist id="cboContainers" Runat="server" AutoPostBack="True" />
         </div>
-        <div class="dnnFormItem">
-            <asp:Label ID="lblLegacy" runat="server" class="dnnFormMessage dnnFormWarning" resourcekey="LegacySkin" Visible="false" />
+        <div class="dnnFormItem legacySkinNotice">
+            <asp:Label ID="lblLegacy" runat="server" class="dnnFormMessage dnnFormInfo" resourcekey="LegacySkin" Visible="false" />
         </div>
         <div class="dnnFormItem">
 		    <asp:panel id="pnlSkin" Runat="server" Visible="False">
@@ -29,22 +29,20 @@
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="lblSkinTitle" runat="server" resourcekey="plSkins" />
-            <table id="tblSkins" runat="server" cellspacing="4" cellpadding="4" class="skinViewer" />
+            <table id="tblSkins" runat="server" cellspacing="0" cellpadding="0" class="skinViewer" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="lblContainerTitle" runat="server" resourcekey="plContainers" />
-            <table id="tblContainers" runat="server" cellspacing="4" cellpadding="4" class="skinViewer" />
+            <table id="tblContainers" runat="server" cellspacing="0" cellpadding="0" class="skinViewer" />
         </div>
         <div id="pnlParse" Runat="server" Visible="False" class="dnnFormItem">
             <dnn:label id="lblParseOptions" runat="server" resourcekey="ParseOptions" />
-			<asp:RadioButtonList id="optParse" Runat="server"  RepeatDirection="Horizontal" CssClass="dnnESRadioButtons">
+			<asp:RadioButtonList id="optParse" Runat="server"  RepeatDirection="Horizontal" CssClass="dnnESRadioButtons" RepeatLayout="Flow">
 				<asp:ListItem resourcekey="Localized" Value="L" Selected="True" />
 				<asp:ListItem resourcekey="Portable" Value="P" />
 			</asp:RadioButtonList>
         </div>
-        <div class="dnnFormItem">
-            <asp:label id="lblOutput" Runat="server" EnableViewState="False" />
-        </div>
+        <div class="dnnFormItem"><asp:label id="lblOutput" Runat="server" EnableViewState="False" /></div>
     </fieldset>
     <ul class="dnnActions dnnClear">
     	<li><asp:LinkButton id="cmdParse" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdParse" /></li>

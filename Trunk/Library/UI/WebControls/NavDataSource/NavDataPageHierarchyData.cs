@@ -181,6 +181,12 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// Returns node navigation url
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks></remarks>
         public virtual string NavigateUrl
         {
             get
@@ -189,6 +195,12 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// Returns Node description
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks></remarks>
         public virtual string Description
         {
             get
@@ -204,6 +216,13 @@ namespace DotNetNuke.UI.WebControls
             return m_objNode.Text;
         }
 
+        /// <summary>
+        /// Helper function to handle cases where property is null (Nothing)
+        /// </summary>
+        /// <param name="Value">Value to evaluate for null</param>
+        /// <param name="Def">If null, return this default</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
         private string GetSafeValue(string Value, string Def)
         {
             if (Value != null)
@@ -216,6 +235,12 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// <summary>
+        /// Computes valuepath necessary for ASP.NET controls to guarantee uniqueness
+        /// </summary>
+        /// <param name="objNode"></param>
+        /// <returns>ValuePath</returns>
+        /// <remarks>Not sure if it is ok to hardcode the "\" separator, but also not sure where I would get it from</remarks>
         private string GetValuePath(DNNNode objNode)
         {
             DNNNode objParent = objNode.ParentNode;

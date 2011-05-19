@@ -67,6 +67,7 @@ namespace DotNetNuke.Services.Mail
         public static bool IsValidEmailAddress(string Email, int portalid)
         {
             string pattern = Null.NullString;
+            //During install Wizard we may not have a valid PortalID
             if (portalid != Null.NullInteger)
             {
                 pattern = Convert.ToString(UserController.GetUserSettings(portalid)["Security_EmailValidation"]);
@@ -91,6 +92,7 @@ namespace DotNetNuke.Services.Mail
         /// -----------------------------------------------------------------------------
         public static string SendMail(UserInfo user, MessageType msgType, PortalSettings settings)
         {
+			//Send Notification to User
             int toUser = user.UserID;
             string locale = user.Profile.PreferredLocale;
             string subject = "";
@@ -135,12 +137,36 @@ namespace DotNetNuke.Services.Mail
                     body = "EMAIL_USER_UPDATED_OWN_PASSWORD_BODY";
                     break;
             }
+          
             subject = Localize.GetSystemMessage(locale, settings, subject, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId);
             body = Localize.GetSystemMessage(locale, settings, body, user, Localize.GlobalResourceFile, custom, "", settings.AdministratorId);
+        
             SendEmail(settings.Email, UserController.GetUserById(settings.PortalId, toUser).Email, subject, body);
+
             return Null.NullString;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// <summary>Send a simple email.</summary>
+        /// </summary>
+        /// <param name="MailFrom"></param>
+        /// <param name="MailTo"></param>
+        /// <param name="Bcc"></param>
+        /// <param name="Subject"></param>
+        /// <param name="Body"></param>
+        /// <param name="Attachment"></param>
+        /// <param name="BodyType"></param>
+        /// <param name="SMTPServer"></param>
+        /// <param name="SMTPAuthentication"></param>
+        /// <param name="SMTPUsername"></param>
+        /// <param name="SMTPPassword"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        /// <history>
+        ///     [cnurse]        09/29/2005  Moved to Mail class
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string SendMail(string MailFrom, string MailTo, string Bcc, string Subject, string Body, string Attachment, string BodyType, string SMTPServer, string SMTPAuthentication,
                                       string SMTPUsername, string SMTPPassword)
         {
@@ -160,6 +186,29 @@ namespace DotNetNuke.Services.Mail
             return SendMail(MailFrom, MailTo, "", Bcc, MailPriority.Normal, Subject, objBodyFormat, Encoding.UTF8, Body, Attachment, SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>Send a simple email.</summary>
+        /// <param name="MailFrom"></param>
+        /// <param name="MailTo"></param>
+        /// <param name="Cc"></param>
+        /// <param name="Bcc"></param>
+        /// <param name="Priority"></param>
+        /// <param name="Subject"></param>
+        /// <param name="BodyFormat"></param>
+        /// <param name="BodyEncoding"></param>
+        /// <param name="Body"></param>
+        /// <param name="Attachment"></param>
+        /// <param name="SMTPServer"></param>
+        /// <param name="SMTPAuthentication"></param>
+        /// <param name="SMTPUsername"></param>
+        /// <param name="SMTPPassword"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[Nik Kalyani]	10/15/2004	Replaced brackets in member names
+        ///     [cnurse]        09/29/2005  Moved to Mail class
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string SendMail(string MailFrom, string MailTo, string Cc, string Bcc, MailPriority Priority, string Subject, MailFormat BodyFormat, Encoding BodyEncoding, string Body,
                                       string Attachment, string SMTPServer, string SMTPAuthentication, string SMTPUsername, string SMTPPassword)
         {
@@ -213,6 +262,7 @@ namespace DotNetNuke.Services.Mail
                                       string Body, string[] Attachment, string SMTPServer, string SMTPAuthentication, string SMTPUsername, string SMTPPassword, bool SMTPEnableSSL)
         {
             var attachments = new List<Attachment>();
+
             foreach (string myAtt in Attachment)
             {
                 if (!String.IsNullOrEmpty(myAtt))
@@ -244,11 +294,13 @@ namespace DotNetNuke.Services.Mail
             string retValue = "";
             if (!IsValidEmailAddress(MailFrom, PortalSettings.Current != null ? PortalSettings.Current.PortalId : Null.NullInteger))
             {
+				//TODO: Add more robust logging that handles validation of all params
                 var ex = new ArgumentException(string.Format(Localize.GetString("EXCEPTION_InvalidEmailAddress", PortalSettings.Current), MailFrom));
                 Exceptions.Exceptions.LogException(ex);
                 return ex.Message;
             }
 
+            //SMTP server configuration
             if (string.IsNullOrEmpty(SMTPServer) && !string.IsNullOrEmpty(Host.SMTPServer))
             {
                 SMTPServer = Host.SMTPServer;
@@ -265,6 +317,8 @@ namespace DotNetNuke.Services.Mail
             {
                 SMTPPassword = Host.SMTPPassword;
             }
+			
+            //translate semi-colon delimiters to commas as ASP.NET 2.0 does not support semi-colons
             MailTo = MailTo.Replace(";", ",");
             Cc = Cc.Replace(";", ",");
             Bcc = Bcc.Replace(";", ",");
@@ -295,9 +349,14 @@ namespace DotNetNuke.Services.Mail
                 {
                     objMail.Attachments.Add(myAtt);
                 }
+				
+                //message
                 objMail.SubjectEncoding = BodyEncoding;
                 objMail.Subject = HtmlUtils.StripWhiteSpace(Subject, true);
                 objMail.BodyEncoding = BodyEncoding;
+
+                //added support for multipart html messages
+                //add text part as alternate view
                 AlternateView PlainView = AlternateView.CreateAlternateViewFromString(ConvertToText(Body), null, "text/plain");
                 objMail.AlternateViews.Add(PlainView);
                 if (objMail.IsBodyHtml)
@@ -308,11 +367,13 @@ namespace DotNetNuke.Services.Mail
             }
             catch (Exception objException)
             {
+				//Problem creating Mail Object
                 retValue = MailTo + ": " + objException.Message;
                 Exceptions.Exceptions.LogException(objException);
             }
             if (objMail != null)
             {
+				//external SMTP server alternate port
                 int SmtpPort = Null.NullInteger;
                 int portPos = SMTPServer.IndexOf(":");
                 if (portPos > -1)
@@ -333,16 +394,16 @@ namespace DotNetNuke.Services.Mail
                         switch (SMTPAuthentication)
                         {
                             case "":
-                            case "0":
+                            case "0": //anonymous
                                 break;
-                            case "1":
+                            case "1": //basic
                                 if (!String.IsNullOrEmpty(SMTPUsername) && !String.IsNullOrEmpty(SMTPPassword))
                                 {
                                     smtpClient.UseDefaultCredentials = false;
                                     smtpClient.Credentials = new NetworkCredential(SMTPUsername, SMTPPassword);
                                 }
                                 break;
-                            case "2":
+                            case "2": //NTLM
                                 smtpClient.UseDefaultCredentials = true;
                                 break;
                         }
@@ -363,6 +424,7 @@ namespace DotNetNuke.Services.Mail
                 }
                 catch (Exception objException)
                 {
+					//mail configuration problem
                     if (objException.InnerException != null)
                     {
                         retValue = string.Concat(objException.Message, Environment.NewLine, objException.InnerException.Message);

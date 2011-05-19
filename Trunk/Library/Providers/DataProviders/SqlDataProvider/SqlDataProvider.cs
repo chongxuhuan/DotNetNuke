@@ -66,10 +66,12 @@ namespace DotNetNuke.Data
             _providerPath = Settings["providerPath"];
             if (useConfig)
             {
+				//Get Connection string from web.config
                 _connectionString = Config.GetConnectionString();
             }
             if (string.IsNullOrEmpty(_connectionString))
             {
+				//Use connection string specified in provider
                 _connectionString = Settings["connectionString"];
             }
             _objectQualifier = Settings["objectQualifier"];
@@ -179,16 +181,23 @@ namespace DotNetNuke.Data
 
         private void ExecuteADOScript(SqlTransaction trans, string SQL)
         {
+            //Get the connection
             SqlConnection connection = trans.Connection;
+
+            //Create a new command (with no timeout)
             var command = new SqlCommand(SQL, trans.Connection);
             command.Transaction = trans;
             command.CommandTimeout = 0;
+
             command.ExecuteNonQuery();
         }
 
         private void ExecuteADOScript(string SQL)
         {
+            //Create a new connection
             var connection = new SqlConnection(UpgradeConnectionString);
+
+            //Create a new command (with no timeout)
             var command = new SqlCommand(SQL, connection);
             command.CommandTimeout = 0;
             connection.Open();
@@ -204,8 +213,11 @@ namespace DotNetNuke.Data
             //Create a new command (with no timeout)
             var command = new SqlCommand(SQL, connection);
             command.CommandTimeout = 0;
+
             connection.Open();
+
             command.ExecuteNonQuery();
+
             connection.Close();
         }
 
@@ -226,10 +238,14 @@ namespace DotNetNuke.Data
             string DBUser = "public";
             string[] ConnSettings;
             string[] ConnSetting;
+
             ConnSettings = ConnectionString.Split(';');
+
+            //If connection string does not use integrated security, then get user id.
             if (ConnectionString.ToUpper().Contains("USER ID") || ConnectionString.ToUpper().Contains("UID") || ConnectionString.ToUpper().Contains("USER"))
             {
                 ConnSettings = ConnectionString.Split(';');
+
                 foreach (string s in ConnSettings)
                 {
                     if (s != string.Empty)
@@ -252,6 +268,7 @@ namespace DotNetNuke.Data
 
             try
             {
+                //grant rights to a login or role for all stored procedures
                 SQL += "if exists (select * from dbo.sysusers where name='" + LoginOrRole + "')";
                 SQL += "  begin";
                 SQL += "    declare @exec nvarchar(2000) ";
@@ -289,6 +306,7 @@ namespace DotNetNuke.Data
             string Exceptions = string.Empty;
             try
             {
+				//grant EXECUTE rights to a login or role for all functions
                 SQL += "if exists (select * from dbo.sysusers where name='" + LoginOrRole + "')";
                 SQL += "  begin";
                 SQL += "    declare @exec nvarchar(2000) ";
@@ -363,6 +381,19 @@ namespace DotNetNuke.Data
             return connectionValid;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ExecuteReader executes a stored procedure or "dynamic sql" statement, against 
+        /// the database
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="ProcedureName">The name of the Stored Procedure to Execute</param>
+        /// <param name="commandParameters">An array of parameters to pass to the Database</param>
+        /// <history>
+        /// 	[cnurse]	12/11/2005	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void ExecuteNonQuery(string ProcedureName, params object[] commandParameters)
         {
             SqlHelper.ExecuteNonQuery(_connectionString, DatabaseOwner + ObjectQualifier + ProcedureName, commandParameters);
@@ -429,6 +460,7 @@ namespace DotNetNuke.Data
             }
             catch
             {
+				//error in SQL query
                 return null;
             }
         }
@@ -468,6 +500,7 @@ namespace DotNetNuke.Data
                 string s = SQL;
                 if (!String.IsNullOrEmpty(s.Trim()))
                 {
+					//script dynamic substitution
                     s = s.Replace("{databaseOwner}", DatabaseOwner);
                     s = s.Replace("{objectQualifier}", ObjectQualifier);
                     IgnoreErrors = false;
@@ -570,10 +603,12 @@ namespace DotNetNuke.Data
                     Exceptions += ExecuteScript(Script, transaction);
                     if (String.IsNullOrEmpty(Exceptions))
                     {
+                        //No exceptions so go ahead and commit
                         CommitTransaction(transaction);
                     }
                     else
                     {
+						//Found exceptions, so rollback db
                         RollbackTransaction(transaction);
                         Exceptions += "SQL Execution failed.  Database was rolled back" + Environment.NewLine + Environment.NewLine + Script + Environment.NewLine + Environment.NewLine;
                     }
@@ -594,6 +629,7 @@ namespace DotNetNuke.Data
                     string s = SQL;
                     if (!String.IsNullOrEmpty(s.Trim()))
                     {
+						//script dynamic substitution
                         s = s.Replace("{databaseOwner}", DatabaseOwner);
                         s = s.Replace("{objectQualifier}", ObjectQualifier);
                         try
@@ -609,10 +645,16 @@ namespace DotNetNuke.Data
                     }
                 }
             }
+			
+            //if the upgrade connection string is specified or or db_owner setting is not set to dbo
             if (UpgradeConnectionString != ConnectionString || DatabaseOwner.Trim().ToLower() != "dbo.")
             {
                 try
                 {
+                    //grant execute rights to the public role or userid for all stored procedures. This is
+                    //necesary because the UpgradeConnectionString will create stored procedures
+                    //which restrict execute permissions for the ConnectionString user account. This is also
+                    //necessary when db_owner is not set to "dbo" 
                     Exceptions += GrantStoredProceduresPermission("EXECUTE", GetConnectionStringUserID());
                 }
                 catch (SqlException objException)
@@ -621,8 +663,14 @@ namespace DotNetNuke.Data
 
                     Exceptions += objException + Environment.NewLine + Environment.NewLine + Script + Environment.NewLine + Environment.NewLine;
                 }
+				
                 try
                 {
+                    //grant execute or select rights to the public role or userid for all user defined functions based
+                    //on what type of function it is (scalar function or table function). This is
+                    //necesary because the UpgradeConnectionString will create user defined functions
+                    //which restrict execute permissions for the ConnectionString user account.  This is also
+                    //necessary when db_owner is not set to "dbo" 
                     Exceptions += GrantUserDefinedFunctionsPermission("EXECUTE", "SELECT", GetConnectionStringUserID());
                 }
                 catch (SqlException objException)
@@ -704,10 +752,12 @@ namespace DotNetNuke.Data
         public override string GetProviderPath()
         {
             HttpContext objHttpContext = HttpContext.Current;
+
             string path = ProviderPath;
             if (!String.IsNullOrEmpty(path))
             {
                 path = objHttpContext.Server.MapPath(path);
+
                 if (Directory.Exists(path))
                 {
                     if (!IsConnectionValid)
@@ -787,18 +837,21 @@ namespace DotNetNuke.Data
             }
             else
             {
+				//Invalid DbConnectionStringBuilder
             }
             return connectionString;
         }
 
         public override void UpgradeDatabaseSchema(int Major, int Minor, int Build)
         {
+			//not necessary for SQL Server - use Transact-SQL scripts
         }
 
         public override void UpdateDatabaseVersion(int Major, int Minor, int Build, string Name)
         {
             if ((Major >= 5 || (Major == 4 && Minor == 9 && Build > 0)))
             {
+				//If the version > 4.9.0 use the new sproc, which is added in 4.9.1 script
                 SqlHelper.ExecuteNonQuery(UpgradeConnectionString, DatabaseOwner + ObjectQualifier + "UpdateDatabaseVersionAndName", Major, Minor, Build, Name);
             }
             else
@@ -807,6 +860,7 @@ namespace DotNetNuke.Data
             }
         }
 
+		//host
         public override IDataReader GetHostSettings()
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHostSettings");
@@ -852,6 +906,7 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateServerActivity", ServerName, IISAppName, CreatedDate, LastActivityDate);
         }
 
+		//portal
         public override int AddPortalInfo(string portalname, string currency, string firstname, string lastname, string username, string password, string email, DateTime expirydate, double hostfee,
                                           double hostspace, int pagequota, int userquota, int siteloghistory, string homedirectory, int createdbyuserid)
         {
@@ -1217,6 +1272,7 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModules", TabId);
         }
 
+		//module
         public override IDataReader GetAllModules()
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllModules");
@@ -1713,6 +1769,7 @@ namespace DotNetNuke.Data
                                       LastModifiedByUserID);
         }
 
+		//files
         public override IDataReader GetFiles(int FolderID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFiles", FolderID);
@@ -1803,6 +1860,7 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateFileVersion", FileId, VersionGuid);
         }
 
+		//site log
         public override void AddSiteLog(DateTime DateTime, int PortalId, int UserId, string Referrer, string URL, string UserAgent, string UserHostAddress, string UserHostName, int TabId,
                                         int AffiliateId)
         {
@@ -1835,6 +1893,7 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteSiteLog", DateTime, PortalId);
         }
 
+		//database
         public override IDataReader GetTables()
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTables");
@@ -1846,6 +1905,7 @@ namespace DotNetNuke.Data
             return ExecuteSQL(SQL);
         }
 
+		//vendors
         public override IDataReader GetVendors(int PortalId, bool UnAuthorized, int PageIndex, int PageSize)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetVendors", GetNull(PortalId), UnAuthorized, GetNull(PageSize), GetNull(PageIndex));

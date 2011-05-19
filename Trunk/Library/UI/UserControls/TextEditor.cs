@@ -39,62 +39,76 @@ using DotNetNuke.Services.Personalization;
 
 namespace DotNetNuke.UI.UserControls
 {
+    /// -----------------------------------------------------------------------------
+    /// Class:  TextEditor
+    /// Project: DotNetNuke
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// TextEditor is a user control that provides a wrapper for the HtmlEditor providers
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	12/13/2004	Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [ValidationPropertyAttribute("Text")]
     public class TextEditor : UserControl
     {
-        private string MyFileName = "TextEditor.ascx";
-        private HtmlEditorProvider RichTextEditor;
-        private bool _ChooseMode = true;
-        private bool _ChooseRender = true;
-        private bool _HtmlEncode = true;
-        protected HtmlTableCell celTextEditor;
-        protected RadioButtonList optRender;
-        protected RadioButtonList optView;
-        protected LabelControl plView;
-        protected PlaceHolder plcEditor;
-        protected Panel pnlBasicRender;
-        protected Panel pnlBasicTextBox;
-        protected Panel pnlRichTextBox;
-        protected HtmlTable tblTextEditor;
-        protected HtmlTableRow trView;
-        protected TextBox txtDesktopHTML;
+		#region "Private Members"
 
-        public bool ChooseMode
+        private const string MyFileName = "TextEditor.ascx";
+        private HtmlEditorProvider _richTextEditor;
+        private bool _chooseMode = true;
+        private bool _chooseRender = true;
+        private bool _htmlEncode = true;
+        protected Panel PanelTextEditor;
+        protected RadioButtonList OptRender;
+        protected RadioButtonList OptView;
+        protected LabelControl PlView;
+        protected PlaceHolder PlcEditor;
+        protected HtmlGenericControl DivBasicTextBox;
+        protected HtmlGenericControl DivBasicRender;
+        protected HtmlGenericControl DivRichTextBox;
+        protected Panel PanelView;
+        protected TextBox TxtDesktopHTML;
+		
+		#endregion
+
+		#region "Properties"
+
+        ///<summary>Enables/Disables the option to allow the user to select between Rich/Basic Mode, Default is true.</summary>
+		public bool ChooseMode
         {
             get
             {
-                return _ChooseMode;
+                return _chooseMode;
             }
             set
             {
-                _ChooseMode = value;
+                _chooseMode = value;
             }
         }
 
+		///<summary>Determines wether or not the Text/Html button is rendered for Basic mode, Default is True</summary>
         public bool ChooseRender
         {
             get
             {
-                return _ChooseRender;
+                return _chooseRender;
             }
             set
             {
-                _ChooseRender = value;
+                _chooseRender = value;
             }
         }
 
-        public string DefaultMode
+        ///<summary>Gets/Sets the Default mode of the control, either "RICH" or "BASIC", Defaults to Rich</summary>
+		public string DefaultMode
         {
             get
             {
-                if (ViewState["DefaultMode"] == null || String.IsNullOrEmpty(ViewState["DefaultMode"].ToString()))
-                {
-                    return "RICH";
-                }
-                else
-                {
-                    return ViewState["DefaultMode"].ToString();
-                }
+                return ViewState["DefaultMode"] == null || String.IsNullOrEmpty(ViewState["DefaultMode"].ToString()) ? "RICH" : ViewState["DefaultMode"].ToString();
             }
             set
             {
@@ -109,26 +123,31 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
-        public Unit Height { get; set; }
+        ///<summary>Gets/Sets the Height of the control</summary>
+		public Unit Height { get; set; }
 
-        public bool HtmlEncode
+        ///<summary>Turns on HtmlEncoding of text.  If this option is on the control will assume, it is being passed encoded text and will decode.</summary>
+		public bool HtmlEncode
         {
             get
             {
-                return _HtmlEncode;
+                return _htmlEncode;
             }
             set
             {
-                _HtmlEncode = value;
+                _htmlEncode = value;
             }
         }
 
-        public string Mode
+        ///<summary>The current mode of the control "RICH",  "BASIC"</summary>
+		public string Mode
         {
             get
             {
                 string strMode = "";
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
+
+                //Check if Personal Preference is set
                 if (objUserInfo.UserID >= 0)
                 {
                     if (Personalization.GetProfile("DotNetNuke.TextEditor", "PreferredTextEditor") != null)
@@ -136,6 +155,8 @@ namespace DotNetNuke.UI.UserControls
                         strMode = Convert.ToString(Personalization.GetProfile("DotNetNuke.TextEditor", "PreferredTextEditor"));
                     }
                 }
+				
+				//If no Preference Check if Viewstate has been saved
                 if (String.IsNullOrEmpty(strMode))
                 {
                     if (ViewState["DesktopMode"] != null && !String.IsNullOrEmpty(ViewState["DesktopMode"].ToString()))
@@ -143,6 +164,8 @@ namespace DotNetNuke.UI.UserControls
                         strMode = Convert.ToString(ViewState["DesktopMode"]);
                     }
                 }
+				
+				//Finally if still no value Use default
                 if (String.IsNullOrEmpty(strMode))
                 {
                     strMode = DefaultMode;
@@ -152,9 +175,11 @@ namespace DotNetNuke.UI.UserControls
             set
             {
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
+
                 if (value.ToUpper() != "BASIC")
                 {
                     ViewState["DesktopMode"] = "RICH";
+
                     if (objUserInfo.UserID >= 0)
                     {
                         Personalization.SetProfile("DotNetNuke.TextEditor", "PreferredTextEditor", "RICH");
@@ -163,6 +188,7 @@ namespace DotNetNuke.UI.UserControls
                 else
                 {
                     ViewState["DesktopMode"] = "BASIC";
+
                     if (objUserInfo.UserID >= 0)
                     {
                         Personalization.SetProfile("DotNetNuke.TextEditor", "PreferredTextEditor", "BASIC");
@@ -171,41 +197,42 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
-        public string Text
+        ///<summary>Gets/Sets the Text of the control</summary>
+		public string Text
         {
             get
             {
-                if (optView.SelectedItem.Value == "BASIC")
+                switch (OptView.SelectedItem.Value)
                 {
-                    switch (optRender.SelectedItem.Value)
-                    {
-                        case "T":
-                            return Encode(HtmlUtils.ConvertToHtml(txtDesktopHTML.Text));
-                            //break;
-                        case "R":
-                            return txtDesktopHTML.Text;
-                            //break;
-                        default:
-                            return Encode(txtDesktopHTML.Text);
-                            //break;
-                    }
-                }
-                else
-                {
-                    return Encode(RichTextEditor.Text);
+                    case "BASIC":
+                        switch (OptRender.SelectedItem.Value)
+                        {
+                            case "T":
+                                return Encode(HtmlUtils.ConvertToHtml(TxtDesktopHTML.Text));
+                                //break;
+                            case "R":
+                                return TxtDesktopHTML.Text;
+                                //break;
+                            default:
+                                return Encode(TxtDesktopHTML.Text);
+                                //break;
+                        }
+                    default:
+                        return Encode(_richTextEditor.Text);
                 }
             }
             set
             {
                 if (!String.IsNullOrEmpty(value))
                 {
-                    txtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
-                    RichTextEditor.Text = Decode(value);
+                    TxtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
+                    _richTextEditor.Text = Decode(value);
                 }
             }
         }
 
-        public string TextRenderMode
+        ///<summary>Sets the render mode for Basic mode.  {Raw | HTML | Text}</summary>
+		public string TextRenderMode
         {
             get
             {
@@ -213,8 +240,7 @@ namespace DotNetNuke.UI.UserControls
             }
             set
             {
-                string strMode;
-                strMode = value.ToUpper().Substring(0, 1);
+                var strMode = value.ToUpper().Substring(0, 1);
                 if (strMode != "R" && strMode != "H" && strMode != "T")
                 {
                     strMode = "H";
@@ -223,13 +249,15 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
-        public Unit Width { get; set; }
+        ///<summary>Gets/Sets the Width of the control</summary>
+		public Unit Width { get; set; }
 
-        public HtmlEditorProvider RichText
+        ///<summary>Allows public access ot the HtmlEditorProvider</summary>
+		public HtmlEditorProvider RichText
         {
             get
             {
-                return RichTextEditor;
+                return _richTextEditor;
             }
         }
 
@@ -240,176 +268,253 @@ namespace DotNetNuke.UI.UserControls
                 return TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" + MyFileName;
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Decodes the html
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strHtml">Html to decode</param>
+        /// <returns>The decoded html</returns>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string Decode(string strHtml)
         {
-            if (HtmlEncode)
-            {
-                return Server.HtmlDecode(strHtml);
-            }
-            else
-            {
-                return strHtml;
-            }
+            return HtmlEncode ? Server.HtmlDecode(strHtml) : strHtml;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Encodes the html
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strHtml">Html to encode</param>
+        /// <returns>The encoded html</returns>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string Encode(string strHtml)
         {
-            if (HtmlEncode)
-            {
-                return Server.HtmlEncode(strHtml);
-            }
-            else
-            {
-                return strHtml;
-            }
+            return HtmlEncode ? Server.HtmlEncode(strHtml) : strHtml;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the radio button lists
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void PopulateLists()
         {
-            if (optRender.Items.Count == 0)
+            if (OptRender.Items.Count == 0)
             {
-                optRender.Items.Add(new ListItem(Localization.GetString("Text", Localization.GetResourceFile(this, MyFileName)), "T"));
-                optRender.Items.Add(new ListItem(Localization.GetString("Html", Localization.GetResourceFile(this, MyFileName)), "H"));
-                optRender.Items.Add(new ListItem(Localization.GetString("Raw", Localization.GetResourceFile(this, MyFileName)), "R"));
+                OptRender.Items.Add(new ListItem(Localization.GetString("Text", Localization.GetResourceFile(this, MyFileName)), "T"));
+                OptRender.Items.Add(new ListItem(Localization.GetString("Html", Localization.GetResourceFile(this, MyFileName)), "H"));
+                OptRender.Items.Add(new ListItem(Localization.GetString("Raw", Localization.GetResourceFile(this, MyFileName)), "R"));
             }
-            if (optView.Items.Count == 0)
+            if (OptView.Items.Count == 0)
             {
-                optView.Items.Add(new ListItem(Localization.GetString("BasicTextBox", Localization.GetResourceFile(this, MyFileName)), "BASIC"));
-                optView.Items.Add(new ListItem(Localization.GetString("RichTextBox", Localization.GetResourceFile(this, MyFileName)), "RICH"));
+                OptView.Items.Add(new ListItem(Localization.GetString("BasicTextBox", Localization.GetResourceFile(this, MyFileName)), "BASIC"));
+                OptView.Items.Add(new ListItem(Localization.GetString("RichTextBox", Localization.GetResourceFile(this, MyFileName)), "RICH"));
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets the Mode displayed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/10/2005	created (extracted from Page_load)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void SetPanels()
         {
-            if (optView.SelectedIndex != -1)
+            if (OptView.SelectedIndex != -1)
             {
-                Mode = optView.SelectedItem.Value;
+                Mode = OptView.SelectedItem.Value;
             }
             if (!String.IsNullOrEmpty(Mode))
             {
-                optView.Items.FindByValue(Mode).Selected = true;
+                OptView.Items.FindByValue(Mode).Selected = true;
             }
             else
             {
-                optView.SelectedIndex = 0;
+                OptView.SelectedIndex = 0;
             }
-            if (optRender.SelectedIndex != -1)
+			
+			//Set the text render mode for basic mode
+            if (OptRender.SelectedIndex != -1)
             {
-                TextRenderMode = optRender.SelectedItem.Value;
+                TextRenderMode = OptRender.SelectedItem.Value;
             }
             if (!String.IsNullOrEmpty(TextRenderMode))
             {
-                optRender.Items.FindByValue(TextRenderMode).Selected = true;
+                OptRender.Items.FindByValue(TextRenderMode).Selected = true;
             }
             else
             {
-                optRender.SelectedIndex = 0;
+                OptRender.SelectedIndex = 0;
             }
-            if (optView.SelectedItem.Value == "BASIC")
+            if (OptView.SelectedItem.Value == "BASIC")
             {
-                pnlBasicTextBox.Visible = true;
-                pnlRichTextBox.Visible = false;
+                DivBasicTextBox.Visible = true;
+                DivRichTextBox.Visible = false;
             }
             else
             {
-                pnlBasicTextBox.Visible = false;
-                pnlRichTextBox.Visible = true;
+                DivBasicTextBox.Visible = false;
+                DivRichTextBox.Visible = true;
             }
         }
+		
+		#endregion
+
+		#region "Event Handlers"
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            RichTextEditor = HtmlEditorProvider.Instance();
-            RichTextEditor.ControlID = ID;
-            RichTextEditor.Initialize();
+            _richTextEditor = HtmlEditorProvider.Instance();
+            _richTextEditor.ControlID = ID;
+            _richTextEditor.Initialize();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            optRender.SelectedIndexChanged += optRender_SelectedIndexChanged;
-            optView.SelectedIndexChanged += optView_SelectedIndexChanged;
+            OptRender.SelectedIndexChanged += OptRenderSelectedIndexChanged;
+            OptView.SelectedIndexChanged += OptViewSelectedIndexChanged;
 
             try
             {
+				//Populate Radio Button Lists
                 PopulateLists();
-                UserInfo objUserInfo = UserController.GetCurrentUserInfo();
-                RichTextEditor.Width = Width;
-                RichTextEditor.Height = Height;
-                txtDesktopHTML.Height = Height;
-                txtDesktopHTML.Width = Width;
-                tblTextEditor.Width = Width.ToString();
-                celTextEditor.Width = Width.ToString();
+
+                //Get the current user
+                //UserInfo objUserInfo = UserController.GetCurrentUserInfo();
+
+                //Set the width and height of the controls
+                _richTextEditor.Width = Width;
+                _richTextEditor.Height = Height;
+                TxtDesktopHTML.Height = Height;
+                TxtDesktopHTML.Width = Width;
+                PanelView.Width = Width;
+                PanelTextEditor.Width = Width;
+
+                //Optionally display the radio button lists
                 if (!ChooseMode)
                 {
-                    trView.Visible = false;
+                    PanelView.Visible = false;
                 }
                 if (!ChooseRender)
                 {
-                    pnlBasicRender.Visible = false;
+                    DivBasicRender.Visible = false;
                 }
-                plcEditor.Controls.Add(RichTextEditor.HtmlEditorControl);
+				
+                //Load the editor
+                PlcEditor.Controls.Add(_richTextEditor.HtmlEditorControl);
                 SetPanels();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
-        protected void optRender_SelectedIndexChanged(Object sender, EventArgs e)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// optRender_SelectedIndexChanged runs when Basic Text Box mode is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        protected void OptRenderSelectedIndexChanged(Object sender, EventArgs e)
         {
-            if (optRender.SelectedIndex != -1)
+            if (OptRender.SelectedIndex != -1)
             {
-                TextRenderMode = optRender.SelectedItem.Value;
+                TextRenderMode = OptRender.SelectedItem.Value;
             }
             if (Mode == "BASIC")
             {
-                if (TextRenderMode == "H")
-                {
-                    txtDesktopHTML.Text = HtmlUtils.ConvertToHtml(txtDesktopHTML.Text);
-                }
-                else
-                {
-                    txtDesktopHTML.Text = HtmlUtils.ConvertToText(txtDesktopHTML.Text);
-                }
+                TxtDesktopHTML.Text = TextRenderMode == "H" ? HtmlUtils.ConvertToHtml(TxtDesktopHTML.Text) : HtmlUtils.ConvertToText(TxtDesktopHTML.Text);
             }
             SetPanels();
         }
 
-        protected void optView_SelectedIndexChanged(Object sender, EventArgs e)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// optView_SelectedIndexChanged runs when Editor Mode is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        protected void OptViewSelectedIndexChanged(Object sender, EventArgs e)
         {
-            if (optView.SelectedIndex != -1)
+            if (OptView.SelectedIndex != -1)
             {
-                Mode = optView.SelectedItem.Value;
+                Mode = OptView.SelectedItem.Value;
             }
             if (Mode == "BASIC")
             {
-                if (TextRenderMode == "T")
+                switch (TextRenderMode)
                 {
-                    txtDesktopHTML.Text = HtmlUtils.ConvertToText(RichTextEditor.Text);
-                }
-                else
-                {
-                    txtDesktopHTML.Text = RichTextEditor.Text;
+                    case "T":
+                        TxtDesktopHTML.Text = HtmlUtils.ConvertToText(_richTextEditor.Text);
+                        break;
+                    default:
+                        TxtDesktopHTML.Text = _richTextEditor.Text;
+                        break;
                 }
             }
             else
             {
-                if (TextRenderMode == "T")
+                switch (TextRenderMode)
                 {
-                    RichTextEditor.Text = HtmlUtils.ConvertToHtml(txtDesktopHTML.Text);
-                }
-                else
-                {
-                    RichTextEditor.Text = txtDesktopHTML.Text;
+                    case "T":
+                        _richTextEditor.Text = HtmlUtils.ConvertToHtml(TxtDesktopHTML.Text);
+                        break;
+                    default:
+                        _richTextEditor.Text = TxtDesktopHTML.Text;
+                        break;
                 }
             }
             SetPanels();
         }
+		
+		#endregion
+
     }
 }

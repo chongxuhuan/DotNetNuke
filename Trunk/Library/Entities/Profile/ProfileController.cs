@@ -138,8 +138,13 @@ namespace DotNetNuke.Entities.Profile
             var definitionsCollection = new ProfilePropertyDefinitionCollection();
             foreach (ProfilePropertyDefinition definition in arrDefinitions)
             {
+				//Clear the Is Dirty Flag
                 definition.ClearIsDirty();
+
+                //Initialise the Visibility
                 definition.Visibility = definition.DefaultVisibility;
+
+                //Add to collection
                 definitionsCollection.Add(definition);
             }
             return definitionsCollection;
@@ -166,6 +171,8 @@ namespace DotNetNuke.Entities.Profile
         private static ProfilePropertyDefinition FillPropertyDefinitionInfo(IDataReader dr, bool checkForOpenDataReader)
         {
             ProfilePropertyDefinition definition = null;
+
+            //read datareader
             bool canContinue = true;
             if (checkForOpenDataReader)
             {
@@ -205,7 +212,9 @@ namespace DotNetNuke.Entities.Profile
                 ProfilePropertyDefinition obj;
                 while (dr.Read())
                 {
+					//fill business object
                     obj = FillPropertyDefinitionInfo(dr, false);
+                    //add to collection
                     arr.Add(obj);
                 }
             }
@@ -215,6 +224,7 @@ namespace DotNetNuke.Entities.Profile
             }
             finally
             {
+				//close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return arr;
@@ -222,12 +232,20 @@ namespace DotNetNuke.Entities.Profile
 
         private static List<ProfilePropertyDefinition> GetPropertyDefinitions(int portalId)
         {
+			//Get the Cache Key
             string key = string.Format(DataCache.ProfileDefinitionsCacheKey, portalId);
+
+            //Try fetching the List from the Cache
             var definitions = (List<ProfilePropertyDefinition>) DataCache.GetCache(key);
             if (definitions == null)
             {
+                //definitions caching settings
                 Int32 timeOut = DataCache.ProfileDefinitionsCacheTimeOut*Convert.ToInt32(Host.Host.PerformanceSetting);
+
+                //Get the List from the database
                 definitions = FillPropertyDefinitionInfoCollection(provider.GetPropertyDefinitionsByPortal(portalId));
+
+                //Cache the List
                 if (timeOut > 0)
                 {
                     DataCache.SetCache(key, definitions, TimeSpan.FromMinutes(timeOut));
@@ -264,16 +282,31 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static void UpdateUserProfile(UserInfo objUser)
         {
+			//Update the User Profile
             if (objUser.Profile.IsDirty)
             {
                 profileProvider.UpdateUserProfile(objUser);
             }
+			
+            //Remove the UserInfo from the Cache, as it has been modified
             DataCache.ClearUserCache(objUser.PortalID, objUser.Username);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a User's Profile
+        /// </summary>
+        /// <param name="objUser">The use to update</param>
+        /// <param name="profileProperties">The collection of profile properties</param>
+        /// <returns>The updated User</returns>
+        /// <history>
+        /// 	[cnurse]	03/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static UserInfo UpdateUserProfile(UserInfo objUser, ProfilePropertyDefinitionCollection profileProperties)
         {
             bool updateUser = Null.NullBoolean;
+            //Iterate through the Definitions
             if (profileProperties != null)
             {
                 foreach (ProfilePropertyDefinition propertyDefinition in profileProperties)
@@ -451,6 +484,7 @@ namespace DotNetNuke.Entities.Profile
             }
             if (!bFound)
             {
+				//Try Database
                 definition = FillPropertyDefinitionInfo(provider.GetPropertyDefinition(definitionId));
             }
             return definition;
@@ -482,6 +516,7 @@ namespace DotNetNuke.Entities.Profile
             }
             if (!bFound)
             {
+				//Try Database
                 definition = FillPropertyDefinitionInfo(provider.GetPropertyDefinitionByName(portalId, name));
             }
             return definition;

@@ -51,7 +51,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views
         void ShowTermEditor(bool showEditor);
 
         event EventHandler AddTerm;
-        event EventHandler Cancel;
         event EventHandler CancelTerm;
         event EventHandler Delete;
         event EventHandler DeleteTerm;

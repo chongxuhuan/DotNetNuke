@@ -24,9 +24,7 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Web.UI.WebControls;
-
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
@@ -40,22 +38,24 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.Admin.Console
 {
+
     public partial class Settings : ModuleSettingsBase
     {
+
         public override void LoadSettings()
         {
             try
             {
                 if (Page.IsPostBack == false)
                 {
-                    List<TabInfo> portalTabs = TabController.GetPortalTabs(PortalId, Null.NullInteger, false, true);
+                    var portalTabs = TabController.GetPortalTabs(PortalId, Null.NullInteger, false, true);
                     if (UserInfo != null && UserInfo.IsSuperUser)
                     {
-                        TabCollection hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
+                        var hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
                         portalTabs.AddRange(hostTabs.Values);
                     }
                     ParentTab.Items.Clear();
-                    foreach (TabInfo t in portalTabs)
+                    foreach (var t in portalTabs)
                     {
                         if ((TabPermissionController.CanViewPage(t)))
                         {
@@ -66,16 +66,16 @@ namespace DotNetNuke.Modules.Admin.Console
                     SelectDropDownListItem(ref ParentTab, "ParentTabID");
                     foreach (string val in ConsoleController.GetSizeValues())
                     {
-                        DefaultSize.Items.Add(new ListItem(Localization.GetString(val, base.LocalResourceFile), val));
+                        DefaultSize.Items.Add(new ListItem(Localization.GetString(val, LocalResourceFile), val));
                     }
                     SelectDropDownListItem(ref DefaultSize, "DefaultSize");
                     if (Settings.ContainsKey("AllowSizeChange"))
                     {
                         AllowResize.Checked = Convert.ToBoolean(Settings["AllowSizeChange"]);
                     }
-                    foreach (string val in ConsoleController.GetViewValues())
+                    foreach (var val in ConsoleController.GetViewValues())
                     {
-                        DefaultView.Items.Add(new ListItem(Localization.GetString(val, base.LocalResourceFile), val));
+                        DefaultView.Items.Add(new ListItem(Localization.GetString(val, LocalResourceFile), val));
                     }
                     SelectDropDownListItem(ref DefaultView, "DefaultView");
                     if (Settings.ContainsKey("AllowViewChange"))
@@ -103,7 +103,7 @@ namespace DotNetNuke.Modules.Admin.Console
             try
             {
                 var objModules = new ModuleController();
-                string wdth = string.Empty;
+                var wdth = string.Empty;
                 if ((ConsoleWidth.Text.Trim().Length > 0))
                 {
                     try
@@ -143,13 +143,13 @@ namespace DotNetNuke.Modules.Admin.Console
             if (Settings.ContainsKey(key))
             {
                 ddl.ClearSelection();
-                ListItem selItem;
-                selItem = ddl.Items.FindByValue(Convert.ToString(Settings[key]));
+                var selItem = ddl.Items.FindByValue(Convert.ToString(Settings[key]));
                 if (selItem != null)
                 {
                     selItem.Selected = true;
                 }
             }
         }
+
     }
 }

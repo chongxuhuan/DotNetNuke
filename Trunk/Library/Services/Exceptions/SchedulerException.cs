@@ -34,14 +34,17 @@ namespace DotNetNuke.Services.Exceptions
     [Serializable]
     public class SchedulerException : BasePortalException
     {
-        public SchedulerException()
+        //default constructor
+		public SchedulerException()
         {
         }
 
-        public SchedulerException(string message) : base(message)
+        //constructor with exception message
+		public SchedulerException(string message) : base(message)
         {
         }
 
+		//constructor with message and inner exception
         public SchedulerException(string message, Exception inner) : base(message, inner)
         {
         }
@@ -53,6 +56,7 @@ namespace DotNetNuke.Services.Exceptions
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+			//Serialize this class' state and then call the base class GetObjectData
             base.GetObjectData(info, context);
         }
     }

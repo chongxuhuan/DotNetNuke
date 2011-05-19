@@ -38,14 +38,32 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Security.Roles
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Security.Roles
+    /// Class:      RoleGroupInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The RoleGroupInfo class provides the Entity Layer RoleGroup object
+    /// </summary>
+    /// <history>
+    ///     [cnurse]    01/03/2006  made compatible with .NET 2.0
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class RoleGroupInfo : BaseEntityInfo, IHydratable, IXmlSerializable
     {
+		#region "Private Members"
+		
         private string _Description;
         private int _PortalID = Null.NullInteger;
         private int _RoleGroupID = Null.NullInteger;
         private string _RoleGroupName;
         private Dictionary<string, RoleInfo> _Roles;
+		
+		#endregion
+		
+		#region "Constructors"
 
         public RoleGroupInfo()
         {
@@ -60,7 +78,17 @@ namespace DotNetNuke.Security.Roles
                 GetRoles();
             }
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the RoleGroup Id
+        /// </summary>
+        /// <value>An Integer representing the Id of the RoleGroup</value>
+        /// -----------------------------------------------------------------------------
         public int RoleGroupID
         {
             get
@@ -73,6 +101,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Portal Id for the RoleGroup
+        /// </summary>
+        /// <value>An Integer representing the Id of the Portal</value>
+        /// -----------------------------------------------------------------------------
         public int PortalID
         {
             get
@@ -85,6 +119,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the RoleGroup Name
+        /// </summary>
+        /// <value>A string representing the Name of the RoleGroup</value>
+        /// -----------------------------------------------------------------------------
         public string RoleGroupName
         {
             get
@@ -97,6 +137,12 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an sets the Description of the RoleGroup
+        /// </summary>
+        /// <value>A string representing the description of the RoleGroup</value>
+        /// -----------------------------------------------------------------------------
         public string Description
         {
             get
@@ -109,6 +155,15 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Roles for this Role Group
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, RoleInfo> Roles
         {
             get
@@ -120,18 +175,40 @@ namespace DotNetNuke.Security.Roles
                 return _Roles;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a RoleGroupInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void Fill(IDataReader dr)
         {
             RoleGroupID = Null.SetNullInteger(dr["RoleGroupId"]);
             PortalID = Null.SetNullInteger(dr["PortalID"]);
             RoleGroupName = Null.SetNullString(dr["RoleGroupName"]);
             Description = Null.SetNullString(dr["Description"]);
+
+            //Fill base class fields
             FillInternal(dr);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	03/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int KeyID
         {
             get
@@ -148,11 +225,28 @@ namespace DotNetNuke.Security.Roles
 
         #region IXmlSerializable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an XmlSchema for the RoleGroupInfo
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlSchema GetSchema()
         {
             return null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a RoleGroupInfo from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ReadXml(XmlReader reader)
         {
             while (reader.Read())
@@ -186,12 +280,28 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Writes a RoleGroupInfo to an XmlWriter
+        /// </summary>
+        /// <param name="writer">The XmlWriter to use</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void WriteXml(XmlWriter writer)
         {
+            //Write start of main elemenst
             writer.WriteStartElement("rolegroup");
+
+            //write out properties
             writer.WriteElementString("rolegroupname", RoleGroupName);
             writer.WriteElementString("description", Description);
+
+            //Write start of roles
             writer.WriteStartElement("roles");
+			
+			//Iterate through roles
             if (Roles != null)
             {
                 foreach (RoleInfo role in Roles.Values)
@@ -199,7 +309,11 @@ namespace DotNetNuke.Security.Roles
                     role.WriteXml(writer);
                 }
             }
+			
+            //Write end of Roles
             writer.WriteEndElement();
+
+            //Write end of main element
             writer.WriteEndElement();
         }
 

@@ -53,8 +53,13 @@ namespace DotNetNuke.Security.Permissions
     [Serializable]
     public class DesktopModulePermissionController
     {
+		#region "Private Members"
         private static readonly DataProvider provider = DataProvider.Instance();
-
+		
+		#endregion
+		
+		#region "Private Shared Methods"
+		
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// ClearPermissionCache clears the DesktopModule Permission Cache
@@ -86,15 +91,24 @@ namespace DotNetNuke.Security.Permissions
                 DesktopModulePermissionInfo obj;
                 while (dr.Read())
                 {
+					//fill business object
                     obj = CBO.FillObject<DesktopModulePermissionInfo>(dr, false);
+
+                    //add DesktopModule Permission to dictionary
                     if (dic.ContainsKey(obj.PortalDesktopModuleID))
                     {
+                        //Add DesktopModulePermission to DesktopModulePermission Collection already in dictionary for TabId
                         dic[obj.PortalDesktopModuleID].Add(obj);
                     }
                     else
                     {
+                        //Create new DesktopModulePermission Collection for DesktopModulePermissionID
                         var collection = new DesktopModulePermissionCollection();
+
+                        //Add Permission to Collection
                         collection.Add(obj);
+
+                        //Add Collection to Dictionary
                         dic.Add(obj.PortalDesktopModuleID, collection);
                     }
                 }
@@ -105,6 +119,7 @@ namespace DotNetNuke.Security.Permissions
             }
             finally
             {
+				//close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return dic;
@@ -140,6 +155,10 @@ namespace DotNetNuke.Security.Permissions
         {
             return FillDesktopModulePermissionDictionary(provider.GetDesktopModulePermissions());
         }
+		
+		#endregion
+		
+		#region "Public Shared Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -258,11 +277,16 @@ namespace DotNetNuke.Security.Permissions
         public static DesktopModulePermissionCollection GetDesktopModulePermissions(int portalDesktopModuleID)
         {
             bool bFound = false;
+
+            //Get the Tab DesktopModulePermission Dictionary
             Dictionary<int, DesktopModulePermissionCollection> dicDesktopModulePermissions = GetDesktopModulePermissions();
+
+            //Get the Collection from the Dictionary
             DesktopModulePermissionCollection DesktopModulePermissions = null;
             bFound = dicDesktopModulePermissions.TryGetValue(portalDesktopModuleID, out DesktopModulePermissions);
             if (!bFound)
             {
+				//try the database
                 DesktopModulePermissions =
                     new DesktopModulePermissionCollection(CBO.FillCollection(provider.GetDesktopModulePermissionsByPortalDesktopModuleID(portalDesktopModuleID), typeof (DesktopModulePermissionInfo)),
                                                           portalDesktopModuleID);
@@ -311,5 +335,7 @@ namespace DotNetNuke.Security.Permissions
                                EventLogController.EventLogType.DESKTOPMODULEPERMISSION_UPDATED);
             ClearPermissionCache();
         }
+		
+		#endregion
     }
 }

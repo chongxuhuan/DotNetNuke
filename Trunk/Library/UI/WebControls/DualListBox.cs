@@ -41,6 +41,8 @@ namespace DotNetNuke.UI.WebControls
 {
     public class DualListBox : WebControl, IPostBackEventHandler, IPostBackDataHandler
     {
+		#region "Private Members"
+
         private readonly Style _AvailableListBoxStyle = new Style();
         private readonly Style _ButtonStyle = new Style();
         private readonly TableStyle _ContainerStyle = new TableStyle();
@@ -50,6 +52,10 @@ namespace DotNetNuke.UI.WebControls
         private string _DataTextField;
         private string _DataValueField;
         private List<string> _RemoveValues;
+
+		#endregion
+
+		#region "Public Properties"
 
         public string AddAllImageURL { get; set; }
 
@@ -96,7 +102,17 @@ namespace DotNetNuke.UI.WebControls
         public string RemoveText { get; set; }
 
         public object SelectedDataSource { get; set; }
+		#region "Style Properties"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of the Available List Box Style
+        /// </summary>
+        /// <value>A Style object</value>
+        /// <history>
+        ///     [cnurse]	02/15/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty),
          TypeConverter(typeof (ExpandableObjectConverter)), Description("Set the Style for the Available List Box.")]
         public Style AvailableListBoxStyle
@@ -107,6 +123,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of the Button Style
+        /// </summary>
+        /// <value>A Style object</value>
+        /// <history>
+        ///     [cnurse]	02/15/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty),
          TypeConverter(typeof (ExpandableObjectConverter)), Description("Set the Style for the Button.")]
         public Style ButtonStyle
@@ -117,6 +142,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of the Container Style
+        /// </summary>
+        /// <value>A Style object</value>
+        /// <history>
+        ///     [cnurse]	02/15/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty),
          TypeConverter(typeof (ExpandableObjectConverter)), Description("Set the Style for the Container.")]
         public TableStyle ContainerStyle
@@ -127,6 +161,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of the Header Style
+        /// </summary>
+        /// <value>A Style object</value>
+        /// <history>
+        ///     [cnurse]	02/15/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty),
          TypeConverter(typeof (ExpandableObjectConverter)), Description("Set the Style for the Header.")]
         public Style HeaderStyle
@@ -137,6 +180,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of the Selected List Box Style
+        /// </summary>
+        /// <value>A Style object</value>
+        /// <history>
+        ///     [cnurse]	02/15/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), PersistenceMode(PersistenceMode.InnerProperty),
          TypeConverter(typeof (ExpandableObjectConverter)), Description("Set the Style for the Selected List Box.")]
         public Style SelectedListBoxStyle
@@ -146,6 +198,9 @@ namespace DotNetNuke.UI.WebControls
                 return _SelectedListBoxStyle;
             }
         }
+		#endregion
+		
+		#endregion
 
         #region IPostBackDataHandler Members
 
@@ -203,11 +258,17 @@ namespace DotNetNuke.UI.WebControls
         }
 
         #endregion
+		
+		#region "Events"
 
         public event DualListBoxEventHandler AddButtonClick;
         public event EventHandler AddAllButtonClick;
         public event DualListBoxEventHandler RemoveButtonClick;
         public event EventHandler RemoveAllButtonClick;
+		
+		#endregion
+
+		#region "Private Methods"
 
         private NameValueCollection GetList(string listType, object dataSource)
         {
@@ -226,6 +287,7 @@ namespace DotNetNuke.UI.WebControls
                     PropertyInfo objValueProperty = item.GetType().GetProperty(_DataValueField, bindings);
                     string objValue = Convert.ToString(objValueProperty.GetValue(item, null));
                     string objText = Convert.ToString(objTextProperty.GetValue(item, null));
+
                     list.Add(objText, objValue);
                 }
             }
@@ -236,7 +298,11 @@ namespace DotNetNuke.UI.WebControls
         {
             string buttonText = Null.NullString;
             string imageURL = Null.NullString;
+
+            //Begin Button Row
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+
+            //Begin Button Cell
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             switch (buttonType)
             {
@@ -285,9 +351,13 @@ namespace DotNetNuke.UI.WebControls
                     imageURL = RemoveAllImageURL;
                     break;
             }
+			
+            //Render Hyperlink
             writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink(this, buttonType));
             writer.AddAttribute(HtmlTextWriterAttribute.Title, buttonText);
             writer.RenderBeginTag(HtmlTextWriterTag.A);
+
+            //Render Image
             if (!string.IsNullOrEmpty(imageURL))
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveClientUrl(imageURL));
@@ -300,23 +370,43 @@ namespace DotNetNuke.UI.WebControls
             {
                 writer.Write(buttonText);
             }
+			
+            //End of Hyperlink
             writer.RenderEndTag();
+
+            //End of Button Cell
             writer.RenderEndTag();
+
+            //Render end of Button Row
             writer.RenderEndTag();
         }
 
         private void RenderButtons(HtmlTextWriter writer)
         {
+			//render table
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
+
             RenderButton("Add", writer);
             RenderButton("AddAll", writer);
+
+            //Begin Button Row
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+
+            //Begin Button Cell
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
+
             writer.Write("&nbsp;");
+
+        	//End of Button Cell
             writer.RenderEndTag();
+
+            //Render end of Button Row
             writer.RenderEndTag();
+
             RenderButton("Remove", writer);
             RenderButton("RemoveAll", writer);
+
+            //Render end of table
             writer.RenderEndTag();
         }
 
@@ -331,16 +421,21 @@ namespace DotNetNuke.UI.WebControls
                     {
                         style.AddAttributesToRender(writer);
                     }
+					
+                    //Render ListBox
                     writer.AddAttribute(HtmlTextWriterAttribute.Multiple, "multiple");
                     writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + "_" + listType);
                     writer.RenderBeginTag(HtmlTextWriterTag.Select);
                     for (int i = 0; i <= list.Count - 1; i++)
                     {
+						//Render option tags for each item
                         writer.AddAttribute(HtmlTextWriterAttribute.Value, list.Get(i));
                         writer.RenderBeginTag(HtmlTextWriterTag.Option);
                         writer.Write(list.GetKey(i));
                         writer.RenderEndTag();
                     }
+					
+                    //Render ListBox end
                     writer.RenderEndTag();
                 }
             }
@@ -348,6 +443,7 @@ namespace DotNetNuke.UI.WebControls
 
         private void RenderHeader(HtmlTextWriter writer)
         {
+			//render Header row
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
             if (HeaderStyle != null)
             {
@@ -356,6 +452,7 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write(Localization.GetString(ID + "_Available", LocalResourceFile));
             writer.RenderEndTag();
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.RenderEndTag();
             if (HeaderStyle != null)
@@ -365,23 +462,35 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write(Localization.GetString(ID + "_Selected", LocalResourceFile));
             writer.RenderEndTag();
+
+            //Render end of Header Row
             writer.RenderEndTag();
         }
 
         private void RenderListBoxes(HtmlTextWriter writer)
         {
+			//render List Boxes row
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             RenderListBox("Available", AvailableDataSource, AvailableListBoxStyle, writer);
             writer.RenderEndTag();
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             RenderButtons(writer);
             writer.RenderEndTag();
+
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             RenderListBox("Selected", SelectedDataSource, SelectedListBoxStyle, writer);
             writer.RenderEndTag();
+
+            //Render end of List Boxes Row
             writer.RenderEndTag();
         }
+		
+		#endregion
+
+		#region "Protected Methods"
 
         protected void OnAddButtonClick(DualListBoxEventArgs e)
         {
@@ -426,14 +535,23 @@ namespace DotNetNuke.UI.WebControls
 
         protected override void RenderContents(HtmlTextWriter writer)
         {
+			//render table
             if (ContainerStyle != null)
             {
                 ContainerStyle.AddAttributesToRender(writer);
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
+
+            //Render Header Row
             RenderHeader(writer);
+
+            //Render ListBox row
             RenderListBoxes(writer);
+
+            //Render end of table
             writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

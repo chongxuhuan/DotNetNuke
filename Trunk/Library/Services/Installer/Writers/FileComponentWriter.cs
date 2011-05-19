@@ -46,19 +46,49 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class FileComponentWriter
     {
+		#region "Private Members"
+
         private readonly string _BasePath;
         private readonly Dictionary<string, InstallFile> _Files;
         private readonly PackageInfo _Package;
         private int _InstallOrder = Null.NullInteger;
         private int _UnInstallOrder = Null.NullInteger;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs the FileComponentWriter
+        /// </summary>
+        /// <param name="basePath">The Base Path for the files</param>
+        /// <param name="files">A Dictionary of files</param>
+        /// <param name="package">Package Info.</param>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public FileComponentWriter(string basePath, Dictionary<string, InstallFile> files, PackageInfo package)
         {
             _Files = files;
             _BasePath = basePath;
             _Package = package;
         }
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("files")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string CollectionNodeName
         {
             get
@@ -67,6 +97,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Component Type ("File")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string ComponentType
         {
             get
@@ -75,6 +114,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("file")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string ItemNodeName
         {
             get
@@ -83,6 +131,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Logger
+        /// </summary>
+        /// <value>A Logger</value>
+        /// <history>
+        /// 	[cnurse]	02/06/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual Logger Log
         {
             get
@@ -91,6 +148,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Package
+        /// </summary>
+        /// <value>A PackageInfo</value>
+        /// <history>
+        /// 	[cnurse]	02/11/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual PackageInfo Package
         {
             get
@@ -98,6 +164,10 @@ namespace DotNetNuke.Services.Installer.Writers
                 return _Package;
             }
         }
+		
+		#endregion
+
+		#region "Public Properties"
 
         public int InstallOrder
         {
@@ -122,7 +192,22 @@ namespace DotNetNuke.Services.Installer.Writers
                 _UnInstallOrder = value;
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The WriteCustomManifest method writes the custom manifest items (that subclasses
+        /// of FileComponentWriter may need)
+        /// </summary>
+        /// <param name="writer">The Xmlwriter to use</param>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void WriteCustomManifest(XmlWriter writer)
         {
         }
@@ -130,7 +215,11 @@ namespace DotNetNuke.Services.Installer.Writers
         protected virtual void WriteFileElement(XmlWriter writer, InstallFile file)
         {
             Log.AddInfo(string.Format(Util.WRITER_AddFileToManifest, file.Name));
+
+            //Start file Element
             writer.WriteStartElement(ItemNodeName);
+
+            //Write path
             if (!string.IsNullOrEmpty(file.Path))
             {
                 string path = file.Path;
@@ -143,16 +232,27 @@ namespace DotNetNuke.Services.Installer.Writers
                 }
                 writer.WriteElementString("path", path);
             }
+			
+            //Write name
             writer.WriteElementString("name", file.Name);
+
+            //Write sourceFileName
             if (!string.IsNullOrEmpty(file.SourceFileName))
             {
                 writer.WriteElementString("sourceFileName", file.SourceFileName);
             }
+			
+            //Close file Element
             writer.WriteEndElement();
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public virtual void WriteManifest(XmlWriter writer)
         {
+			//Start component Element
             writer.WriteStartElement("component");
             writer.WriteAttributeString("type", ComponentType);
             if (InstallOrder > Null.NullInteger)
@@ -163,8 +263,14 @@ namespace DotNetNuke.Services.Installer.Writers
             {
                 writer.WriteAttributeString("unInstallOrder", UnInstallOrder.ToString());
             }
+			
+            //Start files element
             writer.WriteStartElement(CollectionNodeName);
+
+            //Write custom manifest items
             WriteCustomManifest(writer);
+
+            //Write basePath Element
             if (!string.IsNullOrEmpty(_BasePath))
             {
                 writer.WriteElementString("basePath", _BasePath);
@@ -173,8 +279,14 @@ namespace DotNetNuke.Services.Installer.Writers
             {
                 WriteFileElement(writer, file);
             }
+			
+            //End files Element
             writer.WriteEndElement();
+
+            //End component Element
             writer.WriteEndElement();
         }
+		
+		#endregion
     }
 }

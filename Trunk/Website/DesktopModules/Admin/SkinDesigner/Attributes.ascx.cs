@@ -43,16 +43,19 @@ namespace DotNetNuke.Modules.Admin.Skins
 {
     public partial class Attributes : PortalModuleBase
     {
+
+        #region Event Handlers
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cboContainers.SelectedIndexChanged += cboContainers_SelectedIndexChanged;
-            cboFiles.SelectedIndexChanged += cboFiles_SelectedIndexChanged;
-            cboSettings.SelectedIndexChanged += cboSettings_SelectedIndexChanged;
-            cboSkins.SelectedIndexChanged += cboSkins_SelectedIndexChanged;
-            cboTokens.SelectedIndexChanged += cboTokens_SelectedIndexChanged;
-            cmdUpdate.Click += cmdUpdate_Click;
+            cboContainers.SelectedIndexChanged += OnContainerSelectedIndexChanged;
+            cboFiles.SelectedIndexChanged += OnFilesSelectedIndexChanged;
+            cboSettings.SelectedIndexChanged += OnSettingsSelectedIndexChanged;
+            cboSkins.SelectedIndexChanged += OnSkinSelectedIndexChanged;
+            cboTokens.SelectedIndexChanged += OnTokenSelectedIndexChanged;
+            cmdUpdate.Click += OnUpdateClick;
 
             try
             {
@@ -68,32 +71,32 @@ namespace DotNetNuke.Modules.Admin.Skins
             }
         }
 
-        private void cboSkins_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnSkinSelectedIndexChanged(object sender, EventArgs e)
         {
             ShowSkins();
         }
 
-        private void cboContainers_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnContainerSelectedIndexChanged(object sender, EventArgs e)
         {
             ShowContainers();
         }
 
-        protected void cboFiles_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnFilesSelectedIndexChanged(object sender, EventArgs e)
         {
             LoadTokens();
         }
 
-        protected void cboTokens_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnTokenSelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSettings();
         }
 
-        protected void cboSettings_SelectedIndexChanged(object sender, EventArgs e)
+        protected void OnSettingsSelectedIndexChanged(object sender, EventArgs e)
         {
             LoadValues();
         }
 
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
@@ -108,9 +111,13 @@ namespace DotNetNuke.Modules.Admin.Skins
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void ShowSkins()
         {
-            string strSkinPath = Globals.ApplicationMapPath.ToLower() + cboSkins.SelectedItem.Value;
+            var strSkinPath = Globals.ApplicationMapPath.ToLower() + cboSkins.SelectedItem.Value;
             cboContainers.ClearSelection();
             if (cboSkins.SelectedIndex > 0)
             {
@@ -120,7 +127,7 @@ namespace DotNetNuke.Modules.Admin.Skins
 
         private void ShowContainers()
         {
-            string strContainerPath = Globals.ApplicationMapPath.ToLower() + cboContainers.SelectedItem.Value;
+            var strContainerPath = Globals.ApplicationMapPath.ToLower() + cboContainers.SelectedItem.Value;
             cboSkins.ClearSelection();
             if (cboContainers.SelectedIndex > 0)
             {
@@ -142,7 +149,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 if (Directory.Exists(strRoot))
                 {
                     arrFolders = Directory.GetDirectories(strRoot);
-                    foreach (string strFolder in arrFolders)
+                    foreach (var strFolder in arrFolders)
                     {
                         strName = strFolder.Substring(strFolder.LastIndexOf("\\") + 1);
                         strSkin = strFolder.Replace(Globals.ApplicationMapPath, "");
@@ -157,7 +164,7 @@ namespace DotNetNuke.Modules.Admin.Skins
             if (Directory.Exists(strRoot))
             {
                 arrFolders = Directory.GetDirectories(strRoot);
-                foreach (string strFolder in arrFolders)
+                foreach (var strFolder in arrFolders)
                 {
                     strName = strFolder.Substring(strFolder.LastIndexOf("\\") + 1);
                     strSkin = strFolder.Replace(Globals.ApplicationMapPath, "");
@@ -195,7 +202,7 @@ namespace DotNetNuke.Modules.Admin.Skins
             if (Directory.Exists(strRoot))
             {
                 arrFolders = Directory.GetDirectories(strRoot);
-                foreach (string strFolder in arrFolders)
+                foreach (var strFolder in arrFolders)
                 {
                     strName = strFolder.Substring(strFolder.LastIndexOf("\\") + 1);
                     strSkin = strFolder.Replace(Globals.ApplicationMapPath, "");
@@ -207,11 +214,10 @@ namespace DotNetNuke.Modules.Admin.Skins
         private void LoadFiles(string strFolderPath)
         {
             cboFiles.Items.Clear();
-            string[] arrFiles;
             if (Directory.Exists(strFolderPath))
             {
-                arrFiles = Directory.GetFiles(strFolderPath, "*.ascx");
-                foreach (string strFile in arrFiles)
+                var arrFiles = Directory.GetFiles(strFolderPath, "*.ascx");
+                foreach (var strFile in arrFiles)
                 {
                     cboFiles.Items.Add(new ListItem(Path.GetFileNameWithoutExtension(strFile), strFile));
                 }
@@ -229,7 +235,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         private void LoadSettings()
         {
             cboSettings.Items.Clear();
-            string strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
+            var strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
             if (File.Exists(strFile))
             {
                 try
@@ -257,7 +263,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             cboValue.Items.Clear();
             txtValue.Text = "";
-            string strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
+            var strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
             if (File.Exists(strFile))
             {
                 try
@@ -277,7 +283,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                                     break;
                                 case "[TABID]":
                                     var objTabs = new TabController();
-                                    foreach (TabInfo objTab in objTabs.GetTabsByPortal(PortalId).Values)
+                                    foreach (var objTab in objTabs.GetTabsByPortal(PortalId).Values)
                                     {
                                         cboValue.Items.Add(new ListItem(objTab.TabName, objTab.TabID.ToString()));
                                     }
@@ -287,8 +293,8 @@ namespace DotNetNuke.Modules.Admin.Skins
                                     txtValue.Visible = false;
                                     break;
                                 default:
-                                    string[] arrValues = (strValue + ",").Split(',');
-                                    foreach (string value in arrValues)
+                                    var arrValues = (strValue + ",").Split(',');
+                                    foreach (var value in arrValues)
                                     {
                                         if (!String.IsNullOrEmpty(value))
                                         {
@@ -322,37 +328,27 @@ namespace DotNetNuke.Modules.Admin.Skins
             {
                 if ((cboValue.SelectedItem != null) || !String.IsNullOrEmpty(txtValue.Text))
                 {
-                    StreamReader objStreamReader;
-                    objStreamReader = File.OpenText(cboFiles.SelectedItem.Value);
-                    string strSkin = objStreamReader.ReadToEnd();
+                    var objStreamReader = File.OpenText(cboFiles.SelectedItem.Value);
+                    var strSkin = objStreamReader.ReadToEnd();
                     objStreamReader.Close();
-                    string strTag = "<dnn:" + cboTokens.SelectedItem.Text + " runat=\"server\" id=\"dnn" + cboTokens.SelectedItem.Text + "\"";
-                    int intOpenTag = strSkin.IndexOf(strTag);
+                    var strTag = "<dnn:" + cboTokens.SelectedItem.Text + " runat=\"server\" id=\"dnn" + cboTokens.SelectedItem.Text + "\"";
+                    var intOpenTag = strSkin.IndexOf(strTag);
                     if (intOpenTag != -1)
                     {
-                        int intCloseTag = strSkin.IndexOf(" />", intOpenTag);
-                        string strAttribute = cboSettings.SelectedItem.Value;
-                        int intStartAttribute = strSkin.IndexOf(strAttribute, intOpenTag);
-                        string strValue = "";
-                        if (cboValue.Visible)
-                        {
-                            strValue = cboValue.SelectedItem.Value;
-                        }
-                        else
-                        {
-                            strValue = txtValue.Text;
-                        }
+                        var intCloseTag = strSkin.IndexOf(" />", intOpenTag);
+                        var strAttribute = cboSettings.SelectedItem.Value;
+                        var intStartAttribute = strSkin.IndexOf(strAttribute, intOpenTag);
+                        string strValue = cboValue.Visible ? cboValue.SelectedItem.Value : txtValue.Text;
                         if (intStartAttribute != -1 && intStartAttribute < intCloseTag)
                         {
-                            int intEndAttribute = strSkin.IndexOf("\" ", intStartAttribute);
+                            var intEndAttribute = strSkin.IndexOf("\" ", intStartAttribute);
                             strSkin = strSkin.Substring(0, intStartAttribute) + strSkin.Substring(intEndAttribute + 2);
                         }
                         strSkin = strSkin.Insert(intOpenTag + strTag.Length, " " + strAttribute + "=\"" + strValue + "\"");
                         try
                         {
                             File.SetAttributes(cboFiles.SelectedItem.Value, FileAttributes.Normal);
-                            StreamWriter objStream;
-                            objStream = File.CreateText(cboFiles.SelectedItem.Value);
+                            var objStream = File.CreateText(cboFiles.SelectedItem.Value);
                             objStream.WriteLine(strSkin);
                             objStream.Close();
                             UpdateManifest();
@@ -383,7 +379,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             if (File.Exists(cboFiles.SelectedItem.Value.Replace(".ascx", ".htm")))
             {
-                string strFile = cboFiles.SelectedItem.Value.Replace(".ascx", ".xml");
+                var strFile = cboFiles.SelectedItem.Value.Replace(".ascx", ".xml");
                 if (File.Exists(strFile) == false)
                 {
                     strFile = strFile.Replace(Path.GetFileName(strFile), "skin.xml");
@@ -398,7 +394,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 {
                     xmlDoc.InnerXml = "<Objects></Objects>";
                 }
-                XmlNode xmlToken = xmlDoc.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + cboTokens.SelectedItem.Text + "]']");
+                var xmlToken = xmlDoc.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + cboTokens.SelectedItem.Text + "]']");
                 if (xmlToken == null)
                 {
                     string strToken = "<Token>[" + cboTokens.SelectedItem.Text + "]</Token><Settings></Settings>";
@@ -407,16 +403,8 @@ namespace DotNetNuke.Modules.Admin.Skins
                     xmlDoc.SelectSingleNode("Objects").AppendChild(xmlToken);
                     xmlToken = xmlDoc.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + cboTokens.SelectedItem.Text + "]']");
                 }
-                string strValue = "";
-                if (cboValue.Visible)
-                {
-                    strValue = cboValue.SelectedItem.Value;
-                }
-                else
-                {
-                    strValue = txtValue.Text;
-                }
-                bool blnUpdate = false;
+                var strValue = cboValue.Visible ? cboValue.SelectedItem.Value : txtValue.Text;
+                var blnUpdate = false;
                 foreach (XmlNode xmlSetting in xmlToken.SelectNodes(".//Settings/Setting"))
                 {
                     if (xmlSetting.SelectSingleNode("Name").InnerText == cboSettings.SelectedItem.Value)
@@ -427,7 +415,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 }
                 if (blnUpdate == false)
                 {
-                    string strSetting = "<Name>" + cboSettings.SelectedItem.Value + "</Name><Value>" + strValue + "</Value>";
+                    var strSetting = "<Name>" + cboSettings.SelectedItem.Value + "</Name><Value>" + strValue + "</Value>";
                     XmlNode xmlSetting = xmlDoc.CreateElement("Setting");
                     xmlSetting.InnerXml = strSetting;
                     xmlToken.SelectSingleNode("Settings").AppendChild(xmlSetting);
@@ -438,9 +426,8 @@ namespace DotNetNuke.Modules.Admin.Skins
                     {
                         File.SetAttributes(strFile, FileAttributes.Normal);
                     }
-                    StreamWriter objStream;
-                    objStream = File.CreateText(strFile);
-                    string strXML = xmlDoc.InnerXml;
+                    var objStream = File.CreateText(strFile);
+                    var strXML = xmlDoc.InnerXml;
                     strXML = strXML.Replace("><", ">" + Environment.NewLine + "<");
                     objStream.WriteLine(strXML);
                     objStream.Close();
@@ -450,6 +437,10 @@ namespace DotNetNuke.Modules.Admin.Skins
 					DnnLog.Error(ex);
 				}
             }
+
         }
+
+        #endregion
+
     }
 }

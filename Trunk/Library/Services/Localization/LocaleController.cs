@@ -224,7 +224,7 @@ namespace DotNetNuke.Services.Localization
         {
             var locales = new Dictionary<string, Locale>();
 
-            if ((!(Globals.Status == Globals.UpgradeStatus.Install)))
+            if (Globals.Status != Globals.UpgradeStatus.Install)
             {
                 string cacheKey = string.Format(DataCache.LocalesCacheKey, portalID);
                 locales = CBO.GetCachedObject<Dictionary<string, Locale>>(new CacheItemArgs(cacheKey, DataCache.LocalesCacheTimeOut, DataCache.LocalesCachePriority, portalID), GetLocalesCallBack, true);

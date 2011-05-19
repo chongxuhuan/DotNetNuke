@@ -43,6 +43,8 @@ namespace DotNetNuke.Security.Permissions
 {
     public class PermissionController
     {
+		#region "Public Methods"
+		
         private static readonly DataProvider provider = DataProvider.Instance();
 
         public int AddPermission(PermissionInfo objPermission)
@@ -99,6 +101,10 @@ namespace DotNetNuke.Security.Permissions
                                       objPermission.PermissionName,
                                       UserController.GetCurrentUserInfo().UserID);
         }
+		
+		#endregion
+		
+		#region "Shared Methods"
 
         public static string BuildPermissions(IList Permissions, string PermissionKey)
         {
@@ -109,6 +115,7 @@ namespace DotNetNuke.Security.Permissions
             {
                 if (permission.PermissionKey == PermissionKey)
                 {
+					//Deny permissions are prefixed with a "!"
                     if (!permission.AllowAccess)
                     {
                         strPrefix = "!";
@@ -117,6 +124,8 @@ namespace DotNetNuke.Security.Permissions
                     {
                         strPrefix = "";
                     }
+					
+                    //encode permission
                     if (Null.IsNull(permission.UserID))
                     {
                         strPermission = strPrefix + permission.RoleName + ";";
@@ -125,6 +134,8 @@ namespace DotNetNuke.Security.Permissions
                     {
                         strPermission = strPrefix + "[" + permission.UserID + "];";
                     }
+					
+                    //build permissions string ensuring that Deny permissions are inserted at the beginning and Grant permissions at the end
                     if (strPrefix == "!")
                     {
                         objPermissions.Insert(0, strPermission);
@@ -135,7 +146,11 @@ namespace DotNetNuke.Security.Permissions
                     }
                 }
             }
+			
+            //get string
             string strPermissions = objPermissions.ToString();
+
+            //ensure leading delimiter
             if (!strPermissions.StartsWith(";"))
             {
                 strPermissions.Insert(0, ";");
@@ -215,6 +230,8 @@ namespace DotNetNuke.Security.Permissions
 
             return result;
         }
+		
+		#endregion
 
 
         [Obsolete("Deprecated in DNN 5.0.1. Replaced by GetPermissionsByFolder()")]

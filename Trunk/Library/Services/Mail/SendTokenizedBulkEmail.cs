@@ -27,7 +27,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Text;
 using System.Web;
 
@@ -56,25 +59,31 @@ namespace DotNetNuke.Services.Mail
     ///     [sleupold]  9/09/2007   refactored interface for enhanced type safety
     /// </history>
     /// -----------------------------------------------------------------------------
-    public class SendTokenizedBulkEmail
+    public class SendTokenizedBulkEmail : IDisposable
     {
         #region AddressMethods enum
 
         /// <summary>
         /// Addressing Methods (personalized or hidden)
         /// </summary>
+        // ReSharper disable InconsistentNaming
+        // Existing public API
         public enum AddressMethods
         {
+
             Send_TO = 1,
             Send_BCC = 2,
             Send_Relay = 3
         }
+        // ReSharper restore InconsistentNaming
 
         #endregion
+		
+		#region "Private Members"
 
         private readonly List<string> _addressedRoles = new List<string>();
         private readonly List<UserInfo> _addressedUsers = new List<UserInfo>();
-        private readonly List<string> _attachments = new List<string>();
+        private readonly List<Attachment> _attachments = new List<Attachment>();
         private UserInfo _replyToUser;
         private bool _smtpEnableSSL;
         private TokenReplace _tokenReplace;
@@ -91,6 +100,11 @@ namespace DotNetNuke.Services.Mail
         private string _smtpServer = "";
         private string _smtpUsername = "";
         private string _strSenderLanguage;
+        private bool _isDisposed;
+
+        #endregion
+		
+		#region "Constructs"
 
         public SendTokenizedBulkEmail()
         {
@@ -116,6 +130,10 @@ namespace DotNetNuke.Services.Mail
             SuppressTokenReplace = SuppressTokenReplace;
             Initialize();
         }
+		
+		#endregion
+		
+		#region "Public Properties"
 
 		/// <summary>
 		/// Priority of emails to be sent
@@ -218,7 +236,12 @@ namespace DotNetNuke.Services.Mail
         }
 
         public string[] LanguageFilter { get; set; }
+		
+		#endregion
+		
+		#region "Private Methods"
 
+        /// <summary>internal method to initialize used objects, depending on parameters of construct method</summary>
         private void Initialize()
         {
             _portalSettings = PortalController.GetCurrentPortalSettings();
@@ -232,8 +255,28 @@ namespace DotNetNuke.Services.Mail
             _smtpEnableSSL = Host.EnableSMTPSSL;
         }
 
+        /// <summary>Send bulkmail confirmation to admin</summary>
+        /// <param name="numRecipients">number of email recipients</param>
+        /// <param name="numMessages">number of messages sent, -1 if not determinable</param>
+        /// <param name="numErrors">number of emails not sent</param>
+        /// <param name="subject">Subject of BulkMail sent (to be used as reference)</param>
+        /// <param name="startedAt">date/time, sendout started</param>
+        /// <param name="mailErrors">mail error texts</param>
+        /// <param name="recipientList">List of recipients as formatted string</param>
+        /// <remarks></remarks>
         private void SendConfirmationMail(int numRecipients, int numMessages, int numErrors, string subject, string startedAt, string mailErrors, string recipientList)
-        {
+		{
+            //send confirmation, use resource string like:
+        	//Operation started at: [Custom:0]<br>
+            //EmailRecipients:      [Custom:1]<b
+            //EmailMessages sent:   [Custom:2]<br>
+            //Operation Completed:  [Custom:3]<br>
+            //Number of Errors:     [Custom:4]<br>
+            //Error Report:<br>
+            //[Custom:5]
+            //--------------------------------------
+            //Recipients:
+            //[custom:6]
             var parameters = new ArrayList
                                  {
                                      startedAt,
@@ -256,6 +299,10 @@ namespace DotNetNuke.Services.Mail
             Mail.SendEmail(_sendingUser.Email, _sendingUser.Email, message.Subject, message.Body);
         }
 
+        /// <summary>check, if the user's language matches the current language filter</summary>
+        /// <param name="userLanguage">Language of the user</param>
+        /// <returns>userlanguage matches current languageFilter</returns>
+        /// <remarks>if userlanguage is empty or filter not set, true is returned</remarks>
         private bool MatchLanguageFilter(string userLanguage)
         {
             if (String.IsNullOrEmpty(userLanguage))
@@ -269,6 +316,11 @@ namespace DotNetNuke.Services.Mail
             return LanguageFilter.Any(s => userLanguage.ToLowerInvariant().StartsWith(s.ToLowerInvariant() + "*"));
         }
 
+        /// <summary>add a user to the userlist, if it is not already in there</summary>
+        /// <param name="user">user to add</param>
+        /// <param name="keyList">list of key (either email addresses or userid's)</param>
+        /// <param name="userList">List of users</param>
+        /// <remarks>for use by Recipients method only</remarks>
         private void ConditionallyAddUser(UserInfo user, ref List<string> keyList, ref List<UserInfo> userList)
         {
             if (((user.UserID <= 0 || user.Membership.Approved) && user.Email != string.Empty) && MatchLanguageFilter(user.Profile.PreferredLocale))
@@ -289,9 +341,23 @@ namespace DotNetNuke.Services.Mail
                 }
             }
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
+        /// <summary>Specify SMTP server to be used</summary>
+        /// <param name="smtpServer">name of the SMTP server</param>
+		/// <param name="smtpAuthentication">authentication string (0: anonymous, 1: basic, 2: NTLM)</param>
+		/// <param name="smtpUsername">username to log in SMTP server</param>
+		/// <param name="smtpPassword">password to log in SMTP server</param>
+		/// <param name="smtpEnableSSL">SSL used to connect tp SMTP server</param>
+        /// <returns>always true</returns>
+        /// <remarks>if not called, values will be taken from host settings</remarks>
         public bool SetSMTPServer(string smtpServer, string smtpAuthentication, string smtpUsername, string smtpPassword, bool smtpEnableSSL)
         {
+            EnsureNotDisposed();
+
             _smtpServer = smtpServer;
             _smtpAuthenticationMethod = smtpAuthentication;
             _smtpUsername = smtpUsername;
@@ -300,70 +366,108 @@ namespace DotNetNuke.Services.Mail
             return true;
         }
 
-        public void AddAttachment(string pAttachment)
+        /// <summary>Add a single attachment file to the email</summary>
+        /// <param name="localPath">path to file to attach</param>
+        /// <remarks>only local stored files can be added with a path</remarks>
+        public void AddAttachment(string localPath)
         {
-            _attachments.Add(pAttachment);
+            EnsureNotDisposed();
+            _attachments.Add(new Attachment(localPath));
         }
 
+        public void AddAttachment(Stream contentStream, ContentType contentType)
+        {
+            EnsureNotDisposed();
+            _attachments.Add(new Attachment(contentStream, contentType));
+        }
+
+        /// <summary>Add a single recipient</summary>
+        /// <param name="recipient">userinfo of user to add</param>
+        /// <remarks>emaiol will be used for addressing, other properties might be used for TokenReplace</remarks>
         public void AddAddressedUser(UserInfo recipient)
         {
+            EnsureNotDisposed();
             _addressedUsers.Add(recipient);
         }
 
+        /// <summary>Add all members of a role to recipient list</summary>
+        /// <param name="roleName">name of a role, whose members shall be added to recipients</param>
+        /// <remarks>emaiol will be used for addressing, other properties might be used for TokenReplace</remarks>
         public void AddAddressedRole(string roleName)
         {
+            EnsureNotDisposed();
             _addressedRoles.Add(roleName);
         }
 
+        /// <summary>All bulk mail recipients, derived from role names and individual adressees </summary>
+        /// <returns>List of userInfo objects, who receive the bulk mail </returns>
+        /// <remarks>user.Email used for sending, other properties might be used for TokenReplace</remarks>
         public List<UserInfo> Recipients()
         {
+            EnsureNotDisposed();
+
             var userList = new List<UserInfo>();
             var keyList = new List<string>();
             var roleController = new RoleController();
+            
             foreach (string strRolename in _addressedRoles)
             {
                 var roleInfo = roleController.GetRoleByName(_portalSettings.PortalId, strRolename);
+
                 foreach (UserInfo objUser in roleController.GetUsersByRoleName(_portalSettings.PortalId, strRolename))
                 {
                     UserInfo user = objUser;
                     ProfileController.GetUserProfile(ref user);
                     var userRole = roleController.GetUserRole(_portalSettings.PortalId, objUser.UserID, roleInfo.RoleID);
+                    //only add if user role has not expired and effectivedate has been passed
                     if ((userRole.EffectiveDate <= DateTime.Now || Null.IsNull(userRole.EffectiveDate)) && (userRole.ExpiryDate >= DateTime.Now || Null.IsNull(userRole.ExpiryDate)))
                     {
                         ConditionallyAddUser(objUser, ref keyList, ref userList);
                     }
                 }
             }
+            
             foreach (UserInfo objUser in _addressedUsers)
             {
                 ConditionallyAddUser(objUser, ref keyList, ref userList);
             }
+            
             return userList;
         }
 
+        /// <summary>Send bulkmail to all recipients according to settings</summary>
+        /// <returns>Number of emails sent, null.integer if not determinable</returns>
+        /// <remarks>Detailed status report is sent by email to sending user</remarks>
         public int SendMails()
         {
+            EnsureNotDisposed();
+            
             int recipients = 0;
             int messagesSent = 0;
             int errors = 0;
+            
             try
             {
+				//send to recipients
                 string body = _body;
-                if (BodyFormat == MailFormat.Html)
+                if (BodyFormat == MailFormat.Html) //Add Base Href for any images inserted in to the email.
                 {
                     body = "<Base Href='" + PortalAlias + "'>" + body;
                 }
                 string subject = Subject;
                 string startedAt = DateTime.Now.ToString();
+
                 bool replaceTokens = !SuppressTokenReplace && (_tokenReplace.ContainsTokens(Subject) || _tokenReplace.ContainsTokens(_body));
                 bool individualSubj = false;
                 bool individualBody = false;
+
                 var mailErrors = new StringBuilder();
                 var mailRecipients = new StringBuilder();
                 switch (AddressMethod)
                 {
                     case AddressMethods.Send_TO:
                     case AddressMethods.Send_Relay:
+                        //optimization:
                         if (replaceTokens)
                         {
                             individualBody = (_tokenReplace.Cacheability(_body) == CacheLevel.notCacheable);
@@ -404,7 +508,7 @@ namespace DotNetNuke.Services.Mail
                                                                 BodyFormat,
                                                                 Encoding.UTF8,
                                                                 body,
-                                                                _attachments.ToArray(),
+                                                                _attachments,
                                                                 _smtpServer,
                                                                 _smtpAuthenticationMethod,
                                                                 _smtpUsername,
@@ -440,6 +544,7 @@ namespace DotNetNuke.Services.Mail
                         {
                             if (replaceTokens)
                             {
+								//no access to User properties possible!
                                 var tr = new TokenReplace(Scope.Configuration);
                                 body = tr.ReplaceEnvironmentTokens(_body);
                                 subject = tr.ReplaceEnvironmentTokens(Subject);
@@ -459,7 +564,7 @@ namespace DotNetNuke.Services.Mail
                                                        BodyFormat,
                                                        Encoding.UTF8,
                                                        body,
-                                                       _attachments.ToArray(),
+                                                       _attachments,
                                                        _smtpServer,
                                                        _smtpAuthenticationMethod,
                                                        _smtpUsername,
@@ -483,18 +588,65 @@ namespace DotNetNuke.Services.Mail
                 }
                 SendConfirmationMail(recipients, messagesSent, errors, subject, startedAt, mailErrors.ToString(), mailRecipients.ToString());
             }
-            catch (Exception exc)
+            catch (Exception exc) //send mail failure
             {
                 Instrumentation.DnnLog.Error(exc);
 
                 Debug.Write(exc.Message);
             }
+            finally
+            {
+                foreach (var attachment in _attachments)
+                {
+                    attachment.Dispose();
+                }
+            }
             return messagesSent;
         }
 
+        /// <summary>Wrapper for Function SendMails</summary>
         public void Send()
         {
+            EnsureNotDisposed();
             SendMails();
+        }
+		
+		#endregion
+
+        private void EnsureNotDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("SharedDictionary");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    //get rid of managed resources
+                    foreach (Attachment attachment in _attachments)
+                    {
+                        attachment.Dispose();
+                        _isDisposed = true;
+                    }
+                }
+                // get rid of unmanaged resources
+            }
+        }
+
+        ~SendTokenizedBulkEmail()
+        {
+            Dispose(false);
         }
     }
 }

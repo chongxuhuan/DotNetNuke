@@ -28,7 +28,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.Web.UI.WebControls.DnnTextBox nameTextBox;
+        protected global::System.Web.UI.WebControls.TextBox nameTextBox;
         
         /// <summary>
         /// nameValidator control.
@@ -55,16 +55,16 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.Web.UI.WebControls.DnnTextBox descriptionTextBox;
+        protected global::System.Web.UI.WebControls.TextBox descriptionTextBox;
         
         /// <summary>
-        /// parentTermRow control.
+        /// divParentTerm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow parentTermRow;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divParentTerm;
         
         /// <summary>
         /// parentTermLabel control.

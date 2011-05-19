@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CancelEdit.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="ControlTitle_editvocabulary.Text" xml:space="preserve">
     <value>Edit Vocabulary</value>
   </data>
@@ -181,9 +178,6 @@
     <value>The name of the Term</value>
   </data>
   <data name="TermName.Required" xml:space="preserve">
-    <value>&lt;br/&gt;The term name is a required field.</value>
-  </data>
-  <data name="CancelTerm.Text" xml:space="preserve">
-    <value>Cancel</value>
+    <value>The term name is a required field.</value>
   </data>
 </root>

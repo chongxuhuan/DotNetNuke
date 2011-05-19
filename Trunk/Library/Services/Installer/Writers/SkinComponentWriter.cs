@@ -44,13 +44,44 @@ namespace DotNetNuke.Services.Installer.Writers
     /// -----------------------------------------------------------------------------
     public class SkinComponentWriter : FileComponentWriter
     {
+		#region "Private Members"
+
         private readonly string _SkinName;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs the SkinComponentWriter
+        /// </summary>
+        /// <param name="skinName">The name of the Skin</param>
+        /// <param name="basePath">The Base Path for the files</param>
+        /// <param name="files">A Dictionary of files</param>
+        /// <param name="package">Package Info.</param>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public SkinComponentWriter(string skinName, string basePath, Dictionary<string, InstallFile> files, PackageInfo package) : base(basePath, files, package)
         {
             _SkinName = skinName;
         }
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("skinFiles")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -59,6 +90,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Component Type ("Skin")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ComponentType
         {
             get
@@ -67,6 +107,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("skinFile")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get
@@ -75,6 +124,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the SkinName Node ("skinName")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string SkinNameNodeName
         {
             get
@@ -82,10 +140,26 @@ namespace DotNetNuke.Services.Installer.Writers
                 return "skinName";
             }
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The WriteCustomManifest method writes the custom manifest items (that subclasses
+        /// of FileComponentWriter may need)
+        /// </summary>
+        /// <param name="writer">The Xmlwriter to use</param>
+        /// <history>
+        /// 	[cnurse]	02/04/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void WriteCustomManifest(XmlWriter writer)
         {
             writer.WriteElementString(SkinNameNodeName, _SkinName);
         }
+		
+		#endregion
     }
 }

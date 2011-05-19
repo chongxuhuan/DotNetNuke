@@ -166,11 +166,6 @@ namespace DotNetNuke.Modules.Admin.Vendors
             return Globals.FormatAddress(Unit, Street, City, Region, Country, PostalCode);
         }
 
-        public string DisplayEmail(string Email)
-        {
-            return HtmlUtils.FormatEmail(Email);
-        }
-
         public string FormatURL(string strKeyName, string strKeyValue)
         {
             return !String.IsNullOrEmpty(strFilter) ? EditUrl(strKeyName, strKeyValue, "", "filter=" + strFilter) : EditUrl(strKeyName, strKeyValue);

@@ -47,7 +47,13 @@ namespace DotNetNuke.UI.WebControls
     /// -----------------------------------------------------------------------------
     public class DNNDataGrid : DataGrid
     {
+		#region "Events"
+
         public event DNNDataGridCheckedColumnEventHandler ItemCheckedChanged;
+
+		#endregion
+
+		#region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -65,12 +71,25 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Called when the grid is Data Bound
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/17/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnDataBinding(EventArgs e)
         {
             foreach (DataGridColumn column in Columns)
             {
                 if (ReferenceEquals(column.GetType(), typeof (CheckBoxColumn)))
                 {
+					//Manage CheckBox column events
                     var cbColumn = (CheckBoxColumn) column;
                     cbColumn.CheckedChanged += OnItemCheckedChanged;
                 }
@@ -86,5 +105,7 @@ namespace DotNetNuke.UI.WebControls
         {
             base.PrepareControlHierarchy();
         }
+		
+		#endregion
     }
 }

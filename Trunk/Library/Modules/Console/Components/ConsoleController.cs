@@ -83,6 +83,7 @@ namespace DotNetNuke.Modules.Console.Components
                         switch (key)
                         {
                             case "ParentTabID":
+								//does tab exist?
                                 int parentTabID = int.Parse(value);
                                 TabInfo tabInfo = new TabController().GetTab(parentTabID, PortalController.GetCurrentPortalSettings().PortalId, false);
                                 break;

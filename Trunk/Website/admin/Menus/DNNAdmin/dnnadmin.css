@@ -2,7 +2,7 @@
 	.dnnadminmega ul, .dnnadminmega li {list-style:none none;margin:0;padding:0;}
 	.dnnadminmega li {float:left;display:block;}
 		.dnnadminmega .megaborder {position:absolute;top:18px;z-index:20;width:635px;padding:1em;font-size:12px;background:white;-moz-border-radius:0px 0px 5px 5px;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;border-radius:0px 0px 5px 5px;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border:4px solid #ccc;display:none;}
-			.dnnadminmega li.root {float:left;margin:10px 0 10px 10px;position:relative;}
+			.dnnadminmega li.root {float:left;margin:5px 0 10px 10px;position:relative;}
 				.dnnadminmega li.root a{font-weight:bold;text-transform:uppercase;}
 			.dnnadminmega li.category {clear:both;font-weight:bold;margin-bottom:1em;}
 			.dnnadminmega li.category > span {display:block;border-bottom:1px solid #ccc;margin-bottom:15px;text-align:left;padding:0 0 8px 0;font-size:14px;}

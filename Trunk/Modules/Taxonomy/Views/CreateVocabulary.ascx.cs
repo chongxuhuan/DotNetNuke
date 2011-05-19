@@ -24,57 +24,43 @@
 #region Usings
 
 using System;
-
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Web.Mvp;
-
 using WebFormsMvp;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Taxonomy.Views
 {
+
     [PresenterBinding(typeof (CreateVocabularyPresenter))]
     public partial class CreateVocabulary : ModuleView<CreateVocabularyModel>, ICreateVocabularyView
     {
-        #region "Protected Methods"
+
+        #region ICreateVocabularyView Implementation
+
+        public void BindVocabulary(Vocabulary vocabulary, bool showScope)
+        {
+            editVocabularyControl.BindVocabulary(vocabulary, true, showScope);
+            cancelCreate.NavigateUrl = Model.TaxonomyHomeUrl;
+        }
+
+        public event EventHandler Save;
+
+        #endregion
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            cancelCreate.Click += cancelCreate_Click;
-            saveVocabulary.Click += saveVocabulary_Click;
+            saveVocabulary.Click += OnSaveVocabClick;
         }
 
-        #endregion
-
-        #region "ICreateVocabularyView Implementation"
-
-        public void BindVocabulary(Vocabulary vocabulary, bool showScope)
-        {
-            editVocabularyControl.BindVocabulary(vocabulary, true, showScope);
-        }
-
-        public event EventHandler Cancel;
-        public event EventHandler Save;
-
-        #endregion
-
-        #region "Event Handlers"
-
-        private void cancelCreate_Click(object sender, EventArgs e)
-        {
-            if (Cancel != null)
-            {
-                Cancel(this, e);
-            }
-        }
-
-        private void saveVocabulary_Click(object sender, EventArgs e)
+        protected void OnSaveVocabClick(object sender, EventArgs e)
         {
             if (Save != null)
             {
@@ -83,5 +69,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views
         }
 
         #endregion
+
     }
 }

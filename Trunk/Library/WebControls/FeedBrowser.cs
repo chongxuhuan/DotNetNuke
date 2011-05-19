@@ -41,6 +41,8 @@ namespace DotNetNuke.UI.WebControls
     [DefaultProperty("RssProxyUrl"), ToolboxData("<{0}:FeedBrowser runat=server></{0}:FeedBrowser>")]
     public class FeedBrowser : WebControlBase
     {
+		#region "Private Members"
+
         private readonly StringBuilder output = new StringBuilder("");
         private bool _allowHtmlDescription = true;
         private string _defaultTemplate = "";
@@ -48,6 +50,10 @@ namespace DotNetNuke.UI.WebControls
         private string _opmlText = "";
         private string _opmlUrl = "";
         private string _rssProxyUrl = "";
+		
+		#endregion
+
+		#region "Public Properties"
 
         public string DefaultTemplate
         {
@@ -128,6 +134,10 @@ namespace DotNetNuke.UI.WebControls
                 return (output.ToString());
             }
         }
+		
+		#endregion
+		
+		#region "Protected Methods"
 
         protected override void OnLoad(EventArgs e)
         {
@@ -156,11 +166,13 @@ namespace DotNetNuke.UI.WebControls
                 }
             }
             var script = new StringBuilder();
+
             string tabInstanceVarName = instanceVarName + "_tabs";
             script.Append("var " + tabInstanceVarName + " = new DotNetNuke.UI.WebControls.TabStrip.Strip(\"" + tabInstanceVarName + "\");");
             script.Append("var " + instanceVarName + " = new DotNetNuke.UI.WebControls.FeedBrowser.Browser(\"" + instanceVarName + "\"," + tabInstanceVarName + ");");
             script.Append(tabInstanceVarName + ".setResourcesFolderUrl(\"" + ResourcesFolderUrl + "\");");
             script.Append(instanceVarName + ".setResourcesFolderUrl(\"" + ResourcesFolderUrl + "\");");
+
             script.Append(instanceVarName + ".setElementIdPrefix(\"" + elementIdPrefix + "\");");
             if ((!String.IsNullOrEmpty(Theme)))
             {
@@ -184,15 +196,19 @@ namespace DotNetNuke.UI.WebControls
                 script.Append("false");
             }
             script.Append(");");
+
             string renderScript = GetRenderingScript(instanceVarName, opmlFeed.Outlines);
             bool includeFallbackScript = false;
-            if ((String.IsNullOrEmpty(renderScript)))
+            
+			//Is there any OPML structure to render?
+			if ((String.IsNullOrEmpty(renderScript)))
             {
                 includeFallbackScript = true;
                 script.Append(instanceVarName + ".setTabs(defaultFeedBrowser());");
             }
             else
             {
+				//Javascript function that renders the OPML structure
                 script.Append("function " + instanceVarName + "customFeedBrowser() ");
                 script.Append("{");
                 script.Append("     var " + instanceVarName + "tabs = [];");
@@ -204,7 +220,11 @@ namespace DotNetNuke.UI.WebControls
                 script.Append("} ");
                 script.Append(instanceVarName + ".setTabs(" + instanceVarName + "customFeedBrowser());");
             }
-            if (!Page.ClientScript.IsClientScriptBlockRegistered("FBHostUrl"))
+            		
+            //NK 11/25/08
+            //This code has a jQuery dependency so it can't be loaded using standard client script registration
+            //It must come later in the page which is why it is inline; also ClientScript buggy when used in webcontrols
+			if (!Page.ClientScript.IsClientScriptBlockRegistered("FBHostUrl"))
             {
                 Page.ClientScript.RegisterClientScriptBlock(GetType(),
                                                             "FBHostUrl",
@@ -226,8 +246,13 @@ namespace DotNetNuke.UI.WebControls
             }
             script.Append(instanceVarName + ".render();");
             output.Append("<script type=\"text/javascript\">" + script + "</script>");
+
             base.OnLoad(e);
         }
+
+		#endregion
+
+		#region "Private Methods"
 
         private Opml GetDefaultOpmlFeed()
         {
@@ -243,6 +268,10 @@ namespace DotNetNuke.UI.WebControls
         private string GetRenderingScript(string instanceVarName, OpmlOutlines _outlines)
         {
             string script = "";
+
+            //First fetch any linked OPML files
+            //Only one level of link fetching is supported so
+            //no recursion
             var expandedOutlines = new OpmlOutlines();
             foreach (OpmlOutline item in _outlines)
             {
@@ -271,6 +300,7 @@ namespace DotNetNuke.UI.WebControls
                 }
             }
             script = GetTabsScript(instanceVarName, expandedOutlines);
+
             return script;
         }
 
@@ -284,7 +314,13 @@ namespace DotNetNuke.UI.WebControls
                 {
                     tabCounter = tabCounter + 1;
                     string tabVarName = instanceVarName + "tab" + tabCounter;
+
+                    //Create a call to the "addTab" method
+                    //addTab accepts one parameter -- a TabInfo object
+                    //Here the TabInfo object is dynamically created
+                	//with the parameters  Label, Url and Template
                     js.Append("var " + tabVarName + " = new TabInfo('" + item.Text + "',");
+
                     if ((item.Type == "none"))
                     {
                         js.Append("''");
@@ -293,6 +329,12 @@ namespace DotNetNuke.UI.WebControls
                     {
                         js.Append("'" + item.XmlUrl.AbsoluteUri + "'");
                     }
+					
+                    //Template detection
+                    //The category field indicates if the outline node is a tab, section or category
+                    //If the field value includes a / character, then portion of the value to the right of /
+                    //contains the name of the template that should be used for that tab/section/category
+                    //and its children
                     if ((item.Category.IndexOf("/") > 0))
                     {
                         js.Append(",'" + item.Category.Substring(item.Category.IndexOf("/") + 1) + "'");
@@ -323,7 +365,21 @@ namespace DotNetNuke.UI.WebControls
                     {
                         sectionUrl = ", '" + item.XmlUrl.AbsoluteUri + "'";
                     }
+                    //Create a call to the addSection method
+                    //addSection accepts one parameter -- a SectionInfo object
+                    //Here the SectionInfo object is dyncamically created
+                    //with the parameters Label, Url and Template
+                    //A section Url is the Url called for obtaining search results
+                    //If the Url contains a [KEYWORD] token, the user's search keyword
+                    //is substituted for the token. If no token exists then &keyword={keyword value}
+                    //is appended to the Url
                     js.Append("var " + sectionVarName + " = " + tabVarName + ".addSection(new SectionInfo('" + item.Text + "'" + sectionUrl);
+
+                    //Template detection
+                    //The category field indicates if the outline node is a tab, section or category
+                    //If the field value includes a / character, then portion of the value to the right of /
+                    //contains the name of the template that should be used for that section/category
+                    //and its children
                     if ((item.Category.IndexOf("/") > 0))
                     {
                         js.Append(",'" + item.Category.Substring(item.Category.IndexOf("/") + 1) + "'");
@@ -349,11 +405,19 @@ namespace DotNetNuke.UI.WebControls
                 {
                     counter = counter + 1;
                     js.Append(sectionVarName + ".addCategory(new CategoryInfo('" + item.Text + "','" + item.XmlUrl.AbsoluteUri + "'," + depth);
+
+                    //Template detection
+                    //The category field indicates if the outline node is a tab, section or category
+                    //If the field value includes a / character, then portion of the value to the right of /
+                    //contains the name of the template that should be used for that category
                     if ((item.Category.IndexOf("/") > 0))
                     {
                         js.Append(",'" + item.Category.Substring(item.Category.IndexOf("/") + 1) + "'");
                     }
                     js.Append("));");
+
+                    //If the Category field includes "Default" in its list of values,
+                    //the item is marked as the default category
                     if ((item.Category.IndexOf("Default") > -1))
                     {
                         js.Append(sectionVarName + ".setDefaultCategory(" + counter + ");");
@@ -366,5 +430,7 @@ namespace DotNetNuke.UI.WebControls
             }
             return js.ToString();
         }
+		
+		#endregion
     }
 }

@@ -159,4 +159,7 @@
   <data name="SearchWordLength.Text" xml:space="preserve">
     <value>The Minimum Word Length must be less than or equal to the MaximimumWord Length.</value>
   </data>
+  <data name="SearchWordMinLength.Text" xml:space="preserve">
+    <value>The Minimum Word Length must be at least 1.</value>
+  </data>
 </root>

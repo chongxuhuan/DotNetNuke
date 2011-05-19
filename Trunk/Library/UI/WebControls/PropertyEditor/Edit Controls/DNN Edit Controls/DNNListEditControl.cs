@@ -60,6 +60,17 @@ namespace DotNetNuke.UI.WebControls
 
         protected bool AutoPostBack { get; set; }
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IntegerValue returns the Integer representation of the Value
+        /// </summary>
+        /// <value>An integer representing the Value</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int IntegerValue
         {
             get
@@ -78,6 +89,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// List gets the List associated with the control
+        /// </summary>
+        /// <value>A string representing the Value</value>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ListEntryInfoCollection List
         {
             get
@@ -91,6 +111,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ListName is the name of the List to display
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string ListName
         {
             get
@@ -107,6 +135,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldIntegerValue returns the Integer representation of the OldValue
+        /// </summary>
+        /// <value>An integer representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int OldIntegerValue
         {
             get
@@ -114,6 +151,7 @@ namespace DotNetNuke.UI.WebControls
                 int intValue = Null.NullInteger;
                 try
                 {
+					//Try and cast the value to an Integer
                     intValue = Convert.ToInt32(OldValue);
                 }
                 catch (Exception exc)
@@ -125,6 +163,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ParentKey is the parent key of the List to display
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual string ParentKey
         {
             get
@@ -145,6 +191,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// TextField is the field to display in the combo
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual ListBoundField TextField
         {
             get
@@ -157,6 +211,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ValueField is the field to use as the combo item values
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual ListBoundField ValueField
         {
             get
@@ -169,6 +231,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldStringValue returns the Boolean representation of the OldValue
+        /// </summary>
+        /// <value>A String representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string OldStringValue
         {
             get
@@ -177,6 +248,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StringValue is the value of the control expressed as a String
+        /// </summary>
+        /// <value>A string representing the Value</value>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string StringValue
         {
             get
@@ -187,14 +267,18 @@ namespace DotNetNuke.UI.WebControls
             {
                 if (ValueField == ListBoundField.Id)
                 {
+					//Integer type field
                     Value = Int32.Parse(value);
                 }
                 else
                 {
+					//String type Field
                     Value = value;
                 }
             }
         }
+		
+		#endregion
 
         #region IPostBackEventHandler Members
 
@@ -209,26 +293,43 @@ namespace DotNetNuke.UI.WebControls
         #endregion
 
         public event PropertyChangedEventHandler ItemChanged;
+		
+		#region "Private Methods"
 
         private PropertyEditorEventArgs GetEventArgs()
         {
             var args = new PropertyEditorEventArgs(Name);
             if (ValueField == ListBoundField.Id)
             {
+				//This is an Integer Value
                 args.Value = IntegerValue;
                 args.OldValue = OldIntegerValue;
             }
             else
             {
+				//This is a String Value
                 args.Value = StringValue;
                 args.OldValue = OldStringValue;
             }
             args.StringValue = StringValue;
             return args;
         }
+		
+		#endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnAttributesChanged runs when the CustomAttributes property has changed.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	06/08/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnAttributesChanged()
         {
+			//Get the List settings out of the "Attributes"
             if ((CustomAttributes != null))
             {
                 foreach (Attribute attribute in CustomAttributes)
@@ -246,11 +347,28 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnDataChanged runs when the PostbackData has changed.  It raises the ValueChanged
+        /// Event
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnDataChanged(EventArgs e)
         {
             base.OnValueChanged(GetEventArgs());
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnItemChanged runs when the Item has changed
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void OnItemChanged(PropertyEditorEventArgs e)
         {
             if (ItemChanged != null)
@@ -259,6 +377,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderViewMode renders the View (readonly) mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderViewMode(HtmlTextWriter writer)
         {
             var objListController = new ListController();
@@ -297,11 +424,23 @@ namespace DotNetNuke.UI.WebControls
             {
                 writer.Write(entryText);
             }
+			
+			//Close Select Tag
             writer.RenderEndTag();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
+            //Render the Select Tag
             ControlStyle.AddAttributesToRender(writer);
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
             if (AutoPostBack)
@@ -309,6 +448,8 @@ namespace DotNetNuke.UI.WebControls
                 writer.AddAttribute(HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference(this, ID));
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Select);
+
+            //Add the Not Specified Option
             if (ValueField == ListBoundField.Text)
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
@@ -319,6 +460,7 @@ namespace DotNetNuke.UI.WebControls
             }
             if (StringValue == Null.NullString)
             {
+				//Add the Selected Attribute
                 writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
             }
             writer.RenderBeginTag(HtmlTextWriterTag.Option);
@@ -328,7 +470,9 @@ namespace DotNetNuke.UI.WebControls
             {
                 ListEntryInfo item = List[I];
                 string itemValue = Null.NullString;
-                switch (ValueField)
+                
+				//Add the Value Attribute
+				switch (ValueField)
                 {
                     case ListBoundField.Id:
                         itemValue = item.EntryID.ToString();
@@ -343,9 +487,12 @@ namespace DotNetNuke.UI.WebControls
                 writer.AddAttribute(HtmlTextWriterAttribute.Value, itemValue);
                 if (StringValue == itemValue)
                 {
+					//Add the Selected Attribute
                     writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
                 }
-                writer.RenderBeginTag(HtmlTextWriterTag.Option);
+                
+				//Render Option Tag
+				writer.RenderBeginTag(HtmlTextWriterTag.Option);
                 switch (TextField)
                 {
                     case ListBoundField.Id:
@@ -360,7 +507,11 @@ namespace DotNetNuke.UI.WebControls
                 }
                 writer.RenderEndTag();
             }
-            writer.RenderEndTag();
+            
+			//Close Select Tag
+			writer.RenderEndTag();
         }
+		
+		#endregion
     }
 }

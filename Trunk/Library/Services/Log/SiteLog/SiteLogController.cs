@@ -55,12 +55,12 @@ namespace DotNetNuke.Services.Log.SiteLog
                 }
                 switch (SiteLogBuffer)
                 {
-                    case 0:
+                    case 0: //logging disabled
                         break;
-                    case 1:
+                    case 1: //no buffering
                         switch (SiteLogStorage)
                         {
-                            case "D":
+                            case "D": //database
                                 DataProvider.Instance().AddSiteLog(DateTime.Now,
                                                                    PortalId,
                                                                    UserId,
@@ -72,7 +72,7 @@ namespace DotNetNuke.Services.Log.SiteLog
                                                                    TabId,
                                                                    AffiliateId);
                                 break;
-                            case "F":
+                            case "F": //file system
                                 W3CExtendedLog(DateTime.Now,
                                                PortalId,
                                                UserId,
@@ -86,14 +86,18 @@ namespace DotNetNuke.Services.Log.SiteLog
                                 break;
                         }
                         break;
-                    default:
+                    default: //buffered logging
                         string key = "SiteLog" + PortalId;
                         var arrSiteLog = (ArrayList) DataCache.GetCache(key);
-                        if (arrSiteLog == null)
+                        
+						//get buffered site log records from the cache
+						if (arrSiteLog == null)
                         {
                             arrSiteLog = new ArrayList();
                             DataCache.SetCache(key, arrSiteLog);
                         }
+						
+                        //create new sitelog object
                         var objSiteLog = new SiteLogInfo();
                         objSiteLog.DateTime = DateTime.Now;
                         objSiteLog.PortalId = PortalId;
@@ -105,13 +109,21 @@ namespace DotNetNuke.Services.Log.SiteLog
                         objSiteLog.UserHostName = objSecurity.InputFilter(UserHostName, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoMarkup);
                         objSiteLog.TabId = TabId;
                         objSiteLog.AffiliateId = AffiliateId;
+
+                        //add sitelog object to cache
                         arrSiteLog.Add(objSiteLog);
+
                         if (arrSiteLog.Count >= SiteLogBuffer)
                         {
+							//create the buffered sitelog object
                             var objBufferedSiteLog = new BufferedSiteLog();
                             objBufferedSiteLog.SiteLogStorage = SiteLogStorage;
                             objBufferedSiteLog.SiteLog = arrSiteLog;
+
+                            //clear the current sitelogs from the cache
                             DataCache.RemoveCache(key);
+
+                            //process buffered sitelogs on a background thread
                             var objThread = new Thread(objBufferedSiteLog.AddSiteLog);
                             objThread.Start();
                         }
@@ -138,30 +150,46 @@ namespace DotNetNuke.Services.Log.SiteLog
         public void W3CExtendedLog(DateTime DateTime, int PortalId, int UserId, string Referrer, string URL, string UserAgent, string UserHostAddress, string UserHostName, int TabId, int AffiliateId)
         {
             StreamWriter objStream;
+
+            //create log file path
             string LogFilePath = Globals.ApplicationMapPath + "\\Portals\\" + PortalId + "\\Logs\\";
             string LogFileName = "ex" + DateTime.Now.ToString("yyMMdd") + ".log";
+
+            //check if log file exists
             if (!File.Exists(LogFilePath + LogFileName))
             {
                 try
                 {
+					//create log file
                     Directory.CreateDirectory(LogFilePath);
+
+                    //open log file for append ( position the stream at the end of the file )
                     objStream = File.AppendText(LogFilePath + LogFileName);
+
+                    //add standard log file headers
                     objStream.WriteLine("#Software: Microsoft Internet Information Services 6.0");
                     objStream.WriteLine("#Version: 1.0");
                     objStream.WriteLine("#Date: " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                     objStream.WriteLine("#Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) sc-status sc-substatus sc-win32-status");
+
+                    //close stream
                     objStream.Flush();
                     objStream.Close();
                 }
-				catch (Exception ex)
+				catch (Exception ex) //can not create file
 				{
 					DnnLog.Error(ex);
 				}
             }
             try
             {
+				//open log file for append ( position the stream at the end of the file )
                 objStream = File.AppendText(LogFilePath + LogFileName);
+
+                //declare a string builder
                 var objStringBuilder = new StringBuilder(1024);
+
+                //build W3C extended log item
                 objStringBuilder.Append(DateTime.ToString("yyyy-MM-dd hh:mm:ss") + " ");
                 objStringBuilder.Append(UserHostAddress + " ");
                 objStringBuilder.Append("GET" + " ");
@@ -174,11 +202,15 @@ namespace DotNetNuke.Services.Log.SiteLog
                 objStringBuilder.Append("200" + " ");
                 objStringBuilder.Append("0" + " ");
                 objStringBuilder.Append("0");
+
+                //write to log file
                 objStream.WriteLine(objStringBuilder.ToString());
+
+                //close stream
                 objStream.Flush();
                 objStream.Close();
             }
-			catch (Exception ex)
+			catch (Exception ex) //can not open file
 			{
 				DnnLog.Error(ex);
 			}

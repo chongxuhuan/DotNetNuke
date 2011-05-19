@@ -1,28 +1,20 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.UI.UserControls.TextEditor" %>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/labelControl.ascx" %>
-<table cellSpacing="2" cellPadding="2" summary="Edit HTML Design Table" border="0" id="tblTextEditor" Runat="server">
-	<tr vAlign="top" id="trView" runat="server">
-	    <td><dnn:label id="plView" runat="server" controlname="optView"/></td>
-	    <td align="left">
-			<asp:RadioButtonList id="optView" Runat="server" AutoPostBack="True" RepeatDirection="Horizontal" CssClass="NormalTextBox"></asp:RadioButtonList>
-		</td>
-	</tr>
-	<tr vAlign="top">
-		<td id="celTextEditor" Runat="Server" colspan="2">
-		    <asp:panel id="pnlBasicTextBox" Visible="False" Runat="server" Width="100%">
-				<asp:TextBox id="txtDesktopHTML" CssClass="NormalTextBox" runat="server" textmode="multiline" rows="12" width="100%" columns="75"></asp:TextBox>
-				<br/>
-				<asp:Panel id="pnlBasicRender" Runat="server" Visible="True">
-				    <table cellSpacing="2" cellPadding="2">
-				        <tr>
-				            <td><dnn:label id="plRender" runat="server" controlname="optRender"/></td>
-				            <td><asp:RadioButtonList id="optRender" Runat="server" AutoPostBack="True" RepeatDirection="Horizontal" CssClass="NormalTextBox"></asp:RadioButtonList></td>
-				        </tr>
-				    </table>
-				</asp:Panel>
-			</asp:panel><asp:panel id="pnlRichTextBox" Visible="False" Runat="server">
-				<asp:PlaceHolder id="plcEditor" runat="server"></asp:PlaceHolder>
-			</asp:panel>
-		</td>
-	</tr>
-</table>
+<div class="dnnForm dnnTextEditor dnnClear">
+    <asp:Panel id="PanelView" runat="server" class="dnnFormItem">
+        <dnn:label id="PlView" runat="server" controlname="optView" />
+        <asp:RadioButtonList id="OptView" Runat="server" AutoPostBack="True" RepeatDirection="Horizontal" RepeatLayout="Flow" />
+    </asp:Panel>
+    <asp:Panel id="PanelTextEditor" runat="server" class="dnnTextPanel">
+        <div id="DivBasicTextBox" runat="server" class="dnnFormItem" visible="false">
+            <asp:TextBox id="TxtDesktopHTML" runat="server" textmode="multiline" rows="12" width="100%" columns="75" />
+            <div id="DivBasicRender" runat="server">
+                <dnn:label id="plRender" runat="server" controlname="optRender" />
+                <asp:RadioButtonList id="OptRender" Runat="server" AutoPostBack="True" RepeatDirection="Horizontal" />
+            </div>
+        </div>
+        <div id="DivRichTextBox" runat="server" visible="false" class="dnnFormItem">
+            <asp:PlaceHolder id="PlcEditor" runat="server" />
+        </div>
+    </asp:Panel>
+</div>

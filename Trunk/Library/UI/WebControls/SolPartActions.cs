@@ -55,7 +55,7 @@ namespace DotNetNuke.UI.WebControls
 
         public bool PopulateNodesFromClient { get; set; }
 
-        public int ExpandDepth
+        public int ExpandDepth //JH - POD
         {
             get
             {
@@ -71,7 +71,7 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
-        public NavigationProvider Control
+        public NavigationProvider Control //Modules.ActionProvider.ActionProvider
         {
             get
             {
@@ -92,20 +92,25 @@ namespace DotNetNuke.UI.WebControls
         {
             try
             {
+				//--- original page set attributes ---
                 Control.StyleIconWidth = 15;
                 Control.MouseOutHideDelay = 500;
                 Control.MouseOverAction = NavigationProvider.HoverAction.Expand;
                 Control.MouseOverDisplay = NavigationProvider.HoverDisplay.None;
-                Control.CSSControl = "ModuleTitle_MenuBar";
-                Control.CSSContainerRoot = "ModuleTitle_MenuContainer";
-                Control.CSSNode = "ModuleTitle_MenuItem";
-                Control.CSSIcon = "ModuleTitle_MenuIcon";
-                Control.CSSContainerSub = "ModuleTitle_SubMenu";
-                Control.CSSBreak = "ModuleTitle_MenuBreak";
-                Control.CSSNodeHover = "ModuleTitle_MenuItemSel";
-                Control.CSSIndicateChildSub = "ModuleTitle_MenuArrow";
-                Control.CSSIndicateChildRoot = "ModuleTitle_RootMenuArrow";
-                if (String.IsNullOrEmpty(Control.PathSystemScript))
+
+                //style sheet settings
+                Control.CSSControl = "ModuleTitle_MenuBar"; //ctlActions.MenuCSS.MenuBar
+                Control.CSSContainerRoot = "ModuleTitle_MenuContainer"; //ctlActions.MenuCSS.MenuContainer
+                Control.CSSNode = "ModuleTitle_MenuItem"; //ctlActions.MenuCSS.MenuItem
+                Control.CSSIcon = "ModuleTitle_MenuIcon"; //ctlActions.MenuCSS.MenuIcon
+                Control.CSSContainerSub = "ModuleTitle_SubMenu"; //ctlActions.MenuCSS.SubMenu
+                Control.CSSBreak = "ModuleTitle_MenuBreak"; //ctlActions.MenuCSS.MenuBreak
+                Control.CSSNodeHover = "ModuleTitle_MenuItemSel"; //ctlActions.MenuCSS.MenuItemSel
+                Control.CSSIndicateChildSub = "ModuleTitle_MenuArrow"; //ctlActions.MenuCSS.MenuArrow
+                Control.CSSIndicateChildRoot = "ModuleTitle_RootMenuArrow"; //ctlActions.MenuCSS.RootMenuArrow
+                
+				//generate dynamic menu
+				if (String.IsNullOrEmpty(Control.PathSystemScript))
                 {
                     Control.PathSystemScript = Globals.ApplicationPath + "/Controls/SolpartMenu/";
                 }
@@ -113,22 +118,22 @@ namespace DotNetNuke.UI.WebControls
                 Control.PathSystemImage = Globals.ApplicationPath + "/Images/";
                 Control.IndicateChildImageSub = "action_right.gif";
                 Control.IndicateChildren = true;
-                Control.StyleRoot = "background-color: Transparent; font-size: 1pt;";
+                Control.StyleRoot = "background-color: Transparent; font-size: 1pt;"; //backwards compatibility HACK
                 Control.NodeClick += ctlActions_MenuClick;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
-        private void ctlActions_MenuClick(NavigationEventArgs args)
+        private void ctlActions_MenuClick(NavigationEventArgs args) //Handles ctlActions.MenuClick
         {
             try
             {
                 ProcessAction(args.ID);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -144,7 +149,7 @@ namespace DotNetNuke.UI.WebControls
             Visible = DisplayControl(objNodes);
             if (Visible)
             {
-                Control.ClearNodes();
+                Control.ClearNodes(); //since we always bind we need to clear the nodes for providers that maintain their state
                 foreach (DNNNode objNode in objNodes)
                 {
                     ProcessNodes(objNode);
@@ -173,7 +178,7 @@ namespace DotNetNuke.UI.WebControls
             {
                 BindMenu();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -192,7 +197,8 @@ namespace DotNetNuke.UI.WebControls
         private void Control_PopulateOnDemand(NavigationEventArgs args)
         {
             SetMenuDefaults();
-            ActionRoot.Actions.AddRange(Actions);
+            ActionRoot.Actions.AddRange(Actions); //Modules how add custom actions in control lifecycle will not have those actions populated... 
+
             ModuleAction objAction = ActionRoot;
             if (ActionRoot.ID != Convert.ToInt32(args.ID))
             {
@@ -202,7 +208,7 @@ namespace DotNetNuke.UI.WebControls
             {
                 args.Node = Navigation.GetActionNode(args.ID, Control.ID, objAction, this);
             }
-            Control.ClearNodes();
+            Control.ClearNodes(); //since we always bind we need to clear the nodes for providers that maintain their state
             BindMenu(Navigation.GetActionNodes(objAction, args.Node, this, ExpandDepth));
         }
     }

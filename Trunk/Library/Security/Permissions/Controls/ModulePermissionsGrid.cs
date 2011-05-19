@@ -39,12 +39,18 @@ namespace DotNetNuke.Security.Permissions.Controls
 {
     public class ModulePermissionsGrid : PermissionsGrid
     {
-        private bool _InheritViewPermissionsFromTab;
+        #region "Private Members"
+		
+		private bool _InheritViewPermissionsFromTab;
         private int _ModuleID = -1;
         private ModulePermissionCollection _ModulePermissions;
         private List<PermissionInfoBase> _PermissionsList;
         private int _TabId = -1;
         private int _ViewColumnIndex;
+		
+		#endregion
+		
+		#region "Protected Properties"
 
         protected override List<PermissionInfoBase> PermissionsList
         {
@@ -57,6 +63,10 @@ namespace DotNetNuke.Security.Permissions.Controls
                 return _PermissionsList;
             }
         }
+		
+		#endregion
+		
+		#region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -135,7 +145,10 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             get
             {
+				//First Update Permissions in case they have been changed
                 UpdatePermissions();
+
+                //Return the ModulePermissions
                 return _ModulePermissions;
             }
         }
@@ -166,6 +179,8 @@ namespace DotNetNuke.Security.Permissions.Controls
         private ModulePermissionInfo ParseKeys(string[] Settings)
         {
             var objModulePermission = new ModulePermissionInfo();
+
+            //Call base class to load base properties
             base.ParsePermissionKeys(objModulePermission, Settings);
             if (String.IsNullOrEmpty(Settings[2]))
             {
@@ -178,7 +193,21 @@ namespace DotNetNuke.Security.Permissions.Controls
             objModulePermission.ModuleID = ModuleID;
             return objModulePermission;
         }
+		
+		#endregion
+		
+		#region "Protected Methods"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a Permission
+        /// </summary>
+        /// <param name="permissions">The permissions collection</param>
+        /// <param name="user">The user to add</param>
+        /// <history>
+        ///     [cnurse]    01/12/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void AddPermission(ArrayList permissions, UserInfo user)
         {
             bool isMatch = false;
@@ -190,6 +219,8 @@ namespace DotNetNuke.Security.Permissions.Controls
                     break;
                 }
             }
+			
+			//user not found so add new
             if (!isMatch)
             {
                 foreach (PermissionInfo objPermission in permissions)
@@ -212,9 +243,22 @@ namespace DotNetNuke.Security.Permissions.Controls
             objPermission.UserID = userId;
             objPermission.DisplayName = displayName;
             _ModulePermissions.Add(objPermission, true);
+
+            //Clear Permission List
             _PermissionsList = null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Enabled status of the permission
+        /// </summary>
+        /// <param name="objPerm">The permission being loaded</param>
+        /// <param name="role">The role</param>
+        /// <param name="column">The column of the Grid</param>
+        /// <history>
+        ///     [cnurse]    01/13/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool GetEnabled(PermissionInfo objPerm, RoleInfo role, int column)
         {
             bool enabled;
@@ -236,11 +280,35 @@ namespace DotNetNuke.Security.Permissions.Controls
             return enabled;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Enabled status of the permission
+        /// </summary>
+        /// <param name="objPerm">The permission being loaded</param>
+        /// <param name="user">The user</param>
+        /// <param name="column">The column of the Grid</param>
+        /// <history>
+        ///     [cnurse]    01/13/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool GetEnabled(PermissionInfo objPerm, UserInfo user, int column)
         {
             return InheritViewPermissionsFromTab && column != _ViewColumnIndex;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Value of the permission
+        /// </summary>
+        /// <param name="objPerm">The permission being loaded</param>
+        /// <param name="role">The role</param>
+        /// <param name="column">The column of the Grid</param>
+        /// <param name="defaultState">Default State.</param>
+        /// <returns>A Boolean (True or False)</returns>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string GetPermission(PermissionInfo objPerm, RoleInfo role, int column, string defaultState)
         {
             string permission;
@@ -256,12 +324,26 @@ namespace DotNetNuke.Security.Permissions.Controls
                 }
                 else
                 {
+					//Call base class method to handle standard permissions
                     permission = base.GetPermission(objPerm, role, column, defaultState);
                 }
             }
             return permission;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Value of the permission
+        /// </summary>
+        /// <param name="objPerm">The permission being loaded</param>
+        /// <param name="user">The role</param>
+        /// <param name="column">The column of the Grid</param>
+        /// <param name="defaultState">Default State.</param>
+        /// <returns>A Boolean (True or False)</returns>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string GetPermission(PermissionInfo objPerm, UserInfo user, int column, string defaultState)
         {
             string permission;
@@ -271,11 +353,20 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
             else
             {
+				//Call base class method to handle standard permissions
                 permission = base.GetPermission(objPerm, user, column, defaultState);
             }
             return permission;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Permissions from the Data Store
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override ArrayList GetPermissions()
         {
             var objPermissionController = new PermissionController();
@@ -293,29 +384,48 @@ namespace DotNetNuke.Security.Permissions.Controls
             return arrPermissions;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Load the ViewState
+        /// </summary>
+        /// <param name="savedState">The saved state</param>
+        /// <history>
+        ///     [cnurse]    01/12/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void LoadViewState(object savedState)
         {
             if (savedState != null)
             {
+				//Load State from the array of objects that was saved with SaveViewState.
                 var myState = (object[]) savedState;
-                if (myState[0] != null)
+                
+				//Load Base Controls ViewState
+				if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
+				
+				//Load ModuleID
                 if (myState[1] != null)
                 {
                     ModuleID = Convert.ToInt32(myState[1]);
                 }
+				
+				//Load InheritViewPermissionsFromTab
                 if (myState[2] != null)
                 {
                     InheritViewPermissionsFromTab = Convert.ToBoolean(myState[2]);
                 }
+				
+				//Load ModulePermissions
                 if (myState[3] != null)
                 {
                     _ModulePermissions = new ModulePermissionCollection();
                     string state = Convert.ToString(myState[3]);
                     if (!String.IsNullOrEmpty(state))
                     {
+						//First Break the String into individual Keys
                         string[] permissionKeys = state.Split(new[] {"##"}, StringSplitOptions.None);
                         foreach (string key in permissionKeys)
                         {
@@ -332,12 +442,28 @@ namespace DotNetNuke.Security.Permissions.Controls
             _ModulePermissions.Remove(permissionID, roleID, userID);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Saves the ViewState
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/12/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override object SaveViewState()
         {
             var allStates = new object[4];
+			
+			//Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
+
+            //Save the ModuleID
             allStates[1] = ModuleID;
+
+            //Save the InheritViewPermissionsFromTab
             allStates[2] = InheritViewPermissionsFromTab;
+
+            //Persist the ModulePermissions
             var sb = new StringBuilder();
             if (_ModulePermissions != null)
             {
@@ -365,13 +491,35 @@ namespace DotNetNuke.Security.Permissions.Controls
             return allStates;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// returns whether or not the derived grid supports Deny permissions
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool SupportsDenyPermissions()
         {
             return true;
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Overrides the Base method to Generate the Data Grid
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    01/09/2006  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void GenerateDataGrid()
         {
         }
+		
+		#endregion
     }
 }

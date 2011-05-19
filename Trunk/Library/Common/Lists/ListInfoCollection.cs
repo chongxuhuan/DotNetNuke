@@ -51,6 +51,7 @@ namespace DotNetNuke.Common.Lists
         public void Add(string key, object value)
         {
             int index;
+            //<tam:note key to be lowercase for appropiated seeking>
             try
             {
                 index = base.List.Add(value);
@@ -81,7 +82,7 @@ namespace DotNetNuke.Common.Lists
         {
             int index;
             object obj;
-            try
+            try //Do validation first
             {
                 if (mKeyIndexLookup[key.ToLower()] == null)
                 {
@@ -98,12 +99,13 @@ namespace DotNetNuke.Common.Lists
             return obj;
         }
 
+        // Another method, get Lists on demand
         public object Item(string key, bool Cache)
         {
             int index;
             object obj = null;
             bool itemExists = false;
-            try
+            try //Do validation first
             {
                 if (mKeyIndexLookup[key.ToLower()] != null)
                 {
@@ -114,12 +116,14 @@ namespace DotNetNuke.Common.Lists
             {
                 DnnLog.Error(exc);
             }
+            //key will be in format Country.US:Region
             if (!itemExists)
             {
                 var ctlLists = new ListController();
                 string listName = key.Substring(key.IndexOf(":") + 1);
                 string parentKey = key.Replace(listName, "").TrimEnd(':');
                 ListInfo listInfo = ctlLists.GetListInfo(listName, parentKey);
+                //the collection has been cache, so add this entry list into it if specified
                 if (Cache)
                 {
                     Add(listInfo.Key, listInfo);

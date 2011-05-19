@@ -35,6 +35,8 @@ namespace DotNetNuke.Services.Installer.Installers
 {
     public class DashboardInstaller : ComponentInstallerBase
     {
+		#region "Private Properties"
+
         private string ControllerClass;
         private bool IsEnabled;
         private string Key;
@@ -42,7 +44,20 @@ namespace DotNetNuke.Services.Installer.Installers
         private string Src;
         private DashboardControl TempDashboardControl;
         private int ViewOrder;
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/05/2009  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override string AllowableFiles
         {
             get
@@ -50,11 +65,16 @@ namespace DotNetNuke.Services.Installer.Installers
                 return "ashx, aspx, ascx, vb, cs, resx, css, js, resources, config, vbproj, csproj, sln, htm, html";
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private void DeleteDashboard()
         {
             try
             {
+				//Attempt to get the Dashboard
                 DashboardControl dashboardControl = DashboardController.GetDashboardControlByPackageId(Package.PackageID);
                 if (dashboardControl != null)
                 {
@@ -77,8 +97,10 @@ namespace DotNetNuke.Services.Installer.Installers
             bool bAdd = Null.NullBoolean;
             try
             {
+                //Attempt to get the Dashboard
                 TempDashboardControl = DashboardController.GetDashboardControlByKey(Key);
                 var dashboardControl = new DashboardControl();
+
                 if (TempDashboardControl == null)
                 {
                     dashboardControl.IsEnabled = true;
@@ -97,10 +119,12 @@ namespace DotNetNuke.Services.Installer.Installers
                 dashboardControl.ViewOrder = ViewOrder;
                 if (bAdd)
                 {
+                    //Add new Dashboard
                     DashboardController.AddDashboardControl(dashboardControl);
                 }
                 else
                 {
+					//Update Dashboard
                     DashboardController.UpdateDashboardControl(dashboardControl);
                 }
                 Completed = true;
@@ -112,14 +136,34 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ReadManifest method reads the manifest file for the Authentication compoent.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/25/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void ReadManifest(XPathNavigator manifestNav)
         {
+			//Get the Key
             Key = Util.ReadElement(manifestNav, "dashboardControl/key", Log, Util.DASHBOARD_KeyMissing);
+
+            //Get the Src
             Src = Util.ReadElement(manifestNav, "dashboardControl/src", Log, Util.DASHBOARD_SrcMissing);
+
+            //Get the LocalResources
             LocalResources = Util.ReadElement(manifestNav, "dashboardControl/localResources", Log, Util.DASHBOARD_LocalResourcesMissing);
+
+            //Get the ControllerClass
             ControllerClass = Util.ReadElement(manifestNav, "dashboardControl/controllerClass");
+
+            //Get the IsEnabled Flag
             IsEnabled = bool.Parse(Util.ReadElement(manifestNav, "dashboardControl/isEnabled", "true"));
+
+            //Get the ViewOrder
             ViewOrder = int.Parse(Util.ReadElement(manifestNav, "dashboardControl/viewOrder", "-1"));
+
             if (Log.Valid)
             {
                 Log.AddInfo(Util.DASHBOARD_ReadSuccess);
@@ -128,12 +172,15 @@ namespace DotNetNuke.Services.Installer.Installers
 
         public override void Rollback()
         {
+			//If Temp Dashboard exists then we need to update the DataStore with this 
             if (TempDashboardControl == null)
             {
+				//No Temp Dashboard - Delete newly added system
                 DeleteDashboard();
             }
             else
             {
+				//Temp Dashboard - Rollback to Temp
                 DashboardController.UpdateDashboardControl(TempDashboardControl);
             }
         }
@@ -142,6 +189,7 @@ namespace DotNetNuke.Services.Installer.Installers
         {
             try
             {
+				//Attempt to get the DashboardControl
                 DashboardControl dashboardControl = DashboardController.GetDashboardControlByPackageId(Package.PackageID);
                 if (dashboardControl != null)
                 {
@@ -154,5 +202,7 @@ namespace DotNetNuke.Services.Installer.Installers
                 Log.AddFailure(ex);
             }
         }
+		
+		#endregion
     }
 }

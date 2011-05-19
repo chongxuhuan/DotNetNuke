@@ -416,9 +416,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        
         protected void btnSnow_Click(object sender, EventArgs e)
         {
-            if (CheckCanCallSnowcovered()==true)
+            if (CheckCanCallSnowcovered())
             {
                 GetSnowcoveredFiles();
             }
@@ -430,61 +431,79 @@ namespace DotNetNuke.Modules.Admin.Extensions
             string fileCheck = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
              HttpWebRequest oRequest;
             WebResponse oResponse;
-            Stream oStream;
             XmlTextReader oReader;
             XPathDocument oXMLDocument;
-            string sFeedType;
-            string sCategoryID;
-            string sRequest;
+
+            //temp code for snowcovered feed issue
+            StreamReader sReader;
+
             try
             {
-                sRequest = fileCheck;
+                string sRequest = fileCheck;
+                Stream oStream;
                 try
                 {
                     oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
                     oResponse = oRequest.GetResponse();
                     oStream = oResponse.GetResponseStream();
+                    sReader= new StreamReader(oResponse.GetResponseStream());
                 }
                 catch (Exception oExc)
                 {
-                    throw oExc;
+                    throw;
                 }
-                oReader = new XmlTextReader(oStream);
-                oReader.XmlResolver = null;
-                oXMLDocument = new XPathDocument(oReader);
-                //XPathNavigator nav = oXMLDocument.CreateNavigator();
-                //xmlRSS.XPathNavigator = nav;
-                ////xmlRSS.Document = oXMLDocument;
-                //xmlRSS.TransformSource = XSL_PATH;
-                //if (nav.Select(PRODUCT_XMLNODE_PATH).Count == 0)
-                //{
-                //    lblMessage.Text = Localization.GetString("NoProductsFound.Text", LocalResourceFile);
-                //}
-                grdSnow.DataSource = oXMLDocument;
-                grdSnow.DataBind();
+                //temp code to workaround snowcovered feed issue
+
+                string returnText = sReader.ReadToEnd();
+              //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
+
+                string orderPass = "<orders>";
+                if (returnText.Contains(orderPass))
+                {
+                    
+                    oReader = new XmlTextReader(returnText);
+
+                    grdSnow.DataSource = oReader;
+                    grdSnow.DataBind();    
+                }
+               
+                
             }
             catch (Exception oExc)
             {
-                throw oExc;
+                throw ;
             }
         }
 
         private bool CheckCanCallSnowcovered()
         {
-            if (SecurityPolicy.HasWebPermission()==false)
-            {
-                lblMessage.Text = Localization.GetString("WebservicePermission", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-                return false;
-            }
+            //if (SecurityPolicy.HasWebPermission()==false)
+            //{
+            //    lblMessage.Text = Localization.GetString("WebservicePermission", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+            //    return false;
+            //}
             string cookieCheck=Localization.GetString("SnowcoveredCookie", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-           
+            
 
+            //code added until snowcovered feed is changed
+            //string failCookie = null;
+            string failCookie = "Authenticated: False";
             //check if logged in
-            if (GetExternalRequest(cookieCheck)==null)
+            HttpWebRequest oRequest;
+            
+            oRequest = (HttpWebRequest) GetExternalRequest(cookieCheck);
+            WebResponse oResponse;
+            oResponse = oRequest.GetResponse();
+            StreamReader sReader;
+            sReader = new StreamReader(oResponse.GetResponseStream());
+            
+            string returnText = sReader.ReadToEnd();
+            if (returnText.Contains(failCookie))
             {
-                    lblMessage.Text = Localization.GetString("SnowcoveredLogin", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                lblMessage.Text = Localization.GetString("SnowcoveredLogin", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
                 return false;
             }
+            
             return true;
         }
 
@@ -493,7 +512,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
             try
             {
                 PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                //need to enable cookiecontainer http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.cookiecontainer.aspx / http://forums.asp.net/t/1051670.aspx/1
+
+                CookieContainer CC = new CookieContainer();
                 var objRequest = (HttpWebRequest)WebRequest.Create(Address);
+                objRequest.CookieContainer = CC;
                 objRequest.Timeout = Host.WebRequestTimeout;
                 objRequest.UserAgent = "DotNetNuke";
                 if (!string.IsNullOrEmpty(Host.ProxyServer))
@@ -518,5 +541,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             
         }
+       
 }
 }

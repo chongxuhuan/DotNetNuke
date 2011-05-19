@@ -113,6 +113,22 @@ namespace DotNetNuke.Services.Upgrade
 
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddAdminPages adds an Admin Page and an associated Module to all configured Portals
+        /// </summary>
+        ///	<param name="tabName">The Name to give this new Tab</param>
+        /// <param name="description">Description.</param>
+        ///	<param name="tabIconFile">The Icon for this new Tab</param>
+		/// <param name="tabIconFileLarge">The large Icon for this new Tab</param>
+        ///	<param name="isVisible">A flag indicating whether the tab is visible</param>
+        ///	<param name="moduleDefId">The Module Deinition Id for the module to be aded to this tab</param>
+        ///	<param name="moduleTitle">The Module's title</param>
+        ///	<param name="moduleIconFile">The Module's icon</param>
+        /// <history>
+        /// 	[cnurse]	11/16/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void AddAdminPages(string tabName, string description, string tabIconFile, string tabIconFileLarge, bool isVisible, int moduleDefId, string moduleTitle, string moduleIconFile)
         {
             //Call overload with InheritPermisions=True
@@ -171,6 +187,24 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleControl adds a new Module Control to the system
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="moduleDefId">The Module Definition Id</param>
+        ///	<param name="controlKey">The key for this control in the Definition</param>
+        ///	<param name="controlTitle">The title of this control</param>
+        ///	<param name="controlSrc">Te source of ths control</param>
+        ///	<param name="iconFile">The icon file</param>
+        ///	<param name="controlType">The type of control</param>
+        ///	<param name="viewOrder">The vieworder for this module</param>
+        ///	<param name="helpURL">The Help Url</param>
+        /// <history>
+        /// 	[cnurse]	11/08/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void AddModuleControl(int moduleDefId, string controlKey, string controlTitle, string controlSrc, string iconFile, SecurityAccessLevel controlType, int viewOrder, string helpURL)
         {
             AddModuleControl(moduleDefId, controlKey, controlTitle, controlSrc, iconFile, controlType, viewOrder, helpURL, false);
@@ -200,11 +234,51 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleDefinition adds a new Core Module Definition to the system
+        /// </summary>
+        /// <remarks>
+        ///	This overload allows the caller to determine whether the module has a controller
+        /// class
+        /// </remarks>
+        ///	<param name="desktopModuleName">The Friendly Name of the Module to Add</param>
+        ///	<param name="description">Description of the Module</param>
+        ///	<param name="moduleDefinitionName">The Module Definition Name</param>
+        ///	<param name="premium">A flag representing whether the module is a Premium module</param>
+        ///	<param name="admin">A flag representing whether the module is an Admin module</param>
+        ///	<returns>The Module Definition Id of the new Module</returns>
+        /// <history>
+        /// 	[cnurse]	10/14/2004	documented
+        ///     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static int AddModuleDefinition(string desktopModuleName, string description, string moduleDefinitionName, bool premium, bool admin)
         {
             return AddModuleDefinition(desktopModuleName, description, moduleDefinitionName, "", false, premium, admin);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleDefinition adds a new Core Module Definition to the system
+        /// </summary>
+        /// <remarks>
+        ///	This overload allows the caller to determine whether the module has a controller
+        /// class
+        /// </remarks>
+        ///	<param name="desktopModuleName">The Friendly Name of the Module to Add</param>
+        ///	<param name="description">Description of the Module</param>
+        ///	<param name="moduleDefinitionName">The Module Definition Name</param>
+        /// <param name="businessControllerClass">Business Control Class.</param>
+        /// <param name="isPortable">Whether the module is enable for portals.</param>
+        ///	<param name="premium">A flag representing whether the module is a Premium module</param>
+        ///	<param name="admin">A flag representing whether the module is an Admin module</param>
+        ///	<returns>The Module Definition Id of the new Module</returns>
+        /// <history>
+        /// 	[cnurse]	10/14/2004	documented
+        ///     [cnurse]    11/11/2004  removed addition of Module Control (now in AddMOduleControl)
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static int AddModuleDefinition(string desktopModuleName, string description, string moduleDefinitionName, string businessControllerClass, bool isPortable, bool premium, bool admin)
         {
             // check if desktop module exists
@@ -271,12 +345,46 @@ namespace DotNetNuke.Services.Upgrade
             return moduleDefinition.ModuleDefID;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleToPage adds a module to a Page
+        /// </summary>
+        /// <remarks>
+        /// This overload assumes ModulePermissions will be inherited
+        /// </remarks>
+        ///	<param name="page">The Page to add the Module to</param>
+        ///	<param name="moduleDefId">The Module Deinition Id for the module to be aded to this tab</param>
+        ///	<param name="moduleTitle">The Module's title</param>
+        ///	<param name="moduleIconFile">The Module's icon</param>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static int AddModuleToPage(TabInfo page, int moduleDefId, string moduleTitle, string moduleIconFile)
         {
             //Call overload with InheritPermisions=True
             return AddModuleToPage(page, moduleDefId, moduleTitle, moduleIconFile, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddPage adds a Tab Page
+        /// </summary>
+        /// <remarks>
+        /// Adds a Tab to a parentTab
+        /// </remarks>
+        ///	<param name="parentTab">The Parent Tab</param>
+        ///	<param name="tabName">The Name to give this new Tab</param>
+        /// <param name="description">Description.</param>
+        ///	<param name="tabIconFile">The Icon for this new Tab</param>
+		/// <param name="tabIconFileLarge">The Large Icon for this new Tab</param>
+        ///	<param name="isVisible">A flag indicating whether the tab is visible</param>
+        ///	<param name="permissions">Page Permissions Collection for this page</param>
+        /// <param name="isAdmin">Is an admin page</param>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static TabInfo AddPage(TabInfo parentTab, string tabName, string description, string tabIconFile, string tabIconFileLarge, bool isVisible, TabPermissionCollection permissions, bool isAdmin)
         {
             int parentId = Null.NullInteger;
@@ -292,6 +400,23 @@ namespace DotNetNuke.Services.Upgrade
             return AddPage(portalId, parentId, tabName, description, tabIconFile, tabIconFileLarge, isVisible, permissions, isAdmin);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddPage adds a Tab Page
+        /// </summary>
+        ///	<param name="portalId">The Id of the Portal</param>
+        ///	<param name="parentId">The Id of the Parent Tab</param>
+        ///	<param name="tabName">The Name to give this new Tab</param>
+        /// <param name="description">Description.</param>
+        ///	<param name="tabIconFile">The Icon for this new Tab</param>
+		/// <param name="tabIconFileLarge">The large Icon for this new Tab</param>
+        ///	<param name="isVisible">A flag indicating whether the tab is visible</param>
+        ///	<param name="permissions">Page Permissions Collection for this page</param>
+        /// <param name="isAdmin">Is and admin page</param>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static TabInfo AddPage(int portalId, int parentId, string tabName, string description, string tabIconFile, string tabIconFileLarge, bool isVisible, TabPermissionCollection permissions, bool isAdmin)
         {
             var tabController = new TabController();
@@ -330,6 +455,17 @@ namespace DotNetNuke.Services.Upgrade
             return tab;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddPagePermission adds a TabPermission to a TabPermission Collection
+        /// </summary>
+        ///	<param name="permissions">Page Permissions Collection for this page</param>
+        ///	<param name="key">The Permission key</param>
+        ///	<param name="roleId">The role given the permission</param>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void AddPagePermission(TabPermissionCollection permissions, string key, int roleId)
         {
             var permissionController = new PermissionController();
@@ -438,7 +574,7 @@ namespace DotNetNuke.Services.Upgrade
 
             AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
                         "//Host//ProfessionalFeatures//SoftwareAndDocumentation",
-                        "http://www.dotnetnuke.com/tabid/1226/Default.aspx",
+						"http://www.dotnetnuke.com/Resources/Manuals/tabid/1667/Default.aspx",
                         "Software and Documentation",
                         "Download upgrades, subscribed products and additional documentation for professional edition customers.",
                         "~/images/icon_software_16px.gif",
@@ -501,7 +637,16 @@ namespace DotNetNuke.Services.Upgrade
                         "~/images/icon_usersSwitcher_32px.gif");
         }
 
-        private static void AddSearchResults(int moduleDefId)
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddSearchResults adds a top level Hidden Search Results Page
+        /// </summary>
+        ///	<param name="moduleDefId">The Module Deinition Id for the Search Results Module</param>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created 
+        /// </history>
+        /// -----------------------------------------------------------------------------
+		private static void AddSearchResults(int moduleDefId)
         {
             var portalController = new PortalController();
             PortalInfo portal;
@@ -527,6 +672,19 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddSkinControl adds a new Module Control to the system
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="controlKey">The key for this control in the Definition</param>
+        /// <param name="packageName">Package Name.</param>
+        ///	<param name="controlSrc">Te source of ths control</param>
+        /// <history>
+        /// 	[cnurse]	05/26/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void AddSkinControl(string controlKey, string packageName, string controlSrc)
         {
             // check if skin control exists
@@ -692,6 +850,18 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CoreModuleExists determines whether a Core Module exists on the system
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="desktopModuleName">The Friendly Name of the Module</param>
+        ///	<returns>True if the Module exists, otherwise False</returns>
+        /// <history>
+        /// 	[cnurse]	10/14/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static bool CoreModuleExists(string desktopModuleName)
         {
             var desktopModule = DesktopModuleController.GetDesktopModuleByModuleName(desktopModuleName, Null.NullInteger);
@@ -699,6 +869,18 @@ namespace DotNetNuke.Services.Upgrade
             return ((desktopModule != null));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ExecuteScript executes a SQl script file
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="scriptFile">The script to Execute</param>
+        /// <param name="writeFeedback">Need to output feedback message.</param>
+        /// <history>
+        /// 	[cnurse]	11/09/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static string ExecuteScript(string scriptFile, bool writeFeedback)
         {
             if (writeFeedback)
@@ -723,6 +905,7 @@ namespace DotNetNuke.Services.Upgrade
             }
             catch (Exception exc)
             {
+				//does not have permission to create the log file
                 DnnLog.Error(exc);
             }
 
@@ -738,6 +921,17 @@ namespace DotNetNuke.Services.Upgrade
             return exceptions;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetModuleDefinition gets the Module Definition Id of a module
+        /// </summary>
+        ///	<param name="desktopModuleName">The Friendly Name of the Module to Add</param>
+        ///	<param name="moduleDefinitionName">The Module Definition Name</param>
+        ///	<returns>The Module Definition Id of the Module (-1 if no module definition)</returns>
+        /// <history>
+        /// 	[cnurse]	11/16/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static int GetModuleDefinition(string desktopModuleName, string moduleDefinitionName)
         {
             // get desktop module
@@ -758,6 +952,18 @@ namespace DotNetNuke.Services.Upgrade
             return objModuleDefinition.ModuleDefID;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// HostTabExists determines whether a tab of a given name exists under the Host tab
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="tabName">The Name of the Tab</param>
+        ///	<returns>True if the Tab exists, otherwise False</returns>
+        /// <history>
+        /// 	[cnurse]	11/08/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static bool HostTabExists(string tabName)
         {
             bool tabExists = false;
@@ -774,6 +980,18 @@ namespace DotNetNuke.Services.Upgrade
             return tabExists;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallMemberRoleProvider - Installs the MemberRole Provider Db objects
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+		///	<param name="providerPath">The Path to the Provider Directory</param>
+		/// <param name="writeFeedback">Whether need to output feedback message.</param>
+        /// <history>
+        /// 	[cnurse]	02/02/2005	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static string InstallMemberRoleProvider(string providerPath, bool writeFeedback)
         {
             string exceptions = "";
@@ -804,6 +1022,18 @@ namespace DotNetNuke.Services.Upgrade
             return exceptions;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallMemberRoleProviderScript - Installs a specific MemberRole Provider script
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="providerPath">The Path to the Provider Directory</param>
+        ///	<param name="scriptFile">The Name of the Script File</param>
+        ///	<param name="writeFeedback">Whether or not to echo results</param>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static string InstallMemberRoleProviderScript(string providerPath, string scriptFile, bool writeFeedback)
         {
             if (writeFeedback)
@@ -824,12 +1054,25 @@ namespace DotNetNuke.Services.Upgrade
             }
             catch (Exception exc)
             {
+				//does not have permission to create the log file
                 DnnLog.Error(exc);
             }
 
             return exceptions;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ParseFiles parses the Host Template's Files node
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="node">The Files node</param>
+        ///	<param name="portalId">The PortalId (-1 for Host Files)</param>
+        /// <history>
+        /// 	[cnurse]	11/08/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void ParseFiles(XmlNode node, int portalId)
         {
             //Parse the File nodes
@@ -859,6 +1102,21 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RemoveCoreModule removes a Core Module from the system
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="desktopModuleName">The Friendly Name of the Module to Remove</param>
+        ///	<param name="parentTabName">The Name of the parent Tab/Page for this module</param>
+        ///	<param name="tabName">The Name to tab that contains the Module</param>
+		///	<param name="removeTab">A flag to determine whether to remove the Tab if it has no
+        ///	other modules</param>
+        /// <history>
+        /// 	[cnurse]	10/14/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static void RemoveCoreModule(string desktopModuleName, string parentTabName, string tabName, bool removeTab)
         {
             int moduleDefId = Null.NullInteger;

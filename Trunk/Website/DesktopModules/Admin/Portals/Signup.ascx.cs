@@ -39,10 +39,10 @@ using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mail;
+using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
@@ -74,8 +74,6 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             try
             {
-                string strFolder;
-                string strMessage;
                 if ((!IsHostMenu || UserInfo.IsSuperUser == false) && !Host.DemoSignup)
                 {
                     Response.Redirect(Globals.NavigateURL("Access Denied"), true);
@@ -83,7 +81,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 valEmail2.ValidationExpression = Globals.glbEmailRegEx;
                 if (!Page.IsPostBack)
                 {
-                    strFolder = Globals.HostMapPath;
+                    string strFolder = Globals.HostMapPath;
                     if (Directory.Exists(strFolder))
                     {
                         string[] fileEntries = Directory.GetFiles(strFolder, "*.template");
@@ -96,7 +94,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         }
                         if (cboTemplate.Items.Count == 0)
                         {
-                            lblMessage.Text = Localization.GetString("PortalMissing", LocalResourceFile);
+                            UI.Skins.Skin.AddModuleMessage(this, "", Localization.GetString("PortalMissing", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                             cmdUpdate.Enabled = false;
                         }
                         cboTemplate.Items.Insert(0, new ListItem(Localization.GetString("None_Specified"), "-1"));
@@ -110,15 +108,15 @@ namespace DotNetNuke.Modules.Admin.Portals
                     else
                     {
                         optType.SelectedValue = "C";
-                        txtPortalName.Text = Globals.GetDomainName(Request) + "/";
+                        txtPortalName.Text = Globals.GetDomainName(Request) + @"/";
                         rowType.Visible = false;
-                        strMessage = string.Format(Localization.GetString("DemoMessage", LocalResourceFile),
-                                                   Host.DemoPeriod != Null.NullInteger ? " for " + Host.DemoPeriod + " days" : "",
-                                                   Globals.GetDomainName(Request));
+                        string strMessage = string.Format(Localization.GetString("DemoMessage", LocalResourceFile),
+                                                          Host.DemoPeriod != Null.NullInteger ? " for " + Host.DemoPeriod + " days" : "",
+                                                          Globals.GetDomainName(Request));
                         lblInstructions.Text = strMessage;
                         btnCustomizeHomeDir.Visible = false;
                     }
-                    txtHomeDirectory.Text = "Portals/[PortalID]";
+                    txtHomeDirectory.Text = @"Portals/[PortalID]";
                     txtHomeDirectory.Enabled = false;
                     if (MembershipProviderConfig.RequiresQuestionAndAnswer)
                     {
@@ -145,14 +143,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             try
             {
-                if (IsHostMenu)
-                {
-                    Response.Redirect(Globals.NavigateURL(), true);
-                }
-                else
-                {
-                    Response.Redirect(Globals.GetPortalDomainName(PortalAlias.HTTPAlias, Request, true), true);
-                }
+                Response.Redirect(IsHostMenu ? Globals.NavigateURL() : Globals.GetPortalDomainName(PortalAlias.HTTPAlias, Request, true), true);
             }
             catch (Exception exc)
             {
@@ -167,10 +158,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 try
                 {
                     bool blnChild;
-                    string strMessage = string.Empty;
                     string strPortalAlias;
-                    int intPortalId;
-                    string strServerPath;
                     string strChildPath = string.Empty;
                     var objPortalController = new PortalController();
                     var messages = new ArrayList();
@@ -179,8 +167,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     var xval = new PortalTemplateValidator();
                     if (!xval.Validate(xmlFilename, schemaFilename))
                     {
-                        strMessage = Localization.GetString("InvalidTemplate", LocalResourceFile);
-                        lblMessage.Text = string.Format(strMessage, cboTemplate.SelectedItem.Text + ".template");
+                        UI.Skins.Skin.AddModuleMessage(this, "", String.Format(Localization.GetString("InvalidTemplate", LocalResourceFile), cboTemplate.SelectedItem.Text + ".template"), ModuleMessage.ModuleMessageType.RedError);
                         messages.AddRange(xval.Errors);
                         lstResults.Visible = true;
                         lstResults.DataSource = messages;
@@ -197,32 +184,29 @@ namespace DotNetNuke.Modules.Admin.Portals
                     else
                     {
                         blnChild = (optType.SelectedValue == "C");
-                        if (blnChild)
-                        {
-                            strPortalAlias = txtPortalName.Text.Substring(txtPortalName.Text.LastIndexOf("/") + 1);
-                        }
-                        else
-                        {
-                            strPortalAlias = txtPortalName.Text;
-                        }
+                        strPortalAlias = blnChild ? txtPortalName.Text.Substring(txtPortalName.Text.LastIndexOf("/") + 1) : txtPortalName.Text;
                     }
+
+                    string message = String.Empty;
+                    ModuleMessage.ModuleMessageType messageType = ModuleMessage.ModuleMessageType.RedError;
                     if (!PortalAliasController.ValidateAlias(strPortalAlias, blnChild))
                     {
-                        strMessage += "<br>" + Localization.GetString("InvalidName", LocalResourceFile);
+                        message = Localization.GetString("InvalidName", LocalResourceFile);
                     }
                     if (txtPassword.Text != txtConfirm.Text)
                     {
-                        strMessage += "<br>" + Localization.GetString("InvalidPassword", LocalResourceFile);
+                        if (!String.IsNullOrEmpty(message)) message += "<br/>";
+                        message += Localization.GetString("InvalidPassword", LocalResourceFile);
                     }
-                    strServerPath = Globals.GetAbsoluteServerPath(Request);
-                    if (String.IsNullOrEmpty(strMessage))
+                    string strServerPath = Globals.GetAbsoluteServerPath(Request);
+                    if (String.IsNullOrEmpty(message))
                     {
                         if (blnChild)
                         {
                             strChildPath = strServerPath + strPortalAlias;
                             if (Directory.Exists(strChildPath))
                             {
-                                strMessage = Localization.GetString("ChildExists", LocalResourceFile);
+                                message = Localization.GetString("ChildExists", LocalResourceFile);
                             }
                             else
                             {
@@ -237,38 +221,31 @@ namespace DotNetNuke.Modules.Admin.Portals
                             }
                         }
                     }
-                    string HomeDir;
-                    if (txtHomeDirectory.Text != "Portals/[PortalID]")
+                    string homeDir = txtHomeDirectory.Text != @"Portals/[PortalID]" ? txtHomeDirectory.Text : "";
+                    if (!string.IsNullOrEmpty(homeDir))
                     {
-                        HomeDir = txtHomeDirectory.Text;
-                    }
-                    else
-                    {
-                        HomeDir = "";
-                    }
-                    if (!string.IsNullOrEmpty(HomeDir))
-                    {
-                        if (string.IsNullOrEmpty(String.Format("{0}\\{1}\\}", Globals.ApplicationMapPath, HomeDir).Replace("/", "\\")))
+                        if (string.IsNullOrEmpty(String.Format("{0}\\{1}\\}", Globals.ApplicationMapPath, homeDir).Replace("/", "\\")))
                         {
-                            strMessage = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
+                            message = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
                         }
-                        if (HomeDir.Contains("admin") || HomeDir.Contains("DesktopModules") || HomeDir.ToLowerInvariant() == "portals/")
+                        if (homeDir.Contains("admin") || homeDir.Contains("DesktopModules") || homeDir.ToLowerInvariant() == "portals/")
                         {
-                            strMessage = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
+                            message = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
                         }
                     }
                     if (!string.IsNullOrEmpty(strPortalAlias))
                     {
-                        PortalAliasInfo PortalAlias = PortalAliasController.GetPortalAliasLookup(strPortalAlias.ToLower());
-                        if (PortalAlias != null)
+                        PortalAliasInfo portalAlias = PortalAliasController.GetPortalAliasLookup(strPortalAlias.ToLower());
+                        if (portalAlias != null)
                         {
-                            strMessage = Localization.GetString("DuplicatePortalAlias", LocalResourceFile);
+                            message = Localization.GetString("DuplicatePortalAlias", LocalResourceFile);
                         }
                     }
-                    if (String.IsNullOrEmpty(strMessage))
+                    if (String.IsNullOrEmpty(message))
                     {
                         string strTemplateFile = cboTemplate.SelectedItem.Text + ".template";
                         var objAdminUser = new UserInfo();
+                        int intPortalId;
                         try
                         {
                             objAdminUser.FirstName = txtFirstName.Text;
@@ -289,7 +266,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                                            txtKeyWords.Text,
                                                                            Globals.HostMapPath,
                                                                            strTemplateFile,
-                                                                           HomeDir,
+                                                                           homeDir,
                                                                            strPortalAlias,
                                                                            strServerPath,
                                                                            strChildPath,
@@ -298,22 +275,18 @@ namespace DotNetNuke.Modules.Admin.Portals
                         catch (Exception ex)
                         {
                             intPortalId = Null.NullInteger;
-                            strMessage = ex.Message;
+                            message = ex.Message;
                         }
                         if (intPortalId != -1)
                         {
                             PortalInfo objPortal = objPortalController.GetPortal(intPortalId);
-                            var newSettings = new PortalSettings();
-                            newSettings.PortalAlias = new PortalAliasInfo();
-                            newSettings.PortalAlias.HTTPAlias = strPortalAlias;
-                            newSettings.PortalId = intPortalId;
-                            newSettings.DefaultLanguage = objPortal.DefaultLanguage;
+                            var newSettings = new PortalSettings {PortalAlias = new PortalAliasInfo {HTTPAlias = strPortalAlias}, PortalId = intPortalId, DefaultLanguage = objPortal.DefaultLanguage};
                             string webUrl = Globals.AddHTTP(strPortalAlias);
                             try
                             {
                                 if (PortalSettings.ActiveTab.ParentId != PortalSettings.SuperTabId)
                                 {
-                                    strMessage = Mail.SendMail(PortalSettings.Email,
+                                    message = Mail.SendMail(PortalSettings.Email,
                                                                txtEmail.Text,
                                                                PortalSettings.Email + ";" + Host.HostEmail,
                                                                Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", objAdminUser),
@@ -327,7 +300,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                 }
                                 else
                                 {
-                                    strMessage = Mail.SendMail(Host.HostEmail,
+                                    message = Mail.SendMail(Host.HostEmail,
                                                                txtEmail.Text,
                                                                Host.HostEmail,
                                                                Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", objAdminUser),
@@ -344,21 +317,22 @@ namespace DotNetNuke.Modules.Admin.Portals
                             {
                                 DnnLog.Error(exc);
 
-                                strMessage = string.Format(Localization.GetString("UnknownSendMail.Error", LocalResourceFile), webUrl);
+                                message = string.Format(Localization.GetString("UnknownSendMail.Error", LocalResourceFile), webUrl);
                             }
                             var objEventLog = new EventLogController();
                             objEventLog.AddLog(objPortalController.GetPortal(intPortalId), PortalSettings, UserId, "", EventLogController.EventLogType.PORTAL_CREATED);
-                            if (strMessage == Null.NullString)
+                            if (message == Null.NullString)
                             {
                                 Response.Redirect(webUrl, true);
                             }
                             else
                             {
-                                strMessage = string.Format(Localization.GetString("SendMail.Error", LocalResourceFile), strMessage, webUrl);
+                                message = string.Format(Localization.GetString("SendMail.Error", LocalResourceFile), message, webUrl);
+                                messageType = ModuleMessage.ModuleMessageType.YellowWarning;
                             }
                         }
                     }
-                    lblMessage.Text = "<br>" + strMessage + "<br><br>";
+                    UI.Skins.Skin.AddModuleMessage(this, "", message, messageType);
                 }
                 catch (Exception exc)
                 {
@@ -371,14 +345,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             try
             {
-                if (optType.SelectedValue == "C")
-                {
-                    txtPortalName.Text = Globals.GetDomainName(Request) + "/";
-                }
-                else
-                {
-                    txtPortalName.Text = "";
-                }
+                txtPortalName.Text = optType.SelectedValue == "C" ? Globals.GetDomainName(Request) + @"/" : "";
             }
             catch (Exception exc)
             {
@@ -393,7 +360,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 if (txtHomeDirectory.Enabled)
                 {
                     btnCustomizeHomeDir.Text = Localization.GetString("Customize", LocalResourceFile);
-                    txtHomeDirectory.Text = "Portals/[PortalID]";
+                    txtHomeDirectory.Text = @"Portals/[PortalID]";
                     txtHomeDirectory.Enabled = false;
                 }
                 else
@@ -413,14 +380,12 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             try
             {
-                string filename;
                 if (cboTemplate.SelectedIndex > 0)
                 {
-                    filename = Globals.HostMapPath + cboTemplate.SelectedItem.Text + ".template";
+                    string filename = Globals.HostMapPath + cboTemplate.SelectedItem.Text + ".template";
                     var xmldoc = new XmlDocument();
-                    XmlNode node;
                     xmldoc.Load(filename);
-                    node = xmldoc.SelectSingleNode("//portal/description");
+                    XmlNode node = xmldoc.SelectSingleNode("//portal/description");
                     if (node != null && !String.IsNullOrEmpty(node.InnerXml))
                     {
                         lblTemplateDescription.Visible = true;

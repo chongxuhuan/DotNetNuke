@@ -44,17 +44,26 @@ namespace DotNetNuke.Services.Log.SiteLog
         {
             try
             {
-                Progressing();
+				//notification that the event is progressing
+                Progressing(); //OPTIONAL
+
                 DoPurgeSiteLog();
-                ScheduleHistoryItem.Succeeded = true;
+
+                ScheduleHistoryItem.Succeeded = true; //REQUIRED
+
                 ScheduleHistoryItem.AddLogNote("Site Log purged.");
             }
-            catch (Exception exc)
+            catch (Exception exc) //REQUIRED
             {
-                ScheduleHistoryItem.Succeeded = false;
-                ScheduleHistoryItem.AddLogNote("Site Log purge failed. " + exc);
+                ScheduleHistoryItem.Succeeded = false; //REQUIRED
+
+                ScheduleHistoryItem.AddLogNote("Site Log purge failed. " + exc); //OPTIONAL
+
+				//notification that we have errored
                 Errored(ref exc);
-                Exceptions.Exceptions.LogException(exc);
+				
+				//log the exception
+                Exceptions.Exceptions.LogException(exc); //OPTIONAL
             }
         }
 

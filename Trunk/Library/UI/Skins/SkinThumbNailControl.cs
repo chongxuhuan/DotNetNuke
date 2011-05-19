@@ -39,10 +39,27 @@ using Image = System.Drawing.Image;
 
 namespace DotNetNuke.UI.Skins
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// SkinThumbNailControl is a user control that provides that displays the skins
+    ///	as a Radio ButtonList with Thumbnail Images where available
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/12/2004	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class SkinThumbNailControl : UserControlBase
     {
+		#region "Private Members"
+		
         protected HtmlGenericControl ControlContainer;
-        protected RadioButtonList optSkin;
+        protected RadioButtonList OptSkin;
+		
+		#endregion
+
+		#region "Properties"
 
         public string Border
         {
@@ -74,7 +91,7 @@ namespace DotNetNuke.UI.Skins
                 ViewState["SkinControlColumns"] = value;
                 if (value > 0)
                 {
-                    optSkin.RepeatColumns = value;
+                    OptSkin.RepeatColumns = value;
                 }
             }
         }
@@ -111,23 +128,17 @@ namespace DotNetNuke.UI.Skins
         {
             get
             {
-                if (optSkin.SelectedItem != null)
-                {
-                    return optSkin.SelectedItem.Value;
-                }
-                else
-                {
-                    return "";
-                }
+                return OptSkin.SelectedItem != null ? OptSkin.SelectedItem.Value : "";
             }
             set
             {
+				//select current skin
                 int intIndex;
-                for (intIndex = 0; intIndex <= optSkin.Items.Count - 1; intIndex++)
+                for (intIndex = 0; intIndex <= OptSkin.Items.Count - 1; intIndex++)
                 {
-                    if (optSkin.Items[intIndex].Value == value)
+                    if (OptSkin.Items[intIndex].Value == value)
                     {
-                        optSkin.Items[intIndex].Selected = true;
+                        OptSkin.Items[intIndex].Selected = true;
                         break;
                     }
                 }
@@ -149,17 +160,44 @@ namespace DotNetNuke.UI.Skins
                 }
             }
         }
+		
+		#endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddDefaultSkin adds the not-specified skin to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddDefaultSkin()
         {
-            string strDefault = Localization.GetString("Not_Specified") + "<br>";
+            var strDefault = Localization.GetString("Not_Specified") + "<br>";
             strDefault += "<img src=\"" + Globals.ApplicationPath.Replace("\\", "/") + "/images/spacer.gif\" width=\"140\" height=\"135\" border=\"0\">";
-            optSkin.Items.Insert(0, new ListItem(strDefault, ""));
+            OptSkin.Items.Insert(0, new ListItem(strDefault, ""));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddSkin adds the skin to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="root">Root Path.</param>
+        /// <param name="strFolder">The Skin Folder</param>
+        /// <param name="strFile">The Skin File</param>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddSkin(string root, string strFolder, string strFile)
         {
-            string strImage = "";
+            var strImage = "";
             if (File.Exists(strFile.Replace(".ascx", ".jpg")))
             {
                 strImage += "<a href=\"" + CreateThumbnail(strFile.Replace(".ascx", ".jpg")).Replace("thumbnail_", "") + "\" target=\"_new\"><img src=\"" +
@@ -169,37 +207,61 @@ namespace DotNetNuke.UI.Skins
             {
                 strImage += "<img src=\"" + Globals.ApplicationPath.Replace("\\", "/") + "/images/thumbnail.jpg\" border=\"1\">";
             }
-            optSkin.Items.Add(new ListItem(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)) + "<br>" + strImage, root + "/" + strFolder + "/" + Path.GetFileName(strFile)));
+            OptSkin.Items.Add(new ListItem(FormatSkinName(strFolder, Path.GetFileNameWithoutExtension(strFile)) + "<br />" + strImage, root + "/" + strFolder + "/" + Path.GetFileName(strFile)));
         }
 
-        private string FormatSkinName(string strSkinFolder, string strSkinFile)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// format skin name
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strSkinFolder">The Folder Name</param>
+        /// <param name="strSkinFile">The File Name without extension</param>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        private static string FormatSkinName(string strSkinFolder, string strSkinFile)
         {
-            if (strSkinFolder.ToLower() == "_default")
+            if (strSkinFolder.ToLower() == "_default") //host folder
             {
                 return strSkinFile;
             }
-            else
+			
+			//portal folder
+            switch (strSkinFile.ToLower())
             {
-                switch (strSkinFile.ToLower())
-                {
-                    case "skin":
-                    case "container":
-                    case "default":
-                        return strSkinFolder;
-                    default:
-                        return strSkinFolder + " - " + strSkinFile;
-                }
+                case "skin":
+                case "container":
+                case "default":
+                    return strSkinFolder;
+                default:
+                    return strSkinFolder + " - " + strSkinFile;
             }
         }
 
-        private string CreateThumbnail(string strImage)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateThumbnail creates a thumbnail of the Preview Image
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strImage">The Image File Name</param>
+        /// <history>
+        /// 	[cnurse]	9/8/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        private static string CreateThumbnail(string strImage)
         {
-            bool blnCreate = true;
-            string strThumbnail = strImage.Replace(Path.GetFileName(strImage), "thumbnail_" + Path.GetFileName(strImage));
+            var blnCreate = true;
+
+            var strThumbnail = strImage.Replace(Path.GetFileName(strImage), "thumbnail_" + Path.GetFileName(strImage));
+
+            //check if image has changed
             if (File.Exists(strThumbnail))
             {
-                DateTime d1 = File.GetLastWriteTime(strThumbnail);
-                DateTime d2 = File.GetLastWriteTime(strImage);
+                //var d1 = File.GetLastWriteTime(strThumbnail);
+                //var d2 = File.GetLastWriteTime(strImage);
                 if (File.GetLastWriteTime(strThumbnail) == File.GetLastWriteTime(strImage))
                 {
                     blnCreate = false;
@@ -207,35 +269,48 @@ namespace DotNetNuke.UI.Skins
             }
             if (blnCreate)
             {
-                double dblScale;
-                int intHeight;
-                int intWidth;
-                int intSize = 140;
+                const int intSize = 140; //size of the thumbnail 
                 Image objImage;
                 try
                 {
                     objImage = Image.FromFile(strImage);
+					
+					//scale the image to prevent distortion
+                    int intWidth;
+                    int intHeight;
+                    double dblScale;
                     if (objImage.Height > objImage.Width)
                     {
+						//The height was larger, so scale the width 
                         dblScale = intSize/objImage.Height;
                         intHeight = intSize;
                         intWidth = Convert.ToInt32(objImage.Width*dblScale);
                     }
                     else
                     {
+						//The width was larger, so scale the height 
                         dblScale = intSize/objImage.Width;
                         intWidth = intSize;
                         intHeight = Convert.ToInt32(objImage.Height*dblScale);
                     }
-                    Image objThumbnail;
-                    objThumbnail = objImage.GetThumbnailImage(intWidth, intHeight, null, IntPtr.Zero);
-                    if (File.Exists(strThumbnail))
+                    
+					//create the thumbnail image
+					var objThumbnail = objImage.GetThumbnailImage(intWidth, intHeight, null, IntPtr.Zero);
+                    
+					//delete the old file ( if it exists )
+					if (File.Exists(strThumbnail))
                     {
                         File.Delete(strThumbnail);
                     }
-                    objThumbnail.Save(strThumbnail, objImage.RawFormat);
-                    File.SetAttributes(strThumbnail, FileAttributes.Normal);
+                    
+					//save the thumbnail image 
+					objThumbnail.Save(strThumbnail, objImage.RawFormat);
+                    
+					//set the file attributes
+					File.SetAttributes(strThumbnail, FileAttributes.Normal);
                     File.SetLastWriteTime(strThumbnail, File.GetLastWriteTime(strImage));
+
+                    //tidy up
                     objImage.Dispose();
                     objThumbnail.Dispose();
                 }
@@ -248,34 +323,77 @@ namespace DotNetNuke.UI.Skins
             return strThumbnail;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Clear clears the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void Clear()
         {
-            optSkin.Items.Clear();
+            OptSkin.Items.Clear();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadAllSkins loads all the available skins (Host and Site) to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="includeNotSpecified">Optionally include the "Not Specified" option</param>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void LoadAllSkins(bool includeNotSpecified)
         {
+            //default value
             if (includeNotSpecified)
             {
                 AddDefaultSkin();
             }
+			
+            //load host skins (includeNotSpecified = false as we have already added it)
             LoadHostSkins(false);
+
+            //load portal skins (includeNotSpecified = false as we have already added it)
             LoadPortalSkins(false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadHostSkins loads all the available Host skins to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="includeNotSpecified">Optionally include the "Not Specified" option</param>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void LoadHostSkins(bool includeNotSpecified)
         {
-            string strRoot;
-            string[] arrFolders;
+
+            //default value
             if (includeNotSpecified)
             {
                 AddDefaultSkin();
             }
-            strRoot = Globals.HostMapPath + SkinRoot;
+			
+			//load host skins
+            var strRoot = Globals.HostMapPath + SkinRoot;
             if (Directory.Exists(strRoot))
             {
-                arrFolders = Directory.GetDirectories(strRoot);
-                foreach (string strFolder in arrFolders)
+                var arrFolders = Directory.GetDirectories(strRoot);
+                foreach (var strFolder in arrFolders)
                 {
                     if (!strFolder.EndsWith(Globals.glbHostSkinFolder))
                     {
@@ -285,46 +403,70 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadHostSkins loads all the available Site/Portal skins to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="includeNotSpecified">Optionally include the "Not Specified" option</param>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void LoadPortalSkins(bool includeNotSpecified)
         {
-            string strRoot;
-            string[] arrFolders;
+            //default value
             if (includeNotSpecified)
             {
                 AddDefaultSkin();
             }
-            strRoot = PortalSettings.HomeDirectoryMapPath + SkinRoot;
+			
+			//load portal skins
+            var strRoot = PortalSettings.HomeDirectoryMapPath + SkinRoot;
             if (Directory.Exists(strRoot))
             {
-                arrFolders = Directory.GetDirectories(strRoot);
-                foreach (string strFolder in arrFolders)
+                var arrFolders = Directory.GetDirectories(strRoot);
+                foreach (var strFolder in arrFolders)
                 {
                     LoadSkins(strFolder, "[L]", false);
                 }
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadSkins loads all the available skins in a specific folder to the radio button list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strFolder">The folder to search for skins</param>
+        /// <param name="skinType">A string that identifies whether the skin is Host "[G]" or Site "[L]"</param>
+        /// <param name="includeNotSpecified">Optionally include the "Not Specified" option</param>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void LoadSkins(string strFolder, string skinType, bool includeNotSpecified)
         {
-            string[] arrFiles;
+            //default value
             if (includeNotSpecified)
             {
                 AddDefaultSkin();
             }
             if (Directory.Exists(strFolder))
             {
-                arrFiles = Directory.GetFiles(strFolder, "*.ascx");
+                var arrFiles = Directory.GetFiles(strFolder, "*.ascx");
                 strFolder = strFolder.Substring(strFolder.LastIndexOf("\\") + 1);
-                foreach (string strFile in arrFiles)
+
+                foreach (var strFile in arrFiles)
                 {
                     AddSkin(skinType + SkinRoot, strFolder, strFile);
                 }
             }
         }
+		
+		#endregion
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
     }
 }

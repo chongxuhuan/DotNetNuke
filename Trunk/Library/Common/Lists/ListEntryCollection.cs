@@ -58,6 +58,7 @@ namespace DotNetNuke.Common.Lists
             get
             {
                 int index;
+            	//<tam:note key to be lowercase for appropiated seeking>
                 try
                 {
                     if (mKeyIndexLookup[key.ToLower()] == null)
@@ -89,7 +90,7 @@ namespace DotNetNuke.Common.Lists
         public void Add(string key, ListEntryInfo value)
         {
             int index;
-            try
+            try //Do validation first
             {
                 index = base.List.Add(value);
                 mKeyIndexLookup.Add(key.ToLower(), index);

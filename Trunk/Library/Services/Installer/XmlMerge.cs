@@ -45,12 +45,29 @@ namespace DotNetNuke.Services.Installer
     /// -----------------------------------------------------------------------------
     public class XmlMerge
     {
+		#region "Private Methods"
+		
         private readonly string _Sender;
         private readonly XmlDocument _SourceConfig;
         private readonly string _Version;
         private string _TargetFileName;
         private string _TargetProductName;
 
+		#endregion
+
+		#region "Constructors"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the XmlMerge class.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="sender"></param>
+        /// <param name="sourceFileName"></param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlMerge(string sourceFileName, string version, string sender)
         {
             _Version = version;
@@ -59,6 +76,17 @@ namespace DotNetNuke.Services.Installer
             _SourceConfig.Load(sourceFileName);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the XmlMerge class.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="sender"></param>
+        /// <param name="sourceStream"></param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlMerge(Stream sourceStream, string version, string sender)
         {
             _Version = version;
@@ -67,6 +95,17 @@ namespace DotNetNuke.Services.Installer
             _SourceConfig.Load(sourceStream);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the XmlMerge class.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="sender"></param>
+        /// <param name="sourceReader"></param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlMerge(TextReader sourceReader, string version, string sender)
         {
             _Version = version;
@@ -75,13 +114,37 @@ namespace DotNetNuke.Services.Installer
             _SourceConfig.Load(sourceReader);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the XmlMerge class.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="sender"></param>
+        /// <param name="sourceDoc"></param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlMerge(XmlDocument sourceDoc, string version, string sender)
         {
             _Version = version;
             _Sender = sender;
             _SourceConfig = sourceDoc;
         }
+		
+		#endregion
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Source for the Config file
+        /// </summary>
+        /// <value>An XmlDocument</value>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlDocument SourceConfig
         {
             get
@@ -90,6 +153,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Sender (source) of the changes to be merged
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Sender
         {
             get
@@ -98,8 +170,26 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Target Config file
+        /// </summary>
+        /// <value>An XmlDocument</value>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlDocument TargetConfig { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the File Name of the Target Config file
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string TargetFileName
         {
             get
@@ -108,6 +198,15 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Version of the changes to be merged
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Version
         {
             get
@@ -115,6 +214,10 @@ namespace DotNetNuke.Services.Installer
                 return _Version;
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private void AddNode(XmlNode rootNode, XmlNode actionNode)
         {
@@ -157,6 +260,7 @@ namespace DotNetNuke.Services.Installer
             }
             else
             {
+				//Use Namespace Manager
                 string xmlNameSpace = node.Attributes["nameSpace"].Value;
                 string xmlNameSpacePrefix = node.Attributes["nameSpacePrefix"].Value;
                 var nsmgr = new XmlNamespaceManager(TargetConfig.NameTable);
@@ -197,6 +301,7 @@ namespace DotNetNuke.Services.Installer
 
         private void ProcessNodes(XmlNodeList nodes, bool saveConfig)
         {
+			//The nodes definition is not correct so skip changes
             if (TargetConfig != null)
             {
                 foreach (XmlNode node in nodes)
@@ -230,7 +335,10 @@ namespace DotNetNuke.Services.Installer
         {
             if (node != null)
             {
+				//Get Parent
                 XmlNode parentNode = node.ParentNode;
+
+                //Remove current Node
                 parentNode.RemoveChild(node);
             }
         }
@@ -280,12 +388,14 @@ namespace DotNetNuke.Services.Installer
                         if (actionNode.Attributes["targetpath"] != null)
                         {
                             string path = actionNode.Attributes["targetpath"].Value;
+
                             if (actionNode.Attributes["nameSpace"] == null)
                             {
                                 targetNode = rootNode.SelectSingleNode(path);
                             }
                             else
                             {
+								//Use Namespace Manager
                                 string xmlNameSpace = actionNode.Attributes["nameSpace"].Value;
                                 string xmlNameSpacePrefix = actionNode.Attributes["nameSpacePrefix"].Value;
                                 var nsmgr = new XmlNamespaceManager(TargetConfig.NameTable);
@@ -296,11 +406,13 @@ namespace DotNetNuke.Services.Installer
                     }
                     if (targetNode == null)
                     {
+                        //Since there is no collision we can just add the node
                         rootNode.AppendChild(TargetConfig.ImportNode(child, true));
                         continue;
                     }
                     else
                     {
+						//There is a collision so we need to determine what to do.
                         string collisionAction = actionNode.Attributes["collision"].Value;
                         switch (collisionAction.ToLowerInvariant())
                         {
@@ -326,7 +438,22 @@ namespace DotNetNuke.Services.Installer
                 }
             }
         }
+		
+		#endregion
 
+		#region "Public Methods"
+
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UpdateConfig method processes the source file and updates the Target
+        /// Config Xml Document.
+        /// </summary>
+        /// <param name="target">An Xml Document represent the Target Xml File</param>
+        /// <history>
+        /// 	[cnurse]	08/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void UpdateConfig(XmlDocument target)
         {
             TargetConfig = target;
@@ -336,6 +463,17 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UpdateConfig method processes the source file and updates the Target
+        /// Config file.
+        /// </summary>
+        /// <param name="target">An Xml Document represent the Target Xml File</param>
+        /// <param name="fileName">The fileName for the Target Xml File - relative to the webroot</param>
+        /// <history>
+        /// 	[cnurse]	08/04/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void UpdateConfig(XmlDocument target, string fileName)
         {
             _TargetFileName = fileName;
@@ -346,10 +484,20 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The UpdateConfigs method processes the source file and updates the various config 
+        /// files
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void UpdateConfigs()
         {
             foreach (XmlNode configNode in SourceConfig.SelectNodes("/configuration/nodes"))
             {
+				//Attempt to load TargetFile property from configFile Atribute
                 _TargetFileName = configNode.Attributes["configfile"].Value;
                 if (configNode.Attributes["productName"] != null)
                 {
@@ -365,11 +513,14 @@ namespace DotNetNuke.Services.Installer
                 {
                     IsAppliedToProduct = DotNetNukeContext.Current.Application.ApplyToProduct(_TargetProductName);
                 }
-                if (TargetConfig != null && IsAppliedToProduct)
+                //The nodes definition is not correct so skip changes
+				if (TargetConfig != null && IsAppliedToProduct)
                 {
                     ProcessNodes(configNode.SelectNodes("node"), true);
                 }
             }
         }
+		
+		#endregion
     }
 }

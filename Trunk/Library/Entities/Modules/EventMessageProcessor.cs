@@ -51,7 +51,9 @@ namespace DotNetNuke.Entities.Modules
                     string Content = HttpUtility.HtmlDecode(message.Attributes["Content"]);
                     string Version = message.Attributes["Version"];
                     int UserID = Convert.ToInt32(message.Attributes["UserId"]);
+                    //call the IPortable interface for the module/version
                     ((IPortable) controller).ImportModule(ModuleId, Content, Version, UserID);
+                    //Synchronize Module Cache
                     ModuleController.SynchronizeModule(ModuleId);
                 }
             }
@@ -65,16 +67,22 @@ namespace DotNetNuke.Entities.Modules
         {
             try
             {
+                int desktopModuleId = Convert.ToInt32(message.Attributes["DesktopModuleId"]);
+                var desktopModule = DesktopModuleController.GetDesktopModule(desktopModuleId, Null.NullInteger);
+
                 string BusinessControllerClass = message.Attributes["BusinessControllerClass"];
                 object controller = Reflection.CreateObject(BusinessControllerClass, "");
                 var eventLogController = new EventLogController();
                 LogInfo eventLogInfo;
                 if (controller is IUpgradeable)
                 {
+					//get the list of applicable versions
                     string[] UpgradeVersions = message.Attributes["UpgradeVersionsList"].Split(',');
                     foreach (string Version in UpgradeVersions)
                     {
+						//call the IUpgradeable interface for the module/version
                         string Results = ((IUpgradeable) controller).UpgradeModule(Version);
+                        //log the upgrade results
                         eventLogInfo = new LogInfo();
                         eventLogInfo.AddProperty("Module Upgraded", BusinessControllerClass);
                         eventLogInfo.AddProperty("Version", Version);
@@ -108,7 +116,10 @@ namespace DotNetNuke.Entities.Modules
                 DesktopModuleInfo desktopModule = DesktopModuleController.GetDesktopModule(desktopModuleId, Null.NullInteger);
                 if ((desktopModule != null))
                 {
+                    //Initialise the SupportedFeatures
                     desktopModule.SupportedFeatures = 0;
+
+                    //Test the interfaces
                     desktopModule.IsPortable = (objController is IPortable);
                     desktopModule.IsSearchable = (objController is ISearchable);
                     desktopModule.IsUpgradeable = (objController is IUpgradeable);
@@ -160,6 +171,7 @@ namespace DotNetNuke.Entities.Modules
                         ImportModule(message);
                         break;
                     default:
+						//other events can be added here
                         break;
                 }
             }

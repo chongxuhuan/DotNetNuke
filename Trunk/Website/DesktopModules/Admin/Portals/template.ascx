@@ -4,7 +4,6 @@
 
 <div class="dnnForm dnnExportPortal dnnClear" id="dnnExportPortal">
 	<div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
-    <h2 class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("PortalSetup")%></a></h2>
     <fieldset>
         <div class="dnnFormItem">
             <dnn:label id="plPortals" controlname="cboPortals" runat="server" />

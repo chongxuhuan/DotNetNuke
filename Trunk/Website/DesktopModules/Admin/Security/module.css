@@ -8,6 +8,10 @@
 .dnnUser{min-width:50%; float:left;}	
 .dnnMembership{width:50%; float:left;}	
 
+.dnnUserSettings{width:850px;}
+.dnnUserSettings .dnnFormItem input[type="radio"]{float:none;}
+.dnnUserSettings .dnnFormItem .dnnFormInput span{margin: 0px 10px 0px 10px; }
+
 .dnnEditRole .dnnFormItem input[type="checkbox"]{width:auto;}
 
 .dnnUser .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width: 35%;}
@@ -20,7 +24,7 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnPassword a.dnnPrimaryAction, .dnnPassword a.dnnPrimaryAction:link, .dnnPassword a.dnnPrimaryAction:visited {color:White; }	
 
 .dnnProfileDetails .dnnFormItem .dnnFormLabel{width:15%;}
-.dnnProfileDetails .dnnFormItem label{width:100%;}
+.dnnProfileDetails .dnnFormItem label{width:15%;}
 .dnnProfileDetails .dnnFormItem .dnnFormInput{width:38%;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%; float:right;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%; float:none;}

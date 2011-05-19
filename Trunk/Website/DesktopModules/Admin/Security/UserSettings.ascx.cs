@@ -31,6 +31,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Framework;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.UI.WebControls;
 
@@ -72,6 +73,8 @@ namespace DotNetNuke.Modules.Admin.Users
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            jQuery.RequestDnnPluginsRegistration();
 
             cmdCancel.Click += cmdCancel_Click;
             cmdUpdate.Click += cmdUpdate_Click;

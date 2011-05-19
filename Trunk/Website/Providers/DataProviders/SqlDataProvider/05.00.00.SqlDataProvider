@@ -84,7 +84,7 @@ GO
 
 CREATE procedure {databaseOwner}[{objectQualifier}GetPackageTypes]
 AS
-	SELECT PackageType AS [Type], Description, SecurityAccessLevel, EditorControlSrc
+	SELECT PackageType, Description, SecurityAccessLevel, EditorControlSrc
 		FROM   {databaseOwner}{objectQualifier}PackageTypes
 GO
 

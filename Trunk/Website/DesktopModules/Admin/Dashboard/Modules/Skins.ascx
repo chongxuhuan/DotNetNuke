@@ -6,7 +6,7 @@
 <asp:DataGrid ID="grdSkins" runat="server" GridLines="None" 
     AutoGenerateColumns="false" EnableViewState="False">
     <Columns>
-        <asp:BoundColumn DataField="SkinName" HeaderText="Skin" />
-        <asp:BoundColumn DataField="InUse" HeaderText="InUse" />
+        <asp:BoundColumn DataField="SkinName" HeaderText="Skin"  ItemStyle-Width="250px"/>
+        <asp:BoundColumn DataField="InUse" HeaderText="InUse" ItemStyle-Width="100px"/>
     </Columns>
 </asp:DataGrid>

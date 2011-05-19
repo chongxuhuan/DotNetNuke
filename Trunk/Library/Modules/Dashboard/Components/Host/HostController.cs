@@ -36,8 +36,13 @@ namespace DotNetNuke.Modules.Dashboard.Components.Host
         public void ExportData(XmlWriter writer)
         {
             var host = new HostInfo();
+
+            //Write start of Host 
             writer.WriteStartElement("host");
+
             host.WriteXml(writer);
+
+            //Write end of Host 
             writer.WriteEndElement();
         }
 

@@ -62,6 +62,8 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class SkinController
     {
+		#region "Public Shared Properties"
+		
         public static string RootSkin
         {
             get
@@ -77,6 +79,10 @@ namespace DotNetNuke.UI.Skins
                 return "Containers";
             }
         }
+		
+		#endregion
+
+		#region "Public Shared Methods"
 
         private static void AddSkinFiles(List<KeyValuePair<string, string>> skins, string skinRoot, string skinFolder)
         {
@@ -155,6 +161,7 @@ namespace DotNetNuke.UI.Skins
                 skinFolder = folderPath.ToLower().Replace(portalHomeDirMapPath.ToLower(), "").Replace("\\", "/");
             }
             var portalSettings = PortalController.GetCurrentPortalSettings();
+
             string skin = "[" + skinType.ToLowerInvariant() + "]" + skinFolder.ToLowerInvariant();
             if (skinFolder.ToLowerInvariant().Contains("skins"))
             {
@@ -174,6 +181,7 @@ namespace DotNetNuke.UI.Skins
             }
             if (canDelete)
             {
+				//Check if used for Tabs or Modules
                 canDelete = DataProvider.Instance().CanDeleteSkin(skinType, skinFolder);
             }
             return canDelete;
@@ -283,10 +291,10 @@ namespace DotNetNuke.UI.Skins
             var skins = new List<KeyValuePair<string, string>>();
             switch (scope)
             {
-                case SkinScope.Host:
+                case SkinScope.Host: //load host skins
                     skins = GetHostSkins(skinRoot);
                     break;
-                case SkinScope.Site:
+                case SkinScope.Site: //load portal skins
                     skins = GetPortalSkins(portalInfo, skinRoot);
                     break;
                 case SkinScope.All:
@@ -314,8 +322,10 @@ namespace DotNetNuke.UI.Skins
             {
                 // host folder
                 return skinFile;
-                // portal folder
+                
             }
+			
+			//portal folder
             switch (skinFile.ToLower())
             {
                 case "skin":
@@ -423,6 +433,7 @@ namespace DotNetNuke.UI.Skins
         public static string UploadLegacySkin(string rootPath, string skinRoot, string skinName, Stream inputStream)
         {
             var objZipInputStream = new ZipInputStream(inputStream);
+
             ZipEntry objZipEntry;
             string strExtension;
             string strFileName;
@@ -431,6 +442,8 @@ namespace DotNetNuke.UI.Skins
             var arrData = new byte[2048];
             string strMessage = "";
             var arrSkinFiles = new ArrayList();
+
+            //Localized Strings
             PortalSettings ResourcePortalSettings = Globals.GetPortalSettings();
             string BEGIN_MESSAGE = Localization.GetString("BeginZip", ResourcePortalSettings);
             string CREATE_DIR = Localization.GetString("CreateDir", ResourcePortalSettings);
@@ -438,17 +451,21 @@ namespace DotNetNuke.UI.Skins
             string FILE_ERROR = Localization.GetString("FileError", ResourcePortalSettings);
             string END_MESSAGE = Localization.GetString("EndZip", ResourcePortalSettings);
             string FILE_RESTICTED = Localization.GetString("FileRestricted", ResourcePortalSettings);
+
             strMessage += FormatMessage(BEGIN_MESSAGE, skinName, -1, false);
+
             objZipEntry = objZipInputStream.GetNextEntry();
             while (objZipEntry != null)
             {
                 if (!objZipEntry.IsDirectory)
                 {
+					//validate file extension
                     strExtension = objZipEntry.Name.Substring(objZipEntry.Name.LastIndexOf(".") + 1);
                     var extraExtensions = new List<string> {".ASCX", ".HTM", ".HTML", ".CSS", ".SWF", ".RESX", ".XAML", ".JS"};
                     if(Host.AllowedExtensionWhitelist.IsAllowedExtension(strExtension, extraExtensions))
                     {
-                        if (objZipEntry.Name.ToLower() == RootSkin.ToLower() + ".zip")
+                        //process embedded zip files
+						if (objZipEntry.Name.ToLower() == RootSkin.ToLower() + ".zip")
                         {
                             var objMemoryStream = new MemoryStream();
                             intSize = objZipInputStream.Read(arrData, 0, arrData.Length);
@@ -475,17 +492,25 @@ namespace DotNetNuke.UI.Skins
                         else
                         {
                             strFileName = rootPath + skinRoot + "\\" + skinName + "\\" + objZipEntry.Name;
+
+                            //create the directory if it does not exist
                             if (!Directory.Exists(Path.GetDirectoryName(strFileName)))
                             {
                                 strMessage += FormatMessage(CREATE_DIR, Path.GetDirectoryName(strFileName), 2, false);
                                 Directory.CreateDirectory(Path.GetDirectoryName(strFileName));
                             }
+							
+							//remove the old file
                             if (File.Exists(strFileName))
                             {
                                 File.SetAttributes(strFileName, FileAttributes.Normal);
                                 File.Delete(strFileName);
                             }
+							
+							//create the new file
                             objFileStream = File.Create(strFileName);
+							
+							//unzip the file
                             strMessage += FormatMessage(WRITE_FILE, Path.GetFileName(strFileName), 2, false);
                             intSize = objZipInputStream.Read(arrData, 0, arrData.Length);
                             while (intSize > 0)
@@ -494,6 +519,8 @@ namespace DotNetNuke.UI.Skins
                                 intSize = objZipInputStream.Read(arrData, 0, arrData.Length);
                             }
                             objFileStream.Close();
+
+                            //save the skin file
                             switch (Path.GetExtension(strFileName))
                             {
                                 case ".htm":
@@ -518,8 +545,12 @@ namespace DotNetNuke.UI.Skins
             }
             strMessage += FormatMessage(END_MESSAGE, skinName + ".zip", 1, false);
             objZipInputStream.Close();
+
+            //process the list of skin files
             var NewSkin = new SkinFileProcessor(rootPath, skinRoot, skinName);
             strMessage += NewSkin.ProcessList(arrSkinFiles, SkinParser.Portable);
+			
+			//log installation event
             try
             {
                 var objEventLogInfo = new LogInfo();
@@ -540,6 +571,10 @@ namespace DotNetNuke.UI.Skins
             }
             return strMessage;
         }
+		
+		#endregion
+
+		#region "Obsolete"
 
         [Obsolete("In DotNetNuke 5.0, the Skins are uploaded by using the new Installer")]
         public static string UploadSkin(string rootPath, string skinRoot, string skinName, string path)
@@ -555,5 +590,7 @@ namespace DotNetNuke.UI.Skins
         {
             return UploadLegacySkin(rootPath, skinRoot, skinName, inputStream);
         }
+		
+		#endregion
     }
 }

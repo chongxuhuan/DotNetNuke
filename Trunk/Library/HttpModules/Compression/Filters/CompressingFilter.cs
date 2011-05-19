@@ -30,16 +30,39 @@ using System.Web;
 
 namespace DotNetNuke.HttpModules.Compression
 {
+    /// <summary>
+    /// Base for any HttpFilter that performing compression
+    /// </summary>
+    /// <remarks>
+    /// When implementing this class, you need to implement a <see cref="HttpOutputFilter"/>
+    /// along with a <see cref="CompressingFilter.ContentEncoding"/>.  The latter corresponds to a 
+    /// content coding (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.5)
+    /// that your implementation will support.
+    /// </remarks>
     public abstract class CompressingFilter : HttpOutputFilter
     {
         private bool _HasWrittenHeaders;
 
+        /// <summary>
+        /// Protected constructor that sets up the underlying stream we're compressing into
+        /// </summary>
+        /// <param name="baseStream">The stream we're wrapping up</param>
         protected CompressingFilter(Stream baseStream) : base(baseStream)
         {
         }
 
+        /// <summary>
+        /// The name of the content-encoding that's being implemented
+        /// </summary>
+        /// <remarks>
+        /// See http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.5 for more
+        /// details on content codings.
+        /// </remarks>
         public abstract string ContentEncoding { get; }
 
+        /// <summary>
+        /// Keeps track of whether or not we're written the compression headers
+        /// </summary>
         protected bool HasWrittenHeaders
         {
             get
@@ -48,8 +71,14 @@ namespace DotNetNuke.HttpModules.Compression
             }
         }
 
+        /// <summary>
+        /// Writes out the compression-related headers.  Subclasses should call this once before writing to the output stream.
+        /// </summary>
         internal void WriteHeaders()
         {
+            //this is dangerous.  if Response.End is called before the filter is used, directly or indirectly,
+            //the content will not pass through the filter.  However, this header will still be appended.  
+            //Look for handling cases in PreRequestSendHeaders and Pre
             HttpContext.Current.Response.AppendHeader("Content-Encoding", ContentEncoding);
             HttpContext.Current.Response.AppendHeader("X-Compressed-By", "DotNetNuke-Compression");
             _HasWrittenHeaders = true;

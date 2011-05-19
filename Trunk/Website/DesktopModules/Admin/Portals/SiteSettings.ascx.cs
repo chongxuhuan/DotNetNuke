@@ -278,7 +278,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             ctlLogo.FileFilter = Globals.glbImageFileTypes;
             ctlBackground.FilePath = portal.BackgroundFile;
             ctlBackground.FileFilter = Globals.glbImageFileTypes;
-            ctlFavIcon.FilePath = new FavIcon(portal.PortalID).GetFilePath();
+            ctlFavIcon.FilePath = new FavIcon(portal.PortalID).GetSettingPath();
             chkSkinWidgestEnabled.Checked = PortalController.GetPortalSettingAsBoolean("EnableSkinWidgets", portalId, true);
 
             BindSkins(portal);
@@ -300,7 +300,8 @@ namespace DotNetNuke.Modules.Admin.Portals
             //PortalSettings for portal being edited
             var portalSettings = new PortalSettings(portal);
 
-            cboTimeZone.DataBind(portalSettings.TimeZone.ToString());
+            cboTimeZone.DataBind(portalSettings.TimeZone.Id);
+            
 
             if (UserInfo.IsSuperUser)
             {
@@ -338,7 +339,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             if (PortalSettings.EnablePopUps)
             {
-                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings));
+                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true));
             }
         }
 
@@ -789,6 +790,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         Response.Redirect(Request.RawUrl, true);
                     }
+                    DataCache.ClearPortalCache(PortalId, false);
                     BindPortal(_portalId, SelectedCultureCode);
                 }
                 catch (Exception exc)

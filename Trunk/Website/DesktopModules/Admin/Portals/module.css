@@ -1,17 +1,19 @@
 /* ===========   Admin Settings Module Styling   =========== */
-.dnnSiteSettings{width:900px;margin:2em auto;}
+.dnnSiteSettings{width:100%;margin:2em auto;}
 	.dnnSiteSettings div.ssBasicSettings, .dnnSiteSettings div.ssAdvancedSettings, .dnnSiteSettings div.ssStylesheetEditor{padding:0;margin-top:1em;}
-		.dnnSiteSettings .dnnFormItem input[type="text"], .dnnSiteSettings .dnnFormItem .dnnFormInput, .dnnSiteSettings .dnnFormItem textarea{min-width:50%;}
+		.dnnSiteSettings .dnnFormItem input[type="text"], .dnnSiteSettings .dnnFormItem .dnnFormInput, .dnnSiteSettings .dnnFormItem textarea{width:50%;}
 		.dnnSiteSettings textarea{min-height:100px;}
 	.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnSSRadioButtons input, .dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons input{float:left;padding:0;width:2%;text-align:left;}
-		.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnPSRadioButtons label{width:auto;padding:0 15px 0 6px;}
+		.dnnFormItem .dnnSSRadioButtons label, .dnnFormItem .dnnPSRadioButtons label{width:auto;padding:0 15px 0 6px;font-weight:normal;margin-top:0;}
 		.dnnForm input[type="checkbox"]{width:auto;}
-	.dnnSiteSettings .dnnSSRadioButtons br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
-	.ssasUsabilitySettings .dnnSSRadioButtons label, .ssasPortalAlias .dnnSSRadioButtons label, .ssasSecuritySettings .dnnSSRadioButtons label{width:auto;}
+	.dnnSiteSettings .dnnSSRadioButtons br, .ssbsPortalAppearance br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
+	.ssbsPortalAppearance td span, .ssbsPortalAppearance td span.NormalBold{font-weight:normal;}
+	.ssasUsabilitySettings .dnnSSRadioButtons label, .ssasPortalAlias .dnnSSRadioButtons label, .ssasSecuritySettings .dnnSSRadioButtons label{width:auto;margin-top:0;font-weight:normal}
 	.dnnFormItem.ssbsAppearance label{width:20%;text-align:right;padding-right:2%;font-weight:bold;}
 		.dnnFormItem.ssbsAppearance label label{width:100%;}
 	.dnnSiteSettings .ssseContent textarea{margin:1em;min-width:52em;}
 	.ssseContent ul.dnnActions{padding:0em 2em 3em;border:none;overflow:hidden;clear:both;}
+	.ssasPremiumModule td.dnnFormLabel{width:100%;text-align:left;font-weight:normal;margin:0;}
 	.dnnSiteSettings div.dnnssStat{border-top:1px #ccc solid;padding:1em 0 4em;overflow:hidden;}
 	.dnnssStat p{float:left;padding-right:2em;}
 		p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
@@ -25,5 +27,6 @@
 	.dnnPortalSignup .dnnFormMessage.dnnFormWarning{max-width:100%;}		
 .vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
 /* ===========   End Admin Settings Module Styling   =========== */
-
-.dnnPortalSignup h2.dnnFormSectionHead a:hover{background:#f1f1f1;}.dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded{background:inherit;}.dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded:hover{background:#f1f1f1;}
+.dnnPortalSignup h2.dnnFormSectionHead a:hover{background:#f1f1f1;}
+.dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded{background:inherit;}
+.dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded:hover{background:#f1f1f1;}

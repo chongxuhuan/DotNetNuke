@@ -74,15 +74,19 @@ namespace DotNetNuke.Entities.Portals
         public static string GetPortalAliasByPortal(int portalId, string portalAlias)
         {
             string retValue = "";
+
+            //get the portal alias collection from the cache
             PortalAliasCollection portalAliasCollection = GetPortalAliasLookup();
             string httpAlias;
             bool foundAlias = false;
 
+            //Do a specified PortalAlias check first
             PortalAliasInfo objPortalAliasInfo = portalAliasCollection[portalAlias.ToLower()];
             if (objPortalAliasInfo != null)
             {
                 if (objPortalAliasInfo.PortalID == portalId)
                 {
+					//set the alias
                     retValue = objPortalAliasInfo.HTTPAlias;
                     foundAlias = true;
                 }
@@ -136,10 +140,13 @@ namespace DotNetNuke.Entities.Portals
         {
             string retValue = Null.NullString;
             int intPortalId = -2;
+
+            //get the tab
             var objTabs = new TabController();
             TabInfo objTab = objTabs.GetTab(TabID, Null.NullInteger, false);
             if (objTab != null)
             {
+				//ignore deleted tabs
                 if (!objTab.IsDeleted)
                 {
                     intPortalId = objTab.PortalID;
@@ -147,12 +154,13 @@ namespace DotNetNuke.Entities.Portals
             }
             switch (intPortalId)
             {
-                case -2:
+                case -2: //tab does not exist
                     break;
-                case -1:
+                case -1: //host tab
+					//host tabs are not verified to determine if they belong to the portal alias
                     retValue = PortalAlias;
                     break;
-                default:
+                default: //portal tab
                     retValue = GetPortalAliasByPortal(intPortalId, PortalAlias);
                     break;
             }
@@ -167,47 +175,60 @@ namespace DotNetNuke.Entities.Portals
         public static PortalAliasInfo GetPortalAliasInfo(string PortalAlias)
         {
             string strPortalAlias;
+
+            //try the specified alias first
             PortalAliasInfo objPortalAliasInfo = GetPortalAliasLookup(PortalAlias.ToLower());
+
+            //domain.com and www.domain.com should be synonymous
             if (objPortalAliasInfo == null)
             {
                 if (PortalAlias.ToLower().StartsWith("www."))
                 {
+					//try alias without the "www." prefix
                     strPortalAlias = PortalAlias.Replace("www.", "");
                 }
-                else
+                else //try the alias with the "www." prefix
                 {
                     strPortalAlias = string.Concat("www.", PortalAlias);
                 }
+                //perform the lookup
                 objPortalAliasInfo = GetPortalAliasLookup(strPortalAlias.ToLower());
             }
+            //allow domain wildcards 
             if (objPortalAliasInfo == null)
             {
+				//remove the domain prefix ( ie. anything.domain.com = domain.com )
                 if (PortalAlias.IndexOf(".") != -1)
                 {
                     strPortalAlias = PortalAlias.Substring(PortalAlias.IndexOf(".") + 1);
                 }
-                else
+                else //be sure we have a clean string (without leftovers from preceding 'if' block)
                 {
                     strPortalAlias = PortalAlias;
                 }
                 if (objPortalAliasInfo == null)
                 {
+					//try an explicit lookup using the wildcard entry ( ie. *.domain.com )
                     objPortalAliasInfo = GetPortalAliasLookup("*." + strPortalAlias.ToLower());
                 }
                 if (objPortalAliasInfo == null)
                 {
+					//try a lookup using the raw domain
                     objPortalAliasInfo = GetPortalAliasLookup(strPortalAlias.ToLower());
                 }
                 if (objPortalAliasInfo == null)
                 {
+					//try a lookup using "www." + raw domain
                     objPortalAliasInfo = GetPortalAliasLookup("www." + strPortalAlias.ToLower());
                 }
             }
             if (objPortalAliasInfo == null)
             {
+				//check if this is a fresh install ( no alias values in collection )
                 PortalAliasCollection objPortalAliasCollection = GetPortalAliasLookup();
                 if (!objPortalAliasCollection.HasKeys || (objPortalAliasCollection.Count == 1 && objPortalAliasCollection.Contains("_default")))
                 {
+					//relate the PortalAlias to the default portal on a fresh database installation
                     DataProvider.Instance().UpdatePortalAlias(PortalAlias.ToLower().Trim('/'), UserController.GetCurrentUserInfo().UserID);
                     var objEventLog = new EventLogController();
                     objEventLog.AddLog("PortalAlias",
@@ -215,7 +236,10 @@ namespace DotNetNuke.Entities.Portals
                                        PortalController.GetCurrentPortalSettings(),
                                        UserController.GetCurrentUserInfo().UserID,
                                        EventLogController.EventLogType.PORTALALIAS_UPDATED);
-                    DataCache.RemoveCache("GetPortalByAlias");
+                    
+					//clear the cachekey "GetPortalByAlias" otherwise portalalias "_default" stays in cache after first install
+					DataCache.RemoveCache("GetPortalByAlias");
+					//try again
                     objPortalAliasInfo = GetPortalAliasLookup(PortalAlias.ToLower());
                 }
             }
@@ -282,6 +306,7 @@ namespace DotNetNuke.Entities.Portals
             int Id = DataProvider.Instance().AddPortalAlias(objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower().Trim('/'), UserController.GetCurrentUserInfo().UserID);
             var objEventLog = new EventLogController();
             objEventLog.AddLog(objPortalAliasInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PORTALALIAS_CREATED);
+            //clear portal alias cache
             DataCache.RemoveCache(DataCache.PortalAliasCacheKey);
             return Id;
         }

@@ -36,7 +36,22 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Entities.Profile
 {
-    [XmlRoot("profiledefinition", IsNullable = false)]
+	/// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Profile
+    /// Class:      ProfilePropertyDefinition
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ProfilePropertyDefinition class provides a Business Layer entity for 
+    /// property Definitions
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	01/31/2006	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
+   [XmlRoot("profiledefinition", IsNullable = false)]
     [Serializable]
     public class ProfilePropertyDefinition : BaseEntityInfo
     {
@@ -59,6 +74,7 @@ namespace DotNetNuke.Entities.Profile
 
         public ProfilePropertyDefinition()
         {
+            //Get the default PortalSettings
             PortalSettings _Settings = PortalController.GetCurrentPortalSettings();
             PortalId = _Settings.PortalId;
         }
@@ -68,6 +84,14 @@ namespace DotNetNuke.Entities.Profile
             PortalId = portalId;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Data Type of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Editor("DotNetNuke.UI.WebControls.DNNListEditControl, DotNetNuke", typeof (EditControl)), List("DataType", "", ListBoundField.Id, ListBoundField.Value), IsReadOnly(true), Required(true),
          SortOrder(1)]
         [XmlIgnore]
@@ -87,6 +111,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Default Value of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [SortOrder(4)]
         [XmlIgnore]
         public string DefaultValue
@@ -105,6 +137,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Definition has been modified since it has been retrieved
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/21/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public bool IsDirty
@@ -115,6 +155,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Length of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [SortOrder(3)]
         [XmlElement("length")]
         public int Length
@@ -133,6 +181,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ModuleDefId
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public int ModuleDefId
@@ -147,6 +203,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the PortalId
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public int PortalId
@@ -161,6 +225,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Category of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Required(true), SortOrder(2)]
         [XmlElement("propertycategory")]
         public string PropertyCategory
@@ -179,6 +251,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Id of the ProfilePropertyDefinition
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public int PropertyDefinitionId
@@ -193,6 +273,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Name of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Required(true), IsReadOnly(true), SortOrder(0), RegularExpressionValidator("^[a-zA-Z0-9._%\\-+']+$")]
         [XmlElement("propertyname")]
         public string PropertyName
@@ -211,6 +299,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Value of the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public string PropertyValue
@@ -229,6 +325,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the property is required
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [SortOrder(6)]
         [XmlIgnore]
         public bool Required
@@ -247,6 +351,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a Validation Expression (RegEx) for the Profile Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [SortOrder(5)]
         [XmlIgnore]
         public string ValidationExpression
@@ -265,6 +377,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the View Order of the Property
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [IsReadOnly(true), SortOrder(8)]
         [XmlIgnore]
         public int ViewOrder
@@ -283,6 +403,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the property is visible
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [SortOrder(7)]
         [XmlIgnore]
         public bool Visible
@@ -328,6 +456,14 @@ namespace DotNetNuke.Entities.Profile
         }
 
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the property is visible
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         [XmlIgnore]
         public UserVisibilityMode Visibility
@@ -346,6 +482,14 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Clears the IsDirty Flag
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ClearIsDirty()
         {
             _IsDirty = false;

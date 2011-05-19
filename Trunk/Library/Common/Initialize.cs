@@ -112,6 +112,7 @@ namespace DotNetNuke.Common
             {
                 UseWizard = bool.Parse(Config.GetSetting("UseInstallWizard"));
             }
+            //Determine the Upgrade status and redirect as neccessary to InstallWizard.aspx
             string retValue = Null.NullString;
             switch (Globals.Status)
             {
@@ -154,6 +155,7 @@ namespace DotNetNuke.Common
 
         private static void CreateUnderConstructionPage(HttpServerUtility server)
         {
+			//create an UnderConstruction page if it does not exist already
             if (!File.Exists(server.MapPath("~/Install/UnderConstruction.htm")))
             {
                 if (File.Exists(server.MapPath("~/Install/UnderConstruction.template.htm")))
@@ -169,31 +171,42 @@ namespace DotNetNuke.Common
             HttpRequest Request = app.Request;
             string redirect = Null.NullString;
             
+            //Call the Global GetStatus function to determine the current status
             Globals.GetStatus();
+            //Don't process some of the AppStart methods if we are installing
             if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
             {
+                //Check whether the current App Version is the same as the DB Version
                 redirect = CheckVersion(app);
                 if (string.IsNullOrEmpty(redirect))
                 {
+					//Cache Mapped Directory(s)
                     CacheMappedDirectory();
+                    //Set globals
                     Globals.IISAppName = Request.ServerVariables["APPL_MD_PATH"];
                     Globals.OperatingSystemVersion = Environment.OSVersion.Version;
                     Globals.NETFrameworkVersion = GetNETFrameworkVersion();
                     Globals.DatabaseEngineVersion = GetDatabaseEngineVersion();
+                    //Try and Upgrade to Current Framewok
                     Upgrade.TryUpgradeNETFramework();
 
+                    //Start Scheduler
                     StartScheduler();
+                    //Log Application Start
                     LogStart();
+                    //Process any messages in the EventQueue for the Application_Start event
                     EventQueueController.ProcessMessages("Application_Start");
 
                     //Set Flag so we can determine the first Page Request after Application Start
                     app.Context.Items.Add("FirstRequest", true);
 
+                    //Log Server information
                     ServerController.UpdateServerActivity(new ServerInfo());
                 }
             }
             else
             {
+				//NET Framework version is neeed by Upgrade
                 Globals.NETFrameworkVersion = GetNETFrameworkVersion();
             }
             return redirect;
@@ -204,6 +217,7 @@ namespace DotNetNuke.Common
             string version = Environment.Version.ToString(2);
             if (version == "2.0")
             {
+				//Try and load a 3.0 Assembly
                 try
                 {
                     AppDomain.CurrentDomain.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089");
@@ -213,6 +227,7 @@ namespace DotNetNuke.Common
                 {
                     DnnLog.Error(exc);
                 }
+                //Try and load a 3.5 Assembly
                 try
                 {
                     AppDomain.CurrentDomain.Load("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089");
@@ -239,17 +254,21 @@ namespace DotNetNuke.Common
         {
             HttpResponse Response = app.Response;
             string redirect = Null.NullString;
+            //Check if app is initialised
             if ((InitializedAlready && Globals.Status == Globals.UpgradeStatus.None))
             {
                 return;
             }
             lock (InitializeLock)
             {
+				//Double-Check if app was initialised by another request
                 if ((InitializedAlready && Globals.Status == Globals.UpgradeStatus.None))
                 {
                     return;
                 }
+                //Initialize ...
                 redirect = InitializeApp(app);
+                //Set flag to indicate app has been initialised
                 InitializedAlready = true;
             }
             if (!string.IsNullOrEmpty(redirect))
@@ -289,6 +308,7 @@ namespace DotNetNuke.Common
         /// -----------------------------------------------------------------------------
         public static void StartScheduler()
         {
+			//instantiate APPLICATION_START scheduled jobs
             if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
             {
                 SchedulingProvider scheduler = SchedulingProvider.Instance();
@@ -376,12 +396,14 @@ namespace DotNetNuke.Common
             }
             if (Globals.Status != Globals.UpgradeStatus.Install)
             {
+            	//purge log buffer
                 LoggingProvider.Instance().PurgeLogBuffer();
             }
         }
 
         public static void RunSchedule(HttpRequest request)
         {
+			//First check if we are upgrading/installing
             if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
                 return;
@@ -416,6 +438,7 @@ namespace DotNetNuke.Common
         /// -----------------------------------------------------------------------------
         public static void StopScheduler()
         {
+			//stop scheduled jobs
             SchedulingProvider.Instance().Halt("Stopped by Application_End");
         }
     }

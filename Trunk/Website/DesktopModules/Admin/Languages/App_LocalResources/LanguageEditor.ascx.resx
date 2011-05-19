@@ -240,4 +240,7 @@
   <data name="highlightLabel.Help" xml:space="preserve">
     <value>Check this box to highlight any pennding translations.</value>
   </data>
+  <data name="NoRecords.Text" xml:space="preserve">
+    <value>There are no records to display.</value>
+  </data>
 </root>

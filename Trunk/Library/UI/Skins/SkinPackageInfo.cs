@@ -36,15 +36,35 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.UI.Skins
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : SkinPackageInfo
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    ///     Handles the Business Object for Skins
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	02/04/2008	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class SkinPackageInfo : BaseEntityInfo, IHydratable
     {
+		#region "Private Members"
+
         private int _PackageID = Null.NullInteger;
         private int _PortalID = Null.NullInteger;
         private string _SkinName;
         private int _SkinPackageID = Null.NullInteger;
         private string _SkinType;
         private Dictionary<int, string> _Skins = new Dictionary<int, string>();
+		
+		#endregion
+
+		#region "Public Properties"
 
         public int PackageID
         {
@@ -118,6 +138,8 @@ namespace DotNetNuke.UI.Skins
                 _SkinType = value;
             }
         }
+		
+		#endregion
 
         #region IHydratable Members
 
@@ -127,7 +149,9 @@ namespace DotNetNuke.UI.Skins
             PackageID = Null.SetNullInteger(dr["PackageID"]);
             SkinName = Null.SetNullString(dr["SkinName"]);
             SkinType = Null.SetNullString(dr["SkinType"]);
+            //Call the base classes fill method to populate base class proeprties
             base.FillInternal(dr);
+
             if (dr.NextResult())
             {
                 while (dr.Read())

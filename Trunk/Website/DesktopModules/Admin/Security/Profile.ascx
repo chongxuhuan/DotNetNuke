@@ -4,8 +4,10 @@
 <div class="dnnForm dnnProfile dnnClear">
     <div id="divTitle" runat="server">
         <asp:label id="lblTitle" cssclass="Head" runat="server" />
-        <dnn:ProfileEditorControl id="ProfileProperties" runat="Server" enableClientValidation="true" CssClass="dnnFormItem" />
     </div>
+	<div class="propertyList">
+		<dnn:ProfileEditorControl id="ProfileProperties" runat="Server" enableClientValidation="true" CssClass="dnnFormItem" />
+	</div>
     <ul class="dnnActions dnnClear">
         <li><asp:LinkButton class="dnnPrimaryAction" id="cmdUpdate" runat="server" resourcekey="cmdUpdate" /></li>
     </ul>

@@ -553,7 +553,7 @@
     <value>Portal Aliases</value>
   </data>
   <data name="valPortalName.ErrorMessage" xml:space="preserve">
-    <value>&lt;br/&gt;You must provide a title for your site</value>
+    <value>You must provide a title for your site</value>
   </data>
   <data name="plPayPaylCancelURL.Help" xml:space="preserve">
     <value>By default a subscriber is redirected to the portal home page on payment canceled. If you use the subscription feature, you can create a page with information to display to the user if the payment has been canceled. Enter the fully qualified URL of this page.</value>
@@ -644,5 +644,8 @@
   </data>
   <data name="ExpandAll.Text" xml:space="preserve">
     <value>Expand All</value>
+  </data>
+  <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
+    <value>Please select a skin and/or container to preview.</value>
   </data>
 </root>

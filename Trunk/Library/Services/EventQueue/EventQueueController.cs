@@ -67,9 +67,13 @@ namespace DotNetNuke.Services.EventQueue
 	/// </example>
     public class EventQueueController
     {
+		#region "Private Shared Methods"
+
         private static EventMessage FillMessage(IDataReader dr, bool CheckForOpenDataReader)
         {
             EventMessage message;
+
+            //read datareader
             bool canContinue = true;
             if (CheckForOpenDataReader)
             {
@@ -93,6 +97,8 @@ namespace DotNetNuke.Services.EventQueue
                 message.ExceptionMessage = Convert.ToString(Null.SetNull(dr["ExceptionMessage"], message.ExceptionMessage));
                 message.SentDate = Convert.ToDateTime(Null.SetNull(dr["SentDate"], message.SentDate));
                 message.ExpirationDate = Convert.ToDateTime(Null.SetNull(dr["ExpirationDate"], message.ExpirationDate));
+
+                //Deserialize Attributes
                 string xmlAttributes = Null.NullString;
                 xmlAttributes = Convert.ToString(Null.SetNull(dr["Attributes"], xmlAttributes));
                 message.DeserializeAttributes(xmlAttributes);
@@ -112,7 +118,9 @@ namespace DotNetNuke.Services.EventQueue
                 EventMessage obj;
                 while (dr.Read())
                 {
+					//fill business object
                     obj = FillMessage(dr, false);
+                    //add to collection
                     arr.Add(obj);
                 }
             }
@@ -122,6 +130,7 @@ namespace DotNetNuke.Services.EventQueue
             }
             finally
             {
+				//close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return arr;
@@ -129,6 +138,7 @@ namespace DotNetNuke.Services.EventQueue
 
         private static string[] GetSubscribers(string eventName)
         {
+			//Get the subscribers to this event
             string[] subscribers = null;
             PublishedEvent publishedEvent = null;
             if (EventQueueConfiguration.GetConfig().PublishedEvents.TryGetValue(eventName, out publishedEvent))
@@ -141,6 +151,10 @@ namespace DotNetNuke.Services.EventQueue
             }
             return subscribers;
         }
+		
+		#endregion
+		
+		#region "Public Shared Methods"
 
 		/// <summary>
 		/// Gets the messages.
@@ -203,12 +217,15 @@ namespace DotNetNuke.Services.EventQueue
                     {
                         throw new Exception();
                     }
+					
+                    //Set Message comlete so it is not run a second time
                     DataProvider.Instance().SetEventMessageComplete(message.EventMessageID);
 
                     success = true;
                 }
                 catch
                 {
+					//log if message could not be processed
                     var objEventLog = new EventLogController();
                     var objEventLogInfo = new LogInfo();
                     objEventLogInfo.AddProperty("EventQueue.ProcessMessage", "Message Processing Failed");
@@ -227,6 +244,7 @@ namespace DotNetNuke.Services.EventQueue
                     objEventLog.AddLog(objEventLogInfo);
                     if (message.ExpirationDate < DateTime.Now)
                     {
+						//Set Message comlete so it is not run a second time
                         DataProvider.Instance().SetEventMessageComplete(message.EventMessageID);
                     }
                 }
@@ -242,11 +260,16 @@ namespace DotNetNuke.Services.EventQueue
 		/// <returns></returns>
         public static bool SendMessage(EventMessage message, string eventName)
         {
+			//set the sent date if it wasn't set by the sender
             if (message.SentDate != null)
             {
                 message.SentDate = DateTime.Now;
             }
+			
+            //Get the subscribers to this event
             string[] subscribers = GetSubscribers(eventName);
+
+            //send a message for each subscriber of the specified event
             int intMessageID = Null.NullInteger;
             bool success = true;
             try
@@ -274,11 +297,17 @@ namespace DotNetNuke.Services.EventQueue
             }
             return success;
         }
+		
+		#endregion
+		
+		#region "Obsolete Methods"
 
         [Obsolete("This method is obsolete. Use Sendmessage(message, eventName) instead")]
         public bool SendMessage(EventMessage message, string eventName, bool encryptMessage)
         {
             return SendMessage(message, eventName);
         }
+		
+		#endregion
     }
 }

@@ -91,15 +91,32 @@ namespace DotNetNuke.UI
           return null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadControl loads a control and returns a reference to the control
+        /// </summary>
+        /// <typeparam name="T">The type of control to Load</typeparam>
+        /// <param name="containerControl">The parent Container Control</param>
+        /// <param name="ControlSrc">The source for the control.  This can either be a User Control (.ascx) or a compiled
+        /// control.</param>
+        /// <returns>A Control of type T</returns>
+        /// <history>
+        /// 	[cnurse]	12/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static T LoadControl<T>(TemplateControl containerControl, string ControlSrc) where T : Control
         {
             T ctrl;
+
+            //load the control dynamically
             if (ControlSrc.ToLower().EndsWith(".ascx"))
             {
+				//load from a user control on the file system
                 ctrl = (T) containerControl.LoadControl("~/" + ControlSrc);
             }
             else
             {
+				//load from a typename in an assembly ( ie. server control )
                 Type objType = Reflection.CreateType(ControlSrc);
                 ctrl = (T) containerControl.LoadControl(objType, null);
             }

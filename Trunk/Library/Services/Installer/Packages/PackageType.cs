@@ -30,36 +30,29 @@ using DotNetNuke.Security;
 
 namespace DotNetNuke.Services.Installer.Packages
 {
+    /// <summary>
+    /// This class allows PackageType to have a memeber named PackageType
+    /// to remain compatible with the original VB implementation
+    /// </summary>
+    public class PackageTypeMemberNameFixer
+    {
+        public PackageTypeMemberNameFixer()
+        {
+            PackageType = string.Empty;
+        }
+
+        public string PackageType { get; set; }
+    }
+
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The PackageType class represents a single Installer Package Type
     /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    /// 	[cnurse]	09/04/2007  created
-    /// </history>
     /// -----------------------------------------------------------------------------
-    public class PackageType
+    public class PackageType : PackageTypeMemberNameFixer
     {
-        private string _PackageType = Null.NullString;
-
         public string Description { get; set; }
-
         public string EditorControlSrc { get; set; }
-
-        public string Type
-        {
-            get
-            {
-                return _PackageType;
-            }
-            set
-            {
-                _PackageType = value;
-            }
-        }
-
         public SecurityAccessLevel SecurityAccessLevel { get; set; }
     }
 }

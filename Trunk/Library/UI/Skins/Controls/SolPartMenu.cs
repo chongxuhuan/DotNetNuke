@@ -43,6 +43,8 @@ namespace DotNetNuke.UI.Skins.Controls
     /// -----------------------------------------------------------------------------
     public class SolPartMenu : NavObjectBase
     {
+		#region "Public Members"
+		
         public string SeparateCss { get; set; }
 
         public string MenuBarCssClass
@@ -816,8 +818,16 @@ namespace DotNetNuke.UI.Skins.Controls
         }
 
         public string RootOnly { get; set; }
-
-        protected override void OnLoad(EventArgs e)
+		
+		#endregion
+		
+		#region "Protected Methods"
+        
+		/// <summary>
+		/// The Page_Load server event handler on this page is used
+        /// to populate the role information for the page
+		/// </summary>
+		protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
@@ -841,6 +851,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     ExpandDepth = 1;
                 }
                 var objSkins = new SkinController();
+                //image for root menu breadcrumb marking
                 if (!String.IsNullOrEmpty(RootBreadCrumbArrow))
                 {
                     strRootBreadcrumbArrow = PortalSettings.ActiveTab.SkinPath + RootBreadCrumbArrow;
@@ -849,6 +860,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     strRootBreadcrumbArrow = Globals.ApplicationPath + "/images/breadcrumb.gif";
                 }
+				
+				//image for submenu breadcrumb marking
                 if (!String.IsNullOrEmpty(SubMenuBreadCrumbArrow))
                 {
                     strSubMenuBreadcrumbArrow = PortalSettings.ActiveTab.SkinPath + SubMenuBreadCrumbArrow;
@@ -862,6 +875,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     NodeLeftHTMLBreadCrumbRoot = "<img alt=\"*\" BORDER=\"0\" src=\"" + strRootBreadcrumbArrow + "\">";
                 }
+				
+				//image for right facing arrow
                 if (!String.IsNullOrEmpty(RightArrow))
                 {
                     strRightArrow = RightArrow;
@@ -878,6 +893,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     strDownArrow = "menu_down.gif";
                 }
+				
+				//Set correct image path for all separator images
                 if (!String.IsNullOrEmpty(Separator))
                 {
                     if (Separator.IndexOf("src=") != -1)
@@ -927,6 +944,8 @@ namespace DotNetNuke.UI.Skins.Controls
                         RightSeparatorActive = RightSeparatorActive.Replace("src=\"", "src=\"" + PortalSettings.ActiveTab.SkinPath);
                     }
                 }
+				
+				//generate dynamic menu
                 if (blnUseSkinPathArrowImages)
                 {
                     PathSystemImage = PortalSettings.ActiveTab.SkinPath;
@@ -942,7 +961,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 if (blnUseArrows)
                 {
                     IndicateChildImageSub = strRightArrow;
-                    if (ControlOrientation.ToLower() == "vertical")
+                    if (ControlOrientation.ToLower() == "vertical") //NavigationProvider.NavigationProvider.Orientation.Vertical Then
                     {
                         IndicateChildImageRoot = strRightArrow;
                     }
@@ -962,7 +981,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 BuildNodes(null);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -972,7 +991,7 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             DNNNodeCollection objNodes;
             objNodes = GetNavigationNodes(objNode);
-            Control.ClearNodes();
+            Control.ClearNodes(); //since we always bind we need to clear the nodes for providers that maintain their state
             Bind(objNodes);
         }
 
@@ -990,7 +1009,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 if (String.IsNullOrEmpty(MouseOverAction))
                 {
-                    MouseOverAction = true.ToString();
+                    MouseOverAction = true.ToString(); //NavigationProvider.NavigationProvider.HoverAction.Expand
                 }
                 if (String.IsNullOrEmpty(StyleBorderWidth))
                 {
@@ -1030,7 +1049,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 if (String.IsNullOrEmpty(MouseOverDisplay))
                 {
-                    MouseOverDisplay = "highlight";
+                    MouseOverDisplay = "highlight"; //NavigationProvider.NavigationProvider.HoverDisplay.Highlight
                 }
                 if (String.IsNullOrEmpty(EffectsStyle))
                 {
@@ -1144,5 +1163,7 @@ namespace DotNetNuke.UI.Skins.Controls
             InitializeNavControl(this, "SolpartMenuNavigationProvider");
             base.OnInit(e);
         }
+		
+		#endregion
     }
 }

@@ -39,77 +39,101 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.UI.Containers
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Title : SkinObjectBase
     {
         private const string MyFileName = "Title.ascx";
+		#region "Public Members"
         public string CssClass { get; set; }
 
+		#endregion
+		
         private bool CanEditModule()
         {
-            bool blnCanEdit = false;
-            if ((ModuleControl != null) && (ModuleControl.ModuleContext.ModuleId > Null.NullInteger))
+            var canEdit = false;
+            if (ModuleControl != null && ModuleControl.ModuleContext.ModuleId > Null.NullInteger)
             {
-                blnCanEdit = (PortalSettings.UserMode == PortalSettings.Mode.Edit) && TabPermissionController.CanAdminPage() && !Globals.IsAdminControl();
+                canEdit = (PortalSettings.UserMode == PortalSettings.Mode.Edit) && TabPermissionController.CanAdminPage() && !Globals.IsAdminControl();
             }
-            return blnCanEdit;
+            return canEdit;
         }
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            lblTitle.UpdateLabel += lblTitle_UpdateLabel;
+            titleLabel.UpdateLabel += UpdateTitle;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Assign the CssClass and Text Attributes for the Title label.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[sun1]	2/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
+				//public attributes
                 if (!String.IsNullOrEmpty(CssClass))
                 {
-                    lblTitle.CssClass = CssClass;
+                    titleLabel.CssClass = CssClass;
                 }
-                string strTitle = Null.NullString;
+                string moduleTitle = Null.NullString;
                 if (ModuleControl != null)
                 {
-                    strTitle = Localization.LocalizeControlTitle(ModuleControl);
+                    moduleTitle = Localization.LocalizeControlTitle(ModuleControl);
                 }
-                if (strTitle == Null.NullString)
+                if (moduleTitle == Null.NullString)
                 {
-                    strTitle = "&nbsp;";
+                    moduleTitle = "&nbsp;";
                 }
-                lblTitle.Text = strTitle;
-                lblTitle.EditEnabled = false;
-                tbEIPTitle.Visible = false;
+                titleLabel.Text = moduleTitle;
+                titleLabel.EditEnabled = false;
+                titleToolbar.Visible = false;
+
                 if (CanEditModule() && PortalSettings.InlineEditorEnabled)
                 {
-                    lblTitle.EditEnabled = true;
-                    tbEIPTitle.Visible = true;
-                }
-                else
-                {
-                    foreach (DNNToolBarButton objButton in tbEIPTitle.Buttons)
+                    titleLabel.EditEnabled = true;
+                    titleToolbar.Visible = true;
+
+                    foreach (DNNToolBarButton barButton in titleToolbar.Buttons)
                     {
-                        objButton.ToolTip = Localization.GetString("cmd" + objButton.ToolTip, Localization.GetResourceFile(this, MyFileName));
+                        barButton.ToolTip = Localization.GetString("cmd" + barButton.ToolTip, Localization.GetResourceFile(this, MyFileName));
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception ex) //Module failed to load
             {
-                Exceptions.ProcessModuleLoadException(this, exc);
+                Exceptions.ProcessModuleLoadException(this, ex);
             }
         }
 
-        private void lblTitle_UpdateLabel(object source, DNNLabelEditEventArgs e)
+        private void UpdateTitle(object source, DNNLabelEditEventArgs e)
         {
             if (CanEditModule())
             {
-                var objModule = new ModuleController();
-                ModuleInfo objModInfo = objModule.GetModule(ModuleControl.ModuleContext.ModuleId, ModuleControl.ModuleContext.TabId, false);
-                objModInfo.ModuleTitle = e.Text;
-                objModule.UpdateModule(objModInfo);
+                var moduleController = new ModuleController();
+                ModuleInfo moduleInfo = moduleController.GetModule(ModuleControl.ModuleContext.ModuleId, ModuleControl.ModuleContext.TabId, false);
+
+                moduleInfo.ModuleTitle = e.Text;
+                moduleController.UpdateModule(moduleInfo);
             }
         }
     }

@@ -52,6 +52,8 @@ namespace DotNetNuke.UI.UserControls
 {
     public abstract class UrlControl : UserControlBase
     {
+		#region "Private Members"
+		
         protected Panel ErrorRow;
         protected Panel FileRow;
         protected Panel ImagesRow;
@@ -93,6 +95,10 @@ namespace DotNetNuke.UI.UserControls
         protected HtmlInputFile txtFile;
         protected TextBox txtUrl;
         protected TextBox txtUser;
+		
+		#endregion
+		
+		#region "Public Properties"
 
         public string FileFilter
         {
@@ -127,7 +133,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return false;
+                    return false; //Set as default
                 }
             }
             set
@@ -222,7 +228,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -245,7 +251,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -315,7 +321,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return false;
+                    return false; //Set as default in the old variable
                 }
             }
             set
@@ -338,7 +344,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -361,7 +367,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -384,7 +390,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -419,7 +425,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -442,7 +448,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return true;
+                    return true; //Set as default in the old variable
                 }
             }
             set
@@ -465,7 +471,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
-                    return false;
+                    return false; //Set as default in the old variable
                 }
             }
             set
@@ -626,10 +632,15 @@ namespace DotNetNuke.UI.UserControls
                 }
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
 
         private ArrayList GetFileList(bool NoneSpecified)
         {
             int PortalId = Null.NullInteger;
+
             if ((!IsHostMenu) || (Request.QueryString["pid"] != null))
             {
                 PortalId = _objPortal.PortalID;
@@ -641,6 +652,7 @@ namespace DotNetNuke.UI.UserControls
         {
             int PortalId = Null.NullInteger;
             cboFolders.Items.Clear();
+
             if ((!IsHostMenu) || (Request.QueryString["pid"] != null))
             {
                 PortalId = _objPortal.PortalID;
@@ -673,6 +685,8 @@ namespace DotNetNuke.UI.UserControls
         private void SetStorageLocationType()
         {
             string FolderName = cboFolders.SelectedValue;
+
+            //Check to see if this is the 'Root' folder, if so we cannot rely on its text value because it is something and not an empty string that we need to lookup the 'root' folder
             if (cboFolders.SelectedValue == string.Empty)
             {
                 FolderName = "";
@@ -701,6 +715,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 var objUrls = new UrlController();
                 string TrackingUrl = _Url;
+
                 _Urltype = Globals.GetURLType(_Url).ToString("g").Substring(0, 1);
                 if (_Urltype == "U" && (_Url.StartsWith("~/images/")))
                 {
@@ -720,6 +735,7 @@ namespace DotNetNuke.UI.UserControls
                     }
                     else
                     {
+                        //to handle legacy scenarios before the introduction of the FileServerHandler
                         var fileName = Path.GetFileName(_Url);
 
                         var folderPath = _Url.Substring(0, _Url.LastIndexOf(fileName));
@@ -748,7 +764,7 @@ namespace DotNetNuke.UI.UserControls
                     chkTrack.Checked = objUrlTracking.TrackClicks;
                     chkLog.Checked = objUrlTracking.LogActivity;
                 }
-                else
+                else //the url does not exist in the tracking table
                 {
                     chkNewWindow.Checked = false;
                     chkTrack.Checked = false;
@@ -778,19 +794,22 @@ namespace DotNetNuke.UI.UserControls
                         optType.Items[0].Selected = true;
                     }
                 }
-                chkNewWindow.Checked = false;
-                chkTrack.Checked = false;
-                chkLog.Checked = false;
+                chkNewWindow.Checked = false; //Need check
+                chkTrack.Checked = false; //Need check
+                chkLog.Checked = false; //Need check
             }
+			
+            //Url type changed, then we must draw the controlos for that type
             _doRenderTypeControls = true;
         }
 
         private void DoRenderTypes()
         {
+			//We must clear the list to keep the same item order
             string strCurrent = "";
             if (optType.SelectedIndex >= 0)
             {
-                strCurrent = optType.SelectedItem.Value;
+                strCurrent = optType.SelectedItem.Value; //Save current selected value
             }
             optType.Items.Clear();
             if (ShowNone)
@@ -888,13 +907,13 @@ namespace DotNetNuke.UI.UserControls
                     else
                     {
                         optType.Items[0].Selected = true;
-                        _doRenderTypeControls = true;
+                        _doRenderTypeControls = true; //Type changed, re-draw
                     }
                 }
                 else
                 {
                     optType.Items[0].Selected = true;
-                    _doRenderTypeControls = true;
+                    _doRenderTypeControls = true; //Type changed, re-draw
                 }
                 TypeRow.Visible = optType.Items.Count > 1;
             }
@@ -907,6 +926,7 @@ namespace DotNetNuke.UI.UserControls
         private void DoCorrectRadioButtonList()
         {
             string _Urltype = Convert.ToString(ViewState["UrlType"]);
+
             if (optType.Items.Count > 0)
             {
                 optType.ClearSelection();
@@ -939,22 +959,25 @@ namespace DotNetNuke.UI.UserControls
             var objUrls = new UrlController();
             if (!String.IsNullOrEmpty(_Urltype))
             {
+                //load listitems
                 switch (optType.SelectedItem.Value)
                 {
-                    case "N":
+                    case "N": //None
                         URLRow.Visible = false;
                         TabRow.Visible = false;
                         FileRow.Visible = false;
                         UserRow.Visible = false;
                         ImagesRow.Visible = false;
                         break;
-                    case "I":
+                    case "I": //System Image
                         URLRow.Visible = false;
                         TabRow.Visible = false;
                         FileRow.Visible = false;
                         UserRow.Visible = false;
                         ImagesRow.Visible = true;
+
                         cboImages.Items.Clear();
+
                         string strImagesFolder = Path.Combine(Globals.ApplicationMapPath, "images\\");
                         foreach (string strImage in Directory.GetFiles(strImagesFolder))
                         {
@@ -967,7 +990,7 @@ namespace DotNetNuke.UI.UserControls
                             cboImages.Items.FindByValue(_Url).Selected = true;
                         }
                         break;
-                    case "U":
+                    case "U": //Url
                         URLRow.Visible = true;
                         TabRow.Visible = false;
                         FileRow.Visible = false;
@@ -982,18 +1005,22 @@ namespace DotNetNuke.UI.UserControls
                             txtUrl.Text = "http://";
                         }
                         txtUrl.Visible = true;
+
                         cmdSelect.Visible = true;
+
                         cboUrls.Visible = false;
                         cmdAdd.Visible = false;
                         cmdDelete.Visible = false;
                         break;
-                    case "T":
+                    case "T": //tab
                         URLRow.Visible = false;
                         TabRow.Visible = true;
                         FileRow.Visible = false;
                         UserRow.Visible = false;
                         ImagesRow.Visible = false;
+
                         cboTabs.Items.Clear();
+
                         PortalSettings _settings = PortalController.GetCurrentPortalSettings();
                         int excludeTabId = Null.NullInteger;
                         if (!IncludeActiveTab)
@@ -1007,12 +1034,13 @@ namespace DotNetNuke.UI.UserControls
                             cboTabs.Items.FindByValue(_Url).Selected = true;
                         }
                         break;
-                    case "F":
+                    case "F": //file
                         URLRow.Visible = false;
                         TabRow.Visible = false;
                         FileRow.Visible = true;
                         UserRow.Visible = false;
                         ImagesRow.Visible = false;
+
                         if (ViewState["FoldersLoaded"] == null || _doReloadFolders)
                         {
                             LoadFolders("BROWSE,ADD");
@@ -1024,11 +1052,15 @@ namespace DotNetNuke.UI.UserControls
                             FileRow.Visible = false;
                             return;
                         }
+						
+                        //select folder
+                        //We Must check if selected folder has changed because of a property change (Secure, Database)
                         string FileName = string.Empty;
                         string FolderPath = string.Empty;
                         string LastFileName = string.Empty;
                         string LastFolderPath = string.Empty;
                         bool _MustRedrawFiles = false;
+                        //Let's try to remember last selection
                         if (ViewState["LastFolderPath"] != null)
                         {
                             LastFolderPath = Convert.ToString(ViewState["LastFolderPath"]);
@@ -1039,11 +1071,13 @@ namespace DotNetNuke.UI.UserControls
                         }
                         if (_Url != string.Empty)
                         {
+							//Let's use the new URL
                             FileName = _Url.Substring(_Url.LastIndexOf("/") + 1);
                             FolderPath = _Url.Replace(FileName, "");
                         }
                         else
                         {
+							//Use last settings
                             FileName = LastFileName;
                             FolderPath = LastFolderPath;
                         }
@@ -1060,6 +1094,7 @@ namespace DotNetNuke.UI.UserControls
                         }
                         if (ViewState["FilesLoaded"] == null || FolderPath != LastFolderPath || _doReloadFiles)
                         {
+							//Reload files only if property change or not same folder
                             _MustRedrawFiles = true;
                             ViewState["FilesLoaded"] = "Y";
                         }
@@ -1069,11 +1104,13 @@ namespace DotNetNuke.UI.UserControls
                             {
                                 if ((Required && String.IsNullOrEmpty(cboFiles.Items[0].Value)) || (!Required && !String.IsNullOrEmpty(cboFiles.Items[0].Value)))
                                 {
+									//Required state has changed, so we need to reload files
                                     _MustRedrawFiles = true;
                                 }
                             }
                             else if (!Required)
                             {
+								//Required state has changed, so we need to reload files
                                 _MustRedrawFiles = true;
                             }
                         }
@@ -1089,12 +1126,15 @@ namespace DotNetNuke.UI.UserControls
                         }
                         cboFiles.Visible = true;
                         txtFile.Visible = false;
+
                         FolderInfo objFolder = (FolderInfo)FolderManager.Instance.GetFolder(_objPortal.PortalID, FolderPath);
                         cmdUpload.Visible = ShowUpLoad && FolderPermissionController.CanAddFolder(objFolder);
+
                         SetStorageLocationType();
                         txtUrl.Visible = false;
                         cmdSave.Visible = false;
                         cmdCancel.Visible = false;
+
                         if (cboFolders.SelectedIndex >= 0)
                         {
                             ViewState["LastFolderPath"] = cboFolders.SelectedValue;
@@ -1112,7 +1152,7 @@ namespace DotNetNuke.UI.UserControls
                             ViewState["LastFileName"] = "";
                         }
                         break;
-                    case "M":
+                    case "M": //membership users
                         URLRow.Visible = false;
                         TabRow.Visible = false;
                         FileRow.Visible = false;
@@ -1134,12 +1174,18 @@ namespace DotNetNuke.UI.UserControls
                 UserRow.Visible = false;
             }
         }
+		
+		#endregion
+
+		#region "Event Handlers"
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             AJAX.RegisterPostBackControl(FindControl("cmdSave"));
+
+            //prevent unauthorized access
             if (Request.IsAuthenticated == false)
             {
                 Visible = false;
@@ -1172,12 +1218,18 @@ namespace DotNetNuke.UI.UserControls
                 }
                 if (ViewState["IsUrlControlLoaded"] == null)
                 {
+					//If Not Page.IsPostBack Then
+                    //let's make at least an initialization
+                    //The type radio button must be initialized
+                    //The url must be initialized no matter its value
                     _doRenderTypes = true;
                     _doChangeURL = true;
                     ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
+					//The following line was mover to the pre-render event to ensure render for the first time
+                    //ViewState("IsUrlControlLoaded") = "Loaded"
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -1215,6 +1267,7 @@ namespace DotNetNuke.UI.UserControls
             }
             catch (Exception exc)
             {
+				//Let's detect possible problems
                 Exceptions.LogException(new Exception("Error rendering URLControl subcontrols.", exc));
             }
         }
@@ -1233,11 +1286,13 @@ namespace DotNetNuke.UI.UserControls
                 if (!txtFile.Visible)
                 {
                     cmdSave.Visible = false;
+					//only show if not already in upload mode and not disabled
                     cmdUpload.Visible = ShowUpLoad;
                 }
             }
             else
             {
+				//reset controls
                 cboFiles.Visible = true;
                 cmdUpload.Visible = false;
                 txtFile.Visible = false;
@@ -1264,7 +1319,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 ViewState["LastFileName"] = "";
             }
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1278,7 +1333,7 @@ namespace DotNetNuke.UI.UserControls
             txtUrl.Visible = true;
             cmdAdd.Visible = false;
             cmdDelete.Visible = false;
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1292,7 +1347,7 @@ namespace DotNetNuke.UI.UserControls
             txtFile.Visible = false;
             cmdSave.Visible = false;
             cmdCancel.Visible = false;
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1305,9 +1360,9 @@ namespace DotNetNuke.UI.UserControls
             {
                 var objUrls = new UrlController();
                 objUrls.DeleteUrl(_objPortal.PortalID, cboUrls.SelectedItem.Value);
-                LoadUrls();
+                LoadUrls(); //we must reload the url list
             }
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1317,6 +1372,8 @@ namespace DotNetNuke.UI.UserControls
         protected void cmdSave_Click(Object sender, EventArgs e)
         {
             cmdUpload.Visible = false;
+
+            //if no file is selected exit
             if (String.IsNullOrEmpty(txtFile.PostedFile.FileName))
             {
                 return;
@@ -1331,9 +1388,11 @@ namespace DotNetNuke.UI.UserControls
                 ParentFolderName = PortalSettings.HomeDirectoryMapPath;
             }
             ParentFolderName += cboFolders.SelectedItem.Value;
+
             string strExtension = Path.GetExtension(txtFile.PostedFile.FileName).Replace(".", "");
             if (!String.IsNullOrEmpty(FileFilter) && ("," + FileFilter.ToLower()).IndexOf("," + strExtension.ToLower()) == -1)
             {
+				//trying to upload a file not allowed for current filter
                 lblMessage.Text = string.Format(Localization.GetString("UploadError", LocalResourceFile), FileFilter, strExtension);
             }
             else
@@ -1377,10 +1436,12 @@ namespace DotNetNuke.UI.UserControls
                 txtFile.Visible = false;
                 cmdSave.Visible = false;
                 cmdCancel.Visible = false;
+
                 var Root = new DirectoryInfo(ParentFolderName);
                 cboFiles.Items.Clear();
                 cboFiles.DataSource = GetFileList(false);
                 cboFiles.DataBind();
+
                 string FileName = txtFile.PostedFile.FileName.Substring(txtFile.PostedFile.FileName.LastIndexOf("\\") + 1);
                 if (cboFiles.Items.FindByText(FileName) != null)
                 {
@@ -1395,7 +1456,7 @@ namespace DotNetNuke.UI.UserControls
                     ViewState["LastFileName"] = "";
                 }
             }
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1415,7 +1476,7 @@ namespace DotNetNuke.UI.UserControls
                 cboUrls.ClearSelection();
                 cboUrls.Items.FindByValue(txtUrl.Text).Selected = true;
             }
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1448,6 +1509,7 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else
                 {
+					//reset controls
                     LoadFolders("BROWSE,ADD");
                     cboFolders.Items.FindByValue(strSaveFolder).Selected = true;
                     cboFiles.Visible = true;
@@ -1458,7 +1520,7 @@ namespace DotNetNuke.UI.UserControls
                     lblMessage.Text = Localization.GetString("NoWritePermission", LocalResourceFile);
                 }
             }
-            _doRenderTypeControls = false;
+            _doRenderTypeControls = false; //Must not render on this postback
             _doRenderTypes = false;
             _doChangeURL = false;
             _doReloadFolders = false;
@@ -1467,8 +1529,11 @@ namespace DotNetNuke.UI.UserControls
 
         protected void optType_SelectedIndexChanged(Object sender, EventArgs e)
         {
+			//Type changed, render the correct control set
             ViewState["UrlType"] = optType.SelectedItem.Value;
             _doRenderTypeControls = true;
         }
+		
+		#endregion
     }
 }
