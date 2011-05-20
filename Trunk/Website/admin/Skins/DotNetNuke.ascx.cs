@@ -32,6 +32,14 @@ using DotNetNuke.Entities.Host;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class DotNetNukeControl : SkinObjectBase
     {
         public string CssClass { get; set; }
@@ -54,9 +62,13 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 hypDotNetNuke.CssClass = CssClass;
             }
+			
+            //get Product Name and Legal Copyright from constants (Medium Trust)
             hypDotNetNuke.Text = DotNetNukeContext.Current.Application.LegalCopyright;
             hypDotNetNuke.NavigateUrl = DotNetNukeContext.Current.Application.Url;
-            Visible = Host.DisplayCopyright;
+            
+			//show copyright credits?
+			Visible = Host.DisplayCopyright;
         }
     }
 }

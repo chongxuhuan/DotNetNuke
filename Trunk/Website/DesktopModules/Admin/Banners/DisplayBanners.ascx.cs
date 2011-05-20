@@ -64,11 +64,22 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #endregion
 
+        /// <summary>
+        /// The Page_Load event handler on this User Control is used to
+        /// obtain a DataReader of banner information from the Banners
+        /// table, and then databind the results to a templated DataList
+        /// server control.  It uses the DotNetNuke.BannerDB()
+        /// data component to encapsulate all data functionality.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks></remarks>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            if (Request.Browser.Crawler)
+            //exit without displaying banners to crawlers
+			if (Request.Browser.Crawler)
             {
                 return;
             }
@@ -78,13 +89,15 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 int intBannerTypeId = 0;
                 string strBannerGroup;
                 int intBanners = 0;
+
+                //banner parameters
                 switch (Convert.ToString(Settings["bannersource"]))
                 {
-                    case "L":
+                    case "L": //local
                     case "":
                         intPortalId = PortalId;
                         break;
-                    case "G":
+                    case "G": //global
                         intPortalId = Null.NullInteger;
                         break;
                 }
@@ -101,14 +114,19 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     lstBanners.CellPadding = Int32.Parse(Convert.ToString(Settings["padding"]));
                 }
+				
+                //load banners
                 if (intBanners != 0)
                 {
                     var objBanners = new BannerController();
                     lstBanners.DataSource = objBanners.LoadBanners(intPortalId, ModuleId, intBannerTypeId, strBannerGroup, intBanners);
                     lstBanners.DataBind();
                 }
+				
+                //set banner display characteristics
                 if (lstBanners.Items.Count != 0)
                 {
+					//container attributes
                     lstBanners.RepeatLayout = RepeatLayout.Table;
                     if (!String.IsNullOrEmpty(Convert.ToString(Settings["orientation"])))
                     {
@@ -135,6 +153,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         var objColorConverter = new ColorConverter();
                         lstBanners.ItemStyle.BorderColor = (Color) objColorConverter.ConvertFrom(Convert.ToString(Settings["bordercolor"]));
                     }
+					
+                    //item attributes
                     if (!String.IsNullOrEmpty(Convert.ToString(Settings["rowheight"])))
                     {
                         lstBanners.ItemStyle.Height = Unit.Parse(Convert.ToString(Settings["rowheight"]) + "px");
@@ -149,7 +169,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     lstBanners.Visible = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

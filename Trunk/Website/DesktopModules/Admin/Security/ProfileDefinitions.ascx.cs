@@ -44,14 +44,44 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+    /// The ProfileDefinitions PortalModuleBase is used to manage the Profile Properties
+    /// for a portal
+	/// </summary>
+    /// <remarks>
+	/// </remarks>
+	/// <history>
+    /// 	[cnurse]	02/16/2006  Created
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class ProfileDefinitions : PortalModuleBase, IActionable
     {
+		#region "Constants"
+
         private const int COLUMN_REQUIRED = 11;
         private const int COLUMN_VISIBLE = 12;
         private const int COLUMN_MOVE_DOWN = 2;
         private const int COLUMN_MOVE_UP = 3;
-        private ProfilePropertyDefinitionCollection _ProfileProperties;
+		
+		#endregion
 
+		#region "Private Members"
+
+        private ProfilePropertyDefinitionCollection _ProfileProperties;
+		
+		#endregion
+
+		#region "Protected Members"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether we are dealing with SuperUsers
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsSuperUser
         {
             get
@@ -67,6 +97,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the collection of Profile Proeprties
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/03/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ProfilePropertyDefinitionCollection ProfileProperties
         {
             get
@@ -79,12 +117,21 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Return Url for the page
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ReturnUrl
         {
             get
             {
                 string _ReturnURL;
                 var FilterParams = new string[String.IsNullOrEmpty(Request.QueryString["filterproperty"]) ? 1 : 2];
+
                 if (String.IsNullOrEmpty(Request.QueryString["filterProperty"]))
                 {
                     FilterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
@@ -106,6 +153,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Portal Id whose Users we are managing
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int UsersPortalId
         {
             get
@@ -118,6 +173,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 return intPortalId;
             }
         }
+		
+		#endregion
 
         #region IActionable Members
 
@@ -152,44 +209,108 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Helper function that determines whether the client-side functionality is possible
+        /// </summary>
+        /// <history>
+        ///     [Jon Henning]	03/12/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool SupportsRichClient()
         {
             return ClientAPI.BrowserSupportsFunctionality(ClientAPI.ClientFunctionality.DHTML);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes a property
+        /// </summary>
+        /// <param name="index">The index of the Property to delete</param>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteProperty(int index)
         {
             ProfilePropertyDefinition objProperty = ProfileProperties[index];
+
             ProfileController.DeletePropertyDefinition(objProperty);
+
             RefreshGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Moves a property
+        /// </summary>
+        /// <param name="index">The index of the Property to move</param>
+        /// <param name="destIndex">The new index of the Property</param>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MoveProperty(int index, int destIndex)
         {
             ProfilePropertyDefinition objProperty = ProfileProperties[index];
             ProfilePropertyDefinition objNext = ProfileProperties[destIndex];
+
             int currentOrder = objProperty.ViewOrder;
             int nextOrder = objNext.ViewOrder;
+
+            //Swap ViewOrders
             objProperty.ViewOrder = nextOrder;
             objNext.ViewOrder = currentOrder;
+
+            //Refresh Grid
             ProfileProperties.Sort();
             BindGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Moves a property down in the ViewOrder
+        /// </summary>
+        /// <param name="index">The index of the Property to move</param>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MovePropertyDown(int index)
         {
             MoveProperty(index, index + 1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Moves a property up in the ViewOrder
+        /// </summary>
+        /// <param name="index">The index of the Property to move</param>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MovePropertyUp(int index)
         {
             MoveProperty(index, index - 1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Binds the Property Collection to the Grid
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindGrid()
         {
             bool allRequired = true;
             bool allVisible = true;
+
+            //Check whether the checkbox column headers are true or false
             foreach (ProfilePropertyDefinition profProperty in ProfileProperties)
             {
                 if (profProperty.Required == false)
@@ -209,6 +330,7 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 if (ReferenceEquals(column.GetType(), typeof (CheckBoxColumn)))
                 {
+					//Manage CheckBox column events
                     var cbColumn = (CheckBoxColumn) column;
                     if (cbColumn.DataField == "Required")
                     {
@@ -224,12 +346,28 @@ namespace DotNetNuke.Modules.Admin.Users
             grdProfileProperties.DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Refresh the Property Collection to the Grid
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void RefreshGrid()
         {
             _ProfileProperties = null;
             BindGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates any "dirty" properties
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UpdateProperties()
         {
             ProcessPostBack();
@@ -246,6 +384,15 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This method is responsible for taking in posted information from the grid and
+        /// persisting it to the property definition collection
+        /// </summary>
+        /// <history>
+        ///     [Jon Henning]	03/12/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ProcessPostBack()
         {
             try
@@ -263,6 +410,8 @@ namespace DotNetNuke.Modules.Admin.Users
                     chk = (CheckBox) objItem.Cells[COLUMN_VISIBLE].Controls[0];
                     objProperty.Visible = chk.Checked;
                 }
+				
+				//assign vieworder
                 for (int i = 0; i <= aryNewOrder.Length - 1; i++)
                 {
                     ProfileProperties[Convert.ToInt32(aryNewOrder[i])].ViewOrder = i;
@@ -275,15 +424,24 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
         protected override void LoadViewState(object savedState)
         {
             if ((savedState != null))
             {
+				//Load State from the array of objects that was saved with SaveViewState.
                 var myState = (object[]) savedState;
+				
+				//Load Base Controls ViewState
                 if ((myState[0] != null))
                 {
                     base.LoadViewState(myState[0]);
                 }
+				
+				//Load ModuleID
                 if ((myState[1] != null))
                 {
                     _ProfileProperties = (ProfilePropertyDefinitionCollection) myState[1];
@@ -294,10 +452,17 @@ namespace DotNetNuke.Modules.Admin.Users
         protected override object SaveViewState()
         {
             var allStates = new object[2];
+			
+			//Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
             allStates[1] = ProfileProperties;
+
             return allStates;
         }
+		
+		#endregion
+
+		#region "Public Methods"
 
         public string DisplayDataType(ProfilePropertyDefinition definition)
         {
@@ -311,6 +476,20 @@ namespace DotNetNuke.Modules.Admin.Users
             return retValue;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/16/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -331,6 +510,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
                 else if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     switch (imageColumn.CommandName)
                     {
@@ -339,6 +519,9 @@ namespace DotNetNuke.Modules.Admin.Users
                             imageColumn.Text = Localization.GetString("Delete", LocalResourceFile);
                             break;
                         case "Edit":
+                            //The Friendly URL parser does not like non-alphanumeric characters
+                            //so first create the format string with a dummy value and then
+                            //replace the dummy value with the FormatString place holder
                             string formatString = EditUrl("PropertyDefinitionID", "KEYFIELD", "EditProfileProperty");
                             formatString = formatString.Replace("KEYFIELD", "{0}");
                             imageColumn.NavigateURLFormatString = formatString;
@@ -364,6 +547,16 @@ namespace DotNetNuke.Modules.Admin.Users
             grdProfileProperties.ItemCreated += grdProfileProperties_ItemCreated;
             grdProfileProperties.ItemDataBound += grdProfileProperties_ItemDataBound;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/16/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
             try
             {
                 if (!Page.IsPostBack)
@@ -372,30 +565,63 @@ namespace DotNetNuke.Modules.Admin.Users
                     BindGrid();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdRefresh_Click runs when the refresh button is clciked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/23/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdRefresh_Click(object sender, EventArgs e)
         {
             RefreshGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the update button is clciked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/23/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
             try
             {
                 UpdateProperties();
+
+                //Redirect to upadte page
                 Response.Redirect(Request.RawUrl, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// grdProfileProperties_ItemCheckedChanged runs when a checkbox in the grid
+        /// is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/23/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void grdProfileProperties_ItemCheckedChanged(object sender, DNNDataGridCheckChangedEventArgs e)
         {
             string propertyName = e.Field;
@@ -404,6 +630,7 @@ namespace DotNetNuke.Modules.Admin.Users
             int index = e.Item.ItemIndex;
             if (isAll)
             {
+				//Update All the properties
                 foreach (ProfilePropertyDefinition profProperty in ProfileProperties)
                 {
                     switch (propertyName)
@@ -419,6 +646,7 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             else
             {
+				//Update the indexed property
                 ProfilePropertyDefinition profProperty = ProfileProperties[index];
                 switch (propertyName)
                 {
@@ -433,11 +661,23 @@ namespace DotNetNuke.Modules.Admin.Users
             BindGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// grdProfileProperties_ItemCommand runs when a Command event is raised in the
+        /// Grid
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/23/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void grdProfileProperties_ItemCommand(object source, DataGridCommandEventArgs e)
         {
             string commandName = e.CommandName;
             int commandArgument = Convert.ToInt32(e.CommandArgument);
             int index = e.Item.ItemIndex;
+
             switch (commandName)
             {
                 case "Delete":
@@ -452,6 +692,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// When it is determined that the client supports a rich interactivity the grdProfileProperties_ItemCreated 
+        /// event is responsible for disabling all the unneeded AutoPostBacks, along with assiging the appropriate
+        ///	client-side script for each event handler
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [Jon Henning]	03/12/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void grdProfileProperties_ItemCreated(object sender, DataGridItemEventArgs e)
         {
             if (SupportsRichClient())
@@ -459,6 +711,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 switch (e.Item.ItemType)
                 {
                     case ListItemType.Header:
+                        //we combined the header label and checkbox in same place, so it is control 1 instead of 0
                         ((WebControl) e.Item.Cells[COLUMN_REQUIRED].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_REQUIRED + ");");
                         ((CheckBox) e.Item.Cells[COLUMN_REQUIRED].Controls[1]).AutoPostBack = false;
                         ((WebControl) e.Item.Cells[COLUMN_VISIBLE].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_VISIBLE + ");");
@@ -475,6 +728,17 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// grdProfileProperties_ItemDataBound runs when a row in the grid is bound to its data source
+        /// Grid
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/06/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void grdProfileProperties_ItemDataBound(object sender, DataGridItemEventArgs e)
         {
             DataGridItem item = e.Item;
@@ -485,6 +749,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     var delImage = (ImageButton) imgColumnControl;
                     var profProperty = (ProfilePropertyDefinition) item.DataItem;
+
                     switch (profProperty.PropertyName.ToLower())
                     {
                         case "lastname":
@@ -500,5 +765,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
             }
         }
+		
+		#endregion
     }
 }

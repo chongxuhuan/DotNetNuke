@@ -43,20 +43,47 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Security
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SendPassword UserModuleBase is used to allow a user to retrieve their password
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	03/21/2006  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class SendPassword : UserModuleBase
     {
+		#region "Private Members"
+
         private UserInfo _User;
         private int _UserCount = Null.NullInteger;
         private string ipAddress;
 
+		#endregion
+
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Redirect URL (after successful sending of password)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/11/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string RedirectURL
         {
             get
             {
                 string _RedirectURL = "";
+
                 if (Request.QueryString["returnurl"] != null)
                 {
+					//return to the url passed
                     _RedirectURL = HttpUtility.UrlDecode(Request.QueryString["returnurl"]);
+                    //redirect url should never contain a protocol ( if it does, it is likely a cross-site request forgery attempt )
                     if (_RedirectURL.Contains("://"))
                     {
                         _RedirectURL = "";
@@ -65,17 +92,27 @@ namespace DotNetNuke.Modules.Admin.Security
                     {
                         string baseURL = _RedirectURL.Substring(0, _RedirectURL.IndexOf("?returnurl"));
                         string returnURL = _RedirectURL.Substring(_RedirectURL.IndexOf("?returnurl") + 11);
+
                         _RedirectURL = string.Concat(baseURL, "?returnurl", HttpUtility.UrlEncode(returnURL));
                     }
                 }
                 if (String.IsNullOrEmpty(_RedirectURL))
                 {
+					//redirect to current page 
                     _RedirectURL = Globals.NavigateURL();
                 }
                 return _RedirectURL;
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Captcha control is used to validate the login
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool UseCaptcha
         {
             get
@@ -85,6 +122,10 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+		
         private void GetUser()
         {
             ArrayList arrUsers;
@@ -102,11 +143,16 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             bool isEnabled = true;
+
             if (MembershipProviderConfig.PasswordRetrievalEnabled)
             {
                 lblHelp.Text = Localization.GetString("SendPasswordHelp", LocalResourceFile);
@@ -135,6 +181,16 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -169,11 +225,22 @@ namespace DotNetNuke.Modules.Admin.Security
             loginLink.NavigateUrl = PortalSettings.EnablePopUps ? popUpUrl : url;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdSendPassword_Click runs when the Password Reminder button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdSendPassword_Click(Object sender, EventArgs e)
         {
             string strMessage = Null.NullString;
             string strLogMessage = Null.NullString;
             bool canSend = true;
+
             if (MembershipProviderConfig.RequiresQuestionAndAnswer && String.IsNullOrEmpty(txtAnswer.Text))
             {
                 GetUser();
@@ -188,16 +255,19 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (String.IsNullOrEmpty(txtUsername.Text.Trim()))
                 {
+					//No UserName provided
                     if (MembershipProviderConfig.RequiresUniqueEmail)
                     {
                         if (String.IsNullOrEmpty(txtEmail.Text.Trim()))
                         {
+							//No email address either (cannot retrieve password)
                             canSend = false;
                             strMessage = Localization.GetString("EnterUsernameEmail", LocalResourceFile);
                         }
                     }
                     else
                     {
+						//Cannot retrieve password
                         canSend = false;
                         strMessage = Localization.GetString("EnterUsername", LocalResourceFile);
                     }
@@ -286,6 +356,7 @@ namespace DotNetNuke.Modules.Admin.Security
                                                                               PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
                         objEventLogInfo.LogTypeKey = "PASSWORD_SENT_SUCCESS";
                         objEventLog.AddLog(objEventLogInfo);
+
                         UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.GreenSuccess);
                     }
                     else
@@ -301,6 +372,7 @@ namespace DotNetNuke.Modules.Admin.Security
                         objEventLogInfo.LogTypeKey = "PASSWORD_SENT_FAILURE";
                         objEventLogInfo.LogProperties.Add(new LogDetailInfo("Cause", strMessage));
                         objEventLog.AddLog(objEventLogInfo);
+
                         UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.RedError);
                     }
                     loginLink.Visible = true;
@@ -311,5 +383,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 }
             }
         }
+		
+		#endregion
     }
 }

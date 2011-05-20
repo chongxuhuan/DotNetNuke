@@ -35,11 +35,25 @@ using DotNetNuke.Entities.Tabs;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Links : SkinObjectBase
     {
+		#region "Private Members"
+
         private string _alignment;
         private bool _forceLinks = true;
         private string _level;
+
+		#endregion
+
+		#region "Public Members"
 
         public string Alignment
         {
@@ -82,6 +96,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 _forceLinks = value;
             }
         }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
         protected override void OnLoad(EventArgs e)
         {
@@ -100,28 +118,42 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (Separator.IndexOf("src=") != -1)
                 {
+					//Add the skinpath to image paths
                     Separator = Regex.Replace(Separator, "src=[']?", "$&" + PortalSettings.ActiveTab.SkinPath);
                 }
+				
+				//Wrap in a span
                 Separator = string.Format("<span class=\"{0}\">{1}</span>", strCssClass, Separator);
             }
             else
             {
                 Separator = " ";
             }
+			
+            //build links
             string strLinks = "";
+
             strLinks = BuildLinks(Level, strSeparator, strCssClass);
+			
+			//Render links, even if nothing is returned with the currently set level
             if (String.IsNullOrEmpty(strLinks) && ForceLinks)
             {
                 strLinks = BuildLinks("", strSeparator, strCssClass);
             }
             lblLinks.Text = strLinks;
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         private string BuildLinks(string strLevel, string strSeparator, string strCssClass)
         {
             var sbLinks = new StringBuilder();
+
             List<TabInfo> portalTabs = TabController.GetTabsBySortOrder(PortalSettings.PortalId);
             List<TabInfo> hostTabs = TabController.GetTabsBySortOrder(Null.NullInteger);
+
             foreach (TabInfo objTab in portalTabs)
             {
                 sbLinks.Append(ProcessLink(ProcessTab(objTab, strLevel, strCssClass), sbLinks.ToString().Length));
@@ -139,26 +171,26 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 switch (strLevel)
                 {
-                    case "same":
+                    case "same": //Render tabs on the same level as the current tab
                     case "":
                         if (objTab.ParentId == PortalSettings.ActiveTab.ParentId)
                         {
                             return AddLink(objTab.TabName, objTab.FullUrl, strCssClass);
                         }
                         break;
-                    case "child":
+                    case "child": //Render the current tabs child tabs
                         if (objTab.ParentId == PortalSettings.ActiveTab.TabID)
                         {
                             return AddLink(objTab.TabName, objTab.FullUrl, strCssClass);
                         }
                         break;
-                    case "parent":
+                    case "parent": //Render the current tabs parenttab
                         if (objTab.TabID == PortalSettings.ActiveTab.ParentId)
                         {
                             return AddLink(objTab.TabName, objTab.FullUrl, strCssClass);
                         }
                         break;
-                    case "root":
+                    case "root": //Render Root tabs
                         if (objTab.Level == 0)
                         {
                             return AddLink(objTab.TabName, objTab.FullUrl, strCssClass);
@@ -171,6 +203,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
         private string ProcessLink(string sLink, int iLinksLength)
         {
+			//wrap in a div if set to vertical
             if (String.IsNullOrEmpty(sLink))
             {
                 return "";
@@ -181,6 +214,7 @@ namespace DotNetNuke.UI.Skins.Controls
             }
             else if (!String.IsNullOrEmpty(Separator) && iLinksLength > 0)
             {
+				//If not vertical, then render the separator
                 sLink = string.Concat(Separator, sLink);
             }
             return sLink;
@@ -190,5 +224,7 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             return string.Format("<a class=\"{0}\" href=\"{1}\">{2}</a>", strCssClass, strURL, strTabName);
         }
+		
+		#endregion
     }
 }

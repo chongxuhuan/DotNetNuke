@@ -56,17 +56,23 @@ namespace DotNetNuke.Modules.Admin.Host
             {
                 var document = new XPathDocument(resourcefile);
                 var navigator = document.CreateNavigator();
+
                 var nodes = navigator.Select("/root/data[starts-with(@name, 'WhatsNew')]/@name");
+
                 var releasenotes = new List<ReleaseInfo>();
+
                 while (nodes.MoveNext())
                 {
                     var key = nodes.Current.Value;
                     var version = string.Format(Localization.GetString("notestitle.text", LocalResourceFile), key.Replace("WhatsNew.", string.Empty));
                     releasenotes.Add(new ReleaseInfo(Localization.GetString(key, LocalResourceFile), version));
                 }
+
                 releasenotes.Sort(CompareReleaseInfo);
+
                 WhatsNewList.DataSource = releasenotes;
                 WhatsNewList.DataBind();
+
                 header.InnerHtml = Localization.GetString("header.text", LocalResourceFile);
                 footer.InnerHtml = Localization.GetString("footer.text", LocalResourceFile);
             }
@@ -78,6 +84,7 @@ namespace DotNetNuke.Modules.Admin.Host
 
         private static int CompareReleaseInfo(ReleaseInfo notes1, ReleaseInfo notes2)
         {
+			//We do this in reverse order so that we have the latest release at the top of the list
             return notes2.Version.CompareTo(notes1.Version);
         }
 
@@ -87,6 +94,11 @@ namespace DotNetNuke.Modules.Admin.Host
 
         internal class ReleaseInfo
         {
+            /// <summary>
+            /// Initializes a new instance of the ReleaseInfo class.
+            /// </summary>
+            /// <param name="notes"></param>
+            /// <param name="version"></param>
             public ReleaseInfo(string notes, string version)
             {
                 Notes = notes;

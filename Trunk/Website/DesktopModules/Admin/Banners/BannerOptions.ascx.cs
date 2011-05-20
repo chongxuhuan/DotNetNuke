@@ -41,7 +41,14 @@ namespace DotNetNuke.Modules.Admin.Vendors
 {
     public partial class BannerOptions : PortalModuleBase
     {
-        protected override void OnLoad(EventArgs e)
+        /// <summary>
+		/// The Page_Load event handler on this User Control is used to
+        /// obtain a DataReader of banner information from the Banners
+        /// table, and then databind the results to a templated DataList
+        /// server control.  It uses the DotNetNuke.BannerDB()
+        /// data component to encapsulate all data functionality.
+		/// </summary>
+		protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
@@ -53,13 +60,18 @@ namespace DotNetNuke.Modules.Admin.Vendors
             {
                 if (!Page.IsPostBack)
                 {
+					//Obtain banner information from the Banners table and bind to the list control
                     var objBannerTypes = new BannerTypeController();
+
                     cboType.DataSource = objBannerTypes.GetBannerTypes();
                     cboType.DataBind();
                     cboType.Items.Insert(0, new ListItem(Localization.GetString("AllTypes", LocalResourceFile), "-1"));
+
                     if (ModuleId > 0)
                     {
+                        //Get settings from the database
                         Hashtable settings = new ModuleController().GetModuleSettings(ModuleId);
+
                         if (optSource.Items.FindByValue(Convert.ToString(settings["bannersource"])) != null)
                         {
                             optSource.Items.FindByValue(Convert.ToString(settings["bannersource"])).Selected = true;
@@ -115,7 +127,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -127,7 +139,9 @@ namespace DotNetNuke.Modules.Admin.Vendors
             {
                 if (Page.IsValid)
                 {
+					//Update settings in the database
                     var objModules = new ModuleController();
+
                     if (optSource.SelectedItem != null)
                     {
                         objModules.UpdateModuleSetting(ModuleId, "bannersource", optSource.SelectedItem.Value);
@@ -148,10 +162,12 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     objModules.UpdateModuleSetting(ModuleId, "colwidth", txtColWidth.Text);
                     objModules.UpdateModuleSetting(ModuleId, "padding", txtPadding.Text);
                     objModules.UpdateModuleSetting(ModuleId, "bannerclickthroughurl", txtBannerClickThroughURL.Text);
+
+                    //Redirect back to the portal home page
                     Response.Redirect(Globals.NavigateURL(), true);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -163,16 +179,29 @@ namespace DotNetNuke.Modules.Admin.Vendors
             {
                 Response.Redirect(Globals.NavigateURL(), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DNNTxtBannerGroup_PopulateOnDemand runs when something is entered on the
+        /// BannerGroup field
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	9/29/2006	Implement a callback to display current groups
+        ///  to user so the BannerGroup can be easily selected
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void DNNTxtBannerGroup_PopulateOnDemand(object source, DNNTextSuggestEventArgs e)
         {
             DataTable dt;
             DNNNode objNode;
+
             var objBanners = new BannerController();
             dt = objBanners.GetBannerGroups(PortalId);
             DataRow[] dr;

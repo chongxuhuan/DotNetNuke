@@ -38,6 +38,17 @@ using DotNetNuke.Services.Scheduling;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ViewSchedule PortalModuleBase is used to manage the scheduled items.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ViewSchedule : PortalModuleBase, IActionable
     {
 
@@ -68,6 +79,19 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetTimeLapse formats the time lapse as a string
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string GetTimeLapse(int timeLapse, string timeLapseMeasurement)
         {
             if (timeLapse != Null.NullInteger)
@@ -102,6 +126,21 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             return Localization.GetString("n/a", LocalResourceFile);
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -110,7 +149,10 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                 if (!Page.IsPostBack)
                 {
                     var arrSchedule = SchedulingProvider.Instance().GetSchedule();
+
+                    //Lcalize Grid
                     Localization.LocalizeDataGrid(ref dgSchedule, LocalResourceFile);
+
                     dgSchedule.DataSource = arrSchedule;
                     dgSchedule.DataBind();
                 }
@@ -120,6 +162,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
 
     }
 }

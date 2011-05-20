@@ -52,6 +52,22 @@ using DotNetNuke.UI.WebControls;
 namespace DotNetNuke.Modules.Admin.LogViewer
 {
 
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : LogViewer
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality for viewing the Site Logs
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///   [cnurse] 17/9/2004  Updated for localization, Help and 508. Also 
+    ///                       consolidated Send Exceptions into one set of 
+    ///                       controls
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class LogViewer : PortalModuleBase, IActionable, ILogViewer
     {
 
@@ -104,7 +120,8 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                 {
                     ddlPortalid.Items.Add(new ListItem(portal.PortalName, portal.PortalID.ToString()));
                 }
-
+				
+                //check to see if any portalname is empty, otherwise set it to portalid
                 for (var i = 0; i <= ddlPortalid.Items.Count - 1; i++)
                 {
                     if (String.IsNullOrEmpty(ddlPortalid.Items[i].Text))
@@ -250,6 +267,7 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                 using(var attachment = new Attachment(filePath, ct))
                 {
                     attachments.Add(attachment);
+
                     returnMsg = Mail.SendEmail(strFromEmailAddress, strFromEmailAddress, txtEmailAddress.Text, txtSubject.Text, txtMessage.Text, attachments);
                 }
 
@@ -275,11 +293,13 @@ namespace DotNetNuke.Modules.Admin.LogViewer
         public string GetPropertiesText(object obj)
         {
             var objLogInfo = (LogInfo)obj;
+
             var objLogProperties = objLogInfo.LogProperties;
             var str = new StringBuilder();
             int i;
             for (i = 0; i <= objLogProperties.Count - 1; i++)
             {
+				//display the values in the Panel child controls.
                 var ldi = (LogDetailInfo)objLogProperties[i];
                 str.Append("<p><strong>" + ldi.PropertyName + "</strong>: " + Server.HtmlEncode(ldi.PropertyValue) + "</p>");
             }
@@ -327,12 +347,25 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             _logTypeDictionary = logController.GetLogTypeInfoDictionary();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load runs when the page loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 17/9/2004  Updated for localization, Help and 508
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
+				// If this is the first visit to the page, populate the site data
                 if (Page.IsPostBack == false)
                 {
                     var logController = new LogController();
@@ -346,7 +379,7 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                     BindData();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -358,6 +391,8 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             objLoggingController.ClearLog();
             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("LogCleared", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
             var objEventLog = new EventLogController();
+			
+            //add entry to log recording it was cleared
             objEventLog.AddLog(Localization.GetString("LogCleared", LocalResourceFile),
                                Localization.GetString("Username", LocalResourceFile) + ":" + UserInfo.Username,
                                PortalSettings,

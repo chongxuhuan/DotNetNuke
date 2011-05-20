@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="false" CodeFile="foldermappings.ascx.cs" Inherits="DotNetNuke.Modules.Admin.FileManager.FolderMappings" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
+<%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <script language="javascript" type="text/javascript">
 <!--
     function grdMappings_OnRowDragStarted(sender, args) {
@@ -38,6 +39,7 @@
                 OnItemCommand="grdMappings_ItemCommand" OnItemDataBound="grdMappings_ItemDataBound">
                 <MasterTableView DataKeyNames="FolderMappingID">
                     <Columns>
+                        <telerik:GridDragDropColumn HeaderStyle-Width="18px" />
                         <dnn:DnnGridTemplateColumn>
                             <ItemStyle Width="60px" />
                             <ItemTemplate>
@@ -47,14 +49,6 @@
                         </dnn:DnnGridTemplateColumn>
                         <dnn:DnnGridBoundColumn DataField="MappingName" HeaderText="Name" />
                         <dnn:DnnGridBoundColumn DataField="FolderProviderType" HeaderText="Type" />
-                        <dnn:DnnGridTemplateColumn HeaderText="Enabled">
-                            <HeaderStyle HorizontalAlign="Center" />
-                            <ItemStyle HorizontalAlign="Center" Width="70px" />
-                            <ItemTemplate>
-                                <asp:Button ID="btnChangeAvailability" runat="server" CommandName="ChangeAvailability" CommandArgument='<%# Eval("FolderMappingID") %>' style="display:none" />
-                                <asp:CheckBox ID="chkEnabled" runat="server" Checked='<%# Eval("IsEnabled") %>' Enabled='<%# Eval("IsEditable") %>' />
-                            </ItemTemplate>
-                        </dnn:DnnGridTemplateColumn>
                     </Columns>
                 </MasterTableView>
                 <ClientSettings AllowRowsDragDrop="true">

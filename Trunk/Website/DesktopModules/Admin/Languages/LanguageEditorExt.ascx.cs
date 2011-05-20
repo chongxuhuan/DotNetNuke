@@ -37,12 +37,28 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Languages
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Manages translations for Resource files
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[vmasanas]	10/04/2004  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class LanguageEditorExt : PortalModuleBase
     {
+		#region "Private Members"
+		
         private string highlight;
         private string locale;
         private string mode;
         private string resfile;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected string ReturnUrl
         {
@@ -52,6 +68,33 @@ namespace DotNetNuke.Modules.Admin.Languages
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Loads resources from file 
+        /// </summary>
+        /// <param name="mode">Active editor mode</param>
+        /// <param name="type">Resource being loaded (edit or default)</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Depending on the editor mode, resources will be overrided using default DNN schema.
+        /// "Edit" resources will only load selected file.
+        /// When loading "Default" resources (to be used on the editor as helpers) fallback resource
+        /// chain will be used in order for the editor to be able to correctly see what 
+        /// is the current default value for the any key. This process depends on the current active
+        /// editor mode:
+        /// - System: when editing system base resources on en-US needs to be loaded
+        /// - Host: base en-US, and base locale especific resource
+        /// - Portal: base en-US, host override for en-US, base locale especific resource, and host override 
+        /// for locale
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	25/03/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string LoadFile(string mode, string type)
         {
             string file = "";
@@ -60,6 +103,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             switch (type)
             {
                 case "Edit":
+                    //Only load resources from the file being edited
                     file = ResourceFile(locale, mode);
                     temp = LoadResource(file);
                     if (temp != null)
@@ -68,6 +112,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                     }
                     break;
                 case "Default":
+                    //Load system default
                     file = ResourceFile(Localization.SystemLocale, "System");
                     t = LoadResource(file);
                     switch (mode)
@@ -75,6 +120,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                         case "Host":
                             if (locale != Localization.SystemLocale)
                             {
+								//Load base file for selected locale
                                 file = ResourceFile(locale, "System");
                                 temp = LoadResource(file);
                                 if (temp != null)
@@ -84,6 +130,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                             }
                             break;
                         case "Portal":
+                            //Load host override for default locale
                             file = ResourceFile(Localization.SystemLocale, "Host");
                             temp = LoadResource(file);
                             if (temp != null)
@@ -92,12 +139,15 @@ namespace DotNetNuke.Modules.Admin.Languages
                             }
                             if (locale != Localization.SystemLocale)
                             {
+								//Load base file for locale
                                 file = ResourceFile(locale, "System");
                                 temp = LoadResource(file);
                                 if (temp != null)
                                 {
                                     t = temp;
                                 }
+								
+								//Load host override for selected locale
                                 file = ResourceFile(locale, "Host");
                                 temp = LoadResource(file);
                                 if (temp != null)
@@ -112,6 +162,18 @@ namespace DotNetNuke.Modules.Admin.Languages
             return t;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Loads resource from file
+        /// </summary>
+        /// <param name="filepath">Resources file</param>
+        /// <returns>Resource value</returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	25/03/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string LoadResource(string filepath)
         {
             var d = new XmlDocument();
@@ -138,11 +200,40 @@ namespace DotNetNuke.Modules.Admin.Languages
             return ret;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Returns the resource file name for a given resource and language
+        /// </summary>
+        /// <param name="mode">Identifies the resource being searched (System, Host, Portal)</param>
+        /// <returns>Localized File Name</returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	04/10/2004	Created
+        /// 	[vmasanas]	25/03/2006	Modified to support new host resources and incremental saving
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string ResourceFile(string language, string mode)
         {
             return Localization.GetResourceFileName(Server.MapPath("~\\" + resfile), language, mode, PortalId);
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Loads resource file and default data
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	07/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -174,24 +265,48 @@ namespace DotNetNuke.Modules.Admin.Languages
                     lblDefault.Text = Server.HtmlDecode(defaultValue);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Returns to language editor control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	04/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdCancel_Click(Object sender, EventArgs e)
         {
             try
             {
                 Response.Redirect(ReturnUrl, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Saves the translation to the resource file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	07/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(Object sender, EventArgs e)
         {
             XmlNode node;
@@ -211,6 +326,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                 filename = ResourceFile(locale, mode);
                 if (!File.Exists(filename))
                 {
+					//load system default
                     resDoc.Load(ResourceFile(Localization.SystemLocale, "System"));
                     IsNewFile = true;
                 }
@@ -224,14 +340,17 @@ namespace DotNetNuke.Modules.Admin.Languages
                         node = resDoc.SelectSingleNode("//root/data[@name='" + lblName.Text + "']/value");
                         if (node == null)
                         {
+							//missing entry
                             nodeData = resDoc.CreateElement("data");
                             attr = resDoc.CreateAttribute("name");
                             attr.Value = lblName.Text;
                             nodeData.Attributes.Append(attr);
                             resDoc.SelectSingleNode("//root").AppendChild(nodeData);
+
                             node = nodeData.AppendChild(resDoc.CreateElement("value"));
                         }
                         node.InnerXml = teContent.Text;
+
                         resDoc.Save(filename);
                         break;
                     case "Host":
@@ -250,8 +369,10 @@ namespace DotNetNuke.Modules.Admin.Languages
                                 attr.Value = lblName.Text;
                                 nodeData.Attributes.Append(attr);
                                 resDoc.SelectSingleNode("//root").AppendChild(nodeData);
+
                                 node = nodeData.AppendChild(resDoc.CreateElement("value"));
                                 node.InnerXml = teContent.Text;
+
                                 resDoc.Save(filename);
                             }
                         }
@@ -267,20 +388,24 @@ namespace DotNetNuke.Modules.Admin.Languages
                                     attr.Value = lblName.Text;
                                     nodeData.Attributes.Append(attr);
                                     resDoc.SelectSingleNode("//root").AppendChild(nodeData);
+
                                     node = nodeData.AppendChild(resDoc.CreateElement("value"));
                                 }
                                 node.InnerXml = teContent.Text;
                             }
                             else if (node != null)
                             {
+								//remove item = default
                                 resDoc.SelectSingleNode("//root").RemoveChild(node.ParentNode);
                             }
                             if (resDoc.SelectNodes("//root/data").Count > 0)
                             {
+								//there's something to save
                                 resDoc.Save(filename);
                             }
                             else if (File.Exists(filename))
                             {
+								//nothing to be saved, if file exists delete
                                 File.Delete(filename);
                             }
                         }
@@ -288,10 +413,12 @@ namespace DotNetNuke.Modules.Admin.Languages
                 }
                 Response.Redirect(ReturnUrl, true);
             }
-            catch (Exception)
+            catch (Exception) //Module failed to load
             {
                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Save.ErrorMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
             }
+			
+			#endregion
         }
     }
 }

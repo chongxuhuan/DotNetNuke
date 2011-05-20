@@ -66,6 +66,7 @@ namespace DotNetNuke.Modules.Admin.Sales
             {
                 double dblTotal;
                 string strCurrency;
+
                 if ((Request.QueryString["RoleID"] != null))
                 {
                     RoleID = Int32.Parse(Request.QueryString["RoleID"]);
@@ -76,6 +77,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     if (RoleID != -1)
                     {
                         RoleInfo objRole = objRoles.GetRole(RoleID, PortalSettings.PortalId);
+
                         if (objRole.RoleID != -1)
                         {
                             lblServiceName.Text = objRole.RoleName;
@@ -104,16 +106,18 @@ namespace DotNetNuke.Modules.Admin.Sales
                                 lblFrequency.Text = entry.Text;
                             }
                             txtUnits.Text = "1";
-                            if (objRole.BillingFrequency == "1")
+                            if (objRole.BillingFrequency == "1") //one-time fee
                             {
                                 txtUnits.Enabled = false;
                             }
                         }
-                        else
+                        else //security violation attempt to access item not related to this Module
                         {
                             Response.Redirect(Globals.NavigateURL(), true);
                         }
                     }
+					
+                    //Store URL Referrer to return to portal
                     if (Request.UrlReferrer != null)
                     {
                         ViewState["UrlReferrer"] = Convert.ToString(Request.UrlReferrer);
@@ -133,10 +137,11 @@ namespace DotNetNuke.Modules.Admin.Sales
                 }
                 dblTotal = Convert.ToDouble(lblFee.Text)*Convert.ToDouble(txtUnits.Text);
                 lblTotal.Text = dblTotal.ToString("#.##");
+
                 lblFeeCurrency.Text = strCurrency;
                 lblTotalCurrency.Text = strCurrency;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -149,6 +154,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                 string strPaymentProcessor = "";
                 string strProcessorUserId = "";
                 string strProcessorPassword = "";
+
                 if (Page.IsValid)
                 {
                     var objPortalController = new PortalController();
@@ -161,6 +167,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     }
                     if (strPaymentProcessor == "PayPal")
                     {
+						//build secure PayPal URL
                         string strPayPalURL = "";
                         strPayPalURL = "https://www.paypal.com/xclick/business=" + Globals.HTTPPOSTEncode(strProcessorUserId);
                         strPayPalURL = strPayPalURL + "&item_name=" +
@@ -175,11 +182,13 @@ namespace DotNetNuke.Modules.Admin.Sales
                         strPayPalURL = strPayPalURL + "&cancel_return=" + Globals.HTTPPOSTEncode("http://" + Globals.GetDomainName(Request));
                         strPayPalURL = strPayPalURL + "&notify_url=" + Globals.HTTPPOSTEncode("http://" + Globals.GetDomainName(Request) + "/admin/Sales/PayPalIPN.aspx");
                         strPayPalURL = strPayPalURL + "&undefined_quantity=&no_note=1&no_shipping=1";
+
+                        //redirect to PayPal
                         Response.Redirect(strPayPalURL, true);
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -191,7 +200,7 @@ namespace DotNetNuke.Modules.Admin.Sales
             {
                 Response.Redirect(Convert.ToString(ViewState["UrlReferrer"]), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -208,19 +217,23 @@ namespace DotNetNuke.Modules.Admin.Sales
                 objRequest.Method = "POST";
                 objRequest.ContentLength = strPost.Length;
                 objRequest.ContentType = "application/x-www-form-urlencoded";
+
                 objStream = new StreamWriter(objRequest.GetRequestStream());
                 objStream.Write(strPost);
                 objStream.Close();
+
                 var objResponse = (HttpWebResponse) objRequest.GetResponse();
                 StreamReader sr;
                 sr = new StreamReader(objResponse.GetResponseStream());
                 string strResponse = sr.ReadToEnd();
                 sr.Close();
+
                 int intPos1 = strResponse.IndexOf(ToCurrency + "</B>");
                 int intPos2 = strResponse.LastIndexOf("<B>", intPos1);
+
                 retValue = Convert.ToDouble(strResponse.Substring(intPos2 + 3, (intPos1 - intPos2) - 4));
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

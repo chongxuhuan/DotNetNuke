@@ -41,6 +41,18 @@ using DotNetNuke.UI.Skins;
 namespace DotNetNuke.Modules.Admin.Portals
 {
 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SiteWizard Wizard is a user-friendly Wizard that leads the user through the
+    ///	process of setting up a new site
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	10/8/2004	created
+    ///     [cnurse]    12/04/2006  converted to use ASP.NET 2 Wizard classes
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class SiteWizard : PortalModuleBase
     {
 
@@ -58,9 +70,20 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindContainers manages the containers
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindContainers()
         {
             ctlPortalContainer.Clear();
+
             if (chkIncludeAll.Checked)
             {
                 GetContainers(ContainerType.All, "", "");
@@ -91,8 +114,24 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetContainers gets the containers and binds the lists to the controls
+        ///	the buttons
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="type">An enum indicating what type of containers to load</param>
+        /// <param name="skinType">A string that identifies whether the skin is Host "[G]" or Site "[L]"</param>
+        /// <param name="strFolder">The folder to search for skins</param>
+        /// <history>
+        /// 	[cnurse]	12/14/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GetContainers(ContainerType type, string skinType, string strFolder)
         {
+
+            //Configure SkinControl
             ctlPortalContainer.Columns = 3;
             ctlPortalContainer.SkinRoot = SkinController.RootContainer;
             switch (type)
@@ -112,19 +151,44 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetSkins gets the skins and containers and binds the lists to the controls
+        ///	the buttons
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/04/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GetSkins()
         {
+
+            //Configure SkinControl
             ctlPortalSkin.Columns = 3;
             ctlPortalSkin.SkinRoot = SkinController.RootSkin;
             ctlPortalSkin.LoadAllSkins(false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetTemplates gets the skins and containers and binds the lists to the control
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/04/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GetTemplates()
         {
             string strFolder;
+
             strFolder = Globals.HostMapPath;
             if (Directory.Exists(strFolder))
             {
+				//admin.template and a portal template are required at minimum
                 string[] fileEntries = Directory.GetFiles(strFolder, "*.template");
                 foreach (string strFileName in fileEntries)
                 {
@@ -142,6 +206,16 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UseTemplate sets the page ready to select a Template
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/04/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UseTemplate()
         {
             lstTemplate.Enabled = chkTemplate.Checked;
@@ -155,6 +229,16 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/11/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -175,31 +259,59 @@ namespace DotNetNuke.Modules.Admin.Portals
                 Wizard.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/save.gif\" border=\"0\" /> " + Localization.GetString("Finish", LocalResourceFile);
                 if (!Page.IsPostBack)
                 {
+                    //Get Templates for Page 1
                     GetTemplates();
                     chkTemplate.Checked = false;
                     lstTemplate.Enabled = false;
+
+                    //Get Skins for Pages 2
                     GetSkins();
+
+                    //Get Details for Page 4
                     var objPortalController = new PortalController();
                     var objPortal = objPortalController.GetPortal(PortalId);
                     txtPortalName.Text = objPortal.PortalName;
                     txtDescription.Text = objPortal.Description;
                     txtKeyWords.Text = objPortal.KeyWords;
+
+                    //Get Details for Page 5
                     urlLogo.Url = objPortal.LogoFile;
                     urlLogo.FileFilter = Globals.glbImageFileTypes;
+
                     UseTemplate();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// chkIncludeAll_CheckedChanged runs when include all containers checkbox status is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/15/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnIncludeAllCheckChanged(object sender, EventArgs e)
         {
             BindContainers();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// chkTemplate_CheckedChanged runs when use template checkbox status is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/13/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnTemplateCheckChanged(object sender, EventArgs e)
         {
             if (chkTemplate.Checked)
@@ -209,6 +321,16 @@ namespace DotNetNuke.Modules.Admin.Portals
             UseTemplate();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// lstTemplate_SelectedIndexChanged runs when the selected template is changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/04/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnTemplateSelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstTemplate.SelectedIndex > -1)
@@ -217,6 +339,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                 XmlNode node;
                 var strTemplatePath = Globals.HostMapPath;
                 var strTemplateFile = lstTemplate.SelectedItem.Text + ".template";
+				
+				//open the XML file
                 try
                 {
                     xmlDoc.Load(strTemplatePath + strTemplateFile);
@@ -255,6 +379,16 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_ActiveStepChanged runs when the Wizard page has been changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnWizardActiveStepChanged(object sender, EventArgs e)
         {
             switch (Wizard.ActiveStepIndex)
@@ -265,13 +399,29 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_FinishButtonClick runs when the Finish Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	10/12/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnWizardFinishedClick(object sender, WizardNavigationEventArgs e)
         {
             var objPortalController = new PortalController();
+
+            //use Portal Template to update portal content pages
             if (lstTemplate.SelectedIndex != -1)
             {
                 string strTemplateFile = lstTemplate.SelectedItem.Text + ".template";
+
+                //process zip resource file if present
                 objPortalController.ProcessResourceFile(PortalSettings.HomeDirectoryMapPath, Globals.HostMapPath + strTemplateFile);
+
+                //Process Template
                 switch (optMerge.SelectedValue)
                 {
                     case "Ignore":
@@ -285,24 +435,43 @@ namespace DotNetNuke.Modules.Admin.Portals
                         break;
                 }
             }
+			
+            //update Portal info in the database
             PortalInfo objPortal = objPortalController.GetPortal(PortalId);
             objPortal.Description = txtDescription.Text;
             objPortal.KeyWords = txtKeyWords.Text;
             objPortal.PortalName = txtPortalName.Text;
             objPortal.LogoFile = urlLogo.Url;
             objPortalController.UpdatePortalInfo(objPortal);
+
+            //Set Portal Skin
             SkinController.SetSkin(SkinController.RootSkin, PortalId, SkinType.Portal, ctlPortalSkin.SkinSrc);
             SkinController.SetSkin(SkinController.RootSkin, PortalId, SkinType.Admin, ctlPortalSkin.SkinSrc);
+
+            //Set Portal Container
             SkinController.SetSkin(SkinController.RootContainer, PortalId, SkinType.Portal, ctlPortalContainer.SkinSrc);
             SkinController.SetSkin(SkinController.RootContainer, PortalId, SkinType.Admin, ctlPortalContainer.SkinSrc);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_NextButtonClickruns when the next Button is clicked.  It provides
+        ///	a mechanism for cancelling the page change if certain conditions aren't met.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnWizardNextClick(object sender, WizardNavigationEventArgs e)
         {
             string strMessage;
+
             switch (e.CurrentStepIndex)
             {
-                case 1:
+                case 1: //Templates
+                    //Before we leave Page 1, the user must have selected a Portal
                     if (lstTemplate.SelectedIndex == -1)
                     {
                         if (chkTemplate.Checked)
@@ -313,6 +482,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     }
                     else
                     {
+						//Check Template Validity before proceeding
                         string schemaFilename = Server.MapPath("DesktopModules/Admin/Portals/portal.template.xsd");
                         string xmlFilename = Globals.HostMapPath + lstTemplate.SelectedItem.Text + ".template";
                         var xval = new PortalTemplateValidator();
@@ -320,6 +490,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         {
                             strMessage = Localization.GetString("InvalidTemplate", LocalResourceFile);
                             lblTemplateMessage.Text = string.Format(strMessage, lstTemplate.SelectedItem.Text + ".template");
+                            //Cancel Page move if invalid template
                             e.Cancel = true;
                         }
                     }

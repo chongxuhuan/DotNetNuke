@@ -50,17 +50,35 @@ using DotNetNuke.UI.Skins.Controls;
 namespace DotNetNuke.Modules.Admin.Newsletters
 {
 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Newsletter PortalModuleBase is used to manage a Newsletters
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	2004-09-13	Updated to reflect design changes for Help, 508 support and localisation
+    ///     [lpointer]  2006-02-03  Added 'From' email address support.
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Newsletter : PortalModuleBase
     {
 
         #region Private Methods
 
+        /// <summary>
+        /// helper function for ManageDirectoryBase
+        /// <history>
+        /// [vmasanas] 2007-09-07 added
+        /// [sleupold] 2008-02-10 support for local links added
+        /// </history>
+        /// </summary>
         private static string FormatUrls(Match m)
         {
             var match = m.Value;
             var url = m.Groups["url"].Value;
             var result = match;
-            if (url.StartsWith("/"))
+            if (url.StartsWith("/")) //server absolute path
             {
                 return result.Replace(url, Globals.AddHTTP(HttpContext.Current.Request.Url.Host) + url);
             }
@@ -71,6 +89,15 @@ namespace DotNetNuke.Modules.Admin.Newsletters
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	2004-09-10	Updated to reflect design changes for Help, 508 support and localisation
+        ///     [sleupold]  2007-10-07  Relay address and Language adoption added
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -89,12 +116,24 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 plLanguages.Visible = (LocaleController.Instance.GetLocales(PortalId).Count > 1);
                 pnlRelayAddress.Visible = (cboSendMethod.SelectedValue == "RELAY");
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdSend_Click runs when the cmdSend Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	2004-09-10	Updated to reflect design changes for Help, 508 support and localisation
+        ///     [sleupold]	2007-08-15	added support for tokens and SendTokenizedBulkEmail
+        ///     [sleupold]  2007-09-09   moved Roles to SendTokenizedBulkEmail
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnSendClick(Object sender, EventArgs e)
         {
             var message = "";
@@ -266,6 +305,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             {
                 int fileId = int.Parse(ctlAttachment.Url.Substring(7));
                 var objFileInfo = FileManager.Instance.GetFile(fileId);
+                //TODO: support secure storage locations for attachments! [sleupold 06/15/2007]
                 email.AddAttachment(FileManager.Instance.GetFileContent(objFileInfo), 
                                                new ContentType { MediaType = objFileInfo.ContentType, Name = objFileInfo.FileName });
             }
@@ -337,21 +377,33 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             }
         }
 
+        /// <summary>
+        /// Display a preview of the message to be sent out
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignores</param>
+        /// <history>
+        /// 	[vmasanas]	2007-09-07  added
+        /// </history>
         protected void OnPreviewClick(object sender, EventArgs e)
         {
             try
             {
                 if (String.IsNullOrEmpty(txtSubject.Text) || String.IsNullOrEmpty(teMessage.Text))
                 {
+					//no subject or message
                     var strResult = Localization.GetString("MessageValidation", LocalResourceFile);
                     const ModuleMessage.ModuleMessageType msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
                     UI.Skins.Skin.AddModuleMessage(this, strResult, msgResult);
                     ((CDefault) Page).ScrollToControl(Page.Form);
                     return;
                 }
+				
+				//convert links to absolute
                 var strBody = teMessage.Text;
                 const string pattern = "<(a|link|img|script|object).[^>]*(href|src|action)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
                 strBody = Regex.Replace(strBody, pattern, FormatUrls);
+
                 if (chkReplaceTokens.Checked)
                 {
                     var objTr = new TokenReplace();
@@ -371,7 +423,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 }
                 pnlPreview.Visible = true;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

@@ -36,9 +36,25 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The LanguagePackEditor ModuleUserControlBase is used to edit a Language
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	02/14/2008  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class LanguagePackEditor : PackageEditorBase
     {
+		#region "Private Methods"
+
         private LanguagePackInfo _languagePack;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected override string EditorID
         {
@@ -68,6 +84,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         private void BindLanguagePack()
         {
             cboLanguage.DataSource = LocaleController.Instance.GetLocales(Null.NullInteger).Values;
@@ -80,6 +100,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 if (LanguagePack.PackageType == LanguagePackType.Extension)
                 {
+					//Get all the packages but only bind to combo if not a language package
                     var packages = new List<PackageInfo>();
                     foreach (PackageInfo package in PackageController.GetPackages())
                     {
@@ -102,12 +123,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
         }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
             cmdEdit.Visible = !IsWizard;
         }
+		
+		#endregion
+		
+		#region "Public Methods"
 
         public override void Initialize()
         {
@@ -129,11 +158,17 @@ namespace DotNetNuke.Modules.Admin.Extensions
             base.OnLoad(e);
             cmdEdit.Click += cmdEdit_Click;
         }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
         protected void cmdEdit_Click(object sender, EventArgs e)
         {
             int languagesTab = TabController.GetTabByTabPath(ModuleContext.PortalId, "//Admin//Languages", Null.NullString);
             Response.Redirect(Globals.NavigateURL(languagesTab, "", "Locale=" + Language.Code), true);
         }
+		
+		#endregion
     }
 }

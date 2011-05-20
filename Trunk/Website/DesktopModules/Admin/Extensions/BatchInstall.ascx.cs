@@ -39,18 +39,62 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : BatchInstall
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality to BatchInstall  multiple Extensions(packages) to 
+    /// the Portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]   05/13/2008    Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class BatchInstall : ModuleUserControlBase
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindAuthSystems binds the Authentication Systems checkbox list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindAuthSystems()
         {
             BindPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "NoAuthSystems", lblAuthSystemsError);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindLanguages binds the languages checkbox list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindLanguages()
         {
             BindPackageItems("Language", lstLanguages, lblNoLanguages, "NoLanguages", lblLanguagesError);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindModules binds the modules checkbox list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindModules()
         {
             BindPackageItems("Module", lstModules, lblNoModules, "NoModules", lblModulesError);
@@ -59,6 +103,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         private void BindPackageItems(string packageType, CheckBoxList list, Label noItemsLabel, string noItemsKey, Label errorLabel)
         {
             string[] arrFiles;
+
             string InstallPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
             list.Items.Clear();
             if (Directory.Exists(InstallPath))
@@ -79,6 +124,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         strResource = strResource.Replace("_source", ")");
                         strResource = strResource.Replace("_", " (");
                         packageItem.Text = strResource;
+
                         list.Items.Add(packageItem);
                     }
                 }
@@ -98,22 +144,63 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindSkins binds the skins checkbox list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindSkins()
         {
             BindPackageItems("Skin", lstSkins, lblNoSkins, "NoSkins", lblSkinsError);
+
             BindPackageItems("Container", lstContainers, lblNoContainers, "NoContainers", null);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallLanguages installs the Optional Languages
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool InstallAuthSystems()
         {
             return InstallPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "InstallAuthSystemError");
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallLanguages installs the Optional Languages
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool InstallLanguages()
         {
             return InstallPackageItems("Language", lstLanguages, lblLanguagesError, "InstallLanguageError");
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallModules installs the Optional Modules
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool InstallModules()
         {
             return InstallPackageItems("Module", lstModules, lblModulesError, "InstallModuleError");
@@ -123,10 +210,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             bool success = false;
             string strErrorMessage = Null.NullString;
+
+            //Get current Script time-out
             int scriptTimeOut = Server.ScriptTimeout;
             try
             {
+                //Set Script timeout to MAX value
                 Server.ScriptTimeout = int.MaxValue;
+
                 string InstallPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
                 foreach (ListItem packageItem in list.Items)
                 {
@@ -148,6 +239,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             finally
             {
+				//restore Script timeout
                 Server.ScriptTimeout = scriptTimeOut;
             }
             if (!success)
@@ -157,6 +249,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             return success;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstallSkins installs the Optional Skins
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   05/13/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool InstallSkins()
         {
             bool skinSuccess = InstallPackageItems("Skin", lstSkins, lblSkinsError, "InstallSkinError");
@@ -197,6 +299,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             AuthSystemSuccess = InstallAuthSystems();
             if (moduleSuccess && skinSuccess && languagesSuccess && AuthSystemSuccess)
             {
+				//Refesh page to update lists
                 Response.Redirect(Request.RawUrl, true);
             }
         }

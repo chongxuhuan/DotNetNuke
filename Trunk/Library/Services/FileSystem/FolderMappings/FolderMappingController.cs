@@ -47,7 +47,7 @@ namespace DotNetNuke.Services.FileSystem
         #region Private Variables
 
         private static readonly DataProvider dataProvider = DataProvider.Instance();
-        private static readonly string cacheKeyPrefix = "GetFolderMappingSettings";
+        private const string CacheKeyPrefix = "GetFolderMappingSettings";
 
         #endregion
 
@@ -65,7 +65,6 @@ namespace DotNetNuke.Services.FileSystem
             objFolderMapping.FolderMappingID = dataProvider.AddFolderMapping(objFolderMapping.PortalID,
                                                                              objFolderMapping.MappingName,
                                                                              objFolderMapping.FolderProviderType,
-                                                                             objFolderMapping.IsEnabled,
                                                                              UserController.GetCurrentUserInfo().UserID);
 
             UpdateFolderMappingSettings(objFolderMapping);
@@ -76,14 +75,13 @@ namespace DotNetNuke.Services.FileSystem
         public void DeleteFolderMapping(int folderMappingID)
         {
             dataProvider.DeleteFolderMapping(folderMappingID);
-            DataCache.RemoveCache(cacheKeyPrefix + folderMappingID);
+            DataCache.RemoveCache(CacheKeyPrefix + folderMappingID);
         }
 
         public void UpdateFolderMapping(FolderMappingInfo objFolderMapping)
         {
             dataProvider.UpdateFolderMapping(objFolderMapping.FolderMappingID,
                                              objFolderMapping.MappingName,
-                                             objFolderMapping.IsEnabled,
                                              objFolderMapping.Priority,
                                              UserController.GetCurrentUserInfo().UserID);
 
@@ -112,9 +110,8 @@ namespace DotNetNuke.Services.FileSystem
 
         public Hashtable GetFolderMappingSettings(int folderMappingID)
         {
-            Hashtable objSettings;
-            string strCacheKey = cacheKeyPrefix + folderMappingID;
-            objSettings = (Hashtable)DataCache.GetCache(strCacheKey);
+            var strCacheKey = CacheKeyPrefix + folderMappingID;
+            var objSettings = (Hashtable)DataCache.GetCache(strCacheKey);
             if (objSettings == null)
             {
                 objSettings = new Hashtable();
@@ -142,7 +139,7 @@ namespace DotNetNuke.Services.FileSystem
                 {
                     CBO.CloseDataReader(dr, true);
                 }
-                int intCacheTimeout = 20 * Convert.ToInt32(Host.PerformanceSetting);
+                var intCacheTimeout = 20 * Convert.ToInt32(Host.PerformanceSetting);
                 DataCache.SetCache(strCacheKey, objSettings, TimeSpan.FromMinutes(intCacheTimeout));
             }
             return objSettings;
@@ -152,7 +149,7 @@ namespace DotNetNuke.Services.FileSystem
 
         #region Private Methods
 
-        private void UpdateFolderMappingSettings(FolderMappingInfo objFolderMapping)
+        private static void UpdateFolderMappingSettings(FolderMappingInfo objFolderMapping)
         {
             foreach (string sKey in objFolderMapping.FolderMappingSettings.Keys)
             {
@@ -160,7 +157,7 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
-        private void UpdateFolderMappingSetting(int folderMappingID, string settingName, string settingValue)
+        private static void UpdateFolderMappingSetting(int folderMappingID, string settingName, string settingValue)
         {
             IDataReader dr = null;
             try
@@ -185,7 +182,7 @@ namespace DotNetNuke.Services.FileSystem
                 CBO.CloseDataReader(dr, true);
             }
 
-            DataCache.RemoveCache(cacheKeyPrefix + folderMappingID);
+            DataCache.RemoveCache(CacheKeyPrefix + folderMappingID);
         }
 
         #endregion

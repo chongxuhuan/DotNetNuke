@@ -208,7 +208,7 @@
     <value>Icon File:</value>
   </data>
   <data name="appgalleryEndpoint.Text" xml:space="preserve">
-    <value>localhost:10408</value>
+    <value>appgallery.dotnetnuke.com</value>
   </data>
   <data name="appgalleryTracker.Text" xml:space="preserve">
     <value>&amp;r=appgallery</value>

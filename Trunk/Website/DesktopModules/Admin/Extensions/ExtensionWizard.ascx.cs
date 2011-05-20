@@ -39,6 +39,14 @@ using DotNetNuke.UI.Modules;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ExtensionWizard control is used to create a Extension
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	08/25/2008	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ExtensionWizard : ModuleUserControlBase
     {
         private Control _Control;
@@ -150,6 +158,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 PackageEditor.IsWizard = true;
             }
             phEditor.Controls.Add(PackageEditor as Control);
+
             var moduleControl = PackageEditor as IModuleControl;
             if (moduleControl != null)
             {
@@ -236,6 +245,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
             wizNewExtension.NextButtonClick += wizNewExtension_NextButtonClick;
 
             extensionForm.DataSource = Package;
+
+            //Bind the Owner control
             ownerForm.DataSource = Package;
             if (Package != null)
             {
@@ -271,11 +282,33 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizNewExtension_CancelButtonClick runs when the Cancel Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/25/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizNewExtension_CancelButtonClick(object sender, EventArgs e)
         {
+			//Redirect to Definitions page
             Response.Redirect(Globals.NavigateURL(), true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizNewExtension_NextButtonClick when the next Button is clicked.  It provides
+        ///	a mechanism for cancelling the page change if certain conditions aren't met.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/25/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizNewExtension_NextButtonClick(object sender, WizardNavigationEventArgs e)
         {
             switch (e.CurrentStepIndex)

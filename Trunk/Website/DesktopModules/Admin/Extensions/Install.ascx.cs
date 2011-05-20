@@ -44,12 +44,39 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : Install
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality to Install Extensions(packages) to the Portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]   07/26/2007    Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     partial class Install : ModuleUserControlBase
     {
+		#region "Members"
+
         private Installer _Installer;
         private PackageInfo _Package;
         private PackageType _PackageType;
+		
+		#endregion
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the FileName for the Uploade file
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   01/20/2009    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FileName
         {
             get
@@ -62,6 +89,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Installer
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   08/13/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected Installer Installer
         {
             get
@@ -70,6 +105,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Path to the Manifest File
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   08/13/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string ManifestFile
         {
             get
@@ -82,6 +125,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Package
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   08/13/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected PackageInfo Package
         {
             get
@@ -90,6 +141,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Package Type
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected PackageType PackageType
         {
             get
@@ -120,14 +179,24 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Return Url
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string ReturnURL
         {
             get
             {
                 string _ReturnUrl = Server.UrlDecode(Request.Params["returnUrl"]);
+
                 if (string.IsNullOrEmpty(_ReturnUrl))
                 {
                     int TabID = ModuleContext.PortalSettings.HomeTabId;
+
                     if (Request.Params["rtab"] != null)
                     {
                         TabID = int.Parse(Request.Params["rtab"]);
@@ -138,6 +207,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Temporary Installation Folder
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   08/13/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string TempInstallFolder
         {
             get
@@ -150,6 +227,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine binds the package to the Property Editor
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindPackage()
         {
             CreateInstaller();
@@ -159,15 +248,22 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     _Package = _Installer.Packages[0].Package;
                 }
-                packageForm.DataSource = _Package;
+                
+				//Bind Package Info
+				packageForm.DataSource = _Package;
                 packageForm.DataBind();
+
+                //Bind License Info
                 licenseForm.DataSource = _Package;
                 licenseForm.DataBind();
+
+                //Bind ReleaseNotes Info
                 releaseNotesForm.DataSource = _Package;
                 releaseNotesForm.DataBind();
             }
             else
             {
+				//Error reading Manifest
                 switch (wizInstall.ActiveStepIndex)
                 {
                     case 0:
@@ -183,6 +279,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine checks the Access Security
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CheckSecurity()
         {
             if (!ModuleContext.PortalSettings.UserInfo.IsSuperUser)
@@ -191,22 +295,36 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine creates the Installer
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CreateInstaller()
         {
             CheckSecurity();
             _Installer = new Installer(TempInstallFolder, ManifestFile, Request.MapPath("."), false);
+
+            //The Installer is created automatically with a SecurityAccessLevel of Host
+            //Check if the User has lowere Security and update as neccessary
             if (!ModuleContext.PortalSettings.UserInfo.IsSuperUser)
             {
                 if (ModuleContext.PortalSettings.UserInfo.IsInRole(ModuleContext.PortalSettings.AdministratorRoleName))
                 {
+					//Admin User
                     Installer.InstallerInfo.SecurityAccessLevel = SecurityAccessLevel.Admin;
                 }
                 else if (ModulePermissionController.CanAdminModule(ModuleContext.Configuration))
                 {
+					//Has Edit rights
                     Installer.InstallerInfo.SecurityAccessLevel = SecurityAccessLevel.Edit;
                 }
                 else if (ModulePermissionController.CanViewModule(ModuleContext.Configuration))
                 {
+					//Has View rights
                     Installer.InstallerInfo.SecurityAccessLevel = SecurityAccessLevel.View;
                 }
                 else
@@ -215,6 +333,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
             Installer.InstallerInfo.PortalID = InstallPortalId;
+
+            //Read the manifest
             if (Installer.InstallerInfo.ManifestFile != null)
             {
                 Installer.ReadManifest(true);
@@ -229,15 +349,31 @@ namespace DotNetNuke.Modules.Admin.Extensions
             manifestWriter.Close();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine installs the uploaded package
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void InstallPackage(WizardNavigationEventArgs e)
         {
             CreateInstaller();
             if (Installer.IsValid)
             {
+				//Reset Log
                 Installer.InstallerInfo.Log.Logs.Clear();
+
+                //Set the IgnnoreWhiteList flag
                 Installer.InstallerInfo.IgnoreWhiteList = chkIgnoreWhiteList.Checked;
+
+                //Set the Repair flag
                 Installer.InstallerInfo.RepairInstall = chkRepairInstall.Checked;
+
+                //Install
                 Installer.Install();
+
                 if (!Installer.IsValid)
                 {
                     lblInstallMessage.Text = Localization.GetString("InstallError", LocalResourceFile);
@@ -246,6 +382,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else
             {
+				//Error reading Manifest
                 switch (e.CurrentStepIndex)
                 {
                     case 3:
@@ -265,6 +402,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         private bool ValidatePackage()
         {
             bool isValid = Null.NullBoolean;
+
             CreateInstaller();
             if (Installer.InstallerInfo.ManifestFile != null)
             {
@@ -274,7 +412,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 if (rblLegacySkin.SelectedValue != "None")
                 {
+					//We need to create a manifest file so the installer can continue to run
                     CreateManifest();
+
+                    //Revalidate Package
                     isValid = ValidatePackage();
                 }
                 else
@@ -301,6 +442,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 pnlWhitelist.Visible = false;
                 pnlLegacy.Visible = false;
                 lblWarningMessage.Text = Localization.GetString("ZipError", LocalResourceFile);
+
+                //Error parsing zip
                 phLoadLogs.Controls.Add(Installer.InstallerInfo.Log.GetLogsTable());
             }
             else if (!string.IsNullOrEmpty(Installer.InstallerInfo.LegacyError))
@@ -337,6 +480,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             return isValid;
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
         protected string GetText(string type)
         {
             string text = Null.NullString;
@@ -351,6 +498,22 @@ namespace DotNetNuke.Modules.Admin.Extensions
             return text;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load runs when the page loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -400,9 +563,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             switch (wizInstall.ActiveStepIndex)
             {
-                case 1:
+                case 1: //Warning Page
                     if (ValidatePackage())
                     {
+						//Skip Warning Page
                         wizInstall.ActiveStepIndex = 2;
                     }
                     break;
@@ -417,6 +581,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizInstall_CancelButtonClick runs when the Cancel Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/13/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizInstall_CancelButtonClick(object sender, EventArgs e)
         {
             try
@@ -425,14 +599,25 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     Directory.Delete(TempInstallFolder, true);
                 }
+				//Redirect to Definitions page
                 Response.Redirect(ReturnURL, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizInstall_FinishButtonClick runs when the Finish Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/13/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizInstall_FinishButtonClick(object sender, WizardNavigationEventArgs e)
         {
             try
@@ -441,6 +626,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     Installer.DeleteTempFolder();
                 }
+				
+                //Redirect to Definitions page
                 Response.Redirect(ReturnURL, true);
             }
             catch (Exception exc)
@@ -449,6 +636,17 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_NextButtonClickruns when the next Button is clicked.  It provides
+        ///	a mechanism for cancelling the page change if certain conditions aren't met.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/13/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizInstall_NextButtonClick(object sender, WizardNavigationEventArgs e)
         {
             switch (e.CurrentStepIndex)
@@ -482,10 +680,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         e.Cancel = true;
                     }
                     break;
-                case 1:
+                case 1: //Warning Page
                     e.Cancel = !ValidatePackage();
                     break;
-                case 4:
+                case 4: //Accept Terms 
                     if (chkAcceptLicense.Checked)
                     {
                         InstallPackage(e);
@@ -495,10 +693,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         lblAcceptMessage.Text = Localization.GetString("AcceptTerms", LocalResourceFile);
                         lblAcceptMessage.Visible = true;
                         e.Cancel = true;
+
+                        //Rebind package
                         BindPackage();
                     }
                     break;
             }
         }
+		
+		#endregion
     }
 }

@@ -34,14 +34,44 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.SearchInput
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Modules.SearchInput
+    /// Project:    DotNetNuke.SearchInput
+    /// Class:      InputSettings
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The InputSettings ModuleSettingsBase is used to manage the 
+    /// settings for the Search Input Module
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cnurse]	11/30/2004	converted to SettingsBase
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class InputSettings : ModuleSettingsBase
     {
         protected LinkButton cmdCancel;
         protected LinkButton cmdUpdate;
 
+		#region "Private Methods"
+		
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindSearchResults gets the Search Results Modules available and binds them to the
+        /// drop-down combo
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/30/2004	converted to SettingsBase
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindSearchResults()
         {
             var objSearch = new SearchInputController();
+
             cboModule.DataSource = objSearch.GetSearchResultModules(PortalId);
             cboModule.DataTextField = "SearchTabName";
             cboModule.DataValueField = "TabID";
@@ -58,6 +88,20 @@ namespace DotNetNuke.Modules.SearchInput
             }
         }
 
+		#endregion
+
+		#region "Base Method Implementations"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadSettings loads the settings from the Database and displays them
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/30/2004	converted to SettingsBase
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void LoadSettings()
         {
             try
@@ -65,9 +109,11 @@ namespace DotNetNuke.Modules.SearchInput
                 if ((Page.IsPostBack == false))
                 {
                     BindSearchResults();
+
                     string SearchTabID = Convert.ToString(ModuleSettings["SearchResultsModule"]);
                     string ShowGoImage = Convert.ToString(ModuleSettings["ShowGoImage"]);
                     string ShowSearchImage = Convert.ToString(ModuleSettings["ShowSearchImage"]);
+
                     if (cboModule.Items.FindByValue(SearchTabID) != null)
                     {
                         cboModule.Items.FindByValue(SearchTabID).Selected = true;
@@ -90,17 +136,28 @@ namespace DotNetNuke.Modules.SearchInput
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateSettings saves the modified settings to the Database
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/30/2004	converted to SettingsBase
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UpdateSettings()
         {
             try
             {
                 var objModules = new ModuleController();
+
                 if (cboModule.SelectedIndex != -1)
                 {
                     objModules.UpdateModuleSetting(ModuleId, "SearchResultsModule", cboModule.SelectedItem.Value);
@@ -108,11 +165,13 @@ namespace DotNetNuke.Modules.SearchInput
                 objModules.UpdateModuleSetting(ModuleId, "ShowGoImage", chkGo.Checked.ToString());
                 objModules.UpdateModuleSetting(ModuleId, "ShowSearchImage", chkSearchImage.Checked.ToString());
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
 
         private void InitializeComponent()
         {

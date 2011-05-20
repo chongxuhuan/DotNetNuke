@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -35,11 +35,11 @@ using System.Runtime.InteropServices;
 // Review the values of the assembly attributes
 
 [assembly: AssemblyTitle("Provider.BigSitemapProvider")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Provider.BigSitemapProvider")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyDescription("Open Source Web Application Framework")]
+[assembly: AssemblyCompany("DotNetNuke Corporation")]
+[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: ComVisible(false)]
 //The following GUID is for the ID of the typelib if this project is exposed to COM
 

@@ -56,7 +56,7 @@ namespace DotNetNuke.Modules.Admin.Marketplace
                     PopulateControls();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -71,20 +71,26 @@ namespace DotNetNuke.Modules.Admin.Marketplace
             {
                 oXMLDocument = new XmlDocument();
                 oXMLDocument.Load(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "DesktopModules\\Admin\\Marketplace\\ListItems.xml");
+
+                //load search-by
                 oNodes = oXMLDocument.SelectNodes("/listitems/feedtypes/feedtype");
+
                 foreach (XmlNode oNode in oNodes)
                 {
                     oListItem = new ListItem();
-                    oListItem.Value = oNode.ChildNodes.Item(0).InnerText;
-                    oListItem.Text = oNode.ChildNodes.Item(1).InnerText;
+                    oListItem.Value = oNode.ChildNodes.Item(0).InnerText; //ID
+                    oListItem.Text = oNode.ChildNodes.Item(1).InnerText; //Name
                     cboSearchFor.Items.Add(oListItem);
                 }
+				
+                //load categories
                 oNodes = oXMLDocument.SelectNodes("/listitems/categories/category");
+
                 foreach (XmlNode oNode in oNodes)
                 {
                     oListItem = new ListItem();
-                    oListItem.Value = oNode.ChildNodes.Item(0).InnerText;
-                    oListItem.Text = oNode.ChildNodes.Item(1).InnerText;
+                    oListItem.Value = oNode.ChildNodes.Item(0).InnerText; //ID
+                    oListItem.Text = oNode.ChildNodes.Item(1).InnerText; //Name
                     cboCategories.Items.Add(oListItem);
                 }
             }
@@ -101,9 +107,11 @@ namespace DotNetNuke.Modules.Admin.Marketplace
             Stream oStream;
             XmlTextReader oReader;
             XPathDocument oXMLDocument;
+
             string sFeedType;
             string sCategoryID;
             string sRequest;
+            
             try
             {
                 sFeedType = cboSearchFor.SelectedValue;
@@ -111,8 +119,9 @@ namespace DotNetNuke.Modules.Admin.Marketplace
                 sRequest = "http://www.snowcovered.com/Snowcovered2/DesktopModules/PortalStore/rss.aspx?feedtype=" + sFeedType + "&categoryid=" + sCategoryID;
                 try
                 {
+					//make remote request
                     oRequest = (HttpWebRequest) WebRequest.Create(sRequest);
-                    oRequest.Timeout = 10000;
+                    oRequest.Timeout = 10000; //10 seconds
                     oResponse = oRequest.GetResponse();
                     oStream = oResponse.GetResponseStream();
                 }
@@ -120,6 +129,8 @@ namespace DotNetNuke.Modules.Admin.Marketplace
                 {
                     throw oExc;
                 }
+				
+                //load XML document
                 oReader = new XmlTextReader(oStream);
                 oReader.XmlResolver = null;
                 oXMLDocument = new XPathDocument(oReader);
@@ -127,6 +138,8 @@ namespace DotNetNuke.Modules.Admin.Marketplace
                 xmlRSS.XPathNavigator = nav;
                 //xmlRSS.Document = oXMLDocument;
                 xmlRSS.TransformSource = XSL_PATH;
+
+                //display message if no products found
                 if (nav.Select(PRODUCT_XMLNODE_PATH).Count == 0)
                 {
                     lblMessage.Text = Localization.GetString("NoProductsFound.Text", LocalResourceFile);

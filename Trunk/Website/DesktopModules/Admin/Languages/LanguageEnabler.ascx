@@ -11,7 +11,7 @@
         <legend></legend>
         <div class="dnnFormItem">
             <dnn:Label ID="systemDefaultLabel" runat="server" />
-            <dnn:DnnLanguageLabel ID="systemDefaultLanguageLabel" runat="server" />
+            <dnn:DnnLanguageLabel ID="systemDefaultLanguageLabel" runat="server" Width="300" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="siteDefaultLabel" runat="server" />
@@ -56,7 +56,7 @@
                             <HeaderTemplate>
                                 <%# Localization.GetString("Enabled.Header", this.LocalResourceFile)%>
                                 <asp:Label ID="enabledMessageLabel" runat="server" CssClass="NormalRed" Text="*"
-                                    Visible='<%# this.PortalSettings.ContentLocalizationEnabled %>' />
+                                    Visible='<%# PortalSettings.ContentLocalizationEnabled %>' />
                             </HeaderTemplate>
                             <ItemTemplate>
                                 <dnn:DnnCheckBox ID="enabledCheckbox" runat="server" AutoPostBack="True" CommandArgument='<%# Eval("LanguageId") %>'

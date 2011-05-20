@@ -46,18 +46,45 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditVendors PortalModuleBase is used to add/edit a Vendor
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditVendors : PortalModuleBase
     {
 
         public int VendorID = -1;
 
         #region Private Methods
-
+        /// <summary>
+        /// Return url redirects to the previous page, with or without filter info
+        /// </summary>
+        /// <param name="Filter"></param>
+        /// <history>
+        /// 	[erikvb]	10/18/2007
+        /// </history>
         private void ReturnUrl(string filter)
         {
             Response.Redirect(string.IsNullOrEmpty(filter.Trim()) ? Globals.NavigateURL() : Globals.NavigateURL(TabId, Null.NullString, "filter=" + filter), true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddModuleMessage adds a module message
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="type">The type of message</param>
+        /// <history>
+        /// 	[cnurse]	08/24/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddModuleMessage(string message, ModuleMessage.ModuleMessageType type)
         {
             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString(message, LocalResourceFile), type);
@@ -75,6 +102,17 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -86,8 +124,10 @@ namespace DotNetNuke.Modules.Admin.Vendors
             try
             {
                 var objTabs = new TabController();
+
                 var blnBanner = false;
                 var blnSignup = false;
+
                 if ((Request.QueryString["VendorID"] != null))
                 {
                     VendorID = Int32.Parse(Request.QueryString["VendorID"]);
@@ -103,8 +143,10 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 if (Page.IsPostBack == false)
                 {
                     ctlLogo.FileFilter = Globals.glbImageFileTypes;
+
                     addresssVendor.ModuleId = ModuleId;
                     addresssVendor.StartTabIndex = 4;
+
 
                     var objClassifications = new ClassificationController();
                     var arr = objClassifications.GetVendorClassifications(VendorID);
@@ -124,10 +166,12 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         VendorInfo objVendor;
                         if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId && UserInfo.IsSuperUser)
                         {
+							//Get Host Vendor
                             objVendor = objVendors.GetVendor(VendorID, Null.NullInteger);
                         }
                         else
                         {
+							//Get Portal Vendor
                             objVendor = objVendors.GetVendor(VendorID, PortalId);
                         }
                         if (objVendor != null)
@@ -149,15 +193,18 @@ namespace DotNetNuke.Modules.Admin.Vendors
                             txtWebsite.Text = objVendor.Website;
                             chkAuthorized.Checked = objVendor.Authorized;
                             txtKeyWords.Text = objVendor.KeyWords;
+
                             ctlAudit.CreatedByUser = objVendor.CreatedByUser;
                             ctlAudit.CreatedDate = objVendor.CreatedDate.ToString();
                         }
 
+                        //use dispatch method to load modules
                         var banners = ControlUtilities.LoadControl<Banners>(this, TemplateSourceDirectory.Remove(0, Globals.ApplicationPath.Length) + "/Banners.ascx");
                         banners.ID = "/Banners.ascx";
                         banners.VendorID = VendorID;
                         banners.ModuleConfiguration = ModuleConfiguration;
                         divBanners.Controls.Add(banners);
+
 
                         var affiliates = ControlUtilities.LoadControl<Affiliates>(this, TemplateSourceDirectory.Remove(0, Globals.ApplicationPath.Length) + "/Affiliates.ascx");
                         affiliates.ID = "/Affiliates.ascx";
@@ -207,24 +254,46 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the Cancel button is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnCancelClick(object sender, EventArgs e)
         {
             try
             {
                 ReturnUrl(Convert.ToString(ViewState["filter"]));
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the Delete button is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(object sender, EventArgs e)
         {
             try
@@ -236,17 +305,29 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 }
                 Response.Redirect(Globals.NavigateURL());
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update button is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
                 int intPortalID;
+
                 if (Page.IsValid)
                 {
                     if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
@@ -306,6 +387,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                             Response.Redirect(Globals.NavigateURL());
                         }
                     }
+					
+                    //update vendor classifications
                     var objClassifications = new ClassificationController();
                     objClassifications.DeleteVendorClassifications(VendorID);
                     foreach (ListItem lstItem in lstClassifications.Items)
@@ -360,7 +443,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

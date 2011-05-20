@@ -43,6 +43,19 @@ namespace DotNetNuke.Modules.Admin.Search
     public partial class SearchAdmin : ModuleUserControlBase
     {
 
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/16/2004 created
+        ///     [cnurse]    01/10/2005 added UrlReferrer code so Cancel returns to previous page
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -69,6 +82,17 @@ namespace DotNetNuke.Modules.Admin.Search
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdReIndex_Click runs when the ReIndex LinkButton is clicked.  It re-indexes the
+        /// site (or application if run on Host page)
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/16/2004 created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnReIndexClick(object sender, EventArgs e)
         {
             try
@@ -88,12 +112,23 @@ namespace DotNetNuke.Modules.Admin.Search
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Indexed", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update LinkButton is clicked.
+        /// It saves the current Search Settings
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/9/2004	Modified
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
@@ -107,6 +142,8 @@ namespace DotNetNuke.Modules.Admin.Search
                         HostController.Instance.Update("MinSearchWordLength", txtMinWordLength.Text);
                         HostController.Instance.Update("SearchIncludeCommon", chkIncludeCommon.Checked ? "Y" : "N");
                         HostController.Instance.Update("SearchIncludeNumeric", chkIncludeNumeric.Checked ? "Y" : "N");
+
+						//clear host settings cache
                         DataCache.ClearHostCache(false);
                     }
                     else
@@ -118,11 +155,13 @@ namespace DotNetNuke.Modules.Admin.Search
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
 
     }
 }

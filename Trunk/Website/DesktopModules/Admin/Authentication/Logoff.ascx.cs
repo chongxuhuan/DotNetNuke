@@ -38,10 +38,24 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.Admin.Authentication
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : Logoff
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Logoff UserModuleBase is used to log off a registered user
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]        07/23/2007   Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Logoff : UserModuleBase
     {
         private void Redirect()
         {
+			//Redirect browser back to portal 
             Response.Redirect(AuthenticationController.GetLogoffRedirectURL(PortalSettings, Request), true);
         }
 
@@ -49,6 +63,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
         {
             try
             {
+				//Remove user from cache
                 if (User != null)
                 {
                     DataCache.ClearUserCache(PortalSettings.PortalId, Context.User.Identity.Name);
@@ -56,32 +71,51 @@ namespace DotNetNuke.Modules.Admin.Authentication
                 var objPortalSecurity = new PortalSecurity();
                 objPortalSecurity.SignOut();
             }
-            catch (Exception exc)
+            catch (Exception exc)	//Page failed to load
             {
                 Exceptions.ProcessPageLoadException(exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/23/2006  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             try
             {
+				//Get the Authentication System associated with the current User
                 AuthenticationInfo authSystem = AuthenticationController.GetAuthenticationType();
+
                 if (authSystem != null && !string.IsNullOrEmpty(authSystem.LogoffControlSrc))
                 {
                     var authLogoffControl = (AuthenticationLogoffBase) LoadControl("~/" + authSystem.LogoffControlSrc);
+
+                    //set the control ID to the resource file name ( ie. controlname.ascx = controlname )
+                    //this is necessary for the Localization in PageBase
                     authLogoffControl.AuthenticationType = authSystem.AuthenticationType;
                     authLogoffControl.ID = Path.GetFileNameWithoutExtension(authSystem.LogoffControlSrc) + "_" + authSystem.AuthenticationType;
                     authLogoffControl.LocalResourceFile = authLogoffControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
                                                           Path.GetFileNameWithoutExtension(authSystem.LogoffControlSrc);
                     authLogoffControl.ModuleConfiguration = ModuleConfiguration;
+
                     authLogoffControl.LogOff += UserLogOff;
                     authLogoffControl.Redirect += UserRedirect;
+
+                    //Add Login Control to Control
                     pnlLogoffContainer.Controls.Add(authLogoffControl);
                 }
                 else
                 {
+					//The current auth system has no custom logoff control so LogOff
                     DoLogoff();
                     Redirect();
                 }
@@ -90,7 +124,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
             {
                 //Do nothing Response.redirect
             }
-            catch (Exception exc)
+            catch (Exception exc) //Page failed to load
             {
                 Exceptions.ProcessPageLoadException(exc);
             }

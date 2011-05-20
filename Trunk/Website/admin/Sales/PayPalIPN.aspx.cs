@@ -78,7 +78,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     string strValue = Request.Form[strName];
                     switch (strName)
                     {
-                        case "txn_type":
+                        case "txn_type": //get the transaction type
                             string strTransactionType = strValue;
                             switch (strTransactionType)
                             {
@@ -94,38 +94,42 @@ namespace DotNetNuke.Modules.Admin.Sales
                                     break;
                             }
                             break;
-                        case "payment_status":
+                        case "payment_status": //verify the status
                             if (strValue != "Completed")
                             {
                                 blnValid = false;
                             }
                             break;
-                        case "txn_id":
+                        case "txn_id": //verify the transaction id for duplicates
 //                            strTransactionID = strValue;
                             break;
-                        case "receiver_email":
+                        case "receiver_email": //verify the PayPalId
                             strPayPalID = strValue;
                             break;
-                        case "mc_gross":
+                        case "mc_gross": // verify the price
                             dblAmount = double.Parse(strValue);
                             break;
-                        case "item_number":
+                        case "item_number": //get the RoleID
                             intRoleID = Int32.Parse(strValue);
                             //RoleInfo objRole = objRoles.GetRole(intRoleID, intPortalID);
                             break;
-                        case "item_name":
+                        case "item_name": //get the product description
 //                            strDescription = strValue;
                             break;
-                        case "custom":
+                        case "custom": //get the UserID
                             intUserID = Int32.Parse(strValue);
                             break;
-                        case "email":
+                        case "email": //get the email
 //                            strEmail = strValue;
                             break;
                     }
-                    strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode(strName), Globals.HTTPPOSTEncode(strValue));
+                    
+					//reconstruct post for postback validation
+					strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode(strName), Globals.HTTPPOSTEncode(strValue));
                 }
-                if (blnValid)
+                
+				//postback to verify the source
+				if (blnValid)
                 {
                     Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(PortalSettings.PortalId);
                     string strPayPalURL;
@@ -161,7 +165,8 @@ namespace DotNetNuke.Modules.Admin.Sales
                         case "VERIFIED":
                             break;
                         default:
-                            blnValid = false;
+                            //possible fraud
+							blnValid = false;
                             break;
                     }
                 }
@@ -178,6 +183,7 @@ namespace DotNetNuke.Modules.Admin.Sales
 
                     if (intRoleID == intAdministratorRoleId)
                     {
+						//admin portal renewal
                         strProcessorID = Host.ProcessorUserId.ToLower();
                         float portalPrice = objPortalInfo.HostFee;
                         if ((portalPrice.ToString() == dblAmount.ToString()) && (HttpUtility.UrlDecode(strPayPalID.ToLower()) == strProcessorID))
@@ -197,6 +203,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     }
                     else
                     {
+						//user subscription
                         RoleInfo objRoleInfo = objRoles.GetRole(intRoleID, intPortalID);
                         float rolePrice = objRoleInfo.ServiceFee;
                         float trialPrice = objRoleInfo.TrialFee;
@@ -217,7 +224,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Page failed to load
             {
                 Exceptions.ProcessPageLoadException(exc);
             }

@@ -40,15 +40,25 @@ using Telerik.Web.UI;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// <summary>
+	/// LeftMenu skinobject
+    /// </summary>
+    /// <remarks></remarks>
     public partial class LeftMenu : SkinObjectBase
     {
+		#region "Private Variables"
+
         private ArrayList AuthPages;
+		
+		//variables and structures
         private Queue PagesQueue;
         private bool _EnableAdminMenus = true;
         private bool _EnablePageIcons = true;
         private bool _EnableToolTips = true;
         private bool _EnableUserMenus = true;
         private String _ItemClickedCssClass = string.Empty;
+
+		//panel item properties
         private String _ItemCssClass = string.Empty;
         private String _ItemDisabledCssClass = string.Empty;
         private String _ItemExpandedCssClass = string.Empty;
@@ -62,6 +72,8 @@ namespace DotNetNuke.UI.Skins.Controls
         private int _MaxLevelNumber = 10;
         private string _PagesToExclude = string.Empty;
         private RadPanelBar _RadPanel1;
+		
+		//panel ROOT item properties
         private String _RootItemClickedCssClass = string.Empty;
         private String _RootItemCssClass = string.Empty;
         private String _RootItemDisabledCssClass = string.Empty;
@@ -72,7 +84,9 @@ namespace DotNetNuke.UI.Skins.Controls
         private String _RootItemImageUrl = string.Empty;
         private Unit _RootItemWidth = Unit.Empty;
         private string _ShowOnlyCurrent = string.Empty;
-        private bool _ShowPath = true;
+        
+		//other properties
+		private bool _ShowPath = true;
         private string _Skin = string.Empty;
         private String _Style = string.Empty;
         private ArrayList arrayShowPath;
@@ -92,6 +106,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 return _RadPanel1;
             }
         }
+
+		#endregion
+
+		#region "Public Properties"
 
         public bool AllowCollapseAllItems
         {
@@ -808,6 +826,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 _Style = value;
             }
         }
+		
+		#endregion
+		
+		#region "Event Handlers"
 
         protected override void OnInit(EventArgs e)
         {
@@ -827,14 +849,20 @@ namespace DotNetNuke.UI.Skins.Controls
             int iRootGroupId = 0;
             qElement temp;
             int StartingItemId = 0;
+
             AuthPages = new ArrayList();
             PagesQueue = new Queue();
             arrayShowPath = new ArrayList();
             iItemIndex = 0;
+			//---------------------------------------------------
+
             SetPanelbarProperties();
+
             if (!Page.IsPostBack)
             {
+				//optional code to support displaying a specific branch of the page tree
                 GetShowOnlyCurrent(objTabController, ref StartingItemId, ref iRootGroupId);
+                //Fixed: For i = 0 To Me.PortalSettings.DesktopTabs.Count - 1
                 int portalID = PortalSettings.ActiveTab.IsSuperTab ? -1 : PortalSettings.PortalId;
                 IList<TabInfo> desktopTabs = TabController.GetTabsBySortOrder(portalID, PortalController.GetActivePortalLanguage(portalID), true);
                 for (i = 0; i <= desktopTabs.Count - 1; i++)
@@ -870,6 +898,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
             }
         }
+		
+		#endregion
+		
+		#region "Private Helper Functions"
 
         private void ApplySkin()
         {
@@ -917,10 +949,13 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             StartingItemId = 0;
             iRootGroupId = 0;
+			//check if we have a value to work with
             if ((ShowOnlyCurrent == string.Empty))
             {
                 return;
             }
+			
+			//check if user specified an ID
             if ((char.IsDigit(ShowOnlyCurrent.ToCharArray()[0])))
             {
                 int output;
@@ -929,6 +964,8 @@ namespace DotNetNuke.UI.Skins.Controls
                     StartingItemId = output;
                 }
             }
+			
+			//check if user specified a page name
             if ((ShowOnlyCurrent.StartsWith("PageItem:")))
             {
                 TabInfo temptab = objTabController.GetTabByName(ShowOnlyCurrent.Substring(("PageItem:").Length), PortalSettings.PortalId);
@@ -937,6 +974,8 @@ namespace DotNetNuke.UI.Skins.Controls
                     StartingItemId = temptab.TabID;
                 }
             }
+			
+			//RootItem
             if (("RootItem" == ShowOnlyCurrent))
             {
                 iRootGroupId = PortalSettings.ActiveTab.TabID;
@@ -961,10 +1000,12 @@ namespace DotNetNuke.UI.Skins.Controls
 
         private bool CheckPanelVisibility(TabInfo tab)
         {
+			//Fixed: If (Not EnableAdminMenus AndAlso (tab.IsAdminTab Or tab.IsSuperTab)) Then
             if (!EnableAdminMenus && tab.IsSuperTab)
             {
                 return false;
             }
+			//Fixed: If (Not EnableUserMenus AndAlso Not (tab.IsAdminTab Or tab.IsSuperTab)) Then
             if (!EnableUserMenus && !tab.IsSuperTab)
             {
                 return false;
@@ -1098,6 +1139,7 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             string sLevel = EnableLevelCss && iLevel < MaxLevelNumber ? "Level" + iLevel : string.Empty;
             string sItem = iItem <= MaxItemNumber && ((EnableItemCss && iLevel > 0) || (EnableRootItemCss && iLevel == 0)) ? iItem.ToString() : string.Empty;
+
             if ((RootItemCssClass != string.Empty))
             {
                 currentPanelItem.CssClass = sLevel + RootItemCssClass + sItem;
@@ -1176,12 +1218,14 @@ namespace DotNetNuke.UI.Skins.Controls
                 else if ((CopyChildItemLink && page.Level >= MaxLevel))
                 {
                     j = 0;
+					//check if there are any child items and use a href from the first one
                     while ((j < AuthPages.Count && (((qElement) AuthPages[j]).page.ParentId != page.TabID || ((qElement) AuthPages[j]).page.DisableLink)))
                     {
                         j = j + 1;
                     }
                     if ((j < AuthPages.Count))
                     {
+						//child item found. use its link
                         temp.radPanelItem.NavigateUrl = ((qElement) AuthPages[j]).page.FullUrl;
                     }
                 }
@@ -1189,6 +1233,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     temp.radPanelItem.ToolTip = page.Description;
                 }
+				
+				//set all other item properties
                 if ((temp.radPanelItem.Level == 0))
                 {
                     SetRootItemProperties(temp.radPanelItem, page.Level, temp.item, page.TabName);
@@ -1197,14 +1243,20 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     SetItemProperties(temp.radPanelItem, page.Level, temp.item, page.TabName);
                 }
+				
+				//check showpath
                 if ((ShowPath))
                 {
                     CheckShowPath(page.TabID, temp.radPanelItem, page.TabName);
                 }
+				
+				//image-only panel check
                 if ((ImagesOnlyPanel && temp.radPanelItem.ImageUrl != string.Empty))
                 {
                     temp.radPanelItem.Text = string.Empty;
                 }
+				
+				//attach child items the current one
                 if ((page.Level < MaxLevel || MaxLevel < 0))
                 {
                     iItemIndex = 0;
@@ -1223,6 +1275,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
             }
         }
+		
+		#endregion
 
         #region Nested type: qElement
 

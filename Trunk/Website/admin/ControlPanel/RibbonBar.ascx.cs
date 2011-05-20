@@ -70,11 +70,6 @@ namespace DotNetNuke.UI.ControlPanels
             CurrentPageTabLiteral.Text = Localization.GetString("Tab_CurrentPage", LocalResourceFile);
             AdminTabLiteral.Text = Localization.GetString("Tab_Site", LocalResourceFile);
 
-            //cmdAdmin.Text = Localization.GetString("AdminConsole", LocalResourceFile);
-            //cmdAdmin.ToolTip = Localization.GetString("AdminConsole.ToolTip", LocalResourceFile);
-            //cmdHost.Text = Localization.GetString("HostConsole", LocalResourceFile);
-            //cmdHost.ToolTip = Localization.GetString("HostConsole.ToolTip", LocalResourceFile);
-
             Control ctrl = AdminPanel.FindControl("SiteNewPage");
             if (((ctrl != null) && ctrl is DnnRibbonBarTool))
             {
@@ -172,7 +167,7 @@ namespace DotNetNuke.UI.ControlPanels
         {
             base.OnInit(e);
 
-            ID = "RibbonBar.ascx";
+            ID = "RibbonBar";
         }
 
         protected override void OnLoad(EventArgs e)
@@ -184,13 +179,11 @@ namespace DotNetNuke.UI.ControlPanels
 
             try
             {
-              //cmdHost.Visible = false;
-              //cmdAdmin.Visible = false;
                 AdminPanel.Visible = false;
                 AdminTabListItem.Visible = false;
                 AdvancedToolsPanel.Visible = false;
 
-                Framework.jQuery.RequestDnnPluginsRegistration();
+                jQuery.RequestDnnPluginsRegistration();
 
                 Control copyPageButton = CurrentPagePanel.FindControl("CopyPage");
                 if ((copyPageButton != null))
@@ -204,8 +197,6 @@ namespace DotNetNuke.UI.ControlPanels
                     UserInfo user = UserController.GetCurrentUserInfo();
                     if (((user != null)))
                     {
-                      //cmdHost.Visible = user.IsSuperUser;
-                      //cmdAdmin.Visible = isAdmin;
                         bool isAdmin = user.IsInRole(PortalSettings.Current.AdministratorRoleName);
                         AdminPanel.Visible = isAdmin;
                         AdminTabListItem.Visible = isAdmin;

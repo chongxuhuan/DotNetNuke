@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -29,13 +29,13 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("DotNetNuke.Tests.Data")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("DotNetNuke.Tests.Data")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyDescription("Open Source Web Application Framework")]
+
+[assembly: AssemblyCompany("DotNetNuke Corporation")]
+[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyTrademark("DotNetNuke")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM componenets.  If you need to access a type in this assembly from 

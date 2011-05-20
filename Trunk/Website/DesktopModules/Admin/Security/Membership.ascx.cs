@@ -32,8 +32,31 @@ using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Modules.Admin.Users
+    /// Class:      Membership
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Membership UserModuleBase is used to manage the membership aspects of a
+    /// User
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	03/01/2006  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Membership : UserModuleBase
     {
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the UserMembership associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserMembership UserMembership
         {
             get
@@ -46,12 +69,38 @@ namespace DotNetNuke.Modules.Admin.Users
                 return _Membership;
             }
         }
+		
+		#endregion
+
+		#region "Events"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the MembershipAuthorized Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+
 
         public event EventHandler MembershipAuthorized;
         public event EventHandler MembershipPasswordUpdateChanged;
         public event EventHandler MembershipUnAuthorized;
         public event EventHandler MembershipUnLocked;
 
+		#endregion
+
+		#region "Event Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the MembershipAuthorized Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void OnMembershipAuthorized(EventArgs e)
         {
             if (MembershipAuthorized != null)
@@ -60,6 +109,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the MembershipPasswordUpdateChanged Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/14/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void OnMembershipPasswordUpdateChanged(EventArgs e)
         {
             if (MembershipPasswordUpdateChanged != null)
@@ -68,6 +125,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the MembershipUnAuthorized Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void OnMembershipUnAuthorized(EventArgs e)
         {
             if (MembershipUnAuthorized != null)
@@ -76,6 +141,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the MembershipUnLocked Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void OnMembershipUnLocked(EventArgs e)
         {
             if (MembershipUnLocked != null)
@@ -84,8 +157,21 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DataBind binds the data to the controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DataBind()
         {
+			//disable/enable buttons
             if (UserInfo.UserID == User.UserID)
             {
                 cmdAuthorize.Visible = false;
@@ -104,6 +190,20 @@ namespace DotNetNuke.Modules.Admin.Users
             membershipForm.DataBind();
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -114,38 +214,90 @@ namespace DotNetNuke.Modules.Admin.Users
             cmdUnLock.Click += cmdUnLock_Click;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdAuthorize_Click runs when the Authorize User Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdAuthorize_Click(object sender, EventArgs e)
         {
+			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
+
             User.Membership.Approved = true;
+
+            //Update User
             UserController.UpdateUser(PortalId, User);
+
             OnMembershipAuthorized(EventArgs.Empty);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdPassword_Click runs when the ChangePassword Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/15/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdPassword_Click(object sender, EventArgs e)
         {
+			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
+
             User.Membership.UpdatePassword = true;
+
+            //Update User
             UserController.UpdateUser(PortalId, User);
+
             OnMembershipPasswordUpdateChanged(EventArgs.Empty);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUnAuthorize_Click runs when the UnAuthorize User Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUnAuthorize_Click(object sender, EventArgs e)
         {
+			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
+
             User.Membership.Approved = false;
+
+            //Update User
             UserController.UpdateUser(PortalId, User);
+
             OnMembershipUnAuthorized(EventArgs.Empty);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUnlock_Click runs when the Unlock Account Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUnLock_Click(Object sender, EventArgs e)
         {
+			//update the user record in the database
             bool isUnLocked = UserController.UnLockUser(User);
+
             if (isUnLocked)
             {
                 User.Membership.LockedOut = false;
+
                 OnMembershipUnLocked(EventArgs.Empty);
             }
         }
+		
+		#endregion
     }
 }

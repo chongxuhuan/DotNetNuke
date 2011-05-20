@@ -73,6 +73,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         private void DeleteControl(int index)
         {
             var dashboardControl = DashboardControlList[index];
+
             Response.Redirect(Util.UnInstallURL(TabId, dashboardControl.PackageID, Server.UrlEncode(Globals.NavigateURL(TabId, "DashboardControls", "mid=" + ModuleId))), true);
         }
 
@@ -80,10 +81,15 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             var dashboardControl = DashboardControlList[index];
             var nextControl = DashboardControlList[destIndex];
+
             var currentOrder = dashboardControl.ViewOrder;
             var nextOrder = nextControl.ViewOrder;
+
+            //Swap ViewOrders
             dashboardControl.ViewOrder = nextOrder;
             nextControl.ViewOrder = currentOrder;
+
+            //Refresh Grid
             DashboardControlList.Sort();
             BindGrid();
         }
@@ -101,6 +107,8 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         private void BindGrid()
         {
             var allEnabled = true;
+
+            //Check whether the checkbox column headers are true or false
             foreach (var dashboardControl in DashboardControlList)
             {
                 if (dashboardControl.IsEnabled == false)
@@ -116,6 +124,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             {
                 if (ReferenceEquals(column.GetType(), typeof (CheckBoxColumn)))
                 {
+					//Manage CheckBox column events
                     var cbColumn = (CheckBoxColumn) column;
                     if (cbColumn.DataField == "IsEnabled")
                     {
@@ -159,6 +168,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                     chk = (CheckBox) objItem.Cells[COLUMN_ENABLED].Controls[0];
                     dashboardControl.IsEnabled = chk.Checked;
                 }
+				//assign vieworder
                 for (var i = 0; i <= aryNewOrder.Length - 1; i++)
                 {
                     DashboardControlList[Convert.ToInt32(aryNewOrder[i])].ViewOrder = i;
@@ -179,11 +189,16 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             if ((savedState != null))
             {
+				//Load State from the array of objects that was saved with SaveViewState.
                 var myState = (object[]) savedState;
+				
+				//Load Base Controls ViewState
                 if ((myState[0] != null))
                 {
                     base.LoadViewState(myState[0]);
                 }
+				
+				//Load ModuleID
                 if ((myState[1] != null))
                 {
                     _DashboardControls = (List<DashboardControl>) myState[1];
@@ -194,8 +209,13 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         protected override object SaveViewState()
         {
             var allStates = new object[2];
+			
+			//Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
+
+            //Save the Profile Properties
             allStates[1] = DashboardControlList;
+
             return allStates;
         }
 
@@ -215,6 +235,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                 }
                 else if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     switch (imageColumn.CommandName)
                     {
@@ -258,7 +279,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                     ProcessPostBack();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -274,9 +295,10 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             try
             {
                 UpdateControls();
+
                 RefreshGrid();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -288,9 +310,12 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             var propertyValue = e.Checked;
             var isAll = e.IsAll;
             var index = e.Item.ItemIndex;
+
             DashboardControl dashboardControl;
+
             if (isAll)
             {
+				//Update All the properties
                 foreach (DashboardControl dashboard in DashboardControlList)
                 {
                     switch (propertyName)
@@ -303,6 +328,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
             }
             else
             {
+				//Update the indexed property
                 dashboardControl = DashboardControlList[index];
                 switch (propertyName)
                 {
@@ -318,6 +344,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             var commandName = e.CommandName;
             var index = e.Item.ItemIndex;
+
             switch (commandName)
             {
                 case "Delete":
@@ -339,12 +366,14 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                 switch (e.Item.ItemType)
                 {
                     case ListItemType.Header:
+                        //we combined the header label and checkbox in same place, so it is control 1 instead of 0
                         ((WebControl) e.Item.Cells[COLUMN_ENABLED].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_ENABLED + ");");
                         ((CheckBox) e.Item.Cells[COLUMN_ENABLED].Controls[1]).AutoPostBack = false;
                         break;
                     case ListItemType.AlternatingItem:
                     case ListItemType.Item:
                         ((CheckBox) e.Item.Cells[COLUMN_ENABLED].Controls[0]).AutoPostBack = false;
+
                         ClientAPI.EnableClientSideReorder(e.Item.Cells[COLUMN_MOVE_DOWN].Controls[0], Page, false, grdDashboardControls.ClientID);
                         ClientAPI.EnableClientSideReorder(e.Item.Cells[COLUMN_MOVE_UP].Controls[0], Page, true, grdDashboardControls.ClientID);
                         break;
@@ -366,6 +395,7 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                         {
                             var delImage = (ImageButton) imgColumnControl;
                             var dashboardControl = (DashboardControl) item.DataItem;
+
                             switch (dashboardControl.DashboardControlKey)
                             {
                                 case "Server":

@@ -119,6 +119,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             var strSkinPath = Globals.ApplicationMapPath.ToLower() + cboSkins.SelectedItem.Value;
             cboContainers.ClearSelection();
+
             if (cboSkins.SelectedIndex > 0)
             {
                 LoadFiles(strSkinPath);
@@ -129,6 +130,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             var strContainerPath = Globals.ApplicationMapPath.ToLower() + cboContainers.SelectedItem.Value;
             cboSkins.ClearSelection();
+
             if (cboContainers.SelectedIndex > 0)
             {
                 LoadFiles(strContainerPath);
@@ -141,8 +143,11 @@ namespace DotNetNuke.Modules.Admin.Skins
             string[] arrFolders;
             string strName;
             string strSkin;
+
             cboSkins.Items.Clear();
             cboSkins.Items.Add("<" + Localization.GetString("Not_Specified") + ">");
+
+            //load host skins
             if (UserInfo.IsSuperUser)
             {
                 strRoot = Request.MapPath(Globals.HostPath + SkinController.RootSkin);
@@ -160,6 +165,8 @@ namespace DotNetNuke.Modules.Admin.Skins
                     }
                 }
             }
+			
+            //load portal skins
             strRoot = PortalSettings.HomeDirectoryMapPath + SkinController.RootSkin;
             if (Directory.Exists(strRoot))
             {
@@ -179,8 +186,11 @@ namespace DotNetNuke.Modules.Admin.Skins
             string[] arrFolders;
             string strName;
             string strSkin;
+
             cboContainers.Items.Clear();
             cboContainers.Items.Add("<" + Localization.GetString("Not_Specified") + ">");
+
+            //load host containers
             if (UserInfo.IsSuperUser)
             {
                 strRoot = Request.MapPath(Globals.HostPath + SkinController.RootContainer);
@@ -198,6 +208,8 @@ namespace DotNetNuke.Modules.Admin.Skins
                     }
                 }
             }
+			
+            //load portal containers
             strRoot = PortalSettings.HomeDirectoryMapPath + SkinController.RootContainer;
             if (Directory.Exists(strRoot))
             {
@@ -229,12 +241,14 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             cboTokens.DataSource = SkinControlController.GetSkinControls().Values;
             cboTokens.DataBind();
+
             cboTokens.Items.Insert(0, "<" + Localization.GetString("Not_Specified") + ">");
         }
 
         private void LoadSettings()
         {
             cboSettings.Items.Clear();
+
             var strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
             if (File.Exists(strFile))
             {
@@ -263,6 +277,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             cboValue.Items.Clear();
             txtValue.Text = "";
+
             var strFile = Globals.ApplicationMapPath + "\\" + cboTokens.SelectedItem.Value.ToLower().Replace("/", "\\").Replace(".ascx", ".xml");
             if (File.Exists(strFile))
             {
@@ -341,9 +356,11 @@ namespace DotNetNuke.Modules.Admin.Skins
                         string strValue = cboValue.Visible ? cboValue.SelectedItem.Value : txtValue.Text;
                         if (intStartAttribute != -1 && intStartAttribute < intCloseTag)
                         {
+							//remove attribute
                             var intEndAttribute = strSkin.IndexOf("\" ", intStartAttribute);
                             strSkin = strSkin.Substring(0, intStartAttribute) + strSkin.Substring(intEndAttribute + 2);
                         }
+                        //add attribute
                         strSkin = strSkin.Insert(intOpenTag + strTag.Length, " " + strAttribute + "=\"" + strValue + "\"");
                         try
                         {
@@ -351,7 +368,9 @@ namespace DotNetNuke.Modules.Admin.Skins
                             var objStream = File.CreateText(cboFiles.SelectedItem.Value);
                             objStream.WriteLine(strSkin);
                             objStream.Close();
+
                             UpdateManifest();
+
                             UI.Skins.Skin.AddModuleMessage(this, "Skin Successfully Updated", ModuleMessage.ModuleMessageType.GreenSuccess);
                         }
                         catch
@@ -397,6 +416,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 var xmlToken = xmlDoc.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + cboTokens.SelectedItem.Text + "]']");
                 if (xmlToken == null)
                 {
+					//add token
                     string strToken = "<Token>[" + cboTokens.SelectedItem.Text + "]</Token><Settings></Settings>";
                     xmlToken = xmlDoc.CreateElement("Object");
                     xmlToken.InnerXml = strToken;
@@ -404,6 +424,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                     xmlToken = xmlDoc.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + cboTokens.SelectedItem.Text + "]']");
                 }
                 var strValue = cboValue.Visible ? cboValue.SelectedItem.Value : txtValue.Text;
+
                 var blnUpdate = false;
                 foreach (XmlNode xmlSetting in xmlToken.SelectNodes(".//Settings/Setting"))
                 {

@@ -220,6 +220,8 @@ namespace DotNetNuke.Modules.Admin.Tabs
                         UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("SpecifyName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                         return;
                     }
+					
+					//New Tab
                     objTab = new TabInfo {PortalID = PortalId, TabName = txtTabName.Text, IsVisible = true};
                     if (cboParentTab.SelectedItem != null)
                     {
@@ -228,6 +230,8 @@ namespace DotNetNuke.Modules.Admin.Tabs
                     objTab.TabPath = Globals.GenerateTabPath(objTab.ParentId, objTab.TabName);
                     int tabID = TabController.GetTabByTabPath(objTab.PortalID, objTab.TabPath, Null.NullString);
                     var objTabs = new TabController();
+
+                    //Check if tab exists
                     if (tabID != Null.NullInteger)
                     {
                         TabInfo existingTab = objTabs.GetTab(tabID, PortalId, false);
@@ -243,6 +247,7 @@ namespace DotNetNuke.Modules.Admin.Tabs
                     }
 
                     int positionTabID = Int32.Parse(cboPositionTab.SelectedItem.Value);
+
                     var objEventLog = new EventLogController();
                     if (rbInsertPosition.SelectedValue == "After" && positionTabID > Null.NullInteger)
                     {
@@ -257,10 +262,13 @@ namespace DotNetNuke.Modules.Admin.Tabs
                         objTab.TabID = objTabs.AddTab(objTab);
                     }
                     objEventLog.AddLog(objTab, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_CREATED);
+
+                    //Update Tab properties from template
                     objTab = TabController.DeserializeTab(nodeTab, objTab, PortalId, PortalTemplateModuleAction.Replace);
                 }
                 else
                 {
+					//Replace Existing Tab
                     objTab = TabController.DeserializeTab(nodeTab, Tab, PortalId, PortalTemplateModuleAction.Replace);
                 }
                 switch (optRedirect.SelectedValue)

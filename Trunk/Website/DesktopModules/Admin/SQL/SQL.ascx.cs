@@ -35,6 +35,17 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SQL PortalModuleBase is used run SQL Scripts on the Database
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
 using DotNetNuke.UI.Skins.Controls;
 
 #endregion
@@ -52,6 +63,18 @@ namespace DotNetNuke.Modules.Admin.SQL
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        ///     [VMasanas]  9/28/2004   Changed redirect to Access Denied
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -82,12 +105,23 @@ namespace DotNetNuke.Modules.Admin.SQL
                     chkRunAsScript.ToolTip = Localization.GetString("chkRunAsScript.ToolTip", LocalResourceFile);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdExecute_Click runs when the Execute button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnExecuteClick(object sender, EventArgs e)
         {
             try
@@ -128,7 +162,7 @@ namespace DotNetNuke.Modules.Admin.SQL
                     RecordAuditEventLog(txtQuery.Text);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

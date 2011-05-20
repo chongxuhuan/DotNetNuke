@@ -42,6 +42,13 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+	/// <summary>
+	/// Add and Edit Servers for a Web Farm
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	/// </history>
     public partial class UsageDetails : PortalModuleBase
     {
         private bool _IsListBound;
@@ -201,7 +208,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     str.Append("<a href=\"" + Globals.AddHTTP(objPortalAliasInfo.HTTPAlias) + "\">" + objPortalAliasInfo.HTTPAlias + "</a>");
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -274,6 +281,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             _IsListBound = true;
             IDictionary<int, TabInfo> tabs = null;
             string portalName = string.Empty;
+
             if (PackageID != Null.NullInteger && Package != null)
             {
                 if (IsSuperTab)
@@ -299,6 +307,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 UsageList.Visible = true;
                 UsageList.DataSource = tabs.Values;
                 UsageList.DataBind();
+
                 UsageListMsg.Text = string.Format(Localization.GetString("Msg.InUseBy", LocalResourceFile), tabs.Count, portalName);
             }
             else if ((portalName != string.Empty))
@@ -318,6 +327,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
             IDictionary<int, TabInfo> tabsWithModule = TabCtrl.GetTabsByPackageID(portalID, PackageID, false);
             TabCollection allPortalTabs = TabCtrl.GetTabsByPortal(PortalId);
             IDictionary<int, TabInfo> tabsInOrder = new Dictionary<int, TabInfo>();
+
+			//must get each tab, they parent may not exist
             foreach (TabInfo tab in allPortalTabs.Values)
             {
                 AddChildTabsToList(tab, ref allPortalTabs, ref tabsWithModule, ref tabsInOrder);
@@ -329,7 +340,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             if ((tabsWithModule.ContainsKey(currentTab.TabID) && !tabsInOrder.ContainsKey(currentTab.TabID)))
             {
+				//add current tab
                 tabsInOrder.Add(currentTab.TabID, currentTab);
+				//add children of current tab
                 foreach (TabInfo tab in allPortalTabs.WithParentId(currentTab.TabID))
                 {
                     AddChildTabsToList(tab, ref allPortalTabs, ref tabsWithModule, ref tabsInOrder);

@@ -40,9 +40,28 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : UnInstall
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality for uninstalling Extensions(packages) from the Portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]   07/26/2007    Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class UnInstall : ModuleUserControlBase
     {
+		#region "Members"
+
         private PackageInfo _Package;
+
+		#endregion
+
+		#region "Public Properties"
 
         public int PackageID
         {
@@ -73,6 +92,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Return Url
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/31/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ReturnURL
         {
             get
@@ -91,6 +118,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine checks the Access Security
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CheckSecurity()
         {
             if (!ModuleContext.PortalSettings.UserInfo.IsSuperUser)
@@ -99,6 +138,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine uninstalls the package
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/31/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UnInstallPackage()
         {
             phPaLogs.Visible = true;
@@ -107,6 +154,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
             phPaLogs.Controls.Add(installer.InstallerInfo.Log.GetLogsTable());
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/21/2008	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -123,6 +184,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             cmdReturn2.NavigateUrl = ReturnURL;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load runs when the page loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -132,10 +205,13 @@ namespace DotNetNuke.Modules.Admin.Extensions
             try
             {
                 ClientAPI.AddButtonConfirm(cmdUninstall, Localization.GetString("DeleteItem"));
+
                 if (Package != null && string.IsNullOrEmpty(Package.Manifest))
                 {
                     deleteRow.Visible = false;
                 }
+				
+                //Make Uninstall and Delete Files option unavailable if package cannot be deleted. Also display a message to the user
                 if (Package != null && !PackageController.CanDeletePackage(Package, ModuleContext.PortalSettings))
                 {
                     cmdUninstall.Visible = false;
@@ -162,18 +238,31 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 packageForm.DataSource = Package;
                 packageForm.DataBind();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The cmdUninstall_Click runs when the Uninstall Button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 07/31/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUninstall_Click(object sender, EventArgs e)
         {
             CheckSecurity();
             try
             {
                 UnInstallPackage();
+
                 if (phPaLogs.Controls.Count > 0)
                 {
                     deleteRow.Visible = false; 
@@ -181,10 +270,12 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     tblLogs.Visible = true;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

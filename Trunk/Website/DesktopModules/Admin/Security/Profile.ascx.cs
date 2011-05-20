@@ -36,8 +36,28 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Profile UserModuleBase is used to register Users
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	03/02/2006
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class DNNProfile : ProfileUserControlBase
     {
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to display the Visibility controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool ShowVisibility
         {
             get
@@ -47,6 +67,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the EditorMode
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PropertyEditorMode EditorMode
         {
             get
@@ -59,11 +91,20 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the User is valid
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsValid
         {
             get
             {
                 bool _IsValid = false;
+
                 if (ProfileProperties.IsValid || IsAdmin)
                 {
                     _IsValid = true;
@@ -72,6 +113,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Update button
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool ShowUpdate
         {
             get
@@ -84,6 +133,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the UserProfile associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserProfile UserProfile
         {
             get
@@ -97,6 +154,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DataBind binds the data to the controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DataBind()
         {
             if (IsAdmin)
@@ -107,7 +176,10 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 divTitle.Visible = false;
             }
+			
+            //Before we bind the Profile to the editor we need to "update" the visible data
             ProfilePropertyDefinitionCollection properties = UserProfile.ProfileProperties;
+
             foreach (ProfilePropertyDefinition profProperty in properties)
             {
                 if (IsAdmin && !IsProfile)
@@ -120,13 +192,29 @@ namespace DotNetNuke.Modules.Admin.Users
             ProfileProperties.DataBind();
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
+            //Get the base Page
             var basePage = Page as PageBase;
             if (basePage != null)
             {
+				//Check if culture is RTL
                 if (basePage.PageCulture.TextInfo.IsRightToLeft)
                 {
                     ProfileProperties.LabelMode = LabelMode.Right;
@@ -138,6 +226,16 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -145,15 +243,30 @@ namespace DotNetNuke.Modules.Admin.Users
             cmdUpdate.Click += cmdUpdate_Click;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
             if (IsValid)
             {
                 var properties = (ProfilePropertyDefinitionCollection) ProfileProperties.DataSource;
+
+                //Update User's profile
                 User = ProfileController.UpdateUserProfile(User, properties);
+
                 OnProfileUpdated(EventArgs.Empty);
                 OnProfileUpdateCompleted(EventArgs.Empty);
             }
         }
+		
+		#endregion
     }
 }

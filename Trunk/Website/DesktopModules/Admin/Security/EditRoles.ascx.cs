@@ -44,6 +44,17 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Security
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditRoles PortalModuleBase is used to manage a Security Role
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditRoles : PortalModuleBase
     {
 
@@ -69,10 +80,22 @@ namespace DotNetNuke.Modules.Admin.Security
             txtRSVPCode.Enabled = enabled;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindGroups gets the role Groups from the Database and binds them to the DropDown
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]    01/05/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindGroups()
         {
             var arrGroups = RoleController.GetRoleGroups(PortalId);
+
             cboRoleGroups.Items.Add(new ListItem(Localization.GetString("GlobalRoles"), "-1"));
+
             foreach (RoleGroupInfo roleGroup in arrGroups)
             {
                 cboRoleGroups.Items.Add(new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString()));
@@ -105,6 +128,17 @@ namespace DotNetNuke.Modules.Admin.Security
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -128,6 +162,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 var objPortalInfo = objPortalController.GetPortal(PortalSettings.PortalId);
                 if ((objPortalInfo == null || string.IsNullOrEmpty(objPortalInfo.ProcessorUserId)))
                 {
+					//Warn users about fee based roles if we have a Processor Id
                     lblProcessorWarning.Visible = true;
                 }
                 else
@@ -142,21 +177,27 @@ namespace DotNetNuke.Modules.Admin.Security
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
 
                     var objUser = new RoleController();
+
                     var ctlList = new ListController();
                     var colFrequencies = ctlList.GetListEntryInfoCollection("Frequency", "");
+
                     cboBillingFrequency.DataSource = colFrequencies;
                     cboBillingFrequency.DataBind();
                     cboBillingFrequency.Items.FindByValue("N").Selected = true;
+
                     cboTrialFrequency.DataSource = colFrequencies;
                     cboTrialFrequency.DataBind();
                     cboTrialFrequency.Items.FindByValue("N").Selected = true;
+
                     BindGroups();
+
                     ctlIcon.FileFilter = Globals.glbImageFileTypes;
                     if (_roleID != -1)
                     {
                         lblRoleName.Visible = true;
                         txtRoleName.Visible = false;
                         valRoleName.Enabled = false;
+
                         var objRoleInfo = objUser.GetRole(_roleID, PortalSettings.PortalId);
                         if (objRoleInfo != null)
                         {
@@ -195,9 +236,10 @@ namespace DotNetNuke.Modules.Admin.Security
                                 lblRSVPLink.Text = Globals.AddHTTP(Globals.GetDomainName(Request)) + "/" + Globals.glbDefaultPage + "?rsvp=" + txtRSVPCode.Text + "&portalid=" + PortalId;
                             }
                             ctlIcon.Url = objRoleInfo.IconFile;
+
                             UpdateFeeTextBoxes();
                         }
-                        else
+                        else //security violation attempt to access item not related to this Module
                         {
                             Response.Redirect(Globals.NavigateURL("Security Roles"));
                         }
@@ -220,7 +262,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -236,6 +278,18 @@ namespace DotNetNuke.Modules.Admin.Security
             UpdateFeeTextBoxes();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// 	[jlucarino]	2/23/2009	Added CreatedByUserID and LastModifiedByUserID
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
@@ -245,6 +299,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     float sglServiceFee = 0;
                     var intBillingPeriod = 1;
                     var strBillingFrequency = "N";
+
                     if (cboBillingFrequency.SelectedItem.Value == "N" && !String.IsNullOrEmpty(txtServiceFee.Text))
                     {
                         UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("IncompatibleFee", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
@@ -259,6 +314,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     float sglTrialFee = 0;
                     var intTrialPeriod = 1;
                     var strTrialFrequency = "N";
+
                     if (sglServiceFee != 0 && !String.IsNullOrEmpty(txtTrialFee.Text) && !String.IsNullOrEmpty(txtTrialPeriod.Text) && cboTrialFrequency.SelectedItem.Value != "N")
                     {
                         sglTrialFee = float.Parse(txtTrialFee.Text);
@@ -298,38 +354,67 @@ namespace DotNetNuke.Modules.Admin.Security
                     {
                         objRoleController.UpdateRole(objRoleInfo);
                     }
+					
+                    //Clear Roles Cache
                     DataCache.RemoveCache("GetRoles");
+
                     Response.Redirect(Globals.NavigateURL());
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(object sender, EventArgs e)
         {
             try
             {
                 var objUser = new RoleController();
+
                 objUser.DeleteRole(_roleID, PortalSettings.PortalId);
+              
+                //Clear Roles Cache
                 DataCache.RemoveCache("GetRoles");
+
                 Response.Redirect(Globals.NavigateURL());
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdManage_Click runs when the Manage Users Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnManageClick(Object sender, EventArgs e)
         {
             try
             {
                 Response.Redirect(EditUrl("RoleId", _roleID.ToString(), "User Roles"));
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

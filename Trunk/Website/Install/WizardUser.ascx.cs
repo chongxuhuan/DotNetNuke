@@ -211,11 +211,22 @@ namespace DotNetNuke.Services.Install
             return strErrorMessage;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_PreRender runs just before the page is rendered
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/15/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
 
-            txtConfirm.Attributes["value"] = txtConfirm.Text;
+            //Make sure that the password is not cleared on pastback
+			txtConfirm.Attributes["value"] = txtConfirm.Text;
             txtPassword.Attributes["value"] = txtPassword.Text;
         }
     }

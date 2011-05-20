@@ -28,7 +28,7 @@
         </asp:TemplateColumn>
         <asp:TemplateColumn>
             <EditItemTemplate>
-	            <asp:ImageButton Runat="server" ID="lnkCancelEdit" resourcekey="cmdCancel" OnCommand="CancelEdit" ImageUrl="~/images/delete.gif" />
+	            <asp:ImageButton Runat="server" ID="lnkCancelEdit" resourcekey="cmdCancel" OnCommand="CancelEdit" ImageUrl="~/images/cancel.gif" />
             </EditItemTemplate>
         </asp:TemplateColumn>
 	</Columns>

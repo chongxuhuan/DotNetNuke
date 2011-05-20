@@ -45,11 +45,28 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditProfileDefinition PortalModuleBase is used to manage a Profile Property
+    /// for a portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	02/22/2006  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditProfileDefinition : PortalModuleBase
     {
+		#region "Private Members"
+
         private string ResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx";
         private string _Message = Null.NullString;
         private ProfilePropertyDefinition _PropertyDefinition;
+
+		#endregion
+
+		#region "Protected Members"
 
         protected bool IsAddMode
         {
@@ -66,6 +83,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 bool _IsList = false;
                 var objListController = new ListController();
                 ListEntryInfo dataType = objListController.GetListEntryInfo(PropertyDefinition.DataType);
+
                 if ((dataType != null) && (dataType.ListName == "DataType") && (dataType.Value == "List"))
                 {
                     _IsList = true;
@@ -74,6 +92,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether we are dealing with SuperUsers
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsSuperUser
         {
             get
@@ -97,11 +123,13 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     if (IsAddMode)
                     {
+						//Create New Property Definition
                         _PropertyDefinition = new ProfilePropertyDefinition();
                         _PropertyDefinition.PortalId = UsersPortalId;
                     }
                     else
                     {
+						//Get Property Definition from Data Store
                         _PropertyDefinition = ProfileController.GetPropertyDefinition(PropertyDefinitionID, UsersPortalId);
                     }
                 }
@@ -126,6 +154,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Portal Id whose Users we are managing
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int UsersPortalId
         {
             get
@@ -139,6 +175,10 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         private void UpdateResourceFileNode(XmlDocument xmlDoc, string key, string text)
         {
             XmlNode node;
@@ -147,6 +187,7 @@ namespace DotNetNuke.Modules.Admin.Users
             node = xmlDoc.SelectSingleNode("//root/data[@name='" + key + "']/value");
             if (node == null)
             {
+				//missing entry
                 nodeData = xmlDoc.CreateElement("data");
                 attr = xmlDoc.CreateAttribute("name");
                 attr.Value = key;
@@ -199,8 +240,10 @@ namespace DotNetNuke.Modules.Admin.Users
         private bool ValidateProperty(ProfilePropertyDefinition definition)
         {
             bool isValid = true;
+
             var objListController = new ListController();
             string strDataType = objListController.GetListEntryInfo(definition.DataType).Value;
+
             switch (strDataType)
             {
                 case "Text":
@@ -213,6 +256,10 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             return isValid;
         }
+
+		#endregion
+
+		#region "Public Methods"
 
         public string GetText(string type)
         {
@@ -242,11 +289,26 @@ namespace DotNetNuke.Modules.Admin.Users
             return text;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/22/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
+            //Set the List Entries Control Properties
             lstEntries.ID = "ListEntries";
+
+            //Get Property Definition Id from Querystring
             if (PropertyDefinitionID == Null.NullInteger)
             {
                 if ((Request.QueryString["PropertyDefinitionId"] != null))
@@ -264,6 +326,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/22/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -281,6 +351,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 Wizard.StartNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
                 Wizard.StepNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
                 Wizard.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("cmdCancel", LocalResourceFile);
+
                 if (!Page.IsPostBack)
                 {
                     Localization.LoadCultureDropDownList(cboLocales, CultureDropDownTypes.NativeName, ((PageBase) Page).PageCulture.Name);
@@ -291,9 +362,12 @@ namespace DotNetNuke.Modules.Admin.Users
                     cboLocales.Visible = cboLocales.Items.Count != 1;
                     lblLocales.Visible = cboLocales.Items.Count == 1;
                 }
+				
+                //Bind Property Definition to Data Store
                 Properties.LocalResourceFile = LocalResourceFile;
                 Properties.DataSource = PropertyDefinition;
                 Properties.DataBind();
+
                 foreach (FieldEditorControl editor in Properties.Fields)
                 {
                     if (editor.DataField == "Required")
@@ -302,7 +376,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -313,6 +387,14 @@ namespace DotNetNuke.Modules.Admin.Users
             BindLanguages();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdSaveKeys_Click runs when the Save Keys button is clciked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/22/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void cmdSaveKeys_Click(object sender, EventArgs e)
         {
             var portalResources = new XmlDocument();
@@ -343,6 +425,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 UpdateResourceFileNode(portalResources, "ProfileProperties_" + PropertyDefinition.PropertyName + ".Required", txtPropertyRequired.Text);
                 UpdateResourceFileNode(portalResources, "ProfileProperties_" + PropertyDefinition.PropertyName + ".Validation", txtPropertyValidation.Text);
                 UpdateResourceFileNode(portalResources, "ProfileProperties_" + PropertyDefinition.PropertyCategory + ".Header", txtCategoryName.Text);
+
+                //remove unmodified keys
                 foreach (XmlNode node in portalResources.SelectNodes("//root/data"))
                 {
                     XmlNode defaultNode = defaultResources.SelectSingleNode("//root/data[@name='" + node.Attributes["name"].Value + "']");
@@ -352,6 +436,8 @@ namespace DotNetNuke.Modules.Admin.Users
                         parent.RemoveChild(node);
                     }
                 }
+				
+                //remove duplicate keys
                 foreach (XmlNode node in portalResources.SelectNodes("//root/data"))
                 {
                     if (portalResources.SelectNodes("//root/data[@name='" + node.Attributes["name"].Value + "']").Count > 1)
@@ -362,28 +448,40 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
                 if (portalResources.SelectNodes("//root/data").Count > 0)
                 {
+					//there's something to save
                     portalResources.Save(filename);
                 }
                 else
                 {
+					//nothing to be saved, if file exists delete
                     if (File.Exists(filename))
                     {
                         File.Delete(filename);
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 DnnLog.Error(exc);
                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Save.ErrorMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_ActiveStepChanged runs when the Wizard page has been changed
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/30/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void Wizard_ActiveStepChanged(object sender, EventArgs e)
         {
             switch (Wizard.ActiveStepIndex)
             {
-                case 1:
+                case 1: //Lists
                     if (!IsList)
                     {
                         Wizard.ActiveStepIndex = 2;
@@ -400,39 +498,74 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_CancelButtonClick runs when the Cancel Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/30/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void Wizard_CancelButtonClick(object sender, EventArgs e)
         {
             try
             {
+				//Redirect to Definitions page
                 Response.Redirect(Globals.NavigateURL(TabId, "ManageProfile", "mid=" + ModuleId), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_FinishButtonClick runs when the Finish Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/30/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void Wizard_FinishButtonClick(object sender, WizardNavigationEventArgs e)
         {
             try
             {
+				//Redirect to Definitions page
                 Response.Redirect(Globals.NavigateURL(TabId, "ManageProfile", "mid=" + ModuleId), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Wizard_NextButtonClickruns when the next Button is clicked.  It provides
+        ///	a mechanism for cancelling the page change if certain conditions aren't met.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/30/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void Wizard_NextButtonClick(object sender, WizardNavigationEventArgs e)
         {
             switch (e.CurrentStepIndex)
             {
-                case 0:
+                case 0: //Property Details
                     try
                     {
+						//Check if Property Editor has been updated by user
                         if (Properties.IsDirty && Properties.IsValid)
                         {
+							//Declare Definition and "retrieve" it from the Property Editor
                             ProfilePropertyDefinition propertyDefinition;
                             propertyDefinition = (ProfilePropertyDefinition) Properties.DataSource;
                             if (UsersPortalId == Null.NullInteger)
@@ -443,6 +576,7 @@ namespace DotNetNuke.Modules.Admin.Users
                             {
                                 if (PropertyDefinitionID == Null.NullInteger)
                                 {
+									//Add the Property Definition
                                     PropertyDefinitionID = ProfileController.AddPropertyDefinition(propertyDefinition);
                                     if (PropertyDefinitionID < Null.NullInteger)
                                     {
@@ -452,6 +586,7 @@ namespace DotNetNuke.Modules.Admin.Users
                                 }
                                 else
                                 {
+									//Update the Property Definition
                                     ProfileController.UpdatePropertyDefinition(propertyDefinition);
                                 }
                             }
@@ -462,12 +597,14 @@ namespace DotNetNuke.Modules.Admin.Users
                             }
                         }
                     }
-                    catch (Exception exc)
+                    catch (Exception exc) //Module failed to load
                     {
                         Exceptions.ProcessModuleLoadException(this, exc);
                     }
                     break;
             }
         }
+		
+		#endregion
     }
 }

@@ -74,6 +74,7 @@ namespace DotNetNuke.Modules.Admin.Modules
             cboFile.Items.Clear();
             cboFile.Items.Add(new ListItem(Localization.GetString("None_Specified"), "None"));
             cboFile.Items.Add(new ListItem("User Control", "UserControl"));
+
             var srcPhysicalPath = Server.MapPath(controlSrc);
             if (File.Exists(srcPhysicalPath + ".vb") || File.Exists(srcPhysicalPath + ".cs"))
             {
@@ -123,10 +124,12 @@ namespace DotNetNuke.Modules.Admin.Modules
                 var srcVirtualPath = objModuleControl.ControlSrc;
                 var srcFile = Null.NullString;
                 var displaySource = cboFile.SelectedValue != "None";
+
                 if (displaySource)
                 {
                     srcFile = GetSourceFileName(srcVirtualPath);
                     lblSourceFile.Text = string.Format(Localization.GetString("SourceFile", LocalResourceFile), srcFile);
+
                     var objStreamReader = File.OpenText(srcFile);
                     txtSource.Text = objStreamReader.ReadToEnd();
                     objStreamReader.Close();
@@ -201,7 +204,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                     Response.Redirect(Globals.NavigateURL(), true);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

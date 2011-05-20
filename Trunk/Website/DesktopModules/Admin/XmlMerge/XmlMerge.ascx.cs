@@ -89,6 +89,7 @@ namespace DotNetNuke.Modules.XmlMerge
 
         private void ValidateSuperUser()
         {
+			//Verify that the current user has access to access this page
             if (!UserInfo.IsSuperUser)
             {
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
@@ -181,6 +182,7 @@ namespace DotNetNuke.Modules.XmlMerge
                     Application.Application app = DotNetNukeContext.Current.Application;
                     var merge = new Services.Installer.XmlMerge(doc, Globals.FormatVersion(app.Version), app.Description);
                     merge.UpdateConfigs();
+
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("Success", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
                 }
                 catch (Exception ex)

@@ -78,7 +78,7 @@ namespace DotNetNuke.Modules.Messaging
                                                                 where p.ModuleID == moduleId
                                                                    && p.RoleID == settings.RegisteredRoleId
                                                                    && p.UserID == Null.NullInteger
-                                                                   && p.PermissionCode == "EDIT"
+                                                                   && p.PermissionKey == "EDIT"
                                                                 select p).SingleOrDefault();
 
                                         if (modulePermission == null)

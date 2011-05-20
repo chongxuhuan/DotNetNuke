@@ -45,6 +45,17 @@ using Image = System.Drawing.Image;
 
 namespace DotNetNuke.Modules.Admin.Skins
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditSkins PortalModuleBase is used to manage the Available Skins
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditSkins : PortalModuleBase
     {
 
@@ -108,7 +119,10 @@ namespace DotNetNuke.Modules.Admin.Skins
         private static string CreateThumbnail(string strImage)
         {
             var blnCreate = true;
+
             var strThumbnail = strImage.Replace(Path.GetFileName(strImage), "thumbnail_" + Path.GetFileName(strImage));
+
+            //check if image has changed
             if (File.Exists(strThumbnail))
             {
                 if (File.GetLastWriteTime(strThumbnail) == File.GetLastWriteTime(strImage))
@@ -118,44 +132,61 @@ namespace DotNetNuke.Modules.Admin.Skins
             }
             if (blnCreate)
             {
-                const int intSize = 150;
+                const int intSize = 150; //size of the thumbnail 
                 Image objImage;
                 try
                 {
                     objImage = Image.FromFile(strImage);
+					
+					//scale the image to prevent distortion
                     int intHeight;
                     int intWidth;
                     double dblScale;
                     if (objImage.Height > objImage.Width)
                     {
+						//The height was larger, so scale the width 
                         dblScale = (double) intSize/objImage.Height;
                         intHeight = intSize;
                         intWidth = Convert.ToInt32(objImage.Width*dblScale);
                     }
                     else
                     {
+						//The width was larger, so scale the height 
                         dblScale = (double) intSize/objImage.Width;
                         intWidth = intSize;
                         intHeight = Convert.ToInt32(objImage.Height*dblScale);
                     }
+					
+                    //create the thumbnail image
                     var objThumbnail = objImage.GetThumbnailImage(intWidth, intHeight, null, IntPtr.Zero);
+
+                    //delete the old file ( if it exists )
                     if (File.Exists(strThumbnail))
                     {
                         File.Delete(strThumbnail);
                     }
+					
+                    //save the thumbnail image 
                     objThumbnail.Save(strThumbnail, objImage.RawFormat);
+
+                    //set the file attributes
                     File.SetAttributes(strThumbnail, FileAttributes.Normal);
                     File.SetLastWriteTime(strThumbnail, File.GetLastWriteTime(strImage));
+
+                    //tidy up
                     objImage.Dispose();
                     objThumbnail.Dispose();
                 }
-				catch (Exception ex)
+				catch (Exception ex) //problem creating thumbnail
 				{
 					DnnLog.Error(ex);
 				}
             }
+
             strThumbnail = Globals.ApplicationPath + "/" + strThumbnail.Substring(strThumbnail.IndexOf("portals\\"));
             strThumbnail = strThumbnail.Replace("\\", "/");
+
+            //return thumbnail filename
             return strThumbnail;
         }
 
@@ -164,10 +195,10 @@ namespace DotNetNuke.Modules.Admin.Skins
             var strPath = Null.NullString;
             switch (type)
             {
-                case "G":
+                case "G":  //global
                     strPath = Globals.HostPath + root + "/" + name;
                     break;
-                case "L":
+                case "L": //local
                     strPath = PortalSettings.HomeDirectory + root + "/" + name;
                     break;
             }
@@ -199,10 +230,14 @@ namespace DotNetNuke.Modules.Admin.Skins
             cboSkins.Items.Clear();
             CurrentSkin = _notSpecified;
             cboSkins.Items.Add(CurrentSkin);
+
+            //load host skins
             if (chkHost.Checked)
             {
                 AddSkinstoCombo(cboSkins, Request.MapPath(Globals.HostPath + SkinController.RootSkin));
             }
+			
+            //load portal skins
             if (chkSite.Checked)
             {
                 AddSkinstoCombo(cboSkins, PortalSettings.HomeDirectoryMapPath + SkinController.RootSkin);
@@ -210,10 +245,14 @@ namespace DotNetNuke.Modules.Admin.Skins
             cboContainers.Items.Clear();
             CurrentContainer = _notSpecified;
             cboContainers.Items.Add(CurrentContainer);
+
+            //load host containers
             if (chkHost.Checked)
             {
                 AddSkinstoCombo(cboContainers, Request.MapPath(Globals.HostPath + SkinController.RootContainer));
             }
+			
+            //load portal containers
             if (chkSite.Checked)
             {
                 AddSkinstoCombo(cboContainers, PortalSettings.HomeDirectoryMapPath + SkinController.RootContainer);
@@ -225,15 +264,16 @@ namespace DotNetNuke.Modules.Admin.Skins
             var strRootPath = Null.NullString;
             switch (strType)
             {
-                case "G":
+                case "G": //global
                     strRootPath = Request.MapPath(Globals.HostPath);
                     break;
-                case "L":
+                case "L": //local
                     strRootPath = Request.MapPath(PortalSettings.HomeDirectory);
                     break;
             }
             var objSkinFiles = new SkinFileProcessor(strRootPath, strRoot, strName);
             var arrSkinFiles = new ArrayList();
+
             if (Directory.Exists(strFolder))
             {
                 var arrFiles = Directory.GetFiles(strFolder);
@@ -260,9 +300,9 @@ namespace DotNetNuke.Modules.Admin.Skins
             }
             switch (strParse)
             {
-                case "L":
+                case "L": //localized
                     return objSkinFiles.ProcessList(arrSkinFiles, SkinParser.Localized);
-                case "P":
+                case "P": //portable
                     return objSkinFiles.ProcessList(arrSkinFiles, SkinParser.Portable);
             }
             return Null.NullString;
@@ -273,9 +313,11 @@ namespace DotNetNuke.Modules.Admin.Skins
             HtmlTable tbl;
             HtmlTableRow row = null;
             HtmlTableCell cell;
+
             string[] arrFiles;
             string strURL;
             var intIndex = 0;
+
             if (Directory.Exists(strFolderPath))
             {
                 bool fallbackSkin;
@@ -293,7 +335,9 @@ namespace DotNetNuke.Modules.Admin.Skins
                     fallbackSkin = IsFallbackContainer(strFolderPath);
                 }
                 var strSkinType = strFolderPath.ToLower().IndexOf(Globals.HostMapPath.ToLower()) != -1 ? "G" : "L";
+
                 var canDeleteSkin = SkinController.CanDeleteSkin(strFolderPath, PortalSettings.HomeDirectoryMapPath);
+
                 if (fallbackSkin || !canDeleteSkin)
                 {
                     row = new HtmlTableRow();
@@ -302,6 +346,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                     cell.InnerText = Localization.GetString(type == "Skin" ? "CannotDeleteSkin.ErrorMessage" : "CannotDeleteContainer.ErrorMessage", LocalResourceFile);
                     row.Cells.Add(cell);
                     tbl.Rows.Add(row);
+
                     cmdDelete.Visible = false;
                 }
                 arrFiles = Directory.GetFiles(strFolderPath, "*.ascx");
@@ -325,21 +370,29 @@ namespace DotNetNuke.Modules.Admin.Skins
                     }
                     if (intIndex == 1)
                     {
+						//Create new row
                         row = new HtmlTableRow();
                         tbl.Rows.Add(row);
                     }
                     cell = new HtmlTableCell {Align = "center", VAlign = "bottom"};
                     cell.Attributes["class"] = "NormalBold";
+
+                    //name
                     var label = new Label {Text = Path.GetFileNameWithoutExtension(file)};
                     cell.Controls.Add(label);
                     cell.Controls.Add(new LiteralControl("<br />"));
+
+                    //thumbnail
                     if (File.Exists(file.Replace(".ascx", ".jpg")))
                     {
                         var imgLink = new HyperLink();
                         strURL = file.Substring(strFile.LastIndexOf("\\portals\\"));
                         imgLink.NavigateUrl = ResolveUrl("~" + strURL.Replace(".ascx", ".jpg"));
                         imgLink.Target = "_new";
+
+
                         var img = new System.Web.UI.WebControls.Image {ImageUrl = CreateThumbnail(file.Replace(".ascx", ".jpg")), BorderWidth = new Unit(1)};
+
                         imgLink.Controls.Add(img);
                         cell.Controls.Add(imgLink);
                     }
@@ -349,9 +402,13 @@ namespace DotNetNuke.Modules.Admin.Skins
                         cell.Controls.Add(img);
                     }
                     cell.Controls.Add(new LiteralControl("<br />"));
+
+                    //options 
                     strURL = file.Substring(strFile.IndexOf("\\" + strRootSkin + "\\"));
                     strURL.Replace(".ascx", "");
+
                     var previewLink = new HyperLink();
+                    
                     if (type == "Skin")
                     {
                         previewLink.NavigateUrl = Globals.NavigateURL(PortalSettings.HomeTabId,
@@ -368,7 +425,9 @@ namespace DotNetNuke.Modules.Admin.Skins
                     previewLink.Target = "_new";
                     previewLink.Text = Localization.GetString("cmdPreview", LocalResourceFile);
                     cell.Controls.Add(previewLink);
+
                     cell.Controls.Add(new LiteralControl("|"));
+
                     var applyButton = new LinkButton
                                           {
                                               Text = Localization.GetString("cmdApply", LocalResourceFile),
@@ -378,9 +437,11 @@ namespace DotNetNuke.Modules.Admin.Skins
                                           };
                     applyButton.Command += OnCommand;
                     cell.Controls.Add(applyButton);
+
                     if ((UserInfo.IsSuperUser || strSkinType == "L") && (!fallbackSkin && canDeleteSkin))
                     {
                         cell.Controls.Add(new LiteralControl(";|"));
+
                         var deleteButton = new LinkButton
                                                {
                                                    Text = Localization.GetString("cmdDelete"),
@@ -399,6 +460,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                     cell = new HtmlTableCell {ColSpan = 3, Align = "center"};
                     var strFile = strFolderPath + "/" + Globals.glbAboutPage;
                     strURL = strFile.Substring(strFile.IndexOf("\\portals\\"));
+
                     var copyrightLink = new HyperLink
                                             {
                                                 NavigateUrl = ResolveUrl("~" + strURL),
@@ -407,6 +469,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                                                 Text = string.Format(Localization.GetString("About", LocalResourceFile), strFolder)
                                             };
                     cell.Controls.Add(copyrightLink);
+
                     row.Cells.Add(cell);
                     tbl.Rows.Add(row);
                 }
@@ -451,6 +514,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             tblContainers.Rows.Clear();
             var intPortalId = PortalId;
+
             var strContainerPath = Globals.ApplicationMapPath.ToLower() + cboContainers.SelectedItem.Value;
             if (strContainerPath.ToLowerInvariant().Contains(Globals.HostMapPath.ToLowerInvariant()))
             {
@@ -487,6 +551,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         {
             tblSkins.Rows.Clear();
             var intPortalId = PortalId;
+
             var strSkinPath = Globals.ApplicationMapPath.ToLower() + cboSkins.SelectedItem.Value;
             if (strSkinPath.ToLowerInvariant().Contains(Globals.HostMapPath.ToLowerInvariant()))
             {
@@ -538,14 +603,17 @@ namespace DotNetNuke.Modules.Admin.Skins
             try
             {
                 cmdDelete.Visible = true;
+
                 if (Page.IsPostBack == false)
                 {
                     LoadCombos();
                 }
                 typeRow.Visible = !PortalSettings.ActiveTab.IsSuperTab;
+
                 if (!Page.IsPostBack)
                 {
                     string strURL;
+
                     if (Request.QueryString["Name"] != null)
                     {
                         strURL =
@@ -554,6 +622,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                     }
                     else
                     {
+						//Get the current portal skin
                         var skinSrc = !string.IsNullOrEmpty(PortalSettings.DefaultPortalSkin) ? PortalSettings.DefaultPortalSkin : SkinController.GetDefaultPortalSkin();
                         strURL = Request.MapPath(SkinController.FormatSkinPath(SkinController.FormatSkinSrc(skinSrc, PortalSettings)));
                         strURL = strURL.Substring(0, strURL.LastIndexOf("\\"));
@@ -585,7 +654,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 ShowSkins();
                 ShowContainers();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -594,6 +663,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         protected void OnHostCheckChanged(object sender, EventArgs e)
         {
             LoadCombos();
+
             ShowSkins();
             ShowContainers();
         }
@@ -601,6 +671,7 @@ namespace DotNetNuke.Modules.Admin.Skins
         protected void OnSiteCheckChanged(object sender, EventArgs e)
         {
             LoadCombos();
+
             ShowSkins();
             ShowContainers();
         }
@@ -643,13 +714,14 @@ namespace DotNetNuke.Modules.Admin.Skins
                             strType = "L";
                         }
                         var strRoot = strSrc.Substring(3, strSrc.IndexOf("/") - 3);
+
                         var strFolder = strSrc.Substring(strSrc.IndexOf("/") + 1, strSrc.LastIndexOf("/") - strSrc.IndexOf("/") - 2);
                         redirectUrl = Globals.NavigateURL(TabId, "", "Type=" + strType, "Root=" + strRoot, "Name=" + strFolder);
                         break;
                 }
                 Response.Redirect(redirectUrl, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -660,7 +732,9 @@ namespace DotNetNuke.Modules.Admin.Skins
             var failure = false;
             var strSkinPath = Globals.ApplicationMapPath.ToLower() + cboSkins.SelectedItem.Value;
             var strContainerPath = Globals.ApplicationMapPath.ToLower() + cboContainers.SelectedItem.Value;
+
             string strMessage;
+
             if (UserInfo.IsSuperUser == false && cboSkins.SelectedItem.Value.IndexOf("\\portals\\_default\\", 0) != -1)
             {
                 strMessage = Localization.GetString("SkinDeleteFailure", LocalResourceFile);
@@ -726,6 +800,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 strRoot = SkinController.RootSkin;
                 strName = cboSkins.SelectedItem.Text;
                 strParse += ParseSkinPackage(strType, strRoot, strName, strFolder, optParse.SelectedItem.Value);
+
                 strFolder = strSkinPath.Replace("\\" + SkinController.RootSkin.ToLower() + "\\", "\\" + SkinController.RootContainer.ToLower() + "\\");
                 strRoot = SkinController.RootContainer;
                 strParse += ParseSkinPackage(strType, strRoot, strName, strFolder, optParse.SelectedItem.Value);
@@ -741,6 +816,7 @@ namespace DotNetNuke.Modules.Admin.Skins
                 DataCache.ClearPortalCache(PortalId, true);
             }
             lblOutput.Text = strParse;
+
             if (cboSkins.SelectedIndex > 0)
             {
                 ShowSkins();

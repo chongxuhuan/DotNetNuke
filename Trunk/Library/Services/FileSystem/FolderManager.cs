@@ -68,8 +68,6 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
-            if (!folderMapping.IsEnabled) throw new ArgumentException(Localization.Localization.GetExceptionMessage("AddFolderDisabledMappingError", "The folder cannot be added using a disabled mapping."));
-
             try
             {
                 FolderProvider.Instance(folderMapping.FolderProviderType).AddFolder(folderPath, folderMapping);
@@ -1095,15 +1093,9 @@ namespace DotNetNuke.Services.FileSystem
 
             var mergedTree = MergeFolderLists(fileSystemFolders, databaseFolders);
 
-            foreach (var folderMapping in FolderMappingController.Instance.GetFolderMappings(portalID))
-            {
-                if (folderMapping.IsEnabled && folderMapping.IsEditable)
-                {
-                    var folderMappingFolders = GetFolderMappingFolders(folderMapping, relativePath, isRecursive);
-                    mergedTree = MergeFolderLists(mergedTree, folderMappingFolders);
-                }
-            }
-            return mergedTree;
+            return (from folderMapping in FolderMappingController.Instance.GetFolderMappings(portalID)
+                    where folderMapping.IsEditable
+                    select GetFolderMappingFolders(folderMapping, relativePath, isRecursive)).Aggregate(mergedTree, MergeFolderLists);
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>

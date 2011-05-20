@@ -111,9 +111,14 @@ namespace DotNetNuke.Modules.Admin.Dashboard
 
             rptControls.ItemDataBound += rptControls_ItemDataBound;
 
+            //Get enabled Dashboard Controls 
             List<DashboardControl> controls = DashboardController.GetDashboardControls(true);
+
+            //Bind to tab list 
             rptTabs.DataSource = controls;
             rptTabs.DataBind();
+
+            //Bind to control list 
             rptControls.DataSource = controls;
             rptControls.DataBind();
         }
@@ -128,10 +133,12 @@ namespace DotNetNuke.Modules.Admin.Dashboard
                     Control dashboardControl;
                     if (control.DashboardControlSrc.ToLowerInvariant().EndsWith("ascx"))
                     {
+						//load from a user control on the file system 
                         dashboardControl = LoadControl("~/" + control.DashboardControlSrc);
                     }
                     else
                     {
+						//load from a typename in an assembly ( ie. server control ) 
                         dashboardControl = LoadControl(Reflection.CreateType(control.DashboardControlSrc), null);
                     }
                     dashboardControl.ID = Path.GetFileNameWithoutExtension(control.DashboardControlSrc);

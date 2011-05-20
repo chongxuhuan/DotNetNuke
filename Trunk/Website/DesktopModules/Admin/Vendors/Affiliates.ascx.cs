@@ -37,6 +37,18 @@ using DotNetNuke.Services.Vendors;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// The Affiliates PortalModuleBase is used to manage a Vendor's Affiliates
+	/// </summary>
+	/// <returns></returns>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class Affiliates : PortalModuleBase, IActionable
     {
         public int VendorID;
@@ -72,15 +84,49 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #endregion
 
+		#region "Private Methods"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// BindData gets the affiliates from the Database and binds them to the DataGrid
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		/// -----------------------------------------------------------------------------
         private void BindData()
         {
             var objAffiliates = new AffiliateController();
+
+			//Localize the Grid
             Localization.LocalizeDataGrid(ref grdAffiliates, LocalResourceFile);
+
             grdAffiliates.DataSource = objAffiliates.GetAffiliates(VendorID);
             grdAffiliates.DataBind();
+
             cmdAdd.NavigateUrl = FormatURL("AffilId", "-1");
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// DisplayDate formats a Date
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <paam name="DateValue">The Date to format</param>
+		/// <returns>The correctly formatted date</returns>
+		/// <history>
+		/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string DisplayDate(DateTime DateValue)
         {
             if (Null.IsNull(DateValue))
@@ -93,11 +139,40 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// FormatURL correctly formats the Url (adding a key/Value pair)
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <paam name="strKeyName">The name of the key to add</param>
+		/// <paam name="strKeyValue">The value to add</param>
+		/// <returns>The correctly formatted url</returns>
+		/// <history>
+		/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public string FormatURL(string strKeyName, string strKeyValue)
         {
             return EditUrl(strKeyName, strKeyValue, "Affiliate", "VendorId=" + VendorID);
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Page_Load runs when the control is loaded
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		/// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -112,7 +187,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     Visible = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -127,5 +202,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             base.OnInit(e);
             InitializeComponent();
         }
+		
+		#endregion
     }
 }

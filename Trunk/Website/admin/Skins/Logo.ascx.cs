@@ -35,6 +35,15 @@ using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <returns></returns>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Logo : SkinObjectBase
     {
         public string BorderWidth { get; set; }

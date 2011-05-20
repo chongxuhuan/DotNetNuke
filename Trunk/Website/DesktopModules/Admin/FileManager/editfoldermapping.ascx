@@ -20,10 +20,6 @@
                         <asp:DropDownList ID="cboFolderProviders" runat="server" CssClass="dnnFormInput" AutoPostBack="true" CausesValidation="false" OnSelectedIndexChanged="cboFolderProviders_SelectedIndexChanged"></asp:DropDownList>
                         <asp:RequiredFieldValidator ID="valFolderProvider" runat="server" ControlToValidate="cboFolderProviders" InitialValue="" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" resourcekey="valFolderProvider.ErrorMessage" EnableClientScript="false" ValidationGroup="vgEditFolderMapping"></asp:RequiredFieldValidator>
                     </div>
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plEnabled" runat="server" ControlName="chkEnabled" />
-                        <asp:CheckBox ID="chkEnabled" runat="server" Checked="true" />
-                    </div>
                 </fieldset>
                 <h2 id="Panel-FolderProviderSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("FolderProviderSettings")%></a></h2>
                 <fieldset>

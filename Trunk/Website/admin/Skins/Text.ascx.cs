@@ -47,8 +47,11 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             base.OnLoad(e);
             string strText = ShowText;
+			
+			//load resources
             if (!String.IsNullOrEmpty(ResourceKey))
             {
+				//localization
                 string strFile = Path.GetFileName(Server.MapPath(PortalSettings.ActiveTab.SkinSrc));
                 strFile = PortalSettings.ActiveTab.SkinPath + Localization.LocalResourceDirectory + "/" + strFile;
                 string strLocalization = Localization.GetString(ResourceKey, strFile);
@@ -57,10 +60,14 @@ namespace DotNetNuke.UI.Skins.Controls
                     strText = strLocalization;
                 }
             }
+			
+            //If no value is found then use the value set the the Text attribute
             if (string.IsNullOrEmpty(strText))
             {
                 strText = ShowText;
             }
+			
+			//token replace
             if (ReplaceTokens)
             {
                 var tr = new TokenReplace();

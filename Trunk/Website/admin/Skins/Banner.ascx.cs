@@ -36,9 +36,25 @@ using DotNetNuke.Services.Vendors;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Banner : SkinObjectBase
     {
+	
+		#region "Private Properties"
+		
         private const string MyFileName = "Banner.ascx";
+		
+		#endregion
+		
+		#region "Public Members"
+		
         public string GroupName { get; set; }
 
         public bool AllowNullBannerType { get; set; }
@@ -59,9 +75,14 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public string ColWidth { get; set; }
 
+		#endregion
+
+		#region "Event Handlers"
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             if (PortalSettings.BannerAdvertising != 0 && Visible)
             {
                 int BannerType = 0;
@@ -79,6 +100,8 @@ namespace DotNetNuke.UI.Skins.Controls
                         BannerType = PortalController.GetPortalSettingAsInteger("BannerTypeId", PortalSettings.PortalId, 1);
                     }
                 }
+				
+				//public attributes
                 if (String.IsNullOrEmpty(GroupName))
                 {
                     GroupName = PortalController.GetPortalSetting("BannerGroupName", PortalSettings.PortalId, "");
@@ -90,18 +113,23 @@ namespace DotNetNuke.UI.Skins.Controls
                 int intPortalId;
                 if (PortalSettings.BannerAdvertising == 1)
                 {
-                    intPortalId = PortalSettings.PortalId;
+                    intPortalId = PortalSettings.PortalId; //portal
                 }
                 else
                 {
-                    intPortalId = Null.NullInteger;
+                    intPortalId = Null.NullInteger; //host
                 }
+				
+                //load banners
                 var objBanners = new BannerController();
 
                 ArrayList arrBanners = objBanners.LoadBanners(intPortalId, Null.NullInteger, BannerType, GroupName, int.Parse(BannerCount));
 
+                //bind to datalist
                 lstBanners.DataSource = arrBanners;
                 lstBanners.DataBind();
+
+                //set banner display characteristics
                 if (lstBanners.Items.Count != 0)
                 {
                     lstBanners.RepeatLayout = RepeatLayout.Table;
@@ -109,6 +137,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     {
                         lstBanners.Width = Unit.Parse(Width + "px");
                     }
+					
                     if (lstBanners.Items.Count == 1)
                     {
                         lstBanners.CellPadding = 0;
@@ -119,6 +148,7 @@ namespace DotNetNuke.UI.Skins.Controls
                         lstBanners.CellPadding = 4;
                         lstBanners.CellSpacing = 0;
                     }
+					
                     if (!String.IsNullOrEmpty(Orientation))
                     {
                         switch (Orientation)
@@ -135,19 +165,24 @@ namespace DotNetNuke.UI.Skins.Controls
                     {
                         lstBanners.RepeatDirection = RepeatDirection.Vertical;
                     }
+					
                     if (!String.IsNullOrEmpty(BorderWidth))
                     {
                         lstBanners.ItemStyle.BorderWidth = Unit.Parse(BorderWidth + "px");
                     }
+					
                     if (!String.IsNullOrEmpty(BorderColor))
                     {
                         var objColorConverter = new ColorConverter();
                         lstBanners.ItemStyle.BorderColor = (Color) objColorConverter.ConvertFrom(BorderColor);
                     }
+					
+					//item attributes
                     if (!String.IsNullOrEmpty(RowHeight))
                     {
                         lstBanners.ItemStyle.Height = Unit.Parse(RowHeight + "px");
                     }
+					
                     if (!String.IsNullOrEmpty(ColWidth))
                     {
                         lstBanners.ItemStyle.Width = Unit.Parse(ColWidth + "px");
@@ -164,6 +199,10 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+		#endregion
+
+		#region "Public Methods"
+		
         public string FormatItem(int VendorId, int BannerId, int BannerTypeId, string BannerName, string ImageFile, string Description, string URL, int Width, int Height)
         {
             var objBanners = new BannerController();
@@ -179,5 +218,7 @@ namespace DotNetNuke.UI.Skins.Controls
                                            PortalSettings.BannerAdvertising == 1 ? "L" : "G",
                                            PortalSettings.HomeDirectory);
         }
+		
+		#endregion
     }
 }

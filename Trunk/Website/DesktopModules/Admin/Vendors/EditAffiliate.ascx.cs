@@ -40,6 +40,18 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditAffiliate PortalModuleBase is used to add/edit an Affiliate
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditAffiliate : PortalModuleBase
     {
 
@@ -64,6 +76,17 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -77,18 +100,23 @@ namespace DotNetNuke.Modules.Admin.Vendors
             {
                 VendorId = Int32.Parse(Request.QueryString["VendorId"]);
             }
+			
             if ((Request.QueryString["AffilId"] != null))
             {
                 AffiliateId = Int32.Parse(Request.QueryString["AffilId"]);
             }
+			
+            //this needs to execute always to the client script code is registred in InvokePopupCal
             cmdStartCalendar.NavigateUrl = Calendar.InvokePopupCal(txtStartDate);
             cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
+
             if (Page.IsPostBack == false)
             {
 
                 var objAffiliates = new AffiliateController();
                 if (AffiliateId != Null.NullInteger)
                 {
+                    //Obtain a single row of banner information
                     var objAffiliate = objAffiliates.GetAffiliate(AffiliateId, VendorId, PortalId);
                     if (objAffiliate != null)
                     {
@@ -103,7 +131,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         txtCPC.Text = objAffiliate.CPC.ToString("#0.0####");
                         txtCPA.Text = objAffiliate.CPA.ToString("#0.0####");
                     }
-                    else
+                    else //security violation attempt to access item not related to this Module
                     {
                         Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
                     }
@@ -112,29 +140,67 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     txtCPC.Text = 0.ToString("#0.0####");
                     txtCPA.Text = 0.ToString("#0.0####");
+
                     cmdDelete.Visible = false;
                 }
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the Cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnCancelClick(object sender, EventArgs e)
         {
+            //Redirect back to the portal home page
             Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the Delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(object sender, EventArgs e)
         {
             if (AffiliateId != -1)
             {
                 var objAffiliates = new AffiliateController();
                 objAffiliates.DeleteAffiliate(AffiliateId);
+
+                //Redirect back to the portal home page
                 Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdSend_Click runs when the Send Notification Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnSendClick(object sender, EventArgs e)
         {
             var objVendors = new VendorController();
+
             var objVendor = objVendors.GetVendor(VendorId, PortalId);
             if (objVendor != null)
             {
@@ -172,6 +238,17 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             if (Page.IsValid)
@@ -186,6 +263,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                                            CPA = double.Parse(txtCPA.Text)
                                        };
                 var objAffiliates = new AffiliateController();
+
                 if (AffiliateId == -1)
                 {
                     objAffiliates.AddAffiliate(objAffiliate);
@@ -194,6 +272,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     objAffiliates.UpdateAffiliate(objAffiliate);
                 }
+				
+                //Redirect back to the portal home page
                 Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
             }
         }

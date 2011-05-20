@@ -37,6 +37,17 @@ using DotNetNuke.Services.Vendors;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// The Banners PortalModuleBase is used to manage a Vendor's Banners
+	/// </summary>
+    /// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class Banners : PortalModuleBase, IActionable
     {
         public int VendorID;
@@ -72,15 +83,49 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData gets the banners from the Database and binds them to the DataGrid
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             var objBanners = new BannerController();
+
+            //Localize the Grid
             Localization.LocalizeDataGrid(ref grdBanners, LocalResourceFile);
+
             grdBanners.DataSource = objBanners.GetBanners(VendorID);
             grdBanners.DataBind();
+
             cmdAdd.NavigateUrl = FormatURL("BannerId", "-1");
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisplayDate formats a Date
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="DateValue">The Date to format</param>
+        /// <returns>The correctly formatted date</returns>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string DisplayDate(DateTime DateValue)
         {
             string _DisplayDate = Null.NullString;
@@ -95,13 +140,25 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     _DisplayDate = DateValue.ToShortDateString();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return _DisplayDate;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisplayDate formats a Date
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <returns>The correctly formatted date</returns>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string DisplayType(int BannerTypeId)
         {
             string _DisplayType = Null.NullString;
@@ -132,18 +189,47 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         break;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return _DisplayType;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatURL correctly formats the Url (adding a key/Value pair)
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strKeyName">The name of the key to add</param>
+        /// <param name="strKeyValue">The value to add</param>
+        /// <returns>The correctly formatted url</returns>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FormatURL(string strKeyName, string strKeyValue)
         {
             return EditUrl(strKeyName, strKeyValue, "Banner", "VendorId=" + VendorID, "mid=" + ModuleId);
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -158,10 +244,12 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     Visible = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

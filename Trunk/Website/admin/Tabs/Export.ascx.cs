@@ -61,6 +61,16 @@ namespace DotNetNuke.Modules.Admin.Tabs
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Serializes the Tab
+        /// </summary>
+        /// <param name="xmlTemplate">Reference to XmlDocument context</param>
+        /// <param name="nodeTabs">Node to add the serialized objects</param>
+        /// <history>
+        /// 	[cnurse]	10/02/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void SerializeTab(XmlDocument xmlTemplate, XmlNode nodeTabs)
         {
             var xmlTab = new XmlDocument();
@@ -130,16 +140,24 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 }
                 string filename = PortalSettings.HomeDirectoryMapPath + cboFolders.SelectedItem.Value + txtFile.Text + ".page.template";
                 filename = filename.Replace("/", "\\");
+
                 var xmlTemplate = new XmlDocument();
                 XmlNode nodePortal = xmlTemplate.AppendChild(xmlTemplate.CreateElement("portal"));
                 nodePortal.Attributes.Append(XmlUtils.CreateAttribute(xmlTemplate, "version", "3.0"));
+
+                //Add template description
                 XmlElement node = xmlTemplate.CreateElement("description");
                 node.InnerXml = Server.HtmlEncode(txtDescription.Text);
                 nodePortal.AppendChild(node);
+
+                //Serialize tabs
                 XmlNode nodeTabs = nodePortal.AppendChild(xmlTemplate.CreateElement("tabs"));
                 SerializeTab(xmlTemplate, nodeTabs);
+
                 xmlTemplate.Save(filename);
                 UI.Skins.Skin.AddModuleMessage(this, "", String.Format(Localization.GetString("EmailErrorMessage", LocalResourceFile), string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename)), ModuleMessage.ModuleMessageType.BlueInfo);
+
+                //add file to Files table
                 FileSystemUtils.AddFile(txtFile.Text + ".page.template", PortalId, cboFolders.SelectedItem.Value, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");
             }
             catch (Exception exc)

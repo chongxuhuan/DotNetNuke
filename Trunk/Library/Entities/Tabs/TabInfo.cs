@@ -44,6 +44,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Tokens;
 
@@ -66,6 +67,10 @@ namespace DotNetNuke.Entities.Tabs
         private bool _superTabIdSet = Null.NullBoolean;
         private readonly SharedDictionary<string, string> LocalizedTabNameDictionary = new SharedDictionary<string, string>();
         private readonly SharedDictionary<string, string> FullUrlDictionary = new SharedDictionary<string, string>();
+        private string _iconFile;
+        private string _iconFileRaw;
+        private string _iconFileLarge;
+        private string _iconFileLargeRaw;
 
         #region Constructors
 
@@ -135,10 +140,56 @@ namespace DotNetNuke.Entities.Tabs
         public bool HasChildren { get; set; }
 
         [XmlElement("iconfile")]
-        public string IconFile { get; set; }
+        public string IconFile
+        {
+            get
+            {
+                IconFileGetter(ref _iconFile, _iconFileRaw);
+                return _iconFile;
+            }
+
+            set
+            {
+                _iconFileRaw = value;
+                _iconFile = null;
+            }
+        }
 
         [XmlElement("iconfilelarge")]
-        public string IconFileLarge { get; set; }
+        public string IconFileLarge
+        {
+            get
+            {
+                IconFileGetter(ref _iconFileLarge, _iconFileLargeRaw);
+                return _iconFileLarge;
+            }
+
+            set
+            {
+                _iconFileLargeRaw = value;
+                _iconFileLarge = null;
+            }
+        }
+
+        private void IconFileGetter(ref string iconFile, string iconRaw)
+        {
+            if (iconRaw.StartsWith("~") || PortalID == Null.NullInteger)
+            {
+                iconFile = iconRaw;
+            }
+            else if (iconFile == null && !String.IsNullOrEmpty(iconRaw) && PortalID != Null.NullInteger)
+            {
+                IFileInfo fileInfo = FileManager.Instance.GetFile(PortalID, iconRaw);
+                if (fileInfo != null)
+                {
+                    iconFile = FileManager.Instance.GetUrl(fileInfo);
+                }
+                else
+                {
+                    iconFile = iconRaw;
+                }
+            }
+        }
 
         [XmlElement("isdeleted")]
         public bool IsDeleted { get; set; }

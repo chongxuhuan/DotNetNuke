@@ -38,10 +38,38 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Security
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditRoles PortalModuleBase is used to manage a Security Role
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditGroups : PortalModuleBase
     {
+		#region "Private Members"
+
         private int RoleGroupID = -1;
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -67,13 +95,16 @@ namespace DotNetNuke.Modules.Admin.Security
                         {
                             txtRoleGroupName.Text = objRoleGroupInfo.RoleGroupName;
                             txtDescription.Text = objRoleGroupInfo.Description;
+
+                            //Check if Group has any roles assigned
                             int roleCount = objRoles.GetRolesByGroup(PortalId, RoleGroupID).Count;
+
                             if (roleCount > 0)
                             {
                                 cmdDelete.Visible = false;
                             }
                         }
-                        else
+                        else //security violation attempt to access item not related to this Module
                         {
                             Response.Redirect(Globals.NavigateURL("Security Roles"));
                         }
@@ -84,12 +115,24 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// 	[jlucarino]	2/26/2009	Added CreatedByUserID and LastModifiedByUserID
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
             try
@@ -121,12 +164,23 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdDelete_Click(object sender, EventArgs e)
         {
             try
@@ -134,12 +188,23 @@ namespace DotNetNuke.Modules.Admin.Security
                 RoleController.DeleteRoleGroup(PortalId, RoleGroupID);
                 Response.Redirect(Globals.NavigateURL());
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdCancel_Click(object sender, EventArgs e)
         {
             try
@@ -153,10 +218,12 @@ namespace DotNetNuke.Modules.Admin.Security
                     Response.Redirect(Globals.NavigateURL(TabId, "", "RoleGroupID=" + RoleGroupID));
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
     }
 }

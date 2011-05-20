@@ -33,6 +33,15 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <returns></returns>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class BreadCrumb : SkinObjectBase
     {
         private const string MyFileName = "Breadcrumb.ascx";
@@ -58,6 +67,8 @@ namespace DotNetNuke.UI.Skins.Controls
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            //public attributes
             string strSeparator;
             if (!String.IsNullOrEmpty(Separator))
             {
@@ -90,6 +101,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 intRootLevel = 1;
             }
             string strBreadCrumbs = "";
+
             if (intRootLevel == -1)
             {
                 strBreadCrumbs += string.Format(Localization.GetString("Root", Localization.GetResourceFile(this, MyFileName)),
@@ -98,6 +110,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 strBreadCrumbs += strSeparator;
                 intRootLevel = 0;
             }
+			
+            //process bread crumbs
             int intTab;
             for (intTab = intRootLevel; intTab <= PortalSettings.ActiveTab.BreadCrumbs.Count - 1; intTab++)
             {

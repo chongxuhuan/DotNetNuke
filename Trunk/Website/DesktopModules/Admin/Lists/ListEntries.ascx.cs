@@ -37,10 +37,32 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Common.Lists
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Manages Entry List
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [tamttt]  20/10/2004	Created
+    ///     [cnurse]  01/30/2007	Extracted to separate user control
+    /// </history>
+    /// -----------------------------------------------------------------------------
 
     public partial class ListEntries : PortalModuleBase
     {
 
+		#region "Protected Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Gets and sets the DefinitionID of the current List
+        /// </summary>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int DefinitionID
         {
             get
@@ -57,6 +79,19 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Property to determine if this list has custom sort order
+        /// </summary>
+        /// <remarks>
+        ///     Up/Down button in datagrid will be visibled based on this property.
+        ///     If disable, list will be sorted anphabetically
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool EnableSortOrder
         {
             get
@@ -73,6 +108,16 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the selected ListInfo
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]  01/31/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ListInfo SelectedList
         {
             get
@@ -81,6 +126,16 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the selected collection of List Items
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]  01/31/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected ListEntryInfoCollection SelectedListItems
         {
             get
@@ -95,6 +150,19 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Property to determine if this list is system (DNN core)
+        /// </summary>
+        /// <remarks>
+        ///     Default entries in system list can not be deleted
+        ///     Entries in system list is sorted anphabetically
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool SystemList
         {
             get
@@ -111,6 +179,20 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get or set the ListName for this set of List Entries
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]  01/31/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ListName
         {
             get
@@ -123,6 +205,16 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the portalId for this set of List Entries
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]  01/31/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int ListPortalID
         {
             get
@@ -151,6 +243,16 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get or set the ParentKey for this set of List Entries
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]  02/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ParentKey
         {
             get
@@ -163,6 +265,17 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets or sets the Selected key
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string SelectedKey
         {
             get
@@ -190,12 +303,28 @@ namespace DotNetNuke.Common.Lists
         public event EventHandler ListCreated;
         public event EventHandler ListEntryCreated;
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Loads top level entry list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindGrid()
         {
             foreach (DataGridColumn column in grdEntries.Columns)
             {
                 if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     if (imageColumn.CommandName == "Delete")
                     {
@@ -209,13 +338,15 @@ namespace DotNetNuke.Common.Lists
                             column.Visible = true;
                         }
                     }
+					
+					//Localize Image Column Text
                     if (!String.IsNullOrEmpty(imageColumn.CommandName))
                     {
                         imageColumn.Text = Localization.GetString(imageColumn.CommandName, LocalResourceFile);
                     }
                 }
             }
-            grdEntries.DataSource = SelectedListItems;
+            grdEntries.DataSource = SelectedListItems; //selList
             grdEntries.DataBind();
             if (SelectedListItems == null)
             {
@@ -227,6 +358,17 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Loads top level entry list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindListInfo()
         {
             lblListName.Text = ListName;
@@ -271,6 +413,7 @@ namespace DotNetNuke.Common.Lists
                 case "AddList":
                     EnableView(false);
                     EnableEdit(true);
+
                     rowListName.Visible = true;
                     txtParentKey.Text = "";
                     txtEntryName.Text = "";
@@ -278,19 +421,19 @@ namespace DotNetNuke.Common.Lists
                     txtEntryText.Text = "";
                     txtEntryName.ReadOnly = false;
                     cmdSaveEntry.CommandName = "SaveList";
+
                     var ctlLists = new ListController();
-                    {
-                        ddlSelectList.Enabled = true;
-                        ddlSelectList.DataSource = ctlLists.GetListInfoCollection();
-                        ddlSelectList.DataTextField = "DisplayName";
-                        ddlSelectList.DataValueField = "Key";
-                        ddlSelectList.DataBind();
-                        ddlSelectList.Items.Insert(0, new ListItem(Localization.GetString("None_Specified"), ""));
-                    }
-                    {
-                        ddlSelectParent.ClearSelection();
-                        ddlSelectParent.Enabled = false;
-                    }
+
+                    ddlSelectList.Enabled = true;
+                    ddlSelectList.DataSource = ctlLists.GetListInfoCollection();
+                    ddlSelectList.DataTextField = "DisplayName";
+                    ddlSelectList.DataValueField = "Key";
+                    ddlSelectList.DataBind();
+                    ddlSelectList.Items.Insert(0, new ListItem(Localization.GetString("None_Specified"), ""));
+                    
+					//Reset dropdownlist
+					ddlSelectParent.ClearSelection();
+                    ddlSelectParent.Enabled = false;
 
                     break;
             }
@@ -306,7 +449,7 @@ namespace DotNetNuke.Common.Lists
                     ctlLists.DeleteListEntryByID(entryId, true);
                     DataBind();
                 }
-                catch (Exception exc)
+                catch (Exception exc) //Module failed to load
                 {
                     Exceptions.ProcessModuleLoadException(this, exc);
                 }
@@ -320,10 +463,23 @@ namespace DotNetNuke.Common.Lists
         private void DeleteList()
         {
             var ctlLists = new ListController();
+
             ctlLists.DeleteList(SelectedList, true);
+
             Response.Redirect(Globals.NavigateURL(TabId));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Switching to edit mode, change controls visibility for editing depends on AddList params
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void EnableEdit(bool AddList)
         {
             rowListdetails.Visible = (!AddList);
@@ -334,6 +490,18 @@ namespace DotNetNuke.Common.Lists
             cmdDelete.Visible = false;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Switching to view mode, change controls visibility for viewing
+        /// </summary>
+        /// <param name="ViewMode">Boolean value to determine View or Edit mode</param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void EnableView(bool ViewMode)
         {
             rowListdetails.Visible = true;
@@ -359,6 +527,17 @@ namespace DotNetNuke.Common.Lists
             return ctlLists.GetListInfo(_ListName, _ParentKey, ListPortalID);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Loads top level entry list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separate user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void InitList()
         {
             if (SelectedList != null)
@@ -369,15 +548,34 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+		#endregion
+
+		#region "Public Methods"
+
         public override void DataBind()
         {
             InitList();
             BindListInfo();
             BindGrid();
         }
+		
+		#endregion
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Page load, bind tree and enable controls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -389,7 +587,7 @@ namespace DotNetNuke.Common.Lists
                     Mode = "ListEntries";
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -408,12 +606,26 @@ namespace DotNetNuke.Common.Lists
             cmdSaveEntry.Click += OnSaveEntryClick;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Handles events when clicking image button in the grid (Edit/Up/Down)
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void EntriesGridItemCommand(object source, DataGridCommandEventArgs e)
         {
             try
             {
                 var ctlLists = new ListController();
                 int entryID = Convert.ToInt32(((DataGrid) source).DataKeys[e.Item.ItemIndex]);
+
                 switch (e.CommandName.ToLower())
                 {
                     case "delete":
@@ -422,6 +634,7 @@ namespace DotNetNuke.Common.Lists
                         break;
                     case "edit":
                         Mode = "EditEntry";
+
                         ListEntryInfo entry = ctlLists.GetListEntryInfo(entryID);
                         txtEntryID.Text = entryID.ToString();
                         txtParentKey.Text = entry.ParentKey;
@@ -429,6 +642,7 @@ namespace DotNetNuke.Common.Lists
                         txtEntryText.Text = entry.Text;
                         rowListName.Visible = false;
                         cmdSaveEntry.CommandName = "Update";
+
                         if (!SystemList)
                         {
                             cmdDelete.Visible = true;
@@ -450,12 +664,23 @@ namespace DotNetNuke.Common.Lists
                         break;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Select a list in dropdownlist
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>        
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void SelectListIndexChanged(object sender, EventArgs e)
         {
             var ctlLists = new ListController();
@@ -477,12 +702,40 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Handles Add New Entry command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        ///     Using "CommandName" property of cmdSaveEntry to determine this is a new entry of an existing list
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnAddEntryClick(object sender, EventArgs e)
         {
             Mode = "AddEntry";
             DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Handles cmdSaveEntry.Click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        ///     Using "CommandName" property of cmdSaveEntry to determine action to take (ListUpdate/AddEntry/AddList)
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnSaveEntryClick(object sender, EventArgs e)
         {
             var ctlLists = new ListController();
@@ -502,7 +755,9 @@ namespace DotNetNuke.Common.Lists
                     case "update":
                         entry.ParentKey = SelectedList.ParentKey;
                         entry.EntryID = Int16.Parse(txtEntryID.Text);
+
                         ctlLists.UpdateListEntry(entry);
+
                         DataBind();
                         break;
                     case "saveentry":
@@ -521,6 +776,7 @@ namespace DotNetNuke.Common.Lists
                             entry.SortOrder = 0;
                         }
                         ctlLists.AddListEntry(entry);
+
                         DataBind();
                         break;
                     case "savelist":
@@ -542,23 +798,63 @@ namespace DotNetNuke.Common.Lists
                             entry.SortOrder = 0;
                         }
                         ctlLists.AddListEntry(entry);
+
                         SelectedKey = entry.ParentKey.Replace(":", ".") + ":" + entry.ListName;
+
                         Response.Redirect(Globals.NavigateURL(TabId, "", "Key=" + SelectedKey));
                         break;
                 }
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Delete List
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteListClick(object sender, EventArgs e)
         {
             DeleteList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Delete List
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        ///     If deleting entry is not the last one in the list, rebinding the grid, otherwise return back to main page (rebinding DNNTree)
+        /// </remarks>
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(object sender, EventArgs e)
         {
             DeleteItem(Convert.ToInt32(txtEntryID.Text));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Cancel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>       
+        /// <history>
+        ///     [tamttt]  20/10/2004	Created
+        ///     [cnurse]  01/30/2007	Extracted to separte user control
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnCancelClick(object sender, EventArgs e)
         {
             try
@@ -573,7 +869,7 @@ namespace DotNetNuke.Common.Lists
                     Response.Redirect(Globals.NavigateURL(TabId));
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

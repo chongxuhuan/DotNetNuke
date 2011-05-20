@@ -61,6 +61,18 @@ namespace DotNetNuke.Modules.Admin.Pages
         Above
     }
 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Tabs PortalModuleBase is used to manage the Tabs/Pages for a 
+    /// portal.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/9/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class View : PortalModuleBase
     {
         private const string DefaultPageTemplate = "Default.page.template";

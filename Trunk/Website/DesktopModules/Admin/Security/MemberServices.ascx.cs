@@ -39,6 +39,16 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.Modules.Admin.Security
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The MemberServices UserModuleBase is used to manage a User's services
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	03/03/2006
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class MemberServices : UserModuleBase
     {
         #region Delegates
@@ -47,8 +57,27 @@ namespace DotNetNuke.Modules.Admin.Security
 
         #endregion
 
+		#region "Events"
+
        public event SubscriptionUpdatedEventHandler SubscriptionUpdated;
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatPrice formats the Fee amount and filters out null-values
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="price">The price to format</param>
+        ///	<returns>The correctly formatted price</returns>
+        /// <history>
+        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string FormatPrice(float price)
         {
             string formatPrice = Null.NullString;
@@ -63,7 +92,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     formatPrice = "";
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -73,6 +102,7 @@ namespace DotNetNuke.Modules.Admin.Security
         private ArrayList GetRoles(int portalId, int userId)
         {
             var objRoles = new RoleController();
+
             return objRoles.GetUserRoles(portalId, userId, false);
         }
 
@@ -80,9 +110,12 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             var objRoles = new RoleController();
             RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+
             if (objRole.IsPublic && objRole.ServiceFee == 0.0)
             {
                 objRoles.UpdateUserRole(PortalId, UserInfo.UserID, roleID, cancel);
+
+                //Raise SubscriptionUpdated Event
                 OnSubscriptionUpdated(new SubscriptionUpdatedEventArgs(cancel, objRole.RoleName));
             }
             else
@@ -102,9 +135,12 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             var objRoles = new RoleController();
             RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+
             if (objRole.IsPublic && objRole.TrialFee == 0.0)
             {
                 objRoles.UpdateUserRole(PortalId, UserInfo.UserID, roleID, false);
+
+                //Raise SubscriptionUpdated Event
                 OnSubscriptionUpdated(new SubscriptionUpdatedEventArgs(false, objRole.RoleName));
             }
             else
@@ -113,6 +149,23 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatExpiryDate formats the expiry date and filters out null-values
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="expiryDate">The date to format</param>
+        ///	<returns>The correctly formatted date</returns>
+        /// <history>
+        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatExpiryDate(DateTime expiryDate)
         {
             string formatExpiryDate = Null.NullString;
@@ -130,13 +183,25 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return formatExpiryDate;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatPrice formats the Fee amount and filters out null-values
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="price">The price to format</param>
+        ///	<returns>The correctly formatted price</returns>
+        /// <history>
+        /// 	[cnurse]	01/18/2007 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatPrice(float price, int period, string frequency)
         {
             string formatPrice = Null.NullString;
@@ -156,13 +221,25 @@ namespace DotNetNuke.Modules.Admin.Security
                         break;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return formatPrice;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatTrial formats the Trial Fee amount and filters out null-values
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="price">The price to format</param>
+        ///	<returns>The correctly formatted price</returns>
+        /// <history>
+        /// 	[cnurse]	03/28/2007 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatTrial(float price, int period, string frequency)
         {
             string formatTrial = Null.NullString;
@@ -185,13 +262,25 @@ namespace DotNetNuke.Modules.Admin.Security
                         break;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return formatTrial;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatURL correctly formats a URL
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<returns>The correctly formatted url</returns>
+        /// <history>
+        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatURL()
         {
             string formatURL = Null.NullString;
@@ -204,13 +293,26 @@ namespace DotNetNuke.Modules.Admin.Security
                 }
                 formatURL = serverPath + "Register.aspx?tabid=" + TabId;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return formatURL;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ServiceText gets the Service Text (Cancel or Subscribe)
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="Subscribed">The service state</param>
+        ///	<returns>The correctly formatted text</returns>
+        /// <history>
+        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string ServiceText(bool subscribed, DateTime expiryDate)
         {
             string serviceText = Null.NullString;
@@ -232,7 +334,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -271,6 +373,7 @@ namespace DotNetNuke.Modules.Admin.Security
             }
             else if (objRole.IsPublic && objRole.TrialFee == 0.0)
             {
+				//Use Trial?
                 UserRoleInfo objUserRole = objRoles.GetUserRole(PortalId, UserInfo.UserID, roleID);
                 if ((objUserRole == null) || (!objUserRole.IsTrialUsed))
                 {
@@ -280,16 +383,42 @@ namespace DotNetNuke.Modules.Admin.Security
             return showTrial;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DataBind binds the data to the controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DataBind()
         {
             if (Request.IsAuthenticated)
             {
                 grdServices.DataSource = GetRoles(PortalId, UserInfo.UserID);
                 grdServices.DataBind();
+
+                //if no service available then hide options
                 ServicesRow.Visible = (grdServices.Items.Count > 0);
             }
         }
 
+		#endregion
+
+		#region "Event Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the SubscriptionUpdated Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/17/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void OnSubscriptionUpdated(SubscriptionUpdatedEventArgs e)
         {
             if (SubscriptionUpdated != null)
@@ -298,6 +427,20 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -308,37 +451,57 @@ namespace DotNetNuke.Modules.Admin.Security
             try
             {
                 lblRSVP.Text = "";
+
+                //If this is the first visit to the page, localize the datalist
                 if (Page.IsPostBack == false)
                 {
+					//Localize the Headers
                     Localization.LocalizeDataGrid(ref grdServices, LocalResourceFile);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdRSVP_Click runs when the Subscribe to RSVP Code Roles Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/19/2006  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdRSVP_Click(object sender, EventArgs e)
         {
+            //Get the RSVP code
             string code = txtRSVPCode.Text;
             bool rsvpCodeExists = false;
             if (!String.IsNullOrEmpty(code))
             {
+				//Get the roles from the Database
                 var objRoles = new RoleController();
                 ArrayList arrRoles = objRoles.GetPortalRoles(PortalSettings.PortalId);
+
+                //Parse the roles
                 foreach (RoleInfo objRole in arrRoles)
                 {
                     if (objRole.RSVPCode == code)
                     {
                         objRoles.UpdateUserRole(PortalId, UserInfo.UserID, objRole.RoleID);
                         rsvpCodeExists = true;
+
+                        //Raise SubscriptionUpdated Event
                         OnSubscriptionUpdated(new SubscriptionUpdatedEventArgs(false, objRole.RoleName));
                     }
                 }
                 if (rsvpCodeExists)
                 {
                     lblRSVP.Text = Localization.GetString("RSVPSuccess", LocalResourceFile);
+                    //Reset RSVP Code field
                     txtRSVPCode.Text = "";
                 }
                 else
@@ -355,35 +518,77 @@ namespace DotNetNuke.Modules.Admin.Security
             int roleID = Convert.ToInt32(e.CommandArgument);
             if (commandName == Localization.GetString("Subscribe", LocalResourceFile) || commandName == Localization.GetString("Renew", LocalResourceFile))
             {
+				//Subscribe
                 Subscribe(roleID, false);
             }
             else if (commandName == Localization.GetString("Unsubscribe", LocalResourceFile))
             {
+				//Unsubscribe
                 Subscribe(roleID, true);
             }
             else if (commandName == Localization.GetString("Unsubscribe", LocalResourceFile))
             {
+				//Unsubscribe
                 Subscribe(roleID, true);
             }
             else if (commandName == "UseTrial")
             {
+				//Use Trial
                 UseTrial(roleID);
             }
+			
+			//Rebind Grid
             DataBind();
         }
+		
+		#endregion
 
         #region Nested type: SubscriptionUpdatedEventArgs
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The SubscriptionUpdatedEventArgs class provides a customised EventArgs class for
+        /// the SubscriptionUpdated Event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/17/2006  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public class SubscriptionUpdatedEventArgs
         {
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            /// Constructs a new SubscriptionUpdatedEventArgs
+            /// </summary>
+            /// <param name="cancel">Whether this is a subscription cancellation</param>
+            /// <history>
+            /// 	[cnurse]	01/17/2006  created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public SubscriptionUpdatedEventArgs(bool cancel, string roleName)
             {
                 Cancel = cancel;
                 RoleName = roleName;
             }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            /// Gets and sets whether this was a cancelation
+            /// </summary>
+            /// <history>
+            /// 	[cnurse]	01/17/2006  created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public bool Cancel { get; set; }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            /// Gets and sets the RoleName that was (un)subscribed to
+            /// </summary>
+            /// <history>
+            /// 	[cnurse]	01/17/2006  created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public string RoleName { get; set; }
         }
 

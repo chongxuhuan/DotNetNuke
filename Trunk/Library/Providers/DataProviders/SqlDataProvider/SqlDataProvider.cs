@@ -3152,10 +3152,10 @@ namespace DotNetNuke.Data
         }
 
         //folder mappings
-        public override int AddFolderMapping(int portalID, string mappingName, string folderProviderType, bool isEnabled, int createdByUserID)
+        public override int AddFolderMapping(int portalID, string mappingName, string folderProviderType, int createdByUserID)
         {
             return
-                Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "AddFolderMapping", GetNull(portalID), mappingName, folderProviderType, isEnabled, createdByUserID));
+                Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "AddFolderMapping", GetNull(portalID), mappingName, folderProviderType, createdByUserID));
         }
 
         public override void AddFolderMappingSetting(int folderMappingID, string settingName, string settingValue, int createdByUserID)
@@ -3188,9 +3188,9 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFolderMappingsSettings", folderMappingID);
         }
 
-        public override void UpdateFolderMapping(int folderMappingID, string mappingName, bool isEnabled, int priority, int lastModifiedByUserID)
+        public override void UpdateFolderMapping(int folderMappingID, string mappingName, int priority, int lastModifiedByUserID)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateFolderMapping", folderMappingID, mappingName, isEnabled, priority, lastModifiedByUserID);
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateFolderMapping", folderMappingID, mappingName, priority, lastModifiedByUserID);
         }
 
         public override void UpdateFolderMappingSetting(int folderMappingID, string settingName, string settingValue, int lastModifiedByUserID)

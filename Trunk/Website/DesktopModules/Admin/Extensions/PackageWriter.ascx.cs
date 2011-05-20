@@ -46,10 +46,27 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : PackageWriter
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality for creating Extension packages
+    /// </summary>
+    /// <history>
+    ///     [cnurse]   01/31/2008    Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class PackageWriter : ModuleUserControlBase
     {
+		#region "Members"
+
         private PackageInfo _Package;
         private PackageWriterBase _Writer;
+
+		#endregion
+
+		#region "Public Properties"
 
         public int PackageID
         {
@@ -80,6 +97,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Return Url
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/31/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ReturnURL
         {
             get
@@ -93,6 +118,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine checks the Access Security
+        /// </summary>
+        /// <history>
+        ///     [cnurse]   07/26/2007    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CheckSecurity()
         {
             if (!ModuleContext.PortalSettings.UserInfo.IsSuperUser)
@@ -134,6 +171,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             if (chkPackage.Checked)
             {
+                //Use the installer to parse the manifest and load the files that need to be packaged
                 var installer = new Installer(Package, Request.MapPath("."));
                 foreach (InstallFile file in installer.InstallerInfo.Files.Values)
                 {
@@ -205,20 +243,30 @@ namespace DotNetNuke.Modules.Admin.Extensions
             if (refreshList)
             {
                 txtFiles.Text = Null.NullString;
+				
+                //Display App Code files
                 foreach (InstallFile file in _Writer.AppCodeFiles.Values)
                 {
                     txtFiles.Text += "[app_code]" + file.FullName + Environment.NewLine;
                 }
+				
+                //Display Script files
                 foreach (InstallFile file in _Writer.Scripts.Values)
                 {
                     txtFiles.Text += file.FullName + Environment.NewLine;
                 }
+				
+                //Display regular files
                 foreach (InstallFile file in _Writer.Files.Values)
                 {
                     txtFiles.Text += file.FullName + Environment.NewLine;
                 }
             }
         }
+
+		#endregion
+
+		#region "Protected Methods"
 
         protected string GetText(string type)
         {
@@ -234,6 +282,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
             return text;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   01/31/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -248,6 +310,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load runs when the page loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   01/31/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -262,6 +336,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             try
             {
                 CheckSecurity();
+
                 ctlPackage.EditMode = PropertyEditorMode.View;            
                 
                 switch (Package.PackageType)
@@ -276,12 +351,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                 ctlPackage.DataSource = Package;
                 ctlPackage.DataBind();
+
                 wizPackage.CancelButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Cancel", LocalResourceFile);
                 wizPackage.StartNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
                 wizPackage.StepNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
                 wizPackage.StepPreviousButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Previous", LocalResourceFile);
                 wizPackage.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Cancel", LocalResourceFile);
+
                 _Writer = PackageWriterFactory.GetWriter(Package);
+
                 if (Page.IsPostBack)
                 {
                     _Writer.BasePath = txtBasePath.Text;
@@ -289,6 +367,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 else
                 {
                     txtBasePath.Text = _Writer.BasePath;
+
+                    //Load Manifests
                     if (!string.IsNullOrEmpty(Package.Manifest))
                     {
                         cboManifests.Items.Add(new ListItem("Database version", ""));
@@ -316,7 +396,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -336,7 +416,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             switch (wizPackage.ActiveStepIndex)
             {
-                case 1:
+                case 1: //Display the files
                     if (chkUseManifest.Checked)
                     {
                         wizPackage.ActiveStepIndex = 3;
@@ -344,7 +424,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     GetFiles(string.IsNullOrEmpty(txtFiles.Text));
                     chkIncludeSource.Visible = _Writer.HasProjectFile || _Writer.AppCodeFiles.Count > 0;
                     break;
-                case 2:
+                case 2: //Display the assemblies
                     if (_Writer.IncludeAssemblies)
                     {
                         GetAssemblies(string.IsNullOrEmpty(txtAssemblies.Text));
@@ -354,17 +434,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         wizPackage.ActiveStepIndex = 3;
                     }
                     break;
-                case 3:
+                case 3: //Display the manfest
                     if (chkUseManifest.Checked)
                     {
                         if (string.IsNullOrEmpty(cboManifests.SelectedValue))
                         {
+							//Use Database
                             var sb = new StringBuilder();
                             var settings = new XmlWriterSettings();
                             settings.ConformanceLevel = ConformanceLevel.Fragment;
                             settings.OmitXmlDeclaration = true;
                             settings.Indent = true;
+
                             _Writer.WriteManifest(XmlWriter.Create(sb, settings), Package.Manifest);
+
                             txtManifest.Text = sb.ToString();
                         }
                         else
@@ -412,35 +495,68 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizPackage_CancelButtonClick runs when the Cancel Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   02/01/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizPackage_CancelButtonClick(object sender, EventArgs e)
         {
             try
             {
+				//Redirect to Definitions page
                 Response.Redirect(ReturnURL, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizPackage_FinishButtonClick runs when the Finish Button on the Wizard is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   02/01/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizPackage_FinishButtonClick(object sender, WizardNavigationEventArgs e)
         {
             try
             {
+				//Redirect to Definitions page
                 Response.Redirect(ReturnURL, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// wizPackage_NextButtonClick runs when the next Button is clicked.  It provides
+        ///	a mechanism for cancelling the page change if certain conditions aren't met.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]   01/31/2008    Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void wizPackage_NextButtonClick(object sender, WizardNavigationEventArgs e)
         {
             switch (e.CurrentStepIndex)
             {
-                case 3:
+                case 3: //Save the Manifest
                     var doc = new XPathDocument(new StringReader(txtManifest.Text));
                     XPathNavigator nav = doc.CreateNavigator();
                     XPathNavigator packageNav = nav.SelectSingleNode("dotnetnuke/packages");
@@ -465,10 +581,13 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     }
                     else
                     {
+						//Create the Package
                         CreatePackage();
                     }
                     break;
             }
         }
+		
+		#endregion
     }
 }

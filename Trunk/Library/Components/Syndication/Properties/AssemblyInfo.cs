@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -29,13 +29,13 @@ using System.Reflection;
 #endregion
 
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyCopyright("DotNetNuke� is copyright 2002-2008 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyProduct("http://www.dotnetnuke.com")]
 [assembly: AssemblyInformationalVersion("6.0.0.0")]
 [assembly: AssemblyFileVersion("6.0.0.0")]
 [assembly: AssemblyVersion("6.0.0.0")]
 [assembly: AssemblyTitle("DotNetNuke.Services.Syndication")]
 [assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCulture("")]
+
 [assembly: AssemblyDelaySign(false)]
 [assembly: CLSCompliant(true)]

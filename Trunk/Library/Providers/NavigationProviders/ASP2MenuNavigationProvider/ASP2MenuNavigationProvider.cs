@@ -571,7 +571,7 @@ namespace DotNetNuke.NavigationControl
                         {
                             objNode.Image = objNode.Image.Replace("~/images/", PathSystemImage);
                         }
-                        else if (objNode.Image.StartsWith("/") == false && !String.IsNullOrEmpty(PathImage))
+                        else if (!objNode.Image.Contains("://") && objNode.Image.StartsWith("/") == false && !String.IsNullOrEmpty(PathImage))
                         {
                             objNode.Image = PathImage + objNode.Image;
                         }

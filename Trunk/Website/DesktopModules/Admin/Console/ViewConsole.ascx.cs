@@ -260,8 +260,12 @@ namespace DotNetNuke.Modules.Admin.Console
             try
             {
                 jQuery.RequestRegistration();
+
                 string consoleJs = ResolveUrl("~/desktopmodules/admin/console/jquery.console.js");
+
                 Page.ClientScript.RegisterClientScriptInclude("ConsoleJS", consoleJs);
+
+				//Save User Preferences
                 SavePersonalizedSettings();
             }
             catch (Exception exc)
@@ -279,6 +283,7 @@ namespace DotNetNuke.Modules.Admin.Console
                 {
                     IconSize.Visible = AllowSizeChange;
                     View.Visible = AllowViewChange;
+
                     foreach (string val in ConsoleController.GetSizeValues())
                     {
                         IconSize.Items.Add(new ListItem(Localization.GetString(val + ".Text", LocalResourceFile), val));
@@ -289,7 +294,9 @@ namespace DotNetNuke.Modules.Admin.Console
                     }
                     IconSize.SelectedValue = DefaultSize;
                     View.SelectedValue = DefaultView;
+
                     SettingsBreak.Visible = (IconSize.Visible && View.Visible);
+
                     List<TabInfo> tempTabs;
                     if ((IsHostTab()))
                     {
@@ -300,8 +307,10 @@ namespace DotNetNuke.Modules.Admin.Console
                         tempTabs = TabController.GetTabsBySortOrder(PortalId);
                     }
                     IList<TabInfo> tabs = new List<TabInfo>();
+
                     IList<int> parentIDList = new List<int>();
                     parentIDList.Add(ConsoleTabID);
+
                     foreach (TabInfo tab in tempTabs)
                     {
                         if ((!CanShowTab(tab)))

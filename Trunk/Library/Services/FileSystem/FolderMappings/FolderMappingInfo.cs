@@ -36,7 +36,7 @@ namespace DotNetNuke.Services.FileSystem
     [Serializable]
     public class FolderMappingInfo : IHydratable
     {
-        private Hashtable _FolderMappingSettings;
+        private Hashtable _folderMappingSettings;
 
         #region "Public Properties"
 
@@ -44,27 +44,25 @@ namespace DotNetNuke.Services.FileSystem
         public int PortalID { get; set; }
         public string MappingName { get; set; }
         public string FolderProviderType { get; set; }
-        public bool IsEnabled { get; set; }
         public int Priority { get; set; }
 
         public Hashtable FolderMappingSettings
         {
             get
             {
-                if (_FolderMappingSettings == null)
+                if (_folderMappingSettings == null)
                 {
                     if (FolderMappingID == Null.NullInteger)
                     {
-                        _FolderMappingSettings = new Hashtable();
+                        _folderMappingSettings = new Hashtable();
                     }
                     else
                     {
                         var oFolderMappingCtrl = new FolderMappingController();
-                        _FolderMappingSettings = oFolderMappingCtrl.GetFolderMappingSettings(FolderMappingID);
-                        oFolderMappingCtrl = null;
+                        _folderMappingSettings = oFolderMappingCtrl.GetFolderMappingSettings(FolderMappingID);
                     }
                 }
-                return _FolderMappingSettings;
+                return _folderMappingSettings;
             }
         }
 
@@ -98,16 +96,14 @@ namespace DotNetNuke.Services.FileSystem
         {
             FolderMappingID = Null.NullInteger;
             PortalID = Null.NullInteger;
-            IsEnabled = true;
         }
 
-        public FolderMappingInfo(int portalID, string mappingName, string folderProviderType, bool isEnabled)
+        public FolderMappingInfo(int portalID, string mappingName, string folderProviderType)
         {
             FolderMappingID = Null.NullInteger;
             PortalID = portalID;
             MappingName = mappingName;
             FolderProviderType = folderProviderType;
-            IsEnabled = isEnabled;
         }
 
         #endregion
@@ -124,7 +120,6 @@ namespace DotNetNuke.Services.FileSystem
             PortalID = Null.SetNullInteger(dr["PortalID"]);
             MappingName = Null.SetNullString(dr["MappingName"]);
             FolderProviderType = Null.SetNullString(dr["FolderProviderType"]);
-            IsEnabled = Null.SetNullBoolean(dr["IsEnabled"]);
             Priority = Null.SetNullInteger(dr["Priority"]);
         }
 

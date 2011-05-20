@@ -49,6 +49,8 @@ namespace DotNetNuke.Modules.Admin.Console
                 if (Page.IsPostBack == false)
                 {
                     var portalTabs = TabController.GetPortalTabs(PortalId, Null.NullInteger, false, true);
+
+					//Add host tabs
                     if (UserInfo != null && UserInfo.IsSuperUser)
                     {
                         var hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
@@ -92,7 +94,7 @@ namespace DotNetNuke.Modules.Admin.Console
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -103,6 +105,8 @@ namespace DotNetNuke.Modules.Admin.Console
             try
             {
                 var objModules = new ModuleController();
+
+				//validate console width value
                 var wdth = string.Empty;
                 if ((ConsoleWidth.Text.Trim().Length > 0))
                 {

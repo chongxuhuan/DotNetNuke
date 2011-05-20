@@ -11,7 +11,7 @@
     <containersrc>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrc>
     <containersrcadmin>[G]Containers/DarkKnight/PageTitle_Red.ascx</containersrcadmin>
     <enableskinwidgets>True</enableskinwidgets>
-    <timezone>Morocco Standard Time</timezone>
+    <timezone>Pacific Standard Time</timezone>
     <hostspace>0</hostspace>
     <userquota>0</userquota>
     <pagequota>0</pagequota>
@@ -145,7 +145,7 @@
     </profiledefinition>
     <profiledefinition>
       <propertycategory>Preferences</propertycategory>
-      <propertyname>TimeZoneInfo</propertyname>
+      <propertyname>PreferredTimeZone</propertyname>
       <datatype>TimeZoneInfo</datatype>
       <length>0</length>
       <defaultvisibility>2</defaultvisibility>

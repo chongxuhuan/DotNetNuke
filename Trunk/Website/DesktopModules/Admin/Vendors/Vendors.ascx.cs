@@ -42,6 +42,17 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// The Vendors PortalModuleBase is used to manage the Vendors of a portal
+	/// </summary>
+    /// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class Vendors : PortalModuleBase, IActionable
     {
         protected int CurrentPage = -1;
@@ -86,6 +97,19 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData gets the vendors from the Database and binds them to the DataGrid
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             BindData(null, null);
@@ -94,7 +118,10 @@ namespace DotNetNuke.Modules.Admin.Vendors
         private void BindData(string searchText, string searchField)
         {
             CreateLetterSearch();
+
+            //Localize the Headers
             Localization.LocalizeDataGrid(ref grdVendors, LocalResourceFile);
+
             if (searchText == Localization.GetString("All"))
             {
                 strFilter = "";
@@ -107,12 +134,15 @@ namespace DotNetNuke.Modules.Admin.Vendors
             {
                 strFilter = searchText;
             }
+			
+            //Get the list of vendors from the database
             var PageSize = Convert.ToInt32(ddlRecordsPerPage.SelectedItem.Value);
             var TotalRecords = 0;
             var objVendors = new VendorController();
             int Portal;
             Portal = PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId ? Null.NullInteger : PortalId;
-            if (String.IsNullOrEmpty(strFilter))
+            
+			if (String.IsNullOrEmpty(strFilter))
             {
                 if (searchText == Localization.GetString("Unauthorized"))
                 {
@@ -135,6 +165,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 }
             }
             grdVendors.DataBind();
+
             ctlPagingControl.TotalRecords = TotalRecords;
             ctlPagingControl.PageSize = PageSize;
             ctlPagingControl.CurrentPage = CurrentPage;
@@ -161,16 +192,53 @@ namespace DotNetNuke.Modules.Admin.Vendors
             rptLetterSearch.DataBind();
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisplayAddress correctly formats an Address
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string DisplayAddress(object Unit, object Street, object City, object Region, object Country, object PostalCode)
         {
             return Globals.FormatAddress(Unit, Street, City, Region, Country, PostalCode);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatURL correctly formats the Url for the Edit Vendor Link
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FormatURL(string strKeyName, string strKeyValue)
         {
             return !String.IsNullOrEmpty(strFilter) ? EditUrl(strKeyName, strKeyValue, "", "filter=" + strFilter) : EditUrl(strKeyName, strKeyValue);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FilterURL correctly formats the Url for filter by first letter and paging
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FilterURL(string Filter, string CurrentPage)
         {
             if (!String.IsNullOrEmpty(Filter))
@@ -197,6 +265,21 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -244,7 +327,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         }
                         Response.Redirect(Globals.NavigateURL(), true);
                     }
-                    catch (Exception exc)
+                    catch (Exception exc) //Module failed to load
                     {
                         Exceptions.ProcessModuleLoadException(this, exc);
                     }                    
@@ -252,6 +335,17 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// grdVendors_ItemCommand runs when a command button in the grid is clicked.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void grdVendors_ItemCommand(object source, DataGridCommandEventArgs e)
         {
             try
@@ -264,12 +358,23 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     BindData(strFilter, "username");
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ddlRecordsPerPage_SelectedIndexChanged runs when the user selects a new
+        /// Records Per Page value from the dropdown.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[dancaron]	10/28/2004	Intial Version
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnRecordsPerPageIndexChanged(Object sender, EventArgs e)
         {
             CurrentPage = 1;
@@ -281,6 +386,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
             CurrentPage = 1;
             BindData(txtSearch.Text, ddlSearchType.SelectedItem.Value);
         }
+		
+		#endregion
 
     }
 }

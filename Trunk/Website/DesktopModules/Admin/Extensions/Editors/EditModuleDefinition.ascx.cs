@@ -48,9 +48,23 @@ using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.Modules.Admin.ModuleDefinitions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class CreateModuleDefinition : ModuleUserControlBase
     {
+		#region "Private Members"
+
         private PackageInfo _Package;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected bool IsAddMode
         {
@@ -81,6 +95,10 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         private static void AddFolder(string parentFolder, string newFolder)
         {
             string parentFolderPath = Globals.ApplicationMapPath + "\\DesktopModules";
@@ -108,7 +126,10 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             string className = GetClassName();
             string moduleControlPath = Server.MapPath("DesktopModules/" + folder + "/" + controlSrc);
             string message = Null.NullString;
+
             string source = string.Format(Localization.GetString("ModuleControlTemplate", LocalResourceFile), rblLanguage.SelectedValue, className);
+
+            //reset attributes
             if (File.Exists(moduleControlPath))
             {
                 message = Localization.GetString("FileExists", LocalResourceFile);
@@ -152,6 +173,15 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             return strFolder;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// </summary>
+        /// <remarks>
+        /// Loads the cboSource control list with locations of controls.
+        /// </remarks>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private ModuleDefinitionInfo ImportControl(string controlSrc)
         {
             ModuleDefinitionInfo moduleDefinition = null;
@@ -161,6 +191,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 string friendlyName = txtName.Text;
                 string name = GetClassName();
                 string moduleControl = "DesktopModules/" + folder + "/" + controlSrc;
+
                 var package = new PackageInfo();
                 package.Name = name;
                 package.FriendlyName = friendlyName;
@@ -168,9 +199,13 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 package.Version = new Version(1, 0, 0);
                 package.PackageType = "Module";
                 package.License = Util.PACKAGE_NoLicense;
+
+                //Save Package
                 PackageController.SavePackage(package);
+
                 var objDesktopModules = new DesktopModuleController();
                 var objDesktopModule = new DesktopModuleInfo();
+
                 objDesktopModule.DesktopModuleID = Null.NullInteger;
                 objDesktopModule.ModuleName = name;
                 objDesktopModule.FolderName = folder;
@@ -184,17 +219,25 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 objDesktopModule.Dependencies = "";
                 objDesktopModule.Permissions = "";
                 objDesktopModule.PackageID = package.PackageID;
+
                 objDesktopModule.DesktopModuleID = objDesktopModules.AddDesktopModule(objDesktopModule);
+
+                //Add module to all portals
                 DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID);
+
                 var objModuleDefinitions = new ModuleDefinitionController();
                 moduleDefinition = new ModuleDefinitionInfo();
+
                 moduleDefinition.ModuleDefID = Null.NullInteger;
                 moduleDefinition.DesktopModuleID = objDesktopModule.DesktopModuleID;
                 moduleDefinition.FriendlyName = friendlyName;
                 moduleDefinition.DefaultCacheTime = 0;
+
                 moduleDefinition.ModuleDefID = objModuleDefinitions.AddModuleDefinition(moduleDefinition);
+
                 var objModuleControls = new ModuleControlController();
                 var objModuleControl = new ModuleControlInfo();
+
                 objModuleControl.ModuleControlID = Null.NullInteger;
                 objModuleControl.ModuleDefID = moduleDefinition.ModuleDefID;
                 objModuleControl.ControlKey = "";
@@ -205,6 +248,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 objModuleControl.IconFile = "";
                 objModuleControl.ViewOrder = 0;
                 objModuleControl.SupportsPartialRendering = false;
+
                 ModuleControlController.AddModuleControl(objModuleControl);
             }
             catch (Exception exc)
@@ -260,6 +304,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             foreach (string strFolder in arrFolders)
             {
                 string[] files = Directory.GetFiles(strFolder, "*.ascx");
+                //exclude module folders
                 if (files.Length == 0 || strFolder.ToLower() == "admin")
                 {
                     var item = new ListItem(strFolder.Replace(Path.GetDirectoryName(strFolder) + "\\", ""));
@@ -299,6 +344,20 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             SetupModuleFolders();
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -318,6 +377,14 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             ModuleContext.Configuration.ModuleTitle = Localization.GetString(IsAddMode ? "Add.Title" : "Edit.Title", LocalResourceFile);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -344,6 +411,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             cboFile.Items.Clear();
             txtModule.Text = "";
             txtDescription.Text = "";
+
             switch (cboCreate.SelectedValue)
             {
                 case "":
@@ -567,6 +635,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                         int tabID = TabController.GetTabByTabPath(ModuleContext.PortalId, tabPath, Null.NullString);
                         if (tabID == Null.NullInteger)
                         {
+							//Create a new page
                             var newTab = new TabInfo();
                             newTab.TabName = "Test " + txtName.Text + " Page";
                             newTab.ParentId = Null.NullInteger;
@@ -594,6 +663,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                     }
                     else
                     {
+						//Redirect to main extensions page
                         Response.Redirect(Globals.NavigateURL(), true);
                     }
                 }
@@ -621,5 +691,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
             rowOwner1.Visible = true;
             rowOwner2.Visible = false;
         }
+		
+		#endregion
     }
 }

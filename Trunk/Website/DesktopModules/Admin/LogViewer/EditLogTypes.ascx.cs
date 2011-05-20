@@ -43,6 +43,20 @@ using DotNetNuke.UI.UserControls;
 
 namespace DotNetNuke.Modules.Admin.LogViewer
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : EditLogTypes
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Manage the Log Types for the portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///   [cnurse] 17/9/2004  Updated for localization, Help and 508. 
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditLogTypes : PortalModuleBase, IActionable
     {
 
@@ -77,17 +91,25 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             ddlLogTypePortalID.DataValueField = "PortalID";
             ddlLogTypePortalID.DataSource = pc.GetPortals();
             ddlLogTypePortalID.DataBind();
+
             var i = new ListItem {Text = Localization.GetString("All"), Value = "*"};
             ddlLogTypePortalID.Items.Insert(0, i);
+
+
             pnlEditLogTypeConfigInfo.Visible = true;
             pnlLogTypeConfigInfo.Visible = false;
             var l = new LogController();
+
             var arrLogTypeInfo = l.GetLogTypeInfo();
+
             arrLogTypeInfo.Sort(new LogTypeSortFriendlyName());
+
+
             ddlLogTypeKey.DataTextField = "LogTypeFriendlyName";
             ddlLogTypeKey.DataValueField = "LogTypeKey";
             ddlLogTypeKey.DataSource = arrLogTypeInfo;
             ddlLogTypeKey.DataBind();
+
             int[] items = {1, 2, 3, 4, 5, 10, 25, 100, 250, 500};
             ddlKeepMostRecent.Items.Clear();
             ddlKeepMostRecent.Items.Add(new ListItem(Localization.GetString("All"), "*"));
@@ -113,6 +135,8 @@ namespace DotNetNuke.Modules.Admin.LogViewer
         {
             var objLogController = new LogController();
             ArrayList arrLogTypeConfigInfo = objLogController.GetLogTypeConfigInfo();
+
+            //Localize the Headers
             if (!Page.IsPostBack)
             {
                 Localization.LocalizeDataGrid(ref dgLogTypeConfigInfo, LocalResourceFile);
@@ -165,6 +189,17 @@ namespace DotNetNuke.Modules.Admin.LogViewer
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -193,12 +228,23 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnCancelClick(Object sender, EventArgs e)
         {
             try
@@ -211,6 +257,17 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(Object sender, EventArgs e)
         {
             var objLogTypeConfigInfo = new LogTypeConfigInfo();
@@ -228,6 +285,17 @@ namespace DotNetNuke.Modules.Admin.LogViewer
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/17/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(Object sender, EventArgs e)
         {
             var objLogTypeConfigInfo = new LogTypeConfigInfo
@@ -237,6 +305,7 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                                                LogTypePortalID = ddlLogTypePortalID.SelectedItem.Value,
                                                KeepMostRecent = ddlKeepMostRecent.SelectedItem.Value,
                                                LogFileName = txtFileName.Text,
+
                                                EmailNotificationIsActive = chkEmailNotificationStatus.Checked,
                                                NotificationThreshold = Convert.ToInt32(ddlThreshold.SelectedItem.Value),
                                                NotificationThresholdTime = Convert.ToInt32(ddlThresholdNotificationTime.SelectedItem.Value),
@@ -247,6 +316,7 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                                                MailToAddress = txtMailToAddress.Text
                                            };
             var l = new LogController();
+
             if (ViewState["LogID"] != null)
             {
                 objLogTypeConfigInfo.ID = Convert.ToString(ViewState["LogID"]);
@@ -278,12 +348,17 @@ namespace DotNetNuke.Modules.Admin.LogViewer
         {
             var LogID = Convert.ToString(dgLogTypeConfigInfo.DataKeys[e.Item.ItemIndex]);
             ViewState["LogID"] = LogID;
+
             BindDetailData();
+
             var l = new LogController();
+
             LogTypeConfigInfo objLogTypeConfigInfo = l.GetLogTypeConfigInfoByID(LogID);
+
             txtFileName.Text = objLogTypeConfigInfo.LogFileName;
             chkIsActive.Checked = objLogTypeConfigInfo.LoggingIsActive;
             chkEmailNotificationStatus.Checked = objLogTypeConfigInfo.EmailNotificationIsActive;
+
             if (ddlLogTypeKey.Items.FindByValue(objLogTypeConfigInfo.LogTypeKey) != null)
             {
                 ddlLogTypeKey.ClearSelection();

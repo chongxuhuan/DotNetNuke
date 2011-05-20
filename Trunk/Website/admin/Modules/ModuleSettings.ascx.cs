@@ -463,7 +463,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                         if (cboTab.Items.FindByValue(Module.TabID.ToString()) == null)
                         {
                             var objtabs = new TabController();
-                            var objTab = objtabs.GetTab(Module.TabID, PortalId, false);
+                            var objTab = objtabs.GetTab(Module.TabID, Module.PortalID, false);
                             cboTab.Items.Add(new ListItem(objTab.LocalizedTabName, objTab.TabID.ToString()));
                         }
                     }

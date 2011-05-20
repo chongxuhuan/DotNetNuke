@@ -86,7 +86,7 @@ namespace DotNetNuke.Entities.Users
         private const string cPhoto = "Photo";
         private const string cTimeZone = "TimeZone";
         private const string cPreferredLocale = "PreferredLocale";
-        private const String cPreferredTimeZone = "TimeZoneInfo";
+        private const String cPreferredTimeZone = "PreferredTimeZone";
 
 		#endregion
 		#region "Private Members"

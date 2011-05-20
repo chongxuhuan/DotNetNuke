@@ -674,7 +674,7 @@ namespace DotNetNuke.NavigationControl
                     {
                         objNode.Image = Globals.ResolveUrl(objNode.Image);
                     }
-                    else if (objNode.Image.StartsWith("/") == false && !String.IsNullOrEmpty(PathImage))
+                    else if (!objNode.Image.Contains("://") && objNode.Image.StartsWith("/") == false && !String.IsNullOrEmpty(PathImage))
                     {
                         objNode.Image = PathImage + objNode.Image;
                     }

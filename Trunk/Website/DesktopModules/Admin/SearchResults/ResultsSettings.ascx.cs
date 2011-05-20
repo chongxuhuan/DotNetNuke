@@ -32,8 +32,36 @@ using DotNetNuke.Services.Exceptions;
 
 namespace DotNetNuke.Modules.SearchResults
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Modules.SearchResults
+    /// Project:    DotNetNuke.SearchResults
+    /// Class:      ResultsSettings
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ResultsSettings ModuleSettingsBase is used to manage the 
+    /// settings for the Search Results Module
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cnurse]	11/11/2004	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ResultsSettings : ModuleSettingsBase
     {
+		#region "Base Method Implementations"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// LoadSettings loads the settings from the Databas and displays them
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/11/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void LoadSettings()
         {
             try
@@ -82,12 +110,22 @@ namespace DotNetNuke.Modules.SearchResults
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateSettings saves the modified settings to the Database
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/11/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void UpdateSettings()
         {
             try
@@ -95,6 +133,7 @@ namespace DotNetNuke.Modules.SearchResults
                 if (Page.IsValid)
                 {
                     var objModules = new ModuleController();
+
                     objModules.UpdateTabModuleSetting(TabModuleId, "maxresults", txtresults.Text);
                     objModules.UpdateTabModuleSetting(TabModuleId, "perpage", txtPage.Text);
                     objModules.UpdateTabModuleSetting(TabModuleId, "titlelength", txtTitle.Text);
@@ -107,6 +146,8 @@ namespace DotNetNuke.Modules.SearchResults
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
 
         private void InitializeComponent()
         {

@@ -62,12 +62,14 @@ namespace DotNetNuke.Modules.SearchInput
         private void SearchExecute()
         {
             int ResultsTabid;
+
             if (Settings["SearchResultsModule"] != null)
             {
                 ResultsTabid = int.Parse(Convert.ToString(Settings["SearchResultsModule"]));
             }
             else
             {
+				//Get Default Page
                 var objModules = new ModuleController();
                 ModuleInfo SearchModule = objModules.GetModuleByDefinition(PortalSettings.PortalId, "Search Results");
                 if (SearchModule == null)
@@ -116,6 +118,7 @@ namespace DotNetNuke.Modules.SearchInput
                 imgSearch.ImageUrl = Path.Combine(PortalSettings.HomeDirectory, SearchUrl);
             }
             ShowHideImages();
+
             cmdGo.Text = Localization.GetString("cmdGo.Text", LocalResourceFile);
         }
 

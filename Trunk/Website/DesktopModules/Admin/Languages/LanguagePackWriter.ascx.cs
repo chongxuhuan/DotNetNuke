@@ -68,7 +68,9 @@ namespace DotNetNuke.Modules.Admin.Languages
             Package.FriendlyName = authPackage.Name;
             Package.Version = authPackage.Version;
             Package.License = Util.PACKAGE_NoLicense;
+
             string fileName = Path.Combine(BasePath, "ResourcePack." + Package.Name);
+
             AuthenticationInfo authSystem = AuthenticationController.GetAuthenticationServiceByPackageID(authPackage.PackageID);
             string authPath = authSystem.LoginControlSrc.Substring(0, authSystem.LoginControlSrc.LastIndexOf("/"));
             CreatePackage(Package, authPackage.PackageID, authPath.Replace("/", "\\"), fileName, createZip);
@@ -80,7 +82,9 @@ namespace DotNetNuke.Modules.Admin.Languages
             Package.Name = Globals.CleanFileName(txtFileName.Text);
             Package.Version = DotNetNukeContext.Current.Application.Version;
             Package.License = Util.PACKAGE_NoLicense;
+
             string fileName = Path.Combine(BasePath, "ResourcePack." + Package.Name);
+
             CreatePackage(Package, -2, "", fileName, createZip);
         }
 
@@ -92,6 +96,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             Package.Version = DotNetNukeContext.Current.Application.Version;
             Package.License = Util.PACKAGE_NoLicense;
             Package.PackageType = "CoreLanguagePack";
+
             _Files = new Dictionary<string, InstallFile>();
             CreateCorePackage(false);
             foreach (DesktopModuleInfo desktopModule in DesktopModuleController.GetDesktopModules(Null.NullInteger).Values)
@@ -111,6 +116,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             }
             string fileName = Path.Combine(BasePath, "ResourcePack." + Package.Name);
             fileName = fileName + "." + Package.Version.ToString(3) + "." + language.Code + ".zip";
+
             packageWriter = PackageWriterFactory.GetWriter(Package) as Services.Installer.Writers.LanguagePackWriter;
             packageWriter.Language = language;
             packageWriter.BasePath = "";
@@ -124,22 +130,27 @@ namespace DotNetNuke.Modules.Admin.Languages
         private void CreateModulePackage(DesktopModuleInfo desktopModule, bool createZip)
         {
             PackageInfo modulePackage = PackageController.GetPackage(desktopModule.PackageID);
+
             var Package = new PackageInfo();
             Package.Name = modulePackage.Name;
             Package.FriendlyName = modulePackage.Name;
             Package.Version = modulePackage.Version;
             Package.License = Util.PACKAGE_NoLicense;
+
             string fileName = Path.Combine(BasePath, "ResourcePack." + Package.Name);
+
             CreatePackage(Package, modulePackage.PackageID, Path.Combine("DesktopModules\\", desktopModule.FolderName), fileName, createZip);
         }
 
         private void CreatePackage(PackageInfo package, int dependentPackageID, string basePath, string fileName, bool createZip)
         {
             string manifest;
+
             Locale language = LocaleController.Instance.GetLocale(cboLanguage.SelectedValue);
             var languagePack = new LanguagePackInfo();
             languagePack.LanguageID = language.LanguageId;
             languagePack.DependentPackageID = dependentPackageID;
+
             if (dependentPackageID == -2)
             {
                 package.PackageType = "CoreLanguagePack";
@@ -150,11 +161,13 @@ namespace DotNetNuke.Modules.Admin.Languages
             }
             package.Name += " " + language.Text;
             package.FriendlyName += " " + language.Text;
+
             packageWriter = PackageWriterFactory.GetWriter(package) as Services.Installer.Writers.LanguagePackWriter;
             packageWriter.Language = language;
             packageWriter.LanguagePack = languagePack;
             packageWriter.BasePath = basePath;
             packageWriter.GetFiles(false);
+
             if (packageWriter.Files.Count > 0)
             {
                 _IsPackCreated = true;
@@ -187,7 +200,10 @@ namespace DotNetNuke.Modules.Admin.Languages
             Package.FriendlyName = providerPackage.Name;
             Package.Version = providerPackage.Version;
             Package.License = Util.PACKAGE_NoLicense;
+
             string fileName = Path.Combine(BasePath, "ResourcePack." + Package.Name);
+
+            //Get the provider "path"
             XmlDocument configDoc = Config.Load();
             string providerName = Package.Name;
             if (providerName.IndexOf(".") > Null.NullInteger)
@@ -325,6 +341,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                         {
                             if (moduleItem.Selected)
                             {
+								//Get the Module
                                 DesktopModuleInfo desktopModule = DesktopModuleController.GetDesktopModule(int.Parse(moduleItem.Value), Null.NullInteger);
                                 CreateModulePackage(desktopModule, true);
                             }
@@ -336,6 +353,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                         {
                             if (providerItem.Selected)
                             {
+								//Get the Provider
                                 PackageInfo provider = PackageController.GetPackage(int.Parse(providerItem.Value));
                                 CreateProviderPackage(provider, true);
                             }
@@ -347,6 +365,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                         {
                             if (authItem.Selected)
                             {
+								//Get the AuthSystem
                                 PackageInfo authSystem = PackageController.GetPackage(int.Parse(authItem.Value));
                                 CreateAuthSystemPackage(authSystem, true);
                             }
@@ -378,7 +397,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             {
                 Response.Redirect(Globals.NavigateURL());
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

@@ -35,10 +35,26 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The AuthenticationEditor.ascx control is used to edit the Authentication Properties
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	01/04/2008	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class AuthenticationEditor : PackageEditorBase
     {
+		#region "Private Members"
+
         private AuthenticationInfo _AuthSystem;
         private AuthenticationSettingsBase _SettingsControl;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected AuthenticationInfo AuthSystem
         {
@@ -72,6 +88,18 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine Binds the Authentication System
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/15/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindAuthentication()
         {
             if (AuthSystem != null)
@@ -92,7 +120,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                 if (SettingsControl != null)
                 {
+					//set the control ID to the resource file name ( ie. controlname.ascx = controlname )
+                    //this is necessary for the Localization in PageBase
                     SettingsControl.ID = Path.GetFileNameWithoutExtension(AuthSystem.SettingsControlSrc);
+
+                    //Add Container to Controls
                     pnlSettings.Controls.AddAt(0, SettingsControl);
                 }
                 else
@@ -101,6 +133,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
         }
+
+		#endregion
+
+		#region "Public Methods"
 
         public override void Initialize()
         {
@@ -135,6 +171,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -148,5 +188,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 SettingsControl.UpdateSettings();
             }
         }
+		
+		#endregion
     }
 }

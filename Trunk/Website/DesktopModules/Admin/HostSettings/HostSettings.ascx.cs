@@ -66,16 +66,39 @@ using DotNetNuke.Web.UI.WebControls.Extensions;
 
 namespace DotNetNuke.Modules.Admin.Host
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The HostSettings PortalModuleBase is used to edit the host settings
+    /// for the application.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class HostSettings : PortalModuleBase
     {
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData fetches the data from the database and updates the controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindConfiguration()
         {
             lblProduct.Text = DotNetNukeContext.Current.Application.Description;
             lblVersion.Text = Globals.FormatVersion(DotNetNukeContext.Current.Application.Version, true);
+
             betaRow.Visible = (DotNetNukeContext.Current.Application.Status != ReleaseMode.Stable);
             chkBetaNotice.Checked = Entities.Host.Host.DisplayBetaNotice;
+
             chkUpgrade.Checked = Entities.Host.Host.CheckUpgrade;
             hypUpgrade.ImageUrl = Upgrade.UpgradeIndicator(DotNetNukeContext.Current.Application.Version, Request.IsLocal, Request.IsSecureConnection);
             if (String.IsNullOrEmpty(hypUpgrade.ImageUrl))
@@ -88,6 +111,7 @@ namespace DotNetNuke.Modules.Admin.Host
             }
             lblDataProvider.Text = ProviderConfiguration.GetProviderConfiguration("data").DefaultProvider;
             lblFramework.Text = Globals.NETFrameworkVersion.ToString(2);
+
             if (!Upgrade.IsNETFrameworkCurrent("3.5"))
             {
                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("FrameworkDownLevel", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
@@ -435,6 +459,7 @@ namespace DotNetNuke.Modules.Admin.Host
 
         private void CheckSecurity()
         {
+			//Verify that the current user has access to access this page
             if (!UserInfo.IsSuperUser)
             {
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
@@ -458,6 +483,18 @@ namespace DotNetNuke.Modules.Admin.Host
             jQuery.RequestDnnPluginsRegistration();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        ///     [VMasanas]  9/28/2004   Changed redirect to Access Denied
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -471,6 +508,8 @@ namespace DotNetNuke.Modules.Admin.Host
             try
             {
                 CheckSecurity();
+
+                //If this is the first visit to the page, populate the site data
                 if (Page.IsPostBack == false)
                 {
                     BindData();
@@ -509,6 +548,17 @@ namespace DotNetNuke.Modules.Admin.Host
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ClearCache runs when the clear cache button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void ClearCache(object sender, EventArgs e)
         {
             DataCache.ClearCache();
@@ -525,6 +575,17 @@ namespace DotNetNuke.Modules.Admin.Host
             Response.Redirect(Globals.NavigateURL(), true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// TestEmail runs when the test email button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void TestEmail(object sender, EventArgs e)
         {
             try
@@ -532,6 +593,7 @@ namespace DotNetNuke.Modules.Admin.Host
                 if (!String.IsNullOrEmpty(txtHostEmail.Text))
                 {
                     txtSMTPPassword.Attributes.Add("value", Entities.Host.Host.SMTPPassword);
+
                     string strMessage = Mail.SendMail(txtHostEmail.Text,
                                                       txtHostEmail.Text,
                                                       "",
@@ -561,7 +623,7 @@ namespace DotNetNuke.Modules.Admin.Host
                     UI.Skins.Skin.AddModuleMessage(this, "", Localization.GetString("SpecifyHostEmailMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -642,6 +704,17 @@ namespace DotNetNuke.Modules.Admin.Host
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Upgrade button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void UpdateSettings(object sender, EventArgs e)
         {
             if (Page.IsValid)

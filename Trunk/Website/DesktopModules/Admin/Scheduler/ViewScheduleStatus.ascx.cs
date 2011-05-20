@@ -42,6 +42,17 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ViewScheduleStatus PortalModuleBase is used to view the schedule Status
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ViewScheduleStatus : PortalModuleBase, IActionable
     {
 
@@ -87,6 +98,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             lblFreeThreads.Text = SchedulingProvider.Instance().GetFreeThreadCount().ToString();
             lblActiveThreads.Text = SchedulingProvider.Instance().GetActiveThreadCount().ToString();
             lblMaxThreads.Text = SchedulingProvider.Instance().GetMaxThreadCount().ToString();
+
             Collection arrScheduleQueue = SchedulingProvider.Instance().GetScheduleQueue();
             if (arrScheduleQueue.Count == 0)
             {
@@ -94,10 +106,13 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             else
             {
+				//Localize Grid
                 Localization.LocalizeDataGrid(ref dgScheduleQueue, LocalResourceFile);
+
                 dgScheduleQueue.DataSource = arrScheduleQueue;
                 dgScheduleQueue.DataBind();
             }
+			
             Collection arrScheduleProcessing = SchedulingProvider.Instance().GetScheduleProcessing();
             if (arrScheduleProcessing.Count == 0)
             {
@@ -105,6 +120,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             else
             {
+				//Localize Grid
                 Localization.LocalizeDataGrid(ref dgScheduleProcessing, LocalResourceFile);
                 dgScheduleProcessing.DataSource = arrScheduleProcessing;
                 dgScheduleProcessing.DataBind();
@@ -120,7 +136,9 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         {
             Status = SchedulingProvider.Instance().GetScheduleStatus();
             lblStatus.Text = Status.ToString();
+
             placeCommands.Visible = SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD;
+
             if (Status == ScheduleStatus.STOPPED && SchedulingProvider.SchedulerMode != SchedulerMode.DISABLED)
             {
                 cmdStart.Enabled = true;
@@ -140,13 +158,28 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
+		#region "Protected Methods"
+
         protected string GetOverdueText(double overdueBy)
         {
             return overdueBy > 0 ? overdueBy.ToString() : "";
         }
+		
+		#endregion
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -180,12 +213,23 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
                 cmdCancel.NavigateUrl += Globals.NavigateURL();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdStart_Click runs when the Start Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnStartClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().StartAndWaitForResponse();
@@ -193,6 +237,17 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             BindStatus();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdStop_Click runs when the Stop Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnStopClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().Halt(Localization.GetString("ManuallyStopped", LocalResourceFile));

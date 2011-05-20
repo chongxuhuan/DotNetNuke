@@ -23,7 +23,8 @@
     	<li><asp:LinkButton id="cmdExecute" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdExecute" /></li>
     </ul>
     <div class="dnnFormItem dnnResults">
-        <asp:GridView ID="gvResults" runat="server" AutoGenerateColumns="True" EnableViewState="False" CssClass="dnnGrid" gridlines="None">
+        <asp:GridView ID="gvResults" runat="server" AutoGenerateColumns="True" CellSpacing="4" 
+            EnableViewState="False" CssClass="dnnGrid" gridlines="None">
             <headerstyle CssClass="dnnGridHeader" />
             <rowstyle CssClass="dnnGridItem" />
             <alternatingrowstyle CssClass="dnnGridAltItem" />

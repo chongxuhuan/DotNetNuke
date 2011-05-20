@@ -47,15 +47,37 @@ using Calendar = DotNetNuke.Common.Utilities.Calendar;
 namespace DotNetNuke.Modules.Admin.SiteLog
 {
 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SiteLog PortalModuleBase is used to display Logs for the Site
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/15/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class SiteLog : PortalModuleBase
     {
 
         #region Private Methods
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData binds the controls to the Data
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/15/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             var strPortalAlias = Globals.GetPortalDomainName(PortalAlias.HTTPAlias, Request, false);
-            if (strPortalAlias.IndexOf("/") != -1)
+            if (strPortalAlias.IndexOf("/") != -1) //child portal
             {
                 strPortalAlias = strPortalAlias.Substring(0, strPortalAlias.LastIndexOf("/") - 1);
             }
@@ -80,17 +102,21 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                 case "10":
                     arrUsers = UserController.GetUsers(PortalId);
                     dt = new DataTable();
+
                     dt.Columns.Add(new DataColumn("Full Name", typeof (string)));
                     dt.Columns.Add(new DataColumn("User Name", typeof (string)));
                     dt.Columns.Add(new DataColumn("Date Registered", typeof (DateTime)));
+
                     foreach (UserInfo objUser in arrUsers)
                     {
                         if (objUser.Membership.CreatedDate >= dtStart && objUser.Membership.CreatedDate <= dtEnd && objUser.IsSuperUser == false)
                         {
                             var dr = dt.NewRow();
+
                             dr["Date Registered"] = objUser.Membership.CreatedDate;
                             dr["Full Name"] = objUser.Profile.FullName;
                             dr["User Name"] = objUser.Username;
+
                             dt.Rows.Add(dr);
                         }
                     }
@@ -99,20 +125,24 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                     grdLog.DataSource = dv;
                     grdLog.DataBind();
                     break;
-                case "11":
+                case "11": //User Registrations By Country
                     arrUsers = UserController.GetUsers(PortalId);
                     dt = new DataTable();
+
                     dt.Columns.Add(new DataColumn("Full Name", typeof (string)));
                     dt.Columns.Add(new DataColumn("User Name", typeof (string)));
                     dt.Columns.Add(new DataColumn("Country", typeof (string)));
+
                     foreach (UserInfo objUser in arrUsers)
                     {
                         if (objUser.Membership.CreatedDate >= dtStart && objUser.Membership.CreatedDate <= dtEnd && objUser.IsSuperUser == false)
                         {
                             var dr = dt.NewRow();
+
                             dr["Country"] = objUser.Profile.Country;
                             dr["Full Name"] = objUser.Profile.FullName;
                             dr["User Name"] = objUser.Username;
+
                             dt.Rows.Add(dr);
                         }
                     }
@@ -128,7 +158,7 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                                                                Convert.ToInt32(cboReportType.SelectedItem.Value),
                                                                Convert.ToDateTime(strStartDate),
                                                                Convert.ToDateTime(strEndDate));
-                    grdLog.DataSource = reader;
+                    grdLog.DataSource = reader; //we are using a DataReader here because the resultset returned by GetSiteLog varies based on the report type selected and therefore does not conform to a static business object
                     grdLog.DataBind();
                     reader.Close();
                     break;
@@ -149,6 +179,17 @@ namespace DotNetNuke.Modules.Admin.SiteLog
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/15/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -157,8 +198,11 @@ namespace DotNetNuke.Modules.Admin.SiteLog
 
             try
             {
+                //this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdStartCalendar.NavigateUrl = Calendar.InvokePopupCal(txtStartDate);
                 cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
+
+                //If this is the first visit to the page, bind the role data to the datalist
                 if (Page.IsPostBack == false)
                 {
                     var strSiteLogStorage = "D";
@@ -175,7 +219,7 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                     {
                         switch (PortalSettings.SiteLogHistory)
                         {
-                            case -1:
+                            case -1: //unlimited
                                 break;
                             case 0:
                                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("LogDisabled", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
@@ -190,26 +234,39 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                     }
                     var ctlList = new ListController();
                     var colSiteLogReports = ctlList.GetListEntryInfoCollection("Site Log Reports");
+
                     cboReportType.DataSource = colSiteLogReports;
                     cboReportType.DataBind();
                     cboReportType.SelectedIndex = 0;
+
                     txtStartDate.Text = DateTime.Today.AddDays(-6).ToShortDateString();
                     txtEndDate.Text = DateTime.Today.AddDays(1).ToShortDateString();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDisplay_Click runs when the Display Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/15/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDisplayClick(object sender, EventArgs e)
         {
             try
             {
                 BindData();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

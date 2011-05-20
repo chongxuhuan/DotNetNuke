@@ -41,6 +41,16 @@ using DataCache = DotNetNuke.UI.Utilities.DataCache;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The UserSettings PortalModuleBase is used to manage User Settings for the portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	03/02/2006
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class UserSettings : UserModuleBase
     {
         protected string ReturnURL
@@ -49,6 +59,7 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 string _ReturnURL;
                 var FilterParams = new string[String.IsNullOrEmpty(Request.QueryString["filterproperty"]) ? 1 : 2];
+
                 if (String.IsNullOrEmpty(Request.QueryString["filterProperty"]))
                 {
                     FilterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
@@ -70,6 +81,16 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -91,6 +112,7 @@ namespace DotNetNuke.Modules.Admin.Users
             ProviderSettings.LocalResourceFile = LocalResourceFile;
             ProviderSettings.DataSource = config;
             ProviderSettings.DataBind();
+
             if (UserInfo.IsSuperUser)
             {
                 PasswordSettings.EditMode = PropertyEditorMode.Edit;
@@ -102,10 +124,15 @@ namespace DotNetNuke.Modules.Admin.Users
             PasswordSettings.LocalResourceFile = LocalResourceFile;
             PasswordSettings.DataSource = new PasswordConfig();
             PasswordSettings.DataBind();
+
+            //Create a hashtable for the custom editors being used, using the same keys
+            //as in the settings hashtable
             var editors = new Hashtable();
             editors["Redirect_AfterLogin"] = EditorInfo.GetEditor("Page");
             editors["Redirect_AfterLogout"] = EditorInfo.GetEditor("Page");
             editors["Redirect_AfterRegistration"] = EditorInfo.GetEditor("Page");
+
+            //Create a Hashtable for the custom Visibility options
             var visibility = new Hashtable();
             if (IsHostMenu)
             {
@@ -129,15 +156,36 @@ namespace DotNetNuke.Modules.Admin.Users
             UserSettingsEditor.DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the Cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/02/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdCancel_Click(object sender, EventArgs e)
         {
             Response.Redirect(ReturnURL, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/02/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
             string key = Null.NullString;
             string setting = Null.NullString;
+
             foreach (FieldEditorControl settingsEditor in UserSettingsEditor.Fields)
             {
                 if (settingsEditor.IsDirty)
@@ -146,6 +194,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     setting = Convert.ToString(settingsEditor.Editor.Value);
                     if (key == "Security_DisplayNameFormat")
                     {
+						//Update the DisplayName of all Users in the portal
                         var objUserController = new UserController();
                         objUserController.PortalId = UserPortalID;
                         objUserController.DisplayFormat = setting;
@@ -155,7 +204,10 @@ namespace DotNetNuke.Modules.Admin.Users
                     UpdateSetting(UserPortalID, key, setting);
                 }
             }
+			
+            //Clear the UserSettings Cache
             DataCache.RemoveCache(UserController.SettingsKey(UserPortalID));
+
             Response.Redirect(ReturnURL, true);
         }
     }

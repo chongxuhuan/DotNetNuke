@@ -26,7 +26,6 @@ BEGIN
 		[PortalID] [int] NULL,
 		[MappingName] [nvarchar](50) NOT NULL,
 		[FolderProviderType] [nvarchar](50) NOT NULL,
-		[IsEnabled] [bit] NOT NULL,
 		[Priority] [int] NULL,
 		[CreatedByUserID] [int] NULL,
 		[CreatedOnDate] [datetime] NULL,
@@ -51,22 +50,22 @@ GO
 
 IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Standard')
 BEGIN
-	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-	VALUES (NULL, 'Standard', 'StandardFolderProvider', 1, 1)
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+	VALUES (NULL, 'Standard', 'StandardFolderProvider', 1)
 END
 GO
 
 IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Secure')
 BEGIN
-	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-	VALUES (NULL, 'Secure', 'SecureFolderProvider', 1, 2)
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+	VALUES (NULL, 'Secure', 'SecureFolderProvider', 2)
 END
 GO
 
 IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID IS NULL AND MappingName = 'Database')
 BEGIN
-	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-	VALUES (NULL, 'Database', 'DatabaseFolderProvider', 1, 3)
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+	VALUES (NULL, 'Database', 'DatabaseFolderProvider', 3)
 END
 GO
 
@@ -88,20 +87,20 @@ IF (SELECT COUNT(PortalID) FROM {databaseOwner}[{objectQualifier}Portals]) > 0 B
 	BEGIN
 		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Standard')
 		BEGIN
-			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-			VALUES (@PortalID, 'Standard', 'StandardFolderProvider', 1, 1)
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+			VALUES (@PortalID, 'Standard', 'StandardFolderProvider', 1)
 		END
 
 		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Secure')
 		BEGIN
-			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-			VALUES (@PortalID, 'Secure', 'SecureFolderProvider', 1, 2)
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+			VALUES (@PortalID, 'Secure', 'SecureFolderProvider', 2)
 		END
 
 		IF NOT EXISTS(SELECT FolderMappingID FROM {databaseOwner}[{objectQualifier}FolderMappings] WHERE PortalID = @PortalID AND MappingName = 'Database')
 		BEGIN
-			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-			VALUES (@PortalID, 'Database', 'DatabaseFolderProvider', 1, 3)
+			INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+			VALUES (@PortalID, 'Database', 'DatabaseFolderProvider', 3)
 		END
 
 		FETCH NEXT FROM portal_cursor INTO @PortalID
@@ -148,7 +147,6 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddFolderMapping]
 	@PortalID int,
 	@MappingName nvarchar(50),
 	@FolderProviderType nvarchar(50),
-	@IsEnabled bit,
 	@CreatedByUserID int
 AS
 BEGIN
@@ -163,7 +161,6 @@ BEGIN
 		PortalID,
 		MappingName,
 		FolderProviderType,
-		IsEnabled,
 		Priority,
 		CreatedByUserID,
 		CreatedOnDate,
@@ -174,7 +171,6 @@ BEGIN
 		@PortalID,
 		@MappingName,
 		@FolderProviderType,
-		@IsEnabled,
 		@Priority,
 		@CreatedByUserID,
 		GETDATE(),
@@ -196,7 +192,6 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolderMapping]
 	@FolderMappingID int,
 	@MappingName nvarchar(50),
-	@IsEnabled bit,
 	@Priority int,
 	@LastModifiedByUserID int
 AS
@@ -204,7 +199,6 @@ BEGIN
 	UPDATE {databaseOwner}[{objectQualifier}FolderMappings]
 	SET
 		MappingName = @MappingName,
-		IsEnabled = @IsEnabled,
 		Priority = @Priority,
 		LastModifiedByUserID = @LastModifiedByUserID,
 		LastModifiedOnDate = GETDATE()
@@ -312,12 +306,12 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddDefaultFolderTypes]
 	@PortalID int
 AS
 BEGIN
-	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, IsEnabled, Priority)
-	SELECT @PortalID, 'Standard', 'StandardFolderProvider', 1, 1
+	INSERT INTO {databaseOwner}[{objectQualifier}FolderMappings] (PortalID, MappingName, FolderProviderType, Priority)
+	SELECT @PortalID, 'Standard', 'StandardFolderProvider', 1
 	UNION ALL
-	SELECT @PortalID, 'Secure', 'SecureFolderProvider', 1, 2
+	SELECT @PortalID, 'Secure', 'SecureFolderProvider', 2
 	UNION ALL
-	SELECT @PortalID, 'Database', 'DatabaseFolderProvider', 1, 3
+	SELECT @PortalID, 'Database', 'DatabaseFolderProvider', 3
 END
 GO
 
@@ -1078,14 +1072,14 @@ DECLARE @ViewOrder int
 DECLARE @DataType int
 
 --find DataType
-SELECT @DataType = EntryID FROM {databaseOwner}[{objectQualifier}Lists] WHERE ListName = N'DataType' and Value = N'TimeZoneInfo'
+SELECT @DataType = EntryID FROM {databaseOwner}[{objectQualifier}Lists] WHERE ListName = N'DataType' and Value = N'PreferredTimeZone'
 IF @DataType IS NULL
 BEGIN
 	SET @DataType = 363
 END
 
 --Create new entry for Host
-IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZoneInfo' AND PortalID IS NULL)
+IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'PreferredTimeZone' AND PortalID IS NULL)
 BEGIN
 	--try to find old view order
 	SELECT @ViewOrder = ViewOrder FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZone' AND PortalID IS NULL
@@ -1093,7 +1087,7 @@ BEGIN
 	BEGIN
 		SET @ViewOrder = 1
 	END
-    INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (NULL, -1, 0, @DataType, N'Preferences', N'TimeZoneInfo', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+    INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (NULL, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
 END 
 
 --Create new entries for Portals
@@ -1109,7 +1103,7 @@ FETCH NEXT FROM Portals_Cursor
 into @PortalID
 WHILE @@FETCH_STATUS = 0
    BEGIN
-	   IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZoneInfo' AND PortalID = @PortalID)
+	   IF NOT EXISTS(SELECT PropertyDefinitionID FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'PreferredTimeZone' AND PortalID = @PortalID)
 	   BEGIN
 			--try to find old view order
 			SELECT @ViewOrder = ViewOrder FROM {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] WHERE PropertyCategory = N'Preferences' AND PropertyName = N'TimeZone' AND PortalID = @PortalID
@@ -1117,7 +1111,7 @@ WHILE @@FETCH_STATUS = 0
 			BEGIN
 				SET @ViewOrder = 1
 			END
-            INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (@PortalID, -1, 0, @DataType, N'Preferences', N'TimeZoneInfo', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+            INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (@PortalID, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
 	   END 
 
        FETCH NEXT FROM Portals_Cursor
@@ -2055,6 +2049,92 @@ GO
 
 DELETE FROM {databaseOwner}{objectQualifier}HostSettings
 	WHERE SettingName = 'DisableUsersOnline'
+GO
+
+/* Introduce RawUrl to allow banners to work with remote FolderProviders */
+/*************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetBanner]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetBanner]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetBanner
+@BannerId int
+as
+select B.BannerId,
+       B.VendorId,
+       'ImageFile' = case when F.FileName is null then B.ImageFile else F.Folder + F.FileName end,
+       B.BannerName,
+       B.Impressions,
+       B.CPM,
+       B.Views,
+       B.ClickThroughs,
+       B.StartDate,
+       B.EndDate,
+       'CreatedByUser' = U.FirstName + ' ' + U.LastName,
+       B.CreatedDate,
+       B.BannerTypeId,
+       B.Description,
+       B.GroupName,
+       B.Criteria,
+       B.URL,        
+       B.Width,
+       B.Height,
+       B.ImageFile AS ImageFileRaw
+from   {databaseOwner}{objectQualifier}Banners B 
+inner join {databaseOwner}{objectQualifier}Vendors V ON B.VendorId = V.VendorId 
+left outer join {databaseOwner}{objectQualifier}Users U ON B.CreatedByUser = U.UserID
+left outer join {databaseOwner}{objectQualifier}Files F on B.ImageFile = 'FileId=' + convert(varchar,F.FileID)
+where  B.BannerId = @BannerId
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FindBanners]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FindBanners]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FindBanners]
+	@PortalID     int,
+	@BannerTypeId int,
+	@GroupName    nvarchar(100)
+
+AS
+SELECT  B.BannerId,
+        B.VendorId,
+        BannerName,
+        URL,
+		CASE WHEN LEFT(LOWER(ImageFile), 6) = 'fileid' 
+			THEN
+				(SELECT Folder + FileName  
+					FROM {databaseOwner}{objectQualifier}Files 
+					WHERE 'fileid=' + convert(varchar,{databaseOwner}{objectQualifier}Files.FileID) = ImageFile
+				) 
+			ELSE 
+				ImageFile  
+			END 
+		AS ImageFile,
+        Impressions,
+        CPM,
+        B.Views,
+        B.ClickThroughs,
+        StartDate,
+        EndDate,
+        BannerTypeId,
+        Description,
+        GroupName,
+        Criteria,
+        B.Width,
+        B.Height,
+        B.ImageFile AS ImageFileRaw
+FROM    {databaseOwner}{objectQualifier}Banners B
+INNER JOIN {databaseOwner}{objectQualifier}Vendors V ON B.VendorId = V.VendorId
+WHERE   (B.BannerTypeId = @BannerTypeId or @BannerTypeId is null)
+AND     (B.GroupName = @GroupName or @GroupName is null)
+AND     ((V.PortalId = @PortalID) or (@PortalID is null and V.PortalId is null))
+AND     V.Authorized = 1 
+AND     (getdate() <= B.EndDate or B.EndDate is null)
+ORDER BY BannerId
+
 GO
 
 /************************************************************/

@@ -163,13 +163,13 @@
                 <StepStyle VerticalAlign="Top" />
                 <StartNavigationTemplate>
                     <ul class="dnnActions dnnClear">
-    	                <li><asp:LinkButton id="StartNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
+    	                <li><asp:LinkButton id="StartNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" /></li>
                     </ul>
                 </StartNavigationTemplate>
                 <StepNavigationTemplate>
                     <ul class="dnnActions dnnClear">
-    	                <li><asp:LinkButton id="StepNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
-                        <li><asp:LinkButton id="StepPreviousButton" runat="server" CssClass="dnnSecondaryAction" CommandName="MovePrevious" resourcekey="Previous" /></li>
+    	                <li><asp:LinkButton id="StepNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" /></li>
+                        <li><asp:LinkButton id="StepPreviousButton" runat="server" CssClass="dnnSecondaryAction" CommandName="MovePrevious" /></li>
                         <li><asp:LinkButton id="CustomButton" runat="server" CssClass="dnnSecondaryAction" Visible="false" /></li>
                     </ul>
                 </StepNavigationTemplate>
@@ -183,11 +183,11 @@
                         <hr />
                         <div id="languagePanel" runat="server" class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label2" runat="server" resourceKey="ChooseInstall" ControlName="rblInstall" />
+                                <label for="<%=rblInstall.ClientID%>"><%=LocalizeString("ChooseInstall")%></label>
                                 <asp:RadioButtonList ID="rblInstall" runat="Server" RepeatDirection="Vertical" CssClass="installRadioButtons" />
                             </div>                   
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label3" runat="server" resourceKey="ChooseLanguage" ControlName="cboLanguages" />
+                                <label for="<%=cboLanguages.ClientID%>"><%=LocalizeString("ChooseLanguage")%></label>
                                 <asp:DropDownList ID="cboLanguages" AutoPostBack="true" runat="Server" DataTextField="Text" DataValueField="Code" />
                             </div>
                         </div>                   
@@ -200,7 +200,7 @@
                         <hr />
                         <div class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label1" runat="server" resourceKey="Permissions" ControlName="lstPermissions" />
+                                <label for="<%=lstPermissions.ClientID%>"><%=LocalizeString("Permissions")%></label>
                             </div>
                             <div class="dnnFormItem">
                                 <asp:CheckBoxList ID="lstPermissions" runat="server" CssClass="permissionsCheckBoxes" DataTextField="Name" DataValueField="Permission" TextAlign="Left" />
@@ -214,26 +214,26 @@
                         <hr />
                         <div class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label4" runat="server" resourceKey="ChooseDatabase" ControlName="rblDatabases" />
+                                <label for="<%=rblDatabases.ClientID%>"><%=LocalizeString("ChooseDatabase")%></label>
                                 <asp:RadioButtonList ID="rblDatabases" runat="Server" CssClass="databaseRadioButtons" 
                                         AutoPostBack="true" RepeatDirection="Vertical" RepeatColumns="1" />
                             </div>
                         </div>
                         <div id="databasePanel" runat="Server" visible="False" class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="serverLabel" runat="server" ControlName="txtServer" ResourceKey="Server" HelpKey="ServerHelp" />
+                                <dnn:Label ID="serverLabel" runat="server" ControlName="txtServer" />
                                 <asp:TextBox ID="txtServer" runat="Server" />
                             </div>
                             <div id="fileRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="fileLabel" runat="server" ControlName="txtFile" ResourceKey="DatabaseFile" HelpKey="DatabaseFileHelp" />
+                                <dnn:Label ID="fileLabel" runat="server" ControlName="txtFile" />
                                 <asp:TextBox ID="txtFile" runat="Server" />
                             </div>
                             <div id="databaseRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="databaseLabel" runat="server" ControlName="txtDatabase" ResourceKey="Database" HelpKey="DatabaseHelp" />
+                                <dnn:Label ID="databaseLabel" runat="server" ControlName="txtDatabase" />
                                 <asp:TextBox ID="txtDatabase" runat="Server" />
                             </div>
                             <div id="integratedRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="integratedLabel" runat="server" ControlName="chkIntegrated" ResourceKey="Integrated" HelpKey="IntegratedHelp" />
+                                <dnn:Label ID="integratedLabel" runat="server" ControlName="chkIntegrated" />
                                 <asp:CheckBox ID="chkIntegrated" runat="Server" AutoPostBack="True" />
                             </div>
                             <div id="userRow" runat="server" class="dnnFormItem">
@@ -241,15 +241,15 @@
                                 <asp:TextBox ID="txtUserId" runat="Server" />
                             </div>
                             <div id="passwordRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="passwordLabel" runat="server" ControlName="txtPassword" ResourceKey="Password" HelpKey="PasswordHelp" />
-                                <asp:TextBox ID="txtPassword" runat="Server" />
+                                <dnn:Label ID="passwordLabel" runat="server" ControlName="txtPassword" />
+                                <asp:TextBox ID="txtPassword" runat="Server" TextMode="Password" />
                             </div>
                             <div class="dnnFormItem">
-                                <dnn:Label ID="ownerLabel" runat="server" ControlName="chkOwner" ResourceKey="Owner" HelpKey="OwnerHelp" />
+                                <dnn:Label ID="ownerLabel" runat="server" ControlName="chkOwner" />
                                 <asp:CheckBox ID="chkOwner" runat="Server" />
                             </div>
                             <div class="dnnFormItem">
-                                <dnn:Label ID="qualifierLabel" runat="server" ControlName="txtqualifier" ResourceKey="Qualifier" HelpKey="QualifierHelp" />
+                                <dnn:Label ID="qualifierLabel" runat="server" ControlName="txtqualifier" />
                                 <asp:TextBox ID="txtqualifier" runat="Server" />
                             </div>
                         </div>
@@ -276,11 +276,11 @@
                             <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
                             <div class="dnnForm">
                                 <div class="dnnFormItem">
-                                    <dnn:Label ID="Label6" runat="server" resourceKey="SMTPServer" ControlName="txtSMTPServer" />
+                                    <label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
                                     <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256"  />
                                 </div>                   
                                 <div class="dnnFormItem">
-                                    <dnn:Label ID="Label7" runat="server" resourceKey="SMTPAuthentication" ControlName="optSMTPAuthentication" />
+                                    <label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
                                     <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
                                         <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
                                         <asp:ListItem Value="1" resourcekey="SMTPBasic" />
@@ -288,15 +288,15 @@
                                     </asp:RadioButtonList>
                                 </div>
                                 <div class="dnnFormItem">
-                                    <dnn:Label ID="Label8" runat="server" resourceKey="SMTPEnableSSL" ControlName="chkSMTPEnableSSL" />
+                                    <label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
                                     <asp:Checkbox ID="chkSMTPEnableSSL" runat="server" />
                                 </div>                           
                                 <div id="SMTPUserNameRow" class="dnnFormItem">
-                                    <dnn:Label ID="Label9" runat="server" resourceKey="SMTPUsername" ControlName="txtSMTPUsername" />
+                                    <label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
                                     <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256"  />
                                 </div>                   
                                 <div id="SMTPPasswordRow" class="dnnFormItem">
-                                    <dnn:Label ID="Label10" runat="server" resourceKey="SMTPPassword" ControlName="txtSMTPPassword" />
+                                    <label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
                                     <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password"  />
                                 </div>                   
                             </div>                   
@@ -367,11 +367,11 @@
                         <h3><asp:Label ID="lblPortal" runat="server" /></h3>
                         <div class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label11" runat="server" resourceKey="PortalTitle" ControlName="txtPortalTitle" />
+                                <label for="<%=txtPortalTitle.ClientID%>"><%=LocalizeString("PortalTitle")%></label>
                                 <asp:TextBox ID="txtPortalTitle" runat="server" MaxLength="128"  />
                             </div>
                             <div class="dnnFormItem">
-                                <dnn:Label ID="Label12" runat="server" resourceKey="PortalTemplate" ControlName="cboPortalTemplate" />
+                                <label for="<%=cboPortalTemplate.ClientID%>"><%=LocalizeString("PortalTemplate")%></label>
                                 <asp:DropDownList ID="cboPortalTemplate" runat="server"  />
                             </div>
                         </div>                   

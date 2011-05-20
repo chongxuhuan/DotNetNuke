@@ -22,8 +22,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework;
@@ -39,6 +40,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
         #region Private Variables
 
         private readonly IFolderMappingController _folderMappingController = FolderMappingController.Instance;
+        private int _folderMappingID = Null.NullInteger;
 
         #endregion
 
@@ -52,7 +54,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
-        private int _folderMappingID = Null.NullInteger;
         public int FolderMappingID
         {
             get
@@ -65,10 +66,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     }
                 }
                 return _folderMappingID;
-            }
-            private set
-            {
-                _folderMappingID = value;
             }
         }
 
@@ -109,7 +106,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     {
                         BindFolderMapping();
 
-                        if (phProviderSettings.Controls.Count > 0 && phProviderSettings.Controls[0] != null && phProviderSettings.Controls[0] is FolderMappingSettingsControlBase)
+                        if (phProviderSettings.Controls.Count > 0 && phProviderSettings.Controls[0] is FolderMappingSettingsControlBase)
                         {
                             var folderMapping = _folderMappingController.GetFolderMapping(FolderMappingID);
                             var settingsControl = (FolderMappingSettingsControlBase)phProviderSettings.Controls[0];
@@ -128,71 +125,64 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             Page.Validate("vgEditFolderMapping");
 
-            if (Page.IsValid)
+            if (!Page.IsValid) return;
+
+            try
             {
+                var folderMapping = new FolderMappingInfo();
+
+                if (FolderMappingID != Null.NullInteger)
+                {
+                    folderMapping = _folderMappingController.GetFolderMapping(FolderMappingID) ?? new FolderMappingInfo();
+                }
+
+                folderMapping.FolderMappingID = FolderMappingID;
+                folderMapping.MappingName = txtName.Text;
+                folderMapping.FolderProviderType = cboFolderProviders.SelectedValue;
+                folderMapping.PortalID = FolderPortalID;
+
                 try
                 {
-                    var folderMapping = new FolderMappingInfo();
+                    var folderMappingID = FolderMappingID;
 
-                    if (FolderMappingID != Null.NullInteger)
+                    if (folderMappingID == Null.NullInteger)
                     {
-                        folderMapping = _folderMappingController.GetFolderMapping(FolderMappingID);
-
-                        if (folderMapping == null)
-                        {
-                            folderMapping = new FolderMappingInfo();
-                        }
+                        folderMappingID = _folderMappingController.AddFolderMapping(folderMapping);
+                    }
+                    else
+                    {
+                        _folderMappingController.UpdateFolderMapping(folderMapping);
                     }
 
-                    folderMapping.FolderMappingID = FolderMappingID;
-                    folderMapping.MappingName = txtName.Text;
-                    folderMapping.IsEnabled = chkEnabled.Checked;
-                    folderMapping.FolderProviderType = cboFolderProviders.SelectedValue;
-                    folderMapping.PortalID = FolderPortalID;
-
-                    try
+                    if (phProviderSettings.Controls.Count > 0 && phProviderSettings.Controls[0] is FolderMappingSettingsControlBase)
                     {
-                        var folderMappingID = FolderMappingID;
+                        var settingsControl = (FolderMappingSettingsControlBase)phProviderSettings.Controls[0];
 
-                        if (folderMappingID == Null.NullInteger)
+                        try
                         {
-                            folderMappingID = _folderMappingController.AddFolderMapping(folderMapping);
+                            settingsControl.UpdateSettings(folderMappingID);
                         }
-                        else
+                        catch
                         {
-                            _folderMappingController.UpdateFolderMapping(folderMapping);
-                        }
-
-                        if (phProviderSettings.Controls.Count > 0 && phProviderSettings.Controls[0] != null && phProviderSettings.Controls[0] is FolderMappingSettingsControlBase)
-                        {
-                            var settingsControl = (FolderMappingSettingsControlBase)phProviderSettings.Controls[0];
-
-                            try
+                            if (FolderMappingID == Null.NullInteger)
                             {
-                                settingsControl.UpdateSettings(folderMappingID);
+                                _folderMappingController.DeleteFolderMapping(folderMappingID);
                             }
-                            catch
-                            {
-                                if (FolderMappingID == Null.NullInteger)
-                                {
-                                    _folderMappingController.DeleteFolderMapping(folderMappingID);
-                                }
-                                return;
-                            }
+                            return;
                         }
                     }
-                    catch
-                    {
-                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DuplicateMappingName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                        return;
-                    }
-
-                    Response.Redirect(EditUrl("FolderMappings"));
                 }
-                catch (Exception exc)
+                catch
                 {
-                    Exceptions.ProcessModuleLoadException(this, exc);
+                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DuplicateMappingName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    return;
                 }
+
+                Response.Redirect(EditUrl("FolderMappings"));
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
@@ -208,12 +198,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
         private void BindFolderProviders()
         {
             var defaultProviders = FolderProvider.GetDefaultProviders();
-            foreach (var provider in FolderProvider.GetProviderList().Keys)
+
+            foreach (var provider in FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)))
             {
-                if (!defaultProviders.Contains(provider))
-                {
-                    cboFolderProviders.Items.Add(provider);
-                }
+                cboFolderProviders.Items.Add(provider);
             }
 
             cboFolderProviders.Items.Insert(0, new ListItem(Localization.GetString("SelectFolderProvider", LocalResourceFile), ""));
@@ -224,8 +212,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var folderMapping = _folderMappingController.GetFolderMapping(FolderMappingID);
 
             txtName.Text = folderMapping.MappingName;
-
-            chkEnabled.Checked = folderMapping.IsEnabled;
 
             cboFolderProviders.SelectedValue = folderMapping.FolderProviderType;
             cboFolderProviders.Enabled = false;
@@ -245,24 +231,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 folderProviderType = cboFolderProviders.SelectedValue;
             }
 
-            if (!string.IsNullOrEmpty(folderProviderType))
-            {
-                var settingsControlVirtualPath = FolderProvider.GetSettingsControlVirtualPath(folderProviderType);
+            if (string.IsNullOrEmpty(folderProviderType)) return;
 
-                if (!String.IsNullOrEmpty(settingsControlVirtualPath))
-                {
-                    var settingsControl = LoadControl(settingsControlVirtualPath);
+            var settingsControlVirtualPath = FolderProvider.GetSettingsControlVirtualPath(folderProviderType);
+            if (String.IsNullOrEmpty(settingsControlVirtualPath)) return;
 
-                    if (settingsControl != null && settingsControl is FolderMappingSettingsControlBase)
-                    {
-                        // This is important to allow settings control to be localizable
-                        settingsControl.ID = FolderProvider.SettingsControlID;
+            var settingsControl = LoadControl(settingsControlVirtualPath);
+            if (settingsControl == null || !(settingsControl is FolderMappingSettingsControlBase)) return;
 
-                        phProviderSettings.Controls.Clear();
-                        phProviderSettings.Controls.Add(settingsControl);
-                    }
-                }
-            }
+            // This is important to allow settings control to be localizable
+            settingsControl.ID = FolderProvider.SettingsControlID;
+
+            phProviderSettings.Controls.Clear();
+            phProviderSettings.Controls.Add(settingsControl);
         }
 
         #endregion

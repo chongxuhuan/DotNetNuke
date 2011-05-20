@@ -37,6 +37,14 @@ using DotNetNuke.Services.Messaging;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class User : SkinObjectBase
     {
         private const string MyFileName = "User.ascx";
@@ -111,8 +119,11 @@ namespace DotNetNuke.UI.Skins.Controls
                     if (objUserInfo.UserID != -1)
                     {
                         var messagingController = new MessagingController();
+
                         int messageCount = messagingController.GetNewMessageCount(PortalSettings.PortalId, objUserInfo.UserID);
+
                         registerLink.Text = objUserInfo.DisplayName;
+
                         if ((ShowUnreadMessages && messageCount > 0))
                         {
                             registerLink.Text = registerLink.Text + string.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(this, MyFileName)), messageCount);

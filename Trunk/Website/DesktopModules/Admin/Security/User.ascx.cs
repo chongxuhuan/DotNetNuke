@@ -39,8 +39,28 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The User UserModuleBase is used to manage the base parts of a User.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	03/01/2006  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class User : UserUserControlBase
     {
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the User is valid
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsValid
         {
             get
@@ -49,6 +69,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Password section is displayed
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/17/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool ShowPassword
         {
             get
@@ -61,6 +89,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Update button
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool ShowUpdate
         {
             get
@@ -73,8 +109,13 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         private void UpdateDisplayName()
         {
+			//Update DisplayName to conform to Format
             object setting = GetSetting(UserPortalID, "Security_DisplayNameFormat");
             if ((setting != null) && (!string.IsNullOrEmpty(Convert.ToString(setting))))
             {
@@ -82,19 +123,32 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Validate validates the User
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/10/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool Validate()
         {
+            //Check User Editor
             bool _IsValid = userForm.IsValid;
 
+            //Check Password is valid
             if (AddUser && ShowPassword)
             {
                 UserCreateStatus createStatus = UserCreateStatus.AddUser;
                 if (!chkRandom.Checked)
                 {
+					//1. Check Password and Confirm are the same
                     if (txtPassword.Text != txtConfirm.Text)
                     {
                         createStatus = UserCreateStatus.PasswordMismatch;
                     }
+					
+					//2. Check Password is Valid
                     if (createStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(txtPassword.Text))
                     {
                         createStatus = UserCreateStatus.InvalidPassword;
@@ -106,12 +160,16 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
                 else
                 {
+					//Generate a random password for the user
                     User.Membership.Password = UserController.GeneratePassword();
                 }
+				
+                //Check Question/Answer
                 if (createStatus == UserCreateStatus.AddUser && MembershipProviderConfig.RequiresQuestionAndAnswer)
                 {
                     if (string.IsNullOrEmpty(txtQuestion.Text))
                     {
+						//Invalid Question
                         createStatus = UserCreateStatus.InvalidQuestion;
                     }
                     else
@@ -122,6 +180,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     {
                         if (string.IsNullOrEmpty(txtAnswer.Text))
                         {
+							//Invalid Question
                             createStatus = UserCreateStatus.InvalidAnswer;
                         }
                         else
@@ -140,19 +199,35 @@ namespace DotNetNuke.Modules.Admin.Users
             return _IsValid;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateUser creates a new user in the Database
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void CreateUser()
         {
+            //Update DisplayName to conform to Format
             UpdateDisplayName();
+
             if (IsRegister)
             {
                 User.Membership.Approved = PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.PublicRegistration;
             }
             else
             {
+                //Set the Approved status from the value in the Authorized checkbox
                 User.Membership.Approved = chkAuthorize.Checked;
             }
             UserInfo user = User;
             UserCreateStatus createStatus = UserController.CreateUser(ref user);
+
             UserCreatedEventArgs args = (createStatus == UserCreateStatus.Success)
                                             ? new UserCreatedEventArgs(User) {Notify = chkNotify.Checked} 
                                             : new UserCreatedEventArgs(null);
@@ -161,6 +236,14 @@ namespace DotNetNuke.Modules.Admin.Users
             OnUserCreateCompleted(args);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DataBind binds the data to the controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DataBind()
         {
             if (Page.IsPostBack == false)
@@ -255,6 +338,20 @@ namespace DotNetNuke.Modules.Admin.Users
 			}
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -264,6 +361,14 @@ namespace DotNetNuke.Modules.Admin.Users
             cmdRestore.Click += cmdRestore_Click;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the delete Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdDelete_Click(Object sender, EventArgs e)
         {
             string name = User.Username;
@@ -310,6 +415,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/01/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(Object sender, EventArgs e)
         {
             if (AddUser)
@@ -325,11 +438,14 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     if (User.UserID == PortalSettings.AdministratorId)
                     {
+						//Clear the Portal Cache
                         DataCache.ClearPortalCache(UserPortalID, false);
                     }
                     try
                     {
+						//Update DisplayName to conform to Format
                         UpdateDisplayName();
+
                         UserController.UpdateUser(UserPortalID, User);
                         OnUserUpdated(EventArgs.Empty);
                         OnUserUpdateCompleted(EventArgs.Empty);
@@ -344,6 +460,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
             }
         }
+		
+		#endregion
 
     }
 }

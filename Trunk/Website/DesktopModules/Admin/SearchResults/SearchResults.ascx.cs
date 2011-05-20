@@ -40,12 +40,35 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.SearchResults
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Modules.SearchResults
+    /// Project:    DotNetNuke.SearchResults
+    /// Class:      SearchResults
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SearchResults Class provides the UI for displaying the Search Results
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cnurse]	11/11/2004	Improved Formatting of results, and moved Search Options
+    ///                             to Settings
+    ///     [cnurse]    12/13/2004  Switched to using a DataGrid for Search Results
+    ///     [cnurse]    01/04/2005  Modified so "Nos" stay in order
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class SearchResults : PortalModuleBase
     {
+		#region "Private Members"
+		
         protected int TotalPages = -1;
         protected int TotalRecords;
         private int _CurrentPage = 1;
         private string _SearchQuery;
+
+		#endregion
+
+		#region "Protected Members"
 
         protected int CurrentPage
         {
@@ -59,6 +82,14 @@ namespace DotNetNuke.Modules.SearchResults
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Page Size for the Grid
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int PageSize
         {
             get
@@ -71,10 +102,16 @@ namespace DotNetNuke.Modules.SearchResults
                 return itemsPage;
             }
         }
+		
+		#endregion
+		
+		#region "Private Methods"
 
         private int BindSearchResults(DataTable dt)
         {
             SearchResultsInfoCollection Results = SearchDataStoreProvider.Instance().GetSearchResults(PortalId, _SearchQuery);
+
+            //Get the maximum items to display
             int maxItems = 0;
             if (!String.IsNullOrEmpty(Convert.ToString(Settings["maxresults"])))
             {
@@ -88,6 +125,8 @@ namespace DotNetNuke.Modules.SearchResults
             {
                 maxItems = Results.Count;
             }
+			
+            //Get the titlelength/descriptionlength
             int titleLength = 0;
             if (!String.IsNullOrEmpty(Convert.ToString(Settings["titlelength"])))
             {
@@ -129,6 +168,14 @@ namespace DotNetNuke.Modules.SearchResults
             return Results.Count;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData binds the Search Results to the Grid
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             using (var dt = new DataTable())
@@ -147,6 +194,8 @@ namespace DotNetNuke.Modules.SearchResults
                 {
                     count = BindSearchResults(dt);
                 }
+				
+                //Bind Search Results Grid
                 var dv = new DataView(dt);
                 dv.Sort = "Relevance DESC";
                 dgResults.PageSize = PageSize;
@@ -176,11 +225,35 @@ namespace DotNetNuke.Modules.SearchResults
             ctlPagingControl.CurrentPage = CurrentPage;
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatDate displays the publication Date
+        /// </summary>
+        /// <param name="pubDate">The publication Date</param>
+        /// <returns>The formatted date</returns>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatDate(DateTime pubDate)
         {
             return pubDate.ToString();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatRelevance displays the relevance value
+        /// </summary>
+        /// <param name="relevance">The publication Date</param>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	11/12/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatRelevance(int relevance)
         {
             string relevanceString = Null.NullString;
@@ -191,6 +264,17 @@ namespace DotNetNuke.Modules.SearchResults
             return relevanceString;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatURL the correctly formatted url to the Search Result
+        /// </summary>
+        /// <param name="TabID">The Id of the Tab where the content is located</param>
+        /// <param name="Link">The module provided querystring to access the correct content</param>
+        /// <returns>The formatted url</returns>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FormatURL(int TabID, string Link)
         {
             string strURL;
@@ -205,9 +289,19 @@ namespace DotNetNuke.Modules.SearchResults
             return strURL;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ShowDescription determines whether the description should be shown
+        /// </summary>
+        /// <returns>True or False string</returns>
+        /// <history>
+        /// 	[cnurse]	12/13/2004	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string ShowDescription()
         {
             string strShow;
+
             if (!String.IsNullOrEmpty(Convert.ToString(Settings["showdescription"])))
             {
                 if (Convert.ToString(Settings["showdescription"]) == "Y")
@@ -226,6 +320,19 @@ namespace DotNetNuke.Modules.SearchResults
             return strShow;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	11/11/2004	documented
+        ///     [cnurse]    12/13/2004  Switched to using a DataGrid for Search Results
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -258,6 +365,14 @@ namespace DotNetNuke.Modules.SearchResults
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// dgResults_PageIndexChanged runs when one of the Page buttons is clicked
+        /// </summary>
+        /// <history>
+        ///     [cnurse]    12/13/2004  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void dgResults_PageIndexChanged(object source, DataGridPageChangedEventArgs e)
         {
             dgResults.CurrentPageIndex = e.NewPageIndex;
@@ -267,8 +382,11 @@ namespace DotNetNuke.Modules.SearchResults
         protected void ctlPagingControl_PageChanged(object sender, EventArgs e)
         {
             CurrentPage = ctlPagingControl.CurrentPage;
+
             dgResults.CurrentPageIndex = CurrentPage - 1;
             BindData();
         }
+		
+		#endregion
     }
 }

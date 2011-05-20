@@ -255,7 +255,7 @@ namespace DotNetNuke.Services.Installer.Installers
                                 {
                                     upgradeVersion = new Version(version);
                                 }
-                                catch (FormatException fexc)
+                                catch (FormatException)
                                 {
                                     Log.AddWarning(string.Format(Util.MODULE_InvalidVersion, version));
                                 }

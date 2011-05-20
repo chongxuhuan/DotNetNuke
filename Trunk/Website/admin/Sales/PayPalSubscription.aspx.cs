@@ -96,6 +96,7 @@ namespace DotNetNuke.Modules.Admin.Sales
 
                     if (Request.QueryString["cancel"] != null)
                     {
+						//build the cancellation PayPal URL
                         strPayPalURL += "cmd=_subscr-find&alias=" + Globals.HTTPPOSTEncode(strProcessorUserId);
                     }
                     else
@@ -115,11 +116,14 @@ namespace DotNetNuke.Modules.Admin.Sales
                             {
                                 intBillingPeriod = objRole.BillingPeriod;
                             }
+							
+							//explicitely format numbers using en-US so numbers are correctly built
                             var enFormat = new CultureInfo("en-US");
                             string strService = string.Format(enFormat.NumberFormat, "{0:#####0.00}", objRole.ServiceFee);
                             string strTrial = string.Format(enFormat.NumberFormat, "{0:#####0.00}", objRole.TrialFee);
                             if (objRole.BillingFrequency == "O" || objRole.TrialFrequency == "O")
                             {
+								//build the payment PayPal URL
                                 strPayPalURL += "&redirect_cmd=_xclick&business=" + Globals.HTTPPOSTEncode(strProcessorUserId);
                                 strPayPalURL += "&item_name=" +
                                                 Globals.HTTPPOSTEncode(PortalSettings.PortalName + " - " + objRole.RoleName + " ( " + objRole.ServiceFee.ToString("#.##") + " " +
@@ -130,8 +134,9 @@ namespace DotNetNuke.Modules.Admin.Sales
                                 strPayPalURL += "&amount=" + Globals.HTTPPOSTEncode(strService);
                                 strPayPalURL += "&currency_code=" + Globals.HTTPPOSTEncode(PortalSettings.Currency);
                             }
-                            else
+                            else //recurring payments
                             {
+								//build the subscription PayPal URL
                                 strPayPalURL += "&redirect_cmd=_xclick-subscriptions&business=" + Globals.HTTPPOSTEncode(strProcessorUserId);
                                 strPayPalURL += "&item_name=" +
                                                 Globals.HTTPPOSTEncode(PortalSettings.PortalName + " - " + objRole.RoleName + " ( " + objRole.ServiceFee.ToString("#.##") + " " +
@@ -152,6 +157,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                             }
                         }
                         var ctlList = new ListController();
+
                         strPayPalURL += "&custom=" + Globals.HTTPPOSTEncode(intUserID.ToString());
                         strPayPalURL += "&first_name=" + Globals.HTTPPOSTEncode(objUserInfo.Profile.FirstName);
                         strPayPalURL += "&last_name=" + Globals.HTTPPOSTEncode(objUserInfo.Profile.LastName);
@@ -170,8 +176,11 @@ namespace DotNetNuke.Modules.Admin.Sales
                         }
 						catch (Exception ex)
 						{
+							//issue getting user address
 							DnnLog.Error(ex);
 						}
+						
+                        //Return URL
                         if (settings.ContainsKey("paypalsubscriptionreturn") && !string.IsNullOrEmpty(settings["paypalsubscriptionreturn"]))
                         {
                             strPayPalURL += "&return=" + Globals.HTTPPOSTEncode(settings["paypalsubscriptionreturn"]);
@@ -180,6 +189,8 @@ namespace DotNetNuke.Modules.Admin.Sales
                         {
                             strPayPalURL += "&return=" + Globals.HTTPPOSTEncode(Globals.AddHTTP(Globals.GetDomainName(Request)));
                         }
+						
+                        //Cancellation URL
                         if (settings.ContainsKey("paypalsubscriptioncancelreturn") && !string.IsNullOrEmpty(settings["paypalsubscriptioncancelreturn"]))
                         {
                             strPayPalURL += "&cancel_return=" + Globals.HTTPPOSTEncode(settings["paypalsubscriptioncancelreturn"]);
@@ -188,6 +199,8 @@ namespace DotNetNuke.Modules.Admin.Sales
                         {
                             strPayPalURL += "&cancel_return=" + Globals.HTTPPOSTEncode(Globals.AddHTTP(Globals.GetDomainName(Request)));
                         }
+						
+                        //Instant Payment Notification URL
                         if (settings.ContainsKey("paypalsubscriptionnotifyurl") && !string.IsNullOrEmpty(settings["paypalsubscriptionnotifyurl"]))
                         {
                             strPayPalURL += "&notify_url=" + Globals.HTTPPOSTEncode(settings["paypalsubscriptionnotifyurl"]);
@@ -196,8 +209,10 @@ namespace DotNetNuke.Modules.Admin.Sales
                         {
                             strPayPalURL += "&notify_url=" + Globals.HTTPPOSTEncode(Globals.AddHTTP(Globals.GetDomainName(Request)) + "/admin/Sales/PayPalIPN.aspx");
                         }
-                        strPayPalURL += "&sra=1";
+                        strPayPalURL += "&sra=1"; //reattempt on failure
                     }
+					
+					//redirect to PayPal
                     Response.Redirect(strPayPalURL, true);
                 }
                 else
@@ -210,10 +225,12 @@ namespace DotNetNuke.Modules.Admin.Sales
                     {
                         strPayPalURL = Globals.AddHTTP(Globals.GetDomainName(Request));
                     }
+					
+					//redirect to PayPal
                     Response.Redirect(strPayPalURL, true);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Page failed to load
             {
                 Exceptions.ProcessPageLoadException(exc);
             }

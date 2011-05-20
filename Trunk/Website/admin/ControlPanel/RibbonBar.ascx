@@ -11,10 +11,6 @@
     <div class="dnnCPHeader dnnClear">
         <div class="dnnCPHMode dnnLeft">
             <dnn:MENU ID="adminMenus" MenuStyle="admin/Menus/DNNAdmin" IncludeNodes="Admin, Host" IncludeHidden="True" runat="server" />
-            <%--
-                <dnn:DnnRibbonBarTool ID="cmdAdmin" runat="server" ToolName="Console" />
-                <dnn:DnnRibbonBarTool ID="cmdHost" runat="server" ToolName="HostConsole" />
-            --%>
             <asp:HyperLink ID="hypMessage" runat="server" Target="_new" CssClass="dnnCPHMessage dnnLeft" />
         </div>
         <div class="dnnCPHNav dnnRight">
@@ -98,23 +94,25 @@
 <dnn:DnnWindowManager ID="DnnWindowManager1" runat="server" />
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.dnnCPContent').dnnTabs();
+        $('#<%= BodyPanel.ClientID %>').dnnTabs();
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
         var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
-        $('.dnnDeletePage').dnnConfirm({
+
+        // Client IDs for the following three have _CPCommandBtn appended as a rule
+        $('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
             text: '<%= this.GetButtonConfirmMessage("DeletePage") %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
-        $('.dnnCopyPermissions').dnnConfirm({
+        $('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
             text: '<%= this.GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
-        $('.dnnCopyDesign').dnnConfirm({
+        $('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
             text: '<%= this.GetButtonConfirmMessage("CopyDesignToChildren") %>',
             yesText: yesText,
             noText: noText,

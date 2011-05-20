@@ -47,8 +47,30 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ManageUsers UserModuleBase is used to manage Users
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    ///     [cnurse]    2/21/2005   Updated to use new User UserControl
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ManageUsers : UserModuleBase, IActionable
     {
+		#region "Protected Members"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to display the Manage Services tab
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/11/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool DisplayServices
         {
             get
@@ -58,17 +80,29 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Redirect URL (after successful registration)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string RedirectURL
         {
             get
             {
                 string _RedirectURL = "";
+
                 object setting = GetSetting(PortalId, "Redirect_AfterRegistration");
+
                 if (Convert.ToInt32(setting) == Null.NullInteger)
                 {
                     if (Request.QueryString["returnurl"] != null)
                     {
+						//return to the url passed to register
                         _RedirectURL = HttpUtility.UrlDecode(Request.QueryString["returnurl"]);
+                        //redirect url should never contain a protocol ( if it does, it is likely a cross-site request forgery attempt )
                         if (_RedirectURL.Contains("://"))
                         {
                             _RedirectURL = "";
@@ -77,15 +111,17 @@ namespace DotNetNuke.Modules.Admin.Users
                         {
                             string baseURL = _RedirectURL.Substring(0, _RedirectURL.IndexOf("?returnurl"));
                             string returnURL = _RedirectURL.Substring(_RedirectURL.IndexOf("?returnurl") + 11);
+
                             _RedirectURL = string.Concat(baseURL, "?returnurl", HttpUtility.UrlEncode(returnURL));
                         }
                     }
                     if (String.IsNullOrEmpty(_RedirectURL))
                     {
+						//redirect to current page 
                         _RedirectURL = Globals.NavigateURL();
                     }
                 }
-                else
+                else //redirect to after registration page
                 {
                     _RedirectURL = Globals.NavigateURL(Convert.ToInt32(setting));
                 }
@@ -93,6 +129,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether a profile is required in AddUser mode
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	05/18/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool RequireProfile
         {
             get
@@ -102,6 +146,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Return Url for the page
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string ReturnUrl
         {
             get
@@ -110,6 +162,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Captcha control is used to validate registration
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/21/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool UseCaptcha
         {
             get
@@ -119,6 +179,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Filter to use
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string UserFilter
         {
             get
@@ -126,6 +194,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 string filterString = !string.IsNullOrEmpty(Request["filter"]) ? "filter=" + Request["filter"] : "";
                 string filterProperty = !string.IsNullOrEmpty(Request["filterproperty"]) ? "filterproperty=" + Request["filterproperty"] : "";
                 string page = !string.IsNullOrEmpty(Request["currentpage"]) ? "currentpage=" + Request["currentpage"] : "";
+
                 if (!string.IsNullOrEmpty(filterString))
                 {
                     filterString += "&";
@@ -142,6 +211,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		#endregion
+
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the current Page No
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/09/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PageNo
         {
             get
@@ -158,6 +239,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 ViewState["PageNo"] = value;
             }
         }
+		
+		#endregion
 
         #region IActionable Members
 
@@ -211,30 +294,50 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindData binds the controls to the Data
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             if (User != null)
             {
+				//If trying to add a SuperUser - check that user is a SuperUser
                 if (AddUser && IsHostMenu && !UserInfo.IsSuperUser)
                 {
                     AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();
                     return;
                 }
+				
+                //Check if User is a member of the Current Portal
                 if (User.PortalID != Null.NullInteger && User.PortalID != PortalId)
                 {
                     AddModuleMessage("InvalidUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();
                     return;
                 }
+				
+                //Check if User is a SuperUser and that the current User is a SuperUser
                 if (User.IsSuperUser && !UserInfo.IsSuperUser)
                 {
                     AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();
                     return;
                 }
+				
                 if (IsEdit)
                 {
+					//Check if user has admin rights
                     if (!IsAdmin || (User.IsInRole(PortalSettings.AdministratorRoleName) && !PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
                     {
                         AddModuleMessage("NotAuthorized", ModuleMessage.ModuleMessageType.YellowWarning, true);
@@ -250,6 +353,7 @@ namespace DotNetNuke.Modules.Admin.Users
                         {
                             if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
                             {
+								//Display current user's profile
                                 Response.Redirect(Globals.NavigateURL(PortalSettings.UserTabId, "", "UserID=" + UserInfo.UserID), true);
                             }
                         }
@@ -264,6 +368,7 @@ namespace DotNetNuke.Modules.Admin.Users
                         }
                     }
                 }
+				
                 if (AddUser)
                 {
                     if (!Request.IsAuthenticated)
@@ -314,6 +419,14 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindMembership binds the membership controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindMembership()
         {
             ctlMembership.User = User;
@@ -323,6 +436,14 @@ namespace DotNetNuke.Modules.Admin.Users
             imgOnline.Visible = ctlMembership.UserMembership.IsOnLine;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindRegister binds the register controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/20/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindRegister()
         {
             if (UseCaptcha)
@@ -330,12 +451,15 @@ namespace DotNetNuke.Modules.Admin.Users
                 ctlCaptcha.ErrorMessage = Localization.GetString("InvalidCaptcha", LocalResourceFile);
                 ctlCaptcha.Text = Localization.GetString("CaptchaText", LocalResourceFile);
             }
+			
+            //Verify that the current user has access to this page
             if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.NoRegistration && Request.IsAuthenticated == false)
             {
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
             }
             lblTitle.Text = Localization.GetString("Register", LocalResourceFile);
             cmdRegister.Text = Localization.GetString("cmdRegister", LocalResourceFile);
+
             lblUserHelp.Text = Localization.GetSystemMessage(PortalSettings, "MESSAGE_REGISTRATION_INSTRUCTIONS");
             switch (PortalSettings.UserRegistration)
             {
@@ -352,9 +476,18 @@ namespace DotNetNuke.Modules.Admin.Users
             lblUserHelp.Text += Localization.GetString("Required", LocalResourceFile);
             lblUserHelp.Text += Localization.GetString("RegisterWarning", LocalResourceFile);
             helpRow.Visible = true;
+
             captchaRow.Visible = UseCaptcha;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindUser binds the user controls
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindUser()
         {
             if (AddUser)
@@ -364,6 +497,8 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             ctlUser.User = User;
             ctlUser.DataBind();
+
+            //Bind the Membership
             if (AddUser || (IsUser && !IsAdmin))
             {
 				membershipRow.Visible = false;
@@ -374,6 +509,16 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CheckQuota checks whether the User Quota will be exceeded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/16/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CheckQuota()
         {
             if (PortalSettings.Users < PortalSettings.UserQuota || UserInfo.IsSuperUser || PortalSettings.UserQuota == 0)
@@ -394,12 +539,28 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DisableForm disbles the form (if the user is not authorised)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DisableForm()
         {
             adminTabNav.Visible = false;
 
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ShowPanel displays the correct "panel"
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ShowPanel()
         {
             if (AddUser)
@@ -407,6 +568,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 adminTabNav.Visible = false;
                 if (Request.IsAuthenticated && MembershipProviderConfig.RequiresQuestionAndAnswer)
                 {
+					//Admin adding user
                     //pnlUser.Visible = false;
                     actionsRow.Visible = false;
                     AddModuleMessage("CannotAddUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
@@ -450,6 +612,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     ctlRoles.DataBind();
                 }
                 //cmdProfile.Enabled = !showProfile;
+
                 if ((!DisplayServices))
                 {
                     servicesTab.Visible = false;
@@ -470,43 +633,82 @@ namespace DotNetNuke.Modules.Admin.Users
             dnnPasswordDetails.Visible = (IsAdmin || IsUser) && !AddUser;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             jQuery.RequestDnnPluginsRegistration();
 
+            //Set the Membership Control Properties
             ctlMembership.ID = "Membership";
             ctlMembership.ModuleConfiguration = ModuleConfiguration;
             ctlMembership.UserId = UserId;
+
+            //Set the User Control Properties
             ctlUser.ID = "User";
             ctlUser.ModuleConfiguration = ModuleConfiguration;
             ctlUser.UserId = UserId;
+
+            //Set the Roles Control Properties
             ctlRoles.ID = "SecurityRoles";
             ctlRoles.ModuleConfiguration = ModuleConfiguration;
             ctlRoles.ParentModule = this;
+
+            //Set the Password Control Properties
             ctlPassword.ID = "Password";
             ctlPassword.ModuleConfiguration = ModuleConfiguration;
             ctlPassword.UserId = UserId;
+
+            //Set the Profile Control Properties
             ctlProfile.ID = "Profile";
             ctlProfile.ModuleConfiguration = ModuleConfiguration;
             ctlProfile.UserId = UserId;
+
+            //Set the Services Control Properties
             ctlServices.ID = "MemberServices";
             ctlServices.ModuleConfiguration = ModuleConfiguration;
             ctlServices.UserId = UserId;
+
+            //Customise the Control Title
             if (AddUser)
             {
                 if (!Request.IsAuthenticated)
                 {
+					//Register
                     ModuleConfiguration.ModuleTitle = Localization.GetString("Register.Title", LocalResourceFile);
                 }
                 else
                 {
+					//Add User
                     ModuleConfiguration.ModuleTitle = Localization.GetString("AddUser.Title", LocalResourceFile);
                 }
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	03/01/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -534,10 +736,13 @@ namespace DotNetNuke.Modules.Admin.Users
 
             try
             {
+                //Add an Action Event Handler to the Skin
                 AddActionHandler(ModuleAction_Click);
+
+                //Bind the User information to the controls
                 BindData();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -553,6 +758,16 @@ namespace DotNetNuke.Modules.Admin.Users
             Response.Redirect(RedirectURL, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdRegister_Click runs when the Register button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	05/18/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void cmdRegister_Click(object sender, EventArgs e)
         {
             if (((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha)) && ctlUser.IsValid && ((RequireProfile && ctlProfile.IsValid) || (!RequireProfile)))
@@ -561,6 +776,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ModuleAction_Click handles all ModuleAction events raised from the skin
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="sender"> The object that triggers the event</param>
+        /// <param name="e">An ActionEventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	03/01/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ModuleAction_Click(object sender, ActionEventArgs e)
         {
             switch (e.Action.CommandArgument)
@@ -582,12 +809,24 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MembershipAuthorized runs when the User has been unlocked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/01/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MembershipAuthorized(object sender, EventArgs e)
         {
             try
             {
                 AddModuleMessage("UserAuthorized", ModuleMessage.ModuleMessageType.GreenSuccess, true);
-                if (string.IsNullOrEmpty(User.Membership.Password) && !MembershipProviderConfig.RequiresQuestionAndAnswer && MembershipProviderConfig.PasswordRetrievalEnabled)
+                
+				//Send Notification to User
+				if (string.IsNullOrEmpty(User.Membership.Password) && !MembershipProviderConfig.RequiresQuestionAndAnswer && MembershipProviderConfig.PasswordRetrievalEnabled)
                 {
                     UserInfo user = User;
                     User.Membership.Password = UserController.GetPassword(ref user, "");
@@ -595,38 +834,70 @@ namespace DotNetNuke.Modules.Admin.Users
                 Mail.SendMail(User, MessageType.UserRegistrationPublic, PortalSettings);
                 BindMembership();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MembershipPasswordUpdateChanged runs when the Admin has forced the User to update their password
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	05/14/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void MembershipPasswordUpdateChanged(object sender, EventArgs e)
         {
             try
             {
                 AddModuleMessage("UserPasswordUpdateChanged", ModuleMessage.ModuleMessageType.GreenSuccess, true);
+
                 BindMembership();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MembershipUnAuthorized runs when the User has been unlocked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/01/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MembershipUnAuthorized(object sender, EventArgs e)
         {
             try
             {
                 AddModuleMessage("UserUnAuthorized", ModuleMessage.ModuleMessageType.GreenSuccess, true);
+
                 BindMembership();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// MembershipUnLocked runs when the User has been unlocked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/01/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void MembershipUnLocked(object sender, EventArgs e)
         {
             try
@@ -634,12 +905,22 @@ namespace DotNetNuke.Modules.Admin.Users
                 AddModuleMessage("UserUnLocked", ModuleMessage.ModuleMessageType.GreenSuccess, true);
                 BindMembership();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// PasswordQuestionAnswerUpdated runs when the Password Q and A have been updated.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/09/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void PasswordQuestionAnswerUpdated(object sender, Password.PasswordUpdatedEventArgs e)
         {
             PasswordUpdateStatus status = e.UpdateStatus;
@@ -653,20 +934,34 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// PasswordUpdated runs when the Password has been updated or reset
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/08/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void PasswordUpdated(object sender, Password.PasswordUpdatedEventArgs e)
         {
             PasswordUpdateStatus status = e.UpdateStatus;
+
             if (status == PasswordUpdateStatus.Success)
             {
+				//Send Notification to User
                 try
                 {
                     var accessingUser = (UserInfo) HttpContext.Current.Items["UserInfo"];
                     if (accessingUser.UserID != User.UserID)
                     {
+						//The password was changed by someone else 
                         Mail.SendMail(User, MessageType.PasswordReminder, PortalSettings);
                     }
                     else
                     {
+						//The User changed his own password
                         Mail.SendMail(User, MessageType.UserUpdatedOwnPassword, PortalSettings);
                     }
                     AddModuleMessage("PasswordChanged", ModuleMessage.ModuleMessageType.GreenSuccess, true);
@@ -683,14 +978,27 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ProfileUpdateCompleted runs when the Profile has been updated
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/20/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ProfileUpdateCompleted(object sender, EventArgs e)
         {
             if (IsUser)
             {
+				//Notify the user that his/her profile was updated
                 Mail.SendMail(User, MessageType.ProfileUpdated, PortalSettings);
+
                 ProfilePropertyDefinition localeProperty = User.Profile.GetProperty("PreferredLocale");
                 if (localeProperty.IsDirty)
                 {
+					//store preferredlocale in cookie, if none specified set to portal default.
                     if (User.Profile.PreferredLocale == string.Empty)
                     {
                         Localization.SetLanguage(PortalController.GetPortalDefaultLanguage(User.PortalID));
@@ -701,6 +1009,9 @@ namespace DotNetNuke.Modules.Admin.Users
                     }
                 }
             }
+			
+            //Redirect to same page (this will update all controls for any changes to profile
+            //and leave us at Page 0 (User Credentials)
             Response.Redirect(Request.RawUrl, true);
         }
 
@@ -716,9 +1027,20 @@ namespace DotNetNuke.Modules.Admin.Users
                 message = string.Format(Localization.GetString("UserSubscribed", LocalResourceFile), e.RoleName);
             }
             PortalSecurity.ClearRoles();
+
             AddLocalizedModuleMessage(message, ModuleMessage.ModuleMessageType.GreenSuccess, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UserCreateCompleted runs when a new user has been Created
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/06/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UserCreateCompleted(object sender, UserUserControlBase.UserCreatedEventArgs e)
         {
             string strMessage = "";
@@ -745,7 +1067,7 @@ namespace DotNetNuke.Modules.Admin.Users
                                 cmdRegister.Visible = false;
                                 cmdLogin.Visible = true;
                             }
-                            else
+                            else //redirect to after registration page
                             {
                                 Response.Redirect(RedirectURL, true);
                             }
@@ -764,24 +1086,44 @@ namespace DotNetNuke.Modules.Admin.Users
                     AddLocalizedModuleMessage(UserController.GetUserCreateStatus(e.CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UserDeleted runs when the User has been deleted
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/01/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UserDeleted(object sender, UserUserControlBase.UserDeletedEventArgs e)
         {
             try
             {
                 Response.Redirect(ReturnUrl, true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UserUpdateCompleted runs when a user has been updated
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	3/02/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UserRestored(object sender, UserUserControlBase.UserRestoredEventArgs e)
         {
             try
@@ -813,9 +1155,21 @@ namespace DotNetNuke.Modules.Admin.Users
             Response.Redirect(Request.RawUrl, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UserUpdateError runs when there is an error updating the user
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	2/07/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UserUpdateError(object sender, UserUserControlBase.UserUpdateErrorArgs e)
         {
             AddModuleMessage(e.Message, ModuleMessage.ModuleMessageType.RedError, true);
         }
+		
+		#endregion
     }
 }

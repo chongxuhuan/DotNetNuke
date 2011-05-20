@@ -25,6 +25,8 @@
 
 using System;
 
+using DotNetNuke.Services.FileSystem;
+
 #endregion
 
 namespace DotNetNuke.Services.Vendors
@@ -32,252 +34,38 @@ namespace DotNetNuke.Services.Vendors
     [Serializable]
     public class BannerInfo
     {
-        private int _BannerId;
-        private string _BannerName;
-        private int _BannerTypeId;
-        private double _CPM;
-        private int _ClickThroughs;
-        private string _CreatedByUser;
-        private DateTime _CreatedDate;
-        private int _Criteria;
-        private string _Description;
-        private DateTime _EndDate;
-        private string _GroupName;
-        private int _Height;
-        private string _ImageFile;
-        private int _Impressions;
-        private DateTime _StartDate;
-        private string _URL;
-        private int _VendorId;
-        private int _Views;
-        private int _Width;
-
-        public int BannerId
+        public int BannerId { get; set; }
+        public int VendorId { get; set; }
+        public string ImageFile { get; set; }
+        public string BannerName { get; set; }
+        public string URL { get; set; }
+        public int Impressions { get; set; }
+        // ReSharper disable InconsistentNaming
+        // Existing public API
+        public double CPM { get; set; }
+        // ReSharper restore InconsistentNaming
+        public int Views { get; set; }
+        public int ClickThroughs { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string CreatedByUser { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int BannerTypeId { get; set; }
+        public string Description { get; set; }
+        public string GroupName { get; set; }
+        public int Criteria { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string ImageFileRaw { get; set; }
+        public string ImageFileUrl { get
         {
-            get
+            if(ImageFileRaw.StartsWith("FileID="))
             {
-                return _BannerId;
+                int fileId = int.Parse(ImageFileRaw.Substring("FileID=".Length));
+                return FileManager.Instance.GetUrl(FileManager.Instance.GetFile(fileId));
             }
-            set
-            {
-                _BannerId = value;
-            }
-        }
 
-        public int VendorId
-        {
-            get
-            {
-                return _VendorId;
-            }
-            set
-            {
-                _VendorId = value;
-            }
-        }
-
-        public string ImageFile
-        {
-            get
-            {
-                return _ImageFile;
-            }
-            set
-            {
-                _ImageFile = value;
-            }
-        }
-
-        public string BannerName
-        {
-            get
-            {
-                return _BannerName;
-            }
-            set
-            {
-                _BannerName = value;
-            }
-        }
-
-        public string URL
-        {
-            get
-            {
-                return _URL;
-            }
-            set
-            {
-                _URL = value;
-            }
-        }
-
-        public int Impressions
-        {
-            get
-            {
-                return _Impressions;
-            }
-            set
-            {
-                _Impressions = value;
-            }
-        }
-
-        public double CPM
-        {
-            get
-            {
-                return _CPM;
-            }
-            set
-            {
-                _CPM = value;
-            }
-        }
-
-        public int Views
-        {
-            get
-            {
-                return _Views;
-            }
-            set
-            {
-                _Views = value;
-            }
-        }
-
-        public int ClickThroughs
-        {
-            get
-            {
-                return _ClickThroughs;
-            }
-            set
-            {
-                _ClickThroughs = value;
-            }
-        }
-
-        public DateTime StartDate
-        {
-            get
-            {
-                return _StartDate;
-            }
-            set
-            {
-                _StartDate = value;
-            }
-        }
-
-        public DateTime EndDate
-        {
-            get
-            {
-                return _EndDate;
-            }
-            set
-            {
-                _EndDate = value;
-            }
-        }
-
-        public string CreatedByUser
-        {
-            get
-            {
-                return _CreatedByUser;
-            }
-            set
-            {
-                _CreatedByUser = value;
-            }
-        }
-
-        public DateTime CreatedDate
-        {
-            get
-            {
-                return _CreatedDate;
-            }
-            set
-            {
-                _CreatedDate = value;
-            }
-        }
-
-        public int BannerTypeId
-        {
-            get
-            {
-                return _BannerTypeId;
-            }
-            set
-            {
-                _BannerTypeId = value;
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return _Description;
-            }
-            set
-            {
-                _Description = value;
-            }
-        }
-
-        public string GroupName
-        {
-            get
-            {
-                return _GroupName;
-            }
-            set
-            {
-                _GroupName = value;
-            }
-        }
-
-        public int Criteria
-        {
-            get
-            {
-                return _Criteria;
-            }
-            set
-            {
-                _Criteria = value;
-            }
-        }
-
-        public int Width
-        {
-            get
-            {
-                return _Width;
-            }
-            set
-            {
-                _Width = value;
-            }
-        }
-
-        public int Height
-        {
-            get
-            {
-                return _Height;
-            }
-            set
-            {
-                _Height = value;
-            }
-        }
+            return ImageFileRaw;
+        } }
     }
 }

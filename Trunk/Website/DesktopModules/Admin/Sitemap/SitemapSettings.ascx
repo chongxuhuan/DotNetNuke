@@ -27,7 +27,7 @@
         <dnn:DnnGrid ID="grdProviders" runat="Server" Width="100%" AutoGenerateColumns="false" AllowSorting="true">
             <MasterTableView EditMode="InPlace">
                 <Columns>
-                    <dnn:DnnGridEditColumn HeaderStyle-Width="0" />
+                    <dnn:DnnGridEditColumn HeaderStyle-Width="0" ButtonType="ImageButton" EditImageUrl="~/images/edit.gif" CancelImageUrl="~/images/cancel.gif" UpdateImageUrl="~/images/save.gif" />
                     <dnn:DnnGridBoundColumn DataField="Name" HeaderText="Name" ReadOnly="true" />
                     <dnn:DnnGridBoundColumn DataField="Description" HeaderText="Description" ReadOnly="true"  />
                     <dnn:DnnGridCheckBoxColumn DataField="OverridePriority" HeaderText="OverridePriority" HeaderStyle-Width="0"/>

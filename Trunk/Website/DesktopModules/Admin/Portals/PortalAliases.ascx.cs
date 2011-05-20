@@ -41,9 +41,25 @@ namespace DotNetNuke.Modules.Admin.Portals
 {
     public partial class PortalAliases : PortalModuleBase
     {
+		#region "Private Members"
+
         private ArrayList _Aliases;
         private int intPortalId = -1;
+		
+		#endregion
 
+		#region "Private Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the mode of the control
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool AddMode
         {
             get
@@ -61,6 +77,16 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the collection of Portal ALiases
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private ArrayList Aliases
         {
             get
@@ -76,12 +102,20 @@ namespace DotNetNuke.Modules.Admin.Portals
                 _Aliases = value;
             }
         }
+		
+		#endregion
+
+		#region "Private methods"
 
         private void BindAliases()
         {
             dgPortalAlias.DataSource = Aliases;
             dgPortalAlias.DataBind();
         }
+		
+		#endregion
+
+		#region "Protected methods"
 
         protected override void LoadViewState(object savedState)
         {
@@ -119,6 +153,20 @@ namespace DotNetNuke.Modules.Admin.Portals
             return allStates;
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -127,11 +175,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     if (imageColumn.CommandName == "Delete")
                     {
                         imageColumn.OnClickJS = Localization.GetString("DeleteItem");
                     }
+					
+					//Localize Image Column Text
                     if (!String.IsNullOrEmpty(imageColumn.CommandName))
                     {
                         imageColumn.Text = Localization.GetString(imageColumn.CommandName, LocalResourceFile);
@@ -140,6 +191,16 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -169,6 +230,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         protected void grdPortals_ItemDataBound(object sender, DataGridItemEventArgs e)
         {
             string defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "");
+
             DataGridItem item = e.Item;
             if (item.ItemType == ListItemType.Item || item.ItemType == ListItemType.AlternatingItem || item.ItemType == ListItemType.SelectedItem)
             {
@@ -177,6 +239,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     var delImage = (ImageButton) imgColumnControl;
                     var portalAlias = (PortalAliasInfo) item.DataItem;
+
                     delImage.Visible = portalAlias.PortalAliasID != PortalAlias.PortalAliasID && portalAlias.HTTPAlias != defaultAlias;
                 }
                 imgColumnControl = item.Controls[0].Controls[0];
@@ -184,6 +247,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     var editImage = (ImageButton) imgColumnControl;
                     var portalAlias = (PortalAliasInfo) item.DataItem;
+
                     editImage.Visible = portalAlias.PortalAliasID != PortalAlias.PortalAliasID;
                 }
             }
@@ -194,30 +258,66 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddAlias runs when the Add button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddAlias(object sender, EventArgs e)
         {
+            //Add a new empty rule and set the editrow to the new row
             var portalAlias = new PortalAliasInfo();
             portalAlias.PortalID = intPortalId;
             Aliases.Add(portalAlias);
             dgPortalAlias.EditItemIndex = Aliases.Count - 1;
+
+            //Set the AddMode to true
             AddMode = true;
+
+            //Rebind the collection
             BindAliases();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteAlias runs when a delete button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/12/2008  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteAlias(object source, DataGridCommandEventArgs e)
         {
             var controller = new PortalAliasController();
+
+            //Get the index of the row to delete
             int index = e.Item.ItemIndex;
+
+            //Remove the alias from the aliases collection
             var portalAlias = (PortalAliasInfo) Aliases[index];
             controller.DeletePortalAlias(portalAlias.PortalAliasID);
+
+            //Rebind the collection
             _Aliases = null;
             BindAliases();
         }
 
         private void EditAlias(object source, DataGridCommandEventArgs e)
         {
+            //Set the AddMode to false
             AddMode = false;
+
+            //Set the editrow
             dgPortalAlias.EditItemIndex = e.Item.ItemIndex;
+
+            //Rebind the collection
             BindAliases();
         }
 
@@ -316,12 +416,19 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             if (AddMode)
             {
+				//Remove the temporary added row
                 Aliases.RemoveAt(Aliases.Count - 1);
                 AddMode = false;
             }
+			
+            //Clear editrow
             dgPortalAlias.EditItemIndex = -1;
             lblError.Visible = false;
+
+            //Rebind the collection
             BindAliases();
         }
+		
+		#endregion
     }
 }

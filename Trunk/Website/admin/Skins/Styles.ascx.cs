@@ -68,9 +68,11 @@ namespace DotNetNuke.UI.Skins.Controls
 
         protected void AddStyleSheet()
         {
+            //Find the placeholder control
             Control objCSS = Page.FindControl("CSS");
             if (objCSS != null)
             {
+                //First see if we have already added the <LINK> control
                 Control objCtrl = Page.Header.FindControl(ID);
                 if (objCtrl == null)
                 {
@@ -90,6 +92,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     }
                     if (IsFirst)
                     {
+						//Find the first HtmlLink
                         int iLink;
                         for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
                         {
@@ -135,6 +138,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 else
                 {
+					//Since we want to add at a specific location, we do this in reverse order
+                    //this allows us to use the same insertion point
                     cssRoot.Controls.AddAt(InsertAt, closeif);
                     cssRoot.Controls.AddAt(InsertAt, link);
                     cssRoot.Controls.AddAt(InsertAt, openif);

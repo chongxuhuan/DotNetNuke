@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -61,13 +62,38 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.FileManager
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : FileManager
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality for uploading files to the Portal
+    /// Synchronizing Files within the folder and the database
+    /// and Provides status of available disk space for the portal
+    /// as well as limiting uploads to the restricted allocated file space
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[DYNST]	        2/1/2004	Created
+    ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+    ///     [cnurse]        12/2/2004   Database Synchronization added
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class FileManager : PortalModuleBase, IActionable
     {
+		#region "Private Members"
+
         private string _ErrorMessage =
             "<TABLE><TR><TD height=100% class=NormalRed>{0}</TD></TR><TR valign=bottom><TD align=center><INPUT id=btnClearError onclick=clearErrorMessage(); type=button value=OK></TD></TR></TABLE>";
 
         private string imageDirectory = "~/images/FileManager/Icons/";
         private SortedList<int, string> m_FolderMappings;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected bool IsAdminRole
         {
@@ -76,6 +102,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 return PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName);
             }
         }
+
+		#endregion
+
+		#region "Public Properties"
 
         public int FolderPortalID
         {
@@ -315,6 +345,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         protected bool HasPermission(string permissionKey)
         {
             var hasPermision = UserInfo.IsSuperUser;
@@ -327,6 +361,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             return hasPermision;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds a File to the DataTable used for the File List grid
+        /// </summary>
+        /// <param name="tblFiles">The DataTable</param>
+        /// <param name="objFile">The FileInfo object to add</param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	    12/3/2004	documented
+        ///     [cnurse]        04/24/2006  Updated to use new Secure Storage
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void AddFileToTable(DataTable tblFiles, FileInfo objFile)
         {
             DataRow dRow = tblFiles.NewRow();
@@ -373,6 +420,22 @@ namespace DotNetNuke.Modules.Admin.FileManager
             tblFiles.Rows.Add(dRow);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds node to tree
+        /// </summary>
+        /// <param name="strName">Name of folder to display</param>
+        /// <param name="strKey">Masked Key of folder location</param>
+        /// <param name="eImage">Type of image</param>
+        /// <param name="objNodes">Node collection to add to</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	10/26/2004	Created
+        /// 	[Jon Henning]	8/24/2005	Added Populate on Demand (POD) logic
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private DNNTreeNode AddNode(string strName, string strKey, int imageIndex, DNNTreeNodeCollection objNodes)
         {
             DNNTreeNode objNode;
@@ -382,6 +445,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             objNode.ImageIndex = imageIndex;
             objNode.CssClass = "FileManagerTreeNode";
             objNodes.Add(objNode);
+
             if (objNode.Key == DestPath)
             {
                 objNode.Selected = true;
@@ -390,6 +454,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             return objNode;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds node to tree
+        /// </summary>
+        /// <param name="folder">The FolderInfo object to add</param>
+        /// <param name="objNodes">Node collection to add to</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	04/24/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private DNNTreeNode AddNode(FolderInfo folder, DNNTreeNodeCollection objNodes)
         {
             DNNTreeNode objNode;
@@ -401,16 +478,30 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             objNode = AddNode(strName, strKey, imageIndex, objNodes);
             objNode.HasNodes = subFolders.Count > 0;
+
             return objNode;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// BindFileList 
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindFileList()
         {
             string strCurPage;
+
             LastPath = PathUtils.Instance.RemoveTrailingSlash(UnMaskPath(DestPath));
             dgFileList.PageSize = PageSize;
             dgFileList.CurrentPageIndex = PageIndex;
+
             GetFilesByFolder(PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/"));
+
             if (dgFileList.PageCount > 1)
             {
                 tblMessagePager.Visible = true;
@@ -427,26 +518,54 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
             lblCurFolder.Text = Regex.Replace(DestPath, "^0\\\\", RootFolderName + "\\");
             MoveFiles = "";
+
             UpdateSpaceUsed();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cpaterra]	4/6/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindStorageLocationTypes()
         {
             ddlStorageLocation.Items.Clear();
 
-            var enabledFolderMappings = FolderMappingController.Instance.GetFolderMappings(FolderPortalID).FindAll(f => f.IsEnabled);
-
-            foreach (var folderMapping in enabledFolderMappings)
+            foreach (var folderMapping in FolderMappingController.Instance.GetFolderMappings(FolderPortalID))
             {
                 ddlStorageLocation.Items.Add(new ListItem(folderMapping.MappingName, folderMapping.FolderMappingID.ToString()));
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The BindFolderTree helper method is used to bind the list of
+        /// files for this portal or for the hostfolder, to an asp:DATAGRID server control
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	        2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        ///     [cnurse]        12/2/2004   Updated to use Localization for Root
+        /// 	[Jon Henning]	8/24/2005	Added Populate on Demand (POD) logic
+        ///     [cnurse]        04/24/2006  Updated to use new Secure Storage
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindFolderTree()
         {
             DNNTreeNode objNode;
+
+            //Clear the Tree Nodes Collection
             DNNTree.TreeNodes.Clear();
+
             objNode = AddNode(RootFolderName, MaskPath(RootFolderPath), FolderMappings.IndexOfValue("Standard"), DNNTree.TreeNodes);
+
             var folders = FolderManager.Instance.GetFolders(FolderPortalID);
             objNode.HasNodes = folders.Count > 1;
             if (DNNTree.PopulateNodesFromClient == false || DNNTree.IsDownLevel)
@@ -459,9 +578,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetCheckAllString 
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string GetCheckAllString()
         {
             int intCount = dgFileList.Items.Count;
+
             CheckBox chkFile;
             int i;
             string strResult;
@@ -477,14 +607,28 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 }
             }
             strResult = "function CheckAllFiles(blValue) {" + strResult + "}" + Environment.NewLine;
+
             strResult = "<script language=javascript>" + strResult + "</script>";
+
             return strResult;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GeneratePermissionsGrid generates the permissions grid for the folder
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]        12/2/2004   documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GeneratePermissionsGrid()
         {
             var folderPath = PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/");
+
             dgPermissions.FolderPath = folderPath;
+
             var objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, folderPath);
             if (objFolderInfo != null && ddlStorageLocation.Items.FindByValue(Convert.ToString(objFolderInfo.FolderMappingID)) != null)
             {
@@ -492,6 +636,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetAttributeString generates the attributes string from the FileAttributes
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]        12/2/2004   documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string GetAttributeString(FileAttributes attributes)
         {
             string strResult = "";
@@ -514,9 +668,22 @@ namespace DotNetNuke.Modules.Admin.FileManager
             return strResult;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFilesByFolder gets the Files/Folders to display
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]        12/2/2004   documented and modified to display Folders in 
+        ///                                 the grid
+        ///     [cnurse]        04/24/2006  Updated to use new Secure Storage
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void GetFilesByFolder(string strFolderName)
         {
             DataTable tblFiles = GetFileTable();
+
             var objFolder = FolderManager.Instance.GetFolder(FolderPortalID, strFolderName);
             if (objFolder != null)
             {
@@ -537,64 +704,99 @@ namespace DotNetNuke.Modules.Admin.FileManager
             dgFileList.DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFileTable creates the DataTable used to store the list of files and folders
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]        12/3/2004   documented and modified to display Folders in 
+        ///                                 the grid
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private DataTable GetFileTable()
         {
             var tblFiles = new DataTable("Files");
+
             var myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.String");
             myColumns.ColumnName = "FileType";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Int32");
             myColumns.ColumnName = "FileId";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.String");
             myColumns.ColumnName = "FileName";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.String");
             myColumns.ColumnName = "FileSize";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Int32");
             myColumns.ColumnName = "IntFileSize";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.DateTime");
             myColumns.ColumnName = "DateModified";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Boolean");
             myColumns.ColumnName = "ReadOnly";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Boolean");
             myColumns.ColumnName = "Hidden";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Boolean");
             myColumns.ColumnName = "System";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Boolean");
             myColumns.ColumnName = "Archive";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.String");
             myColumns.ColumnName = "AttributeString";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.String");
             myColumns.ColumnName = "Extension";
             tblFiles.Columns.Add(myColumns);
+
             myColumns = new DataColumn();
             myColumns.DataType = Type.GetType("System.Boolean");
             myColumns.ColumnName = "SupportsFileAttributes";
             tblFiles.Columns.Add(myColumns);
+
             return tblFiles;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the size of the all the files in the zip file
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/4/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private long GetZipFileExtractSize(string strFileName)
         {
             ZipEntry objZipEntry;
@@ -620,6 +822,17 @@ namespace DotNetNuke.Modules.Admin.FileManager
             return iTemp;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets common properties on DNNTree control
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// 	[Jon Henning]	8/24/2005	Added Populate on Demand (POD) logic
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void InitializeTree()
         {
             DNNTree.SystemImagesPath = ResolveUrl("~/images/");
@@ -670,34 +883,72 @@ namespace DotNetNuke.Modules.Admin.FileManager
             ManageToolbarButton(deleteFolder, lnkDelFolderIMG, "return deleteFolder();", "DelFolder", HasPermission("DELETE"));
             ManageToolbarButton(syncFolder, lnkSyncFolderIMG, "__doPostBack(m_sUCPrefixName + 'lnkSyncFolder', '');", "Synchronize", HasPermission("MANAGE"));
             chkRecursive.Enabled = HasPermission("MANAGE");
+
             ManageToolbarButton(refresh, lnkRefreshIMG, "__doPostBack(m_sUCPrefixName + 'lnkRefresh', '');", "Refresh", true);
             ManageToolbarButton(copy, lnkCopy, "copyCheckedFiles();", "Copy", HasPermission("COPY"));
             ManageToolbarButton(move, lnkMove, "moveFiles();", "Move", HasPermission("COPY"));
             ManageToolbarButton(upload, lnkUploadIMG, "__doPostBack(m_sUCPrefixName + 'lnkUpload', '');", "Upload", HasPermission("ADD"));
             ManageToolbarButton(delete, lnkDelete, "deleteCheckedFiles();", "Delete", HasPermission("DELETE"));
             ManageToolbarButton(filter, lnkFilterIMG, "__doPostBack(m_sUCPrefixName + 'lnkFilter', '');", "Filter", true);
+
             lnkCopy.Enabled = IsEditable;
             lnkMove.Enabled = IsEditable;
             lnkUpload.Enabled = IsEditable;
             lnkDelete.Enabled = IsEditable;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Masks the path
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string MaskPath(string strOrigPath)
         {
             return strOrigPath.Replace(PathUtils.Instance.RemoveTrailingSlash(RootFolderPath), "0").Replace("/", "\\");
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Masks a string 
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string MaskString(string strSource)
         {
             return FileManagerFunctions.CReplace(strSource, PathUtils.Instance.RemoveTrailingSlash(RootFolderPath), Localization.GetString("PortalRoot", LocalResourceFile), 1);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Populates DNNTree control with folder hiearachy
+        /// </summary>
+        /// <param name="objNodes">Node collection to add children to</param>
+        /// <param name="strPath">Path of parent node</param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	10/26/2004	Created
+        /// 	[Jon Henning]	8/24/2005	Added Populate on Demand (POD) logic
+        ///     [cnurse]        04/24/2006  Updated to use new Secure Storage
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void PopulateTree(DNNTreeNodeCollection objNodes, string strPath)
         {
             var folderPath = strPath.Replace(RootFolderPath, "").Replace("\\", "/");
             var parentFolder = FolderManager.Instance.GetFolder(FolderPortalID, folderPath);
             var folders = FolderManager.Instance.GetFolders(parentFolder);
             DNNTreeNode objNode;
+
+            //Iterate through the SubFolders
             foreach (var folder in folders)
             {
                 if (FolderPermissionController.CanViewFolder((FolderInfo)folder))
@@ -720,14 +971,26 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 LastPath = node.Key;
             }
             ManageSecurity();
+
             BindFileList();
             GeneratePermissionsGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets up the file manager for Edit Mode
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void SetEditMode()
         {
             if (dgFileList.EditItemIndex > -1)
             {
+				//In Edit Mode
                 int intCount = dgFileList.Items.Count;
                 CheckBox chkFile2;
                 CheckBox chkFile;
@@ -780,6 +1043,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
             dgFileList.Columns[4].HeaderStyle.Width = Unit.Percentage(15);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets up the Error Message
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ShowErrorMessage(string strMessage)
         {
             strMessage = strMessage.Replace("\\", "\\\\");
@@ -789,6 +1062,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
             ClientAPI.RegisterClientVariable(Page, "ErrorMessage", strMessage, true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Synchronizes the complete File System
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void Synchronize()
         {
             if (IsHostMenu)
@@ -801,18 +1084,39 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Unmasks the path
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private string UnMaskPath(string strOrigPath)
         {
             strOrigPath = PathUtils.Instance.AddTrailingSlash(RootFolderPath) + PathUtils.Instance.StripFolderPath(strOrigPath);
             return strOrigPath.Replace("/", "\\");
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates the space Used label
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UpdateSpaceUsed()
         {
             string strDestFolder = PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath));
             var objPortalController = new PortalController();
             string strUsed;
             string strQuota;
+
             if (PortalSettings.HostSpace == 0)
             {
                 strQuota = Localization.GetString("UnlimitedSpace", LocalResourceFile);
@@ -844,6 +1148,22 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DeleteFiles helper method is used to delete the files in the list
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="strFiles">The list of files to delete</param>
+        /// <history>
+        /// 	[DYNST]	        2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void DeleteFiles(string strFiles)
         {
             var arFiles = strFiles.Split(';');
@@ -888,8 +1208,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Renders the page output
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	11/1/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void Render(HtmlTextWriter output)
         {
+			//mark various controls as valid for event validation
             Page.ClientScript.RegisterForEventValidation(lnkAddFolder.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkDeleteFolder.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkDeleteAllCheckedFiles.UniqueID);
@@ -899,14 +1230,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
             Page.ClientScript.RegisterForEventValidation(lnkFilter.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkCopy.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkUpload.UniqueID);
+
             Page.ClientScript.RegisterForEventValidation(lnkMove.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMoveFirst.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMoveLast.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMoveNext.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMovePrevious.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMoveFiles.UniqueID);
-            
+
             string strTemp = GetCheckAllString();
+
             pnlScripts2.Controls.Add(new LiteralControl(strTemp));
             if (dgFileList.Items.Count <= 10 && dgFileList.PageCount == 1)
             {
@@ -915,12 +1248,30 @@ namespace DotNetNuke.Modules.Admin.FileManager
             base.Render(output);
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The CheckDestFolderAccess helper method Checks to make sure file copy/move 
+        /// operation will not exceed portal available space
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	        2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        ///     [cnurse]        12/2/2004   Updated to use Localization
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CheckDestFolderAccess(long intSize)
         {
             if (Request.IsAuthenticated)
             {
                 string strDestFolder = PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath));
                 var objPortalController = new PortalController();
+
                 if (objPortalController.HasSpaceAvailable(FolderPortalID, intSize) || (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId))
                 {
                     return "";
@@ -936,6 +1287,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Image associated with the File/Folder
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	12/4/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string GetImageUrl(string type)
         {
             string url = "";
@@ -957,12 +1318,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return url;
         }
+
+		#endregion
+
+		#region "Event Handlers"
 
         protected override void OnInit(EventArgs e)
         {
@@ -990,12 +1355,29 @@ namespace DotNetNuke.Modules.Admin.FileManager
             selPageSize.SelectedIndexChanged += selPageSize_SelectedIndexChanged;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load server event handler on this user control is used
+        /// to populate the current files from the appropriate PortalUpload Directory or the HostFolder
+        /// and binds this list to the Datagrid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
+				//FileManager requires at a bare minimum the dnn namespace, so regardless of wheter the ClientAPI is disabled of not we 
+                //need to register it.
                 ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
                 DNNClientAPI.AddBodyOnloadEventHandler(Page, "initFileManager();");
                 ClientAPI.RegisterClientVariable(Page, "UCPrefixID", DNNTree.ClientID.Replace(DNNTree.ID, ""), true);
@@ -1011,6 +1393,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 else
                 {
                     RootFolderName = Localization.GetString("PortalRoot", LocalResourceFile);
+                    //Only Administrators can manage Folder Security
                     pnlSecurity.Visible = HasPermission("WRITE");
                 }
 
@@ -1029,6 +1412,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     DestPath = "0\\";
                     BindFileList();
                     BindStorageLocationTypes();
+
                     ManageSecurity();
                 }
                 else
@@ -1044,18 +1428,35 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
                 LastFolderPath = DestPath;
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The cmdUpdate_Click server event handler on this user control runs when the
+        /// Update button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	        2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        ///     [Jon Henning]	4/21/2004	Rebind grid after update to reflect update - DNN-178
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(Object sender, EventArgs e)
         {
             var strFolderPath = PathUtils.Instance.StripFolderPath(LastFolderPath).Replace("\\", "/");
             var objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, strFolderPath);
             if (objFolderInfo == null)
             {
+				//file system needs synchronizing
+                //with database...this folder is new.
                 Synchronize();
                 objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, strFolderPath);
             }
@@ -1071,9 +1472,25 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 Exceptions.LogException(ex);
                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("PermissionsError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
             }
-            GeneratePermissionsGrid();
+            GeneratePermissionsGrid(); //rebind the grid to reflect updated values - it is possible for the grid controls and the database to become out of sync
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The dgFileList_ItemDataBound server event handler on this user control runs when a
+        /// File or Folder is added to the Files Table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        ///     [cnurse]        12/3/2004   modified to handle folders and to use
+        ///                                 custom images
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void dgFileList_ItemDataBound(object sender, DataGridItemEventArgs e)
         {
             ImageButton lnkEditFile;
@@ -1136,6 +1553,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The dgFileList_SortCommand server event handler on this user control runs when one
+        /// of the Column Header Links is clicked
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/12/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void dgFileList_SortCommand(object source, DataGridSortCommandEventArgs e)
         {
             BindFolderTree();
@@ -1143,6 +1573,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             LastSort = Sort;
             if (Sort.Replace(" ASC", "").Replace(" DESC", "") == e.SortExpression)
             {
+				//Switch order
                 if (Sort.Contains("ASC"))
                 {
                     Sort = Sort.Replace("ASC", "DESC");
@@ -1161,11 +1592,37 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The DNNTree_NodeClick server event handler on this user control runs when a
+        /// Node (Folder in the) in the TreeView is clicked
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        ///     [cnurse]        12/3/2004   modified to handle folders and to use
+        ///                                 custom images
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DNNTree_NodeClick(object source, DNNTreeNodeClickEventArgs e)
         {
             SetFolder(e.Node);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This method is called from the client to populate send new nodes down to the client
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	8/24/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DNNTree_PopulateOnDemand(object source, DNNTreeEventArgs e)
         {
             DestPath = e.Node.Key;
@@ -1173,6 +1630,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             GeneratePermissionsGrid();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkAddFolder_Command server event handler on this user control runs when the
+        /// Add Folder button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkAddFolder_Command(object sender, CommandEventArgs e)
         {
             if (String.IsNullOrEmpty(txtNewFolder.Text))
@@ -1180,6 +1651,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 return;
             }
             var strSourcePath = UnMaskPath(DestPath);
+
             try
             {
                 if (DNNTree.TreeNodes[0].DNNNodes.Count == 0)
@@ -1196,10 +1668,14 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     var folderPath = PathUtils.Instance.FormatFolderPath(
                         PathUtils.Instance.FormatFolderPath(
                         PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/")) + filterFolderName);
+                    
+					//Add Folder to Database
                     FolderManager.Instance.AddFolder(FolderMappingController.Instance.GetFolderMapping(int.Parse(ddlStorageLocation.SelectedValue)), folderPath);
 
                     DestPath = MaskPath(PathUtils.Instance.AddTrailingSlash(strSourcePath) + filterFolderName + "\\");
                     LastFolderPath = DestPath;
+
+                    //Add new folder to folders tree
                     parentNode.Selected = false;
 
                     var imageIndex = FolderMappings.IndexOfKey(int.Parse(ddlStorageLocation.SelectedValue));
@@ -1208,6 +1684,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     objNode.HasNodes = false;
                     objNode.MakeNodeVisible();
                     objNode.Selected = true;
+
                     SetFolder(objNode);
                 }
             }
@@ -1222,10 +1699,26 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         private void lnkDeleteFolder_Command(object sender, CommandEventArgs e)
         {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkDeleteFolder_Command server event handler on this user control runs when the
+        /// Add Folder ibutton is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
             string strSourcePath;
             var ctrlError = new LiteralControl();
+
             if (DestPath == DNNTree.TreeNodes[0].Key)
             {
+				//Delete Root Node?  Then what? :/
                 ShowErrorMessage(Localization.GetString("NotAllowedToDeleteRootFolder", LocalResourceFile));
                 BindFileList();
                 return;
@@ -1237,18 +1730,23 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var dinfo = new DirectoryInfo(strSourcePath);
             if (dinfo.Exists == false)
             {
+				//ODD...
                 ShowErrorMessage(Localization.GetString("FolderAlreadyRemoved", LocalResourceFile));
                 BindFileList();
                 return;
             }
             if ((Directory.GetDirectories(strSourcePath).Length > 0) || (dgFileList.Items.Count > 0))
             {
+				//Files and/or folders exist in directory..
+                //Files in current folder, make them delete first
+                //Recursive Folder-delete can be enabled by adjusting this Sub
                 ShowErrorMessage(Localization.GetString("PleaseRemoveFilesBeforeDeleting", LocalResourceFile));
                 BindFileList();
                 return;
             }
             try
             {
+				//Delete Folder
                 var folder = FolderManager.Instance.GetFolder(FolderPortalID, PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/"));
                 FolderManager.Instance.DeleteFolder(folder);
 
@@ -1258,6 +1756,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 }
                 var intEnd = DestPath.LastIndexOf("\\");
                 DestPath = DestPath.Substring(0, intEnd);
+
+                //since we removed folder, we will select parent folder
                 var colNodes = DNNTree.SelectedTreeNodes;
                 if (colNodes.Count > 0)
                 {
@@ -1277,6 +1777,21 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkDLFile_Command server event handler on this user control runs when the
+        /// Download File button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the FileSystemUtils DownLoad method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkDLFile_Command(object sender, CommandEventArgs e)
         {
             var fileManager = Services.FileSystem.FileManager.Instance;
@@ -1286,6 +1801,21 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFolderTree();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkEditFile_Command server event handler on this user control runs when the
+        /// Edit File button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The DataGrid is switched to Edit Mode
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkEditFile_Command(object sender, CommandEventArgs e)
         {
             dgFileList.EditItemIndex = Convert.ToInt32(e.CommandName);
@@ -1293,6 +1823,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             SetEditMode();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkCancelRename_Command server event handler on this user control runs when the
+        /// Cancel Edit button is clicked when in Edit Mode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkCancelRename_Command(object sender, CommandEventArgs e)
         {
             dgFileList.EditItemIndex = -1;
@@ -1300,6 +1844,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             SetEditMode();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkDeleteAllCheckedFiles_Command server event handler on this user control runs when the
+        /// Javascript in the page triggers the event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkDeleteAllCheckedFiles_Command(object sender, CommandEventArgs e)
         {
             if (!String.IsNullOrEmpty(MoveFiles))
@@ -1308,23 +1866,69 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkDeleteFile_Command server event handler on this user control runs when the
+        /// Javascript in the page triggers the event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkDeleteFile_Command(object sender, CommandEventArgs e)
         {
             DeleteFiles(e.CommandName);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkFilter_Command server event handler on this user control runs when the
+        /// Filter Files button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkFilter_Command(object sender, CommandEventArgs e)
         {
             dgFileList.CurrentPageIndex = 0;
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkMoveFiles_Command server event handler on this user control runs when the
+        /// Move Files button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkMoveFiles_Command(object sender, CommandEventArgs e)
         {
             var arFiles = MoveFiles.Split(';');
 
             var strErrorMessages = "";
 
+
+            //Check that the user has write permssion on the dest folder
             if (!HasPermission("ADD"))
             {
                 strErrorMessages = Localization.GetString("NoWritePermission", LocalResourceFile);
@@ -1359,6 +1963,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         }
                         catch (Exception ex)
                         {
+							//Unmask paths here, remask with title before showining error message
                             DnnLog.Error(ex);
                             if (MoveStatus == "copy")
                             {
@@ -1396,18 +2001,63 @@ namespace DotNetNuke.Modules.Admin.FileManager
             SourcePath = "";
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkMoveFirst_Command server event handler on this user control runs when the
+        /// Move First Page button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkMoveFirst_Command(object sender, CommandEventArgs e)
         {
             PageIndex = 0;
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkMoveLast_Command server event handler on this user control runs when the
+        /// Move Last Page button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkMoveLast_Command(object sender, CommandEventArgs e)
         {
             PageIndex = dgFileList.PageCount - 1;
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkMoveNext_Command server event handler on this user control runs when the
+        /// Move Next Page button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkMoveNext_Command(object sender, CommandEventArgs e)
         {
             PageIndex += 1;
@@ -1418,6 +2068,21 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkMoveNext_Command server event handler on this user control runs when the
+        /// Move Previous Page button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// The method calls the relevant FileSystemUtils method
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkMovePrevious_Command(object sender, CommandEventArgs e)
         {
             PageIndex -= 1;
@@ -1428,6 +2093,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkOkRename_Command server event handler on this user control runs when the
+        /// Save Changes (Ok) button is clicked when in Edit Mode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkOkRename_Command(object sender, CommandEventArgs e)
         {
             var strSourcePath = PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath));
@@ -1443,6 +2122,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             if (strSourceFile != strDestFile)
             {
+				//move(rename) file
                 try
                 {
                     Services.FileSystem.FileManager.Instance.RenameFile(file, txtEdit.Text);
@@ -1473,6 +2153,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 if ((chkReadOnly.Attributes["original"] != chkReadOnly.Checked.ToString()) || (chkHidden.Attributes["original"] != chkHidden.Checked.ToString()) ||
                     (chkSystem.Attributes["original"] != chkSystem.Checked.ToString()) || (chkArchive.Attributes["original"] != chkArchive.Checked.ToString()))
                 {
+					//attributes were changed
                     int iAttr = 0;
                     
                     if (chkReadOnly.Checked)
@@ -1521,6 +2202,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             SetEditMode();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkRefresh_Command server event handler on this user control runs when the
+        /// Refresh button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkRefresh_Command(object sender, CommandEventArgs e)
         {
             BindFolderTree();
@@ -1532,6 +2227,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkSelectFolder_Command server event handler on this user control runs when a
+        /// Folder is selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkSelectFolder_Command(object sender, CommandEventArgs e)
         {
             string strSourcePath = DestPath;
@@ -1543,6 +2252,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             GetFilesByFolder(PathUtils.Instance.AddTrailingSlash(strSourcePath));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkSyncFolder_Command server event handler on this user control runs when the
+        /// Synchronize Folder button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	04/24/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkSyncFolder_Command(object sender, CommandEventArgs e)
         {
             string syncFolderPath = UnMaskPath(DestPath);
@@ -1553,6 +2275,18 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkSyncFolders_Click server event handler on this user control runs when the
+        /// Synchronize Folders button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void lnkSyncFolders_Click(object sender, ImageClickEventArgs e)
         {
             if (IsHostMenu)
@@ -1567,6 +2301,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             BindFileList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The lnkUpload_Command server event handler on this user control runs when the
+        /// Upload button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void lnkUpload_Command(object sender, CommandEventArgs e)
         {
             string strDestPath = Regex.Replace(DestPath, "^0\\\\", "");
@@ -1586,11 +2334,27 @@ namespace DotNetNuke.Modules.Admin.FileManager
             Response.Redirect(destUrl);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The selPageSize_SelectedIndexChanged server event handler on this user control 
+        /// runs when the Page Size combo's index/value is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[DYNST]	2/1/2004	Created
+        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void selPageSize_SelectedIndexChanged(Object sender, EventArgs e)
         {
             PageIndex = 0;
             BindFileList();
         }
+		
+		#endregion
 
         #region Nested type: eImageType
 
@@ -1609,16 +2373,21 @@ namespace DotNetNuke.Modules.Admin.FileManager
             get
             {
                 var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("ManageFolderTypes.Action", LocalResourceFile),
-                            ModuleActionType.EditContent,
-                            "",
-                            "icon_profile_16px.gif",
-                            EditUrl("FolderMappings"),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
+
+                var defaultProviders = FolderProvider.GetDefaultProviders();
+                if (FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)).Count() > 0)
+                {
+                    Actions.Add(GetNextActionID(),
+                                Localization.GetString("ManageFolderTypes.Action", LocalResourceFile),
+                                ModuleActionType.EditContent,
+                                "",
+                                "icon_profile_16px.gif",
+                                EditUrl("FolderMappings"),
+                                false,
+                                SecurityAccessLevel.Edit,
+                                true,
+                                false);
+                }
                 return Actions;
             }
         }

@@ -50,6 +50,17 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The Extensions Module Control is used to manage the Extensions
+    /// installed in this portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	01/04/2008	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Extensions : ModuleUserControlBase, IActionable
     {
         #region Protected Methods

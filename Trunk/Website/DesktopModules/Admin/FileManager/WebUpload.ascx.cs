@@ -45,13 +45,32 @@ using DotNetNuke.UI.Skins.Controls;
 
 namespace DotNetNuke.Modules.Admin.FileManager
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : WebUpload
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Supplies the functionality for uploading files to the Portal
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///   [cnurse] 16/9/2004  Updated for localization, Help and 508
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class WebUpload : PortalModuleBase
     {
+		#region "Members"
+
         private string _DestinationFolder;
         private UploadType _FileType;
         private string _FileTypeName;
         private string _RootFolder;
         private string _UploadRoles;
+
+		#endregion
+
+		#region "Public Properties"
 
         public string DestinationFolder
         {
@@ -76,6 +95,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 _FileType = UploadType.File;
                 if ((Request.QueryString["ftype"] != null))
                 {
+					//The select statement ensures that the parameter can be converted to UploadType
                     switch (Request.QueryString["ftype"].ToLower())
                     {
                         case "file":
@@ -142,8 +162,11 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 if (_UploadRoles == null)
                 {
                     _UploadRoles = string.Empty;
+
                     var objModules = new ModuleController();
+                    //TODO:  Should replace this with a finder method in PortalSettings to look in the cached modules of the activetab - jmb 11/25/2004
                     ModuleInfo ModInfo;
+
                     if (IsHostMenu)
                     {
                         ModInfo = objModules.GetModuleByDefinition(Null.NullInteger, "File Manager");
@@ -162,6 +185,20 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine checks the Access Security
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 1/21/2005  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CheckSecurity()
         {
             if (!IsEditable)
@@ -170,6 +207,18 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine populates the Folder List Drop Down
+        /// There is no reference to permissions here as all folders should be available to the admin.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [Philip Beadle]     5/10/2004  Added
+        ///     [cnurse]            04/24/2006  Converted to use Database as folder source
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void LoadFolders()
         {
             ddlFolders.Items.Clear();
@@ -209,9 +258,24 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine determines the Return Url
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 1/21/2005  Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ReturnURL()
         {
             int TabID = PortalSettings.HomeTabId;
+
             if (Request.Params["rtab"] != null)
             {
                 TabID = int.Parse(Request.Params["rtab"]);
@@ -223,9 +287,24 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             base.OnInit(e);
 
+            //Customise the Control Title
             ModuleConfiguration.ModuleTitle = Localization.GetString("UploadType" + FileType, LocalResourceFile);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Page_Load runs when the page loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 16/9/2004  Updated for localization, Help and 508
+        ///   [VMasanas]  9/28/2004   Changed redirect to Access Denied
+        ///   [Philip Beadle]  5/10/2004  Added folder population section.
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -237,8 +316,11 @@ namespace DotNetNuke.Modules.Admin.FileManager
             try
             {
                 CheckSecurity();
+
+                //Get localized Strings
                 string strHost = Localization.GetString("HostRoot", LocalResourceFile);
                 string strPortal = Localization.GetString("PortalRoot", LocalResourceFile);
+
                 if (!Page.IsPostBack)
                 {
                     cmdAdd.Text = Localization.GetString("UploadType" + FileType, LocalResourceFile);
@@ -247,6 +329,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         foldersRow.Visible = true;
                         rootRow.Visible = true;
                         unzipRow.Visible = true;
+
                         if (IsHostMenu)
                         {
                             lblRootType.Text = strHost + ":";
@@ -262,27 +345,43 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     chkUnzip.Checked = false;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The cmdAdd_Click runs when the Add Button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 16/9/2004  Updated for localization, Help and 508
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdAdd_Click(object sender, EventArgs e)
         {
             try
             {
                 CheckSecurity();
                 var strMessage = "";
+
                 var postedFile = cmdBrowse.PostedFile;
+
+                //Get localized Strings
                 var strInvalid = Localization.GetString("InvalidExt", LocalResourceFile);
+
                 var strFileName = Path.GetFileName(postedFile.FileName);
                 var strExtension = Path.GetExtension(strFileName);
                 if (!String.IsNullOrEmpty(postedFile.FileName))
                 {
                     switch (FileType)
                     {
-                        case UploadType.File:
+                        case UploadType.File: //content files
                             try
                             {
                                 var folder = FolderManager.Instance.GetFolder(FolderPortalID, ddlFolders.SelectedValue);
@@ -316,7 +415,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                 strMessage += "<br />" + string.Format(Localization.GetString("SaveFileError"), strFileName);
                             }
                             break;
-                        case UploadType.Skin:
+                        case UploadType.Skin: //skin package
                             if (strExtension.ToLower() == ".zip")
                             {
                                 var objLbl = new Label();
@@ -329,7 +428,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                 strMessage += strInvalid + " " + FileTypeName + " " + strFileName;
                             }
                             break;
-                        case UploadType.Container:
+                        case UploadType.Container: //container package
                             if (strExtension.ToLower() == ".zip")
                             {
                                 var objLbl = new Label();
@@ -361,15 +460,29 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     lblMessage.Text = strMessage;
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The cmdReturn_Click runs when the Return Button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 16/9/2004  Updated for localization, Help and 508
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdReturn_Click(Object sender, EventArgs e)
         {
             Response.Redirect(ReturnURL(), true);
         }
+		
+		#endregion
     }
 }

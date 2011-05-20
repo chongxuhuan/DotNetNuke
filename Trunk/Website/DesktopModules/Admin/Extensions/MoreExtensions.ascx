@@ -2,51 +2,49 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>  
 <div id="dnnAppGallery" class="dnnForm dnnAppGallery dnnClear">
     <span id="loading" class="dnnAppGalleryLoading">Loading...</span>
-    <div class="header"><h1><%=LocalizeString("AppGallery") %></h1></div>
 
     <div class="dnnAppGalleryTags">
+        <div class="header"><h1><%=LocalizeString("AppGallery") %></h1></div>
+        <div class="dnnAppGallerySearch">
+            <h2 class="dnnGallerySubHeading"><%=LocalizeString("AppGallerySearchTitle") %></h2>
+            <div class="dnnFormItem">
+                <label for="typeDDL">
+                    <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'typeDDLHelp')) return false;" class="dnnFormHelp" >
+                        <span><%=LocalizeString("TypeLabel") %></span>
+                    </a>
+                </label>
+                <div id="typeDDLHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
+		            <span><%=LocalizeString("TypeLabel.Help") %></span>
+	            </div>
+                <select id="typeDDL">
+                    <option value="all">All</option>
+                    <option selected="selected" value="module"><%=LocalizeString("AppGalleryModule") %></option>
+                    <option value="skin"><%=LocalizeString("AppGallerySkin") %></option>
+                </select>        
+            </div>
+            <div class="dnnFormItem">
+                <label for="searchText">
+                    <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'searchHelp')) return false;" class="dnnFormHelp" >
+                        <span><%=LocalizeString("SearchLabel") %></span>
+                    </a>
+                </label>
+                <div id="searchHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
+		            <span><%=LocalizeString("SearchLabel.Help")%></span>
+	            </div>
+                <div class="dnnGallerySearch">
+                    <input type="text" id="searchText" title=""<%=LocalizeString("SearchLabel.Help")%>" />        
+               </div>
+            </div>
+            <div class="dnnFormItem">
+               <a href="javascript:void(0);" id="search-reset" class="dnnSecondaryAction"><%=LocalizeString("ClearSearch")%></a>
+               <a href="javascript:void(0);" id="search-go" class="dnnSecondaryAction"><%=LocalizeString("Search")%></a>
+            </div>
+        </div>            
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("TagCloud")%></h2>
         <span class="dnnAppGalleryTagList" id="tag-list"></span>
 
     </div>
     <div class="dnnAppGalleryListing">
-        <fieldset>
-            <legend></legend>
-            <div class="dnnAppGallerySearch">
-                <h2 class="dnnGallerySubHeading"><%=LocalizeString("AppGallerySearchTitle") %></h2>
-                <div class="dnnFormItem">
-                    <label for="typeDDL">
-                        <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'typeDDLHelp')) return false;" class="dnnFormHelp" >
-                            <span><%=LocalizeString("TypeLabel") %></span>
-                        </a>
-                    </label>
-                    <div id="typeDDLHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
-		                <span><%=LocalizeString("TypeLabel.Help") %></span>
-	                </div>
-                    <select id="typeDDL">
-                        <option value="all">All</option>
-                        <option selected="selected" value="module"><%=LocalizeString("AppGalleryModule") %></option>
-                        <option value="skin"><%=LocalizeString("AppGallerySkin") %></option>
-                    </select>        
-                </div>
-                <div class="dnnFormItem">
-                    <label for="searchText">
-                        <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'searchHelp')) return false;" class="dnnFormHelp" >
-                            <span><%=LocalizeString("SearchLabel") %></span>
-                        </a>
-                    </label>
-                    <div id="searchHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
-		                <span><%=LocalizeString("SearchLabel.Help")%></span>
-	                </div>
-                    <div class="dnnGallerySearch">
-                        <input type="text" id="searchText" title=""<%=LocalizeString("SearchLabel.Help")%>" />        
-                        <a href="javascript:void(0);" id="search-reset" class="dnnSecondaryAction"><%=LocalizeString("ClearSearch")%></a>
-                        <a href="javascript:void(0);" id="search-go" class="dnnSecondaryAction"><%=LocalizeString("Search")%></a>
-                    </div>
-                </div>
-            </div>            
-
-        </fieldset>
         <div id="extensionDetail">
             <div id="extensionDetailInner"></div>
         </div>
@@ -57,7 +55,7 @@
                <span class="sort-button-off"><a href="javascript:void(0);" id="NameSorter"><%=LocalizeString("NameAZ") %></a></span> 
                <span class="sort-button-off"><a href="javascript:void(0);" id="PriceSorter"><%=LocalizeString("PriceLowHigh") %></a></span>
             </div>
-            <div id="searchFilters" class="dnnFormHelpContent dnnClear"></div>
+            <div id="searchFilters" class="dnnSearchFilters dnnClear"></div>
             <span id="extensionList" class="extensionList"></span>
         </fieldset>
     </div>
@@ -109,8 +107,8 @@
                 <img class='productTypeImage dnnIcon' alt='${extensionType}'  title='${extensionType}'  src='<%=ResolveUrl("~/images/appGallery_${extensionType}.gif")%>'/>
 
                 {{if license}}
-                    <a class="galleryLink  inline" onclick="return Gallery.ShowDetails(${extensionID})">                    
-                        <img class='productTypeImage dnnIcon' alt='License for ${extensionName}' title='License Specified' src='<%=ResolveUrl("~/images/license.png")%>' />
+                    <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${extensionID})">                    
+                        <img class='productTypeImage dnnIcon' alt='License for ${extensionName}' title='License Specified' src='<%=ResolveUrl("~/images/appGallery_License.gif")%>' />
                     </a>
                 {{/if}}
             

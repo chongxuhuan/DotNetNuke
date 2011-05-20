@@ -38,10 +38,22 @@ using DNNControls = DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Common.Lists
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Manages Entry List
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[tamttt] 20/10/2004	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
 
     public partial class ListEditor : PortalModuleBase
     {
 
+		#region "Protected Properties"
+		
         protected string Mode
         {
             get
@@ -53,6 +65,10 @@ namespace DotNetNuke.Common.Lists
                 lstEntries.Mode = value;
             }
         }
+
+		#endregion
+
+		#region "Private Methods"
 
         private void BindList(string key)
         {
@@ -69,12 +85,24 @@ namespace DotNetNuke.Common.Lists
             lstEntries.DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Loads top level entry list into DNNTree
+        /// </summary>        
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindTree()
         {
             var ctlLists = new ListController();
             var colLists = ctlLists.GetListInfoCollection();
             var indexLookup = new Hashtable();
+
             DNNtree.TreeNodes.Clear();
+
             foreach (ListInfo list in colLists)
             {
                 var node = new TreeNode(list.DisplayName);
@@ -95,6 +123,8 @@ namespace DotNetNuke.Common.Lists
                         parentNode.TreeNodes.Add(node);
                     }
                 }
+				
+                //Add index key here to find it later, should suggest with Joe to add it to DNNTree
                 if (indexLookup[list.Key] == null)
                 {
                     indexLookup.Add(list.Key, node);
@@ -102,6 +132,17 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Loads top level entry list
+        /// </summary>
+        /// <param name="ParentKey"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private TreeNode GetParentNode(string ParentKey)
         {
             int i;
@@ -115,16 +156,41 @@ namespace DotNetNuke.Common.Lists
             return null;
         }
 
+#endregion
+
+#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Init runs when the control is initialised
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/05/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            lstEntries.ID = "ListEntries";
+            //Set the List Entries Control Properties
+			lstEntries.ID = "ListEntries";
             
             //ensure that module context is forwarded from parent module to child module
             lstEntries.ModuleContext.Configuration = ModuleContext.Configuration;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Page load, bind tree and enable controls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -136,11 +202,13 @@ namespace DotNetNuke.Common.Lists
             {
                 if (!Page.IsPostBack)
                 {
+					//configure tree
                     DNNtree.ImageList.Add(ResolveUrl("~/images/folder.gif"));
                     DNNtree.ImageList.Add(ResolveUrl("~/images/file.gif"));
                     DNNtree.IndentWidth = 10;
                     DNNtree.CollapsedNodeImage = ResolveUrl("~/images/max.gif");
                     DNNtree.ExpandedNodeImage = ResolveUrl("~/images/min.gif");
+
                     if (Request.QueryString["Key"] != null)
                     {
                         Mode = "ListEntries";
@@ -153,12 +221,24 @@ namespace DotNetNuke.Common.Lists
                     BindTree();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_PreRender runs just prior to the control being rendered
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse] 01/29/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -173,17 +253,44 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Populate list entries based on value selected in DNNTree
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DNNTree_NodeClick(object source, DNNTreeNodeClickEventArgs e)
         {
             Mode = "ListEntries";
             BindList(e.Node.Key);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Handles Add New List command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        ///     Using "CommandName" property of cmdSaveEntry to determine this is a new list
+        /// </remarks>
+        /// <history>
+        ///     [tamttt] 20/10/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void cmdAddList_Click(object sender, EventArgs e)
         {
             Mode = "AddList";
             BindList("");
         }
+		
+		#endregion
 
         #region Nested type: eImageType
 

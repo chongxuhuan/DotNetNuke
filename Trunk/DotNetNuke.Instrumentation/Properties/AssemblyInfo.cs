@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com

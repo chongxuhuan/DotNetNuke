@@ -132,12 +132,6 @@
   <data name="GeneralSettings.Text" xml:space="preserve">
     <value>General Settings</value>
   </data>
-  <data name="plEnabled.Help" xml:space="preserve">
-    <value>Check this option to enable this folder type.</value>
-  </data>
-  <data name="plEnabled.Text" xml:space="preserve">
-    <value>Enabled</value>
-  </data>
   <data name="plFolderProvider.Help" xml:space="preserve">
     <value>Select the folde provider to use.</value>
   </data>

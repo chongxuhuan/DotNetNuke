@@ -21,8 +21,6 @@
 
 .dnnForm.dnnExtensions .dnnFormItem label{width:30%;}
 
-.dnnForm.dnnAppGallery .dnnFormItem label{width:15%;}
-
 .dnnAuthenticationSettings .dnnFormItem label{width:100%;}
 
 /* ===========   Extensions Module Styling   =========== */
@@ -41,6 +39,19 @@ a.dnnProductTitle, a.dnnProductTitle:link, a.dnnProductTitle:visited, a.dnnProdu
 
 .dnnProduct {}
 .dnnProductFooter {border-bottom:#ccc solid}
+
+.dnnSearchFilters, .dnnFormItem label .dnnSearchFilters {
+    border: #46A3D3 2px solid;
+    color: #085B8F;
+    background: #EDF8FF;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-shadow: 0px 1px 1px white;
+    filter: dropshadow(color=white, offx=1, offy=1);
+    font-weight: normal;
+    padding: 0.8em 1em 0.8em 1em;
+    margin: 5px;
+}
 
 .loading-image 
 {

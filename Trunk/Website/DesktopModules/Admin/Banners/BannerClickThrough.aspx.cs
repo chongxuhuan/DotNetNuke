@@ -41,6 +41,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+			
+			//exit without incrementing count if page is indexed by crawler
             if (Request.Browser.Crawler)
             {
                 return;
@@ -74,6 +76,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     if (intBannerId != -1 && intVendorId != -1 && intPortalId != -1)
                     {
                         string strURL = "~/" + Globals.glbDefaultPage;
+
                         var objBanners = new BannerController();
                         BannerInfo objBanner = objBanners.GetBanner(intBannerId);
                         if (objBanner != null)
@@ -111,7 +114,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Page failed to load
             {
                 Exceptions.ProcessPageLoadException(exc);
             }

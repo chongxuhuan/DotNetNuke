@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Open Source Web Application Framework")]
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
 [assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke® is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: CLSCompliant(true)]
 //The following GUID is for the ID of the typelib if this project is exposed to COM

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -37,9 +37,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DotNetNuke.Modules.RazorHostView")]
 [assembly: AssemblyDescription("Razor Host Module")]
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("Razor Host Module")]
-[assembly: AssemblyCopyright("Copyright © 2011, DotNetNuke Corporation")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: ComVisible(false)]
 
 //The following GUID is for the ID of the typelib if this project is exposed to COM
@@ -59,7 +59,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("06.00.00")]
 [assembly: AssemblyFileVersion("06.00.00")]
-[assembly: AssemblyConfiguration("")]
+
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
+
+

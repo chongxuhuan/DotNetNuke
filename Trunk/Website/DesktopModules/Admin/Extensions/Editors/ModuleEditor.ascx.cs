@@ -49,10 +49,24 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ModuleEditor ModuleUserControlBase is used to edit Module Definitions
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	02/04/2008  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ModuleEditor : PackageEditorBase
     {
+		#region "Private Members"
+
         private DesktopModuleInfo _DesktopModule;
         private ModuleDefinitionInfo _ModuleDefinition;
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected DesktopModuleInfo DesktopModule
         {
@@ -111,6 +125,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 return _ModuleDefinition ?? (_ModuleDefinition = ModuleDefinitionController.GetModuleDefinitionByID(ModuleDefinitionID));
             }
         }
+		
+		#endregion
+
+		#region "Private Methods"
+
 
         private void BindDefinition()
         {
@@ -119,6 +138,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 var definition = new ModuleDefinitionInfo {DesktopModuleID = DesktopModule.DesktopModuleID, ModuleDefID = Null.NullInteger};
                 definitionsEditor.DataSource = definition;
                 definitionsEditor.DataBind();
+
                 cmdDeleteDefinition.Visible = false;
                 cmdUpdateDefinition.Text = Localization.GetString("cmdCreateDefinition", LocalResourceFile);
                 pnlDefinition.Visible = true;
@@ -130,14 +150,17 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     definitionsEditor.DataSource = ModuleDefinition;
                     definitionsEditor.DataBind();
+
                     cmdDeleteDefinition.Visible = true;
                     cmdUpdateDefinition.Text = Localization.GetString("cmdUpdateDefinition", LocalResourceFile);
+
                     if (!Page.IsPostBack)
                     {
                         Localization.LocalizeDataGrid(ref grdControls, LocalResourceFile);
                     }
                     grdControls.DataSource = ModuleDefinition.ModuleControls.Values;
                     grdControls.DataBind();
+
                     pnlDefinition.Visible = true;
                     pnlControls.Visible = true;
                 }
@@ -148,6 +171,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// This routine Binds the DesktopModule
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	02/04/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void BindDesktopModule(bool refreshDefinitions)
         {
             if (DesktopModule != null)
@@ -159,6 +190,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 desktopModuleForm.DataBind();
 
                 IsPremiumm.Visible = !DesktopModule.IsAdmin;
+
                 if (!Page.IsPostBack)
                 {
                     if ((Request.QueryString["ModuleDefinitionID"] != null))
@@ -170,12 +202,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     cboDefinitions.DataSource = DesktopModule.ModuleDefinitions.Values;
                     cboDefinitions.DataBind();
+
                     if (ModuleDefinitionID == Null.NullInteger && cboDefinitions.Items.Count > 0)
                     {
                         ModuleDefinitionID = int.Parse(cboDefinitions.SelectedValue);
                     }
                     if (ModuleDefinitionID != Null.NullInteger)
                     {
+						//Set the Combos selected value
                         ListItem selectedDefinition = cboDefinitions.Items.FindByValue(ModuleDefinitionID.ToString());
                         if (selectedDefinition != null)
                         {
@@ -193,7 +227,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     pnlPermissions.Visible = false;
                 }
                 BindPortalDesktopModules();
+
                 BindDefinition();
+
                 lblDefinitionError.Visible = false;
             }
         }
@@ -238,6 +274,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         private void UpdateModuleInterfaces(string BusinessControllerClass)
         {
+			//this cannot be done directly at this time because 
+            //the module may not be loaded into the app domain yet
+            //So send an EventMessage that will process the update 
+            //after the App recycles
             var oAppStartMessage = new EventMessage
                                        {
                                            Sender = ModuleContext.PortalSettings.UserInfo.Username,
@@ -248,11 +288,21 @@ namespace DotNetNuke.Modules.Admin.Extensions
                                            ProcessorType = "DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke",
                                            ProcessorCommand = "UpdateSupportedFeatures"
                                        };
+									   
+            //Add custom Attributes for this message
             oAppStartMessage.Attributes.Add("BusinessControllerClass", BusinessControllerClass);
             oAppStartMessage.Attributes.Add("DesktopModuleId", DesktopModule.DesktopModuleID.ToString());
+
+            //send it to occur on next App_Start Event
             EventQueueController.SendMessage(oAppStartMessage, "Application_Start");
+			
+			//force an app restart
             Config.Touch();
         }
+
+		#endregion
+
+		#region "Protected Methods"
 
         protected override void OnInit(EventArgs e)
         {
@@ -273,6 +323,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     if (imageColumn.CommandName == "Delete")
                     {
@@ -307,6 +358,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             PremiumModules.Visible = !IsWizard;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
         public override void Initialize()
         {
             desktopModuleForm.Visible = IsSuperTab;
@@ -318,6 +373,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             bool bUpdateSupportedFeatures = Null.NullBoolean;
             PackageInfo _Package = PackageController.GetPackage(PackageID);
+
+            //Update module settings
             if (desktopModuleForm.IsValid)
             {
                 var desktopModule = desktopModuleForm.DataSource as DesktopModuleInfo;
@@ -344,11 +401,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
         protected void cboDefinitions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!IsAddDefinitionMode)
             {
                 ModuleDefinitionID = int.Parse(cboDefinitions.SelectedValue);
+                //Force Module Definition to refresh
                 _ModuleDefinition = null;
                 BindDefinition();
             }
@@ -371,6 +433,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             var objModuleDefinitions = new ModuleDefinitionController();
             objModuleDefinitions.DeleteModuleDefinition(ModuleDefinitionID);
+
+            //Force Definitions list to refresh by rebinding DesktopModule
             ModuleDefinitionID = Null.NullInteger;
             _ModuleDefinition = null;
             _DesktopModule = null;
@@ -385,6 +449,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else
             {
+				//Update DesktopModule Permissions
                 DesktopModulePermissionCollection objCurrentPermissions = DesktopModulePermissionController.GetDesktopModulePermissions(dgPermissions.PortalDesktopModuleID);
                 if (!objCurrentPermissions.CompareTo(dgPermissions.Permissions))
                 {
@@ -395,6 +460,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     }
                 }
                 DataCache.RemoveCache(string.Format(DataCache.PortalDesktopModuleCacheKey, ModuleContext.PortalId));
+
                 dgPermissions.ResetPermissions();
             }
         }
@@ -409,12 +475,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     if ((IsAddDefinitionMode && ModuleDefinitionController.GetModuleDefinitionByFriendlyName(definition.FriendlyName) == null) || (!IsAddDefinitionMode))
                     {
                         ModuleDefinitionID = ModuleDefinitionController.SaveModuleDefinition(definition, false, true);
+
+                        //Force Definitions list to refresh by rebinding DesktopModule
                         IsAddDefinitionMode = false;
                         _DesktopModule = null;
                         BindDesktopModule(true);
                     }
                     else
                     {
+						//The FriendlyName is being used
                         lblDefinitionError.Visible = true;
                     }
                 }
@@ -423,12 +492,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         protected void ctlPortals_AddAllButtonClick(object sender, EventArgs e)
         {
+			//Add all Portals
             var objPortals = new PortalController();
             foreach (PortalInfo objPortal in objPortals.GetPortals())
             {
                 DesktopModuleController.AddDesktopModuleToPortal(objPortal.PortalID, DesktopModule.DesktopModuleID, true, false);
             }
             DataCache.ClearHostCache(true);
+
             BindDesktopModule(false);
         }
 
@@ -442,17 +513,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
             DataCache.ClearHostCache(true);
+
             BindDesktopModule(false);
         }
 
         protected void ctlPortals_RemoveAllButtonClick(object sender, EventArgs e)
         {
+			//Add all Portals
             var objPortals = new PortalController();
             foreach (PortalInfo objPortal in objPortals.GetPortals())
             {
                 DesktopModuleController.RemoveDesktopModuleFromPortal(objPortal.PortalID, DesktopModule.DesktopModuleID, false);
             }
             DataCache.ClearHostCache(true);
+
             BindDesktopModule(false);
         }
 
@@ -466,6 +540,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
             DataCache.ClearHostCache(true);
+
             BindDesktopModule(false);
         }
 
@@ -473,6 +548,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             int controlID = Int32.Parse(e.CommandArgument.ToString());
             ModuleControlController.DeleteModuleControl(controlID);
+
+            //Force Module Definition to refresh
             _ModuleDefinition = null;
             BindDefinition();
         }
@@ -493,5 +570,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
             }
         }
+		
+		#endregion
     }
 }

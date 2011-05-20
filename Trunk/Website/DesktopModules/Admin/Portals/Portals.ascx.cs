@@ -50,14 +50,30 @@ using Globals = DotNetNuke.Common.Globals;
 namespace DotNetNuke.Modules.Admin.Portals
 {
 
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// The Portals PortalModuleBase is used to manage the portlas.
+	/// </summary>
+    /// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	/// </history>
+	/// -----------------------------------------------------------------------------
     public partial class Portals : PortalModuleBase, IActionable
     {
+		#region "Private Members"
 
         protected int TotalPages = -1;
         protected int TotalRecords;
         private int _currentPage = 1;
         private string _Filter = "";
         private ArrayList _portals = new ArrayList();
+
+		#endregion
+
+		#region "Protected Members"
 
         protected int CurrentPage
         {
@@ -95,6 +111,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Page Size for the Grid
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/02/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected int PageSize
         {
             get
@@ -103,6 +127,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a flag that determines whether to suppress the Pager (when not required)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	08/10/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool SuppressPager
         {
             get
@@ -110,6 +142,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                 return true;
             }
         }
+		
+		#endregion
 
         #region IActionable Members
 
@@ -138,6 +172,19 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         #endregion
 
+		#region "Private Methods"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// BindData fetches the data from the database and updates the controls
+		/// </summary>
+        /// <remarks>
+		/// </remarks>
+        /// <history>
+		/// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		/// -----------------------------------------------------------------------------
         private void BindData()
         {
             CreateLetterSearch();
@@ -157,11 +204,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
             grdPortals.DataSource = PortalsList;
             grdPortals.DataBind();
+
             ctlPagingControl.TotalRecords = TotalRecords;
             ctlPagingControl.PageSize = PageSize;
             ctlPagingControl.CurrentPage = CurrentPage;
+
             ctlPagingControl.QuerystringParams = strQuerystring;
             ctlPagingControl.TabID = TabId;
+
             if (SuppressPager && ctlPagingControl.Visible)
             {
                 ctlPagingControl.Visible = (PageSize < TotalRecords);
@@ -176,30 +226,66 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the letter filter
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/17/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void CreateLetterSearch()
         {
             var filters = Localization.GetString("Filter.Text", LocalResourceFile);
+
             filters += "," + Localization.GetString("All");
             filters += "," + Localization.GetString("Expired", LocalResourceFile);
+
             var strAlphabet = filters.Split(',');
             rptLetterSearch.DataSource = strAlphabet;
             rptLetterSearch.DataBind();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes all expired portals
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	11/17/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void DeleteExpiredPortals()
         {
             try
             {
                 CheckSecurity();
                 PortalController.DeleteExpiredPortals(Globals.GetAbsoluteServerPath(Request));
+
                 BindData();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+		#endregion
+
+		#region "Protected Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FilterURL correctly formats the Url for filter by first letter and paging
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/10/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string FilterURL(string filter, string currentPage)
         {
             string url;
@@ -214,6 +300,22 @@ namespace DotNetNuke.Modules.Admin.Portals
             return url;
         }
 
+		#endregion
+
+		#region "Public Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatExpiryDate formats the expiry date and filter out null-dates
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FormatExpiryDate(DateTime dateTime)
         {
             var strDate = string.Empty;
@@ -224,13 +326,24 @@ namespace DotNetNuke.Modules.Admin.Portals
                     strDate = dateTime.ToShortDateString();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return strDate;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FormatExpiryDate formats the format name as an a tag
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FormatPortalAliases(int portalID)
         {
             var str = new StringBuilder();
@@ -252,12 +365,14 @@ namespace DotNetNuke.Modules.Admin.Portals
                     str.Append("<a href=\"" + httpAlias + "\">" + objPortalAliasInfo.HTTPAlias + "</a>" + "<BR>");
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return str.ToString();
         }
+		
+		#endregion
 
         #region Event Handlers
 
@@ -269,17 +384,24 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
                 {
+					//Manage Delete Confirm JS
                     var imageColumn = (ImageCommandColumn) column;
                     if (imageColumn.CommandName == "Delete")
                     {
                         imageColumn.OnClickJS = Localization.GetString("DeleteItem");
                     }
+					
+                    //Manage Edit Column NavigateURLFormatString
                     if (imageColumn.CommandName == "Edit")
                     {
+                        //so first create the format string with a dummy value and then
+                        //replace the dummy value with the FormatString place holder
                         var formatString = EditUrl("pid", "KEYFIELD", "Edit");
                         formatString = formatString.Replace("KEYFIELD", "{0}");
                         imageColumn.NavigateURLFormatString = formatString;
                     }
+					
+                    //Localize Image Column Text
                     if (!String.IsNullOrEmpty(imageColumn.CommandName))
                     {
                         imageColumn.Text = Localization.GetString(imageColumn.CommandName, LocalResourceFile);
@@ -288,6 +410,18 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        ///     [VMasanas]  9/28/2004   Changed redirect to Access Denied
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -297,6 +431,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             try
             {
+				//Add an Action Event Handler to the Skin
                 AddActionHandler(OnModuleActionClick);
                 if (!UserInfo.IsSuperUser)
                 {
@@ -316,16 +451,30 @@ namespace DotNetNuke.Modules.Admin.Portals
                 }
                 if (!Page.IsPostBack)
                 {
+					//Localize the Headers
                     Localization.LocalizeDataGrid(ref grdPortals, LocalResourceFile);
                     BindData();
                 }
             }
             catch (Exception exc)
             {
+				//Module failed to load
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ModuleAction_Click handles all ModuleAction events raised from the skin
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="sender"> The object that triggers the event</param>
+        /// <param name="e">An ActionEventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	11/17/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnModuleActionClick(object sender, ActionEventArgs e)
         {
             switch (e.Action.CommandArgument)
@@ -358,7 +507,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 }
                 BindData();
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

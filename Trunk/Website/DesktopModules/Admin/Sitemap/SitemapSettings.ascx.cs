@@ -53,13 +53,18 @@ namespace DotNetNuke.Modules.Admin.Sitemap
         #region Private Methods
 
         private void LoadConfiguration()
-        {
-            chkLevelPriority.Checked = bool.Parse(PortalController.GetPortalSetting("SitemapLevelMode", PortalId, "False"));
+        {     
+			//core settings
+			chkLevelPriority.Checked = bool.Parse(PortalController.GetPortalSetting("SitemapLevelMode", PortalId, "False"));
             var minPriority = float.Parse(PortalController.GetPortalSetting("SitemapMinPriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo);
             txtMinPagePriority.Text = minPriority.ToString();
+
             chkIncludeHidden.Checked = bool.Parse(PortalController.GetPortalSetting("SitemapIncludeHidden", PortalId, "False"));
+
+            //General settings
             var excludePriority = float.Parse(PortalController.GetPortalSetting("SitemapExcludePriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo);
             txtExcludePriority.Text = excludePriority.ToString();
+
             cmbDaysToCache.SelectedIndex = Int32.Parse(PortalController.GetPortalSetting("SitemapCacheDays", PortalId, "1"));
         }
 
@@ -357,6 +362,7 @@ namespace DotNetNuke.Modules.Admin.Sitemap
             {
                 if (!File.Exists(Globals.ApplicationMapPath + "\\" + txtVerification.Text))
                 {
+					//write SiteMap verification file
                     var objStream = File.CreateText(Globals.ApplicationMapPath + "\\" + txtVerification.Text);
                     objStream.WriteLine("Google SiteMap Verification File");
                     objStream.WriteLine(" - " + lnkSiteMapUrl.Text);

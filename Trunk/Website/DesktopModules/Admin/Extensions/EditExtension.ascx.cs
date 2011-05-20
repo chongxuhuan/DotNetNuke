@@ -45,6 +45,16 @@ using DotNetNuke.UI.WebControls;
 namespace DotNetNuke.Modules.Admin.Extensions
 {
 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditExtension control is used to edit a Extension
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	01/04/2008	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditExtension : ModuleUserControlBase
     {
 
@@ -233,6 +243,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             jQuery.RequestDnnPluginsRegistration();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/15/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -245,6 +265,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             BindData();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Package_Updated runs when a Package has been updated by a custom editor.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	08/15/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void Package_Updated(object sender, EventArgs e)
         {
         }

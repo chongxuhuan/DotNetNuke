@@ -39,6 +39,17 @@ using DotNetNuke.Services.Scheduling;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ViewScheduleHistory PortalModuleBase is used to view the schedule History
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ViewScheduleHistory : PortalModuleBase, IActionable
     {
 
@@ -75,6 +86,19 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
+		#region "Event Handlers"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -88,24 +112,33 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                     int scheduleID;
                     if (Request.QueryString["ScheduleID"] != null)
                     {
+						//get history for specific scheduleid
                         scheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
                     }
                     else
                     {
+						//get history for all schedules
                         scheduleID = -1;
                     }
                     var arrSchedule = SchedulingProvider.Instance().GetScheduleHistory(scheduleID);
                     arrSchedule.Sort(new ScheduleHistorySortStartDate());
+
+                    //Localize Grid
                     Localization.LocalizeDataGrid(ref dgScheduleHistory, LocalResourceFile);
+
                     dgScheduleHistory.DataSource = arrSchedule;
                     dgScheduleHistory.DataBind();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+		
+		#endregion
+
+		#region "Protected Methods"
 
         protected string GetNotesText(string notes)
         {
@@ -116,5 +149,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             return "";
         }
+		
+		#endregion
     }
 }

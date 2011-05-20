@@ -45,6 +45,18 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Vendors
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditBanner PortalModuleBase is used to add/edit a Banner
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class EditBanner : PortalModuleBase
     {
 
@@ -83,6 +95,17 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -104,18 +127,25 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     BannerId = Int32.Parse(Request.QueryString["BannerId"]);
                 }
+				
+                //this needs to execute always to the client script code is registred in InvokePopupCal
                 cmdStartCalendar.NavigateUrl = Calendar.InvokePopupCal(txtStartDate);
                 cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
+
                 if (Page.IsPostBack == false)
                 {
                     ctlImage.FileFilter = Globals.glbImageFileTypes;
                     ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
+
                     var objBannerTypes = new BannerTypeController();
+                    //Get the banner types from the database
                     cboBannerType.DataSource = objBannerTypes.GetBannerTypes();
                     cboBannerType.DataBind();
+
                     var objBanners = new BannerController();
                     if (BannerId != Null.NullInteger)
                     {
+                        //Obtain a single row of banner information
                         BannerInfo objBanner = objBanners.GetBanner(BannerId);
                         if (objBanner != null)
                         {
@@ -147,8 +177,10 @@ namespace DotNetNuke.Modules.Admin.Vendors
                                 txtEndDate.Text = objBanner.EndDate.ToShortDateString();
                             }
                             optCriteria.Items.FindByValue(objBanner.Criteria.ToString()).Selected = true;
+
                             ctlAudit.CreatedByUser = objBanner.CreatedByUser;
                             ctlAudit.CreatedDate = objBanner.CreatedDate.ToString();
+
                             var arrBanners = new ArrayList();
 
                             arrBanners.Add(objBanner);
@@ -156,7 +188,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                             lstBanners.DataSource = arrBanners;
                             lstBanners.DataBind();       
                         }
-                        else
+                        else //security violation attempt to access item not related to this Module
                         {
                             Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
                         }
@@ -179,18 +211,41 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdCancel_Click runs when the Cancel Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnCancelClick(object sender, EventArgs e)
         {
             try
             {
+				//Redirect back to the portal home page
                 Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the Delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(object sender, EventArgs e)
         {
             try
@@ -199,6 +254,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 {
                     var objBanner = new BannerController();
                     objBanner.DeleteBanner(BannerId);
+
+                    //Redirect back to the portal home page
                     Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
                 }
             }
@@ -208,10 +265,22 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/21/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(object sender, EventArgs e)
         {
             try
             {
+				//Only Update if the Entered Data is val
                 if (Page.IsValid)
                 {
                     if (!cmdCopy.Visible)
@@ -228,6 +297,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     {
                         EndDate = Convert.ToDateTime(txtEndDate.Text);
                     }
+					
+                    //Create an instance of the Banner DB component
                     var objBanner = new BannerInfo();
                     objBanner.BannerId = BannerId;
                     objBanner.VendorId = VendorId;
@@ -259,19 +330,24 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     objBanner.EndDate = EndDate;
                     objBanner.Criteria = int.Parse(optCriteria.SelectedItem.Value);
                     objBanner.CreatedByUser = UserInfo.UserID.ToString();
+
                     var objBanners = new BannerController();
                     if (BannerId == Null.NullInteger)
                     {
+						//Add the banner within the Banners table
                         objBanners.AddBanner(objBanner);
                     }
                     else
                     {
+						//Update the banner within the Banners table
                         objBanners.UpdateBanner(objBanner);
                     }
+					
+                    //Redirect back to the portal home page
                     Response.Redirect(EditUrl("VendorId", VendorId.ToString()), true);
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
@@ -296,6 +372,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
 
         protected void OnEmailClick(object sender, EventArgs e)
         {
+            //send email summary to vendor
             var objBanners = new BannerController();
             var objBanner = objBanners.GetBanner(BannerId);
             if (objBanner != null)
@@ -316,6 +393,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         Custom.Add(objBanner.EndDate.ToShortDateString());
                         Custom.Add(objBanner.Views.ToString());
                         Custom.Add(objBanner.ClickThroughs.ToString());
+
                         var errorMsg = Mail.SendMail(PortalSettings.Email,
                                                         objVendor.Email,
                                                         "",
@@ -344,6 +422,18 @@ namespace DotNetNuke.Modules.Admin.Vendors
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DNNTxtBannerGroup_PopulateOnDemand runs when something is entered on the
+        /// BannerGroup field
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[vmasanas]	9/29/2006	Implement a callback to display current groups
+        ///  to user so the BannerGroup can be easily selected
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void PopulateBannersOnDemand(object source, DNNTextSuggestEventArgs e)
         {
             var objBanners = new BannerController();

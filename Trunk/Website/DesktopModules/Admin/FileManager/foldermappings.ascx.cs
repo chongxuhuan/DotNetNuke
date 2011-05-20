@@ -23,7 +23,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -45,10 +45,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         private readonly IFolderMappingController _folderMappingController = FolderMappingController.Instance;
 
-
         #endregion
 
         #region Properties
+        
         public int FolderPortalID
         {
             get
@@ -63,7 +63,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 try
                 {
-                    object obj = Session["FolderMappingsList"];
+                    var obj = Session["FolderMappingsList"];
                     if (obj == null)
                     {
                         obj = _folderMappingController.GetFolderMappings(FolderPortalID);
@@ -86,6 +86,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
             set { Session["FolderMappingsList"] = value; }
         }
+        
         #endregion
 
         #region Event Handlers
@@ -125,10 +126,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         _folderMappingController.DeleteFolderMapping(folderMapping.FolderMappingID);
                         folderMappingsList.Remove(folderMapping);
                         break;
-                    case "ChangeAvailability":
-                        folderMapping.IsEnabled = !folderMapping.IsEnabled;
-                        _folderMappingController.UpdateFolderMapping(folderMapping);
-                        break;
                     default:
                         break;
                 }
@@ -140,70 +137,54 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         protected void grdMappings_ItemDataBound(object sender, GridItemEventArgs e)
         {
-            if (e.Item.ItemType == GridItemType.Item ||
-                e.Item.ItemType == GridItemType.AlternatingItem)
-            {
-                var folderMapping = (e.Item.DataItem as FolderMappingInfo);
-
-                if (folderMapping.IsEditable)
-                {
-                    CommandButton cmdDeleteMapping = (e.Item.FindControl("cmdDeleteMapping") as CommandButton);
-                    var deleteMessage = string.Format(Localization.GetString("DeleteConfirm", LocalResourceFile), folderMapping.MappingName);
-                    cmdDeleteMapping.OnClientClick = "return confirm(\"" + ClientAPI.GetSafeJSString(deleteMessage) + "\");";
-
-                    Button btnChangeAvailability = (e.Item.FindControl("btnChangeAvailability") as Button);
-
-                    CheckBox chkEnabled = (e.Item.FindControl("chkEnabled") as CheckBox);
-                    chkEnabled.Attributes.Add("onclick", "javascript:document.getElementById('" + btnChangeAvailability.ClientID + "').click();");
-                }
-            }
+            if (e.Item.ItemType != GridItemType.Item && e.Item.ItemType != GridItemType.AlternatingItem) return;
+            
+            var folderMapping = (e.Item.DataItem as FolderMappingInfo);
+            if (folderMapping == null || !folderMapping.IsEditable) return;
+            
+            var cmdDeleteMapping = (e.Item.FindControl("cmdDeleteMapping") as CommandButton);
+            if (cmdDeleteMapping == null) return;
+            
+            var deleteMessage = string.Format(Localization.GetString("DeleteConfirm", LocalResourceFile), folderMapping.MappingName);
+            cmdDeleteMapping.OnClientClick = "return confirm(\"" + ClientAPI.GetSafeJSString(deleteMessage) + "\");";
         }
 
         protected void grdMappings_OnRowDrop(object sender, GridDragDropEventArgs e)
         {
-            if (string.IsNullOrEmpty(e.HtmlElement))
+            if (!string.IsNullOrEmpty(e.HtmlElement)) return;
+
+            if (e.DraggedItems[0].OwnerGridID != grdMappings.ClientID) return;
+
+            var folderMappingsList = FolderMappingsList;
+            var folderMapping = folderMappingsList.Find(f => f.FolderMappingID == (int)e.DestDataItem.GetDataKeyValue("FolderMappingID"));
+            var destinationIndex = folderMappingsList.IndexOf(folderMapping);
+
+            if (e.DropPosition == GridItemDropPosition.Above && e.DestDataItem.ItemIndex > e.DraggedItems[0].ItemIndex)
             {
-                if (e.DraggedItems[0].OwnerGridID == grdMappings.ClientID)
-                {
-                    var folderMappingsList = FolderMappingsList;
-                    var folderMapping = folderMappingsList.Find(f => f.FolderMappingID == (int)e.DestDataItem.GetDataKeyValue("FolderMappingID"));
-
-                    var destinationIndex = folderMappingsList.IndexOf(folderMapping);
-
-                    if (e.DropPosition == GridItemDropPosition.Above && e.DestDataItem.ItemIndex > e.DraggedItems[0].ItemIndex)
-                    {
-                        destinationIndex -= 1;
-                    }
-                    if (e.DropPosition == GridItemDropPosition.Below && e.DestDataItem.ItemIndex < e.DraggedItems[0].ItemIndex)
-                    {
-                        destinationIndex += 1;
-                    }
-
-                    var folderMappingsToMove = new List<FolderMappingInfo>();
-                    foreach (GridDataItem item in e.DraggedItems)
-                    {
-                        var tmpFolderMapping = folderMappingsList.Find(f => f.FolderMappingID == (int)item.GetDataKeyValue("FolderMappingID"));
-                        if (tmpFolderMapping != null)
-                        {
-                            folderMappingsToMove.Add(tmpFolderMapping);
-                        }
-                    }
-
-                    foreach (FolderMappingInfo folderMappingToMove in folderMappingsToMove)
-                    {
-                        folderMappingsList.Remove(folderMappingToMove);
-                        folderMappingsList.Insert(destinationIndex, folderMappingToMove);
-                    }
-
-                    UpdateFolderMappings(folderMappingsList);
-                    FolderMappingsList = folderMappingsList;
-
-                    grdMappings.Rebind();
-
-                    int destinationItemIndex = destinationIndex - (grdMappings.PageSize * grdMappings.CurrentPageIndex);
-                    e.DestinationTableView.Items[destinationItemIndex].Selected = true;
-                }
+                destinationIndex -= 1;
             }
+            
+            if (e.DropPosition == GridItemDropPosition.Below && e.DestDataItem.ItemIndex < e.DraggedItems[0].ItemIndex)
+            {
+                destinationIndex += 1;
+            }
+
+            var folderMappingsToMove = e.DraggedItems.Select(item => folderMappingsList.Find(f => f.FolderMappingID == (int) item.GetDataKeyValue("FolderMappingID")))
+                .Where(tmpFolderMapping => tmpFolderMapping != null).ToList();
+
+            foreach (var folderMappingToMove in folderMappingsToMove)
+            {
+                folderMappingsList.Remove(folderMappingToMove);
+                folderMappingsList.Insert(destinationIndex, folderMappingToMove);
+            }
+
+            UpdateFolderMappings(folderMappingsList);
+            FolderMappingsList = folderMappingsList;
+
+            grdMappings.Rebind();
+
+            var destinationItemIndex = destinationIndex - (grdMappings.PageSize * grdMappings.CurrentPageIndex);
+            e.DestinationTableView.Items[destinationItemIndex].Selected = true;
         }
 
         protected void grdMappings_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
@@ -239,7 +220,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         #region Private Methods
 
-        private void UpdateFolderMappings(List<FolderMappingInfo> folderMappingsList)
+        private void UpdateFolderMappings(IList<FolderMappingInfo> folderMappingsList)
         {
             for (var i = 3; i < folderMappingsList.Count; i++)
             {

@@ -38,8 +38,14 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    /// <summary>
+    /// The Language skinobject allows the visitor to select the language of the page
+    /// </summary>
+    /// <remarks></remarks>
     public partial class Language : SkinObjectBase
     {
+		#region "Private Members"
+
         private const string MyFileName = "Language.ascx";
         private string _SelectedItemTemplate;
         private string _alternateTemplate;
@@ -52,6 +58,10 @@ namespace DotNetNuke.UI.Skins.Controls
         private LanguageTokenReplace _localTokenReplace;
         private string _separatorTemplate;
         private bool _showMenu = true;
+		
+		#endregion
+
+		#region "Public Properties"
 
         public string AlternateTemplate
         {
@@ -192,6 +202,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if ((_showMenu == false) && (ShowLinks == false))
                 {
+					//this is to make sure that at least one type of selector will be visible if multiple languages are enabled
                     _showMenu = true;
                 }
                 return _showMenu;
@@ -201,6 +212,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 _showMenu = value;
             }
         }
+
+		#endregion
+
+		#region "Protected Properties"
 
         protected string CurrentCulture
         {
@@ -235,6 +250,10 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+		#endregion
+
+		#region "Private Methods"
+
         private string parseTemplate(string template, string locale)
         {
             string strReturnValue = template;
@@ -242,12 +261,16 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (!string.IsNullOrEmpty(locale))
                 {
+					//for non data items use locale
                     LocalTokenReplace.Language = locale;
                 }
                 else
                 {
+					//for non data items use page culture
                     LocalTokenReplace.Language = CurrentCulture;
                 }
+				
+				//perform token replacements
                 strReturnValue = LocalTokenReplace.ReplaceEnvironmentTokens(strReturnValue);
             }
             catch (Exception ex)
@@ -276,6 +299,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 litCommonFooterTemplate.Text = parseTemplate(CommonFooterTemplate, CurrentCulture);
             }
         }
+
+		#endregion
+
+		#region " Event Handlers "
 
         protected override void OnLoad(EventArgs e)
         {
@@ -316,6 +343,8 @@ namespace DotNetNuke.UI.Skins.Controls
                             selectCulture.CssClass = CssClass;
                         }
                         Localization.LoadCultureDropDownList(selectCulture, CultureDropDownTypes.NativeName, ((PageBase) Page).PageCulture.Name);
+
+                        //only show language selector if more than one language
                         if (selectCulture.Items.Count <= 1)
                         {
                             selectCulture.Visible = false;
@@ -336,10 +365,19 @@ namespace DotNetNuke.UI.Skins.Controls
 
         private void selectCulture_SelectedIndexChanged(object sender, EventArgs e)
         {
+			//Redirect to same page to update all controls for newly selected culture
             LocalTokenReplace.Language = selectCulture.SelectedItem.Value;
             Response.Redirect(LocalTokenReplace.ReplaceEnvironmentTokens("[URL]"));
         }
 
+        /// <summary>
+        /// Binds data to repeater. a template is used to render the items
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <history>
+        ///      [erikvb]  20070814	  added
+        /// </history>
         protected void rptLanguages_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             try
@@ -347,6 +385,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 var litTemplate = e.Item.FindControl("litItemTemplate") as Literal;
                 if (litTemplate != null)
                 {
+					//load proper template for this Item
                     string strTemplate = "";
                     switch (e.Item.ItemType)
                     {
@@ -393,6 +432,7 @@ namespace DotNetNuke.UI.Skins.Controls
                         }
                         else
                         {
+							//for non data items use page culture
                             litTemplate.Text = parseTemplate(strTemplate, CurrentCulture);
                         }
                     }
@@ -403,5 +443,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 Exceptions.ProcessPageLoadException(ex, Request.RawUrl);
             }
         }
+		
+		#endregion
     }
 }

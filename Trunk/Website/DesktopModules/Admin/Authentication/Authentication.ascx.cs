@@ -39,6 +39,19 @@ using DotNetNuke.UI.UserControls;
 
 namespace DotNetNuke.Modules.Admin.Authentication
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : Authentication
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// Manages the Authentication settings
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]        06/29/2007   Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class Authentication : PortalModuleBase
     {
         private readonly List<AuthenticationSettingsBase> settingControls = new List<AuthenticationSettingsBase>();
@@ -50,20 +63,38 @@ namespace DotNetNuke.Modules.Admin.Authentication
             cmdUpdate.Click += cmdUpdate_Click;
 
             List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
+
             foreach (AuthenticationInfo authSystem in authSystems)
             {
+				//Add a Section Header
                 var sectionHeadControl = (SectionHeadControl) LoadControl("~/controls/SectionHeadControl.ascx");
                 sectionHeadControl.IncludeRule = true;
                 sectionHeadControl.CssClass = "Head";
+
+                //Create a <div> to hold the control
                 var container = new HtmlGenericControl();
                 container.ID = authSystem.AuthenticationType;
+
                 var authSettingsControl = (AuthenticationSettingsBase) LoadControl("~/" + authSystem.SettingsControlSrc);
+
+                //set the control ID to the resource file name ( ie. controlname.ascx = controlname )
+                //this is necessary for the Localization in PageBase
                 authSettingsControl.ID = Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc) + "_" + authSystem.AuthenticationType;
+
+                //Add Settings Control to Container
                 container.Controls.Add(authSettingsControl);
                 settingControls.Add(authSettingsControl);
+
+                //Add Section Head Control to Container
                 pnlSettings.Controls.Add(sectionHeadControl);
+
+                //Add Container to Controls
                 pnlSettings.Controls.Add(container);
+
+                //Attach Settings Control's container to Section Head Control
                 sectionHeadControl.Section = container.ID;
+
+                //Get Section Head Text from the setting controls LocalResourceFile
                 authSettingsControl.LocalResourceFile = authSettingsControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
                                                         Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc);
                 sectionHeadControl.Text = Localization.GetString("Title", authSettingsControl.LocalResourceFile);
@@ -78,11 +109,15 @@ namespace DotNetNuke.Modules.Admin.Authentication
             {
                 settingControl.UpdateSettings();
             }
+			
+            //Validate Enabled
             bool enabled = false;
             List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
             foreach (AuthenticationInfo authSystem in authSystems)
             {
                 var authLoginControl = (AuthenticationLoginBase) LoadControl("~/" + authSystem.LoginControlSrc);
+
+                //Check if AuthSystem is Enabled
                 if (authLoginControl.Enabled)
                 {
                     enabled = true;
@@ -91,6 +126,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
             }
             if (!enabled)
             {
+				//Display warning
                 UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoProvidersEnabled", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
             }
         }

@@ -45,6 +45,17 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The EditSchedule PortalModuleBase is used to edit the scheduled items.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
+    /// -----------------------------------------------------------------------------
 
     public partial class EditSchedule : PortalModuleBase, IActionable
     {
@@ -91,10 +102,12 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         private void BindData()
         {
             ScheduleItem objScheduleItem;
+
             if (Request.QueryString["ScheduleID"] != null)
             {
                 ViewState["ScheduleID"] = Request.QueryString["ScheduleID"];
                 objScheduleItem = SchedulingProvider.Instance().GetSchedule(Convert.ToInt32(Request.QueryString["ScheduleID"]));
+
                 txtFriendlyName.Text = objScheduleItem.FriendlyName;
                 txtType.Enabled = false;
                 txtType.Text = objScheduleItem.TypeFullName;
@@ -151,6 +164,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         private void BindServers(string selectedServers)
         {
             var servers = ServerController.GetServers();
+
             foreach (var webServer in servers)
             {
                 if (webServer.Enabled)
@@ -192,6 +206,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                 objScheduleItem.TimeLapse = Convert.ToInt32(txtTimeLapse.Text);
             }
             objScheduleItem.TimeLapseMeasurement = ddlTimeLapseMeasurement.SelectedItem.Value;
+
             if (String.IsNullOrEmpty(txtRetryTimeLapse.Text) || txtRetryTimeLapse.Text == "0" || txtRetryTimeLapse.Text == "-1")
             {
                 objScheduleItem.RetryTimeLapse = Null.NullInteger;
@@ -206,6 +221,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             objScheduleItem.CatchUpEnabled = chkCatchUpEnabled.Checked;
             objScheduleItem.Enabled = chkEnabled.Checked;
             objScheduleItem.ObjectDependencies = txtObjectDependencies.Text;
+
+            //if servers are specified, the concatenated string needs to be prefixed and suffixed by commas ( ie. ",SERVER1,SERVER2," )
             var servers = Null.NullString;
             var bAllSelected = true;
             foreach (ListItem item in lstServers.Items)
@@ -234,6 +251,17 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #region Event Handlers
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -252,12 +280,23 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                     BindData();
                 }
             }
-            catch (Exception exc)
+            catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdDelete_Click runs when the Delete Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(Object sender, EventArgs e)
         {
             var objScheduleItem = new ScheduleItem {ScheduleID = Convert.ToInt32(ViewState["ScheduleID"])};
@@ -283,6 +322,17 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// cmdUpdate_Click runs when the Update Button is clicked
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+        ///                       and localisation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(Object sender, EventArgs e)
         {
             var objScheduleItem = CreateScheduleItem();
