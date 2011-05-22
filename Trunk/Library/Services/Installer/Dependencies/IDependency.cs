@@ -29,6 +29,16 @@ using System.Xml.XPath;
 
 namespace DotNetNuke.Services.Installer.Dependencies
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The IDependency Interface defines the contract for a Package Dependency
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	09/02/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public interface IDependency
     {
         string ErrorMessage { get; }

@@ -370,6 +370,15 @@ namespace DotNetNuke.Services.Installer
         /// -----------------------------------------------------------------------------
         public string LegacyError { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the associated Logger
+        /// </summary>
+        /// <value>A Logger</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Logger Log
         {
             get

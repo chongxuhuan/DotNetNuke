@@ -23,6 +23,20 @@
 
 namespace DotNetNuke.UI.WebControls
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.UI.WebControls
+    /// Class:      IEditorInfoAdapter
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The IEditorInfoAdapter control provides an Adapter Interface for datasources 
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	05/05/2006	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public interface IEditorInfoAdapter
     {
         EditorInfo CreateEditControl();

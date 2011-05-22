@@ -196,7 +196,7 @@
     <value>Site</value>
   </data>
   <data name="valCount.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Banner Count Must Be A Valid Integer</value>
+    <value>Banner count must be a valid integer</value>
   </data>
   <data name="Horizontal.Text" xml:space="preserve">
     <value>Horizontal</value>
@@ -205,24 +205,24 @@
     <value>Vertical</value>
   </data>
   <data name="valBorder.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Border Width Must Be A Valid Integer</value>
+    <value>Border width must be a valid integer</value>
   </data>
   <data name="valPadding.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Cell padding Must Be A Valid Integer</value>
+    <value>Cell padding must be a valid integer</value>
   </data>
   <data name="valRowHeight.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Row Height Must Be A Valid Integer</value>
+    <value>Row height must be a valid integer</value>
   </data>
   <data name="valColWidth.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Column Width Must Be A Valid Integer</value>
+    <value>Column width must be a valid integer</value>
   </data>
   <data name="plBannerClickThroughURL.Help" xml:space="preserve">
     <value>Redirect ads to an intermediary page</value>
   </data>
   <data name="plBannerClickThroughURL.Text" xml:space="preserve">
-    <value>Banner Click through URL</value>
+    <value>Banner click through URL</value>
   </data>
   <data name="valBannerClickThroughURL.ErrorMessage" xml:space="preserve">
-    <value>&lt;br&gt;Banner Click through URL Must Be A Valid URL</value>
+    <value>Banner click through URL must be a valid URL, please make sure your URL starts with "http://"</value>
   </data>
 </root>

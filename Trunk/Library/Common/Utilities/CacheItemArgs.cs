@@ -49,6 +49,15 @@ namespace DotNetNuke.Common.Utilities
     {
         private ArrayList _paramList;
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new CacheItemArgs Object
+        /// </summary>
+        /// <param name="key"></param>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemArgs(string key)
         {
             CacheKey = key;
@@ -57,6 +66,16 @@ namespace DotNetNuke.Common.Utilities
             //_ParamList = new ArrayList();
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new CacheItemArgs Object
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="timeout"></param>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemArgs(string key, int timeout)
             : this(key)
         {
@@ -65,6 +84,16 @@ namespace DotNetNuke.Common.Utilities
             //_ParamList = new ArrayList();
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new CacheItemArgs Object
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="priority"></param>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemArgs(string key, CacheItemPriority priority)
             : this(key)
         {
@@ -72,6 +101,17 @@ namespace DotNetNuke.Common.Utilities
             //_ParamList = new ArrayList();
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new CacheItemArgs Object
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="timeout"></param>
+        /// <param name="priority"></param>
+        /// <history>
+        ///     [cnurse]	07/15/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemArgs(string key, int timeout, CacheItemPriority priority)
             : this(key)
         {
@@ -79,6 +119,18 @@ namespace DotNetNuke.Common.Utilities
             CachePriority = priority;
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new CacheItemArgs Object
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="timeout"></param>
+        /// <param name="priority"></param>
+        /// <param name="parameters"></param>
+        /// <history>
+        ///     [cnurse]	07/14/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemArgs(string key, int timeout, CacheItemPriority priority, params object[] parameters)
             : this(key)
         {
@@ -87,16 +139,66 @@ namespace DotNetNuke.Common.Utilities
             Params = parameters;
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Cache Item's CacheItemRemovedCallback delegate
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/13/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemRemovedCallback CacheCallback { get; set; }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Cache Item's CacheDependency
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public DNNCacheDependency CacheDependency { get; set; }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Cache Item's Key
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public string CacheKey { get; private set; }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Cache Item's priority (defaults to Default)
+        /// </summary>
+        /// <remarks>Note: DotNetNuke currently doesn't support the ASP.NET Cache's
+        /// ItemPriority, but this is included for possible future use. </remarks>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public CacheItemPriority CachePriority { get; set; }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Cache Item's Timeout
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public int CacheTimeOut { get; set; }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Cache Item's Parameter List
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ArrayList ParamList
         {
             get
@@ -114,6 +216,14 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Cache Item's Parameter Array
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public object[] Params { get; private set; }
 
         public string ProcedureName { get; set; }

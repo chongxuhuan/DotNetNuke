@@ -56,8 +56,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             InsecureFileSystem = 0,
             SecureFileSystem = 1,
-            DatabaseSecure = 2,
-            NonDefault = 3
+            DatabaseSecure = 2
         }
 
         #endregion
@@ -65,7 +64,7 @@ namespace DotNetNuke.Services.FileSystem
         #region Obsolete Methods
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.AddFolder(string folderPath, int folderMappingID) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.AddFolder(FolderMappingInfo folderMapping, string folderPath) ")]
         public int AddFolder(FolderInfo folder)
         {
             var tmpFolder = FolderManager.Instance.GetFolder(folder.PortalID, folder.FolderPath);
@@ -99,21 +98,21 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolder(int portalID, string folderPath, bool ignoreCache) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolder(int portalID, string folderPath) ")]
         public FolderInfo GetFolder(int PortalID, string FolderPath, bool ignoreCache)
         {
             return (FolderInfo)FolderManager.Instance.GetFolder(PortalID, FolderPath);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolderByUniqueId(Guid uniqueId) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolder(Guid uniqueId) ")]
         public FolderInfo GetFolderByUniqueID(Guid UniqueId)
         {
             return (FolderInfo)FolderManager.Instance.GetFolder(UniqueId);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolder(int portalID, int folderID) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolder(int folderID) ")]
         public FolderInfo GetFolderInfo(int PortalID, int FolderID)
         {
             return (FolderInfo)FolderManager.Instance.GetFolder(FolderID);

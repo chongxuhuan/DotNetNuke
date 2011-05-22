@@ -32,6 +32,21 @@ using DotNetNuke.UI.WebControls;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      UserMembership
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The UserMembership class provides Business Layer model for the Users Membership
+    /// related properties
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	12/22/2005	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class UserMembership
     {
@@ -44,30 +59,134 @@ namespace DotNetNuke.Entities.Users
             _user = user;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the User is Approved
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool Approved { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User's Creation Date
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime CreatedDate { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User Whether is deleted.
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsDeleted { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the User Is Online
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsOnLine { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Last Activity Date of the User
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime LastActivityDate { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Last Lock Out Date of the User
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime LastLockoutDate { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Last Login Date of the User
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime LastLoginDate { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Last Password Change Date of the User
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime LastPasswordChangeDate { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the user is locked out
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool LockedOut { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User's Password
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Password { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User's Password Answer
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	08/04/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PasswordAnswer { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User's Password Question
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/27/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PasswordQuestion { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a flag that determines whether the password should be updated
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool UpdatePassword { get; set; }
 
         [Obsolete("Deprecated in DNN 5.1")]

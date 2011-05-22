@@ -407,6 +407,19 @@ namespace DotNetNuke.Common.Utilities
         }
 
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StripPunctuation removes the Punctuation from the content
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="HTML">The HTML content to clean up</param>
+        /// <param name="RetainSpace">Indicates whether to replace the Punctuation by a space (true) or nothing (false)</param>
+        /// <returns>The cleaned up string</returns>
+        /// <history>
+        ///		[cnurse]	11/16/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string StripPunctuation(string HTML, bool RetainSpace)
         {
             //Create Regular Expression objects

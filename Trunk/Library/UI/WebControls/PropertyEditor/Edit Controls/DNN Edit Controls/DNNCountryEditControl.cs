@@ -45,6 +45,14 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:DNNCountryEditControl runat=server></{0}:DNNCountryEditControl>")]
     public class DNNCountryEditControl : DNNListEditControl
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a DNNCountryEditControl
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/03/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DNNCountryEditControl()
         {
             AutoPostBack = true;

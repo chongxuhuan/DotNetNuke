@@ -29,6 +29,20 @@ using System;
 
 namespace DotNetNuke.Services.Search
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Services.Search
+    /// Project:    DotNetNuke
+    /// Class:      SearchResultsInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SearchResultsInfo represents a Search Result Item
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cnurse]	11/15/2004	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class SearchResultsInfo
     {

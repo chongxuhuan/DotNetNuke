@@ -456,6 +456,17 @@ namespace DotNetNuke.Entities.Tabs
             return PortalId;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetTabsByPortalCallBack gets a Dictionary of Tabs by 
+        /// Portal from the the Database.
+        /// </summary>
+        /// <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
+        /// needed for the database call</param>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private static object GetTabsByPortalCallBack(CacheItemArgs cacheItemArgs)
         {
             int portalID = (int)cacheItemArgs.ParamList[0];

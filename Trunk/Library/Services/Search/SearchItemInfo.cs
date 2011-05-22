@@ -31,6 +31,21 @@ using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Services.Search
 {
+    /// -----------------------------------------------------------------------------
+    /// Namespace:  DotNetNuke.Services.Search
+    /// Project:    DotNetNuke
+    /// Class:      SearchItemInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SearchItemInfo represents a Search Item
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///		[cnurse]	11/15/2004	documented
+    ///     [vnguyen]   09/07/2010  Modified: added TabId property
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class SearchItemInfo
     {

@@ -29,11 +29,33 @@ using System;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      PurgeUsersOnline
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The AnonymousUserInfo class provides an Entity for an anonymous user
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	03/14/2006	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class AnonymousUserInfo : BaseUserInfo
     {
         private string _UserID;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User Id for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string UserID
         {
             get

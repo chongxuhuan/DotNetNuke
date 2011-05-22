@@ -37,6 +37,13 @@ namespace DotNetNuke.UI.WebControls
         private readonly ListBoundField _TextField;
         private readonly ListBoundField _ValueField;
 
+        /// <summary>
+        /// Initializes a new instance of the ListAttribute class.
+        /// </summary>
+        /// <param name="listName">The name of the List to use for this property</param>
+        /// <param name="parentKey">The key of the parent for this List</param>
+        /// <param name="textField">Text Field.</param>
+        /// <param name="valueField">Value Field.</param>
         public ListAttribute(string listName, string parentKey, ListBoundField valueField, ListBoundField textField)
         {
             _ListName = listName;

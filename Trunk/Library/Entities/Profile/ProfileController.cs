@@ -561,7 +561,18 @@ namespace DotNetNuke.Entities.Profile
             return GetPropertyDefinitionsByPortal(portalId, true);
         }
 
-        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
+         /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a collection of Property Defintions from the Data Store by portal
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <param name="clone">Whether to use a clone object.</param>
+        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
+        /// <history>
+        ///     [cnurse]	02/01/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+       public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
         {
             var definitions = new ProfilePropertyDefinitionCollection();
             foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))

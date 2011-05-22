@@ -3207,5 +3207,17 @@ namespace DotNetNuke.Data
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "AddDefaultFolderTypes", portalID);
         }
+
+        //SystemDateTime Utility
+        public override DateTime GetDatabaseTimeUtc()
+        {
+            return Convert.ToDateTime(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetDatabaseTimeUtc"));
+        }
+
+        public override DateTime GetDatabaseTime()
+        {
+            return Convert.ToDateTime(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetDatabaseTime"));
+        }
+
     }
 }

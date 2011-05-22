@@ -38,6 +38,10 @@ namespace DotNetNuke.Services.Installer.Dependencies
     {
         private readonly string _ErrorMessage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidDependency" /> class.
+        /// </summary>
+        /// <param name="ErrorMessage">The error message to display.</param>
         public InvalidDependency(string ErrorMessage)
         {
             _ErrorMessage = ErrorMessage;

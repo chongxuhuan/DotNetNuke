@@ -28,11 +28,14 @@ using System.Linq;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Content.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Modules;
 using DotNetNuke.Web.Mvp;
 
 using Telerik.Web.UI;
@@ -69,7 +72,9 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             base.OnLoad();
 
             View.Model.IsEditable = IsEditable;
-            View.Model.NewVocabUrl = Globals.NavigateURL(TabId, "CreateVocabulary", "mid=" + ModuleId);
+            View.Model.NewVocabUrl = (ModuleContext != null)
+                                         ? ModuleContext.EditNavUrl(TabId, "CreateVocabulary", false, "mid=" + ModuleId)
+                                         : Globals.NavigateURL(TabId, "CreateVocabulary", "mid=" + ModuleId);
             View.ShowAddButton(IsEditable);
             View.GridsNeedDataSource += GridNeedDataSource;
             View.GridsItemDataBound += GridItemDataBound;
@@ -91,7 +96,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             var dataItem = (GridDataItem)e.Item;
 
             var hlEdit = ((HyperLink)(dataItem)["EditItem"].FindControl("hlEdit"));
-            hlEdit.NavigateUrl = Globals.NavigateURL(ModuleContext.TabId, "EditVocabulary", "mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
+            hlEdit.NavigateUrl = ModuleContext.EditNavUrl(ModuleContext.TabId, "EditVocabulary", false,"mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
 
             var imgEdit = ((Image)(dataItem)["EditItem"].FindControl("imgEdit"));
             imgEdit.AlternateText = Localization.GetString("Edit", LocalResourceFile);

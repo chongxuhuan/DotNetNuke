@@ -157,6 +157,17 @@ namespace DotNetNuke.Common.Utilities
             return GetConnectionString(GetDefaultProvider("data").Attributes["connectionStringName"]);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the specified connection String
+        /// </summary>
+        /// <param name="name">Name of Connection String to return</param>
+        /// <returns>The connection String</returns>
+        /// <remarks></remarks>
+        /// <history>
+        ///		[cnurse]	11/15/2005	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetConnectionString(string name)
         {
             string connectionString = "";

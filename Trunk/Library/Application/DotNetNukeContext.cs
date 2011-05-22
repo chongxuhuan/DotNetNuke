@@ -42,10 +42,17 @@ namespace DotNetNuke.Application
         private readonly List<ContainerEventListener> _ContainerEventListeners;
         private readonly List<SkinEventListener> _SkinEventListeners;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DotNetNukeContext" /> class.
+        /// </summary>
         protected DotNetNukeContext() : this(new Application())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DotNetNukeContext" /> class using the provided application as base.
+        /// </summary>
+        /// <param name="application">The application.</param>
         protected DotNetNukeContext(Application application)
         {
             _Application = application;

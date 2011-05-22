@@ -46,11 +46,29 @@ namespace DotNetNuke.Services.Installer.Packages
     {
         private readonly PackageInfo _Package;
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Builds a new PackageCreatedEventArgs
+        /// </summary>
+        /// <param name="package">The package associated with this event</param>
+        /// <remarks></remarks>
+        /// <history>
+        ///     [cnurse]	01/23/2008	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public PackageCreatedEventArgs(PackageInfo package)
         {
             _Package = package;
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Package associated with this event
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/23/2008	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public PackageInfo Package
         {
             get

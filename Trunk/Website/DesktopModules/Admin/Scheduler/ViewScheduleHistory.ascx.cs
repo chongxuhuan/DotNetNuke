@@ -35,11 +35,13 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Scheduling;
 
+using Telerik.Web.UI;
+
 #endregion
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The ViewScheduleHistory PortalModuleBase is used to view the schedule History
     /// </summary>
@@ -49,7 +51,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
     /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
     ///                       and localisation
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class ViewScheduleHistory : PortalModuleBase, IActionable
     {
 
@@ -86,9 +87,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Page_Load runs when the control is loaded.
         /// </summary>
@@ -98,47 +98,42 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             try
             {
-                if (!Page.IsPostBack)
-                {
-                    cmdCancel.NavigateUrl += Globals.NavigateURL();
-
-                    int scheduleID;
-                    if (Request.QueryString["ScheduleID"] != null)
-                    {
-						//get history for specific scheduleid
-                        scheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
-                    }
-                    else
-                    {
-						//get history for all schedules
-                        scheduleID = -1;
-                    }
-                    var arrSchedule = SchedulingProvider.Instance().GetScheduleHistory(scheduleID);
-                    arrSchedule.Sort(new ScheduleHistorySortStartDate());
-
-                    //Localize Grid
-                    Localization.LocalizeDataGrid(ref dgScheduleHistory, LocalResourceFile);
-
-                    dgScheduleHistory.DataSource = arrSchedule;
-                    dgScheduleHistory.DataBind();
-                }
+                dgHistory.NeedDataSource += OnGridNeedDataSource;
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-		
+
+        protected void OnGridNeedDataSource(object sender, GridNeedDataSourceEventArgs e)
+        {
+            int scheduleID;
+            if (Request.QueryString["ScheduleID"] != null)
+            {
+                //get history for specific scheduleid
+                scheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
+            }
+            else
+            {
+                //get history for all schedules
+                scheduleID = -1;
+            }
+
+            var arrSchedule = SchedulingProvider.Instance().GetScheduleHistory(scheduleID);
+
+            dgHistory.DataSource = arrSchedule;
+        }
+
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
         protected string GetNotesText(string notes)
         {
@@ -151,5 +146,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         }
 		
 		#endregion
+
     }
 }

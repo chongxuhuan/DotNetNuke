@@ -291,7 +291,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         //create popup event 
                         else if (ToolInfo.ShowAsPopUp && PortalSettings.EnablePopUps)
                         {
-                            DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true));
+                            DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true, false));
                         }
                     }
 

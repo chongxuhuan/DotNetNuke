@@ -28,6 +28,11 @@ namespace DotNetNuke.ComponentModel
         private readonly object _Instance;
         private readonly string _Name;
 
+        /// <summary>
+        /// Initializes a new instance of the InstanceComponentBuilder class.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="instance"></param>
         public InstanceComponentBuilder(string name, object instance)
         {
             _Name = name;

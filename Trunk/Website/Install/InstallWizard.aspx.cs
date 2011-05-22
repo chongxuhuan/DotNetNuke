@@ -74,7 +74,7 @@ namespace DotNetNuke.Services.Install
         protected new string LocalResourceFile = "~/Install/App_LocalResources/InstallWizard.aspx.resx";
         private Version _dataBaseVersion;
         private XmlDocument _installTemplate;
-        private const string _localesFile = "/Install/App_LocalResources/Locales.xml";
+        private const string LocalesFile = "/Install/App_LocalResources/Locales.xml";
         private string _connectionString = Null.NullString;
 
 		#endregion
@@ -266,16 +266,15 @@ namespace DotNetNuke.Services.Install
         /// 	[smehaffie]	07/13/2008 Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private string GetUpgradeConnectionStringUserID()
+        private static string GetUpgradeConnectionStringUserID()
         {
             string dbUser = "";
             string connection = Config.GetUpgradeConnectionString();
-            string[] connectionParams;
 
             //If connection string does not use integrated security, then get user id.
             if (connection.ToLower().Contains("user id") || connection.ToLower().Contains("uid") || connection.ToLower().Contains("user"))
             {
-                connectionParams = connection.Split(';');
+                string[] connectionParams = connection.Split(';');
 
                 foreach (string connectionParam in connectionParams)
                 {
@@ -357,17 +356,14 @@ namespace DotNetNuke.Services.Install
 
         private void BindPackageItems(string packageType, CheckBoxList list, Label noItemsLabel, string noItemsKey, Label errorLabel)
         {
-            string[] arrFiles;
-
-            string InstallPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
+            string installPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
             list.Items.Clear();
-            if (Directory.Exists(InstallPath))
+            if (Directory.Exists(installPath))
             {
-                arrFiles = Directory.GetFiles(InstallPath);
-                int iFile = 0;
+                string[] arrFiles = Directory.GetFiles(installPath);
                 foreach (string strFile in arrFiles)
                 {
-                    string strResource = strFile.Replace(InstallPath + "\\", "");
+                    string strResource = strFile.Replace(installPath + "\\", "");
                     if (strResource.ToLower().EndsWith(".zip") || strResource.ToLower().EndsWith(".resources"))
                     {
                         var packageItem = new ListItem();
@@ -471,14 +467,7 @@ namespace DotNetNuke.Services.Install
             lstPermissions.Items.Add(permissionItem);
             if (test)
             {
-                if (PermissionsValid)
-                {
-                    lblPermissionsError.Text = LocalizeString("PermissionsOk");
-                }
-                else
-                {
-                    lblPermissionsError.Text = LocalizeString("PermissionsError").Replace("{0}", Globals.ApplicationMapPath);
-                }
+                lblPermissionsError.Text = PermissionsValid ? LocalizeString("PermissionsOk") : LocalizeString("PermissionsError").Replace("{0}", Globals.ApplicationMapPath);
             }
         }
 
@@ -498,10 +487,13 @@ namespace DotNetNuke.Services.Install
             if (node != null)
             {
                 XmlNode adminNode = node.SelectSingleNode("administrator");
-                usrAdmin.FirstName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "firstname");
-                usrAdmin.LastName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "lastname");
-                usrAdmin.UserName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "username");
-                usrAdmin.Email = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "email");
+                if (adminNode != null)
+                {
+                    usrAdmin.FirstName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "firstname");
+                    usrAdmin.LastName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "lastname");
+                    usrAdmin.UserName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "username");
+                    usrAdmin.Email = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "email");
+                }
                 txtPortalTitle.Text = XmlUtils.GetNodeValue(node.CreateNavigator(), "portalname");
 
                 string strTemplate = XmlUtils.GetNodeValue(node.CreateNavigator(), "templatefile");
@@ -579,7 +571,7 @@ namespace DotNetNuke.Services.Install
         /// 	[cnurse]	02/16/2007 Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private void BindSuperUser(LinkButton customButton)
+        private void BindSuperUser()
         {
             UserInfo superUser = Upgrade.Upgrade.GetSuperUser(InstallTemplate, false);
             if (superUser != null)
@@ -602,19 +594,14 @@ namespace DotNetNuke.Services.Install
         /// 	[cnurse]	02/28/2007 Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private void EnableButton(LinkButton button, bool enabled)
+        private static void EnableButton(LinkButton button, bool enabled)
         {
             if (button != null)
             {
                 button.OnClientClick = "return !checkDisabled(this);";
-                if (enabled)
-                {
-                    button.CssClass = (button.CommandName == "MoveNext") ? "dnnPrimaryAction" : "dnnSecondaryAction";
-                }
-                else
-                {
-                    button.CssClass = "dnnPrimaryAction dnnDisabledAction";
-                }
+                button.CssClass = enabled 
+                                    ? ((button.CommandName == "MoveNext") ? "dnnPrimaryAction" : "dnnSecondaryAction") 
+                                    : "dnnPrimaryAction dnnDisabledAction";
             }
         }
 
@@ -628,10 +615,10 @@ namespace DotNetNuke.Services.Install
         /// 	[cnurse]	01/23/2007 Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private ArrayList GetInstallerLocales()
+        private static ArrayList GetInstallerLocales()
         {
             var supportedLocales = new ArrayList();
-            string filePath = Globals.ApplicationMapPath + _localesFile.Replace("/", "\\");
+            string filePath = Globals.ApplicationMapPath + LocalesFile.Replace("/", "\\");
 
             if (File.Exists(filePath))
             {
@@ -640,10 +627,12 @@ namespace DotNetNuke.Services.Install
                 {
                     if (nav.NodeType != XPathNodeType.Comment)
                     {
-                        var objLocale = new Locale();
-                        objLocale.Text = nav.GetAttribute("name", "");
-                        objLocale.Code = nav.GetAttribute("key", "");
-                        objLocale.Fallback = nav.GetAttribute("fallback", "");
+                        var objLocale = new Locale
+                                            {
+                                                Text = nav.GetAttribute("name", ""), 
+                                                Code = nav.GetAttribute("key", ""), 
+                                                Fallback = nav.GetAttribute("fallback", "")
+                                            };
 
                         supportedLocales.Add(objLocale);
                     }
@@ -651,10 +640,12 @@ namespace DotNetNuke.Services.Install
             }
             else
             {
-                var objLocale = new Locale();
-                objLocale.Text = "English";
-                objLocale.Code = "en-US";
-                objLocale.Fallback = "";
+                var objLocale = new Locale
+                                    {
+                                        Text = "English", 
+                                        Code = "en-US", 
+                                        Fallback = ""
+                                    };
                 supportedLocales.Add(objLocale);
             }
             return supportedLocales;
@@ -778,7 +769,7 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private string InstallDatabase()
         {
-            string strErrorMessage = Null.NullString;
+            string strErrorMessage;
 
             string strProviderPath = _dataProvider.GetProviderPath();
             if (!strProviderPath.StartsWith("ERROR:"))
@@ -911,14 +902,14 @@ namespace DotNetNuke.Services.Install
                 //Set Script timeout to MAX value
                 Server.ScriptTimeout = int.MaxValue;
 
-                string InstallPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
+                string installPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
                 foreach (ListItem packageItem in list.Items)
                 {
                     if (packageItem.Selected)
                     {
-                        if ((File.Exists(InstallPath + "\\" + packageItem.Value)))
+                        if ((File.Exists(installPath + "\\" + packageItem.Value)))
                         {
-                            success = Upgrade.Upgrade.InstallPackage(InstallPath + "\\" + packageItem.Value, packageType, false);
+                            success = Upgrade.Upgrade.InstallPackage(installPath + "\\" + packageItem.Value, packageType, false);
                             if (!success)
                             {
                                 strErrorMessage += string.Format(LocalizeString(errorKey), packageItem.Text);
@@ -1098,7 +1089,7 @@ namespace DotNetNuke.Services.Install
         private void LocalizePage()
         {
             //Main Title
-            Title = LocalizeString("Title") + " - " + LocalizeString("Page" + wizInstall.ActiveStepIndex + ".Title");
+            Title = LocalizeString("Title") + @" - " + LocalizeString("Page" + wizInstall.ActiveStepIndex + ".Title");
 
             //Page Titles
             for (int i = 0; i <= wizInstall.WizardSteps.Count - 1; i++)
@@ -1235,14 +1226,7 @@ namespace DotNetNuke.Services.Install
                 integratedRow.Visible = !isOracle;
                 userRow.Visible = !chkIntegrated.Checked || isOracle;
                 passwordRow.Visible = !chkIntegrated.Checked || isOracle;
-                if (isSQLDb)
-                {
-                    chkOwner.Enabled = true;
-                }
-                else
-                {
-                    chkOwner.Enabled = false;
-                }
+                chkOwner.Enabled = isSQLDb;
                 chkOwner.Checked = (Config.GetDataBaseOwner() == "dbo.");
                 txtqualifier.Text = Config.GetObjectQualifer();
             }
@@ -1290,7 +1274,7 @@ namespace DotNetNuke.Services.Install
                     ShowButton(prevButton, false);
                     break;
                 case 4: //Page 4 - SuperUser Configuration
-                    BindSuperUser(customButton);
+                    BindSuperUser();
                     ShowButton(prevButton, false);
                     break;
                 case 5: //Page 5 - Modules
@@ -1330,7 +1314,7 @@ namespace DotNetNuke.Services.Install
         /// 	[cnurse]	02/28/2007 Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private void ShowButton(LinkButton button, bool enabled)
+        private static void ShowButton(LinkButton button, bool enabled)
         {
             if (button != null)
             {
@@ -1697,6 +1681,7 @@ namespace DotNetNuke.Services.Install
                 chkOwner.Checked = true;
             }
             chkOwner.Enabled = !chkIntegrated.Checked;
+            LocalizePage();
         }
 
         /// -----------------------------------------------------------------------------
@@ -1782,6 +1767,7 @@ namespace DotNetNuke.Services.Install
         {
             BindConnectionString();
             SetupDatabasePage();
+            LocalizePage();
         }
 
         /// -----------------------------------------------------------------------------

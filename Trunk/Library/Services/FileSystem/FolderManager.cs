@@ -812,7 +812,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             var isProtected = PathUtils.Instance.IsDefaultProtectedPath(folderPath);
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(folderMappingID);
-            var storageLocation = (int)FolderController.StorageLocationTypes.NonDefault;
+            var storageLocation = (int)FolderController.StorageLocationTypes.DatabaseSecure;
             if (!folderMapping.IsEditable)
             {
                 switch (folderMapping.MappingName)

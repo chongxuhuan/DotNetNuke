@@ -46,11 +46,29 @@ namespace DotNetNuke.UI.WebControls
     /// -----------------------------------------------------------------------------
     public class PropertyEditorItemEventArgs : EventArgs
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new PropertyEditorItemEventArgs
+        /// </summary>
+        /// <param name="editor">The editor created</param>
+        /// <history>
+        ///     [cnurse]	02/20/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PropertyEditorItemEventArgs(EditorInfo editor)
         {
             Editor = editor;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the proeprty has changed
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	01/05/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public EditorInfo Editor { get; set; }
     }
 }

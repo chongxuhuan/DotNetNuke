@@ -513,7 +513,7 @@ namespace DotNetNuke.Modules.Admin.Users
             try
             {
 				//Redirect to Definitions page
-                Response.Redirect(Globals.NavigateURL(TabId, "ManageProfile", "mid=" + ModuleId), true);
+                Response.Redirect(ModuleContext.EditNavUrl(TabId, "ManageProfile", true, "mid=" + ModuleId), true);
             }
             catch (Exception exc) //Module failed to load
             {
@@ -536,7 +536,7 @@ namespace DotNetNuke.Modules.Admin.Users
             try
             {
 				//Redirect to Definitions page
-                Response.Redirect(Globals.NavigateURL(TabId, "ManageProfile", "mid=" + ModuleId), true);
+                Response.Redirect(ModuleContext.EditNavUrl(TabId, "ManageProfile", true, "mid=" + ModuleId), true);
             }
             catch (Exception exc) //Module failed to load
             {
@@ -608,3 +608,5 @@ namespace DotNetNuke.Modules.Admin.Users
 		#endregion
     }
 }
+
+

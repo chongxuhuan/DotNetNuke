@@ -328,6 +328,15 @@ namespace DotNetNuke.Security.Roles
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a Roles from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/14/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ReadRoles(XmlReader reader)
         {
             reader.ReadStartElement("roles");

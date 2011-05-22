@@ -152,20 +152,40 @@ namespace DotNetNuke.Modules.Admin.Portals
             get
             {
                 var actions = new ModuleActionCollection
-                                  {
-                                      {
-                                          GetNextActionID(), Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl("Signup"), false,
-                                          SecurityAccessLevel.Host, true, false
-                                          },
-                                      {
-                                          GetNextActionID(), Localization.GetString("ExportTemplate.Action", LocalResourceFile), ModuleActionType.AddContent, "", "lt.gif", EditUrl("Template"), false,
-                                          SecurityAccessLevel.Admin, true, false
-                                          },
-                                      {
-                                          GetNextActionID(), Localization.GetString("DeleteExpired.Action", LocalResourceFile), ModuleActionType.AddContent, "Delete", "delete.gif", "",
-                                          "confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("DeleteItems.Confirm")) + "')", true, SecurityAccessLevel.Admin, true, false
+                                    {
+                                        {
+                                            GetNextActionID(), 
+                                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), 
+                                            ModuleActionType.AddContent, 
+                                            "", 
+                                            "add.gif", 
+                                            EditUrl("Signup"), 
+                                            false,
+                                            SecurityAccessLevel.Host, 
+                                            true, 
+                                            false
+                                        },
+                                        {
+                                            GetNextActionID(), 
+                                            Localization.GetString("ExportTemplate.Action", LocalResourceFile), 
+                                            ModuleActionType.AddContent, 
+                                            "", 
+                                            "lt.gif", 
+                                            EditUrl("Template"), 
+                                            false,
+                                            SecurityAccessLevel.Admin, 
+                                            true, 
+                                            false
                                           }
-                                  };
+                                    };
+                if (PortalController.GetExpiredPortals().Count > 0)
+                {
+                    actions.Add(GetNextActionID(), Localization.GetString("DeleteExpired.Action", LocalResourceFile), 
+                                    ModuleActionType.AddContent, "Delete", "delete.gif", "",
+                                    "confirm('" + ClientAPI.GetSafeJSString(Localization.GetString("DeleteItems.Confirm")) + "')", 
+                                    true, SecurityAccessLevel.Admin, true, false);
+                }
+
                 return actions;
             }
         }

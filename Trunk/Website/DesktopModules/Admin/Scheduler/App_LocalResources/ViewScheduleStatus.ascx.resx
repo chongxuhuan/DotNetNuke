@@ -175,7 +175,7 @@
     <value>Overdue&lt;br&gt;(seconds)</value>
   </data>
   <data name="TimeRemaining.Header" xml:space="preserve">
-    <value>Time Remaining&lt;br&gt;(seconds)</value>
+    <value>Time Remaining (seconds)</value>
   </data>
   <data name="NoTasks.Text" xml:space="preserve">
     <value>There are no tasks in the queue and no tasks are processing.</value>
@@ -203,5 +203,8 @@
   </data>
   <data name="ScheduleHistory.Action" xml:space="preserve">
     <value>View Schedule History</value>
+  </data>
+  <data name="Name.Header" xml:space="preserve">
+    <value>Task Name</value>
   </data>
 </root>

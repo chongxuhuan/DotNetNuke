@@ -41,12 +41,33 @@ namespace DotNetNuke.Entities.Modules.Actions
         private readonly ActionEventHandler _actionEvent;
         private readonly int _moduleID;
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ModID"></param>
+        /// <param name="e"></param>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[jbrinkman] 	12/27/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ModuleActionEventListener(int ModID, ActionEventHandler e)
         {
             _moduleID = ModID;
             _actionEvent = e;
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[jbrinkman] 	12/27/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public int ModuleID
         {
             get
@@ -55,6 +76,16 @@ namespace DotNetNuke.Entities.Modules.Actions
             }
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[jbrinkman] 	12/27/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ActionEventHandler ActionEvent
         {
             get

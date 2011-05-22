@@ -170,8 +170,16 @@ namespace DotNetNuke.Services.FileSystem
                             {
                                 try
                                 {
-                                    fileManager.WriteFileToResponse(file, contentDisposition);
-                                    download = true;
+                                    var directUrl = fileManager.GetUrl(file);
+                                    if(directUrl.Contains("LinkClick"))
+                                    {
+                                        fileManager.WriteFileToResponse(file, contentDisposition);
+                                        download = true;
+                                    }
+                                    else
+                                    {
+                                        context.Response.Redirect(directUrl, /*endResponse*/ true);
+                                    }
                                 }
 								catch (Exception ex)
 								{

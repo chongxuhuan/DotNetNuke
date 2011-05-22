@@ -47,12 +47,32 @@ namespace DotNetNuke.Entities.Modules.Actions
         private readonly ModuleAction _action;
         private readonly ModuleInfo _moduleConfiguration;
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// </summary>
+        /// <param name="Action"></param>
+        /// <param name="ModuleConfiguration"></param>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[Joe] 	10/26/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ActionEventArgs(ModuleAction Action, ModuleInfo ModuleConfiguration)
         {
             _action = Action;
             _moduleConfiguration = ModuleConfiguration;
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[Joe] 	10/26/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ModuleAction Action
         {
             get
@@ -61,6 +81,16 @@ namespace DotNetNuke.Entities.Modules.Actions
             }
         }
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        /// <remarks></remarks>
+        /// <history>
+        /// 	[jbrinkman] 	12/27/2003	Created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ModuleInfo ModuleConfiguration
         {
             get

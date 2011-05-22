@@ -32,11 +32,28 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Authentication
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The AuthenticationLogoffBase class provides a base class for Authentiication 
+    /// Logoff controls
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	07/10/2007  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class AuthenticationLogoffBase : UserModuleBase
     {
         private string _AuthenticationType = Null.NullString;
         private string _RedirectURL = Null.NullString;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the Type of Authentication associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string AuthenticationType
         {
             get

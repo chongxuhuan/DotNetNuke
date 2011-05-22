@@ -2137,6 +2137,34 @@ ORDER BY BannerId
 
 GO
 
+/* Add GetDatabaseTimeUtc Procedure */
+/**********************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDatabaseTimeUtc]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDatabaseTimeUtc]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetDatabaseTimeUtc]
+AS
+BEGIN
+	SELECT GETUTCDATE()
+END
+GO
+
+/* Add GetDatabaseTime Procedure */
+/**********************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetDatabaseTime]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetDatabaseTime]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetDatabaseTime]
+AS
+BEGIN
+	SELECT GETDATE()
+END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

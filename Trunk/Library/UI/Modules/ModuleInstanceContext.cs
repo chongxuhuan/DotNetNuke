@@ -713,7 +713,7 @@ namespace DotNetNuke.UI.Modules
             {
                 if (!UIUtilities.IsLegacyUI(ModuleId, action.ControlKey, PortalId) && action.Url.Contains("ctl"))
                 {
-                    action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings, true);
+                    action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings, true, false);
                 }
             }
         }
@@ -756,7 +756,6 @@ namespace DotNetNuke.UI.Modules
                 ModuleIdParam = string.Format("mid={0}", Configuration.ModuleID);
             }
 
-            string url;
             string[] parameters;
             if (!string.IsNullOrEmpty(KeyName) && !string.IsNullOrEmpty(KeyValue))
             {
@@ -770,23 +769,25 @@ namespace DotNetNuke.UI.Modules
                 parameters = new string[1 + AdditionalParameters.Length];
                 parameters[0] = ModuleIdParam;
                 Array.Copy(AdditionalParameters, 0, parameters, 1, AdditionalParameters.Length);
-
             }
 
-            url = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, key, parameters);
+            return EditNavUrl(PortalSettings.ActiveTab.TabID, key, false, parameters);
+        }
 
+        public string EditNavUrl(int TabID, string ControlKey, bool pageReirect, params string[] AdditionalParameters)
+        {
+            var url = Globals.NavigateURL(TabID, ControlKey, AdditionalParameters);
             // Making URLs call popups
             if (PortalSettings.EnablePopUps)
             {
                 if (!UIUtilities.IsLegacyUI(ModuleId, ControlKey, PortalId) && (url.Contains("ctl")))
                 {
-                    url = "javascript:" + UrlUtils.PopUpUrl(url, null, PortalSettings, false);
+                    url = UrlUtils.PopUpUrl(url, null, PortalSettings, false, pageReirect);
                 }
             }
-
             return url;
         }
-
+        
         public int GetNextActionID()
         {
             _nextActionId += 1;

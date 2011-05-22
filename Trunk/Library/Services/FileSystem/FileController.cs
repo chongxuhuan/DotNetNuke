@@ -146,7 +146,7 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FileManager.Instance.GetFile(string fileName, int folderID) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FileManager.Instance.GetFile(IFolderInfo folder, string fileName) ")]
         public FileInfo GetFile(string fileName, int portalId, int folderID)
         {
             var folder = FolderManager.Instance.GetFolder(folderID);

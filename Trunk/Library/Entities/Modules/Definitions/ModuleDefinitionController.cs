@@ -89,9 +89,18 @@ namespace DotNetNuke.Entities.Modules.Definitions
             DeleteModuleDefinition(objModuleDefinition.ModuleDefID);
         }
 
-            //Try Cached Dictionary first
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteModuleDefinition deletes a Module Definition By ID
+        /// </summary>
+        /// <param name="moduleDefinitionId">The ID of the Module Definition to delete</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void DeleteModuleDefinition(int moduleDefinitionId)
         {
+			//Delete associated permissions
             var permissionController = new PermissionController();
             foreach (PermissionInfo permission in permissionController.GetPermissionsByModuleDefID(moduleDefinitionId))
             {
@@ -118,7 +127,17 @@ namespace DotNetNuke.Entities.Modules.Definitions
                    .FirstOrDefault();
         }
 
-        public static ModuleDefinitionInfo GetModuleDefinitionByFriendlyName(string friendlyName)
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// GetModuleDefinitionByFriendlyName gets a Module Definition by its Friendly
+		/// Name (and DesktopModuleID)
+		/// </summary>
+		/// <param name="friendlyName">The friendly name</param>
+		/// <history>
+		/// 	[cnurse]	01/14/2008   Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		public static ModuleDefinitionInfo GetModuleDefinitionByFriendlyName(string friendlyName)
         {
             Requires.NotNullOrEmpty("friendlyName", friendlyName);
 

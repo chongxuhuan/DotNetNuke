@@ -31,6 +31,23 @@ using System.Reflection;
 
 namespace DotNetNuke.Common.Utilities
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Common.Utilities
+    /// Class:      ObjectMappingInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ObjectMappingInfo class is a helper class that holds the mapping information
+    /// for a particular type.  This information is in two parts:
+    ///     - Information about the Database Table that the object is mapped to
+    ///     - Information about how the object is cached.
+    /// For each object, when it is first accessed, reflection is used on the class and
+    /// an instance of ObjectMappingInfo is created, which is cached for performance.
+    /// </summary>
+    /// <history>
+    ///     [cnurse]	12/01/2007	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class ObjectMappingInfo
     {
@@ -43,12 +60,29 @@ namespace DotNetNuke.Common.Utilities
         private string _PrimaryKey;
         private string _TableName;
 
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a new ObjectMappingInfo Object
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/12/2008	created
+        /// </history>
+        ///-----------------------------------------------------------------------------
         public ObjectMappingInfo()
         {
             _Properties = new Dictionary<string, PropertyInfo>();
             _ColumnNames = new Dictionary<string, string>();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CacheKey gets the root value of the key used to identify the cached collection 
+        /// in the ASP.NET Cache.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CacheKey
         {
             get
@@ -62,6 +96,17 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CacheByProperty gets and sets the property that is used to cache collections
+        /// of the object.  For example: Modules are cached by the "TabId" proeprty.  Tabs 
+        /// are cached by the PortalId property.
+        /// </summary>
+        /// <remarks>If empty, a collection of all the instances of the object is cached.</remarks>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CacheByProperty
         {
             get
@@ -74,6 +119,17 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CacheTimeOutMultiplier gets and sets the multiplier used to determine how long
+        /// the cached collection should be cached.  It is multiplied by the Performance
+        /// Setting - which in turn can be modified by the Host Account.
+        /// </summary>
+        /// <remarks>Defaults to 20.</remarks>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int CacheTimeOutMultiplier
         {
             get
@@ -86,6 +142,14 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ColumnNames gets a dictionary of Database Column Names for the Object
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/02/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, string> ColumnNames
         {
             get
@@ -94,6 +158,14 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// ObjectType gets and sets the type of the object
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ObjectType
         {
             get
@@ -106,6 +178,15 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// PrimaryKey gets and sets the property of the object that corresponds to the
+        /// primary key in the database
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PrimaryKey
         {
             get
@@ -118,6 +199,14 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Properties gets a dictionary of Properties for the Object
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, PropertyInfo> Properties
         {
             get
@@ -126,6 +215,15 @@ namespace DotNetNuke.Common.Utilities
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// TableName gets and sets the name of the database table that is used to
+        /// persist the object.
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/01/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string TableName
         {
             get

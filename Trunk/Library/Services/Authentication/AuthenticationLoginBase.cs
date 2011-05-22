@@ -32,6 +32,15 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Authentication
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The AuthenticationLoginBase class provides a bas class for Authentiication 
+    /// Login controls
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	07/10/2007  Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class AuthenticationLoginBase : UserModuleBase
     {
         #region Delegates
@@ -43,6 +52,14 @@ namespace DotNetNuke.Services.Authentication
         private string _AuthenticationType = Null.NullString;
         private string _RedirectURL = Null.NullString;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the Type of Authentication associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string AuthenticationType
         {
             get
@@ -55,8 +72,25 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets whether the control is Enabled
+        /// </summary>
+        /// <remarks>This property must be overriden in the inherited class</remarks>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public abstract bool Enabled { get; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the IP address associated with the request
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string IPAddress
         {
             get
@@ -65,6 +99,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and Sets the Type of Authentication associated with this control
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string RedirectURL
         {
             get

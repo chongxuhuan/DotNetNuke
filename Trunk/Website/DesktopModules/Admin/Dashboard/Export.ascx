@@ -5,7 +5,7 @@
     <fieldset>
         <div class="dnnFormItem">
             <dnn:label id="plFileName" runat="server" controlname="txtFileName" />
-            <asp:textbox id="txtFileName" runat="server" maxlength="200"  />
+            <asp:textbox id="txtFileName" runat="server" maxlength="200"  />&nbsp;.xml
             <asp:RequiredFieldValidator ID="valFileName" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" resourcekey="valFileName.Error" ControlToValidate="txtFileName" runat="server" />
         </div>
     </fieldset>

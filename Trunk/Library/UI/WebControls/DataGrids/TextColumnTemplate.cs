@@ -137,6 +137,17 @@ namespace DotNetNuke.UI.WebControls
 
         #region ITemplate Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstantiateIn instantiates the template (implementation of ITemplate)
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        ///	<param name="container">The parent container (DataGridItem)</param>
+        /// <history>
+        /// 	[cnurse]	02/16/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void InstantiateIn(Control container)
         {
             switch (ItemType)

@@ -79,6 +79,16 @@ namespace DotNetNuke.Entities.Modules
         /// </history>
         /// -----------------------------------------------------------------------------
         public SecurityAccessLevel ControlType { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Help URL
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	03/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string HelpURL { get; set; }
         /// -----------------------------------------------------------------------------
         /// <summary>

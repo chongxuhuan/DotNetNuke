@@ -148,7 +148,7 @@
     <value>Page is disabled</value>
   </data>
   <data name="lblHead.Text" xml:space="preserve">
-    <value>The pages module allows you to manage pages within your portal. You can move pages by using drag &amp; drop, other operations are available on right click.</value>
+    <value>The pages module allows you to manage pages within your portal. You can move pages by using drag &amp; drop - other operations are available on right click.  Changes made are immediately available to other users - but are not reflected on this page without a page refresh.</value>
   </data>
   <data name="lblHidden.Text" xml:space="preserve">
     <value>Page is hidden in menu</value>
@@ -329,5 +329,14 @@
   </data>
   <data name="DesignCopyError.Text" xml:space="preserve">
     <value>An error occured while applying the the selected skin to all childpages</value>
+  </data>
+  <data name="Host.Text" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="Site.Text" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="ModuleHelp.Text" xml:space="preserve">
+    <value>&lt;h1&gt;About Pages&lt;/h1&gt;&lt;p&gt;The Admin user can manage pages in the site.&lt;/p&gt;</value>
   </data>
 </root>

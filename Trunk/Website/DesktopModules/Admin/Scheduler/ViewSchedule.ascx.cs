@@ -24,8 +24,6 @@
 #region Usings
 
 using System;
-using System.Collections;
-
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
@@ -33,12 +31,15 @@ using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Scheduling;
+using Telerik.Web.UI;
+using System.Web.UI.WebControls;
+using DotNetNuke.Common;
 
 #endregion
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The ViewSchedule PortalModuleBase is used to manage the scheduled items.
     /// </summary>
@@ -48,7 +49,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
     /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
     ///                       and localisation
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class ViewSchedule : PortalModuleBase, IActionable
     {
 
@@ -79,9 +79,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// GetTimeLapse formats the time lapse as a string
         /// </summary>
@@ -91,7 +90,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected string GetTimeLapse(int timeLapse, string timeLapseMeasurement)
         {
             if (timeLapse != Null.NullInteger)
@@ -128,9 +126,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Page_Load runs when the control is loaded.
         /// </summary>
@@ -140,27 +137,66 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             try
             {
-                if (!Page.IsPostBack)
-                {
-                    var arrSchedule = SchedulingProvider.Instance().GetSchedule();
 
-                    //Lcalize Grid
-                    Localization.LocalizeDataGrid(ref dgSchedule, LocalResourceFile);
-
-                    dgSchedule.DataSource = arrSchedule;
-                    dgSchedule.DataBind();
-                }
+                dgSchedule.NeedDataSource += OnGridNeedDataSource;
+                dgSchedule.ItemDataBound += OnGridItemDataBound;
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        protected void OnGridNeedDataSource(object sender, GridNeedDataSourceEventArgs e)
+        {
+            var arrSchedule = SchedulingProvider.Instance().GetSchedule();
+
+            dgSchedule.DataSource = arrSchedule;
+        }
+
+        protected void OnGridItemDataBound(object sender, GridItemEventArgs e)
+        {
+            if (!(e.Item is GridDataItem)) return;
+            var scheduleKey = (int)e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["ScheduleID"];
+            var enabledKey = (bool)e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["Enabled"];
+            var timeLapseKey = (int)e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["TimeLapse"];
+            var retryTimeLapseKey = (int)e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["RetryTimeLapse"];
+            var timeLapseMeasurementKey = e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["TimeLapseMeasurement"].ToString();
+            var retryTimeLapseMeasurementKey = e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["RetryTimeLapseMeasurement"].ToString();
+            var nextStartKey = e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["NextStart"].ToString();
+
+            var dataItem = (GridDataItem)e.Item;
+
+            var hlEdit = ((HyperLink)(dataItem)["EditItem"].FindControl("hlEdit"));
+            hlEdit.NavigateUrl = EditUrl("ScheduleID", scheduleKey.ToString());
+            hlEdit.Visible = IsEditable;
+
+            var imgEdit = ((Image)(dataItem)["EditItem"].FindControl("imgEdit"));
+            imgEdit.AlternateText = Localization.GetString("Edit", LocalResourceFile);
+            imgEdit.ToolTip = Localization.GetString("Edit", LocalResourceFile);
+            imgEdit.Visible = IsEditable;
+
+            var lblFrequency = ((Label)(dataItem)["Frequency"].FindControl("lblFrequency"));
+            lblFrequency.Text = GetTimeLapse(timeLapseKey, timeLapseMeasurementKey);
+
+            var lblRetryTimeLapse = ((Label)(dataItem)["RetryTimeLapse"].FindControl("lblRetryTimeLapse"));
+            lblRetryTimeLapse.Text = GetTimeLapse(retryTimeLapseKey, retryTimeLapseMeasurementKey);
+
+            var lblNextStart = ((Label)(dataItem)["NextStart"].FindControl("lblNextStart"));
+            lblNextStart.Text = nextStartKey;
+            lblNextStart.Visible = enabledKey;
+
+            var hlHistory = ((HyperLink)(dataItem)["ViewHistory"].FindControl("hlHistory"));
+            hlHistory.NavigateUrl = EditUrl("ScheduleID", scheduleKey.ToString(), "History");
+
+            var imgHistory = ((Image)(dataItem)["ViewHistory"].FindControl("imgHistory"));
+            imgHistory.AlternateText = Localization.GetString("History", LocalResourceFile);
+            imgHistory.ToolTip = Localization.GetString("History", LocalResourceFile);
         }
 		
 		#endregion

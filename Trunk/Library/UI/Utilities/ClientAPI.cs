@@ -175,6 +175,24 @@ namespace DotNetNuke.UI.Utilities
             EnableMinMax(objButton, objContent, -1, blnDefaultMin, strMinIconLoc, strMaxIconLoc, ePersistanceType);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Allows a button and a content area to support client side min/max functionality
+        /// </summary>
+        /// <param name="objButton">Control that when clicked causes content area to be hidden/shown</param>
+        /// <param name="objContent">Content area that is hidden/shown</param>
+        /// <param name="intModuleId">Module id of button/content, used only for persistance type of Cookie</param>
+        /// <param name="blnDefaultMin">If content area is to be defaulted to minimized pass in true</param>
+        /// <param name="strMinIconLoc">Location of minimized icon</param>
+        /// <param name="strMaxIconLoc">Location of maximized icon</param>
+        /// <param name="ePersistanceType">How to store current state of min/max.  Cookie, Page, None</param>
+        /// <remarks>
+        /// This method's purpose is to provide a higher level of abstraction between the ClientAPI and the module developer.
+        /// </remarks>
+        /// <history>
+        /// 	[Jon Henning]	5/6/2005	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static void EnableMinMax(Control objButton, Control objContent, int intModuleId, bool blnDefaultMin, string strMinIconLoc, string strMaxIconLoc, MinMaxPersistanceType ePersistanceType)
         {
             EnableMinMax(objButton, objContent, intModuleId, blnDefaultMin, strMinIconLoc, strMaxIconLoc, ePersistanceType, 5);

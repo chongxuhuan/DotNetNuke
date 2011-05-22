@@ -19,7 +19,7 @@
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.Design.dll</name>
-              <version>2011.1.315.35</version>
+              <version>2011.1.519.35</version>
             </assembly>
           </assemblies>
         </component>

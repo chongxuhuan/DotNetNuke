@@ -45,7 +45,7 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The EditSchedule PortalModuleBase is used to edit the scheduled items.
     /// </summary>
@@ -55,8 +55,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
     /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
     ///                       and localisation
     /// </history>
-    /// -----------------------------------------------------------------------------
-
     public partial class EditSchedule : PortalModuleBase, IActionable
     {
 
@@ -66,32 +64,28 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString(ModuleActionType.ContentOptions, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "icon_scheduler_16px.gif",
-                            EditUrl("", "", "Status"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
+                var actionCollection = new ModuleActionCollection
+                                  {
+                                      {
+                                          GetNextActionID(), Localization.GetString(ModuleActionType.ContentOptions, LocalResourceFile), ModuleActionType.AddContent, "", "icon_scheduler_16px.gif",
+                                          EditUrl("", "", "Status"), false, SecurityAccessLevel.Host, true, false
+                                          }
+                                  };
                 if (Request.QueryString["ScheduleID"] != null)
                 {
-                    int ScheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
-                    Actions.Add(GetNextActionID(),
+                    var scheduleID = Convert.ToInt32(Request.QueryString["ScheduleID"]);
+                    actionCollection.Add(GetNextActionID(),
                                 Localization.GetString("ScheduleHistory.Action", LocalResourceFile),
                                 ModuleActionType.AddContent,
                                 "",
                                 "icon_profile_16px.gif",
-                                EditUrl("ScheduleID", ScheduleID.ToString(), "History"),
+                                EditUrl("ScheduleID", scheduleID.ToString(), "History"),
                                 false,
                                 SecurityAccessLevel.Host,
                                 true,
                                 false);
                 }
-                return Actions;
+                return actionCollection;
             }
         }
 
@@ -251,17 +245,14 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #region Event Handlers
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Page_Load runs when the control is loaded.
         /// </summary>
         /// <remarks>
         /// </remarks>
         /// <history>
-        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
+        /// [cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -286,17 +277,14 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// cmdDelete_Click runs when the Delete Button is clicked
         /// </summary>
         /// <remarks>
         /// </remarks>
         /// <history>
-        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
+        /// [cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected void OnDeleteClick(Object sender, EventArgs e)
         {
             var objScheduleItem = new ScheduleItem {ScheduleID = Convert.ToInt32(ViewState["ScheduleID"])};
@@ -322,17 +310,14 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// cmdUpdate_Click runs when the Update Button is clicked
         /// </summary>
         /// <remarks>
         /// </remarks>
         /// <history>
-        /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
+        /// [cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected void OnUpdateClick(Object sender, EventArgs e)
         {
             var objScheduleItem = CreateScheduleItem();

@@ -80,6 +80,10 @@ namespace DotNetNuke.Application
     {
         private readonly ReleaseMode _releaseMode;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyStatusAttribute" /> class.
+        /// </summary>
+        /// <param name="releaseMode">The release mode.</param>
         public AssemblyStatusAttribute(ReleaseMode releaseMode)
         {
             _releaseMode = releaseMode;

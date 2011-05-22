@@ -359,6 +359,17 @@ namespace DotNetNuke.UI.Skins
             private string m_ParseMessages = "";
             private ArrayList m_RegisterList = new ArrayList();
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     ControlParser class constructor.
+            /// </summary>
+            /// <remarks>
+            ///     The constructor processes accepts a hashtable of skin objects to process against.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public ControlParser(Hashtable ControlList)
             {
                 m_ControlList = (Hashtable) ControlList.Clone();
@@ -460,9 +471,15 @@ namespace DotNetNuke.UI.Skins
             public string Parse(ref string Source, XmlDocument Attributes)
             {
                 Messages = m_InitMessages;
+				//set the token attributes
                 this.Attributes = Attributes;
+				//clear register list
                 RegisterList.Clear();
+
+				//define the regular expression to match tokens
                 var FindTokenInstance = new Regex("\\[\\s*(?<token>\\w*)\\s*:?\\s*(?<instance>\\w*)\\s*]", RegexOptions.IgnoreCase);
+
+				//parse the file
                 Source = FindTokenInstance.Replace(Source, Handler);
                 return Messages;
             }
@@ -623,6 +640,17 @@ namespace DotNetNuke.UI.Skins
             private string m_ParseMessages = "";
             private ArrayList m_RegisterList = new ArrayList();
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     ControlParser class constructor.
+            /// </summary>
+            /// <remarks>
+            ///     The constructor processes accepts a hashtable of skin objects to process against.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public ObjectParser(Hashtable ControlList)
             {
                 m_ControlList = (Hashtable) ControlList.Clone();
@@ -877,6 +905,23 @@ namespace DotNetNuke.UI.Skins
 
         #region Nested type: PathParser
 
+        /// -----------------------------------------------------------------------------
+        /// Project	 : DotNetNuke
+        /// Class	 : SkinFileProcessor.PathParser
+        /// 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Parsing functionality for path replacement in new skin files.
+        /// </summary>
+        /// <remarks>
+        ///     This class encapsulates the data and methods necessary to appropriately
+        ///     handle all the path replacement parsing needs for new skin files. Parsing
+        ///     supported for CSS syntax and HTML syntax (which covers ASCX files also). 
+        /// </remarks>
+        /// <history>
+        /// 	[willhsc]	3/3/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private class PathParser
         {
             private readonly string SUBST = Util.GetLocalizedString("Substituting");
@@ -886,12 +931,29 @@ namespace DotNetNuke.UI.Skins
             private string m_Messages = "";
             private string m_SkinPath = "";
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     List of regular expressions for processing HTML syntax.
+            /// </summary>
+            /// <returns>ArrayList of Regex objects formatted for the Parser method.</returns>
+            /// <remarks>
+            ///     Additional patterns can be added to this list (if necessary) if properly
+            ///     formatted to return <tag/>, <content/> and <endtag/> groups.  For future
+            ///     consideration, this list could be imported from a configuration file to
+            ///     provide for greater flexibility.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public ArrayList HTMLList
             {
                 get
                 {
+					//if the arraylist in uninitialized
                     if (m_HTMLPatterns.Count == 0)
                     {
+						//retrieve the patterns
                         string[] arrPattern = {
                                                   "(?<tag><head[^>]*?\\sprofile\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)",
                                                   "(?<tag><object[^>]*?\\s(?:codebase|data|usemap)\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)",
@@ -905,31 +967,57 @@ namespace DotNetNuke.UI.Skins
                                                   "(?<tag><(?:param\\s+name\\s*=\\s*\"(?:movie|src|base)\")[^>]*?\\svalue\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)",
                                                   "(?<tag><embed[^>]*?\\s(?:src)\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)"
                                               };
-                        int i;
-                        for (i = 0; i <= arrPattern.GetLength(0) - 1; i++)
+
+                        //for each pattern, create a regex object
+                        for (int i = 0; i <= arrPattern.GetLength(0) - 1; i++)
                         {
                             var re = new Regex(arrPattern[i], RegexOptions.Multiline | RegexOptions.IgnoreCase);
+							//add the Regex object to the pattern array list
                             m_HTMLPatterns.Add(re);
                         }
+
+						//optimize the arraylist size since it will not change
                         m_HTMLPatterns.TrimToSize();
                     }
                     return m_HTMLPatterns;
                 }
             }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     List of regular expressions for processing CSS syntax.
+            /// </summary>
+            /// <returns>ArrayList of Regex objects formatted for the Parser method.</returns>
+            /// <remarks>
+            ///     Additional patterns can be added to this list (if necessary) if properly
+            ///     formatted to return <tag/>, <content/> and <endtag/> groups.  For future
+            ///     consideration, this list could be imported from a configuration file to
+            ///     provide for greater flexibility.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public ArrayList CSSList
             {
                 get
                 {
+					//if the arraylist in uninitialized
                     if (m_CSSPatterns.Count == 0)
                     {
+						//retrieve the patterns
                         string[] arrPattern = {"(?<tag>\\surl\\u0028)(?<content>[^\\u0029]*)(?<endtag>\\u0029.*;)"};
-                        int i;
-                        for (i = 0; i <= arrPattern.GetLength(0) - 1; i++)
+                        
+						//for each pattern, create a regex object
+                        for (int i = 0; i <= arrPattern.GetLength(0) - 1; i++)
                         {
                             var re = new Regex(arrPattern[i], RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+							//add the Regex object to the pattern array list
                             m_CSSPatterns.Add(re);
                         }
+
+						//optimize the arraylist size since it will not change
                         m_CSSPatterns.TrimToSize();
                     }
                     return m_CSSPatterns;
@@ -958,40 +1046,85 @@ namespace DotNetNuke.UI.Skins
 
             private SkinParser ParseOption { get; set; }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     Perform parsing on the specified source file.
+            /// </summary>
+            /// <param name="Source">Pointer to Source string to be parsed.</param>
+            /// <param name="RegexList">ArrayList of properly formatted regular expression objects.</param>
+            /// <param name="SkinPath">Path to use in replacement operation.</param>
+            /// <param name="ParseOption">Parse Opition.</param>
+            /// <remarks>
+            ///     This procedure iterates through the list of regular expression objects
+            ///     and invokes a handler for each match which uses the specified path.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public string Parse(ref string Source, ArrayList RegexList, string SkinPath, SkinParser ParseOption)
             {
                 m_Messages = "";
+
+				//set path propery which is file specific
                 this.SkinPath = SkinPath;
+				//set parse option
                 this.ParseOption = ParseOption;
-                int i;
-                for (i = 0; i <= RegexList.Count - 1; i++)
+                
+				//process each regular expression
+                for (int i = 0; i <= RegexList.Count - 1; i++)
                 {
                     Source = ((Regex) RegexList[i]).Replace(Source, Handler);
                 }
                 return m_Messages;
             }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     Process regular expression matches.
+            /// </summary>
+            /// <param name="m">Regular expression match for path information which requires processing.</param>
+            /// <returns>Properly formatted path information.</returns>
+            /// <remarks>
+            ///     The handler is invoked by the Regex.Replace method once for each match that
+            ///     it encounters.  The returned value of the handler is substituted for the
+            ///     original match.  So the handler properly formats the path information and
+            ///     returns it in favor of the improperly formatted match.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             private string MatchHandler(Match m)
             {
                 string strOldTag = m.Groups["tag"].Value + m.Groups["content"].Value + m.Groups["endtag"].Value;
                 string strNewTag = strOldTag;
+
+				//we do not want to process object tags to DotNetNuke widgets
                 if (!m.Groups[0].Value.ToLower().Contains("codetype=\"dotnetnuke/client\""))
                 {
                     switch (ParseOption)
                     {
                         case SkinParser.Localized:
+							//if the tag does not contain the localized path
                             if (strNewTag.IndexOf(SkinPath) == -1)
                             {
+								//insert the localized path
                                 strNewTag = m.Groups["tag"].Value + SkinPath + m.Groups["content"].Value + m.Groups["endtag"].Value;
                             }
                             break;
                         case SkinParser.Portable:
+							//if the tag does not contain a reference to the skinpath
                             if (strNewTag.ToLower().IndexOf("<%= skinpath %>") == -1)
                             {
+								//insert the skinpath 
                                 strNewTag = m.Groups["tag"].Value + "<%= SkinPath %>" + m.Groups["content"].Value + m.Groups["endtag"].Value;
                             }
+
+							//if the tag contains the localized path
                             if (strNewTag.IndexOf(SkinPath) != -1)
                             {
+								//remove the localized path
                                 strNewTag = strNewTag.Replace(SkinPath, "");
                             }
                             break;
@@ -1006,6 +1139,16 @@ namespace DotNetNuke.UI.Skins
 
         #region Nested type: SkinFile
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///     Utility class for processing of skin files.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[willhsc]	3/3/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private class SkinFile
         {
             private readonly string CONTROL_DIR = Util.GetLocalizedString("ControlDirective");
@@ -1023,33 +1166,76 @@ namespace DotNetNuke.UI.Skins
             private string FILE_FORMAT_DETAIL = Util.GetLocalizedString("FileFormat.Detail");
             private string m_Messages = "";
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     SkinFile class constructor.
+            /// </summary>
+			/// <param name="SkinContents"></param>
+            /// <param name="SkinAttributes"></param>
+            /// <remarks>
+            ///     The constructor primes the utility class with basic file information.
+            ///     It also checks for the existentce of a skinfile level attribute file
+            ///     and read it in, if found.  
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public SkinFile(string SkinContents, XmlDocument SkinAttributes)
             {
                 m_FileAttributes = SkinAttributes;
                 Contents = SkinContents;
             }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     SkinFile class constructor.
+            /// </summary>
+            /// <param name="SkinRoot"></param>
+            /// <param name="FileName"></param>
+            /// <param name="SkinAttributes"></param>
+            /// <remarks>
+            ///     The constructor primes the utility class with basic file information.
+            ///     It also checks for the existentce of a skinfile level attribute file
+            ///     and read it in, if found.  
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public SkinFile(string SkinRoot, string FileName, XmlDocument SkinAttributes)
             {
+				//capture file information
                 m_FileName = FileName;
                 m_FileExtension = Path.GetExtension(FileName);
                 m_SkinRoot = SkinRoot;
                 m_FileAttributes = SkinAttributes;
-                string strTemp = FileName.Replace(Path.GetFileName(FileName), "");
+                
+				//determine and store path to portals skin root folder
+				string strTemp = FileName.Replace(Path.GetFileName(FileName), "");
                 strTemp = strTemp.Replace("\\", "/");
                 m_SkinRootPath = Globals.ApplicationPath + strTemp.Substring(0, strTemp.ToUpper().IndexOf("/PORTALS"));
-                Contents = Read(FileName);
+                
+				//read file contents
+				Contents = Read(FileName);
+
+				//setup some attributes based on file extension
                 switch (FileExtension)
                 {
                     case ".htm":
                     case ".html":
+						//set output file name to <filename>.ASCX
                         m_WriteFileName = FileName.Replace(Path.GetExtension(FileName), ".ascx");
+
+						//capture warning if file does not contain a id="ContentPane" or [CONTENTPANE]
                         var PaneCheck1 = new Regex("\\s*id\\s*=\\s*\"" + Globals.glbDefaultPane + "\"", RegexOptions.IgnoreCase);
                         var PaneCheck2 = new Regex("\\s*[" + Globals.glbDefaultPane + "]", RegexOptions.IgnoreCase);
                         if (PaneCheck1.IsMatch(Contents) == false && PaneCheck2.IsMatch(Contents) == false)
                         {
                             m_Messages += SkinController.FormatMessage(FILE_FORMAT_ERROR, string.Format(FILE_FORMAT_ERROR, FileName), 2, true);
                         }
+
+						//Check for existence of and load skin file level attribute information 
                         if (File.Exists(FileName.Replace(FileExtension, ".xml")))
                         {
                             try
@@ -1057,7 +1243,7 @@ namespace DotNetNuke.UI.Skins
                                 m_FileAttributes.Load(FileName.Replace(FileExtension, ".xml"));
                                 m_Messages += SkinController.FormatMessage(FILE_LOAD, FileName, 2, false);
                             }
-                            catch (Exception exc)
+                            catch (Exception exc) //could not load XML file
                             {
                                 DnnLog.Error(exc);
                                 m_FileAttributes = SkinAttributes;
@@ -1066,6 +1252,7 @@ namespace DotNetNuke.UI.Skins
                         }
                         break;
                     default:
+							//output file name is same as input file name
                         m_WriteFileName = FileName;
                         break;
                 }
@@ -1139,6 +1326,7 @@ namespace DotNetNuke.UI.Skins
 
             public void Write()
             {
+				//delete the file before attempting to write
                 if (File.Exists(WriteFileName))
                 {
                     File.Delete(WriteFileName);
@@ -1150,11 +1338,28 @@ namespace DotNetNuke.UI.Skins
                 objStreamWriter.Close();
             }
 
+            /// -----------------------------------------------------------------------------
+            /// <summary>
+            ///     Prepend ascx control directives to file contents.
+            /// </summary>
+            /// <param name="Registrations">ArrayList of registration directives.</param>
+            /// <remarks>
+            ///     This procedure formats the @Control directive and prepends it and all
+            ///     registration directives to the file contents.
+            /// </remarks>
+            /// <history>
+            /// 	[willhsc]	3/3/2004	Created
+            /// </history>
+            /// -----------------------------------------------------------------------------
             public string PrependASCXDirectives(ArrayList Registrations)
             {
                 string Messages = "";
                 string Prefix = "";
+
+				//if the skin source is an HTML document, extract the content within the <body> tags
                 string strPattern = "<\\s*body[^>]*>(?<skin>.*)<\\s*/\\s*body\\s*>";
+
+				//format and save @Control directive
                 Match objMatch;
                 objMatch = Regex.Match(Contents, strPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 if (!String.IsNullOrEmpty(objMatch.Groups[1].Value))
@@ -1170,11 +1375,15 @@ namespace DotNetNuke.UI.Skins
                     Prefix += "<%@ Control language=\"vb\" AutoEventWireup=\"false\" Explicit=\"True\" Inherits=\"DotNetNuke.UI.Containers.Container\" %>" + Environment.NewLine;
                 }
                 Messages += SkinController.FormatMessage(CONTROL_DIR, HttpUtility.HtmlEncode(Prefix), 2, false);
+
+				//add preformatted Control Registrations
                 foreach (string Item in Registrations)
                 {
                     Messages += SkinController.FormatMessage(CONTROL_REG, HttpUtility.HtmlEncode(Item), 2, false);
                     Prefix += Item;
                 }
+
+				//update file contents to include ascx header information
                 Contents = Prefix + Contents;
                 return Messages;
             }

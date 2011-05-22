@@ -50,15 +50,41 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:TextEditControl runat=server></{0}:TextEditControl>")]
     public class TextEditControl : EditControl
     {
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a TextEditControl
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/24/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public TextEditControl()
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Constructs a TextEditControl
+        /// </summary>
+        /// <param name="type">The type of the property</param>
+        /// <history>
+        ///     [cnurse]	02/22/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public TextEditControl(string type)
         {
             SystemType = type;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OldStringValue returns the Boolean representation of the OldValue
+        /// </summary>
+        /// <value>A String representing the OldValue</value>
+        /// <history>
+        ///     [cnurse]	06/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected string OldStringValue
         {
             get
@@ -67,6 +93,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StringValue is the value of the control expressed as a String
+        /// </summary>
+        /// <value>A string representing the Value</value>
+        /// <history>
+        ///     [cnurse]	02/21/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string StringValue
         {
             get
@@ -84,6 +119,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnDataChanged runs when the PostbackData has changed.  It raises the ValueChanged
+        /// Event
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/21/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnDataChanged(EventArgs e)
         {
             var args = new PropertyEditorEventArgs(Name);
@@ -93,6 +137,15 @@ namespace DotNetNuke.UI.WebControls
             base.OnValueChanged(args);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RenderEditMode renders the Edit mode of the control
+        /// </summary>
+        /// <param name="writer">A HtmlTextWriter.</param>
+        /// <history>
+        ///     [cnurse]	02/27/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
             int length = Null.NullInteger;

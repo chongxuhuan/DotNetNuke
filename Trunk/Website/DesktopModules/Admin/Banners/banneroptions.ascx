@@ -4,7 +4,7 @@
 <div class="dnnForm dnnBannerOptions dnnClear">
     <div class="dnnFormItem">
         <dnn:label id="plSource" runat="server" controlname="optSource" suffix=":" />
-        <asp:RadioButtonList id="optSource" runat="server" RepeatDirection="Horizontal">
+        <asp:RadioButtonList id="optSource" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
 			<asp:ListItem Value="G" resourcekey="Host">Host</asp:ListItem>
 			<asp:ListItem Value="L" resourcekey="Site">Site</asp:ListItem>
 		</asp:RadioButtonList>
@@ -24,7 +24,7 @@
     </div>
     <div class="dnnFormItem">
         <dnn:label id="plOrientation" runat="server" controlname="optOrientation" suffix=":" />
-        <asp:RadioButtonList id="optOrientation" runat="server" RepeatDirection="Horizontal">
+        <asp:RadioButtonList id="optOrientation" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
 			<asp:ListItem Value="V" resourcekey="Vertical">Vertical</asp:ListItem>
 			<asp:ListItem Value="H" resourcekey="Horizontal">Horizontal</asp:ListItem>
 		</asp:RadioButtonList>

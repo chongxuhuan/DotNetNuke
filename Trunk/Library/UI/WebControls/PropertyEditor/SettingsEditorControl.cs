@@ -33,11 +33,41 @@ using System.Web.UI.WebControls;
 
 namespace DotNetNuke.UI.WebControls
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.UI.WebControls
+    /// Class:      SettingsEditorControl
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The SettingsEditorControl control provides an Editor to edit DotNetNuke
+    /// Settings
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	02/14/2006	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [ToolboxData("<{0}:SettingsEditorControl runat=server></{0}:SettingsEditorControl>")]
     public class SettingsEditorControl : PropertyEditorControl
-    {
-        private IEnumerable _UnderlyingDataSource;
+	{
+		#region "Private Members"
 
+		private IEnumerable _UnderlyingDataSource;
+
+		#endregion
+
+		#region "Protected Properties"
+
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Underlying DataSource
+        /// </summary>
+        /// <value>An IEnumerable</value>
+        /// <history>
+        /// 	[cnurse]	03/09/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override IEnumerable UnderlyingDataSource
         {
             get
@@ -50,11 +80,45 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+		#endregion
+
+		#region "Public Properties"
+
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the CustomEditors that are used by this control
+        /// </summary>
+        /// <value>The CustomEditors object</value>
+        /// <history>
+        /// 	[cnurse]	03/23/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         public Hashtable CustomEditors { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Visibility values that are used by this control
+        /// </summary>
+        /// <value>The CustomEditors object</value>
+        /// <history>
+        /// 	[cnurse]	08/21/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Hashtable Visibility { get; set; }
 
+		#endregion
+
+		#region "Private Methods"
+
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetSettings converts the DataSource into an ArrayList (IEnumerable)
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/23/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private ArrayList GetSettings()
         {
             var settings = (Hashtable) DataSource;
@@ -73,16 +137,31 @@ namespace DotNetNuke.UI.WebControls
             return arrSettings;
         }
 
-        protected override void AddEditorRow(Table table, object obj)
+		#endregion
+
+		#region "Protected Override Methods"
+
+		protected override void AddEditorRow(Table table, object obj)
         {
             var info = (SettingInfo) obj;
             AddEditorRow(table, info.Name, new SettingsEditorInfoAdapter(DataSource, obj, ID));
         }
+
         protected override void AddEditorRow(object obj)
         {
             var info = (SettingInfo)obj; 
             AddEditorRow(this, info.Name, new SettingsEditorInfoAdapter(DataSource, obj, ID));
         }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetRowVisibility determines the Visibility of a row in the table
+        /// </summary>
+        /// <param name="obj">The property</param>
+        /// <history>
+        ///     [cnurse]	03/08/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override bool GetRowVisibility(object obj)
         {
             var info = (SettingInfo) obj;
@@ -92,6 +171,8 @@ namespace DotNetNuke.UI.WebControls
                 _IsVisible = Convert.ToBoolean(Visibility[info.Name]);
             }
             return _IsVisible;
-        }
-    }
+		}
+
+		#endregion
+	}
 }

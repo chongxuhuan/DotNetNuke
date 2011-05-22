@@ -53,6 +53,16 @@ namespace DotNetNuke.Services.Search
             ScheduleHistoryItem = objScheduleHistoryItem;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DoWork runs the scheduled item
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///		[cnurse]	11/15/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void DoWork()
         {
             try

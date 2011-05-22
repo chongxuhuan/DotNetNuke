@@ -29,6 +29,20 @@ using System;
 
 namespace DotNetNuke.UI.Skins
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Class	 : SkinInfo
+    /// 
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    ///     Handles the Business Object for Skins
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[willhsc]	3/3/2004	Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class SkinInfo
     {

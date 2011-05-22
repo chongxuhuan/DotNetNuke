@@ -35,6 +35,18 @@ using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Entities
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Entities
+    /// Class	 : BaseEntityInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// BaseEntityInfo provides auditing fields for Core tables.
+    /// </summary>
+    /// <history>
+    /// 	[jlucarino]	02/20/2009   Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public abstract class BaseEntityInfo
     {
@@ -44,18 +56,64 @@ namespace DotNetNuke.Entities
             LastModifiedByUserID = Null.NullInteger;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the CreatedByUserID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false), XmlIgnore]
         public int CreatedByUserID { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the CreatedOnDate
+        /// </summary>
+        /// <returns>A DateTime</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false), XmlIgnore]
         public DateTime CreatedOnDate { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the LastModifiedByUserID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false), XmlIgnore]
         public int LastModifiedByUserID { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the LastModifiedOnDate
+        /// </summary>
+        /// <returns>A DateTime</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false), XmlIgnore]
         public DateTime LastModifiedOnDate { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the UserInfo object associated with this user
+        /// </summary>
+		/// <param name="portalId">The PortalID associated with the desired user</param>
+        /// <returns>A UserInfo object</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserInfo CreatedByUser(int portalId)
         {
             if (CreatedByUserID > Null.NullInteger)
@@ -66,6 +124,16 @@ namespace DotNetNuke.Entities
             return null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the UserInfo object associated with this user
+        /// </summary>
+		/// <param name="portalId">The PortalID associated with the desired user</param>
+        /// <returns>A UserInfo object</returns>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserInfo LastModifiedByUser(int portalId)
         {
             if (LastModifiedByUserID > Null.NullInteger)
@@ -76,7 +144,16 @@ namespace DotNetNuke.Entities
             return null;
         }
 
-        protected virtual void FillInternal(IDataReader dr)
+         /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a BaseEntityInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[jlucarino]	02/20/2009   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+       protected virtual void FillInternal(IDataReader dr)
         {
             CreatedByUserID = Null.SetNullInteger(dr["CreatedByUserID"]);
             CreatedOnDate = Null.SetNullDateTime(dr["CreatedOnDate"]);
@@ -84,6 +161,11 @@ namespace DotNetNuke.Entities
             LastModifiedOnDate = Null.SetNullDateTime(dr["LastModifiedOnDate"]);
         }
 
+        /// <summary>
+        /// method used by cbo to fill readonly properties ignored by HydrateObject reflection
+        /// </summary>
+        /// <param name="dr">the data reader to use</param>
+        /// <remarks></remarks>
         internal void FillBaseProperties(IDataReader dr)
         {
             FillInternal(dr);

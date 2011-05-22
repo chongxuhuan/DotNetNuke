@@ -313,7 +313,7 @@
   <data name="PermissionsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke has extensive file upload capabilities for content, modules, and skins. These features require custom security settings so that the application is able to create and remove files in your website.&lt;/p&gt;
 &lt;p&gt;This page checks the current file permissions to ensure that these features will work correctly.&lt;/p&gt;
-&lt;p&gt; &lt;b&gt;Note:&lt;/b&gt;The test checks the root folder of your application.  In most cases this is good enough, as child folders usually inherit their file and folder permissions from their parent.  However, occasionally this test will pass, but there will be a more restrictive permission set on one of the descendant files/folders.&lt;/p&gt;</value>
+&lt;p&gt; &lt;b&gt;Note: &lt;/b&gt;The test checks the root folder of your application.  In most cases this is good enough, as child folders usually inherit their file and folder permissions from their parent.  However, occasionally this test will pass, but there will be a more restrictive permission set on one of the descendant files/folders.&lt;/p&gt;</value>
   </data>
   <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>Checking File Permissions</value>

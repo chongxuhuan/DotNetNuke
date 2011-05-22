@@ -51,6 +51,19 @@ namespace DotNetNuke.Services.Localization
         private readonly LocaleCollection _locales;
         private int _index;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:DotNetNuke.Services.Localization.LocaleCollectionWrapper" />
+        ///  class containing the specified collection <see cref="T:DotNetNuke.Services.Localization.Locale" /> objects.
+        /// </summary>
+        /// <param name="Locales">A <see cref="T:DotNetNuke.Services.Localization.LocaleCollection" /> object 
+        /// which is wrapped by the collection. </param>
+        /// <remarks>This overloaded constructor copies the <see cref="T:DotNetNuke.ModuleAction" />s
+        ///  from the indicated array.</remarks>
+        /// <history>
+        /// 	[jbrinkman]	11/17/2004	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public LocaleCollectionWrapper(LocaleCollection Locales)
         {
             _locales = Locales;

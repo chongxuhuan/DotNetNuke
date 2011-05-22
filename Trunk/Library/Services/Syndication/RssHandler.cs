@@ -116,7 +116,10 @@ namespace DotNetNuke.Services.Syndication
             }
             item["title"] = SearchItem.Title;
             item["description"] = SearchItem.Description;
+            //TODO:  JMB: We need to figure out how to persist the dc prefix in the XML output.  See the Render method below.
+            //item("dc:creator") = SearchItem.AuthorName
             item["pubDate"] = SearchItem.PubDate.ToUniversalTime().ToString("r");
+
             if (!string.IsNullOrEmpty(SearchItem.Guid))
             {
                 if (URL.Contains("?"))

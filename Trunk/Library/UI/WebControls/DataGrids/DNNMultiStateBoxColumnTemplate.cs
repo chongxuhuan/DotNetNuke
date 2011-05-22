@@ -65,15 +65,15 @@ namespace DotNetNuke.UI.WebControls
             ItemType = itemType;
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets and sets whether the column fires a postback when the control changes
- /// </summary>
- /// <value>A Boolean</value>
- /// <history>
- /// 	[cnurse]	02/16/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets and sets whether the column fires a postback when the control changes
+		/// </summary>
+		/// <value>A Boolean</value>
+		/// <history>
+		/// 	[cnurse]	02/16/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public bool AutoPostBack { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -118,15 +118,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets or sets the Design Mode of the Column
- /// </summary>
- /// <value>A Boolean</value>
- /// <history>
- /// 	[cnurse]	02/24/2006	Created
- /// </history>
- /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Design Mode of the Column
+		/// </summary>
+		/// <value>A Boolean</value>
+		/// <history>
+		/// 	[cnurse]	02/24/2006	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
         public bool DesignMode { get; set; }
 
         /// -----------------------------------------------------------------------------
@@ -264,6 +264,15 @@ namespace DotNetNuke.UI.WebControls
 
         #region ITemplate Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InstantiateIn is called when the Template is instantiated by the parent control
+        /// </summary>
+        /// <param name="container">The container control</param>
+        /// <history>
+        ///     [cnurse]	02/16/2006	created
+        /// </history>
+		/// -----------------------------------------------------------------------------
         public void InstantiateIn(Control container)
         {
             if (!String.IsNullOrEmpty(Text))
@@ -286,6 +295,14 @@ namespace DotNetNuke.UI.WebControls
 
         #endregion
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Called when the template item is Data Bound
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/14/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void Item_DataBinding(object sender, EventArgs e)
         {
             var box = (DNNMultiStateBox) sender;

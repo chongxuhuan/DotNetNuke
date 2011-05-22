@@ -41,6 +41,18 @@ using DotNetNuke.Entities.Modules.Definitions;
 
 namespace DotNetNuke.Entities.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Entities.Modules
+    /// Class	 : DesktopModuleInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// DesktopModuleInfo provides the Entity Layer for Desktop Modules
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	01/11/2008   Documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class DesktopModuleInfo : ContentItem, IXmlSerializable
     {
@@ -56,10 +68,39 @@ namespace DotNetNuke.Entities.Modules
             SupportedFeatures = Null.NullInteger;
         }
 
+		#region "Public Properties"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ID of the Desktop Module
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int DesktopModuleID { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the ID of the Package for this Desktop Module
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PackageID { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the BusinessControllerClass of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string BusinessControllerClass { get; set; }
 
         public string Category
@@ -84,20 +125,93 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the AppCode Folder Name of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	02/20/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CodeSubDirectory { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a Regular Expression that matches the versions of the core
+        /// that this module is compatible with
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string CompatibleVersions { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a list of Dependencies for the module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Dependencies { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the  Description of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Description { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Folder Name of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FolderName { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Friendly Name of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string FriendlyName { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Module is an Admin Module
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsAdmin { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Module is Portable
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsPortable
         {
             get
@@ -110,8 +224,26 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Module is a Premium Module
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsPremium { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Module is Searchable
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsSearchable
         {
             get
@@ -124,6 +256,15 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets whether the Module is Upgradable
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool IsUpgradeable
         {
             get
@@ -136,6 +277,15 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Module Definitions for this Desktop Module
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, ModuleDefinitionInfo> ModuleDefinitions
         {
             get
@@ -154,17 +304,64 @@ namespace DotNetNuke.Entities.Modules
                 return _moduleDefinitions;
             }
         }
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the  Name of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
 
         public string ModuleName { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a list of Permissions for the module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Permissions { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Supported Features of the Module
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int SupportedFeatures { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Version of the Desktop Module
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Version { get; set; }
 
-        #region IHydratable Members
+		#endregion
 
+		#region IHydratable Members
+
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a DesktopModuleInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Fill(IDataReader dr)
         {
             DesktopModuleID = Null.SetNullInteger(dr["DesktopModuleID"]);
@@ -182,6 +379,7 @@ namespace DotNetNuke.Entities.Modules
             CompatibleVersions = Null.SetNullString(dr["CompatibleVersions"]);
             Dependencies = Null.SetNullString(dr["Dependencies"]);
             Permissions = Null.SetNullString(dr["Permissions"]);
+            //Call the base classes fill method to populate base class proeprties
             base.FillInternal(dr);
         }
 
@@ -189,11 +387,28 @@ namespace DotNetNuke.Entities.Modules
 
         #region IXmlSerializable Members
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an XmlSchema for the DesktopModule
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public XmlSchema GetSchema()
         {
             return null;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a DesktopModuleInfo from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void ReadXml(XmlReader reader)
         {
             while (reader.Read())
@@ -309,14 +524,37 @@ namespace DotNetNuke.Entities.Modules
 
         #endregion
 
+		#region "Private Helper Methods"
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Clears a Feature from the Features
+        /// </summary>
+        /// <param name="feature">The feature to Clear</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ClearFeature(DesktopModuleSupportedFeature feature)
         {
+			//And with the 1's complement of Feature to Clear the Feature flag
             SupportedFeatures = SupportedFeatures & (int) feature;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Feature from the Features
+        /// </summary>
+        /// <param name="feature">The feature to Get</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private bool GetFeature(DesktopModuleSupportedFeature feature)
         {
             bool isSet = false;
+
+			//And with the Feature to see if the flag is set
             if (SupportedFeatures > Null.NullInteger && (SupportedFeatures & (int) feature) == (int) feature)
             {
                 isSet = true;
@@ -324,11 +562,31 @@ namespace DotNetNuke.Entities.Modules
             return isSet;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Sets a Feature in the Features
+        /// </summary>
+        /// <param name="feature">The feature to Set</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void SetFeature(DesktopModuleSupportedFeature feature)
         {
+			//Or with the Feature to Set the Feature flag
             SupportedFeatures = SupportedFeatures ^ (int) feature;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a Feature in the Features
+        /// </summary>
+        /// <param name="feature">The feature to Set</param>
+        /// <param name="isSet">A Boolean indicating whether to set or clear the feature</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void UpdateFeature(DesktopModuleSupportedFeature feature, bool isSet)
         {
             if (isSet)
@@ -341,6 +599,15 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a Supported Features from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ReadSupportedFeatures(XmlReader reader)
         {
             SupportedFeatures = 0;
@@ -366,16 +633,33 @@ namespace DotNetNuke.Entities.Modules
             } while (reader.ReadToNextSibling("supportedFeature"));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads a Module Definitions from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ReadModuleDefinitions(XmlReader reader)
         {
             reader.ReadStartElement("moduleDefinitions");
             do
             {
                 reader.ReadStartElement("moduleDefinition");
+
+				//Create new ModuleDefinition object
                 var moduleDefinition = new ModuleDefinitionInfo();
+
+				//Load it from the Xml
                 moduleDefinition.ReadXml(reader);
+
+				//Add to the collection
                 ModuleDefinitions.Add(moduleDefinition.FriendlyName, moduleDefinition);
             } while (reader.ReadToNextSibling("moduleDefinition"));
-        }
-    }
+		}
+
+		#endregion
+	}
 }

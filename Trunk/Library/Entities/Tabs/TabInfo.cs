@@ -498,6 +498,15 @@ namespace DotNetNuke.Entities.Tabs
 
         #endregion
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [XmlIgnore]
         public override int KeyID
         {
@@ -780,6 +789,15 @@ namespace DotNetNuke.Entities.Tabs
             return objTabInfo;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a TabInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Fill(IDataReader dr)
         {
             //Call the base classes fill method to populate base class proeprties

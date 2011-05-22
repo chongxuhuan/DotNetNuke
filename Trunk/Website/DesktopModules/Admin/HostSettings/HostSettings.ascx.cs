@@ -286,7 +286,7 @@ namespace DotNetNuke.Modules.Admin.Host
 
             if (PortalSettings.EnablePopUps)
             {
-                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true));
+                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true, false));
             }
         }
 

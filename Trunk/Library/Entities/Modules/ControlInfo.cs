@@ -33,6 +33,18 @@ using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Entities.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.Entities.Modules
+    /// Class	 : ControlInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// ControlInfo provides a base class for Module Controls and SkinControls
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	03/28/2008   Created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public abstract class ControlInfo : BaseEntityInfo
     {
@@ -41,10 +53,49 @@ namespace DotNetNuke.Entities.Modules
             SupportsPartialRendering = Null.NullBoolean;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Control Key
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	03/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ControlKey { get; set; }
-        public string ControlSrc { get; set; }
-        public bool SupportsPartialRendering { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Control Source
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	03/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+		public string ControlSrc { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a flag that determines whether the control support the AJAX
+        /// Update Panel
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        /// 	[cnurse]	03/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+		public bool SupportsPartialRendering { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Fills a ControlInfo from a Data Reader
+        /// </summary>
+        /// <param name="dr">The Data Reader to use</param>
+        /// <history>
+        /// 	[cnurse]	03/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void FillInternal(IDataReader dr)
         {
 			//Call EntityBaseInfo's implementation

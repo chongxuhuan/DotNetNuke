@@ -41,11 +41,9 @@
     </script>
 </telerik:RadScriptBlock>
 <div class="dotnetnuke_pagesmain">
-
-	<div class="dotnetnuke_pageshead">
-		<asp:Label ID="lblHead" runat="server" CssClass="Normal"></asp:Label>
+	<div class="dnnFormMessage dnnFormInfo">
+		<asp:Label ID="lblHead" runat="server"/>
 	</div>
-
 	<telerik:RadAjaxPanel ID="ctlAjax" runat="server" LoadingPanelID="ctlLoading" EnablePageHeadUpdate="true" RestoreOriginalRenderDelegate="false" EnableViewState="true">
 
 		<div class="dotnetnuke_pageselect">
@@ -237,8 +235,8 @@
 							</td>
                             <td class="tdControl">
 								<asp:RadioButtonList ID="rblSkinMode" runat="server" RepeatDirection="Horizontal">
-									<asp:ListItem Text="Host" Value="H" Selected="True"></asp:ListItem>
-									<asp:ListItem Text="Site" Value="S"></asp:ListItem>
+									<asp:ListItem resourcekey="Host" Value="H" Selected="True"></asp:ListItem>
+									<asp:ListItem resourcekey="Site" Value="S"></asp:ListItem>
 								</asp:RadioButtonList>
 							</td>                            
 						</tr>
@@ -249,8 +247,8 @@
 							</td>
                             <td class="tdControl">
 								<asp:RadioButtonList ID="rblContainerMode" runat="server" RepeatDirection="Horizontal">
-									<asp:ListItem Text="Host" Value="H" Selected="True"></asp:ListItem>
-									<asp:ListItem Text="Site" Value="S"></asp:ListItem>
+									<asp:ListItem resourcekey="Host" Value="H" Selected="True"></asp:ListItem>
+									<asp:ListItem resourcekey="Site" Value="S"></asp:ListItem>
 								</asp:RadioButtonList>
 							</td>
 						</tr>  

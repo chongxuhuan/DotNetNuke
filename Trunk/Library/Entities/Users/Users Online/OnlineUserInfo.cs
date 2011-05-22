@@ -29,11 +29,33 @@ using System;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      OnlineUserInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The OnlineUserInfo class provides an Entity for an online user
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	03/14/2006	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public class OnlineUserInfo : BaseUserInfo
     {
         private int _UserID;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User Id for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int UserID
         {
             get

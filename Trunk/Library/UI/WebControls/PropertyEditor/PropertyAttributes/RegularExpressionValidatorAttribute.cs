@@ -34,6 +34,9 @@ namespace DotNetNuke.UI.WebControls
     {
         private readonly string _Expression;
 
+        /// <summary>
+        /// Initializes a new instance of the RegularExpressionValidatorAttribute class.
+        /// </summary>
         public RegularExpressionValidatorAttribute(string expression)
         {
             _Expression = expression;

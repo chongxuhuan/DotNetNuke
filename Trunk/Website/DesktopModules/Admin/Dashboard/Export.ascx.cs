@@ -59,9 +59,14 @@ namespace DotNetNuke.Modules.Admin.Dashboard
         {
             try
             {
-                DashboardController.Export(txtFileName.Text);
+                string fileName = txtFileName.Text;
+                if (!fileName.EndsWith(".xml"))
+                {
+                    fileName += ".xml";
+                }
+                DashboardController.Export(fileName);
 
-                UI.Skins.Skin.AddModuleMessage(this, string.Format(Localization.GetString("Success", LocalResourceFile), txtFileName.Text), ModuleMessage.ModuleMessageType.GreenSuccess);
+                UI.Skins.Skin.AddModuleMessage(this, string.Format(Localization.GetString("Success", LocalResourceFile), fileName), ModuleMessage.ModuleMessageType.GreenSuccess);
             }
             catch (Exception ex)
             {

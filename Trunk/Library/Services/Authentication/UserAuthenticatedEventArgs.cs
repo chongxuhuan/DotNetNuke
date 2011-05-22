@@ -53,6 +53,18 @@ namespace DotNetNuke.Services.Authentication
         private NameValueCollection _Profile = new NameValueCollection();
         private string _UserToken = Null.NullString;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// All properties Constructor.
+        /// </summary>
+        /// <param name="user">The user being authenticated.</param>
+        /// <param name="token">The user token</param>
+        /// <param name="status">The login status.</param>
+        /// <param name="type">The type of Authentication</param>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserAuthenticatedEventArgs(UserInfo user, string token, UserLoginStatus status, string type)
         {
             User = user;
@@ -61,6 +73,14 @@ namespace DotNetNuke.Services.Authentication
             _AuthenticationType = type;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a flag that determines whether the User was authenticated
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/11/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool Authenticated
         {
             get
@@ -73,6 +93,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Authentication Type
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string AuthenticationType
         {
             get
@@ -85,6 +113,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets a flag that determines whether the user should be automatically registered
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/16/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool AutoRegister
         {
             get
@@ -97,6 +133,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Login Status
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserLoginStatus LoginStatus
         {
             get
@@ -109,6 +153,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Message
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/11/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Message
         {
             get
@@ -121,6 +173,14 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Profile
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/16/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public NameValueCollection Profile
         {
             get
@@ -133,8 +193,24 @@ namespace DotNetNuke.Services.Authentication
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the User
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public UserInfo User { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the UserToken (the userid or authenticated id)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/10/2007  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string UserToken
         {
             get

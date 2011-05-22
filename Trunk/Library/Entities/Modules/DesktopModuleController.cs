@@ -165,6 +165,15 @@ namespace DotNetNuke.Entities.Modules
             DeleteDesktopModule(objDesktopModule.DesktopModuleID);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteDesktopModule deletes a Desktop Module By ID
+        /// </summary>
+        /// <param name="desktopModuleID">The ID of the Desktop Module to delete</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void DeleteDesktopModule(int desktopModuleID)
         {
             DataProvider.DeleteDesktopModule(desktopModuleID);
@@ -177,6 +186,15 @@ namespace DotNetNuke.Entities.Modules
             DataCache.ClearHostCache(true);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteDesktopModule deletes a Desktop Module
+        /// </summary>
+        /// <param name="moduleName">The Name of the Desktop Module to delete</param>
+        /// <history>
+        /// 	[cnurse]	05/14/2009   Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static void DeleteDesktopModule(string moduleName)
         {
             DesktopModuleInfo desktopModule = GetDesktopModuleByModuleName(moduleName, Null.NullInteger);
@@ -656,6 +674,15 @@ namespace DotNetNuke.Entities.Modules
             return CBO.FillCollection(DataProvider.Instance().GetPortalDesktopModules(portalID, desktopModuleID), typeof (PortalDesktopModuleInfo));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateDesktopModule saves the Desktop Module to the database
+        /// </summary>
+        /// <param name="objDesktopModule">The Desktop Module to save</param>
+        /// <history>
+        /// 	[cnurse]	01/11/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Obsolete("Deprecated In DotNetNuke 6.0. Replaced by SaveDesktopModule")]
         public void UpdateDesktopModule(DesktopModuleInfo objDesktopModule)
         {

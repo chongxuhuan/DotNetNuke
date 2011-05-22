@@ -35,10 +35,29 @@ using DotNetNuke.Services.Installer.Packages;
 
 namespace DotNetNuke.Services.Installer.Installers
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The ComponentInstallerBase is a base class for all Component Installers
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	07/24/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class ComponentInstallerBase
     {
         private bool _Completed = Null.NullBoolean;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of allowable file extensions (in addition to the Host's List)
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	03/28/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual string AllowableFiles
         {
             get
@@ -47,6 +66,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Completed flag
+        /// </summary>
+        /// <value>A Boolean value</value>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool Completed
         {
             get
@@ -59,6 +87,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the InstallMode
+        /// </summary>
+        /// <value>An InstallMode value</value>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public InstallMode InstallMode
         {
             get
@@ -67,6 +104,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Logger
+        /// </summary>
+        /// <value>An Logger object</value>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Logger Log
         {
             get
@@ -75,8 +121,26 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the associated Package
+        /// </summary>
+        /// <value>An PackageInfo object</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public PackageInfo Package { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Dictionary of Files that are included in the Package
+        /// </summary>
+        /// <value>A Dictionary(Of String, InstallFile)</value>
+        /// <history>
+        /// 	[cnurse]	07/31/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Dictionary<string, InstallFile> PackageFiles
         {
             get
@@ -85,6 +149,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Physical Path to the root of the Site (eg D:\Websites\DotNetNuke")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string PhysicalSitePath
         {
             get
@@ -93,6 +166,15 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Installer supports Manifest only installs
+        /// </summary>
+        /// <value>A Boolean</value>
+        /// <history>
+        /// 	[cnurse]	02/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public virtual bool SupportsManifestOnlyInstall
         {
             get
@@ -101,8 +183,26 @@ namespace DotNetNuke.Services.Installer.Installers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Type of the component
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	07/24/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string Type { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Version of the Component
+        /// </summary>
+        /// <value>A System.Version</value>
+        /// <history>
+        /// 	[cnurse]	02/29/2008  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public Version Version { get; set; }
 
         public abstract void Commit();

@@ -35,8 +35,20 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.UserControls
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The User UserControl is used to manage User Details
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	02/21/2005	created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class User : UserControlBase
     {
+		#region "Private Members"
+
         protected HtmlTableRow ConfirmPasswordRow;
         private string MyFileName = "User.ascx";
         protected HtmlTableRow PasswordRow;
@@ -54,7 +66,12 @@ namespace DotNetNuke.UI.UserControls
         private string _UserName;
         private string _Website;
         protected Label lblUsername;
-        protected Label lblUsernameAsterisk;
+
+		#endregion
+
+		#region "Protected Members"
+
+		protected Label lblUsernameAsterisk;
         protected LabelControl plConfirm;
         protected LabelControl plEmail;
         protected LabelControl plFirstName;
@@ -80,7 +97,11 @@ namespace DotNetNuke.UI.UserControls
         protected RequiredFieldValidator valPassword;
         protected RequiredFieldValidator valUsername;
 
-        public int ModuleId
+		#endregion
+
+		#region "Public Properties"
+
+		public int ModuleId
         {
             get
             {
@@ -236,6 +257,20 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+		#endregion
+
+		#region "Event Handlers"
+
+		/// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Page_Load runs when the control is loaded
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	02/21/2005	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -306,6 +341,8 @@ namespace DotNetNuke.UI.UserControls
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-        }
-    }
+		}
+
+		#endregion
+	}
 }

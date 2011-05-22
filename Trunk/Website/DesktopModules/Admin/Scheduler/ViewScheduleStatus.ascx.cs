@@ -42,7 +42,7 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Scheduler
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The ViewScheduleStatus PortalModuleBase is used to view the schedule Status
     /// </summary>
@@ -52,7 +52,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
     /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
     ///                       and localisation
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class ViewScheduleStatus : PortalModuleBase, IActionable
     {
 
@@ -64,28 +63,18 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "add.gif",
-                            EditUrl(),
-                            false,
-                            SecurityAccessLevel.Admin,
-                            true,
-                            false);
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("ScheduleHistory.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "icon_profile_16px.gif",
-                            EditUrl("", "", "History"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
-                return Actions;
+                var actionCollection = new ModuleActionCollection
+                                  {
+                                      {
+                                          GetNextActionID(), Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl(), false,
+                                          SecurityAccessLevel.Admin, true, false
+                                          },
+                                      {
+                                          GetNextActionID(), Localization.GetString("ScheduleHistory.Action", LocalResourceFile), ModuleActionType.AddContent, "", "icon_profile_16px.gif",
+                                          EditUrl("", "", "History"), false, SecurityAccessLevel.Host, true, false
+                                          }
+                                  };
+                return actionCollection;
             }
         }
 
@@ -106,9 +95,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             else
             {
-				//Localize Grid
-                Localization.LocalizeDataGrid(ref dgScheduleQueue, LocalResourceFile);
-
                 dgScheduleQueue.DataSource = arrScheduleQueue;
                 dgScheduleQueue.DataBind();
             }
@@ -120,14 +106,13 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             else
             {
-				//Localize Grid
-                Localization.LocalizeDataGrid(ref dgScheduleProcessing, LocalResourceFile);
+
                 dgScheduleProcessing.DataSource = arrScheduleProcessing;
                 dgScheduleProcessing.DataBind();
             }
             if (arrScheduleProcessing.Count == 0 && arrScheduleQueue.Count == 0)
             {
-                string strMessage = Localization.GetString("NoTasks", LocalResourceFile);
+                var strMessage = Localization.GetString("NoTasks", LocalResourceFile);
                 UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.YellowWarning);
             }
         }
@@ -158,7 +143,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
         protected string GetOverdueText(double overdueBy)
         {
@@ -169,7 +154,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         #region Event Handlers
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Page_Load runs when the control is loaded.
         /// </summary>
@@ -179,7 +163,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -219,7 +202,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// cmdStart_Click runs when the Start Button is clicked
         /// </summary>
@@ -229,7 +211,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected void OnStartClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().StartAndWaitForResponse();
@@ -237,7 +218,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             BindStatus();
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// cmdStop_Click runs when the Stop Button is clicked
         /// </summary>
@@ -247,7 +227,6 @@ namespace DotNetNuke.Modules.Admin.Scheduler
         /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
         ///                       and localisation
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected void OnStopClick(Object sender, EventArgs e)
         {
             SchedulingProvider.Instance().Halt(Localization.GetString("ManuallyStopped", LocalResourceFile));

@@ -29,6 +29,20 @@ using System;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Class:      BaseUserInfo
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The BaseUserInfo class provides a base Entity for an online user
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    ///     [cnurse]	03/14/2006	documented
+    /// </history>
+    /// -----------------------------------------------------------------------------
     [Serializable]
     public abstract class BaseUserInfo
     {
@@ -37,6 +51,14 @@ namespace DotNetNuke.Entities.Users
         private int _PortalID;
         private int _TabID;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the PortalId for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int PortalID
         {
             get
@@ -49,6 +71,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the TabId for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public int TabID
         {
             get
@@ -61,6 +91,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the CreationDate for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime CreationDate
         {
             get
@@ -73,6 +111,14 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the LastActiveDate for this online user
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	03/14/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public DateTime LastActiveDate
         {
             get

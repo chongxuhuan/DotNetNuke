@@ -93,6 +93,18 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The EditMode property is used to determine whether the user is in the 
+        /// Administrator role
+        /// Cache
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 01/19/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool EditMode
         {
             get
@@ -351,6 +363,23 @@ namespace DotNetNuke.Entities.Modules
             return ModuleContext.EditUrl(KeyName, KeyValue, ControlKey, AdditionalParameters);
         }
 
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string EditUrl(int TabID, string ControlKey, bool PageRedirect, params string[] AdditionalParameters)
+        {
+            return ModuleContext.EditNavUrl(TabID, ControlKey, PageRedirect, AdditionalParameters);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Helper method that can be used to add an ActionEventHandler to the Skin for this 
+        /// Module Control
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///   [cnurse] 17/9/2004  Added Documentation
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void AddActionHandler(ActionEventHandler e)
         {
             UI.Skins.Skin ParentSkin = UI.Skins.Skin.GetParentSkin(this);

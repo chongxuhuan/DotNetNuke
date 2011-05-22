@@ -58,6 +58,14 @@ namespace DotNetNuke.UI.WebControls
         private ListBoundField _TextField = ListBoundField.Text;
         private ListBoundField _ValueField = ListBoundField.Value;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Determines whether the List Auto Posts Back
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	05/04/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool AutoPostBack { get; set; }
 
 		#region "Protected Properties"

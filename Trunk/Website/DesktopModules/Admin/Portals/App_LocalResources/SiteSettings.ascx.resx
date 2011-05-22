@@ -537,7 +537,7 @@
   <data name="ctlDesktopModules_Selected.Text" xml:space="preserve">
     <value>Selected Modules</value>
   </data>
-  <data name="RemoveAllModules" xml:space="preserve">
+  <data name="RemoveAllModules.Text" xml:space="preserve">
     <value>Remove All Modules</value>
   </data>
   <data name="RemoveModule.Text" xml:space="preserve">

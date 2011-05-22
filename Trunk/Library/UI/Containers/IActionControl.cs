@@ -30,6 +30,18 @@ using DotNetNuke.UI.Modules;
 
 namespace DotNetNuke.UI.Containers
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.UI.Containers
+    /// Class	 : IActionControl
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// IActionControl provides a common INterface for Action Controls
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	12/24/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public interface IActionControl
     {
         ActionManager ActionManager { get; }

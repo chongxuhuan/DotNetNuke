@@ -285,6 +285,22 @@ namespace DotNetNuke.Common.Utilities
             return strValue;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of node
+        /// </summary>
+        /// <param name="objNode">Parent node</param>
+		/// <param name="nodeName">Child node to look for</param>
+        /// <param name="defaultValue">Default value to return</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If the node does not exist or it causes any error the default value will be returned.
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	09/09/2004	Created
+        /// 	[cnurse]	11/08/2004	moved from PortalController and made Public Shared
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static string GetNodeValue(XmlNode objNode, string nodeName, string defaultValue)
         {
             string strValue = defaultValue;
@@ -319,6 +335,22 @@ namespace DotNetNuke.Common.Utilities
             return GetNodeValueBoolean(objNode, nodeName, false);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of node
+        /// </summary>
+        /// <param name="objNode">Parent node</param>
+        /// <param name="nodeName">Child node to look for</param>
+        /// <param name="defaultValue">Default value to return</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If the node does not exist or it causes any error the default value will be returned.
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	09/09/2004	Added new method to return converted values
+        /// 	[cnurse]	11/08/2004	moved from PortalController and made Public Shared
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static bool GetNodeValueBoolean(XmlNode objNode, string nodeName, bool defaultValue)
         {
             bool bValue = defaultValue;
@@ -387,6 +419,22 @@ namespace DotNetNuke.Common.Utilities
             return GetNodeValueInt(node, nodeName, 0);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of node
+        /// </summary>
+        /// <param name="node">Parent node</param>
+        /// <param name="nodeName">Child node to look for</param>
+        /// <param name="defaultValue">Default value to return</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If the node does not exist or it causes any error the default value will be returned.
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	09/09/2004	Added new method to return converted values
+        /// 	[cnurse]	11/08/2004	moved from PortalController and made Public Shared
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static int GetNodeValueInt(XmlNode node, string nodeName, int defaultValue)
         {
             int intValue = defaultValue;
@@ -421,6 +469,22 @@ namespace DotNetNuke.Common.Utilities
             return GetNodeValueSingle(node, nodeName, 0);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of node
+        /// </summary>
+        /// <param name="node">Parent node</param>
+        /// <param name="nodeName">Child node to look for</param>
+        /// <param name="defaultValue">Default value to return</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If the node does not exist or it causes any error the default value will be returned.
+        /// </remarks>
+        /// <history>
+        /// 	[VMasanas]	09/09/2004	Added new method to return converted values
+        /// 	[cnurse]	11/08/2004	moved from PortalController and made Public Shared
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public static float GetNodeValueSingle(XmlNode node, string nodeName, float defaultValue)
         {
             float sValue = defaultValue;

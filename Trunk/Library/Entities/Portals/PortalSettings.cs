@@ -431,6 +431,15 @@ namespace DotNetNuke.Entities.Portals
 
         public string HomeDirectoryMapPath { get; private set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Inline Editor is enabled
+        /// </summary>
+        /// <remarks>Defaults to True</remarks>
+        /// <history>
+        /// 	[cnurse]	08/28/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool InlineEditorEnabled
         {
             get
@@ -481,6 +490,15 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether to inlcude Numbers in the Search Index
+        /// </summary>
+        /// <remarks>Defaults to False</remarks>
+        /// <history>
+        /// 	[cnurse]	03/10/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public bool SearchIncludeNumeric
         {
             get

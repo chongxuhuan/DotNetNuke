@@ -183,16 +183,18 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnForm input[type=checkbox]{margin-top:5px;width:auto;}
 	.dnnForm input[type=radio]{margin-top:4px;width:auto;}
 	
-	ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
-		ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
-		ul.dnnActions li{overflow:hidden;display:block;float:left;}
-		ul.dnnActions li a{padding:0 1.2em;display:block;float:left;line-height:2.5;}
-	ul.dnnActions input{display:none}	
-	a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited{background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);color:#fff;text-decoration:none;font-weight:bold;border-color:#fff}
-		a.dnnPrimaryAction:hover, a.dnnPrimaryAction:visited:hover{background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
-	a.dnnSecondaryAction, a.dnnSecondaryAction:link{font-weight:bold;text-decoration:none;padding:0 1em;}
-		a.dnnSecondaryAction:hover, a.dnnSecondaryAction:visited:hover{text-decoration:underline;background:none;color:inherit;}
-	.dnnForm.ui-widget-content a.dnnPrimaryAction{color:#fff;}
+    ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
+        ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
+        ul.dnnActions li{overflow:hidden;display:block;float:left;}
+        ul.dnnActions li a{display:block;float:left;}
+        ul.dnnActions li a, a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited, a.dnnSecondaryAction, a.dnnSecondaryAction:link, a.dnnSecondaryAction:visited{padding:0 1.2em;line-height:2.5;}
+    ul.dnnActions input{display:none}   
+    a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited, a.dnnSecondaryAction, a.dnnSecondaryAction:link, a.dnnSecondaryAction:visited{display:inline-block;}
+    a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited{background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #000;filter:dropshadow(color=#000, offx=1, offy=1);color:#fff;text-decoration:none;font-weight:bold;border-color:#fff}
+        a.dnnPrimaryAction:hover, a.dnnPrimaryAction:visited:hover{background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
+    a.dnnSecondaryAction, a.dnnSecondaryAction:link{font-weight:bold;text-decoration:none;padding:0 1em;}
+        a.dnnSecondaryAction:hover, a.dnnSecondaryAction:visited:hover{text-decoration:underline;background:none;color:inherit;}
+    .dnnForm.ui-widget-content a.dnnPrimaryAction{color:#fff;}
 	
 /*  === End Common Reusable Selectors === */
 
@@ -208,8 +210,9 @@ div.SearchIcon img{margin-top:3px;}
 		.urlControlFileRow span.dnnFormLabel{width:25%;text-align:right;}
 /*  === End Url Control === */
 
+.dnnGrid{font-size:inherit;}
 .dnnGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
-	.dnnGridItem{border-bottom:1px #eee solid}
+	.dnnGridItem{border-bottom:1px #eee solid;background:#fff;}
 		.dnnGridAltItem{background:#f1f1f1;}
 	.dnnGrid td{padding:3px 5px;}
 		.dnnGrid td input.dnnFormInput{width:42%;}

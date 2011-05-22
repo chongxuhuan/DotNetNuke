@@ -29,6 +29,18 @@ using System.Web.UI;
 
 namespace DotNetNuke.UI.Modules
 {
+    /// -----------------------------------------------------------------------------
+    /// Project	 : DotNetNuke
+    /// Namespace: DotNetNuke.UI.Modules
+    /// Class	 : IModuleControl
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// IModuleControl provides a common Interface for Module Controls
+    /// </summary>
+    /// <history>
+    /// 	[cnurse]	12/24/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public interface IModuleControl
     {
         Control Control { get; }

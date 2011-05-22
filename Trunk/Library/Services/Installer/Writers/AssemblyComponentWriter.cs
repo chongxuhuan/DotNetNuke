@@ -48,6 +48,15 @@ namespace DotNetNuke.Services.Installer.Writers
         {
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Collection Node ("assemblies")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string CollectionNodeName
         {
             get
@@ -56,6 +65,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Component Type ("Assembly")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ComponentType
         {
             get
@@ -64,6 +82,15 @@ namespace DotNetNuke.Services.Installer.Writers
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the name of the Item Node ("assembly")
+        /// </summary>
+        /// <value>A String</value>
+        /// <history>
+        /// 	[cnurse]	02/01/2008	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override string ItemNodeName
         {
             get

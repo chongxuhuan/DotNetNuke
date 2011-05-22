@@ -278,6 +278,15 @@ namespace DotNetNuke.Entities.Modules.Definitions
             _ModuleControls = ModuleDefID > Null.NullInteger ? ModuleControlController.GetModuleControlsByModuleDefinitionID(ModuleDefID) : new Dictionary<string, ModuleControlInfo>();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reads the ModuleControls from an XmlReader
+        /// </summary>
+        /// <param name="reader">The XmlReader to use</param>
+        /// <history>
+        /// 	[cnurse]	01/17/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void ReadModuleControls(XmlReader reader)
         {
             reader.ReadStartElement("moduleControls");

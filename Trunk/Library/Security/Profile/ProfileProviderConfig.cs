@@ -48,6 +48,15 @@ namespace DotNetNuke.Security.Profile
     {
         private static readonly ProfileProvider profileProvider = ProfileProvider.Instance();
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the Provider Properties can be edited
+        /// </summary>
+        /// <returns>A Boolean</returns>
+        /// <history>
+        ///     [cnurse]	03/02/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         public static bool CanEditProviderProperties
         {

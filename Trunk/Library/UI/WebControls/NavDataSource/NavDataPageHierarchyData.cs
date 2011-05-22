@@ -41,6 +41,12 @@ namespace DotNetNuke.UI.WebControls
             m_objNode = obj;
         }
 
+        /// <summary>
+        /// Returns nodes image
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks></remarks>
         public virtual string ImageUrl
         {
             get

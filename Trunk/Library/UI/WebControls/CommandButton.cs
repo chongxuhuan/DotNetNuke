@@ -363,6 +363,17 @@ namespace DotNetNuke.UI.WebControls
         public event EventHandler Click;
         public event CommandEventHandler Command;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// CreateChildControls overrides the Base class's method to correctly build the
+        /// control based on the configuration
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	01/06/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void CreateChildControls()
         {
             Controls.Clear();
@@ -396,6 +407,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnButtonClick raises the CommandButton control's Click event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/17/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void OnButtonClick(EventArgs e)
         {
             if (Click != null)
@@ -404,6 +423,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnCommand raises the CommandButton control's Command event
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/22/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected virtual void OnCommand(CommandEventArgs e)
         {
             if (Command != null)
@@ -412,6 +439,14 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// OnPreRender runs just before the Render phase of the Page Life Cycle
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	12/22/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -425,16 +460,52 @@ namespace DotNetNuke.UI.WebControls
             AJAX.RegisterPostBackControl(icon);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RaiseClick runs when one of the contained Link buttons is clciked
+        /// </summary>
+        /// <remarks>It raises a Click Event.
+        /// </remarks>
+        /// <param name="sender"> The object that triggers the event</param>
+        /// <param name="e">An EventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	01/06/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void RaiseClick(object sender, EventArgs e)
         {
             OnButtonClick(e);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RaiseCommand runs when one of the contained Link buttons is clicked
+        /// </summary>
+        /// <remarks>It raises a Command Event.
+        /// </remarks>
+        /// <param name="sender"> The object that triggers the event</param>
+        /// <param name="e">An CommandEventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	12/22/2007	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private void RaiseCommand(object sender, CommandEventArgs e)
         {
             OnCommand(e);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RaiseImageClick runs when the Image button is clicked
+        /// </summary>
+        /// <remarks>It raises a Command Event.
+        /// </remarks>
+        /// <param name="sender"> The object that triggers the event</param>
+        /// <param name="e">An ImageClickEventArgs object</param>
+        /// <history>
+        /// 	[cnurse]	01/06/2006	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected void RaiseImageClick(object sender, ImageClickEventArgs e)
         {
             OnButtonClick(new EventArgs());

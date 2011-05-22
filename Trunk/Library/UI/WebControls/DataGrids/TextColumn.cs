@@ -111,6 +111,14 @@ namespace DotNetNuke.UI.WebControls
             return template;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Initialises the Column
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	02/16/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public override void Initialize()
         {
             ItemTemplate = CreateTemplate(ListItemType.Item);

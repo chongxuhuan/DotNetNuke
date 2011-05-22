@@ -63,6 +63,17 @@ namespace DotNetNuke.Services.Search
             SearchDataStoreProvider.Instance().StoreSearchItems(GetContent(Indexer));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IndexContent indexes the Portal's content
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="PortalID">The Id of the Portal</param>
+        /// <history>
+        ///		[cnurse]	11/15/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public void IndexContent(int PortalID)
         {
             IndexingProvider Indexer = IndexingProvider.Instance();
@@ -95,6 +106,18 @@ namespace DotNetNuke.Services.Search
             return SearchItems;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetContent gets the Portal's content and passes it to the Indexer
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="PortalID">The Id of the Portal</param>
+        /// <param name="Indexer">The Index Provider that will index the content of the portal</param>
+        /// <history>
+        ///		[cnurse]	11/15/2004	documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected SearchItemInfoCollection GetContent(int PortalID, IndexingProvider Indexer)
         {
             var SearchItems = new SearchItemInfoCollection();

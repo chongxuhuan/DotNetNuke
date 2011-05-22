@@ -34,6 +34,9 @@ namespace DotNetNuke.UI.WebControls
     {
         private readonly string _Format;
 
+        /// <summary>
+        /// Initializes a new instance of the FormatAttribute class.
+        /// </summary>
         public FormatAttribute(string format)
         {
             _Format = format;

@@ -31,6 +31,16 @@ using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Services.Installer.Dependencies
 {
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The DependencyBase is a base class for Installer Dependencies
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// 	[cnurse]	09/02/2007  created
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public abstract class DependencyBase : IDependency
     {
         #region IDependency Members

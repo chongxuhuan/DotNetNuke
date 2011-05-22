@@ -78,6 +78,14 @@ namespace DotNetNuke.Entities.Modules
     {
         private UserInfo _User;
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether we are in Add User mode
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/06/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool AddUser
         {
             get
@@ -86,6 +94,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the current user is an Administrator (or SuperUser)
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/03/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsAdmin
         {
             get
@@ -94,6 +110,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this control is in the Host menu
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/13/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsHostTab
         {
             get
@@ -102,6 +126,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the control is being called form the User Accounts module
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	07/07/2006  Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
         protected bool IsEdit
         {
             get
@@ -357,6 +389,14 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// InitialiseUser initialises a "new" user
+        /// </summary>
+        /// <history>
+        /// 	[cnurse]	03/13/2006
+        /// </history>
+        /// -----------------------------------------------------------------------------
         private UserInfo InitialiseUser()
         {
             var newUser = new UserInfo();

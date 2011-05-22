@@ -239,6 +239,12 @@ namespace DotNetNuke.Framework
             return idFound;
         }
 
+        /// <summary>
+        /// <para>IterateControls performs the high level localization for each control on the page.</para>
+        /// <param name="affectedControls"></param>
+        /// <param name="controls"></param>
+        /// <param name="resourceFileRoot"></param>
+        /// </summary>
         private void IterateControls(ControlCollection controls, ArrayList affectedControls, string resourceFileRoot)
         {
             foreach (Control c in controls)
@@ -322,6 +328,12 @@ namespace DotNetNuke.Framework
 		
 		#region "Public Methods"
 
+        /// <summary>
+        /// <para>GetControlAttribute looks a the type of control and does it's best to find an AttributeCollection.</para>
+        /// </summary>
+        /// <param name="c">Control to find the AttributeCollection on</param>
+        /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
+        /// <returns>A string containing the key for the specified control or null if a key attribute wasn't found</returns>
         internal static string GetControlAttribute(Control c, ArrayList affectedControls)
         {
             AttributeCollection ac = null;

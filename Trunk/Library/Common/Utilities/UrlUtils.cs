@@ -189,35 +189,51 @@ namespace DotNetNuke.Common.Utilities
             return popUpSkin;
         }
 
-        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent)
+        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect)
         {
+            string popUpSkinSrc;
+            string delimiter;
             var popUpScriptFormat = String.Empty;
             var popUpUrl = url;
 
-            if (!popUpUrl.Contains("dnnModal.show"))
+            if (responseRedirect)
             {
-                var popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
+                popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
                 if (!String.IsNullOrEmpty(popUpSkinSrc))
                 {
-                    popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2})";
-                    var delimiter = popUpUrl.Contains("?") ? "&" : "?";
+                    popUpScriptFormat += "{0}{1}popUp=true&" + popUpSkinSrc;
+                    delimiter = popUpUrl.Contains("?") ? "&" : "?";
                     popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
                 }
             }
             else
             {
-                // Removes the javascript txt for onClick scripts
-                if (onClickEvent && popUpUrl.StartsWith("javascript:")) popUpUrl = popUpUrl.Replace("javascript:", "");
-                
-                if (popUpUrl.Contains("/*showReturn*/false"))
+                if (!popUpUrl.Contains("dnnModal.show"))
                 {
-                    popUpUrl = popUpUrl.Replace("/*showReturn*/false", "/*showReturn*/" + onClickEvent.ToString().ToLower());
+                    popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
+                    if (!String.IsNullOrEmpty(popUpSkinSrc))
+                    {
+                        popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2})";
+                        delimiter = popUpUrl.Contains("?") ? "&" : "?";
+                        popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
+                    }
                 }
                 else
                 {
-                    popUpUrl = popUpUrl.Replace("/*showReturn*/true", "/*showReturn*/" + onClickEvent.ToString().ToLower());
-                }               
+                    if (popUpUrl.Contains("/*showReturn*/false"))
+                    {
+                        popUpUrl = popUpUrl.Replace("/*showReturn*/false", "/*showReturn*/" + onClickEvent.ToString().ToLower());
+                    }
+                    else
+                    {
+                        popUpUrl = popUpUrl.Replace("/*showReturn*/true", "/*showReturn*/" + onClickEvent.ToString().ToLower());
+                    }
+                }            
             }
+
+            // Removes the javascript txt for onClick scripts
+            if (onClickEvent && popUpUrl.StartsWith("javascript:")) popUpUrl = popUpUrl.Replace("javascript:", "");
+
             return popUpUrl;
         }
 
