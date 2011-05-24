@@ -97,20 +97,20 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Presenters\EditMessagePresenter.cs" />
     <Compile Include="Presenters\ViewMessagePresenter.cs" />
-    <Compile Include="Views\EditMessage.ascx.cs">
+    <Compile Include="EditMessage.ascx.cs">
       <DependentUpon>EditMessage.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\EditMessage.ascx.designer.cs">
+    <Compile Include="EditMessage.ascx.designer.cs">
       <DependentUpon>EditMessage.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\IEditMessageView.cs" />
-    <Compile Include="Views\IViewMessageView.cs" />
-    <Compile Include="Views\ViewMessage.ascx.cs">
+    <Compile Include="IEditMessageView.cs" />
+    <Compile Include="IViewMessageView.cs" />
+    <Compile Include="ViewMessage.ascx.cs">
       <DependentUpon>ViewMessage.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\ViewMessage.ascx.designer.cs">
+    <Compile Include="ViewMessage.ascx.designer.cs">
       <DependentUpon>ViewMessage.ascx</DependentUpon>
     </Compile>
     <Content Include="App_LocalResources\EditMessage.ascx.resx" />
@@ -122,9 +122,11 @@
     <Content Include="messaging.gif" />
     <Content Include="module.css" />
     <Content Include="releaseNotes.txt" />
-    <Content Include="Views\EditMessage.ascx" />
-    <Content Include="Views\ViewMessage.ascx" />
-    <None Include="Messaging.dnn" />
+    <Content Include="EditMessage.ascx" />
+    <Content Include="ViewMessage.ascx" />
+    <None Include="Messaging.dnn">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Import Include="DotNetNuke" />
@@ -182,13 +184,13 @@
   </ProjectExtensions>
   <ItemGroup>
     <Content Include="App_LocalResources\MessageList.ascx.resx" />
-    <Content Include="Views\MessageList.ascx" />
-    <Compile Include="Views\IMessageListView.cs" />
-    <Compile Include="Views\MessageList.ascx.cs">
+    <Content Include="MessageList.ascx" />
+    <Compile Include="IMessageListView.cs" />
+    <Compile Include="MessageList.ascx.cs">
       <DependentUpon>MessageList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\MessageList.ascx.designer.cs">
+    <Compile Include="MessageList.ascx.designer.cs">
       <DependentUpon>MessageList.ascx</DependentUpon>
     </Compile>
     <Compile Include="Views\Models\EditMessageModel.cs" />
@@ -205,10 +207,11 @@
     <Extension>zip</Extension>
     <DNNFileName>Messaging</DNNFileName>
     <PackageName>Messaging</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
-  <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;Package">
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="Views\*.ascx">

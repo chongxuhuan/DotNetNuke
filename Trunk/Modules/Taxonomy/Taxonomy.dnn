@@ -73,9 +73,9 @@
 				</component>
 				<component type="Assembly">
 					<assemblies>
-						<basePath>bin</basePath>
 						<assembly>
-							<name>DotNetNuke.Modules.Taxonomy.dll</name>
+              <path>bin</path>
+              <name>DotNetNuke.Modules.Taxonomy.dll</name>
 						</assembly>
 					</assemblies>
 				</component>

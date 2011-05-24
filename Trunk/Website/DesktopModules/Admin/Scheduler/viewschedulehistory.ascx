@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" Namespace="Telerik.Web.UI" %>
 <div class="dnnForm dnnScheduleHistory dnnClear" id="dnnScheduleHistory">
-    <dnn:DnnGrid id="dgHistory" runat="server" AutoGenerateColumns="false" AllowSorting="true" CssClass="dnnScheduleHistoryGrid">
+    <dnn:DnnGrid id="dgHistory" runat="server" AutoGenerateColumns="false" AllowSorting="true" CssClass="dnnGrid">
         <MasterTableView DataKeyNames="FriendlyName,LogNotes,StartDate,EndDate,NextStart">
             <Columns>
                 <dnn:DnnGridTemplateColumn UniqueName="Description" HeaderText="Description">

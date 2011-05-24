@@ -226,7 +226,7 @@
     <value>Create Portal</value>
   </data>
   <data name="Note.Text" xml:space="preserve">
-    <value>&lt;b&gt;*Note:&lt;/b&gt; Once your portal is created, you will need to login using the Administrator information specified below.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Once your portal is created, you will need to login using the Administrator information specified below.</value>
   </data>
   <data name="InvalidTemplate.Text" xml:space="preserve">
     <value>{0} is not a valid Portal Template File.</value>

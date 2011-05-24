@@ -46,7 +46,7 @@
     <Extension>zip</Extension>
     <DNNFileName>dnn_HTML</DNNFileName>
     <PackageName>HTML_Community</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoWarn>1591</NoWarn>
@@ -211,12 +211,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <Extension>zip</Extension>
-    <DNNFileName>dnn_HTML</DNNFileName>
-    <PackageName>HTML_Community</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
-  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ItemGroup>
     <Content Include="05.01.02_Pro.txt" />
@@ -239,10 +233,11 @@
     <Extension>zip</Extension>
     <DNNFileName>dnn_HTML</DNNFileName>
     <PackageName>HTML_Community</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
-  <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;Package">
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="*.ascx">

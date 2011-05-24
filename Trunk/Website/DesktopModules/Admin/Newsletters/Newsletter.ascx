@@ -51,7 +51,7 @@
         <fieldset>
             <div class="dnnFormItem dnnNewsletterAttachment">
                 <dnn:Label id="plAttachment" runat="server" ControlName="ctlAttachment" />
-                <dnn:URLControl id="ctlAttachment" runat="server" Required="False" ShowUpLoad="true" ShowTrack="False" ShowLog="False" ShowTabs="False" ShowUrls="False" />
+                <div class="dnnLeft"><dnn:URLControl id="ctlAttachment" runat="server" Required="False" ShowUpLoad="true" ShowTrack="False" ShowLog="False" ShowTabs="False" ShowUrls="False" /></div>
             </div>
             <div class="dnnFormItem">
                 <dnn:label id="plReplaceTokens" runat="server" controlname="chkReplaceTokens" />

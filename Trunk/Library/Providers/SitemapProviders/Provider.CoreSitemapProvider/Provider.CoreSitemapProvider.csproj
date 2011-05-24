@@ -61,7 +61,7 @@
     <DNNFileName>CoreSitemapProvider</DNNFileName>
     <PackageName>CoreSitemapProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoWarn>1591</NoWarn>
@@ -110,7 +110,7 @@
     <DNNFileName>SearchProvider</DNNFileName>
     <PackageName>SearchProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -134,7 +134,7 @@
     <DNNFileName>CoreSitemapProvider</DNNFileName>
     <PackageName>CoreSitemapProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\ProviderPackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">

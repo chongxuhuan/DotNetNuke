@@ -2,7 +2,6 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="HelpButton" Src="~/controls/HelpButtonControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
-
 <div class="dnnForm dnnRecycleBin dnnClear" id="dnnRecycleBin">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#rbTabs"><%=LocalizeString("Tabs")%></a></li>
@@ -17,9 +16,7 @@
     <div class="rbTabs dnnClear" id="rbTabs">
         <div class="rbtContent dnnClear">
             <fieldset>
-                <div>
-                    <asp:ListBox ID="lstTabs" runat="server" Width="350px" Rows="5" DataTextField="TabName" DataValueField="TabId" SelectionMode="Multiple" />
-                </div>
+                <div class="dnnFormItem"><asp:ListBox ID="lstTabs" runat="server" Width="450px" Rows="14" DataTextField="TabName" DataValueField="TabId" SelectionMode="Multiple" /></div>
                 <div runat="server" id="divTabButtons">
                     <ul class="dnnActions">
                         <li><asp:LinkButton ID="cmdRestoreTab" runat="server" resourcekey="cmdRestoreTab" CssClass="dnnSecondaryAction cmdRestoreTab" /></li>
@@ -32,9 +29,7 @@
     <div class="rbModules dnnClear" id="rbModules">
         <div class="rbmContent dnnClear">
             <fieldset>
-                <div>
-                    <asp:ListBox ID="lstModules" runat="server" Width="350px" Rows="5" SelectionMode="Multiple" />
-                </div>
+                <div class="dnnFormItem"><asp:ListBox ID="lstModules" runat="server" Width="450px" Rows="14" SelectionMode="Multiple" /></div>
                 <div id="divModuleButtons" runat="server">
                     <ul class="dnnActions">
                         <li><asp:LinkButton ID="cmdRestoreModule" runat="server" resourcekey="cmdRestoreModule" CssClass="dnnSecondaryAction" /></li>

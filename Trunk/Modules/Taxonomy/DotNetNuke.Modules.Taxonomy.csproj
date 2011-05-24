@@ -46,7 +46,7 @@
     <Extension>zip</Extension>
     <DNNFileName>Taxonomy</DNNFileName>
     <PackageName>Taxonomy</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoWarn>1591</NoWarn>
@@ -89,42 +89,42 @@
     <Compile Include="Presenters\CreateVocabularyPresenter.cs" />
     <Compile Include="Presenters\EditVocabularyPresenter.cs" />
     <Compile Include="Presenters\VocabularyListPresenter.cs" />
-    <Compile Include="Views\Controls\EditTermControl.ascx.cs">
+    <Compile Include="Controls\EditTermControl.ascx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>EditTermControl.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\EditTermControl.ascx.designer.cs">
+    <Compile Include="Controls\EditTermControl.ascx.designer.cs">
       <DependentUpon>EditTermControl.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\EditVocabularyControl.ascx.cs">
+    <Compile Include="Controls\EditVocabularyControl.ascx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>EditVocabularyControl.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\EditVocabularyControl.ascx.designer.cs">
+    <Compile Include="Controls\EditVocabularyControl.ascx.designer.cs">
       <DependentUpon>EditVocabularyControl.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\CreateVocabulary.ascx.cs">
+    <Compile Include="CreateVocabulary.ascx.cs">
       <DependentUpon>CreateVocabulary.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\CreateVocabulary.ascx.designer.cs">
+    <Compile Include="CreateVocabulary.ascx.designer.cs">
       <DependentUpon>CreateVocabulary.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditVocabulary.ascx.cs">
+    <Compile Include="EditVocabulary.ascx.cs">
       <DependentUpon>EditVocabulary.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\EditVocabulary.ascx.designer.cs">
+    <Compile Include="EditVocabulary.ascx.designer.cs">
       <DependentUpon>EditVocabulary.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Views\ICreateVocabularyView.cs" />
-    <Compile Include="Views\IEditVocabularyView.cs" />
-    <Compile Include="Views\IVocabularyListView.cs" />
-    <Compile Include="Views\VocabularyList.ascx.cs">
+    <Compile Include="ICreateVocabularyView.cs" />
+    <Compile Include="IEditVocabularyView.cs" />
+    <Compile Include="IVocabularyListView.cs" />
+    <Compile Include="VocabularyList.ascx.cs">
       <DependentUpon>VocabularyList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\VocabularyList.ascx.designer.cs">
+    <Compile Include="VocabularyList.ascx.designer.cs">
       <DependentUpon>VocabularyList.ascx</DependentUpon>
     </Compile>
     <Content Include="App_LocalResources\CreateVocabulary.ascx.resx" />
@@ -137,14 +137,14 @@
     <Content Include="module.css" />
     <Content Include="releaseNotes.txt" />
     <Content Include="taxonomy.gif" />
-    <Content Include="Views\Controls\EditTermControl.ascx" />
-    <Content Include="Views\Controls\EditVocabularyControl.ascx" />
-    <Content Include="Views\CreateVocabulary.ascx" />
-    <Content Include="Views\EditVocabulary.ascx" />
+    <Content Include="Controls\EditTermControl.ascx" />
+    <Content Include="Controls\EditVocabularyControl.ascx" />
+    <Content Include="CreateVocabulary.ascx" />
+    <Content Include="EditVocabulary.ascx" />
     <Compile Include="Views\Models\CreateVocabularyModel.cs" />
     <Compile Include="Views\Models\EditVocabularyModel.cs" />
     <Compile Include="Views\Models\VocabularyListModel.cs" />
-    <Content Include="Views\VocabularyList.ascx" />
+    <Content Include="VocabularyList.ascx" />
     <None Include="Taxonomy.dnn" />
   </ItemGroup>
   <ItemGroup>
@@ -208,10 +208,11 @@
     <Extension>zip</Extension>
     <DNNFileName>Taxonomy</DNNFileName>
     <PackageName>Taxonomy</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
-  <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;Package">
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CreateItem Include="Views\*.ascx">

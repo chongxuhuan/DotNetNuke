@@ -36,6 +36,9 @@ namespace DotNetNuke.Services.FileSystem
     {
         #region Public Properties
 
+        /// <summary>
+        /// Gets the file extension to use for protected files.
+        /// </summary>
         public string ProtectedExtension
         {
             get
@@ -43,7 +46,18 @@ namespace DotNetNuke.Services.FileSystem
                 return GlobalsWrapper.Instance.GetProtectedExtension();
             }
         }
-        
+
+        /// <summary>
+        /// Gets a value indicating if the provider ensures the files/folders it manages are secure from outside access.
+        /// </summary>
+        public override bool SupportsSecureOutsideAccess
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         #endregion
 
         #region Abstract Methods
@@ -179,9 +193,6 @@ namespace DotNetNuke.Services.FileSystem
             return stream;
         }
 
-        /// <remarks>
-        /// Secure files doesn't have a direct Url.
-        /// </remarks>
         public override string GetFileUrl(IFileInfo file)
         {
             Requires.NotNull("file", file);

@@ -107,6 +107,21 @@ namespace DotNetNuke.Services.FileSystem
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets a value indicating if the provider ensures the files/folders it manages are secure from outside access.
+        /// </summary>
+        public virtual bool SupportsSecureOutsideAccess
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Abstract Methods
 
         /// <summary>

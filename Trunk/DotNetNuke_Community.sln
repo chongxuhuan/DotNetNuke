@@ -172,9 +172,11 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Commerce", "Modules\Commerce\DotNetNuke.Professional.Commerce.csproj", "{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 61
+		SccNumberOfProjects = 62
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -414,6 +416,10 @@ Global
 		SccProjectName60 = Website
 		SccLocalPath60 = Website
 		SccProjectEnlistmentChoice60 = 2
+		SccProjectUniqueName61 = Modules\\Commerce\\DotNetNuke.Professional.Commerce.csproj
+		SccProjectTopLevelParentUniqueName61 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName61 = Modules/Commerce
+		SccLocalPath61 = Modules\\Commerce
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1158,6 +1164,18 @@ Global
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|.NET.ActiveCfg = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1199,6 +1217,7 @@ Global
 		{6F0A5B23-E09F-431A-879A-993CB77E23D8} = {8F128F7A-C68D-49E4-B37F-56EBB70A5A67}
 		{89093FD0-076F-48CD-9232-B665226CDBF0} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
 		{86AF9531-D270-4C18-A8B9-C67A8782AF69} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
+		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}

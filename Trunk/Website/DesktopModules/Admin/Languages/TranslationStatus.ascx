@@ -23,4 +23,3 @@
     <dnn:CommandButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/translate.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
     <dnn:CommandButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/untranslate.gif" CausesValidation="False" />
 </div>
-

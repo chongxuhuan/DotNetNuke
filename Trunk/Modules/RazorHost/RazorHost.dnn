@@ -74,38 +74,48 @@
         </component>
         <component type="Assembly">
           <assemblies>
-            <basePath>bin</basePath>
             <assembly>
+              <path>bin</path>
               <name>DotNetNuke.Modules.RazorHost.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>DotNetNuke.Web.Razor.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>System.Web.Helpers.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>System.Web.Razor.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>System.Web.WebPages.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>System.Web.WebPages.Razor.dll</name>
             </assembly>
-			<assembly>
+            <assembly>
+              <path>bin</path>
               <name>System.Web.WebPages.Deployment.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>WebMatrix.Data.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>WebMatrix.WebData.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>Microsoft.Web.Helpers.dll</name>
             </assembly>
             <assembly>
+              <path>bin</path>
               <name>Microsoft.Web.Infrastructure.dll</name>
             </assembly>
           </assemblies>

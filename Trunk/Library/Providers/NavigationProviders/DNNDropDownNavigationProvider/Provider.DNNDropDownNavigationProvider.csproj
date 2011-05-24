@@ -108,7 +108,7 @@
     <DNNFileName>DNNDropDownNavigationProvider</DNNFileName>
     <PackageName>DNNDropDownNavigationProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\ProviderPackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">

@@ -44,5 +44,6 @@ namespace DotNetNuke.Services.FileSystem
         Guid UniqueId { get; set; }
         Guid VersionGuid { get; set; }
         int FolderMappingID { get; set; }
+        bool SupportsSecureOutsideAccess { get; }
     }
 }

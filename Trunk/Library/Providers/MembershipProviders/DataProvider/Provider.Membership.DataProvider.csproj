@@ -114,7 +114,7 @@
     <PackageName>AspNetMembershipProvider</PackageName>
     <Providers>
     </Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>

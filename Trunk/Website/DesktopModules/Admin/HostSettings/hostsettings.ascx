@@ -36,8 +36,8 @@
             toggleSmtpCredentials();
         });
         
-        toggleSection('friendlyUrlsRow', <%=DotNetNuke.Entities.Host.Host.UseFriendlyUrls.ToString().ToLower() %>);
-        toggleSection('requestFiltersRow', <%=DotNetNuke.Entities.Host.Host.EnableRequestFilters.ToString().ToLower() %>);
+        toggleSection('friendlyUrlsRow', <%=chkUseFriendlyUrls.ClientID %>.checked);
+        toggleSection('requestFiltersRow', <%=chkEnableRequestFilters.ClientID %>.checked);
     }
 
     $(document).ready(function () {

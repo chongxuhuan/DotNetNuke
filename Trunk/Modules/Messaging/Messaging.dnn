@@ -75,9 +75,9 @@
 				</component>
 				<component type="Assembly">
 					<assemblies>
-						<basePath>bin</basePath>
 						<assembly>
-							<name>DotNetNuke.Modules.Messaging.dll</name>
+              <path>bin</path>
+              <name>DotNetNuke.Modules.Messaging.dll</name>
 						</assembly>
 					</assemblies>
 				</component>

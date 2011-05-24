@@ -238,6 +238,15 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
+        public bool SupportsSecureOutsideAccess
+        {
+            get
+            {
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(FolderMappingID);
+                return FolderProvider.Instance(folderMapping.FolderProviderType).SupportsSecureOutsideAccess;
+            }   
+        }
+
         #endregion
 
         #region "IHydratable Implementation"

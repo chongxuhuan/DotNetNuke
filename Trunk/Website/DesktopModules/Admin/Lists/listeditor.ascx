@@ -6,7 +6,6 @@
 <%@ Register TagPrefix="dnn" TagName="ListEntries" Src="~/DesktopModules/Admin/Lists/ListEntries.ascx" %>
 <div class="dnnForm dnnListEditor dnnClear" id="dnnListEditor">
     <fieldset>
-        <legend></legend>
         <div class="dnnFormItem">
             <div class="dnnListEditorTree">
                 <dnntv:dnntree id="DNNtree" runat="server" SystemImagesPath="~/images/" />

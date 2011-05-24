@@ -118,7 +118,7 @@
     <PackageName>DNNMembershipProvider</PackageName>
     <Providers>
     </Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\..\..\BuildScripts\MembershipProviderPackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageProvider">

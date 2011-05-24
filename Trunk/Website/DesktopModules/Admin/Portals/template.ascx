@@ -1,7 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Portals.Template" CodeFile="Template.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
-
 <div class="dnnForm dnnExportPortal dnnClear" id="dnnExportPortal">
 	<div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
     <fieldset>
@@ -16,7 +15,7 @@
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plDescription" controlname="txtDescription" runat="server" />
-            <asp:textbox id="txtDescription" runat="server" CssClass="dnnFormRequired" enableviewstate="False" TextMode="MultiLine" Columns="60"/>
+            <asp:textbox id="txtDescription" runat="server" CssClass="dnnFormRequired" enableviewstate="False" TextMode="MultiLine" Rows="10" />
 			<asp:requiredfieldvalidator id="valDescription" runat="server" controltovalidate="txtDescription" display="Dynamic" CssClass="dnnFormMessage dnnFormError" resourcekey="valDescription.ErrorMessage" />
         </div>
         <div class="dnnFormItem">

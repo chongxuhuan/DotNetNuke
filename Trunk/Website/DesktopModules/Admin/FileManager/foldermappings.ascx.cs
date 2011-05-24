@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
@@ -32,15 +31,15 @@ using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
-
 using Telerik.Web.UI;
-
 using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.FileManager
 {
+
     public partial class FolderMappings : PortalModuleBase
     {
+
         #region Private Variables
 
         private readonly IFolderMappingController _folderMappingController = FolderMappingController.Instance;
@@ -95,8 +94,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-            cmdNewMapping.Click += cmdNewMapping_Click;
+            cmdCancel.NavigateUrl = Globals.NavigateURL();
+            cmdNewMapping.Click += OnNewMappingClick;
 
             if (!IsPostBack)
             {
@@ -192,23 +191,11 @@ namespace DotNetNuke.Modules.Admin.FileManager
             grdMappings.DataSource = FolderMappingsList;
         }
 
-        private void cmdNewMapping_Click(object sender, EventArgs e)
+        protected void OnNewMappingClick(object sender, EventArgs e)
         {
             try
             {
                 Response.Redirect(EditUrl("EditFolderMapping"));
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        private void cmdCancel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Response.Redirect(Globals.NavigateURL());
             }
             catch (Exception exc)
             {
@@ -230,5 +217,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
         }
 
         #endregion
+
     }
 }

@@ -1,7 +1,4 @@
 ﻿.dnnScheduleGrid{}
-	.dnnScheduleGrid td{padding:3px 5px;}
-	.dnnScheduleGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
-	.dnnScheduleGridItem{border-bottom:1px #eee solid}
-	.dnnScheduleGridAltItem{background:#f1f1f1;}
-	
-.dnnScheduleGridAltItem span, .dnnScheduleGridItem span{display: inline-block;}
+	.dnnEditSchedule .dnnFormItem input[type="text"]{width:32%;margin-right:10px;}
+	#dnnScheduleStatus .dnnFormItem{padding:0;}
+	#dnnScheduleStatus .dnnFormLabel{margin:0;}

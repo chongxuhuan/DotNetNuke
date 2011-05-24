@@ -106,16 +106,18 @@
             <fieldset>
                 <div class="dnnFormItem">
                     <dnn:Label id="plIcon" runat="server" controlname="ctlIcon" />
-                    <dnn:url id="ctlIcon" runat="server" ShowImages="true" showurls="False" showtabs="False" showlog="False" showtrack="False" required="False" ShowNone="true" />
+                    <div class="dnnLeft"><dnn:url id="ctlIcon" runat="server" ShowImages="true" showurls="False" showtabs="False" showlog="False" showtrack="False" required="False" ShowNone="true" /></div>
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label id="plAlign" runat="server" controlname="cboAlign" />
-                    <asp:radiobuttonlist id="cboAlign" cssclass="dnnMSRadioButtons" runat="server" RepeatLayout="Flow">
-						<asp:listitem resourcekey="Left" value="left" />
-						<asp:listitem resourcekey="Center" value="center" />
-						<asp:listitem resourcekey="Right" value="right" />
-						<asp:listitem resourcekey="Not_Specified" value="" />
-					</asp:radiobuttonlist>
+                    <div class="dnnLeft">
+                        <asp:radiobuttonlist id="cboAlign" cssclass="dnnFormRadioButtons" runat="server" RepeatLayout="Flow">
+                            <asp:listitem resourcekey="Left" value="left" />
+                            <asp:listitem resourcekey="Center" value="center" />
+                            <asp:listitem resourcekey="Right" value="right" />
+                            <asp:listitem resourcekey="Not_Specified" value="" />
+                        </asp:radiobuttonlist>
+					</div>
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label id="plColor" runat="server" controlname="txtColor" />
@@ -128,7 +130,7 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label id="plVisibility" runat="server" controlname="cboVisibility" />
-                    <asp:radiobuttonlist id="cboVisibility" cssclass="dnnMSRadioButtons" runat="server" RepeatLayout="Flow">
+                    <asp:radiobuttonlist id="cboVisibility" cssclass="dnnFormRadioButtons" runat="server" RepeatLayout="Flow">
 						<asp:listitem resourcekey="Maximized" value="0" />
 						<asp:listitem resourcekey="Minimized" value="1" />
 						<asp:listitem resourcekey="None" value="2" />

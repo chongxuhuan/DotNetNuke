@@ -10,8 +10,7 @@
         <div class="dnnFormItem">
             <dnn:Label ID="plType" runat="server" ControlName="txtType" />
             <asp:TextBox ID="txtType" runat="server" CssClass="dnnFormRequired" />
-            <asp:RequiredFieldValidator ID="valType" runat="server" Display="Dynamic" EnableClientScript="true"
-                 ControlToValidate="txtType" CssClass="dnnFormMessage dnnFormError" resourcekey="TypeRequired" />
+            <asp:RequiredFieldValidator ID="valType" runat="server" Display="Dynamic" EnableClientScript="true" ControlToValidate="txtType" CssClass="dnnFormMessage dnnFormError" resourcekey="TypeRequired" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="plEnabled" runat="server" ControlName="chkEnabled" />
@@ -21,26 +20,26 @@
             <dnn:Label ID="plTimeLapse" runat="server" ControlName="txtTimeLapse" />
             <asp:TextBox ID="txtTimeLapse" runat="server" MaxLength="10" />
             <asp:DropDownList ID="ddlTimeLapseMeasurement" runat="server">
-                <asp:ListItem resourcekey="Seconds" Value="s"/>
-                <asp:ListItem resourcekey="Minutes" Value="m"/>
-                <asp:ListItem resourcekey="Hours" Value="h"/>
-                <asp:ListItem resourcekey="Days" Value="d"/>
+                <asp:ListItem resourcekey="Seconds" Value="s" />
+                <asp:ListItem resourcekey="Minutes" Value="m" />
+                <asp:ListItem resourcekey="Hours" Value="h" />
+                <asp:ListItem resourcekey="Days" Value="d" />
             </asp:DropDownList>
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="plRetryTimeLapse" runat="server" ControlName="txtRetryTimeLapse" />
             <asp:TextBox ID="txtRetryTimeLapse" runat="server" MaxLength="10" />
-            <asp:DropDownList ID="ddlRetryTimeLapseMeasurement" runat="server" >
-               <asp:ListItem resourcekey="Seconds" Value="s"/>
-                <asp:ListItem resourcekey="Minutes" Value="m"/>
-                <asp:ListItem resourcekey="Hours" Value="h"/>
-                <asp:ListItem resourcekey="Days" Value="d"/>
+            <asp:DropDownList ID="ddlRetryTimeLapseMeasurement" runat="server">
+               <asp:ListItem resourcekey="Seconds" Value="s" />
+                <asp:ListItem resourcekey="Minutes" Value="m" />
+                <asp:ListItem resourcekey="Hours" Value="h" />
+                <asp:ListItem resourcekey="Days" Value="d" />
             </asp:DropDownList>
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="plRetainHistoryNum" runat="server" ControlName="ddlRetainHistoryNum" />
             <asp:DropDownList ID="ddlRetainHistoryNum" runat="server">
-                <asp:ListItem Value="0" resourcekey="None"/>
+                <asp:ListItem Value="0" resourcekey="None" />
                 <asp:ListItem Value="1">1</asp:ListItem>
                 <asp:ListItem Value="5">5</asp:ListItem>
                 <asp:ListItem Value="10">10</asp:ListItem>
@@ -49,13 +48,13 @@
                 <asp:ListItem Value="100">100</asp:ListItem>
                 <asp:ListItem Value="250">250</asp:ListItem>
                 <asp:ListItem Value="500">500</asp:ListItem>
-                <asp:ListItem Value="-1" resourcekey="All"/>
+                <asp:ListItem Value="-1" resourcekey="All" />
             </asp:DropDownList>
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="plAttachToEvent" runat="server" ControlName="ddlAttachToEvent" />
             <asp:DropDownList ID="ddlAttachToEvent" runat="server" >
-                <asp:ListItem resourcekey="None" Value=""/>
+                <asp:ListItem resourcekey="None" Value="" />
                 <asp:ListItem resourcekey="APPLICATION_START" Value="APPLICATION_START" />
             </asp:DropDownList>
         </div>

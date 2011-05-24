@@ -36,6 +36,21 @@ namespace DotNetNuke.Services.FileSystem
 {
     public class DatabaseFolderProvider : FolderProvider
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets a value indicating if the provider ensures the files/folders it manages are secure from outside access.
+        /// </summary>
+        public override bool SupportsSecureOutsideAccess
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        #endregion
+
         #region Abstract Methods
 
         public override void AddFile(IFolderInfo folder, string fileName, Stream content)
@@ -152,9 +167,6 @@ namespace DotNetNuke.Services.FileSystem
             return null;
         }
 
-        /// <remarks>
-        /// Database files doesn't have a direct Url.
-        /// </remarks>
         public override string GetFileUrl(IFileInfo file)
         {
             Requires.NotNull("file", file);

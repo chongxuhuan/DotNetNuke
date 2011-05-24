@@ -96,7 +96,7 @@
     <DNNFileName>SearchProvider</DNNFileName>
     <PackageName>SearchProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

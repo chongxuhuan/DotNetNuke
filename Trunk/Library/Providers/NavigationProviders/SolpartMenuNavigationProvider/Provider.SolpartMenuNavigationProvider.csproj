@@ -121,7 +121,7 @@
     <DNNFileName>SolpartMenuNavigationProvider</DNNFileName>
     <PackageName>SolpartMenuNavigationProvider</PackageName>
     <Providers>/Providers</Providers>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>

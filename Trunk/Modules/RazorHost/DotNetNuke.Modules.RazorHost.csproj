@@ -222,7 +222,7 @@
     <Extension>resources</Extension>
     <DNNFileName>RazorHost</DNNFileName>
     <PackageName>RazorHost</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</MSBuildCommunityTasksPath>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageRazor">

@@ -24,43 +24,34 @@
     }
 -->
 </script>
-<table cellpadding="2" cellspacing="2" border="0" width="500px">
-    <tr>
-        <td>
-            <asp:Label ID="lbDescription" runat="server" CssClass="Normal" resourcekey="Description.Text"></asp:Label>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <h2><asp:Label ID="lbTableHeader" runat="server" resourcekey="TableHeader.Text"></asp:Label></h2>
-            <dnn:dnngrid id="grdMappings" runat="server" autogeneratecolumns="false" Width="98%"
-                OnRowDrop="grdMappings_OnRowDrop" OnNeedDataSource="grdMappings_NeedDataSource"
-                AllowAutomaticUpdates="false" AllowAutomaticDeletes="false"
-                OnItemCommand="grdMappings_ItemCommand" OnItemDataBound="grdMappings_ItemDataBound">
-                <MasterTableView DataKeyNames="FolderMappingID">
-                    <Columns>
-                        <telerik:GridDragDropColumn HeaderStyle-Width="18px" />
-                        <dnn:DnnGridTemplateColumn>
-                            <ItemStyle Width="60px" />
-                            <ItemTemplate>
-                                <dnn:commandbutton id="cmdEditMapping" runat="server" imageurl="~/images/edit.gif" commandname="Edit" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
-                                <dnn:commandbutton id="cmdDeleteMapping" runat="server" imageurl="~/images/delete.gif" commandname="Delete" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
-                            </ItemTemplate>
-                        </dnn:DnnGridTemplateColumn>
-                        <dnn:DnnGridBoundColumn DataField="MappingName" HeaderText="Name" />
-                        <dnn:DnnGridBoundColumn DataField="FolderProviderType" HeaderText="Type" />
-                    </Columns>
-                </MasterTableView>
-                <ClientSettings AllowRowsDragDrop="true">
-                    <Selecting AllowRowSelect="True" EnableDragToSelectRows="false" />
-                    <ClientEvents OnRowDragStarted="grdMappings_OnRowDragStarted" OnRowDropping="grdMappings_OnRowDropping" />
-                    <Scrolling AllowScroll="true" UseStaticHeaders="true" ScrollHeight="191" />
-                </ClientSettings>
-            </dnn:dnngrid>
-        </td>
-    </tr>
-</table>
-<p>
-    <dnn:commandbutton id="cmdNewMapping" resourcekey="cmdNewMapping" runat="server" cssclass="CommandButton" imageurl="~/images/add.gif" causesvalidation="False" />
-    <dnn:commandbutton id="cmdCancel" resourcekey="cmdCancel" runat="server" cssclass="CommandButton" imageurl="~/images/lt.gif" causesvalidation="False" />
-</p>
+<div class="dnnForm dnnFolderMappings dnnClear">
+    <div><asp:Label ID="lbDescription" runat="server" CssClass="Normal" resourcekey="Description.Text" /></div>
+    <div>
+        <h2><asp:Label ID="lbTableHeader" runat="server" resourcekey="TableHeader.Text" /></h2>
+        <dnn:dnngrid id="grdMappings" runat="server" autogeneratecolumns="false" Width="98%" OnRowDrop="grdMappings_OnRowDrop" OnNeedDataSource="grdMappings_NeedDataSource"
+            AllowAutomaticUpdates="false" AllowAutomaticDeletes="false" OnItemCommand="grdMappings_ItemCommand" OnItemDataBound="grdMappings_ItemDataBound">
+            <MasterTableView DataKeyNames="FolderMappingID">
+                <Columns>
+                    <telerik:GridDragDropColumn HeaderStyle-Width="18px" />
+                    <dnn:DnnGridTemplateColumn>
+                        <ItemTemplate>
+                            <dnn:commandbutton id="cmdEditMapping" runat="server" imageurl="~/images/edit.gif" commandname="Edit" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
+                            <dnn:commandbutton id="cmdDeleteMapping" runat="server" imageurl="~/images/delete.gif" commandname="Delete" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
+                        </ItemTemplate>
+                    </dnn:DnnGridTemplateColumn>
+                    <dnn:DnnGridBoundColumn DataField="MappingName" HeaderText="Name" />
+                    <dnn:DnnGridBoundColumn DataField="FolderProviderType" HeaderText="Type" />
+                </Columns>
+            </MasterTableView>
+            <ClientSettings AllowRowsDragDrop="true">
+                <Selecting AllowRowSelect="True" EnableDragToSelectRows="false" />
+                <ClientEvents OnRowDragStarted="grdMappings_OnRowDragStarted" OnRowDropping="grdMappings_OnRowDropping" />
+                <Scrolling AllowScroll="true" UseStaticHeaders="true" ScrollHeight="191" />
+            </ClientSettings>
+        </dnn:dnngrid>
+    </div>
+    <ul class="dnnActions dnnClear">
+        <li><asp:LinkButton id="cmdNewMapping" resourcekey="cmdNewMapping" runat="server" cssclass="dnnPrimaryAction" causesvalidation="False" /></li>
+        <li><asp:HyperLink id="cmdCancel" resourcekey="cmdCancel" runat="server" cssclass="dnnSecondaryAction" /></li>
+    </ul>
+</div>

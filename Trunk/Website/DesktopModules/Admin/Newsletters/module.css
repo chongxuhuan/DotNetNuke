@@ -9,3 +9,5 @@ span.dnnNewsletterRadios{display:block;float:left;overflow:hidden;width:50%;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnFormLabel{text-align:left;width:20%;}
 	.dnnFormItem.dnnNewsletterAttachment .urlControlFileRow a.dnnSecondaryAction{padding:0;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnFormMessage{margin:0;}
+	.dnnFormItem.dnnNewsletterAttachment .dnnUrlControl .dnnFormLabel{font-weight:normal;width:auto;margin-top:0;}
+	.dnnFormItem.dnnNewsletterAttachment .dnnUrlControl br{display:none;}

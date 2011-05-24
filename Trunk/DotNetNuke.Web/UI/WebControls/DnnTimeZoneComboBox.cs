@@ -43,9 +43,8 @@ namespace DotNetNuke.Web.UI.WebControls
             this.DataValueField = "Id";
 
             this.DataSource = TimeZoneInfo.GetSystemTimeZones();
+			this.DataBind();
         }
-
     }
-
 }
 
