@@ -339,4 +339,43 @@
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About Pages&lt;/h1&gt;&lt;p&gt;The Admin user can manage pages in the site.&lt;/p&gt;</value>
   </data>
+  <data name="Url.Text" xml:space="preserve">
+    <value>Link: </value>
+  </data>
+  <data name="TabRecycled.Text" xml:space="preserve">
+    <value>A page with this name exists in the Recycle Bin.  To restore this page use the Recycle Bin.</value>
+  </data>
+  <data name="TabExists.Text" xml:space="preserve">
+    <value>The Page Name you chose is already being used for another page at the same level of the page heirarchy.</value>
+  </data>
+  <data name="TabCreated.Text" xml:space="preserve">
+    <value>Page {0} Created</value>
+  </data>
+  <data name="TabDeleted.Text" xml:space="preserve">
+    <value>Page {0} Deleted</value>
+  </data>
+  <data name="TabHidden.Text" xml:space="preserve">
+    <value>Page {0} Hidden from Navigation</value>
+  </data>
+  <data name="TabShown.Text" xml:space="preserve">
+    <value>Page {0} Shown in Navigation</value>
+  </data>
+  <data name="TabEnabled.Text" xml:space="preserve">
+    <value>Page {0} Enabled</value>
+  </data>
+  <data name="TabDisabled.Text" xml:space="preserve">
+    <value>Page {0} Disabled</value>
+  </data>
+  <data name="TabMadeHome.Text" xml:space="preserve">
+    <value>Page {0} Made Home</value>
+  </data>
+  <data name="TabUpdated.Text" xml:space="preserve">
+    <value>Page {0} Updated</value>
+  </data>
+  <data name="TabMoved.Text" xml:space="preserve">
+    <value>Page {0} Moved</value>
+  </data>
+  <data name="EmptyTabName.Text" xml:space="preserve">
+    <value>Tab Name is Empty</value>
+  </data>
 </root>

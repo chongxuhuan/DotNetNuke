@@ -169,7 +169,7 @@
     <value>Import</value>
   </data>
   <data name="Tool.NewPage.Text" xml:space="preserve">
-    <value>Add New Page</value>
+    <value>Add</value>
   </data>
   <data name="Tool.PageSettings.Text" xml:space="preserve">
     <value>Edit Page Settings</value>
@@ -344,5 +344,71 @@
   </data>
   <data name="Tool.WebServerManager.ToolTip" xml:space="preserve">
     <value>Web Server Manager</value>
+  </data>
+  <data name="IncludeInMenu.Text" xml:space="preserve">
+    <value>Include in Menu</value>
+  </data>
+  <data name="Tool.CopyPermissionsToChildren.ToolTip" xml:space="preserve">
+    <value>Copy Permissions to Children</value>
+  </data>
+  <data name="Tool.Help.ToolTip" xml:space="preserve">
+    <value>Online Help</value>
+  </data>
+  <data name="Tool.NewRole.ToolTip" xml:space="preserve">
+    <value>Add New Role</value>
+  </data>
+  <data name="Tool.NewUser.ToolTip" xml:space="preserve">
+    <value>Add New User</value>
+  </data>
+  <data name="Tool.UploadFile.ToolTip" xml:space="preserve">
+    <value>Upload File to Server</value>
+  </data>
+  <data name="AddButton.Text" xml:space="preserve">
+    <value>Add Page</value>
+  </data>
+  <data name="Location.Text" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Template.Text" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="AddExisting.Text" xml:space="preserve">
+    <value>Add Existing Module</value>
+  </data>
+  <data name="AddModule.Text" xml:space="preserve">
+    <value>Add Module</value>
+  </data>
+  <data name="AddNew.Text" xml:space="preserve">
+    <value>Add New Module</value>
+  </data>
+  <data name="Category.Text" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Disabled.Text" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Insert.Text" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Name.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Pane.Text" xml:space="preserve">
+    <value>Pane</value>
+  </data>
+  <data name="Skin.Text" xml:space="preserve">
+    <value>Skin</value>
+  </data>
+  <data name="SwitchButton.Text" xml:space="preserve">
+    <value>Switch Site</value>
+  </data>
+  <data name="Title.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="UpdateButton.Text" xml:space="preserve">
+    <value>Update Page</value>
+  </data>
+  <data name="CurrentTabAddPage.Text" xml:space="preserve">
+    <value>Add New Page</value>
   </data>
 </root>

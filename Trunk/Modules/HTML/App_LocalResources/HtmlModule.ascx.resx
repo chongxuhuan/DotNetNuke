@@ -146,4 +146,46 @@
   <data name="MyWork.Action" xml:space="preserve">
     <value>My Work</value>
   </data>
+  <data name="Bold.ToolTip" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="Indent.ToolTip" xml:space="preserve">
+    <value>Indent</value>
+  </data>
+  <data name="Italic.ToolTip" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="Outdent.ToolTip" xml:space="preserve">
+    <value>Outdent</value>
+  </data>
+  <data name="Underline.ToolTip" xml:space="preserve">
+    <value>Underline</value>
+  </data>
+  <data name="Cancel.ToolTip" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CreateLink.ToolTip" xml:space="preserve">
+    <value>Create Link</value>
+  </data>
+  <data name="Edit.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="JustifyCenter.ToolTip" xml:space="preserve">
+    <value>Justify Center</value>
+  </data>
+  <data name="JustifyLeft.ToolTip" xml:space="preserve">
+    <value>Justify Left</value>
+  </data>
+  <data name="JustifyRight.ToolTip" xml:space="preserve">
+    <value>Justify Right</value>
+  </data>
+  <data name="OrderedList.ToolTip" xml:space="preserve">
+    <value>Ordered List</value>
+  </data>
+  <data name="Save.ToolTip" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="UnorderedList.ToolTip" xml:space="preserve">
+    <value>Unordered List</value>
+  </data>
 </root>

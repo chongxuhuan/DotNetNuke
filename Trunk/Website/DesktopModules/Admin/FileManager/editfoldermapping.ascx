@@ -7,7 +7,7 @@
         <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
         <div id="exFolderMappingSettings" class="exFolderMappingSettings dnnClear">
             <div class="exfmsContent dnnClear">
-                <h2 id="Panel-GeneralSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("GeneralSettings")%></a></h2>
+                <h2 id="Panel-GeneralSettings" class="dnnFormSectionHead"><%=LocalizeString("GeneralSettings")%></h2>
                 <fieldset>
                     <legend></legend>
                     <div class="dnnFormItem">
@@ -17,11 +17,11 @@
                     </div>
                     <div class="dnnFormItem">
                         <dnn:label id="plFolderProvider" runat="server" controlname="cboFolderProviders" />
-                        <asp:DropDownList ID="cboFolderProviders" runat="server" CssClass="dnnFormInput" AutoPostBack="true" CausesValidation="false" OnSelectedIndexChanged="cboFolderProviders_SelectedIndexChanged"></asp:DropDownList>
+                        <asp:DropDownList ID="cboFolderProviders" runat="server" AutoPostBack="true" CausesValidation="false" OnSelectedIndexChanged="cboFolderProviders_SelectedIndexChanged"></asp:DropDownList>
                         <asp:RequiredFieldValidator ID="valFolderProvider" runat="server" ControlToValidate="cboFolderProviders" InitialValue="" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" resourcekey="valFolderProvider.ErrorMessage" EnableClientScript="false" ValidationGroup="vgEditFolderMapping"></asp:RequiredFieldValidator>
                     </div>
                 </fieldset>
-                <h2 id="Panel-FolderProviderSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("FolderProviderSettings")%></a></h2>
+                <h2 id="Panel-FolderProviderSettings" class="dnnFormSectionHead"><%=LocalizeString("FolderProviderSettings")%></h2>
                 <fieldset>
                     <legend></legend>
                     <asp:PlaceHolder ID="phProviderSettings" runat="server"></asp:PlaceHolder>
@@ -34,14 +34,3 @@
     <li><dnn:CommandButton ID="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" ResourceKey="cmdUpdate" ImageUrl="~/images/add.gif" ValidationGroup="vgEditFolderMapping" /></li>
     <li><asp:HyperLink ID="cancelHyperLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 </ul>
-<script language="javascript" type="text/javascript">
-    function setUpDnnEditFolderMapping() {
-        $("#dnnEditFolderMapping").dnnTabs().dnnPanels();
-    }
-    $(document).ready(function () {
-        setUpDnnEditFolderMapping();
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-            setUpDnnEditFolderMapping();
-        });
-    });
-</script>

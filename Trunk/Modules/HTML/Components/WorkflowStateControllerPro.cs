@@ -21,25 +21,17 @@
 
 #endregion
 
-#region Usings
 
 using System;
 
 using DotNetNuke.Common.Utilities;
 
-//
-// DotNetNuke?- http://www.dotnetnuke.com
-// Copyright (c) 2002-2009
-// by DotNetNuke Corporation
-//
-
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
     public partial class WorkflowStateController
     {
-        #region "Public Methods"
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -123,7 +115,7 @@ namespace DotNetNuke.Modules.Html
         /// -----------------------------------------------------------------------------
         public WorkflowStateInfo GetWorkflow(int WorkflowID)
         {
-            return CBO.FillObject(DataProvider.Instance().GetWorkflow(WorkflowID), typeof (WorkflowStateInfo)) as WorkflowStateInfo;
+            return (WorkflowStateInfo) CBO.FillObject(DataProvider.Instance().GetWorkflow(WorkflowID), typeof (WorkflowStateInfo));
         }
 
         /// -----------------------------------------------------------------------------
@@ -138,7 +130,7 @@ namespace DotNetNuke.Modules.Html
         /// -----------------------------------------------------------------------------
         public WorkflowStateInfo GetWorkflowState(int StateID)
         {
-            return CBO.FillObject(DataProvider.Instance().GetWorkflowState(StateID), typeof (WorkflowStateInfo)) as WorkflowStateInfo;
+            return (WorkflowStateInfo) CBO.FillObject(DataProvider.Instance().GetWorkflowState(StateID), typeof (WorkflowStateInfo));
         }
 
         /// -----------------------------------------------------------------------------

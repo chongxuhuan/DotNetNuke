@@ -381,4 +381,7 @@
   <data name="ManageFolderTypes.Action" xml:space="preserve">
     <value>Manage Folder Types</value>
   </data>
+  <data name="SecureFolderWarning.Text" xml:space="preserve">
+    <value>These permissions apply to DotNetNuke.  Anonymous users may be able to bypass DotNetNuke and read these files.  Other folder providers such as Secure, and Database can prevent all anonymous access to files.</value>
+  </data>
 </root>

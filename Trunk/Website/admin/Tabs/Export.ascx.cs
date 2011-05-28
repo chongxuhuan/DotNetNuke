@@ -155,7 +155,7 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 SerializeTab(xmlTemplate, nodeTabs);
 
                 xmlTemplate.Save(filename);
-                UI.Skins.Skin.AddModuleMessage(this, "", String.Format(Localization.GetString("EmailErrorMessage", LocalResourceFile), string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename)), ModuleMessage.ModuleMessageType.BlueInfo);
+                UI.Skins.Skin.AddModuleMessage(this, "", string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename), ModuleMessage.ModuleMessageType.BlueInfo);
 
                 //add file to Files table
                 FileSystemUtils.AddFile(txtFile.Text + ".page.template", PortalId, cboFolders.SelectedItem.Value, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");

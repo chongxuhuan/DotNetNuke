@@ -7,8 +7,8 @@
     <fieldset>
         <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=Localization.GetString("RequiredFields", Localization.SharedResourceFile)%></span></p></div>
         <div id="bannersRow" runat="server" Visible="false" class="dnnFormItem">
-            <asp:DataList id="lstBanners" runat="server" CellPadding="4" Width="100%" EnableViewState="true">
-				<itemstyle horizontalalign="Center" borderwidth="1" bordercolor="#000000" />
+            <asp:DataList id="lstBanners" runat="server" CellPadding="0" Width="100%" EnableViewState="true">
+				<itemstyle horizontalalign="Center" />
 				<itemtemplate>
 					<asp:Label ID="lblItem" Runat="server" Text='<%# FormatItem((int)DataBinder.Eval(Container.DataItem,"VendorId"), (int)DataBinder.Eval(Container.DataItem,"BannerId"), (int)DataBinder.Eval(Container.DataItem,"BannerTypeId"),DataBinder.Eval(Container.DataItem,"BannerName").ToString(),DataBinder.Eval(Container.DataItem,"ImageFile").ToString(),DataBinder.Eval(Container.DataItem,"Description").ToString(),DataBinder.Eval(Container.DataItem,"Url").ToString(), (int)DataBinder.Eval(Container.DataItem,"Width"), (int)DataBinder.Eval(Container.DataItem,"Height")) %>'>
 					</asp:Label>
@@ -26,15 +26,11 @@
         </div>
         <div class="dnnFormItem">
             <dnn:Label id="plBannerGroup" runat="server" controlname="txtBannerGroup"/>
-            <dnn:DNNTextSuggest id="DNNTxtBannerGroup" runat="server" Columns="30"
-                LookupDelay="500" MaxLength="100" Width="300px" 
-                TextSuggestCssClass="NormalTextBox SuggestTextMenu GroupSuggestMenu" 
-                DefaultNodeCssClassOver="SuggestNodeOver"/>
+            <dnn:DNNTextSuggest id="DNNTxtBannerGroup" runat="server" Columns="30" LookupDelay="500" MaxLength="100" Width="300px" TextSuggestCssClass="SuggestTextMenu GroupSuggestMenu" DefaultNodeCssClassOver="SuggestNodeOver" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label id="plImage" runat="server" controlname="ctlImage" />
-            <dnn:url id="ctlImage" runat="server" width="250" Required="False" ShowFiles="True" ShowTabs="False" 
-                ShowUrls="True" ShowTrack="False" ShowLog="False" UrlType="F" />
+            <div class="dnnLeft"><dnn:url id="ctlImage" runat="server" width="250" Required="False" ShowFiles="True" ShowTabs="False" ShowUrls="True" ShowTrack="False" ShowLog="False" UrlType="F" /></div>
         </div>
         <div class="dnnFormItem">
             <dnn:Label id="plWidth" runat="server" controlname="txtWidth" />
@@ -50,8 +46,7 @@
         </div>    
         <div class="dnnFormItem">
             <dnn:Label id="plURL" runat="server" controlname="ctlURL" />
- 			<dnn:url id="ctlURL" runat="server" width="250" Required="False" ShowFiles="True" ShowTabs="True" 
-                ShowUrls="True" ShowTrack="False" ShowLog="False" UrlType="U" />
+ 			<div class="dnnLeft"><dnn:url id="ctlURL" runat="server" Required="False" ShowFiles="True" ShowTabs="True" ShowUrls="True" ShowTrack="False" ShowLog="False" UrlType="U" /></div>
        </div>    
         <div class="dnnFormItem">
             <dnn:Label id="plCPM" runat="server" controlname="txtCPM" />
@@ -64,8 +59,7 @@
             <dnn:Label id="plImpressions" runat="server" controlname="txtImpressions"/>
 			<asp:TextBox id="txtImpressions" runat="server" maxlength="10" Columns="30" cssclass="dnnFormRequired"/>
 			<asp:requiredfieldValidator id="valImpressions" resourcekey="Impressions.ErrorMessage" runat="server" ControlToValidate="txtImpressions" Display="Dynamic" CssClass="dnnFormMessage dnnFormError" />
-			<asp:compareValidator id="compareImpressions" resourcekey="Impressions.ErrorMessage" runat="server" Display="Dynamic" ControlToValidate="txtImpressions" Operator="DataTypeCheck"
-				Type="Integer" CssClass="dnnFormMessage dnnFormError" />
+			<asp:compareValidator id="compareImpressions" resourcekey="Impressions.ErrorMessage" runat="server" Display="Dynamic" ControlToValidate="txtImpressions" Operator="DataTypeCheck" Type="Integer" CssClass="dnnFormMessage dnnFormError" />
         </div>    
         <div class="dnnFormItem">
             <dnn:Label id="plStartDate" runat="server" controlname="txtStartDate" />
@@ -79,9 +73,9 @@
         </div>    
         <div class="dnnFormItem">
             <dnn:Label id="plCriteria" runat="server" controlname="optCriteria" />
-			<asp:RadioButtonList id="optCriteria" runat="server" RepeatDirection="Horizontal">
-				<asp:ListItem Value="1" ResourceKey="or"/>
-				<asp:ListItem Value="0" ResourceKey="and"/>
+			<asp:RadioButtonList id="optCriteria" runat="server" RepeatDirection="Horizontal" CssClass="ucLinkTypeRadioButtons">
+				<asp:ListItem Value="1" ResourceKey="or" />
+				<asp:ListItem Value="0" ResourceKey="and" />
 			</asp:RadioButtonList>
         </div>    
     </fieldset>
@@ -97,6 +91,8 @@
     </div>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnEditBanner() {
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -114,4 +110,5 @@
             setUpDnnEditBanner();
         });
     });
+} (jQuery, window.Sys));
 </script>

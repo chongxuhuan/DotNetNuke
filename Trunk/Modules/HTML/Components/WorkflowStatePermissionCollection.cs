@@ -21,13 +21,12 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-#endregion
+using DotNetNuke.Common.Utilities;
 
 namespace DotNetNuke.Security.Permissions
 {
@@ -46,7 +45,7 @@ namespace DotNetNuke.Security.Permissions
     [Serializable]
     public class WorkflowStatePermissionCollection : CollectionBase
     {
-        #region "Constructors"
+        #region Constructors
 
         public WorkflowStatePermissionCollection()
         {
@@ -75,13 +74,13 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public WorkflowStatePermissionInfo this[int index]
         {
             get
             {
-                return (WorkflowStatePermissionInfo) List[index];
+                return (WorkflowStatePermissionInfo) (List[index]);
             }
             set
             {
@@ -91,7 +90,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         public int Add(WorkflowStatePermissionInfo value)
         {
@@ -100,9 +99,10 @@ namespace DotNetNuke.Security.Permissions
 
         public int Add(WorkflowStatePermissionInfo value, bool checkForDuplicates)
         {
+            int id = Null.NullInteger;
             if (!checkForDuplicates)
             {
-                return Add(value);
+                id = Add(value);
             }
             else
             {
@@ -117,13 +117,10 @@ namespace DotNetNuke.Security.Permissions
                 }
                 if (!isMatch)
                 {
-                    return Add(value);
-                }
-                else
-                {
-                    return 0;
+                    id = Add(value);
                 }
             }
+            return id;
         }
 
         public void AddRange(ArrayList WorkflowStatePermissions)
@@ -151,7 +148,7 @@ namespace DotNetNuke.Security.Permissions
             InnerList.Sort(new CompareWorkflowStatePermissions());
             objWorkflowStatePermissionCollection.InnerList.Sort(new CompareWorkflowStatePermissions());
 
-            for (int i = 0; i <= Count - 1; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (objWorkflowStatePermissionCollection[i].WorkflowStatePermissionID != this[i].WorkflowStatePermissionID || objWorkflowStatePermissionCollection[i].AllowAccess != this[i].AllowAccess)
                 {

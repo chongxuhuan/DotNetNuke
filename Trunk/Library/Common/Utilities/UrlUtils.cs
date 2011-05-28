@@ -42,6 +42,15 @@ namespace DotNetNuke.Common.Utilities
 {
     public class UrlUtils
     {
+        public static string Combine(string baseUrl, string relativeUrl)
+        {
+            if (baseUrl.Length == 0)
+                return relativeUrl;
+            if (relativeUrl.Length == 0)
+                return baseUrl;
+            return string.Format("{0}/{1}", baseUrl.TrimEnd(new[] { '/', '\\' }), relativeUrl.TrimStart(new[] { '/', '\\' }));
+        }
+
         public static string DecodeParameter(string value)
         {
             value = value.Replace("-", "+").Replace("_", "/").Replace("$", "=");

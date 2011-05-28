@@ -185,7 +185,7 @@ namespace DotNetNuke.Modules.Admin.Modules
 
                     cboFolders.Items.Insert(0, new ListItem("<" + Localization.GetString("None_Specified") + ">", "-"));
                     var user = UserController.GetCurrentUserInfo();
-                    var folders = FolderManager.Instance.GetFolders(user, "ADD", false, false);
+                    var folders = FolderManager.Instance.GetFileSystemFolders(user, "ADD");
                     foreach (var folderItem in
                         from FolderInfo folder in folders
                         select new ListItem { Text = folder.FolderPath == Null.NullString ? Localization.GetString("Root", LocalResourceFile) : folder.DisplayPath, Value = folder.FolderPath })

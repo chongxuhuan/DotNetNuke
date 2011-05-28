@@ -18,6 +18,8 @@
 </div>
 <p id="footer" runat="server"></p>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     $(document).ready(function () {
         $('#dnnWhatsNew').dnnPanels();
         $('#dnnWhatsNew .dnnFormExpandContent a').dnnExpandAll({
@@ -26,4 +28,5 @@
             targetArea: '#dnnWhatsNew'
         });
     });
+} (jQuery, window.Sys));
 </script>

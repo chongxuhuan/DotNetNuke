@@ -61,7 +61,7 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class SkinFileProcessor
     {
-		#region "Private Members"
+        #region "Private Members"
 
         private readonly string DUPLICATE_DETAIL = Util.GetLocalizedString("DuplicateSkinObject.Detail");
         private readonly string DUPLICATE_ERROR = Util.GetLocalizedString("DuplicateSkinObject.Error");
@@ -82,9 +82,9 @@ namespace DotNetNuke.UI.Skins
         private readonly string m_SkinRoot;
         private string m_Message = "";
 
-		#endregion
+        #endregion
 
-		#region "Constructors"
+        #region "Constructors"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -149,12 +149,12 @@ namespace DotNetNuke.UI.Skins
                 }
                 catch (Exception ex)
                 {
-					//could not load XML file
+                    //could not load XML file
                     DnnLog.Error(ex);
                     Message += SkinController.FormatMessage(string.Format(PACKAGE_LOAD_ERROR, ex.Message), Path.GetFileName(FileName), 2, true);
                 }
             }
-			
+
             //Look at every control
             string Token;
             foreach (SkinControlInfo objSkinControl in SkinControlController.GetSkinControls().Values)
@@ -171,22 +171,22 @@ namespace DotNetNuke.UI.Skins
                 }
                 else
                 {
-					//Add it
+                    //Add it
                     Message += SkinController.FormatMessage(string.Format(LOAD_SKIN_TOKEN, objSkinControl.ControlKey.ToUpper()), objSkinControl.ControlSrc, 2, false);
                     m_ControlList.Add(Token, objSkinControl.ControlSrc);
                 }
             }
-			
+
             //Instantiate the control parser with the list of skin objects
             m_ControlFactory = new ControlParser(m_ControlList);
 
             //Instantiate the object parser with the list of skin objects
             m_ObjectFactory = new ObjectParser(m_ControlList);
         }
-		
-		#endregion
-		
-		#region "Private Properties"
+
+        #endregion
+
+        #region "Private Properties"
 
         private PathParser PathFactory
         {
@@ -231,10 +231,10 @@ namespace DotNetNuke.UI.Skins
                 m_Message = value;
             }
         }
-		
-		#endregion
-		
-		#region "Public Properties"
+
+        #endregion
+
+        #region "Public Properties"
 
         public string SkinRoot
         {
@@ -259,10 +259,10 @@ namespace DotNetNuke.UI.Skins
                 return m_SkinName;
             }
         }
-		
-		#endregion
-		
-		#region "Public Methods"
+
+        #endregion
+
+        #region "Public Methods"
 
         public string ProcessFile(string FileName, SkinParser ParseOption)
         {
@@ -325,11 +325,11 @@ namespace DotNetNuke.UI.Skins
             return contents;
         }
 
-		#endregion
+        #endregion
 
-		#region Nested type: ControlParser
+        #region Nested type: ControlParser
 
-		/// -----------------------------------------------------------------------------
+        /// -----------------------------------------------------------------------------
         /// Project	 : DotNetNuke
         /// Class	 : SkinFileProcessor.ControlParser
         /// 
@@ -372,7 +372,7 @@ namespace DotNetNuke.UI.Skins
             /// -----------------------------------------------------------------------------
             public ControlParser(Hashtable ControlList)
             {
-                m_ControlList = (Hashtable) ControlList.Clone();
+                m_ControlList = (Hashtable)ControlList.Clone();
             }
 
             /// -----------------------------------------------------------------------------
@@ -471,15 +471,15 @@ namespace DotNetNuke.UI.Skins
             public string Parse(ref string Source, XmlDocument Attributes)
             {
                 Messages = m_InitMessages;
-				//set the token attributes
+                //set the token attributes
                 this.Attributes = Attributes;
-				//clear register list
+                //clear register list
                 RegisterList.Clear();
 
-				//define the regular expression to match tokens
+                //define the regular expression to match tokens
                 var FindTokenInstance = new Regex("\\[\\s*(?<token>\\w*)\\s*:?\\s*(?<instance>\\w*)\\s*]", RegexOptions.IgnoreCase);
 
-				//parse the file
+                //parse the file
                 Source = FindTokenInstance.Replace(Source, Handler);
                 return Messages;
             }
@@ -528,24 +528,24 @@ namespace DotNetNuke.UI.Skins
 
                     if (ControlList.ContainsKey(Token))
                     {
-                        Messages += SkinController.FormatMessage(TOKEN_SKIN, (string) ControlList[Token], 2, false);
+                        Messages += SkinController.FormatMessage(TOKEN_SKIN, (string)ControlList[Token], 2, false);
                     }
                     else
                     {
                         Messages += SkinController.FormatMessage(TOKEN_PANE, Token, 2, false);
                     }
-					
-					//f there is an attribute file
+
+                    //f there is an attribute file
                     if (Attributes.DocumentElement != null)
                     {
-						//look for the the node of this instance of the token
+                        //look for the the node of this instance of the token
                         XmlNode xmlSkinAttributeRoot = Attributes.DocumentElement.SelectSingleNode("descendant::Object[Token='[" + AttributeNode + "]']");
                         //if the token is found
-						if (xmlSkinAttributeRoot != null)
+                        if (xmlSkinAttributeRoot != null)
                         {
                             Messages += SkinController.FormatMessage(TOKEN_FOUND, "[" + AttributeNode + "]", 2, false);
                             //process each token attribute
-							foreach (XmlNode xmlSkinAttribute in xmlSkinAttributeRoot.SelectNodes(".//Settings/Setting"))
+                            foreach (XmlNode xmlSkinAttribute in xmlSkinAttributeRoot.SelectNodes(".//Settings/Setting"))
                             {
                                 if (!String.IsNullOrEmpty(xmlSkinAttribute.SelectSingleNode("Value").InnerText))
                                 {
@@ -566,16 +566,16 @@ namespace DotNetNuke.UI.Skins
                     }
                     if (ControlList.ContainsKey(Token))
                     {
-						//create the skin object user control tag
+                        //create the skin object user control tag
                         SkinControl = "dnn:" + Token + " runat=\"server\" id=\"dnn" + ControlName + "\"" + SkinControl;
 
                         //save control registration statement
-                        string ControlRegistration = "<%@ Register TagPrefix=\"dnn\" TagName=\"" + Token + "\" Src=\"~/" + (string) ControlList[Token] + "\" %>" + Environment.NewLine;
+                        string ControlRegistration = "<%@ Register TagPrefix=\"dnn\" TagName=\"" + Token + "\" Src=\"~/" + (string)ControlList[Token] + "\" %>" + Environment.NewLine;
                         if (RegisterList.Contains(ControlRegistration) == false)
                         {
                             RegisterList.Add(ControlRegistration);
                         }
-						
+
                         //return the control statement
                         Messages += SkinController.FormatMessage(CONTROL_FORMAT, "&lt;" + SkinControl + " /&gt;", 2, false);
 
@@ -598,7 +598,7 @@ namespace DotNetNuke.UI.Skins
                 }
                 else
                 {
-					//return the unmodified token
+                    //return the unmodified token
                     //note that this is currently protecting array syntax in embedded javascript
                     //should be fixed in the regular expressions but is not, currently.
                     Messages += SkinController.FormatMessage(TOKEN_NOTFOUND, "[" + m.Groups["token"].Value + "]", 2, false);
@@ -653,7 +653,7 @@ namespace DotNetNuke.UI.Skins
             /// -----------------------------------------------------------------------------
             public ObjectParser(Hashtable ControlList)
             {
-                m_ControlList = (Hashtable) ControlList.Clone();
+                m_ControlList = (Hashtable)ControlList.Clone();
             }
 
             /// -----------------------------------------------------------------------------
@@ -773,7 +773,6 @@ namespace DotNetNuke.UI.Skins
                 string OBJECT_PROC = Util.GetLocalizedString("ProcessObject");
                 string OBJECT_SKIN = Util.GetLocalizedString("SkinObject");
                 string OBJECT_PANE = Util.GetLocalizedString("PaneObject");
-                string OBJECT_FOUND = Util.GetLocalizedString("ObjectFound");
                 string CONTROL_FORMAT = Util.GetLocalizedString("ControlFormat");
                 string OBJECT_NOTFOUND = Util.GetLocalizedString("ObjectNotFound");
 
@@ -816,11 +815,11 @@ namespace DotNetNuke.UI.Skins
                         }
                     }
                 }
-				
+
                 //process skin object
                 if (AttributeNode.ToLower() == "dotnetnuke/server")
                 {
-					//we have a valid skin object specification
+                    //we have a valid skin object specification
                     Messages += SkinController.FormatMessage(OBJECT_PROC, Token, 2, false);
 
                     //if the embedded object is a recognized skin object
@@ -830,13 +829,13 @@ namespace DotNetNuke.UI.Skins
 
                         if (ControlList.ContainsKey(Token))
                         {
-                            Messages += SkinController.FormatMessage(OBJECT_SKIN, (string) ControlList[Token], 2, false);
+                            Messages += SkinController.FormatMessage(OBJECT_SKIN, (string)ControlList[Token], 2, false);
                         }
                         else
                         {
                             Messages += SkinController.FormatMessage(OBJECT_PANE, Token, 2, false);
                         }
-						
+
                         //process embedded object params
                         string Parameters = m.Groups["token"].Value.Substring(m.Groups["token"].Value.IndexOf(">") + 1);
                         Parameters = Parameters.Replace("<param name=\"", "");
@@ -848,7 +847,7 @@ namespace DotNetNuke.UI.Skins
 
                         if (ControlList.ContainsKey(Token))
                         {
-							//create the skin object user control tag
+                            //create the skin object user control tag
                             SkinControl = "dnn:" + Token + " runat=\"server\" ";
                             if (!String.IsNullOrEmpty(ControlName))
                             {
@@ -857,13 +856,13 @@ namespace DotNetNuke.UI.Skins
                             SkinControl += Parameters;
 
                             //save control registration statement
-                            string ControlRegistration = "<%@ Register TagPrefix=\"dnn\" TagName=\"" + Token + "\" Src=\"~/" + (string) ControlList[Token] + "\" %>" + Environment.NewLine;
+                            string ControlRegistration = "<%@ Register TagPrefix=\"dnn\" TagName=\"" + Token + "\" Src=\"~/" + (string)ControlList[Token] + "\" %>" + Environment.NewLine;
                             if (RegisterList.Contains(ControlRegistration) == false)
                             {
                                 RegisterList.Add(ControlRegistration);
                             }
-							
-							//return the control statement
+
+                            //return the control statement
                             Messages += SkinController.FormatMessage(CONTROL_FORMAT, "&lt;" + SkinControl + " /&gt;", 2, false);
                             SkinControl = "<" + SkinControl + "/>";
                         }
@@ -880,7 +879,7 @@ namespace DotNetNuke.UI.Skins
                             }
                             SkinControl += Parameters + "></div";
 
-							//return the control statement
+                            //return the control statement
                             Messages += SkinController.FormatMessage(CONTROL_FORMAT, "&lt;" + SkinControl + "&gt;", 2, false);
                             SkinControl = "<" + SkinControl + ">";
                         }
@@ -888,14 +887,14 @@ namespace DotNetNuke.UI.Skins
                     }
                     else
                     {
-						//return the unmodified embedded object
+                        //return the unmodified embedded object
                         Messages += SkinController.FormatMessage(OBJECT_NOTFOUND, Token, 2, false);
                         return "<object" + m.Groups["token"].Value + "</object>";
                     }
                 }
                 else
                 {
-					//return unmodified embedded object
+                    //return unmodified embedded object
                     return "<object" + m.Groups["token"].Value + "</object>";
                 }
             }
@@ -950,10 +949,10 @@ namespace DotNetNuke.UI.Skins
             {
                 get
                 {
-					//if the arraylist in uninitialized
+                    //if the arraylist in uninitialized
                     if (m_HTMLPatterns.Count == 0)
                     {
-						//retrieve the patterns
+                        //retrieve the patterns
                         string[] arrPattern = {
                                                   "(?<tag><head[^>]*?\\sprofile\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)",
                                                   "(?<tag><object[^>]*?\\s(?:codebase|data|usemap)\\s*=\\s*\")(?!https://|http://|\\\\|[~/])(?<content>[^\"]*)(?<endtag>\"[^>]*>)",
@@ -972,11 +971,11 @@ namespace DotNetNuke.UI.Skins
                         for (int i = 0; i <= arrPattern.GetLength(0) - 1; i++)
                         {
                             var re = new Regex(arrPattern[i], RegexOptions.Multiline | RegexOptions.IgnoreCase);
-							//add the Regex object to the pattern array list
+                            //add the Regex object to the pattern array list
                             m_HTMLPatterns.Add(re);
                         }
 
-						//optimize the arraylist size since it will not change
+                        //optimize the arraylist size since it will not change
                         m_HTMLPatterns.TrimToSize();
                     }
                     return m_HTMLPatterns;
@@ -1002,22 +1001,22 @@ namespace DotNetNuke.UI.Skins
             {
                 get
                 {
-					//if the arraylist in uninitialized
+                    //if the arraylist in uninitialized
                     if (m_CSSPatterns.Count == 0)
                     {
-						//retrieve the patterns
-                        string[] arrPattern = {"(?<tag>\\surl\\u0028)(?<content>[^\\u0029]*)(?<endtag>\\u0029.*;)"};
-                        
-						//for each pattern, create a regex object
+                        //retrieve the patterns
+                        string[] arrPattern = { "(?<tag>\\surl\\u0028)(?<content>[^\\u0029]*)(?<endtag>\\u0029.*;)" };
+
+                        //for each pattern, create a regex object
                         for (int i = 0; i <= arrPattern.GetLength(0) - 1; i++)
                         {
                             var re = new Regex(arrPattern[i], RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
-							//add the Regex object to the pattern array list
+                            //add the Regex object to the pattern array list
                             m_CSSPatterns.Add(re);
                         }
 
-						//optimize the arraylist size since it will not change
+                        //optimize the arraylist size since it will not change
                         m_CSSPatterns.TrimToSize();
                     }
                     return m_CSSPatterns;
@@ -1066,15 +1065,15 @@ namespace DotNetNuke.UI.Skins
             {
                 m_Messages = "";
 
-				//set path propery which is file specific
+                //set path propery which is file specific
                 this.SkinPath = SkinPath;
-				//set parse option
+                //set parse option
                 this.ParseOption = ParseOption;
-                
-				//process each regular expression
+
+                //process each regular expression
                 for (int i = 0; i <= RegexList.Count - 1; i++)
                 {
-                    Source = ((Regex) RegexList[i]).Replace(Source, Handler);
+                    Source = ((Regex)RegexList[i]).Replace(Source, Handler);
                 }
                 return m_Messages;
             }
@@ -1100,31 +1099,31 @@ namespace DotNetNuke.UI.Skins
                 string strOldTag = m.Groups["tag"].Value + m.Groups["content"].Value + m.Groups["endtag"].Value;
                 string strNewTag = strOldTag;
 
-				//we do not want to process object tags to DotNetNuke widgets
+                //we do not want to process object tags to DotNetNuke widgets
                 if (!m.Groups[0].Value.ToLower().Contains("codetype=\"dotnetnuke/client\""))
                 {
                     switch (ParseOption)
                     {
                         case SkinParser.Localized:
-							//if the tag does not contain the localized path
+                            //if the tag does not contain the localized path
                             if (strNewTag.IndexOf(SkinPath) == -1)
                             {
-								//insert the localized path
+                                //insert the localized path
                                 strNewTag = m.Groups["tag"].Value + SkinPath + m.Groups["content"].Value + m.Groups["endtag"].Value;
                             }
                             break;
                         case SkinParser.Portable:
-							//if the tag does not contain a reference to the skinpath
+                            //if the tag does not contain a reference to the skinpath
                             if (strNewTag.ToLower().IndexOf("<%= skinpath %>") == -1)
                             {
-								//insert the skinpath 
+                                //insert the skinpath 
                                 strNewTag = m.Groups["tag"].Value + "<%= SkinPath %>" + m.Groups["content"].Value + m.Groups["endtag"].Value;
                             }
 
-							//if the tag contains the localized path
+                            //if the tag contains the localized path
                             if (strNewTag.IndexOf(SkinPath) != -1)
                             {
-								//remove the localized path
+                                //remove the localized path
                                 strNewTag = strNewTag.Replace(SkinPath, "");
                             }
                             break;
@@ -1170,7 +1169,7 @@ namespace DotNetNuke.UI.Skins
             /// <summary>
             ///     SkinFile class constructor.
             /// </summary>
-			/// <param name="SkinContents"></param>
+            /// <param name="SkinContents"></param>
             /// <param name="SkinAttributes"></param>
             /// <remarks>
             ///     The constructor primes the utility class with basic file information.
@@ -1205,29 +1204,29 @@ namespace DotNetNuke.UI.Skins
             /// -----------------------------------------------------------------------------
             public SkinFile(string SkinRoot, string FileName, XmlDocument SkinAttributes)
             {
-				//capture file information
+                //capture file information
                 m_FileName = FileName;
                 m_FileExtension = Path.GetExtension(FileName);
                 m_SkinRoot = SkinRoot;
                 m_FileAttributes = SkinAttributes;
-                
-				//determine and store path to portals skin root folder
-				string strTemp = FileName.Replace(Path.GetFileName(FileName), "");
+
+                //determine and store path to portals skin root folder
+                string strTemp = FileName.Replace(Path.GetFileName(FileName), "");
                 strTemp = strTemp.Replace("\\", "/");
                 m_SkinRootPath = Globals.ApplicationPath + strTemp.Substring(0, strTemp.ToUpper().IndexOf("/PORTALS"));
-                
-				//read file contents
-				Contents = Read(FileName);
 
-				//setup some attributes based on file extension
+                //read file contents
+                Contents = Read(FileName);
+
+                //setup some attributes based on file extension
                 switch (FileExtension)
                 {
                     case ".htm":
                     case ".html":
-						//set output file name to <filename>.ASCX
+                        //set output file name to <filename>.ASCX
                         m_WriteFileName = FileName.Replace(Path.GetExtension(FileName), ".ascx");
 
-						//capture warning if file does not contain a id="ContentPane" or [CONTENTPANE]
+                        //capture warning if file does not contain a id="ContentPane" or [CONTENTPANE]
                         var PaneCheck1 = new Regex("\\s*id\\s*=\\s*\"" + Globals.glbDefaultPane + "\"", RegexOptions.IgnoreCase);
                         var PaneCheck2 = new Regex("\\s*[" + Globals.glbDefaultPane + "]", RegexOptions.IgnoreCase);
                         if (PaneCheck1.IsMatch(Contents) == false && PaneCheck2.IsMatch(Contents) == false)
@@ -1235,7 +1234,7 @@ namespace DotNetNuke.UI.Skins
                             m_Messages += SkinController.FormatMessage(FILE_FORMAT_ERROR, string.Format(FILE_FORMAT_ERROR, FileName), 2, true);
                         }
 
-						//Check for existence of and load skin file level attribute information 
+                        //Check for existence of and load skin file level attribute information 
                         if (File.Exists(FileName.Replace(FileExtension, ".xml")))
                         {
                             try
@@ -1252,7 +1251,7 @@ namespace DotNetNuke.UI.Skins
                         }
                         break;
                     default:
-							//output file name is same as input file name
+                        //output file name is same as input file name
                         m_WriteFileName = FileName;
                         break;
                 }
@@ -1326,7 +1325,7 @@ namespace DotNetNuke.UI.Skins
 
             public void Write()
             {
-				//delete the file before attempting to write
+                //delete the file before attempting to write
                 if (File.Exists(WriteFileName))
                 {
                     File.Delete(WriteFileName);
@@ -1356,10 +1355,10 @@ namespace DotNetNuke.UI.Skins
                 string Messages = "";
                 string Prefix = "";
 
-				//if the skin source is an HTML document, extract the content within the <body> tags
+                //if the skin source is an HTML document, extract the content within the <body> tags
                 string strPattern = "<\\s*body[^>]*>(?<skin>.*)<\\s*/\\s*body\\s*>";
 
-				//format and save @Control directive
+                //format and save @Control directive
                 Match objMatch;
                 objMatch = Regex.Match(Contents, strPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 if (!String.IsNullOrEmpty(objMatch.Groups[1].Value))
@@ -1376,14 +1375,14 @@ namespace DotNetNuke.UI.Skins
                 }
                 Messages += SkinController.FormatMessage(CONTROL_DIR, HttpUtility.HtmlEncode(Prefix), 2, false);
 
-				//add preformatted Control Registrations
+                //add preformatted Control Registrations
                 foreach (string Item in Registrations)
                 {
                     Messages += SkinController.FormatMessage(CONTROL_REG, HttpUtility.HtmlEncode(Item), 2, false);
                     Prefix += Item;
                 }
 
-				//update file contents to include ascx header information
+                //update file contents to include ascx header information
                 Contents = Prefix + Contents;
                 return Messages;
             }

@@ -162,4 +162,7 @@
   <data name="SearchWordMinLength.Text" xml:space="preserve">
     <value>The Minimum Word Length must be at least 1.</value>
   </data>
+  <data name="SearchWordMaxMinLength.Text" xml:space="preserve">
+    <value>The Maximum Word Length must be at least 1.</value>
+  </data>
 </root>

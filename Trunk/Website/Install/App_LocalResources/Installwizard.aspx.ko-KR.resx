@@ -541,7 +541,7 @@
     <value>SMTP 서버 설정</value>
   </data>
   <data name="SMTPUsername.Text" xml:space="preserve">
-    <value>사용자이름</value>
+    <value>사용자이름:</value>
   </data>
   <data name="EmailErrorMessage.Text" xml:space="preserve">
     <value>테스트메일 전송에 에러가 있습니다. 에러:&lt;br /&gt;{0}</value>

@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/labelControl.ascx" %>
 <div class="dnnForm dnnTextEditor dnnClear">
     <asp:Panel id="PanelView" runat="server" class="dnnFormItem">
-        <dnn:label id="PlView" runat="server" controlname="optView" />
+        <dnn:label id="plView" runat="server" controlname="optView" />
         <asp:RadioButtonList id="OptView" Runat="server" AutoPostBack="True" RepeatDirection="Horizontal" RepeatLayout="Flow" />
     </asp:Panel>
     <asp:Panel id="PanelTextEditor" runat="server" class="dnnTextPanel">

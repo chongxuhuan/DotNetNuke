@@ -45,6 +45,15 @@
 		<asp:Label ID="lblHead" runat="server"/>
 	</div>
 	<telerik:RadAjaxPanel ID="ctlAjax" runat="server" LoadingPanelID="ctlLoading" EnablePageHeadUpdate="true" RestoreOriginalRenderDelegate="false" EnableViewState="true">
+        <asp:Panel ID="pnlError" runat="server" class="dnnFormMessage dnnFormError" Visible="false">
+            <asp:Label ID="lblError" runat="server"/>
+        </asp:Panel> 
+        <asp:Panel ID="pnlWarn" runat="server" class="dnnFormMessage dnnFormWarning" Visible="false">
+            <asp:Label ID="lblWarn" runat="server"/>
+        </asp:Panel> 
+        <asp:Panel ID="pnlSuccess" runat="server" class="dnnFormMessage dnnFormSuccess" Visible="false">
+            <asp:Label ID="lblSuccess" runat="server"/>
+        </asp:Panel> 
 
 		<div class="dotnetnuke_pageselect">
 
@@ -283,7 +292,7 @@
 
 					<table>
 						<tr>
-                            <td class="tdIconLabel"><asp:Label ID="lblUrl" runat="server" Text="Link:" resourcekey="lblUrl"></asp:Label></td>
+                            <td class="tdIconLabel"><asp:Label ID="lblUrl" runat="server" resourcekey="Url"></asp:Label></td>
                             <td class="tdControl"><dnn:URL ID="ctlURL" runat="server" Width="300" ShowLog="False" ShowNone="True" ShowTrack="False"/></td>
 						</tr>
 						<tr>

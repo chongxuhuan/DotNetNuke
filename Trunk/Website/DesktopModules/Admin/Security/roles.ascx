@@ -12,7 +12,7 @@
 			<asp:imagebutton ID="cmdDelete" Runat="server" ImageUrl="~/images/delete.gif" />
         </div>
     </div>
-	<asp:datagrid id="grdRoles" Width="98%" AutoGenerateColumns="false" EnableViewState="false" runat="server" BorderStyle="None" GridLines="None" CssClass="dnnSecurityRolesGrid">
+	<asp:datagrid id="grdRoles" Width="98%" AutoGenerateColumns="false" EnableViewState="false" runat="server" BorderStyle="None" GridLines="None" CssClass="dnnGrid">
         <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
 	    <itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 	    <alternatingitemstyle cssclass="dnnGridAltItem" />
@@ -65,6 +65,8 @@
 	</asp:datagrid>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setupDnnRoles() {
         $('#<%= cmdDelete.ClientID %>').dnnConfirm({
             text: '<%= LocalizeString("DeleteItem") %>',
@@ -80,4 +82,5 @@
             setupDnnSiteSettingssetupDnnRoles();
         });
     });
+} (jQuery, window.Sys));
 </script>

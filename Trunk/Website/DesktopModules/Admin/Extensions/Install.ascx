@@ -2,16 +2,8 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-
 <div class="dnnForm dnnInstallExtension dnnClear" id="dnnInstallExtension">
-    <asp:Wizard ID="wizInstall" runat="server"  DisplaySideBar="false" ActiveStepIndex="0"
-        CellPadding="5" CellSpacing="5" width="100%"
-        DisplayCancelButton="True"
-        CancelButtonType="Link"
-        StartNextButtonType="Link"
-        StepNextButtonType="Link" 
-        FinishCompleteButtonType="Link"
-        >
+    <asp:Wizard ID="wizInstall" runat="server"  DisplaySideBar="false" ActiveStepIndex="0" CellPadding="0" CellSpacing="0" width="100%" DisplayCancelButton="True" CancelButtonType="Link" StartNextButtonType="Link" StepNextButtonType="Link"  FinishCompleteButtonType="Link">
         <CancelButtonStyle CssClass="dnnSecondaryAction" />
         <StartNextButtonStyle CssClass="dnnPrimaryAction" />
         <StepNextButtonStyle CssClass="dnnPrimaryAction" />
@@ -19,8 +11,8 @@
         <StepStyle VerticalAlign="Top" />
         <NavigationButtonStyle CssClass="CommandButton" BorderStyle="None" BackColor="Transparent" />
         <HeaderTemplate>
-            <asp:Label ID="lblTitle" CssClass="Head" runat="server"><% =GetText("Title") %></asp:Label><br /><br />
-            <asp:Label ID="lblHelp" CssClass="WizardText" runat="server"><% =GetText("Help") %></asp:Label>
+            <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server"><% =GetText("Title") %></asp:Label></h2>
+            <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server"><% =GetText("Help") %></asp:Label></div>
         </HeaderTemplate>
         <StartNavigationTemplate>
             <ul class="dnnActions dnnClear">
@@ -42,36 +34,32 @@
         <WizardSteps>
             <asp:WizardStep ID="Step0" runat="Server" Title="Introduction" StepType="Start" AllowReturn="false">
                 <div class="dnnForm">
+                    <div class="dnnFormItem"><asp:Label ID="lblBrowseFileHelp" runat="server" resourcekey="BrowseFileHelp" /></div>
                     <div class="dnnFormItem">
-                        <asp:Label ID="lblBrowseFileHelp" runat="server" resourcekey="BrowseFileHelp" CssClass="WizardText" />
-                    </div>
-                    <div class="dnnFormItem">
-                        <input id="cmdBrowse" type="file" size="50" name="cmdBrowse" runat="server" cssClass="dnnFormInput" />
+                        <input id="cmdBrowse" type="file" size="50" name="cmdBrowse" runat="server" />
                         <asp:Label ID="lblLoadMessage" runat="server" CssClass="dnnFormMessage dnnFormError" Visible="false" />
                     </div>
                 </div>
             </asp:WizardStep>
             <asp:WizardStep ID="Step1" runat="server" Title="Warnings" StepType="Step" AllowReturn="false">
                 <asp:Panel ID="pnlRepair" runat="server" Visible="false">
-                    <asp:Label ID="lblWarningMessage" runat="server" EnableViewState="False" CssClass="NormalRed" />
-                    <br />
-                    <asp:Label ID="lblRepairInstallHelp" runat="server" resourcekey="RepairInstallHelp" CssClass="WizardText" />
-                    <br />
-                    <asp:CheckBox ID="chkRepairInstall" runat="server" resourcekey="RepairInstall" CssClass="SubHead" TextAlign="Left" AutoPostBack="true" />
+                    <div class="dnnFormMessage dnnFormWarning"><asp:Label ID="lblWarningMessage" runat="server" EnableViewState="False" /></div>
+                    <p><asp:Label ID="lblRepairInstallHelp" runat="server" resourcekey="RepairInstallHelp" /></p>
+                    <p><strong><asp:CheckBox ID="chkRepairInstall" runat="server" resourcekey="RepairInstall" TextAlign="Left" AutoPostBack="true" /></strong></p>
                 </asp:Panel>
                 <asp:Panel ID="pnlLegacy" runat="server" Visible="false">
-                    <asp:RadioButtonList ID="rblLegacySkin" runat="server" CssClass="NormalTextBox" RepeatDirection="Horizontal" >
-                        <asp:ListItem Value="Skin" resourcekey="Skin"/>
-                        <asp:ListItem Value="Container" resourcekey="Container"/>
-                        <asp:ListItem Value="None" Selected="True" resourcekey="None"/>
+                    <asp:RadioButtonList ID="rblLegacySkin" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
+                        <asp:ListItem Value="Skin" resourcekey="Skin" />
+                        <asp:ListItem Value="Container" resourcekey="Container" />
+                        <asp:ListItem Value="None" Selected="True" resourcekey="None" />
                     </asp:RadioButtonList>
                 </asp:Panel>
                 <asp:Panel ID="pnlWhitelist" runat = "server" Visible="false">
-                    <asp:Label ID="lblIgnoreWhiteListHelp" runat="server" resourcekey="IgnoreWhiteListHelp" CssClass="WizardText" /><br />
-                    <asp:CheckBox ID="chkIgnoreWhiteList" runat="server" resourcekey="IgnoreWhiteList" CssClass="SubHead" TextAlign="Left" AutoPostBack="true" />
+                    <asp:Label ID="lblIgnoreWhiteListHelp" runat="server" resourcekey="IgnoreWhiteListHelp" />
+                    <asp:CheckBox ID="chkIgnoreWhiteList" runat="server" resourcekey="IgnoreWhiteList" TextAlign="Left" AutoPostBack="true" />
                 </asp:Panel>
                 <asp:PlaceHolder ID="phLoadLogs" runat="server" />
-           </asp:WizardStep>
+            </asp:WizardStep>
             <asp:WizardStep ID="Step2" runat="Server" Title="PackageInfo" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="packageForm" runat="Server" FormMode="Short">
                     <Items>
@@ -90,33 +78,23 @@
             </asp:WizardStep>
             <asp:WizardStep ID="Step3" runat="Server" Title="ReleaseNotes" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="releaseNotesForm" runat="Server" FormMode="Short">
-                    <Items>
-                        <dnn:DnnFormLiteralItem ID="releaseNotes" runat="server" DataField = "ReleaseNotes" />
-                    </Items>
+                    <Items><dnn:DnnFormLiteralItem ID="releaseNotes" runat="server" DataField = "ReleaseNotes" /></Items>
                 </dnn:DnnFormEditor>
             </asp:WizardStep>
             <asp:WizardStep ID="Step4" runat="server" Title="License" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="licenseForm" runat="Server" FormMode="Short">
-                    <Items>
-                        <dnn:DnnFormLiteralItem ID="license" runat="server" DataField = "License" />
-                    </Items>
+                    <Items><dnn:DnnFormLiteralItem ID="license" runat="server" DataField = "License" /></Items>
                 </dnn:DnnFormEditor>
-                <div class="dnnForm">
-                    <div class="dnnFormItem">
-                        <dnn:Label ID="plAcceptLicense" runat="server" resourcekey="AcceptLicense" CssClass="dnnFormLabel" ControlName="chkAcceptLicense" />
-                        <asp:CheckBox ID="chkAcceptLicense" runat="server"  CssClass="dnnFormLabel" />
-                        <asp:Label ID="lblAcceptMessage" runat="server" Visible="false" EnableViewState="False" CssClass="dnnFormMessage dnnFormError" />
-                    </div>
-                    <div class="dnnFormItem">
-                        <asp:PlaceHolder ID="phAcceptLogs" runat="server" />
-                    </div>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plAcceptLicense" runat="server" resourcekey="AcceptLicense" ControlName="chkAcceptLicense" />
+                    <asp:CheckBox ID="chkAcceptLicense" runat="server"  CssClass="dnnFormLabel" />
+                    <asp:Label ID="lblAcceptMessage" runat="server" Visible="false" EnableViewState="False" CssClass="dnnFormMessage dnnFormError" />
                 </div>
+                <div class="dnnFormItem"><asp:PlaceHolder ID="phAcceptLogs" runat="server" /></div>
             </asp:WizardStep>
             <asp:WizardStep ID="Step5" runat="Server" Title="InstallResults" StepType="Finish">
-                <table class="Settings" cellspacing="2" cellpadding="2" summary="Packages Install Design Table">
-                    <tr><td align="left" colspan="2"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" CssClass="NormalRed" /></td></tr>
-                    <tr><td><asp:PlaceHolder ID="phInstallLogs" runat="server" /></td></tr>
-                </table>
+                <div class="dnnFormMessage dnnFormValidationSummary"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" /></div>
+                <div class="dnnFormItem dnnClear"><asp:PlaceHolder ID="phInstallLogs" runat="server" /></div>
             </asp:WizardStep>
         </WizardSteps>
     </asp:Wizard>

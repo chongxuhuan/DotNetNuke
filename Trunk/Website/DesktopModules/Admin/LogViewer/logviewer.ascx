@@ -3,6 +3,8 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnLogViewer() {
         $('.dnnLogItemHeader').click(function () {
             $(this).next('.dnnLogItemDetail').slideToggle();
@@ -35,6 +37,7 @@
             setUpDnnLogViewer();
         });
     });
+} (jQuery, window.Sys));
 </script>
 
 <div class="dnnForm dnnLogViewer dnnClear" id="dnnLogViewer">

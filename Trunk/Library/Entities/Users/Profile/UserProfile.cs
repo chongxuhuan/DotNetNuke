@@ -359,13 +359,10 @@ namespace DotNetNuke.Entities.Users
                 {
                     _TimeZone = TimeZoneInfo.FindSystemTimeZoneById(_TimeZoneId);
                 }
-                //Check if old offset setting is still around. If yes, then use it and save that to new format..
-                //this is an anti-pattern that we are setting in a getter, but we wanted to lazy-upgrade this setting.
+                //Check if old offset setting is still around.
                 else if (LegacyTimeZone != Null.NullInteger)
                 {
-                    TimeZoneInfo timeZone = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(LegacyTimeZone);
-                    _TimeZone = timeZone;
-                    PreferredTimeZone = timeZone;
+                    _TimeZone = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(LegacyTimeZone);
                 }
                 //Next check if there is a Portal Setting
                 else

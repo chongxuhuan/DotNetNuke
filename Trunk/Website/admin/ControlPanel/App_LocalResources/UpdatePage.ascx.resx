@@ -129,9 +129,6 @@
   <data name="DefaultSkin.Text" xml:space="preserve">
     <value>&lt;Use Default Site Skin&gt;</value>
   </data>
-  <data name="Disabled.Text" xml:space="preserve">
-    <value>Disabled</value>
-  </data>
   <data name="Err.DeserializePanesFailed" xml:space="preserve">
     <value>Unable to process page template.</value>
   </data>
@@ -165,9 +162,6 @@
   <data name="Location.Text" xml:space="preserve">
     <value>Move</value>
   </data>
-  <data name="Name.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <data name="NoLocationSelection.Text" xml:space="preserve">
     <value />
   </data>
@@ -186,13 +180,7 @@
   <data name="Secured.ToolTip" xml:space="preserve">
     <value>Page must use SSL. This option is only enabled when SSL is enabled for the site.</value>
   </data>
-  <data name="Skin.Text" xml:space="preserve">
-    <value>Skin</value>
-  </data>
   <data name="SkinLstSeparator.Text" xml:space="preserve">
     <value>-----------------------------------------</value>
-  </data>
-  <data name="UpdateButton.Text" xml:space="preserve">
-    <value>Update Page</value>
   </data>
 </root>

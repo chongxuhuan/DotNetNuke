@@ -633,6 +633,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
             if (objFolderInfo != null && ddlStorageLocation.Items.FindByValue(Convert.ToString(objFolderInfo.FolderMappingID)) != null)
             {
                 ddlStorageLocation.SelectedValue = Convert.ToString(objFolderInfo.FolderMappingID);
+
+                phSecureFolderWarning.Visible = !objFolderInfo.IsStorageSecure;
             }
         }
 

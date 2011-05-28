@@ -534,7 +534,6 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                                                             logTypeKey,
                                                             logTypePortalID,
                                                             intKeepMostRecent,
-                                                            logFileName,
                                                             emailNotificationIsActive,
                                                             intThreshold,
                                                             intThresholdTime,

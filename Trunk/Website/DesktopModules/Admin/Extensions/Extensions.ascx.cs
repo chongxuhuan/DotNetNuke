@@ -24,33 +24,19 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-
-using DotNetNuke.Application;
-using DotNetNuke.Common;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Framework;
 using DotNetNuke.Security;
-using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Installer;
-using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Upgrade;
 using DotNetNuke.UI.Modules;
-using DotNetNuke.UI.WebControls;
 
 #endregion
 
 namespace DotNetNuke.Modules.Admin.Extensions
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The Extensions Module Control is used to manage the Extensions
     /// installed in this portal
@@ -60,9 +46,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
     /// <history>
     /// 	[cnurse]	01/04/2008	Created
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class Extensions : ModuleUserControlBase, IActionable
     {
+
         #region Protected Methods
 
         protected override void OnInit(EventArgs e)
@@ -81,10 +67,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 availableExtensionsControl.LocalResourceFile = LocalResourceFile;
                 availableExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
                 availableExtensionsTab.Visible = true;
-                availableExtensionsControl.Visible = true;           
+                availableExtensionsControl.Visible = true;
+                availableExtensionsTabExpand.Visible = true;
             }
 
-            string appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+            var appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
 
             if (!String.IsNullOrEmpty(appGalleryUri) && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
@@ -92,6 +79,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 moreExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
                 moreExtensionsTab.Visible = true;
                 moreExtensionsControl.Visible = true;
+                availableExtensionsTabExpand.Visible = true;
             }
 
         }

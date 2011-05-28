@@ -79,6 +79,8 @@
     </ul>
 </div>
 <script type="text/javascript">
+/*globals jQuery */
+(function ($) {
 	var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
 	var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
 	var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
@@ -88,4 +90,5 @@
 		noText: noText,
 		title: titleText
 	});
+} (jQuery));
 </script>

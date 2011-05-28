@@ -120,15 +120,6 @@
   <data name="Above.Text" xml:space="preserve">
     <value>Above</value>
   </data>
-  <data name="AddExisting.Text" xml:space="preserve">
-    <value>Add Existing Module</value>
-  </data>
-  <data name="AddModule.Text" xml:space="preserve">
-    <value>Add Module</value>
-  </data>
-  <data name="AddNew.Text" xml:space="preserve">
-    <value>Add New Module</value>
-  </data>
   <data name="Below.Text" xml:space="preserve">
     <value>Below</value>
   </data>
@@ -153,17 +144,11 @@
   <data name="DefaultModule.Text" xml:space="preserve">
     <value>DNN_HTML</value>
   </data>
-  <data name="Insert.Text" xml:space="preserve">
-    <value>Insert</value>
-  </data>
   <data name="Module.Text" xml:space="preserve">
     <value>Module</value>
   </data>
   <data name="Page.Text" xml:space="preserve">
     <value>Page</value>
-  </data>
-  <data name="Pane.Text" xml:space="preserve">
-    <value>Pane</value>
   </data>
   <data name="PermissionEdit.Text" xml:space="preserve">
     <value>Page Editors Only</value>
@@ -171,16 +156,10 @@
   <data name="PermissionView.Text" xml:space="preserve">
     <value>Same As Page</value>
   </data>
-  <data name="Title.Text" xml:space="preserve">
-    <value>Title</value>
-  </data>
   <data name="Top.Text" xml:space="preserve">
     <value>Top</value>
   </data>
   <data name="Visibility.Text" xml:space="preserve">
     <value>Visibility</value>
-  </data>
-  <data name="Category.Text" xml:space="preserve">
-    <value>Category</value>
   </data>
 </root>

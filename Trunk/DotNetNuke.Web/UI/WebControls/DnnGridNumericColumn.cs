@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Services.Localization;
@@ -62,7 +63,7 @@ namespace DotNetNuke.Web.UI.WebControls
         public override void InitializeCell(TableCell cell, int columnIndex, GridItem inItem)
         {
             base.InitializeCell(cell, columnIndex, inItem);
-            if (inItem is GridHeaderItem)
+            if (inItem is GridHeaderItem && !String.IsNullOrEmpty(HeaderText))
             {
                 cell.Text = Localization.GetString(string.Format("{0}.Header", HeaderText), LocalResourceFile);
             }

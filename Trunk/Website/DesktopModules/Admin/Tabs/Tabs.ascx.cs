@@ -220,11 +220,11 @@ namespace DotNetNuke.Modules.Admin.Pages
             try
             {
                 TabController.CopyDesignToChildren(new TabController().GetTab(Convert.ToInt32(ctlPages.SelectedNode.Value), PortalId, false), drpSkin.SelectedValue, drpContainer.SelectedValue);
-                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DesignCopied", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
+                ShowSuccessMessage(Localization.GetString("DesignCopied", LocalResourceFile));
             }
             catch (Exception ex)
-            {
-                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DesignCopyError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+            {                
+                ShowErrorMessage(Localization.GetString("DesignCopyError", LocalResourceFile));
                 Exceptions.ProcessModuleLoadException(this, ex);
             }
         }
@@ -236,7 +236,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void CtlPagesNodeClick(object sender, RadTreeNodeEventArgs e)
         {
-            
+            ClearMessages();
             if (e.Node.Attributes["isPortalRoot"] != null && Boolean.Parse(e.Node.Attributes["isPortalRoot"]))
             {
                 pnlDetails.Visible = false;
@@ -254,6 +254,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void CtlPagesContextMenuItemClick(object sender, RadTreeViewContextMenuEventArgs e)
         {
+            ClearMessages();
             SelectedNode = e.Node.Value;
 
             var objTabController = new TabController();
@@ -265,17 +266,31 @@ namespace DotNetNuke.Modules.Admin.Pages
                     PortalSettings.HomeTabId = objTab.TabID;
                     PortalController.UpdatePortalSetting(PortalId, "HomeTabId", objTab.TabID.ToString());
                     DataCache.ClearPortalCache(PortalId, false);
-                    BindTree();
+                    BindTreeAndShowTab(objTab.TabID);
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabMadeHome", LocalResourceFile), objTab.TabName));
                     break;
                 case "view":
                     Response.Redirect(objTab.FullUrl);
                     break;
                 case "edit":
-                    Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);
+                    Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);                    
                     break;
                 case "delete":
-                    TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);
-                    BindTree();
+                    TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);                    
+                    BindTree();                    
+                    //keep the parent tab selected
+                    if (objTab.ParentId != Null.NullInteger)
+                    {                        
+                        SelectedNode = objTab.ParentId.ToString();
+                        ctlPages.FindNodeByValue(SelectedNode).Selected = true;
+                        ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
+                        BindTab(objTab.ParentId);
+                    }
+                    else
+                    {
+                        pnlDetails.Visible = false;
+                    }
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabDeleted", LocalResourceFile), objTab.TabName));
                     break;
                 case "moveup":
                     objTabController.MoveTab(objTab, TabMoveType.Up);
@@ -296,28 +311,42 @@ namespace DotNetNuke.Modules.Admin.Pages
                 case "hide":
                     objTab.IsVisible = false;
                     objTabController.UpdateTab(objTab);
-                    BindTree();
+                    BindTreeAndShowTab(objTab.TabID);
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabHidden", LocalResourceFile), objTab.TabName));
                     break;
                 case "show":
                     objTab.IsVisible = true;
                     objTabController.UpdateTab(objTab);
-                    BindTree();
+                    BindTreeAndShowTab(objTab.TabID);
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabShown", LocalResourceFile), objTab.TabName));
                     break;
                 case "disable":
                     objTab.DisableLink = true;
                     objTabController.UpdateTab(objTab);
-                    BindTree();
+                    BindTreeAndShowTab(objTab.TabID);
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabDisabled", LocalResourceFile), objTab.TabName));
                     break;
                 case "enable":
                     objTab.DisableLink = false;
                     objTabController.UpdateTab(objTab);
-                    BindTree();
+                    BindTreeAndShowTab(objTab.TabID);
+                    ShowSuccessMessage(string.Format(Localization.GetString("TabEnabled", LocalResourceFile), objTab.TabName));
                     break;
             }
         }
 
+        private void BindTreeAndShowTab(int tabId)
+        {
+            BindTree();
+            ctlPages.FindNodeByValue(SelectedNode).Selected = true;
+            ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
+            pnlDetails.Visible = true;
+            BindTab(tabId);            
+        }
+
         protected void CtlPagesNodeDrop(object sender, RadTreeNodeDragDropEventArgs e)
         {
+            ClearMessages();
             var sourceNode = e.SourceDragNode;
             var destNode = e.DestDragNode;
             var dropPosition = e.DropPosition;
@@ -346,16 +375,15 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void CtlPagesNodeEdit(object sender, RadTreeNodeEditEventArgs e)
         {
+            ClearMessages();
             var objTabController = new TabController();
             var objTab = objTabController.GetTab(int.Parse(e.Node.Value), PortalId, false);
 
             //Check for invalid 
-            if (Regex.IsMatch(e.Text, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase))
-            {
-                string strInvalid = string.Format(Localization.GetString("InvalidTabName", LocalResourceFile), e.Text);
+            if (!IsValidTabName(e.Text))
+            {                                                
                 e.Node.Text = objTab.TabName;
-                e.Text = objTab.TabName;
-                ctlAjax.ResponseScripts.Add("alert('" + strInvalid + "');return false;");
+                e.Text = objTab.TabName;                
             }
             else
             {
@@ -363,7 +391,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 objTabController.UpdateTab(objTab);
             }
 
-            BindTree();
+            BindTreeAndShowTab(objTab.TabID);
         }
 
         protected void BtnTreeCommandClick(object sender, ImageClickEventArgs e)
@@ -426,18 +454,20 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void CtlPagesNodeExpand(object sender, RadTreeNodeEventArgs e)
         {
+            ClearMessages();
             AddChildnodes(e.Node);
         }
 
         protected void BtnBulkCreateClick(object sender, EventArgs e)
         {
+            ClearMessages();
             var strValue = txtBulk.Text;
             strValue = strValue.Replace("\r", "\n");
             strValue = strValue.Replace(Environment.NewLine, "\n");
             strValue = strValue.Replace("\n" + "\n", "\n").Trim();
 
-            if (strValue.Length == 0)
-            {
+            if (!IsValidTabName(strValue))
+            {                
                 return;
             }
 
@@ -466,19 +496,35 @@ namespace DotNetNuke.Modules.Admin.Pages
             {
                 currentIndex += 1;
 
-                oTab.TabID = oTab.TabName.StartsWith(">") == false ? CreateTabFromParent(rootTab, oTab.TabName, parentId) : CreateTabFromParent(rootTab, oTab.TabName.Replace(">", ""), GetParentTabId(tabs, currentIndex, oTab.Level - 1));
+                try
+                {
+                    oTab.TabID = oTab.TabName.StartsWith(">") == false
+                                     ? CreateTabFromParent(rootTab, oTab.TabName, parentId)
+                                     : CreateTabFromParent(rootTab, oTab.TabName.Replace(">", ""), GetParentTabId(tabs, currentIndex, oTab.Level - 1));
+                }
+                catch(Exception ex)
+                {                    
+                    ShowErrorMessage(ex.ToString());
+                    //Instrumentation.DnnLog.Error(ex); --this code shows unexpected results.
+                }
             }
 
             BindTree();
 
             var tabId = Convert.ToInt32(tabs[0].TabID);
+            if (tabId != Null.NullInteger)
+            {
+                BindTab(tabId);
+                pnlDetails.Visible = true;
+                pnlBulk.Visible = false;
+                grdModules.Rebind();
+            }
+            else
+            {
+                tabId = parentId;
+            }
             ctlPages.FindNodeByValue(tabId.ToString()).Selected = true;
-            ctlPages.FindNodeByValue(tabId.ToString()).ExpandParentNodes();
-
-            BindTab(tabId);
-            pnlDetails.Visible = true;
-            pnlBulk.Visible = false;
-            grdModules.Rebind();
+            ctlPages.FindNodeByValue(tabId.ToString()).ExpandParentNodes();            
         }
 
         public void CmdDeleteModuleClick(object sender, EventArgs e)
@@ -495,7 +541,12 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void CmdUpdateClick(object sender, EventArgs e)
         {
-            int intTab = Convert.ToInt32(ctlPages.SelectedNode.Value);
+            ClearMessages();
+            //Often times grid stays but node is not selected (e.g. when node is deleted or update page is clicked)
+            if (ctlPages.SelectedNode == null)
+                return;
+
+            int intTab = Convert.ToInt32(ctlPages.SelectedNode.Value);            
             var tabcontroller = new TabController();
             TabInfo tab = tabcontroller.GetTab(intTab, PortalId, true);
             if (tab != null)
@@ -520,19 +571,11 @@ namespace DotNetNuke.Modules.Admin.Pages
                     tab.TabPermissions.AddRange(dgPermissions.Permissions);
                 }
 
-                if (tab.TabName == "")
-                {
-                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidTabName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                    return;
-                }
-
                 //Check for invalid 
-                if (Regex.IsMatch(tab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase))
-                {
-                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidTabName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                if (!IsValidTabName(tab.TabName))
+                {                
                     return;
                 }
-
 
                 if (txtRefresh.Text.Length > 0 && IsNumeric(txtRefresh.Text))
                 {
@@ -556,6 +599,11 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tabcontroller.UpdateTab(tab);
 
                 BindTree();
+
+                //keep the tab selected
+                SelectedNode = intTab.ToString();
+                ctlPages.FindNodeByValue(SelectedNode).Selected = true;
+                ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
             }
         }
 
@@ -576,8 +624,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 dgPermissions.TabID = tab.TabID;
                 dgPermissions.DataBind();
 
-                cmdMore.NavigateUrl = Globals.NavigateURL(tabId, "", "ctl=Tab", "action=edit", "returntabid=" + TabId);
-                //cmdMore.Target = "_blank"
+                cmdMore.NavigateUrl = ModuleContext.EditNavUrl(tabId, "",false, "ctl=Tab", "action=edit", "returntabid=" + TabId);
 
                 txtTitle.Text = tab.Title;
                 txtName.Text = tab.TabName;
@@ -779,7 +826,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
             rblMode.Items[0].Text = Localization.GetString("ShowPortalTabs", LocalResourceFile);
             rblMode.Items[1].Text = Localization.GetString("ShowHostTabs", LocalResourceFile);
-            lblHead.Text = Localization.GetString("lblHead", LocalResourceFile);
+            lblHead.Text = Localization.GetString("lblHead", LocalResourceFile);            
 
             lblDisabled.Text = Localization.GetString("lblDisabled", LocalResourceFile);
             lblHidden.Text = Localization.GetString("lblHidden", LocalResourceFile);
@@ -1149,7 +1196,8 @@ namespace DotNetNuke.Modules.Admin.Pages
             tab.ParentId = targetTab.TabID;
             tabController.UpdateTab(tab);
 
-            UpdateTabOrder(tab, true);
+            UpdateTabOrder(tab, true);            
+            ShowSuccessMessage(string.Format(Localization.GetString("TabMoved", LocalResourceFile), tab.TabName));
         }
 
         private void MoveTab(TabInfo tab, TabInfo targetTab, Position position)
@@ -1191,28 +1239,28 @@ namespace DotNetNuke.Modules.Admin.Pages
 
             //Update the current Tab to reflect new parent id and new taborder
             tab.ParentId = targetTab.ParentId;
+            
+            tabController.UpdateTab(tab);
 
+            //Update the moving tabs level and tabpath
+            tab.Level = targetTab.Level;
+
+            //Update TabOrder as the previous UpdateTab call pushes the tab to the bottom
             switch (position)
             {
                 case Position.Above:
                     tab.TabOrder = targetTab.TabOrder - 2;
                     break;
                 case Position.Below:
-                    tab.TabOrder = targetTab.TabOrder + 2;
+                    tab.TabOrder = targetTab.TabOrder + 1;
                     break;
             }
 
-            tabController.UpdateTab(tab);
-
-            //Update the moving tabs level and tabpath
-            if (tab.Level < 0)
-            {
-                tab.Level = 0;
-            }
             UpdateTabOrder(tab, true);
 
             //Update the Descendents of the moving tab
             UpdateDescendantLevel(descendantTabs, tab.Level + 1);
+            ShowSuccessMessage(string.Format(Localization.GetString("TabMoved", LocalResourceFile), tab.TabName));
         }
 
         #endregion
@@ -1292,7 +1340,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 var module = moduleController.GetModule(moduleId);
                 if (module != null)
                 {
-                    return Globals.NavigateURL(module.TabID, "", "ctl=Module", "ModuleId=" + moduleId);
+                    return ModuleContext.EditNavUrl(module.TabID, "", false,"ctl=Module", "ModuleId=" + moduleId);
                 }
             }
 
@@ -1307,6 +1355,43 @@ namespace DotNetNuke.Modules.Admin.Pages
         #endregion
 
         #region Tab Moving Helpers
+
+        private void ShowWarningMessage(string message)
+        {
+            pnlWarn.Visible = true;
+            if (string.IsNullOrEmpty(lblWarn.Text))
+                lblWarn.Text = message;
+            else
+                lblWarn.Text += "<br />" + message;
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            pnlError.Visible = true;
+            if (string.IsNullOrEmpty(lblError.Text))
+                lblError.Text = message;
+            else
+                lblError.Text += "<br />" + message;
+        }
+
+        private void ShowSuccessMessage(string message)
+        {
+            pnlSuccess.Visible = true;
+            if (string.IsNullOrEmpty(lblSuccess.Text))
+                lblSuccess.Text = message;
+            else
+                lblSuccess.Text += "<br />" + message;
+        }
+
+        private void ClearMessages()
+        {
+            lblWarn.Text = "";
+            lblSuccess.Text = "";
+            lblError.Text = "";
+            pnlWarn.Visible = false;
+            pnlError.Visible = false;
+            pnlSuccess.Visible = false;
+        }
 
         private void UpdateDescendantLevel(IEnumerable<TabInfo> descendantTabs, int levelDelta)
         {
@@ -1463,6 +1548,11 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tab.DisableLink = objRoot.DisableLink;
                 tab.SkinSrc = objRoot.SkinSrc;
                 tab.ContainerSrc = objRoot.ContainerSrc;
+                tab.CultureCode = objRoot.CultureCode;
+            }
+            else
+            {
+                tab.CultureCode = PortalSettings.Current.DefaultLanguage;
             }
 
 
@@ -1489,8 +1579,8 @@ namespace DotNetNuke.Modules.Admin.Pages
             tab.TabPath = Globals.GenerateTabPath(tab.ParentId, tab.TabName);
 
             //Check for invalid 
-            if (Regex.IsMatch(tab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase))
-            {
+            if (!IsValidTabName(tab.TabName))
+            {            
                 return Null.NullInteger;
             }
 
@@ -1498,6 +1588,12 @@ namespace DotNetNuke.Modules.Admin.Pages
             int tabID = TabController.GetTabByTabPath(tab.PortalID, tab.TabPath, tab.CultureCode);
             if (tabID != Null.NullInteger)
             {
+                TabInfo existingTab = controller.GetTab(tabID, tab.PortalID, false);
+                if(existingTab != null && existingTab.IsDeleted)
+                    ShowWarningMessage(Localization.GetString("TabRecycled", LocalResourceFile));
+                else
+                    ShowWarningMessage(Localization.GetString("TabExists", LocalResourceFile));
+
                 return Null.NullInteger;
             }
 
@@ -1510,8 +1606,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     tab.TabPermissions.AddRange(objRoot.TabPermissions);
                 }
 
-                tab.Terms.Clear();
-                tab.CultureCode = objRoot.CultureCode;
+                tab.Terms.Clear();                
                 tab.StartDate = objRoot.StartDate;
                 tab.EndDate = objRoot.EndDate;
                 tab.RefreshInterval = objRoot.RefreshInterval;
@@ -1520,15 +1615,30 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tab.IsSecure = objRoot.IsSecure;
                 tab.PermanentRedirect = objRoot.PermanentRedirect;
             }
-            else
-            {
-                tab.CultureCode = PortalSettings.Current.DefaultLanguage;
-            }
 
             var ctrl = new TabController();
             tab.TabID = ctrl.AddTab(tab);
             ApplyDefaultTabTemplate(tab);
+            ShowSuccessMessage(string.Format(Localization.GetString("TabCreated", LocalResourceFile),tab.TabName));
             return tab.TabID;                          
+        }
+
+        private bool IsValidTabName(string tabName)
+        {
+            bool valid = true;
+
+            if (string.IsNullOrEmpty(tabName.Trim()))
+            {
+                ShowWarningMessage(Localization.GetString("EmptyTabName", LocalResourceFile));
+                valid = false;
+            }
+            else if (Regex.IsMatch(tabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase))
+            {
+                valid = false;
+                ShowWarningMessage(string.Format(Localization.GetString("InvalidTabName", LocalResourceFile), tabName));
+            }
+
+            return valid;
         }
 
         private void ApplyDefaultTabTemplate(TabInfo tab)

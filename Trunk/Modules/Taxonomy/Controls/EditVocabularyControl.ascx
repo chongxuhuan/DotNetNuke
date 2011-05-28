@@ -4,12 +4,12 @@
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="nameFieldLabel" runat="server" Text="Name.Text" ToolTip="Name.ToolTip" />
         <asp:Label ID="nameLabel" runat="server" />
-        <asp:TextBox ID="nameTextBox" runat="server" />
+        <asp:TextBox ID="nameTextBox" runat="server" CssClass="dnnFormRequired" />
         <asp:RequiredFieldValidator ID="nameValidator" runat="server" ResourceKey="Name.Required" Display="Dynamic" ControlToValidate="nameTextBox" CssClass="dnnFormMessage dnnFormError" SetFocusOnError="true" />
     </div>
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="descriptionFieldLabel" runat="server" Text="Description.Text" ToolTip="Description.ToolTip" />
-        <asp:TextBox ID="descriptionTextBox" runat="server" TextMode="MultiLine" />
+        <asp:TextBox ID="descriptionTextBox" runat="server" TextMode="MultiLine" Rows="6" />
     </div>
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="typeFieldLabel" runat="server" Text="Type.Text" ToolTip="Type.ToolTip" />

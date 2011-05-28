@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
@@ -98,12 +99,9 @@ namespace DotNetNuke.Modules.Admin.LogViewer
 
             pnlEditLogTypeConfigInfo.Visible = true;
             pnlLogTypeConfigInfo.Visible = false;
-            var l = new LogController();
+            var logController = new LogController();
 
-            var arrLogTypeInfo = l.GetLogTypeInfo();
-
-            arrLogTypeInfo.Sort(new LogTypeSortFriendlyName());
-
+        	var arrLogTypeInfo = logController.GetLogTypeInfoDictionary().Values.OrderBy(t => t.LogTypeFriendlyName);
 
             ddlLogTypeKey.DataTextField = "LogTypeFriendlyName";
             ddlLogTypeKey.DataValueField = "LogTypeKey";
@@ -154,14 +152,12 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                 ddlLogTypeKey.Enabled = true;
                 ddlLogTypePortalID.Enabled = true;
                 ddlKeepMostRecent.Enabled = true;
-                txtFileName.Enabled = true;
             }
             else
             {
                 ddlLogTypeKey.Enabled = false;
                 ddlLogTypePortalID.Enabled = false;
                 ddlKeepMostRecent.Enabled = false;
-                txtFileName.Enabled = false;
             }
         }
 
@@ -304,7 +300,6 @@ namespace DotNetNuke.Modules.Admin.LogViewer
                                                LogTypeKey = ddlLogTypeKey.SelectedItem.Value,
                                                LogTypePortalID = ddlLogTypePortalID.SelectedItem.Value,
                                                KeepMostRecent = ddlKeepMostRecent.SelectedItem.Value,
-                                               LogFileName = txtFileName.Text,
 
                                                EmailNotificationIsActive = chkEmailNotificationStatus.Checked,
                                                NotificationThreshold = Convert.ToInt32(ddlThreshold.SelectedItem.Value),
@@ -355,7 +350,6 @@ namespace DotNetNuke.Modules.Admin.LogViewer
 
             LogTypeConfigInfo objLogTypeConfigInfo = l.GetLogTypeConfigInfoByID(LogID);
 
-            txtFileName.Text = objLogTypeConfigInfo.LogFileName;
             chkIsActive.Checked = objLogTypeConfigInfo.LoggingIsActive;
             chkEmailNotificationStatus.Checked = objLogTypeConfigInfo.EmailNotificationIsActive;
 

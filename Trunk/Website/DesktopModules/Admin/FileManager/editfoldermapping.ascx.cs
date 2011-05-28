@@ -27,7 +27,6 @@ using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
-using DotNetNuke.Framework;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -84,8 +83,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var controlTitlePrefix = (FolderMappingID == Null.NullInteger) ? Localization.GetString("New") : Localization.GetString("Edit");
 
             ModuleConfiguration.ModuleControl.ControlTitle = string.Format(controlTitle, controlTitlePrefix);
-
-            jQuery.RequestDnnPluginsRegistration();
         }
 
         protected override void OnLoad(EventArgs e)

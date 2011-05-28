@@ -15,7 +15,7 @@
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label ID="plConfig" runat="server" ControlName="ddlConfig" />
-            <asp:DropDownList ID="ddlConfig" runat="server" AutoPostBack="true" />                
+            <asp:DropDownList ID="ddlConfig" runat="server" AutoPostBack="true"  />                
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="fileLabel" runat="server" ControlName="txtConfiguration" />

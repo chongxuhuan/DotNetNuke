@@ -21,14 +21,12 @@
 
 #endregion
 
-#region Usings
 
 using System;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
@@ -47,12 +45,13 @@ namespace DotNetNuke.Modules.Html
     /// -----------------------------------------------------------------------------
     public class HtmlTextUserInfo
     {
+        #region Private Member
         // local property declarations
         private ModuleInfo _Module;
 
-        // initialization
+        #endregion
 
-        // public properties
+        #region Public Properties
         public int ItemID { get; set; }
 
         public int StateID { get; set; }
@@ -93,5 +92,6 @@ namespace DotNetNuke.Modules.Html
         public int UserID { get; set; }
 
         public DateTime CreatedOnDate { get; set; }
+        #endregion
     }
 }

@@ -440,10 +440,37 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
-            var movedFile = CopyFile(file, destinationFolder);
-            DeleteFile(file);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(destinationFolder.FolderMappingID);
+            var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
 
-            return movedFile;
+            using (var fileContent = GetFileContent(file))
+            {
+                try
+                {
+                    folderProvider.AddFile(destinationFolder, file.FileName, fileContent);
+                }
+                catch (Exception ex)
+                {
+                    DnnLog.Error(ex);
+                    throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception."), ex);
+                }
+            }
+
+            try
+            {
+                // We can't delete the file until the fileContent resource has been released
+                folderProvider.DeleteFile(file);
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+                throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception."), ex);
+            }
+
+            file.FolderId = destinationFolder.FolderID;
+            file.Folder = destinationFolder.FolderPath;
+
+            return UpdateFile(file);
         }
 
         /// <summary>

@@ -19,6 +19,18 @@
         <xsl:apply-templates select="node">
           <xsl:with-param name="nodeType">root</xsl:with-param>
         </xsl:apply-templates>
+        <li id="dnnCommonTasks" class="root">
+          <a href="#">Modules</a>
+          <div class="megaborder"></div>
+        </li>
+        <li id="dnnCurrentPage" class="root">
+          <a href="#">Pages</a>
+          <div class="megaborder"></div>
+        </li>
+        <li id="dnnOtherTools" class="root">
+          <a href="#">Tools</a>
+          <div class="megaborder"></div>
+        </li>			
 			</ul>
 		</div>
 	</xsl:template>

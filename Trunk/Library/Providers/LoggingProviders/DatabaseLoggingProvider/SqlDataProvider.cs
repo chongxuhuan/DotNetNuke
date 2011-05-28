@@ -190,7 +190,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateEventLogType", logTypeKey, logTypeFriendlyName, logTypeDescription, logTypeOwner, logTypeCSSClass);
         }
 
-        public override void UpdateLogTypeConfigInfo(string id, bool loggingIsActive, string logTypeKey, string logTypePortalID, int keepMostRecent, string logFileName, bool emailNotificationIsActive,
+        public override void UpdateLogTypeConfigInfo(string id, bool loggingIsActive, string logTypeKey, string logTypePortalID, int keepMostRecent, bool emailNotificationIsActive,
                                                      int threshold, int notificationThresholdTime, int notificationThresholdTimeType, string mailFromAddress, string mailToAddress)
         {
             int portalID;

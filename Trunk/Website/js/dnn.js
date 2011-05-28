@@ -219,9 +219,9 @@ else
 {if(Sys.Browser.agent===Sys.Browser.InternetExplorer)
 window.navigate(sURL);else
 window.location.href=sURL;}
-return false;},setCookie:function(name,val,days,path,domain,isSecure)
-{var sExpires;if(days)
-{sExpires=new Date();sExpires.setTime(sExpires.getTime()+(days*24*60*60*1000));}
+return false;},setCookie:function(name,val,days,path,domain,isSecure,milleseconds)
+{var sExpires;if(days || milleseconds)
+{sExpires=new Date();sExpires.setTime(sExpires.getTime()+(days > 0 ? days*24*60*60*1000 : milleseconds));}
 document.cookie=name+"="+escape(val)+((sExpires)?"; expires="+sExpires.toGMTString():"")+
 ((path)?"; path="+path:"")+((domain)?"; domain="+domain:"")+((isSecure)?"; secure":"");if(document.cookie.length>0)
 return true;},getCurrentStyle:function(node,prop)

@@ -109,6 +109,8 @@
     </table>
 </asp:Panel>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnNewsletter() {
         $('#dnnNewsletters').dnnTabs();
     }
@@ -118,4 +120,5 @@
             setUpDnnNewsletter();
         });
     });
+} (jQuery, window.Sys));
 </script>

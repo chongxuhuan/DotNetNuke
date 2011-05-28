@@ -1,2 +1,0 @@
-' remove Community Version Assembly
-bin\DotNetNuke.Modules.Html.dll

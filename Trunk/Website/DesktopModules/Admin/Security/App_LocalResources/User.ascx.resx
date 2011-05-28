@@ -210,7 +210,7 @@
   <data name="CaptchaText.Text" xml:space="preserve">
     <value>Enter the code shown above in the box below</value>
   </data>
-  <data name="Email.Validation" xml:space="preserve">
+  <data name="Email.RegExError" xml:space="preserve">
     <value>You must enter a valid email address</value>
   </data>
   <data name="DisplayName.Required" xml:space="preserve">

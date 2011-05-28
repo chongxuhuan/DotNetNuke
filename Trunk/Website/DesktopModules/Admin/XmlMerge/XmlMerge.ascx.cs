@@ -89,7 +89,7 @@ namespace DotNetNuke.Modules.XmlMerge
 
         private void ValidateSuperUser()
         {
-			//Verify that the current user has access to access this page
+            //Verify that the current user has access to access this page
             if (!UserInfo.IsSuperUser)
             {
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
@@ -140,34 +140,20 @@ namespace DotNetNuke.Modules.XmlMerge
             {
                 if (ddlConfig.SelectedIndex != 0)
                 {
-                    ddlConfig.Attributes.Add("onClick", "javascript: alert('" + Localization.GetString("LoadConfigWarning", LocalResourceFile) + "');");
+                    //ddlConfig.Attributes.Add("onClick", "javascript: alert('" + Localization.GetString("LoadConfigWarning", LocalResourceFile) + "');");
                     txtConfiguration.Enabled = true;
-                    cmdSave.Enabled = true;
                 }
                 else
                 {
-                    ddlConfig.Attributes.Remove("onClick");
+                    //ddlConfig.Attributes.Remove("onClick");
                     txtConfiguration.Text = string.Empty;
                     txtConfiguration.Enabled = true;
-                    cmdSave.Enabled = false;
                 }
             }
 
-            if (ddlConfig.SelectedValue.ToLowerInvariant() == "web.config")
-            {
-                ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveWarning", LocalResourceFile));
-                ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("SaveWarning", LocalResourceFile));
-            }
-            else if (ddlConfig.SelectedIndex == 0)
-            {
-                cmdSave.Attributes.Remove("onClick");
-                cmdExecute.Attributes.Remove("onClick");
-            }
-            else
-            {
-                ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveConfirm", LocalResourceFile));
-                ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("MergeConfirm", LocalResourceFile));
-            }
+            SetSaveButtonState();
+
+
         }
 
         protected void OnExecuteClick(object sender, EventArgs e)
@@ -221,6 +207,10 @@ namespace DotNetNuke.Modules.XmlMerge
                 var scriptFile = new StreamReader(uplScript.PostedFile.InputStream);
                 txtScript.Text = scriptFile.ReadToEnd();
             }
+            else
+            {
+                UI.Skins.Skin.AddModuleMessage(this, string.Format(Localization.GetString("ERROR_ConfigurationFormat", LocalResourceFile),""), ModuleMessage.ModuleMessageType.RedError);
+            }
         }
 
         protected void OnConfigFileIndexChanged(object sender, EventArgs e)
@@ -229,6 +219,43 @@ namespace DotNetNuke.Modules.XmlMerge
             {
                 LoadConfig(ddlConfig.SelectedValue.ToLowerInvariant());
             }
+        }
+
+
+        private void SetSaveButtonState()
+        {
+
+            if (ddlConfig.SelectedIndex <= 0)
+            {
+                cmdSave.Attributes.Remove("onClick");
+                cmdExecute.Attributes.Remove("onClick");
+                cmdSave.Enabled = false;
+                cmdExecute.Enabled = false;
+            }
+            else
+            {
+                cmdSave.Enabled = true;
+                if (ddlConfig.SelectedValue.ToLowerInvariant() == "web.config")
+                {
+                    ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveWarning", LocalResourceFile));
+                    ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("SaveWarning", LocalResourceFile));
+                }
+                else
+                {
+                    ClientAPI.AddButtonConfirm(cmdSave, Localization.GetString("SaveConfirm", LocalResourceFile));
+                    ClientAPI.AddButtonConfirm(cmdExecute, Localization.GetString("MergeConfirm", LocalResourceFile));
+                }
+
+                if (!String.IsNullOrEmpty( txtScript.Text.Trim()))
+                {
+                    cmdExecute.Enabled = true;
+                }
+                else
+                {
+                    cmdExecute.Enabled = false;
+                }
+            }
+
         }
 
         #endregion

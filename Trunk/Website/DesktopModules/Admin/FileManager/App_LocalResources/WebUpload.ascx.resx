@@ -201,4 +201,7 @@
   <data name="plFolder.Text" xml:space="preserve">
     <value>Folder</value>
   </data>
+  <data name="ControlTitle_install.Text" xml:space="preserve">
+    <value>Install Extension</value>
+  </data>
 </root>

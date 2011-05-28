@@ -103,7 +103,6 @@ namespace DotNetNuke.Modules.Html
             try
             {
                 var objHTML = new HtmlTextController();
-                var objWorkflow = new WorkflowStateController();
 
                 // edit in place
                 if (EditorEnabled && IsEditable && PortalSettings.UserMode == PortalSettings.Mode.Edit)
@@ -116,34 +115,37 @@ namespace DotNetNuke.Modules.Html
                 }
 
                 // get content
-                HtmlTextInfo objContent = null;
-                string strContent = "";
+                HtmlTextInfo htmlTextInfo = null;
+                string contentString = "";
 
-                objContent = objHTML.GetTopHtmlText(ModuleId, !IsEditable, WorkflowID);
+                htmlTextInfo = objHTML.GetTopHtmlText(ModuleId, !IsEditable, WorkflowID);
 
-                if ((objContent != null))
+                if ((htmlTextInfo != null))
                 {
                     //don't decode yet (this is done in FormatHtmlText)
-                    strContent = objContent.Content;
+                    contentString = htmlTextInfo.Content;
                 }
                 else
                 {
                     // get default content from resource file
-                    if (PortalSettings.UserMode == PortalSettings.Mode.Edit)
+                    if (!IsPostBack)
                     {
-                        if (EditorEnabled)
+                        if (PortalSettings.UserMode == PortalSettings.Mode.Edit)
                         {
-                            strContent = Localization.GetString("AddContentFromToolBar.Text", LocalResourceFile);
+                            if (EditorEnabled)
+                            {
+                                contentString = Localization.GetString("AddContentFromToolBar.Text", LocalResourceFile);
+                            }
+                            else
+                            {
+                                contentString = Localization.GetString("AddContentFromActionMenu.Text", LocalResourceFile);
+                            }
                         }
                         else
                         {
-                            strContent = Localization.GetString("AddContentFromActionMenu.Text", LocalResourceFile);
+                            // hide the module if no content and in view mode
+                            ContainerControl.Visible = false;
                         }
-                    }
-                    else
-                    {
-                        // hide the module if no content and in view mode
-                        ContainerControl.Visible = false;
                     }
                 }
 
@@ -156,20 +158,20 @@ namespace DotNetNuke.Modules.Html
                 // localize toolbar
                 if (EditorEnabled)
                 {
-                    foreach (DNNToolBarButton objButton in tbEIPHTML.Buttons)
+                    foreach (DNNToolBarButton button in editorDnnToobar.Buttons)
                     {
-                        objButton.ToolTip = Localization.GetString("cmd" + objButton.ToolTip, LocalResourceFile);
+                        button.ToolTip = Localization.GetString(button.ToolTip + ".ToolTip", LocalResourceFile);
                     }
                 }
                 else
                 {
-                    tbEIPHTML.Visible = false;
+                    editorDnnToobar.Visible = false;
                 }
 
                 lblContent.EditEnabled = EditorEnabled;
 
                 // add content to module
-                lblContent.Controls.Add(new LiteralControl(HtmlTextController.FormatHtmlText(ModuleId, strContent, Settings)));
+                lblContent.Controls.Add(new LiteralControl(HtmlTextController.FormatHtmlText(ModuleId, contentString, Settings)));
             }
             catch (Exception exc)
             {

@@ -31,416 +31,366 @@ var m_sLocaleUnSelectAll = '<%=ClientAPI.GetSafeJSString(Localization.GetString(
 
 var m_bAllFilesChecked;
 var previd;
-var blpb=true;
+var blpb = true;
 var m_sDNNTreeID;
 var m_sUCPrefixID;
 var m_sUCPrefixName;
 var m_arReplaceTitle = new Array(1);
 m_arReplaceTitle[0] = '<%=ClientAPI.GetSafeJSString(RootFolderName) %>';
 
-function getLastPath() {return dnn.getVar('LastPath');}
-function setLastPath(sValue) {dnn.setVar('LastPath', sValue);}
-function getDestPath() {return dnn.getVar('DestPath');}
-function setDestPath(sValue) {dnn.setVar('DestPath', sValue);}
-function getSourcePath() {return dnn.getVar('SourcePath');}
-function setSourcePath(sValue) {dnn.setVar('SourcePath', sValue);}
+function getLastPath() { return dnn.getVar('LastPath'); }
+function setLastPath(sValue) { dnn.setVar('LastPath', sValue); }
+function getDestPath() { return dnn.getVar('DestPath'); }
+function setDestPath(sValue) { dnn.setVar('DestPath', sValue); }
+function getSourcePath() { return dnn.getVar('SourcePath'); }
+function setSourcePath(sValue) { dnn.setVar('SourcePath', sValue); }
 
-function getMoveFiles() {return dnn.getVar('MoveFiles');}
-function setMoveFiles(sValue) {dnn.setVar('MoveFiles', sValue);}
-function getMoveStatus() {return dnn.getVar('MoveStatus');}
-function setMoveStatus(sValue) {dnn.setVar('MoveStatus', sValue);}
+function getMoveFiles() { return dnn.getVar('MoveFiles'); }
+function setMoveFiles(sValue) { dnn.setVar('MoveFiles', sValue); }
+function getMoveStatus() { return dnn.getVar('MoveStatus'); }
+function setMoveStatus(sValue) { dnn.setVar('MoveStatus', sValue); }
 
-function addFileToMoveList(strfile, sender, strSelClass, strOrigClass) 
-{
+function addFileToMoveList(strfile, sender, strSelClass, strOrigClass) {
 
-	if (sender.tagName.toUpperCase()=="INPUT") 
-	{
-		/* 1.0 Framework */
-		var blvalue = sender.checked;
-		var objRow = sender.parentNode.parentNode.parentNode;
-	}
-	else
-	{ /* 1.1 FrameWork */
-		var blvalue = sender.children[0].checked;
+    if (sender.tagName.toUpperCase() == "INPUT") {
+        /* 1.0 Framework */
+        var blvalue = sender.checked;
+        var objRow = sender.parentNode.parentNode.parentNode;
+    }
+    else { /* 1.1 FrameWork */
+        var blvalue = sender.children[0].checked;
 
-		var objRow = sender.parentNode.parentNode;
-	}
+        var objRow = sender.parentNode.parentNode;
+    }
 
-	if(!blvalue)
-	{
-		//unchecking
-		setMoveFiles(getMoveFiles().replace(strfile + ";", ""));
-		objRow.className=strOrigClass;
-	}
-	else 
-	{
-		//checking
-		setMoveFiles(getMoveFiles() + strfile + ";");
-		objRow.className = strSelClass;
-	}
+    if (!blvalue) {
+        //unchecking
+        setMoveFiles(getMoveFiles().replace(strfile + ";", ""));
+        objRow.className = strOrigClass;
+    }
+    else {
+        //checking
+        setMoveFiles(getMoveFiles() + strfile + ";");
+        objRow.className = strSelClass;
+    }
 }
 
-function canAddFolder() 
-{
-	var txtNewFolder1 = dnn.dom.getById(m_sUCPrefixID + 'txtNewFolder');
-	if (txtNewFolder1.value=='')
-	{
-		alert(m_sLocaleSpecifyFolder);
-		return false;
-	}
-	else 
-		__doPostBack(m_sUCPrefixName + 'lnkAddFolder', '');
+function canAddFolder() {
+    var txtNewFolder1 = dnn.dom.getById(m_sUCPrefixID + 'txtNewFolder');
+    if (txtNewFolder1.value == '') {
+        alert(m_sLocaleSpecifyFolder);
+        return false;
+    }
+    else
+        __doPostBack(m_sUCPrefixName + 'lnkAddFolder', '');
 }
 
-function cancelMove() 
-{
-	clearErrorMessage();
-	setMoveStatus('');
-	blCopying=false;
-	CheckAllFiles(false);
-	dnn.dom.getById(m_sUCPrefixID + 'lblCurFolder').innerHTML = getSourcePath().replace(m_arReplaceTitle[0],m_arReplaceTitle[1]) + '\\';
+function cancelMove() {
+    clearErrorMessage();
+    setMoveStatus('');
+    blCopying = false;
+    CheckAllFiles(false);
+    dnn.dom.getById(m_sUCPrefixID + 'lblCurFolder').innerHTML = getSourcePath().replace(m_arReplaceTitle[0], m_arReplaceTitle[1]) + '\\';
 }
 
-function clearErrorMessage()
-{
-	disableButtons(false);
-	var tdGrid = dnn.dom.getById('tdGrid');
-	tdGrid.style.display='';
-	var FileOverlay = dnn.dom.getById('FileGridOverLay');
-	FileOverlay.innerHTML='';
-	dnn.dom.getById('tdOverLay').style.display='none';
-	dnn.setVar('ErrorMessage', '');
+function clearErrorMessage() {
+    disableButtons(false);
+    var tdGrid = dnn.dom.getById('tdGrid');
+    tdGrid.style.display = '';
+    var FileOverlay = dnn.dom.getById('FileGridOverLay');
+    FileOverlay.innerHTML = '';
+    dnn.dom.getById('tdOverLay').style.display = 'none';
+    dnn.setVar('ErrorMessage', '');
 }
 
-function confirmMoveFiles(strDestFolder) 
-{
-	hideDataGrid();
+function confirmMoveFiles(strDestFolder) {
+    hideDataGrid();
 
-	if (getMoveStatus()=='move') 
-		var strConfirmTitle = m_sLocaleMoveSelectedFilesTo;
-	else if (getMoveStatus()=='copy') 
-		var strConfirmTitle = m_sLocaleCopySelectedFilesTo;
-	else if (getMoveStatus()=='unzip') 
-		var strConfirmTitle = m_sLocaleUnzipSelectedFilesTo;
+    if (getMoveStatus() == 'move')
+        var strConfirmTitle = m_sLocaleMoveSelectedFilesTo;
+    else if (getMoveStatus() == 'copy')
+        var strConfirmTitle = m_sLocaleCopySelectedFilesTo;
+    else if (getMoveStatus() == 'unzip')
+        var strConfirmTitle = m_sLocaleUnzipSelectedFilesTo;
 
-	var strConfirmMessage='<table cellspacing=0 cellpadding=0><tr><td class=NormalBold>' + getProperPath(strDestFolder) + '</td></tr>';
-	strConfirmMessage+='<tr><td height=15>&nbsp;</td><tr>'
-	strConfirmMessage+='<tr><td align=center>';
-	strConfirmMessage+='<INPUT id=btnMoveOK style="width:82px;" Class="NormalBold" onclick="__doPostBack(\'' + m_sUCPrefixName + 'lnkMoveFiles' + '\');" type=button value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
-	strConfirmMessage+='<INPUT id=btnNoConfirmMove style="width:82px;" Class="NormalBold" onclick=hideDataGrid(); type=button value="' + m_sLocaleCancel + '">';
-	strConfirmMessage+='</td></tr></table>';
-	showErrorMessage(strConfirmTitle, strConfirmMessage);
+    var strConfirmMessage = '<table cellspacing="0" cellpadding="0"><tr><td class="NormalBold">' + getProperPath(strDestFolder) + '</td></tr>';
+    strConfirmMessage += '<tr><td height="15">&nbsp;</td><tr>'
+    strConfirmMessage += '<tr><td align="center">';
+    strConfirmMessage += '<INPUT id="btnMoveOK" style="width:82px;" Class="NormalBold" onclick="__doPostBack(\'' + m_sUCPrefixName + 'lnkMoveFiles' + '\', \'\');" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
+    strConfirmMessage += '<INPUT id="btnNoConfirmMove" style="width:82px;" Class="NormalBold" onclick="hideDataGrid();" type="button" value="' + m_sLocaleCancel + '">';
+    strConfirmMessage += '</td></tr></table>';
+    showErrorMessage(strConfirmTitle, strConfirmMessage);
 }
 
-function copyCheckedFiles()
-{
-	if (getMoveFiles() =='')
-	{
-		alert(m_sLocaleNoFilesChecked);
-		return false;
-	}
-	//confirm the copy
-	var blconfirm = confirm(m_sLocaleCopyCheckedFiles);
-	if (blconfirm) 
-	{
-		setSourcePath(getLastPath());
-		setMoveStatus('copy');
-		hideDataGrid();
-		return false;
-	}
+function copyCheckedFiles() {
+    if (getMoveFiles() == '') {
+        alert(m_sLocaleNoFilesChecked);
+        return false;
+    }
+    //confirm the copy
+    var blconfirm = confirm(m_sLocaleCopyCheckedFiles);
+    if (blconfirm) {
+        setSourcePath(getLastPath());
+        setMoveStatus('copy');
+        hideDataGrid();
+        return false;
+    }
 }
 
-function deleteAllChecked()
-{
-	clearErrorMessage();
-	__doPostBack(m_sUCPrefixName + 'lnkDeleteAllCheckedFiles', '');
+function deleteAllChecked() {
+    clearErrorMessage();
+    __doPostBack(m_sUCPrefixName + 'lnkDeleteAllCheckedFiles', '');
 }
 
-function deleteCheckedFiles()
-{
-	if (getMoveFiles() =='')
-	{
-		alert(m_sLocaleNoFilesChecked);
-		return false;
-	}
-  
-	var strTitle='<%=ClientAPI.GetSafeJSString(Localization.GetString("DeleteFiles", LocalResourceFile))%>:';
-	var strMessage='<table cellspacing=0 cellpadding=0>';
-	var strCurFiles = getMoveFiles();
-	var arFiles = strCurFiles.split(';');
-	for( var i = 0; i < arFiles.length-1; i++ )
-		strMessage+='<tr><td class=NormalBold>' + arFiles[i] + '</td></tr>';
+function deleteCheckedFiles() {
+    if (getMoveFiles() == '') {
+        alert(m_sLocaleNoFilesChecked);
+        return false;
+    }
 
-	strMessage+='<tr><td height=15>&nbsp;</td><tr>';
-	strMessage+='<tr><td colspan=2 align=center>';
-	strMessage+='<INPUT id=btnConfirmDel style="WIDTH: 81px;" Class="NormalBold" onclick=deleteAllChecked(); type=button value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
-	strMessage+='<INPUT id=btnClearError style="WIDTH: 81px;" Class="NormalBold" onclick=clearErrorMessage(); type=button value="' + m_sLocaleCancel + '">';
-	strMessage+='</td></tr></table>';
-	showErrorMessage(strTitle, strMessage);
-	return false;
+    var strTitle = '<%=ClientAPI.GetSafeJSString(Localization.GetString("DeleteFiles", LocalResourceFile))%>:';
+    var strMessage = '<table cellspacing="0" cellpadding="0">';
+    var strCurFiles = getMoveFiles();
+    var arFiles = strCurFiles.split(';');
+    for (var i = 0; i < arFiles.length - 1; i++)
+        strMessage += '<tr><td class="NormalBold">' + arFiles[i] + '</td></tr>';
+
+    strMessage += '<tr><td height="15">&nbsp;</td><tr>';
+    strMessage += '<tr><td colspan="2" align="center">';
+    strMessage += '<INPUT id="btnConfirmDel" style="WIDTH: 81px;" Class="NormalBold" onclick="deleteAllChecked();" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
+    strMessage += '<INPUT id="btnClearError" style="WIDTH: 81px;" Class="NormalBold" onclick="clearErrorMessage();" type="button" value="' + m_sLocaleCancel + '">';
+    strMessage += '</td></tr></table>';
+    showErrorMessage(strTitle, strMessage);
+    return false;
 }
 
-function deleteFolder() 
-{
-	var blValue = confirm(m_sLocaleDeleteFolder + ' ' + getProperPath(getLastPath()) + '?');
-	if (blValue) {__doPostBack(m_sUCPrefixName + 'lnkDeleteFolder', '');}else{return false;}
+function deleteFolder() {
+    var blValue = confirm(m_sLocaleDeleteFolder + ' ' + getProperPath(getLastPath()) + '?');
+    if (blValue) { __doPostBack(m_sUCPrefixName + 'lnkDeleteFolder', ''); } else { return false; }
 }
 
-function disableButtons(blvalue)
-{
+function disableButtons(blvalue) {
 
-	var objNewFolderID = dnn.dom.getById(m_sUCPrefixID + 'txtNewFolder');
-	if (objNewFolderID) 
-	{
-		objNewFolderID.disabled=blvalue;
-		enableDisableCtl('lnkAddFolderIMG', blvalue);
-		enableDisableCtl('lnkDelFolderIMG', blvalue);
-	}
-	dnn.dom.getById(m_sUCPrefixID + 'txtFilter').disabled=blvalue;
-	enableDisableCtl('lnkCopy', blvalue);
-	enableDisableCtl('lnkDelete', blvalue);
-	enableDisableCtl('lnkMove', blvalue);
-	enableDisableCtl('lnkUploadIMG', blvalue);
-	enableDisableCtl('lnkFilterIMG', blvalue);
-	//enableDisableCtl('lnkRefreshIMG', blvalue);
-	enableDisableCtl('lnkFolderPropertiesIMG', blvalue);
+    var objNewFolderID = dnn.dom.getById(m_sUCPrefixID + 'txtNewFolder');
+    if (objNewFolderID) {
+        objNewFolderID.disabled = blvalue;
+        enableDisableCtl('lnkAddFolderIMG', blvalue);
+        enableDisableCtl('lnkDelFolderIMG', blvalue);
+    }
+    dnn.dom.getById(m_sUCPrefixID + 'txtFilter').disabled = blvalue;
+    enableDisableCtl('lnkCopy', blvalue);
+    enableDisableCtl('lnkDelete', blvalue);
+    enableDisableCtl('lnkMove', blvalue);
+    enableDisableCtl('lnkUploadIMG', blvalue);
+    enableDisableCtl('lnkFilterIMG', blvalue);
+    //enableDisableCtl('lnkRefreshIMG', blvalue);
+    enableDisableCtl('lnkFolderPropertiesIMG', blvalue);
 
-	obj=dnn.dom.getById(m_sUCPrefixID + 'tblMessagePager')
-	if (obj)
-	{
-		if (blvalue)
-			obj.style.display='none';
-		else
-			obj.style.display='';
-	}
-	else
-	{
-	}
-	obj=dnn.dom.getById(m_sUCPrefixID + 'selPageSize')
-	if (obj)
-		obj.disabled=blvalue;
+    obj = dnn.dom.getById(m_sUCPrefixID + 'tblMessagePager')
+    if (obj) {
+        if (blvalue)
+            obj.style.display = 'none';
+        else
+            obj.style.display = '';
+    }
+    else {
+    }
+    obj = dnn.dom.getById(m_sUCPrefixID + 'selPageSize')
+    if (obj)
+        obj.disabled = blvalue;
 }
 
-function enableDisableCtl(sID, blvalue)
-{
-	var obj = dnn.dom.getById(sID);
-	var strCursor = 'hand';
-	var strSearch='Disabled';
-	var strReplace='Enabled';
-	var strStyle='';
-	if (blvalue) 
-	{
-		strCursor = 'default';
-		strSearch='Enabled';
-		strReplace='Disabled';
-		strStyle='none';
-	}
+function enableDisableCtl(sID, blvalue) {
+    var obj = dnn.dom.getById(sID);
+    var strCursor = 'hand';
+    var strSearch = 'Disabled';
+    var strReplace = 'Enabled';
+    var strStyle = '';
+    if (blvalue) {
+        strCursor = 'default';
+        strSearch = 'Enabled';
+        strReplace = 'Disabled';
+        strStyle = 'none';
+    }
 
-	if (obj)
-	{
-		obj.style.cursor=strCursor;
-		obj.disabled=blvalue;
-		obj.parentNode.disabled=blvalue;
-		obj.src=obj.src.replace(strSearch, strReplace);
-	}
+    if (obj) {
+        obj.style.cursor = strCursor;
+        obj.disabled = blvalue;
+        obj.parentNode.disabled = blvalue;
+        obj.src = obj.src.replace(strSearch, strReplace);
+    }
 }
 
-function fldScroll() 
-{
-	setFolderScrollPos(dnn.dom.getById(m_sUCPrefixID + 'pnlFolders').scrollTop);
+function fldScroll() {
+    setFolderScrollPos(dnn.dom.getById(m_sUCPrefixID + 'pnlFolders').scrollTop);
 }
 
-function getFolderID(fldname) 
-{
-	var arvalues=fldname.split('\\');
-	return arvalues[0];
+function getFolderID(fldname) {
+    var arvalues = fldname.split('\\');
+    return arvalues[0];
 }
 
-function getFolderScrollPos()
-{
-	var i = dnn.getVar('folderScrollPos');
-	if (i != null)
-		return i;
-	else
-		return 0;
+function getFolderScrollPos() {
+    var i = dnn.getVar('folderScrollPos');
+    if (i != null)
+        return i;
+    else
+        return 0;
 }
 
-function getProperPath(s)
-{
-	s=s.replace('\/', '\\');
-	var sFldID=getFolderID(s);
-	return s.replace(sFldID,m_arReplaceTitle[sFldID]);
+function getProperPath(s) {
+    s = s.replace('\/', '\\');
+    var sFldID = getFolderID(s);
+    return s.replace(sFldID, m_arReplaceTitle[sFldID]);
 }
 
-function getSelectedTreeNode()
-{
-	if (dnn.controls != null)
-		return dnn.controls.controls[m_sDNNTreeID].selTreeNode;	
-	else
-	{
-		eval('var oNode = ' + dnn.getVar(m_sDNNTreeID + '_selNode'));
-		return oNode;
-	}
+function getSelectedTreeNode() {
+    if (dnn.controls != null)
+        return dnn.controls.controls[m_sDNNTreeID].selTreeNode;
+    else {
+        eval('var oNode = ' + dnn.getVar(m_sDNNTreeID + '_selNode'));
+        return oNode;
+    }
 }
 
-function hideDataGrid() 
-{
+function hideDataGrid() {
 
-	//used when moving/copying files...
-	dnn.dom.getById('tdOverLay').style.display='';
-	var tdGrid = dnn.dom.getById('tdGrid');
-	tdGrid.style.display='none';
-	var FileOverlay = dnn.dom.getById('FileGridOverLay');
-	FileOverlay.style.display='';
+    //used when moving/copying files...
+    dnn.dom.getById('tdOverLay').style.display = '';
+    var tdGrid = dnn.dom.getById('tdGrid');
+    tdGrid.style.display = 'none';
+    var FileOverlay = dnn.dom.getById('FileGridOverLay');
+    FileOverlay.style.display = '';
 
-	var strCurFiles = getMoveFiles();
-	
-	var arFiles = strCurFiles.split(';');
-	var strMessage='<table cellspacing=0 cellpadding=0>';
-	for( var i = 0; i < arFiles.length-1; i++ )
-		strMessage+='<tr><td class=NormalBold>' + arFiles[i] + '</td></tr>';
+    var strCurFiles = getMoveFiles();
 
-	strMessage=strMessage.replace(arFiles[arFiles.length-2]+',',arFiles[arFiles.length-2]);
-	strMessage+= '<tr><td height=15>&nbsp;</td><tr>'
-	strMessage+= '<tr><td class=NormalRed><%=ClientAPI.GetSafeJSString(Localization.GetString("FromFolder", LocalResourceFile))%>' + getProperPath(getLastPath());  + '</td></tr>'
-	strMessage+= '<tr><td height=15>&nbsp;</td><tr>'
-	strMessage+= '<tr><td class=NormalRed><%=ClientAPI.GetSafeJSString(Localization.GetString("ToFolder", LocalResourceFile))%></td></tr>'
-	strMessage+= '<tr><td height=15>&nbsp;</td><tr>'
-	
-	if (getMoveStatus()=='move') 
-	{
-		var strTitle='<%=ClientAPI.GetSafeJSString(Localization.GetString("MovingFiles", LocalResourceFile))%>';
-	}
-	else if (getMoveStatus()=='copy') 
-	{
-		var strTitle='<%=ClientAPI.GetSafeJSString(Localization.GetString("CopyingFiles", LocalResourceFile))%>';
-	}
-	else if (getMoveStatus()=='unzip')
-	{ 
-		var strTitle='<%=ClientAPI.GetSafeJSString(Localization.GetString("UnzippingFile", LocalResourceFile))%>';
-	}
-	strMessage+= '<tr><td align=center><INPUT id=btnCancelMove style="width:82px;" class="NormalBold" onclick=cancelMove(); type=button value="' + m_sLocaleCancel + '"></td></tr>';
-	strMessage+= '</table>'
-	
-	showErrorMessage(strTitle, strMessage);
+    var arFiles = strCurFiles.split(';');
+    var strMessage = '<table cellspacing="0" cellpadding="0">';
+    for (var i = 0; i < arFiles.length - 1; i++)
+        strMessage += '<tr><td class="NormalBold">' + arFiles[i] + '</td></tr>';
+
+    strMessage = strMessage.replace(arFiles[arFiles.length - 2] + ',', arFiles[arFiles.length - 2]);
+    strMessage += '<tr><td height="15">&nbsp;</td><tr>'
+    strMessage += '<tr><td class="NormalRed"><%=ClientAPI.GetSafeJSString(Localization.GetString("FromFolder", LocalResourceFile))%>' + getProperPath(getLastPath()); +'</td></tr>'
+    strMessage += '<tr><td height="15">&nbsp;</td><tr>'
+    strMessage += '<tr><td class="NormalRed"><%=ClientAPI.GetSafeJSString(Localization.GetString("ToFolder", LocalResourceFile))%></td></tr>'
+    strMessage += '<tr><td height="15">&nbsp;</td><tr>'
+
+    if (getMoveStatus() == 'move') {
+        var strTitle = '<%=ClientAPI.GetSafeJSString(Localization.GetString("MovingFiles", LocalResourceFile))%>';
+    }
+    else if (getMoveStatus() == 'copy') {
+        var strTitle = '<%=ClientAPI.GetSafeJSString(Localization.GetString("CopyingFiles", LocalResourceFile))%>';
+    }
+    else if (getMoveStatus() == 'unzip') {
+        var strTitle = '<%=ClientAPI.GetSafeJSString(Localization.GetString("UnzippingFile", LocalResourceFile))%>';
+    }
+    strMessage += '<tr><td align="center"><INPUT id="btnCancelMove" style="width:82px;" class="NormalBold" onclick="cancelMove();" type="button" value="' + m_sLocaleCancel + '"></td></tr>';
+    strMessage += '</table>'
+
+    showErrorMessage(strTitle, strMessage);
 }
 
-function initFileManager()
-{
-	if (dnn.getVar('IsRefresh') == '0')	
-		dnn.dom.getById(m_sUCPrefixID + 'pnlFolders').scrollTop=getFolderScrollPos();
+function initFileManager() {
+    if (dnn.getVar('IsRefresh') == '0')
+        dnn.dom.getById(m_sUCPrefixID + 'pnlFolders').scrollTop = getFolderScrollPos();
 
-	m_sUCPrefixID = dnn.getVar('UCPrefixID');
-	m_sUCPrefixName = dnn.getVar('UCPrefixName');
-	m_sDNNTreeID = m_sUCPrefixID + 'DNNTree';
+    m_sUCPrefixID = dnn.getVar('UCPrefixID');
+    m_sUCPrefixName = dnn.getVar('UCPrefixName');
+    m_sDNNTreeID = m_sUCPrefixID + 'DNNTree';
 
-	var oFileOverlay = dnn.dom.getById('FileGridOverLay');
-	if (oFileOverlay.innerHTML.length == 0)
-		dnn.dom.getById('tdOverLay').style.display='none';
+    var oFileOverlay = dnn.dom.getById('FileGridOverLay');
+    if (oFileOverlay.innerHTML.length == 0)
+        dnn.dom.getById('tdOverLay').style.display = 'none';
 
-	if (dnn.getVar('DisabledButtons') != '0')
-		disableButtons(true);
+    if (dnn.getVar('DisabledButtons') != '0')
+        disableButtons(true);
 
-	if (dnn.getVar('ErrorMessage') != null && dnn.getVar('ErrorMessage').length > 0)
-		showErrorMessage('<%=ClientAPI.GetSafeJSString(Localization.GetString("ErrorOccurred", LocalResourceFile))%>', dnn.getVar('ErrorMessage'));
+    if (dnn.getVar('ErrorMessage') != null && dnn.getVar('ErrorMessage').length > 0)
+        showErrorMessage('<%=ClientAPI.GetSafeJSString(Localization.GetString("ErrorOccurred", LocalResourceFile))%>', dnn.getVar('ErrorMessage'));
 
 }
 
-function moveFiles() 
-{
+function moveFiles() {
 
-	if (getMoveFiles() =='')
-	{
-		alert(m_sLocaleNoFilesChecked);
-		return false;
-	}
-	var blconfirm = confirm(m_sLocaleMoveCheckedFiles);
-	if (blconfirm) 
-	{
-		setSourcePath(getLastPath());
-		setMoveStatus('move');
-		hideDataGrid();
-		return false;
-	}
+    if (getMoveFiles() == '') {
+        alert(m_sLocaleNoFilesChecked);
+        return false;
+    }
+    var blconfirm = confirm(m_sLocaleMoveCheckedFiles);
+    if (blconfirm) {
+        setSourcePath(getLastPath());
+        setMoveStatus('move');
+        hideDataGrid();
+        return false;
+    }
 }
 
-function nodeSelected()
-{
-	var oNode = getSelectedTreeNode();
-	
-	if (oNode != null)
-	{
-		var sKey = oNode.key;
+function nodeSelected() {
+    var oNode = getSelectedTreeNode();
 
-		var sIsMoving = getMoveStatus();
-		if ((sIsMoving=='copy')||(sIsMoving=='move')||(sIsMoving=='unzip'))
-		{
-			setDestPath(sKey);
-			confirmMoveFiles(sKey);
-			return false; //cancel postback
-		}
-		else
-		{
-			setLastPath(sKey);
-			setDestPath(sKey);
-			return true; //do postback
-		}
-	}
+    if (oNode != null) {
+        var sKey = oNode.key;
+
+        var sIsMoving = getMoveStatus();
+        if ((sIsMoving == 'copy') || (sIsMoving == 'move') || (sIsMoving == 'unzip')) {
+            setDestPath(sKey);
+            confirmMoveFiles(sKey);
+            return false; //cancel postback
+        }
+        else {
+            setLastPath(sKey);
+            setDestPath(sKey);
+            return true; //do postback
+        }
+    }
 }
 
-function setFolderScrollPos(sValue)
-{
-	dnn.setVar('folderScrollPos', sValue);
+function setFolderScrollPos(sValue) {
+    dnn.setVar('folderScrollPos', sValue);
 }
 
-function showErrorMessage(strTitle, strMessage)
-{
-	var strOutput='<table width=80% cellpadding=0 cellspacing=0 style="border: 1px solid black">'
-	strOutput+='<tr><td height=15></td></tr>'
-	strOutput+='<tr><td class=Head align=center><u>' + strTitle + '</u></td></tr>'
-	strOutput+='<tr><td height=15></td></tr>'
-	strOutput+='<tr><td align=center valign=middle>' + strMessage + '</td></tr>'
-	strOutput+='<tr><td height=15></td></tr></table>'
+function showErrorMessage(strTitle, strMessage) {
+    var strOutput = '<table width="80%" cellpadding="0" cellspacing="0" style="border: 1px solid black">'
+    strOutput += '<tr><td height="15"></td></tr>'
+    strOutput += '<tr><td class="Head" align="center"><u>' + strTitle + '</u></td></tr>'
+    strOutput += '<tr><td height="15"></td></tr>'
+    strOutput += '<tr><td align="center" valign="middle">' + strMessage + '</td></tr>'
+    strOutput += '<tr><td height="15"></td></tr></table>'
 
-	disableButtons(true);
-	dnn.dom.getById('tdOverLay').style.display='';
-	var tdGrid = dnn.dom.getById('tdGrid');
-	tdGrid.style.display='none';
-	var oFileOverlay = dnn.dom.getById('FileGridOverLay');
-	oFileOverlay.innerHTML=strOutput;
+    disableButtons(true);
+    dnn.dom.getById('tdOverLay').style.display = '';
+    var tdGrid = dnn.dom.getById('tdGrid');
+    tdGrid.style.display = 'none';
+    var oFileOverlay = dnn.dom.getById('FileGridOverLay');
+    oFileOverlay.innerHTML = strOutput;
 }
 
-function unzipFile(FileName) 
-{
-	setMoveFiles(FileName + ";");
-	var blconfirm = confirm('UnZip File(s): ' + FileName + '?');
-	if (blconfirm) 
-	{
-		setSourcePath(getLastPath());
-		setMoveStatus('unzip');
-		hideDataGrid();
-		return false;
-	}
+function unzipFile(FileName) {
+    setMoveFiles(FileName + ";");
+    var blconfirm = confirm('UnZip File(s): ' + FileName + '?');
+    if (blconfirm) {
+        setSourcePath(getLastPath());
+        setMoveStatus('unzip');
+        hideDataGrid();
+        return false;
+    }
 }
 
-function gridCheckAll(sender) 
-{
-	m_bAllFilesChecked=!m_bAllFilesChecked;
-	CheckAllFiles(m_bAllFilesChecked);
-	if (!m_bAllFilesChecked) 
-	{
-		sender.src=sender.src.replace('checked', 'unchecked');
-		sender.alt = m_sLocaleSelectAll;
-	} 
-	else 
-	{
-		sender.src=sender.src.replace('unchecked', 'checked');
-		sender.alt = m_sLocaleUnSelectAll;
-	}
+function gridCheckAll(sender) {
+    m_bAllFilesChecked = !m_bAllFilesChecked;
+    CheckAllFiles(m_bAllFilesChecked);
+    if (!m_bAllFilesChecked) {
+        sender.src = sender.src.replace('checked', 'unchecked');
+        sender.alt = m_sLocaleSelectAll;
+    }
+    else {
+        sender.src = sender.src.replace('unchecked', 'checked');
+        sender.alt = m_sLocaleUnSelectAll;
+    }
 
-	return false;
+    return false;
 }
-
 
 </script>
 <asp:panel id="pnlMainScripts" Runat="server"/>
@@ -707,7 +657,7 @@ function gridCheckAll(sender)
 </table>
 <br />
 <div style="DISPLAY: none">
-    <asp:linkbutton id="lnkMoveFiles" Runat="server" EnableViewState="False"/>
+    <asp:linkbutton id="lnkMoveFiles" Runat="server"  EnableViewState="False"/>
     <asp:linkbutton id="lnkGetMoreNodes" Runat="server" EnableViewState="False"/>
     <asp:textbox id="txtMailData" Runat="server" EnableViewState="False"/>
     <asp:textbox id="txtMailText" Runat="server" EnableViewState="False"/>
@@ -717,10 +667,15 @@ function gridCheckAll(sender)
     <asp:hyperlink id="lnkUploadRedir" Runat="server" EnableViewState="False" Visible="False"/>
 </div>
 <asp:panel id="pnlSecurity" Runat="server" Visible="False" CssClass="dnnForm">
+    <asp:PlaceHolder id="phSecureFolderWarning" runat="server">
+        <div class="dnnFormMessage dnnFormInfo">
+            <asp:Label runat="server" Visible="true" ResourceKey="SecureFolderWarning" />
+        </div>
+    </asp:PlaceHolder>
     <div class="dnnFormItem">
         <dnn:label id="plPermissions" runat="server" controlname="ctlPermissions"/>
-    </div>
-    <div class="dnnFormItem">
+    </div>    
+    <div class="dnnFormItem">        
         <dnn:folderpermissionsgrid id="dgPermissions" runat="server"/>
     </div>
     <ul class="dnnActions dnnClear">

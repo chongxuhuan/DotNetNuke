@@ -26,12 +26,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Application;
+using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
@@ -516,13 +518,7 @@ namespace DotNetNuke.UI.Skins
 				AddPageMessage(this, MODULELOAD_WARNING, string.Format(MODULELOAD_WARNINGTEXT, PortalSettings.Email), ModuleMessage.ModuleMessageType.YellowWarning);
 			}
 
-			foreach (SkinEventListener listener in DotNetNukeContext.Current.SkinEventListeners)
-			{
-				if (listener.EventType == SkinEventType.OnSkinInit)
-				{
-					listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
-				}
-			}
+            InvokeSkinEvents(SkinEventType.OnSkinInit);
 		}
 
         /// -----------------------------------------------------------------------------
@@ -534,19 +530,13 @@ namespace DotNetNuke.UI.Skins
         /// </history>
         /// -----------------------------------------------------------------------------
 		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
+        {
+            base.OnLoad(e);
 
-			foreach (SkinEventListener listener in DotNetNukeContext.Current.SkinEventListeners)
-			{
-				if (listener.EventType == SkinEventType.OnSkinLoad)
-				{
-					listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
-				}
-			}
-		}
+            InvokeSkinEvents(SkinEventType.OnSkinLoad);
+        }
 
-        /// -----------------------------------------------------------------------------
+	    /// -----------------------------------------------------------------------------
         /// <summary>
         /// OnLoad runs just before the Skin is rendered.
         /// </summary>
@@ -558,13 +548,7 @@ namespace DotNetNuke.UI.Skins
 		{
 			base.OnPreRender(e);
 
-			foreach (SkinEventListener listener in DotNetNukeContext.Current.SkinEventListeners)
-			{
-				if (listener.EventType == SkinEventType.OnSkinPreRender)
-				{
-					listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
-				}
-			}
+            InvokeSkinEvents(SkinEventType.OnSkinPreRender);
 		}
 
         /// -----------------------------------------------------------------------------
@@ -579,16 +563,23 @@ namespace DotNetNuke.UI.Skins
 		{
 			base.OnUnload(e);
 
-			foreach (SkinEventListener listener in DotNetNukeContext.Current.SkinEventListeners)
-			{
-				if (listener.EventType == SkinEventType.OnSkinUnLoad)
-				{
-					listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
-				}
-			}
+            InvokeSkinEvents(SkinEventType.OnSkinUnLoad);
 		}
-		
-		#endregion
+
+	    private void InvokeSkinEvents(SkinEventType skinEventType)
+	    {
+	        SharedList<SkinEventListener> list = ((NaiveLockingList<SkinEventListener>) DotNetNukeContext.Current.SkinEventListeners).SharedList;
+	        
+	        using(list.GetReadLock())
+	        {
+	            foreach (var listener in list.Where(x => x.EventType == skinEventType))
+	            {
+	                listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
+	            }
+	        }
+	    }
+
+	    #endregion
 
 		#region "Public Methods"
 

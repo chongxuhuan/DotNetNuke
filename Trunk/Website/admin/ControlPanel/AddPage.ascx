@@ -7,17 +7,17 @@
         <asp:TextBox ID="Name" runat="server" />
     </div>
     <div class="dnnFormItem">
-        <dnn:DnnFieldLabel id="TemplateLbl" runat="server" Text="Template" AssociatedControlID="TemplateLst" />
+        <asp:Label runat="server" ResourceKey="Template" AssociatedControlID="TemplateLst" />
         <asp:DropDownList ID="TemplateLst" runat="server" />
     </div>
     <div class="dnnFormItem">
-        <dnn:DnnFieldLabel id="LocationLbl" runat="server" Text="Location" AssociatedControlID="LocationLst" />
+        <asp:Label runat="server" ResourceKey="Location" AssociatedControlID="LocationLst" />
         <asp:DropDownList ID="LocationLst" runat="server" />
         <asp:DropDownList ID="PageLst" runat="server" Width="180px" MaxHeight="300px" />
     </div>
     <div class="cpIncludeInMenu">
         <asp:CheckBox ID="IncludeInMenu" runat="server" Checked="true" />
-		<dnn:DnnFieldLabel id="IncludeInMenuLbl" runat="server" Text="IncludeInMenu" AssociatedControlID="IncludeInMenu" />
-        <dnn:DnnButton ID="cmdAddPage" runat="server" Text="AddButton" CssClass="dnnPrimaryAction" />
+		<asp:Label runat="server" ResourceKey="IncludeInMenu" AssociatedControlID="IncludeInMenu" />
+        <asp:Button ID="cmdAddPage" runat="server" ResourceKey="AddButton" CssClass="dnnPrimaryAction" />
     </div>
 </div>

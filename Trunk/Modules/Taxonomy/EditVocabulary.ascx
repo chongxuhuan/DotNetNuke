@@ -8,7 +8,7 @@
         <dnn:EditVocabularyControl ID="editVocabularyControl" runat="server" IsAddMode="false" />
         <div class="dnnFormItem">
             <dnn:DnnFieldLabel id="termsLabel" runat="server" Text="Terms.Text" ToolTip="Terms.ToolTip" />
-            <dnn:TermsList id="termsList" runat="server" Height="200px" Width="200px" />
+            <dnn:TermsList id="termsList" runat="server" Width="260px" />
         </div>
         <ul class="dnnActions dnnClear">
             <li><asp:LinkButton ID="saveVocabulary" runat="server" resourcekey="SaveVocabulary" CssClass="dnnPrimaryAction" /></li>

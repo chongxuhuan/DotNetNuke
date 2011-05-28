@@ -152,10 +152,6 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                         //TODO fix this line bytesProcessed += bytesRead;
                     } while (bytesRead > 0);
                 }
-                catch (Exception e)
-                {
-                    throw;
-                }
                 finally
                 {
                     // Close the response and streams objects here 

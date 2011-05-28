@@ -460,7 +460,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
                 writer.Close();
 
-                Skin.AddModuleMessage(this, "", string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename), ModuleMessage.ModuleMessageType.GreenSuccess);
+				DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "", string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename), ModuleMessage.ModuleMessageType.GreenSuccess);
             }
             catch (Exception exc)
             {

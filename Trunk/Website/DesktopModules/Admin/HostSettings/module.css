@@ -1,5 +1,5 @@
 /* ===========   Host Settings Module Styling   =========== */
-.dnnHostSettings{width:900px;margin:2em auto;}
+.dnnHostSettings{width:100%;margin:2em auto;}
 	.dnnHostSettings .dnnFormItem input, .dnnHostSettings .dnnFormItem .dnnFormInput, .dnnHostSettings .dnnFormItem textarea{width:45%;}
 		.dnnHostSettings .dnnFormItem textarea{min-height:8em;}
 	 .dnnForm.dnnHostSettings input[type=image],.dnnForm.dnnHostSettings input[type=checkbox], .dnnForm.dnnHostSettings input[type=radio]{width:auto;}
@@ -22,7 +22,5 @@
 		.ssosContent ul.dnnActions{border:none;margin:0;}
 .dnnHostSettings br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
 .rfAddRule .dnnPrimaryAction, .rfAddRule a.dnnPrimaryAction:link, .rfAddRule a.dnnPrimaryAction:visited{color:#fff;}
-
-.asContentFriendlyUrls .dnnFormItem input, .asContentFriendlyUrls .dnnFormItem textarea { width: 250px;}
-
+.asContentFriendlyUrls .dnnFormItem input, .asContentFriendlyUrls .dnnFormItem textarea {width:250px;}
 /* ===========   End Host Settings Module Styling   =========== */

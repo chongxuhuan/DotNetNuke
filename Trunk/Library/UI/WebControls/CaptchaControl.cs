@@ -47,966 +47,910 @@ using Image = System.Web.UI.WebControls.Image;
 
 namespace DotNetNuke.UI.WebControls
 {
-    /// -----------------------------------------------------------------------------
-    /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.UI.WebControls
-    /// Class:      CaptchaControl
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// The CaptchaControl control provides a Captcha Challenge control
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    ///     [cnurse]	03/17/2006	created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    [ToolboxData("<{0}:CaptchaControl Runat=\"server\" CaptchaHeight=\"100px\" CaptchaWidth=\"300px\" />")]
-    public class CaptchaControl : WebControl, INamingContainer, IPostBackDataHandler
-    {
-		#region "Private Constants"
 
-        private const int EXPIRATION_DEFAULT = 120;
-        private const int LENGTH_DEFAULT = 6;
-        private const string RENDERURL_DEFAULT = "ImageChallenge.captcha.aspx";
-        private const string CHARS_DEFAULT = "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+	/// <summary>
+	/// The CaptchaControl control provides a Captcha Challenge control
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	///     [cnurse]	03/17/2006	created
+	/// </history>
+	[ToolboxData("<{0}:CaptchaControl Runat=\"server\" CaptchaHeight=\"100px\" CaptchaWidth=\"300px\" />")]
+	public class CaptchaControl : WebControl, INamingContainer, IPostBackDataHandler
+	{
+
+		#region Private Constants
+
+		private const int EXPIRATION_DEFAULT = 120;
+		private const int LENGTH_DEFAULT = 6;
+		private const string RENDERURL_DEFAULT = "ImageChallenge.captcha.aspx";
+		private const string CHARS_DEFAULT = "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
 		#endregion
 
-		#region "Friend Constants"
+		#region Friend Constants
 
-        internal const string KEY = "captcha";
+		internal const string KEY = "captcha";
 		
 		#endregion
 
-		#region "Private Members"
+		#region Private Members
 
-        private static readonly string[] _FontFamilies = {"Arial", "Comic Sans MS", "Courier New", "Georgia", "Lucida Console", "MS Sans Serif", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"};
+		private static readonly string[] _FontFamilies = {"Arial", "Comic Sans MS", "Courier New", "Georgia", "Lucida Console", "MS Sans Serif", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"};
 
-        private static readonly Random _Rand = new Random();
-        private static string _Separator = ":-:";
-        private readonly Style _ErrorStyle = new Style();
-        private readonly Style _TextBoxStyle = new Style();
-        private Color _BackGroundColor = Color.Transparent;
-        private string _BackGroundImage = "";
-        private string _CaptchaChars = CHARS_DEFAULT;
-        private Unit _CaptchaHeight = Unit.Pixel(100);
-        private int _CaptchaLength = LENGTH_DEFAULT;
-        private string _CaptchaText;
-        private Unit _CaptchaWidth = Unit.Pixel(300);
-        private int _Expiration = EXPIRATION_DEFAULT;
-        private bool _IsValid;
-        private string _RenderUrl = RENDERURL_DEFAULT;
-        private string _UserText = "";
-        private Image _image;
+		private static readonly Random _Rand = new Random();
+		private static string _Separator = ":-:";
+		private readonly Style _ErrorStyle = new Style();
+		private readonly Style _TextBoxStyle = new Style();
+		private Color _BackGroundColor = Color.Transparent;
+		private string _BackGroundImage = "";
+		private string _CaptchaChars = CHARS_DEFAULT;
+		private Unit _CaptchaHeight = Unit.Pixel(100);
+		private int _CaptchaLength = LENGTH_DEFAULT;
+		private string _CaptchaText;
+		private Unit _CaptchaWidth = Unit.Pixel(300);
+		private int _Expiration = EXPIRATION_DEFAULT;
+		private bool _IsValid;
+		private string _RenderUrl = RENDERURL_DEFAULT;
+		private string _UserText = "";
+		private Image _image;
 		
 		#endregion
 
-		#region "Constructors"
+		#region Constructors
 
-        public CaptchaControl()
-        {
-            ErrorMessage = Localization.GetString("InvalidCaptcha", Localization.SharedResourceFile);
-            Text = Localization.GetString("CaptchaText.Text", Localization.SharedResourceFile);
-        }
+		public CaptchaControl()
+		{
+			ErrorMessage = Localization.GetString("InvalidCaptcha", Localization.SharedResourceFile);
+			Text = Localization.GetString("CaptchaText.Text", Localization.SharedResourceFile);
+		}
 		
 		#endregion
 
-		#region "Private Properties"
+		#region Private Properties
 
-        private bool IsDesignMode
-        {
-            get
-            {
-                return HttpContext.Current == null;
-            }
-        }
+		private bool IsDesignMode
+		{
+			get
+			{
+				return HttpContext.Current == null;
+			}
+		}
 		
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the BackGroundColor
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Appearance"), Description("The Background Color to use for the Captcha Image.")]
-        public Color BackGroundColor
-        {
-            get
-            {
-                return _BackGroundColor;
-            }
-            set
-            {
-                _BackGroundColor = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the BackGroundColor
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Appearance"), Description("The Background Color to use for the Captcha Image.")]
+		public Color BackGroundColor
+		{
+			get
+			{
+				return _BackGroundColor;
+			}
+			set
+			{
+				_BackGroundColor = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the BackGround Image
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Appearance"), Description("A Background Image to use for the Captcha Image.")]
-        public string BackGroundImage
-        {
-            get
-            {
-                return _BackGroundImage;
-            }
-            set
-            {
-                _BackGroundImage = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the BackGround Image
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Appearance"), Description("A Background Image to use for the Captcha Image.")]
+		public string BackGroundImage
+		{
+			get
+			{
+				return _BackGroundImage;
+			}
+			set
+			{
+				_BackGroundImage = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the list of characters
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Behavior"), DefaultValue(CHARS_DEFAULT), Description("Characters used to render CAPTCHA text. A character will be picked randomly from the string.")]
-        public string CaptchaChars
-        {
-            get
-            {
-                return _CaptchaChars;
-            }
-            set
-            {
-                _CaptchaChars = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the list of characters
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Behavior"), DefaultValue(CHARS_DEFAULT), Description("Characters used to render CAPTCHA text. A character will be picked randomly from the string.")]
+		public string CaptchaChars
+		{
+			get
+			{
+				return _CaptchaChars;
+			}
+			set
+			{
+				_CaptchaChars = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the height of the Captcha image
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	05/11/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Appearance"), Description("Height of Captcha Image.")]
-        public Unit CaptchaHeight
-        {
-            get
-            {
-                return _CaptchaHeight;
-            }
-            set
-            {
-                _CaptchaHeight = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the height of the Captcha image
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	05/11/2006	Created
+		/// </history>
+		[Category("Appearance"), Description("Height of Captcha Image.")]
+		public Unit CaptchaHeight
+		{
+			get
+			{
+				return _CaptchaHeight;
+			}
+			set
+			{
+				_CaptchaHeight = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the length of the Captcha string
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Behavior"), DefaultValue(LENGTH_DEFAULT), Description("Number of CaptchaChars used in the CAPTCHA text")]
-        public int CaptchaLength
-        {
-            get
-            {
-                return _CaptchaLength;
-            }
-            set
-            {
-                _CaptchaLength = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the length of the Captcha string
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Behavior"), DefaultValue(LENGTH_DEFAULT), Description("Number of CaptchaChars used in the CAPTCHA text")]
+		public int CaptchaLength
+		{
+			get
+			{
+				return _CaptchaLength;
+			}
+			set
+			{
+				_CaptchaLength = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the width of the Captcha image
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	05/11/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Appearance"), Description("Width of Captcha Image.")]
-        public Unit CaptchaWidth
-        {
-            get
-            {
-                return _CaptchaWidth;
-            }
-            set
-            {
-                _CaptchaWidth = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the width of the Captcha image
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	05/11/2006	Created
+		/// </history>
+		[Category("Appearance"), Description("Width of Captcha Image.")]
+		public Unit CaptchaWidth
+		{
+			get
+			{
+				return _CaptchaWidth;
+			}
+			set
+			{
+				_CaptchaWidth = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets whether the Viewstate is enabled
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Browsable(false)]
-        public override bool EnableViewState
-        {
-            get
-            {
-                return base.EnableViewState;
-            }
-            set
-            {
-                base.EnableViewState = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets whether the Viewstate is enabled
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Browsable(false)]
+		public override bool EnableViewState
+		{
+			get
+			{
+				return base.EnableViewState;
+			}
+			set
+			{
+				base.EnableViewState = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the ErrorMessage to display if the control is invalid
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Behavior"), Description("The Error Message to display if invalid."), DefaultValue("")]
-        public string ErrorMessage { get; set; }
+		/// <summary>
+		/// Gets and sets the ErrorMessage to display if the control is invalid
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Behavior"), Description("The Error Message to display if invalid."), DefaultValue("")]
+		public string ErrorMessage { get; set; }
 
-         /// -----------------------------------------------------------------------------
-         /// <summary>
-         /// Gets and sets the BackGroundColor
-         /// </summary>
-         /// <history>
-         /// 	[cnurse]	03/20/2006	Created
-         /// </history>
-         /// -----------------------------------------------------------------------------
-        [Browsable(true), Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         Description("Set the Style for the Error Message Control.")]
-        public Style ErrorStyle
-        {
-            get
-            {
-                return _ErrorStyle;
-            }
-        }
+		 /// <summary>
+		 /// Gets and sets the BackGroundColor
+		 /// </summary>
+		 /// <history>
+		 /// 	[cnurse]	03/20/2006	Created
+		 /// </history>
+		[Browsable(true), Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
+		 Description("Set the Style for the Error Message Control.")]
+		public Style ErrorStyle
+		{
+			get
+			{
+				return _ErrorStyle;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the Expiration time in seconds
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Behavior"), Description("The duration of time (seconds) a user has before the challenge expires."), DefaultValue(EXPIRATION_DEFAULT)]
-        public int Expiration
-        {
-            get
-            {
-                return _Expiration;
-            }
-            set
-            {
-                _Expiration = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the Expiration time in seconds
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Behavior"), Description("The duration of time (seconds) a user has before the challenge expires."), DefaultValue(EXPIRATION_DEFAULT)]
+		public int Expiration
+		{
+			get
+			{
+				return _Expiration;
+			}
+			set
+			{
+				_Expiration = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets whether the control is valid
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Validation"), Description("Returns True if the user was CAPTCHA validated after a postback.")]
-        public bool IsValid
-        {
-            get
-            {
-                return _IsValid;
-            }
-        }
+		/// <summary>
+		/// Gets whether the control is valid
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Validation"), Description("Returns True if the user was CAPTCHA validated after a postback.")]
+		public bool IsValid
+		{
+			get
+			{
+				return _IsValid;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the Url to use to render the control
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Behavior"), Description("The URL used to render the image to the client."), DefaultValue(RENDERURL_DEFAULT)]
-        public string RenderUrl
-        {
-            get
-            {
-                return _RenderUrl;
-            }
-            set
-            {
-                _RenderUrl = value;
-            }
-        }
+		/// <summary>
+		/// Gets and sets the Url to use to render the control
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Behavior"), Description("The URL used to render the image to the client."), DefaultValue(RENDERURL_DEFAULT)]
+		public string RenderUrl
+		{
+			get
+			{
+				return _RenderUrl;
+			}
+			set
+			{
+				_RenderUrl = value;
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the Help Text to use
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Category("Captcha"), DefaultValue("Enter the code shown above:"), Description("Instructional text displayed next to CAPTCHA image.")]
-        public string Text { get; set; }
+		/// <summary>
+		/// Gets and sets the Help Text to use
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		[Category("Captcha"), DefaultValue("Enter the code shown above:"), Description("Instructional text displayed next to CAPTCHA image.")]
+		public string Text { get; set; }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the Style to use for the Text Box
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	09/02/2008	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Browsable(true), Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         Description("Set the Style for the Text Box Control.")]
-        public Style TextBoxStyle
-        {
-            get
-            {
-                return _TextBoxStyle;
-            }
-        }
+		/// <summary>
+		/// Gets the Style to use for the Text Box
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	09/02/2008	Created
+		/// </history>
+		[Browsable(true), Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
+		 Description("Set the Style for the Text Box Control.")]
+		public Style TextBoxStyle
+		{
+			get
+			{
+				return _TextBoxStyle;
+			}
+		}
 
-        #region IPostBackDataHandler Members
+		#region IPostBackDataHandler Members
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// LoadPostData loads the Post Back Data and determines whether the value has change
-        /// </summary>
-        /// <param name="postDataKey">A key to the PostBack Data to load</param>
-        /// <param name="postCollection">A name value collection of postback data</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-        {
-            _UserText = postCollection[postDataKey];
-            Validate(_UserText);
-            if (!_IsValid && !string.IsNullOrEmpty(_UserText))
-            {
-                _CaptchaText = GetNextCaptcha();
-            }
-            return false;
-        }
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// LoadPostData loads the Post Back Data and determines whether the value has change
+		/// </summary>
+		/// <param name="postDataKey">A key to the PostBack Data to load</param>
+		/// <param name="postCollection">A name value collection of postback data</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			_UserText = postCollection[postDataKey];
+			Validate(_UserText);
+			if (!_IsValid && !string.IsNullOrEmpty(_UserText))
+			{
+				_CaptchaText = GetNextCaptcha();
+			}
+			return false;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// RaisePostDataChangedEvent runs when the PostBackData has changed. 
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void RaisePostDataChangedEvent()
-        {
-        }
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// RaisePostDataChangedEvent runs when the PostBackData has changed. 
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		public void RaisePostDataChangedEvent()
+		{
+		}
 
-        #endregion
+		#endregion
 		
 		#endregion
 
-		#region "Public Events"
+		#region Public Events
 
 
-        public event ServerValidateEventHandler UserValidated;
+		public event ServerValidateEventHandler UserValidated;
 		
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Builds the url for the Handler
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private string GetUrl()
-        {
-            string url = ResolveUrl(RenderUrl);
-            url += "?" + KEY + "=" + Encrypt(EncodeTicket(), DateTime.Now.AddSeconds(Expiration));
+		/// <summary>
+		/// Builds the url for the Handler
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		private string GetUrl()
+		{
+			var url = ResolveUrl(RenderUrl);
+			url += "?" + KEY + "=" + Encrypt(EncodeTicket(), DateTime.Now.AddSeconds(Expiration));
 
-            //Append the Alias to the url so that it doesn't lose track of the alias it's currently on
-            PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-            url += "&alias=" + _portalSettings.PortalAlias.HTTPAlias;
-            return url;
-        }
+			//Append the Alias to the url so that it doesn't lose track of the alias it's currently on
+			var _portalSettings = PortalController.GetCurrentPortalSettings();
+			url += "&alias=" + _portalSettings.PortalAlias.HTTPAlias;
+			return url;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Encodes the querystring to pass to the Handler
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private string EncodeTicket()
-        {
-            var sb = new StringBuilder();
+		/// <summary>
+		/// Encodes the querystring to pass to the Handler
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/20/2006	Created
+		/// </history>
+		private string EncodeTicket()
+		{
+			var sb = new StringBuilder();
 
-            sb.Append(CaptchaWidth.Value.ToString());
-            sb.Append(_Separator + CaptchaHeight.Value);
-            sb.Append(_Separator + _CaptchaText);
-            sb.Append(_Separator + BackGroundImage);
+			sb.Append(CaptchaWidth.Value.ToString());
+			sb.Append(_Separator + CaptchaHeight.Value);
+			sb.Append(_Separator + _CaptchaText);
+			sb.Append(_Separator + BackGroundImage);
 
-            return sb.ToString();
-        }
+			return sb.ToString();
+		}
 
 		#endregion
 
-		#region "Shared/Static Methods"
+		#region Shared/Static Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Creates the Image
-        /// </summary>
-        /// <param name="width">The width of the image</param>
-        /// <param name="height">The height of the image</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static Bitmap CreateImage(int width, int height)
-        {
-            var bmp = new Bitmap(width, height);
-            Graphics g;
-            var rect = new Rectangle(0, 0, width, height);
-            var rectF = new RectangleF(0, 0, width, height);
+		/// <summary>
+		/// Creates the Image
+		/// </summary>
+		/// <param name="width">The width of the image</param>
+		/// <param name="height">The height of the image</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		private static Bitmap CreateImage(int width, int height)
+		{
+			var bmp = new Bitmap(width, height);
+			Graphics g;
+			var rect = new Rectangle(0, 0, width, height);
+			var rectF = new RectangleF(0, 0, width, height);
 
-            g = Graphics.FromImage(bmp);
+			g = Graphics.FromImage(bmp);
 
-            Brush b = new LinearGradientBrush(rect,
-                                              Color.FromArgb(_Rand.Next(192), _Rand.Next(192), _Rand.Next(192)),
-                                              Color.FromArgb(_Rand.Next(192), _Rand.Next(192), _Rand.Next(192)),
-                                              Convert.ToSingle(_Rand.NextDouble())*360,
-                                              false);
-            g.FillRectangle(b, rectF);
+			Brush b = new LinearGradientBrush(rect,
+											  Color.FromArgb(_Rand.Next(192), _Rand.Next(192), _Rand.Next(192)),
+											  Color.FromArgb(_Rand.Next(192), _Rand.Next(192), _Rand.Next(192)),
+											  Convert.ToSingle(_Rand.NextDouble())*360,
+											  false);
+			g.FillRectangle(b, rectF);
 
-            if (_Rand.Next(2) == 1)
-            {
-                DistortImage(ref bmp, _Rand.Next(5, 10));
-            }
-            else
-            {
-                DistortImage(ref bmp, -_Rand.Next(5, 10));
-            }
-            return bmp;
-        }
+			if (_Rand.Next(2) == 1)
+			{
+				DistortImage(ref bmp, _Rand.Next(5, 10));
+			}
+			else
+			{
+				DistortImage(ref bmp, -_Rand.Next(5, 10));
+			}
+			return bmp;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Creates the Text
-        /// </summary>
-        /// <param name="text">The text to display</param>
-        /// <param name="width">The width of the image</param>
-        /// <param name="height">The height of the image</param>
-        /// <param name="g">Graphic draw context.</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static GraphicsPath CreateText(string text, int width, int height, Graphics g)
-        {
-            var textPath = new GraphicsPath();
-            FontFamily ff = GetFont();
-            int emSize = Convert.ToInt32(width*2/text.Length);
-            Font f = null;
-            try
-            {
-                var measured = new SizeF(0, 0);
-                var workingSize = new SizeF(width, height);
-                while ((emSize > 2))
-                {
-                    f = new Font(ff, emSize);
-                    measured = g.MeasureString(text, f);
-                    if (!(measured.Width > workingSize.Width || measured.Height > workingSize.Height))
-                    {
-                        break;
-                    }
-                    f.Dispose();
-                    emSize -= 2;
-                }
-                emSize += 8;
-                f = new Font(ff, emSize);
+		/// <summary>
+		/// Creates the Text
+		/// </summary>
+		/// <param name="text">The text to display</param>
+		/// <param name="width">The width of the image</param>
+		/// <param name="height">The height of the image</param>
+		/// <param name="g">Graphic draw context.</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		private static GraphicsPath CreateText(string text, int width, int height, Graphics g)
+		{
+			var textPath = new GraphicsPath();
+			var ff = GetFont();
+			var emSize = Convert.ToInt32(width*2/text.Length);
+			Font f = null;
+			try
+			{
+				var measured = new SizeF(0, 0);
+				var workingSize = new SizeF(width, height);
+				while ((emSize > 2))
+				{
+					f = new Font(ff, emSize);
+					measured = g.MeasureString(text, f);
+					if (!(measured.Width > workingSize.Width || measured.Height > workingSize.Height))
+					{
+						break;
+					}
+					f.Dispose();
+					emSize -= 2;
+				}
+				emSize += 8;
+				f = new Font(ff, emSize);
 
-                var fmt = new StringFormat();
-                fmt.Alignment = StringAlignment.Center;
-                fmt.LineAlignment = StringAlignment.Center;
+				var fmt = new StringFormat();
+				fmt.Alignment = StringAlignment.Center;
+				fmt.LineAlignment = StringAlignment.Center;
 
-                textPath.AddString(text, f.FontFamily, Convert.ToInt32(f.Style), f.Size, new RectangleF(0, 0, width, height), fmt);
-                WarpText(ref textPath, new Rectangle(0, 0, width, height));
-            }
-            catch (Exception exc)
-            {
-                DnnLog.Error(exc);
+				textPath.AddString(text, f.FontFamily, Convert.ToInt32(f.Style), f.Size, new RectangleF(0, 0, width, height), fmt);
+				WarpText(ref textPath, new Rectangle(0, 0, width, height));
+			}
+			catch (Exception exc)
+			{
+				DnnLog.Error(exc);
 
-            }
-            finally
-            {
-                f.Dispose();
-            }
-            return textPath;
-        }
+			}
+			finally
+			{
+				f.Dispose();
+			}
+			return textPath;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Decrypts the CAPTCHA Text
-        /// </summary>
-        /// <param name="encryptedContent">The encrypted text</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static string Decrypt(string encryptedContent)
-        {
-            string decryptedText = string.Empty;
-            try
-            {
-                FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(encryptedContent);
-                if ((!ticket.Expired))
-                {
-                    decryptedText = ticket.UserData;
-                }
-            }
-            catch (ArgumentException exc)
-            {
-                DnnLog.Debug(exc);
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Decrypts the CAPTCHA Text
+		/// </summary>
+		/// <param name="encryptedContent">The encrypted text</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static string Decrypt(string encryptedContent)
+		{
+			string decryptedText = string.Empty;
+			try
+			{
+				FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(encryptedContent);
+				if ((!ticket.Expired))
+				{
+					decryptedText = ticket.UserData;
+				}
+			}
+			catch (ArgumentException exc)
+			{
+				DnnLog.Debug(exc);
 
-            }
-            return decryptedText;
-        }
+			}
+			return decryptedText;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// DistortImage distorts the captcha image
-        /// </summary>
-        /// <param name="b">The Image to distort</param>
-        /// <param name="distortion">Distortion.</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void DistortImage(ref Bitmap b, double distortion)
-        {
-            int width = b.Width;
-            int height = b.Height;
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// DistortImage distorts the captcha image
+		/// </summary>
+		/// <param name="b">The Image to distort</param>
+		/// <param name="distortion">Distortion.</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static void DistortImage(ref Bitmap b, double distortion)
+		{
+			int width = b.Width;
+			int height = b.Height;
 
-            var copy = (Bitmap) b.Clone();
-            for (int y = 0; y <= height - 1; y++)
-            {
-                for (int x = 0; x <= width - 1; x++)
-                {
-                    int newX = Convert.ToInt32(x + (distortion*Math.Sin(Math.PI*y/64.0)));
-                    int newY = Convert.ToInt32(y + (distortion*Math.Cos(Math.PI*x/64.0)));
-                    if ((newX < 0 || newX >= width))
-                    {
-                        newX = 0;
-                    }
-                    if ((newY < 0 || newY >= height))
-                    {
-                        newY = 0;
-                    }
-                    b.SetPixel(x, y, copy.GetPixel(newX, newY));
-                }
-            }
-        }
+			var copy = (Bitmap) b.Clone();
+			for (int y = 0; y <= height - 1; y++)
+			{
+				for (int x = 0; x <= width - 1; x++)
+				{
+					int newX = Convert.ToInt32(x + (distortion*Math.Sin(Math.PI*y/64.0)));
+					int newY = Convert.ToInt32(y + (distortion*Math.Cos(Math.PI*x/64.0)));
+					if ((newX < 0 || newX >= width))
+					{
+						newX = 0;
+					}
+					if ((newY < 0 || newY >= height))
+					{
+						newY = 0;
+					}
+					b.SetPixel(x, y, copy.GetPixel(newX, newY));
+				}
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Encrypts the CAPTCHA Text
-        /// </summary>
-        /// <param name="content">The text to encrypt</param>
-        /// <param name="expiration">The time the ticket expires</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static string Encrypt(string content, DateTime expiration)
-        {
-            var ticket = new FormsAuthenticationTicket(1, HttpContext.Current.Request.UserHostAddress, DateTime.Now, expiration, false, content);
-            return FormsAuthentication.Encrypt(ticket);
-        }
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Encrypts the CAPTCHA Text
+		/// </summary>
+		/// <param name="content">The text to encrypt</param>
+		/// <param name="expiration">The time the ticket expires</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static string Encrypt(string content, DateTime expiration)
+		{
+			var ticket = new FormsAuthenticationTicket(1, HttpContext.Current.Request.UserHostAddress, DateTime.Now, expiration, false, content);
+			return FormsAuthentication.Encrypt(ticket);
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GenerateImage generates the Captch Image
-        /// </summary>
-        /// <param name="encryptedText">The Encrypted Text to display</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        internal static Bitmap GenerateImage(string encryptedText)
-        {
-            string encodedText = Decrypt(encryptedText);
-            Bitmap bmp = null;
-            string[] Settings = Regex.Split(encodedText, _Separator);
-            try
-            {
-                int width = int.Parse(Settings[0]);
-                int height = int.Parse(Settings[1]);
-                string text = Settings[2];
-                string backgroundImage = Settings[3];
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// GenerateImage generates the Captch Image
+		/// </summary>
+		/// <param name="encryptedText">The Encrypted Text to display</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		internal static Bitmap GenerateImage(string encryptedText)
+		{
+			string encodedText = Decrypt(encryptedText);
+			Bitmap bmp = null;
+			string[] Settings = Regex.Split(encodedText, _Separator);
+			try
+			{
+				int width = int.Parse(Settings[0]);
+				int height = int.Parse(Settings[1]);
+				string text = Settings[2];
+				string backgroundImage = Settings[3];
 
-                Graphics g;
-                Brush b = new SolidBrush(Color.LightGray);
-                Brush b1 = new SolidBrush(Color.Black);
-                if (String.IsNullOrEmpty(backgroundImage))
-                {
-                    bmp = CreateImage(width, height);
-                }
-                else
-                {
-                    bmp = (Bitmap) System.Drawing.Image.FromFile(HttpContext.Current.Request.MapPath(backgroundImage));
-                }
-                g = Graphics.FromImage(bmp);
+				Graphics g;
+				Brush b = new SolidBrush(Color.LightGray);
+				Brush b1 = new SolidBrush(Color.Black);
+				if (String.IsNullOrEmpty(backgroundImage))
+				{
+					bmp = CreateImage(width, height);
+				}
+				else
+				{
+					bmp = (Bitmap) System.Drawing.Image.FromFile(HttpContext.Current.Request.MapPath(backgroundImage));
+				}
+				g = Graphics.FromImage(bmp);
 
-                //Create Text
-                GraphicsPath textPath = CreateText(text, width, height, g);
-                if (String.IsNullOrEmpty(backgroundImage))
-                {
-                    g.FillPath(b, textPath);
-                }
-                else
-                {
-                    g.FillPath(b1, textPath);
-                }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.LogException(exc);
-            }
-            return bmp;
-        }
+				//Create Text
+				GraphicsPath textPath = CreateText(text, width, height, g);
+				if (String.IsNullOrEmpty(backgroundImage))
+				{
+					g.FillPath(b, textPath);
+				}
+				else
+				{
+					g.FillPath(b1, textPath);
+				}
+			}
+			catch (Exception exc)
+			{
+				Exceptions.LogException(exc);
+			}
+			return bmp;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetFont gets a random font to use for the Captcha Text
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/27/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static FontFamily GetFont()
-        {
-            FontFamily _font = null;
-            while (_font == null)
-            {
-                try
-                {
-                    _font = new FontFamily(_FontFamilies[_Rand.Next(_FontFamilies.Length)]);
-                }
-                catch (Exception exc)
-                {
-                    DnnLog.Error(exc);
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// GetFont gets a random font to use for the Captcha Text
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/27/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static FontFamily GetFont()
+		{
+			FontFamily _font = null;
+			while (_font == null)
+			{
+				try
+				{
+					_font = new FontFamily(_FontFamilies[_Rand.Next(_FontFamilies.Length)]);
+				}
+				catch (Exception exc)
+				{
+					DnnLog.Error(exc);
 
-                    _font = null;
-                }
-            }
-            return _font;
-        }
+					_font = null;
+				}
+			}
+			return _font;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Generates a random point
-        /// </summary>
-        /// <param name="xmin">The minimum x value</param>
-        /// <param name="xmax">The maximum x value</param>
-        /// <param name="ymin">The minimum y value</param>
-        /// <param name="ymax">The maximum y value</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static PointF RandomPoint(int xmin, int xmax, int ymin, int ymax)
-        {
-            return new PointF(_Rand.Next(xmin, xmax), _Rand.Next(ymin, ymax));
-        }
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Generates a random point
+		/// </summary>
+		/// <param name="xmin">The minimum x value</param>
+		/// <param name="xmax">The maximum x value</param>
+		/// <param name="ymin">The minimum y value</param>
+		/// <param name="ymax">The maximum y value</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static PointF RandomPoint(int xmin, int xmax, int ymin, int ymax)
+		{
+			return new PointF(_Rand.Next(xmin, xmax), _Rand.Next(ymin, ymax));
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Warps the Text
-        /// </summary>
-        /// <param name="textPath">The Graphics Path for the text</param>
-        /// <param name="rect">a rectangle which defines the image</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void WarpText(ref GraphicsPath textPath, Rectangle rect)
-        {
-            int intWarpDivisor;
-            var rectF = new RectangleF(0, 0, rect.Width, rect.Height);
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Warps the Text
+		/// </summary>
+		/// <param name="textPath">The Graphics Path for the text</param>
+		/// <param name="rect">a rectangle which defines the image</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static void WarpText(ref GraphicsPath textPath, Rectangle rect)
+		{
+			int intWarpDivisor;
+			var rectF = new RectangleF(0, 0, rect.Width, rect.Height);
 
-            intWarpDivisor = _Rand.Next(4, 8);
+			intWarpDivisor = _Rand.Next(4, 8);
 
-            int intHrange = Convert.ToInt32(rect.Height/intWarpDivisor);
-            int intWrange = Convert.ToInt32(rect.Width/intWarpDivisor);
+			int intHrange = Convert.ToInt32(rect.Height/intWarpDivisor);
+			int intWrange = Convert.ToInt32(rect.Width/intWarpDivisor);
 
-            PointF p1 = RandomPoint(0, intWrange, 0, intHrange);
-            PointF p2 = RandomPoint(rect.Width - (intWrange - Convert.ToInt32(p1.X)), rect.Width, 0, intHrange);
-            PointF p3 = RandomPoint(0, intWrange, rect.Height - (intHrange - Convert.ToInt32(p1.Y)), rect.Height);
-            PointF p4 = RandomPoint(rect.Width - (intWrange - Convert.ToInt32(p3.X)), rect.Width, rect.Height - (intHrange - Convert.ToInt32(p2.Y)), rect.Height);
+			PointF p1 = RandomPoint(0, intWrange, 0, intHrange);
+			PointF p2 = RandomPoint(rect.Width - (intWrange - Convert.ToInt32(p1.X)), rect.Width, 0, intHrange);
+			PointF p3 = RandomPoint(0, intWrange, rect.Height - (intHrange - Convert.ToInt32(p1.Y)), rect.Height);
+			PointF p4 = RandomPoint(rect.Width - (intWrange - Convert.ToInt32(p3.X)), rect.Width, rect.Height - (intHrange - Convert.ToInt32(p2.Y)), rect.Height);
 
-            var points = new[] {p1, p2, p3, p4};
-            var m = new Matrix();
-            m.Translate(0, 0);
-            textPath.Warp(points, rectF, m, WarpMode.Perspective, 0);
-        }
+			var points = new[] {p1, p2, p3, p4};
+			var m = new Matrix();
+			m.Translate(0, 0);
+			textPath.Warp(points, rectF, m, WarpMode.Perspective, 0);
+		}
 
 		#endregion
 
 		#region "Protected Methods"
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Creates the child controls
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void CreateChildControls()
-        {
-            base.CreateChildControls();
+		/// <summary>
+		/// Creates the child controls
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected override void CreateChildControls()
+		{
+			base.CreateChildControls();
 
-            if ((CaptchaWidth.IsEmpty || CaptchaWidth.Type != UnitType.Pixel || CaptchaHeight.IsEmpty || CaptchaHeight.Type != UnitType.Pixel))
-            {
-                throw new InvalidOperationException("Must specify size of control in pixels.");
-            }
-            _image = new Image();
-            _image.BorderColor = BorderColor;
-            _image.BorderStyle = BorderStyle;
-            _image.BorderWidth = BorderWidth;
-            _image.ToolTip = ToolTip;
-            _image.EnableViewState = false;
-            Controls.Add(_image);
-        }
+			if ((CaptchaWidth.IsEmpty || CaptchaWidth.Type != UnitType.Pixel || CaptchaHeight.IsEmpty || CaptchaHeight.Type != UnitType.Pixel))
+			{
+				throw new InvalidOperationException("Must specify size of control in pixels.");
+			}
+			_image = new Image {BorderColor = BorderColor, BorderStyle = BorderStyle, BorderWidth = BorderWidth, ToolTip = ToolTip, EnableViewState = false};
+			Controls.Add(_image);
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the next Captcha
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected virtual string GetNextCaptcha()
-        {
-            var sb = new StringBuilder();
-            var _rand = new Random();
-            int n;
-            int intMaxLength = CaptchaChars.Length;
+		/// <summary>
+		/// Gets the next Captcha
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected virtual string GetNextCaptcha()
+		{
+			var sb = new StringBuilder();
+			var rand = new Random();
+			int n;
+			var intMaxLength = CaptchaChars.Length;
 
-            for (n = 0; n <= CaptchaLength - 1; n++)
-            {
-                sb.Append(CaptchaChars.Substring(_rand.Next(intMaxLength), 1));
-            }
-            return sb.ToString();
-        }
+			for (n = 0; n <= CaptchaLength - 1; n++)
+			{
+				sb.Append(CaptchaChars.Substring(rand.Next(intMaxLength), 1));
+			}
+			return sb.ToString();
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Loads the previously saved Viewstate
-        /// </summary>
-        /// <param name="savedState">The saved state</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void LoadViewState(object savedState)
-        {
-            if (savedState != null)
-            {
+		/// <summary>
+		/// Loads the previously saved Viewstate
+		/// </summary>
+		/// <param name="savedState">The saved state</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected override void LoadViewState(object savedState)
+		{
+			if (savedState != null)
+			{
 				//Load State from the array of objects that was saved at SaveViewState.
-                var myState = (object[]) savedState;
+				var myState = (object[]) savedState;
 				
 				//Load the ViewState of the Base Control
-                if (myState[0] != null)
-                {
-                    base.LoadViewState(myState[0]);
-                }
+				if (myState[0] != null)
+				{
+					base.LoadViewState(myState[0]);
+				}
 				
 				//Load the CAPTCHA Text from the ViewState
-                if (myState[1] != null)
-                {
-                    _CaptchaText = Convert.ToString(myState[1]);
-                }
-            }
-        }
+				if (myState[1] != null)
+				{
+					_CaptchaText = Convert.ToString(myState[1]);
+				}
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Runs just before the control is to be rendered
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnPreRender(EventArgs e)
-        {
+		/// <summary>
+		/// Runs just before the control is to be rendered
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected override void OnPreRender(EventArgs e)
+		{
 			//Generate Random Challenge Text
-            _CaptchaText = GetNextCaptcha();
+			_CaptchaText = GetNextCaptcha();
 
-            //Enable Viewstate Encryption
-            Page.RegisterRequiresViewStateEncryption();
+			//Enable Viewstate Encryption
+			Page.RegisterRequiresViewStateEncryption();
 
-            //Call Base Class method
-            base.OnPreRender(e);
-        }
+			//Call Base Class method
+			base.OnPreRender(e);
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Render the  control
-        /// </summary>
-        /// <param name="writer">An Html Text Writer</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void Render(HtmlTextWriter writer)
-        {
-            ControlStyle.AddAttributesToRender(writer);
+		/// <summary>
+		/// Render the  control
+		/// </summary>
+		/// <param name="writer">An Html Text Writer</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected override void Render(HtmlTextWriter writer)
+		{
+			ControlStyle.AddAttributesToRender(writer);
 
-            //Render outer <div> Tag
-            writer.RenderBeginTag(HtmlTextWriterTag.Div);
+			//Render outer <div> Tag
+			writer.AddAttribute("class", "dnnLeft");
+			writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
-            //Render image <img> Tag
-            writer.AddAttribute(HtmlTextWriterAttribute.Src, GetUrl());
-            writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
-            if (!String.IsNullOrEmpty(ToolTip))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Alt, ToolTip);
-            }
-            else
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Alt, Localization.GetString("CaptchaAlt.Text", Localization.SharedResourceFile));
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Img);
-            writer.RenderEndTag();
+			//Render image <img> Tag
+			writer.AddAttribute(HtmlTextWriterAttribute.Src, GetUrl());
+			writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
+			if (!String.IsNullOrEmpty(ToolTip))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Alt, ToolTip);
+			}
+			else
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Alt, Localization.GetString("CaptchaAlt.Text", Localization.SharedResourceFile));
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Img);
+			writer.RenderEndTag();
 			
 			//Render Help Text
-            if (!String.IsNullOrEmpty(Text))
-            {
-                writer.RenderBeginTag(HtmlTextWriterTag.Div);
-                writer.Write(Text);
-                writer.RenderEndTag();
-            }
+			if (!String.IsNullOrEmpty(Text))
+			{
+				writer.RenderBeginTag(HtmlTextWriterTag.Div);
+				writer.Write(Text);
+				writer.RenderEndTag();
+			}
 			
 			//Render text box <input> Tag
-            TextBoxStyle.AddAttributesToRender(writer);
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
-            writer.AddAttribute(HtmlTextWriterAttribute.Style, "width:" + Width);
-            writer.AddAttribute(HtmlTextWriterAttribute.Maxlength, _CaptchaText.Length.ToString());
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-            if (!String.IsNullOrEmpty(AccessKey))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Accesskey, AccessKey);
-            }
-            if (!Enabled)
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
-            }
-            if (TabIndex > 0)
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString());
-            }
-            if (_UserText == _CaptchaText)
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Value, _UserText);
-            }
-            else
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Value, "");
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
+			TextBoxStyle.AddAttributesToRender(writer);
+			writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
+			writer.AddAttribute(HtmlTextWriterAttribute.Style, "width:" + Width);
+			writer.AddAttribute(HtmlTextWriterAttribute.Maxlength, _CaptchaText.Length.ToString());
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
+			if (!String.IsNullOrEmpty(AccessKey))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Accesskey, AccessKey);
+			}
+			if (!Enabled)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
+			}
+			if (TabIndex > 0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString());
+			}
+			if (_UserText == _CaptchaText)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, _UserText);
+			}
+			else
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, "");
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Input);
+			writer.RenderEndTag();
 
-            //Render error message
-            if (!IsValid && Page.IsPostBack && !string.IsNullOrEmpty(_UserText))
-            {
-                ErrorStyle.AddAttributesToRender(writer);
-                writer.RenderBeginTag(HtmlTextWriterTag.Div);
-                writer.Write(ErrorMessage);
-                writer.RenderEndTag();
-            }
+			//Render error message
+			if (!IsValid && Page.IsPostBack && !string.IsNullOrEmpty(_UserText))
+			{
+				ErrorStyle.AddAttributesToRender(writer);
+				writer.RenderBeginTag(HtmlTextWriterTag.Div);
+				writer.Write(ErrorMessage);
+				writer.RenderEndTag();
+			}
 			
-            //Render </div>
-            writer.RenderEndTag();
-        }
+			//Render </div>
+			writer.RenderEndTag();
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Save the controls Voewstate
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override object SaveViewState()
-        {
-            object baseState = base.SaveViewState();
-            var allStates = new object[2];
-            allStates[0] = baseState;
-            if (string.IsNullOrEmpty(_CaptchaText))
-            {
-                _CaptchaText = GetNextCaptcha();
-            }
-            allStates[1] = _CaptchaText;
-            return allStates;
-        }
+		/// <summary>
+		/// Save the controls Voewstate
+		/// </summary>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		protected override object SaveViewState()
+		{
+			var baseState = base.SaveViewState();
+			var allStates = new object[2];
+			allStates[0] = baseState;
+			if (string.IsNullOrEmpty(_CaptchaText))
+			{
+				_CaptchaText = GetNextCaptcha();
+			}
+			allStates[1] = _CaptchaText;
+			return allStates;
+		}
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Validates the posted back data
-        /// </summary>
-        /// <param name="userData">The user entered data</param>
-        /// <history>
-        ///     [cnurse]	03/17/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public bool Validate(string userData)
-        {
-            if (string.Compare(userData, _CaptchaText, false, CultureInfo.InvariantCulture) == 0)
-            {
-                _IsValid = true;
-            }
-            else
-            {
-                _IsValid = false;
-            }
-            UserValidated(this, new ServerValidateEventArgs(_CaptchaText, _IsValid));
-            return _IsValid;
-        }
+		/// <summary>
+		/// Validates the posted back data
+		/// </summary>
+		/// <param name="userData">The user entered data</param>
+		/// <history>
+		///     [cnurse]	03/17/2006	created
+		/// </history>
+		public bool Validate(string userData)
+		{
+			if (string.Compare(userData, _CaptchaText, false, CultureInfo.InvariantCulture) == 0)
+			{
+				_IsValid = true;
+			}
+			else
+			{
+				_IsValid = false;
+			}
+			UserValidated(this, new ServerValidateEventArgs(_CaptchaText, _IsValid));
+			return _IsValid;
+		}
 		
 		#endregion
-    }
+
+	}
 }

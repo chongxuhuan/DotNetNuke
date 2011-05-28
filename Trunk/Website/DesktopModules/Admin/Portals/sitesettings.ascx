@@ -45,7 +45,7 @@
                 <div class="dnnFormItem">
                     <dnn:Label ID="plSearchEngine" runat="server" ControlName="cboSearchEngine" />
                     <asp:DropDownList ID="cboSearchEngine" runat="server" DataTextField="Key" DataValueField="Value" />
-                    <a href="javascript:void(0);" class="dnnSecondaryAction" onclick="return submitToSearchEngine()"><%=LocalizeString("Submit")%></a>
+                    <a href="#" id="submitToSearchEngine" class=""dnnSecondaryAction"><%=LocalizeString("Submit")%></a>
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plSiteMap" runat="server" ControlName="txtSiteMap" />
@@ -71,15 +71,15 @@
             <fieldset class="ssbsPortalAppearance">
                 <div class="dnnFormItem">
                     <dnn:Label ID="plLogo" runat="server" ControlName="ctlLogo" />
-                    <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" ShowSecure="True" ShowDatabase="False" />
+                    <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plBackground" runat="server" ControlName="cboBackground" />
-                    <dnn:DnnFilePicker ID="ctlBackground" runat="server" Required="False" ShowSecure="True" ShowDatabase="False" />
+                    <dnn:DnnFilePicker ID="ctlBackground" runat="server" Required="False" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plFavIcon" runat="server" ControlName="ctlFavIcon" />
-                    <dnn:DnnFilePicker ID="ctlFavIcon" runat="server" Required="False" ShowSecure="True" ShowDatabase="False" FileFilter="ico"/>
+                    <dnn:DnnFilePicker ID="ctlFavIcon" runat="server" Required="False" FileFilter="ico"/>
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plSkinWidgestEnabled" runat="server" ControlName="chkSkinWidgestEnabled" />
@@ -333,6 +333,8 @@
     <div class="dnnssStat dnnClear"><dnn:audit id="ctlAudit" runat="server" /></div>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setupDnnSiteSettings() {
         $('#dnnSiteSettings').dnnTabs().dnnPanels();
         $('#siteSkinSettings,#editSkinSettings').dnnPreview({
@@ -357,6 +359,29 @@
             noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
             title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
         });
+
+        $('#submitToSearchEngine').click(function (e) {
+            e.preventDefault();
+            var searchEngine = $("select[id$='cboSearchEngine']").val();
+
+            if (searchEngine.indexOf("google") > 0) {
+                searchEngine += "&dq=";
+                var name = $("input[id$='txtPortalName']").val();
+                if (name != "") {
+                    searchEngine += encodeURI(name);
+                }
+                var description = $("textarea[id$='txtDescription']").val()
+                if (description != "") {
+                    searchEngine += encodeURI(" " + description);
+                }
+                var keyWords = $("textarea[id$='txtKeyWords']").val()
+                if (keyWords != "") {
+                    searchEngine += encodeURI(" " + keyWords);
+                }
+                searchEngine += "&submit=Add+URL";
+            }
+            window.open(searchEngine, 'new');
+        });
     }
 
     $(document).ready(function () {
@@ -366,29 +391,5 @@
         });
     });
 
-    function submitToSearchEngine() {
-        var searchEngine = $("select[id$='cboSearchEngine']").val();
-
-        if (searchEngine.indexOf("google") > 0) {
-            searchEngine += "&dq=";
-            var name = $("input[id$='txtPortalName']").val();
-            if (name != "") {
-                searchEngine += encodeURI(name);
-            }
-            var description = $("textarea[id$='txtDescription']").val()
-            if (description != "") {
-                searchEngine += encodeURI(" " + description);
-            }
-            var keyWords = $("textarea[id$='txtKeyWords']").val()
-            if (keyWords != "") {
-                searchEngine += encodeURI(" " + keyWords);
-            }
-            searchEngine += "&submit=Add+URL";
-        }
-        window.open(searchEngine, 'new');
-    }
-
-    function submitToSiteMap() {
-        window.open($("input[id$='txtSiteMap']").val(), 'new');
-    }
-</script>
+} (jQuery, window.Sys));
+</script>   

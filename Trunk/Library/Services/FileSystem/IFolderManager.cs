@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Permissions;
 
@@ -92,6 +91,15 @@ namespace DotNetNuke.Services.FileSystem
         IList<IFileInfo> GetFiles(IFolderInfo folder, bool recursive);
 
         /// <summary>
+        /// Gets the list of Standard folders the specified user has the provided permissions.
+        /// </summary>
+        /// <param name="user">The user info</param>
+        /// <param name="permissions">The permissions the folders have to met.</param>
+        /// <returns>The list of Standard folders the specified user has the provided permissions.</returns>
+        /// <remarks>This method is used to support legacy behaviours and situations where we know the file/folder is in the file system.</remarks>
+        IList<IFolderInfo> GetFileSystemFolders(UserInfo user, string permissions);
+
+        /// <summary>
         /// Gets a folder entity by providing a portal identifier and folder identifier.
         /// </summary>
         /// <param name="folderID">The identifier of the folder.</param>
@@ -150,16 +158,6 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="permissions">The permissions the folders have to met.</param>
         /// <returns>The list of folders the specified user has the provided permissions.</returns>
         IList<IFolderInfo> GetFolders(UserInfo user, string permissions);
-
-        /// <summary>
-        /// Gets the list of folders the specified user has the provided permissions, including or not, secure and database folder types.
-        /// </summary>
-        /// <param name="user">The user info</param>
-        /// <param name="permissions">The permissions the folders have to met.</param>
-        /// <param name="includeSecure">Indicates if the result should include secure folders.</param>
-        /// <param name="includeDatabase">Indicates if the result should include database folders.</param>
-        /// <returns>The list of folders the specified user has the provided permissions, including or not, secure and database folder types.</returns>
-        IList<IFolderInfo> GetFolders(UserInfo user, string permissions, bool includeSecure, bool includeDatabase);
 
         /// <summary>
         /// Renames the specified folder by setting the new provided folder name.

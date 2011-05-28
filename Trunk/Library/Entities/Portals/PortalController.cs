@@ -1967,6 +1967,9 @@ namespace DotNetNuke.Entities.Portals
                         if (createStatus == UserCreateStatus.Success)
                         {
                             AdministratorId = objAdminUser.UserID;
+                            //reload the UserInfo as when it was first created, it had no portal id and therefore
+                            //used host profile definitions
+                            objAdminUser = UserController.GetUserById(objAdminUser.PortalID, objAdminUser.UserID);
                         }
                         else
                         {

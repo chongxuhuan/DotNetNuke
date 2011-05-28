@@ -27,12 +27,7 @@ namespace DotNetNuke.UI.Skins.Controls
 {
     public partial class jQuery : SkinObjectBase
     {
-        public jQuery()
-        {
-            Init += Page_Init;
-        }
-
-        protected void Page_Init(object sender, EventArgs e)
+        protected override void OnInit(EventArgs e)
         {
             Framework.jQuery.RequestRegistration();
         }

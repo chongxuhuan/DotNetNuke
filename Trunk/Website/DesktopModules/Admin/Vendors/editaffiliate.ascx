@@ -34,6 +34,8 @@
     </ul>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnEditAffiliate() {
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -51,4 +53,5 @@
             setUpDnnEditAffiliate();
         });
     });
+} (jQuery, window.Sys));
 </script>

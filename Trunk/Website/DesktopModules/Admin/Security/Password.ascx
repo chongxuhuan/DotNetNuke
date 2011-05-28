@@ -5,7 +5,7 @@
 <div class="dnnForm dnnPassword dnnClear" id="dnnPassword">
     <fieldset>
         <div id="titleRow" runat="server" class="dnnFormItem">
-            <asp:label id="lblTitle" cssclass="Head" runat="server"></asp:label>
+            <h2 class="dnnFormSectionHead"><asp:label id="lblTitle" runat="server"></asp:label></h2>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plLastChanged" runat="server" controlname="lblLastChanged" />
@@ -16,12 +16,8 @@
             <asp:label id = "lblExpires" runat="server" />
         </div>
 			<asp:panel id="pnlChange" runat="server">
-                <div class="dnnFormItem">
-                    <asp:label id="lblChangeHeading" resourcekey="ChangePassword" cssclass="Head" runat="server" />
-                </div>
-                <div class="dnnFormItem">
-                    <asp:label id="lblChangeHelp" runat="server" />
-                </div>
+                <div class="dnnFormItem"><h2 class="dnnFormSectionHead"><asp:label id="lblChangeHeading" resourcekey="ChangePassword" runat="server" /></h2></div>
+                <div class="dnnFormItem"><asp:label id="lblChangeHelp" runat="server" /></div>
                 <div id="oldPasswordRow" runat="server" class="dnnFormItem">
                     <dnn:label id="plOldPassword" runat="server" controlname="txtOldPassword" />
                     <asp:textbox id="txtOldPassword" runat="server" textmode="Password" size="25" maxlength="20" />
@@ -39,12 +35,8 @@
                 </ul>  
 			</asp:panel>
 			<asp:panel id="pnlReset" runat="server">
-                <div class="dnnFormItem">
-                    <asp:label id="lblResetHeading" cssclass="Head" runat="server" resourceKey="ResetPassword" />
-                </div>
-                <div class="dnnFormItem">
-                    <asp:label id="lblResetHelp" runat="server"></asp:label>
-                </div>
+                <h2 class="dnnFormSectionHead"><asp:label id="lblResetHeading" runat="server" resourceKey="ResetPassword" /></h2>
+                <div class="dnnFormItem"><asp:label id="lblResetHelp" runat="server"></asp:label></div>
                 <div id="questionRow" runat="server" class="dnnFormItem">
                     <dnn:label id="plQuestion" runat="server" controlname="lblQuestion" />
                     <asp:label id = "lblQuestion" runat="server" />
@@ -58,12 +50,8 @@
                 </ul>  
 			</asp:panel>
 			<asp:panel id="pnlQA" runat="server">
-                <div class="dnnFormItem">
-                    <asp:label id="lblChangeQA" cssclass="Head" runat="server" resourceKey="ChangeQA" />
-                </div>
-                <div class="dnnFormItem">
-                    <asp:label id="lblQAHelp" resourcekey="QAHelp" cssclass="Normal" runat="server" />
-                </div>
+                <div class="dnnFormItem"><asp:label id="lblChangeQA" runat="server" resourceKey="ChangeQA" /></div>
+                <div class="dnnFormItem"><asp:label id="lblQAHelp" resourcekey="QAHelp" cssclass="Normal" runat="server" /></div>
                 <div class="dnnFormItem">
                     <dnn:label id="plQAPassword" runat="server" controlname="txtQAPassword" />
                     <asp:textbox id="txtQAPassword" runat="server" textmode="Password" size="25" maxlength="20" />

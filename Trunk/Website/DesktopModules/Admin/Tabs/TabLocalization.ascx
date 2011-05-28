@@ -78,10 +78,9 @@
         </Columns>
     </MasterTableView>
 </dnn:DnnGrid>
-<br />
 <asp:PlaceHolder ID="footerPlaceHolder" runat="server">
-    <div>
-        <dnn:CommandButton ID="markTabTranslatedButton" resourcekey="markTabTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/grant.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
-        <dnn:CommandButton ID="markTabUnTranslatedButton" resourcekey="markTabUnTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/deny.gif" CausesValidation="False" />
-    </div>
+    <ul class="dnnActions dnnClear">
+        <li><asp:LinkButton ID="markTabTranslatedButton" resourcekey="markTabTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+        <li><asp:LinkButton ID="markTabUnTranslatedButton" resourcekey="markTabUnTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+    </ul>
 </asp:PlaceHolder>

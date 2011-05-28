@@ -215,6 +215,8 @@
     <div class="dnnmsStat dnnClear"><dnn:audit id="ctlAudit" runat="server" /></div>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnModuleSettings() {
         $('#dnnModuleSettings').dnnTabs().dnnPanels();
         $('#msModuleSettings .dnnFormExpandContent a').dnnExpandAll({
@@ -248,4 +250,5 @@
             setUpDnnModuleSettings();
         });
     });
+} (jQuery, window.Sys));
 </script>

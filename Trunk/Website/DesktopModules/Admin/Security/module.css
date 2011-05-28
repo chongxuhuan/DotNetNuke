@@ -1,33 +1,33 @@
 /* ===========   Security Roles Module Styling   =========== */
-
-.dnnSecurityRoles{}
-	.dnnSecurityRolesGrid{}
-	
+.dnnSecurityRoles{margin:1em auto 2.5em}
+	.dnnSecurityRoles .dnnGrid td, .dnnGrid.dnnSecurityRoles td{padding:12px 10px;}
+	.dnnGrid.dnnSecurityRolesGrid td{padding:8px 5px;}
+	.dnnGrid.dnnSecurityRolesGrid{margin-bottom:1em;}
+	.dnnFormItem input.dnnUserSearchInput{width:40%;}
+	#dnnUsers select.dnnUsersSearchFilter{padding:5px;margin:0 8px;width:20%;}
+	#dnnUsers .uLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
-
 .dnnUser{min-width:50%; float:left;}	
 .dnnMembership{width:50%; float:left;}	
-
 .dnnUserSettings{width:850px;}
 .dnnUserSettings .dnnFormItem input[type="radio"]{float:none;}
 .dnnUserSettings .dnnFormItem .dnnFormInput span{margin: 0px 10px 0px 10px; }
-
 .dnnEditRole .dnnFormItem input[type="checkbox"]{width:auto;}
-
+	.dnnEditRole .dnnFormItem input[type="text"]{margin-right:10px;}
+	.erasContent .dnnFormMessage{display:block;}
+	.dnnEditRole .erasContent .urlControl .dnnFormItem{margin:0;padding:0;}
+	.dnnEditRole .erasContent .urlControl .dnnFormLabel{font-weight:normal;}
 .dnnUser .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width: 35%;}
-.dnnMembership .dnnFormItem label, .dnnMembership .dnnFormItem .dnnFormLabel {width: 45%;}
-.dnnSecurityRoles .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width: 100%;}
-
+.dnnMembership .dnnFormItem label, .dnnMembership .dnnFormItem .dnnFormLabel {width:45%;}
+.dnnSecurityRoles .dnnFormItem label, .dnnUser .dnnFormItem .dnnFormLabel {width:100%;}
 p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}	
+	.dnnUser a.dnnPrimaryAction, .dnnUser a.dnnPrimaryAction:link, .dnnUser a.dnnPrimaryAction:visited {color:White; }	
+	.dnnPassword a.dnnPrimaryAction, .dnnPassword a.dnnPrimaryAction:link, .dnnPassword a.dnnPrimaryAction:visited {color:White; }	
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%;float:right;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%;float:none;}
+.dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%;float:none;}
 
-.dnnUser a.dnnPrimaryAction, .dnnUser a.dnnPrimaryAction:link, .dnnUser a.dnnPrimaryAction:visited {color:White; }	
-.dnnPassword a.dnnPrimaryAction, .dnnPassword a.dnnPrimaryAction:link, .dnnPassword a.dnnPrimaryAction:visited {color:White; }	
-
-.dnnProfileDetails .dnnFormItem .dnnFormLabel{width:15%;}
-.dnnProfileDetails .dnnFormItem label{width:15%;}
-.dnnProfileDetails .dnnFormItem .dnnFormInput{width:38%;}
-.dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%; float:right;}
-.dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%; float:none;}
-.dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%; float:none;}
+.dnnEditRoleGroups .dnnFormItem input, .dnnEditRoleGroups .dnnFormItem textarea{width:35%;}
+.erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}
 
 /* ===========   End Security Roles Module Styling   =========== */

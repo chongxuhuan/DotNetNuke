@@ -65,8 +65,8 @@ namespace DotNetNuke.Entities.Tabs
         private Hashtable _settings;
         private string _skinDoctype;
         private bool _superTabIdSet = Null.NullBoolean;
-        private readonly SharedDictionary<string, string> LocalizedTabNameDictionary = new SharedDictionary<string, string>();
-        private readonly SharedDictionary<string, string> FullUrlDictionary = new SharedDictionary<string, string>();
+        private readonly SharedDictionary<string, string> _localizedTabNameDictionary = new SharedDictionary<string, string>();
+        private readonly SharedDictionary<string, string> _fullUrlDictionary = new SharedDictionary<string, string>();
         private string _iconFile;
         private string _iconFileRaw;
         private string _iconFileLarge;
@@ -75,7 +75,17 @@ namespace DotNetNuke.Entities.Tabs
         #region Constructors
 
         public TabInfo()
+            : this(new SharedDictionary<string, string>(), new SharedDictionary<string, string>())
         {
+
+        }
+
+
+        private TabInfo(SharedDictionary<string, string> localizedTabNameDictionary, SharedDictionary<string, string> fullUrlDictionary)
+        {
+            _localizedTabNameDictionary = localizedTabNameDictionary;
+            _fullUrlDictionary = fullUrlDictionary;
+
             PortalID = Null.NullInteger;
             _authorizedRoles = Null.NullString;
             ParentId = Null.NullInteger;
@@ -173,7 +183,7 @@ namespace DotNetNuke.Entities.Tabs
 
         private void IconFileGetter(ref string iconFile, string iconRaw)
         {
-            if (iconRaw.StartsWith("~") || PortalID == Null.NullInteger)
+            if ((!String.IsNullOrEmpty(iconRaw) && iconRaw.StartsWith("~")) || PortalID == Null.NullInteger)
             {
                 iconFile = iconRaw;
             }
@@ -295,17 +305,18 @@ namespace DotNetNuke.Entities.Tabs
         {
             get
             {
-                var key = Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias);
+                var key = string.Format("{0}_{1}", Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias), 
+											Localization.GetPageLocale(PortalSettings.Current));
 
                 string fullUrl;
-                using (FullUrlDictionary.GetReadLock())
+                using (_fullUrlDictionary.GetReadLock())
                 {
-                    FullUrlDictionary.TryGetValue(key, out fullUrl);
+                    _fullUrlDictionary.TryGetValue(key, out fullUrl);
                 }
 
                 if (String.IsNullOrEmpty(fullUrl))
                 {
-                    using (FullUrlDictionary.GetWriteLock())
+                    using (_fullUrlDictionary.GetWriteLock())
                     {
                         switch (TabType)
                         {
@@ -327,7 +338,7 @@ namespace DotNetNuke.Entities.Tabs
                                 break;
                         }
 
-                        FullUrlDictionary.Add(key, fullUrl);
+                        _fullUrlDictionary.Add(key, fullUrl);
                     }
                 }
 
@@ -406,16 +417,18 @@ namespace DotNetNuke.Entities.Tabs
         {
             get
             {
+                if (String.IsNullOrEmpty(TabPath)) return TabName;
+                
                 var key = Thread.CurrentThread.CurrentUICulture.ToString();
                 string localizedTabName;
-                using (LocalizedTabNameDictionary.GetReadLock())
+                using (_localizedTabNameDictionary.GetReadLock())
                 {
-                    LocalizedTabNameDictionary.TryGetValue(key, out localizedTabName);
+                    _localizedTabNameDictionary.TryGetValue(key, out localizedTabName);
                 }
 
                 if (String.IsNullOrEmpty(localizedTabName))
                 {
-                    using (LocalizedTabNameDictionary.GetWriteLock())
+                    using (_localizedTabNameDictionary.GetWriteLock())
                     {
                         localizedTabName = Localization.GetString(TabPath + ".String", Localization.GlobalResourceFile, true);
                         if (string.IsNullOrEmpty(localizedTabName))
@@ -423,7 +436,7 @@ namespace DotNetNuke.Entities.Tabs
                             localizedTabName = TabName;
                         }
 
-                        LocalizedTabNameDictionary.Add(key, localizedTabName);
+                        _localizedTabNameDictionary.Add(key, localizedTabName);
                     }
                 }
 
@@ -735,7 +748,7 @@ namespace DotNetNuke.Entities.Tabs
 
         public TabInfo Clone()
         {
-            var objTabInfo = new TabInfo
+            var clonedTab = new TabInfo(_localizedTabNameDictionary, _fullUrlDictionary)
                                  {
                                      TabID = TabID,
                                      TabOrder = TabOrder,
@@ -767,26 +780,29 @@ namespace DotNetNuke.Entities.Tabs
                                      PermanentRedirect = PermanentRedirect
                                  };
 
+
+
+
             if (BreadCrumbs != null)
             {
-                objTabInfo.BreadCrumbs = new ArrayList();
+                clonedTab.BreadCrumbs = new ArrayList();
                 foreach (TabInfo t in BreadCrumbs)
                 {
-                    objTabInfo.BreadCrumbs.Add(t.Clone());
+                    clonedTab.BreadCrumbs.Add(t.Clone());
                 }
             }
-            objTabInfo.ContentItemId = ContentItemId;
+            clonedTab.ContentItemId = ContentItemId;
 
             //localized properties
-            objTabInfo.UniqueId = UniqueId;
-            objTabInfo.VersionGuid = VersionGuid;
-            objTabInfo.DefaultLanguageGuid = DefaultLanguageGuid;
-            objTabInfo.LocalizedVersionGuid = LocalizedVersionGuid;
-            objTabInfo.CultureCode = CultureCode;
+            clonedTab.UniqueId = UniqueId;
+            clonedTab.VersionGuid = VersionGuid;
+            clonedTab.DefaultLanguageGuid = DefaultLanguageGuid;
+            clonedTab.LocalizedVersionGuid = LocalizedVersionGuid;
+            clonedTab.CultureCode = CultureCode;
 
-            objTabInfo.Panes = new ArrayList();
-            objTabInfo.Modules = new ArrayList();
-            return objTabInfo;
+            clonedTab.Panes = new ArrayList();
+            clonedTab.Modules = new ArrayList();
+            return clonedTab;
         }
 
         /// -----------------------------------------------------------------------------

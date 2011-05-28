@@ -64,10 +64,6 @@
         <h2 id="dnnPanel-EditVendorClassification" class="dnnFormSectionHead"><a href="" class="dnnLabelExpanded"><%=LocalizeString("VendorClassification")%></a></h2>
         <fieldset>
             <div class="dnnFormItem">
-                <dnn:label id="plClassifications" runat="server" controlname="lstClassifications" />
-                <asp:listbox id="lstClassifications" runat="server" rows="10" selectionmode="Multiple" Width="300" />
-            </div>
-            <div class="dnnFormItem">
                 <dnn:label id="plKeyWords" runat="server" controlname="txtKeyWords" />
                 <asp:textbox id="txtKeyWords" runat="server" rows="10" textmode="MultiLine"  Width="300" />
             </div>
@@ -95,6 +91,8 @@
     </div>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnEditVendors() {
         $('#dnnEditVendor').dnnPanels();
         $('#dnnEditVendor .dnnFormExpandContent a').dnnExpandAll({
@@ -118,4 +116,5 @@
             setUpDnnEditVendors();
         });
     });
+} (jQuery, window.Sys));
 </script>

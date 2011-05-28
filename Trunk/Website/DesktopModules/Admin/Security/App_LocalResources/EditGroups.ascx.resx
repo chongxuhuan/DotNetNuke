@@ -52,7 +52,7 @@
         <value>Enter a description of the role group.</value>
     </data>
     <data name="valRoleGroupName.Text">
-        <value>&lt;br&gt;You Must Enter a Valid Name</value>
+        <value>You Must Enter a Valid Name</value>
     </data>
     <data name="ControlTitle_editgroup.Text">
         <value>Edit Role Group</value>

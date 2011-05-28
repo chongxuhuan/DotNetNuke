@@ -10,6 +10,8 @@
 <%@ Register TagPrefix="dnn" TagName="MemberServices" Src="~/DesktopModules/Admin/Security/MemberServices.ascx" %>
 
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnManageUsers() {
         $('#dnnManageUsers').dnnTabs();
     }
@@ -20,6 +22,7 @@
             setUpDnnManageUsers();
         });
     });
+} (jQuery, window.Sys));
 </script>
 
 <div class="dnnForm dnnManageUsers dnnClear" id="dnnManageUsers">

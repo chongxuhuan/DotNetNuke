@@ -21,7 +21,6 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Data;
@@ -31,7 +30,6 @@ using DotNetNuke.Framework.Providers;
 
 using Microsoft.ApplicationBlocks.Data;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
@@ -57,12 +55,12 @@ namespace DotNetNuke.Modules.Html
 
         private readonly string _providerPath;
 
-        #region "Constructors"
+        #region Constructors
 
         public SqlDataProvider()
         {
             // Read the configuration specific information for this provider
-            var objProvider = (Provider) _providerConfiguration.Providers[_providerConfiguration.DefaultProvider];
+            var objProvider = (Provider) (_providerConfiguration.Providers[_providerConfiguration.DefaultProvider]);
 
             // Read the attributes for this provider
             _connectionString = Config.GetConnectionString();
@@ -84,7 +82,7 @@ namespace DotNetNuke.Modules.Html
 
         #endregion
 
-        #region "Properties"
+        #region Properties
 
         public string ConnectionString
         {
@@ -120,7 +118,7 @@ namespace DotNetNuke.Modules.Html
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         private object GetNull(object Field)
         {
@@ -129,17 +127,17 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetHtmlText(int ModuleID, int ItemID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlText", ModuleID, ItemID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlText", ModuleID, ItemID));
         }
 
         public override IDataReader GetTopHtmlText(int ModuleID, bool IsPublished)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTopHtmlText", ModuleID, IsPublished);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTopHtmlText", ModuleID, IsPublished));
         }
 
         public override IDataReader GetAllHtmlText(int ModuleID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllHtmlText", ModuleID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllHtmlText", ModuleID));
         }
 
         public override int AddHtmlText(int ModuleID, string Content, int StateID, bool IsPublished, int CreatedByUserID, int History)
@@ -159,7 +157,7 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetHtmlTextLog(int ItemID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlTextLog", ItemID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlTextLog", ItemID));
         }
 
         public override void AddHtmlTextLog(int ItemID, int StateID, string Comment, bool Approved, int CreatedByUserID)
@@ -169,7 +167,7 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetHtmlTextUser(int UserID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlTextUser", UserID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetHtmlTextUser", UserID));
         }
 
         public override void AddHtmlTextUser(int ItemID, int StateID, int ModuleID, int TabID, int UserID)
@@ -184,22 +182,22 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetWorkflows(int PortalID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflows", PortalID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflows", PortalID));
         }
 
         public override IDataReader GetWorkflowStates(int WorkflowID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStates", WorkflowID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStates", WorkflowID));
         }
 
         public override IDataReader GetWorkflowStatePermissions()
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermissions");
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermissions"));
         }
 
         public override IDataReader GetWorkflowStatePermissionsByStateID(int StateID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermissionsByStateID", StateID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermissionsByStateID", StateID));
         }
 
         #endregion

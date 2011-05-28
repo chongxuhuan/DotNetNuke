@@ -44,35 +44,35 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Users
 {
-	/// -----------------------------------------------------------------------------
-	/// <summary>
+    /// -----------------------------------------------------------------------------
+    /// <summary>
     /// The ProfileDefinitions PortalModuleBase is used to manage the Profile Properties
     /// for a portal
-	/// </summary>
+    /// </summary>
     /// <remarks>
-	/// </remarks>
-	/// <history>
+    /// </remarks>
+    /// <history>
     /// 	[cnurse]	02/16/2006  Created
-	/// </history>
-	/// -----------------------------------------------------------------------------
+    /// </history>
+    /// -----------------------------------------------------------------------------
     public partial class ProfileDefinitions : PortalModuleBase, IActionable
     {
-		#region "Constants"
+        #region "Constants"
 
         private const int COLUMN_REQUIRED = 11;
         private const int COLUMN_VISIBLE = 12;
         private const int COLUMN_MOVE_DOWN = 2;
         private const int COLUMN_MOVE_UP = 3;
-		
-		#endregion
 
-		#region "Private Members"
+        #endregion
 
-        private ProfilePropertyDefinitionCollection _ProfileProperties;
-		
-		#endregion
+        #region "Private Members"
 
-		#region "Protected Members"
+        private ProfilePropertyDefinitionCollection _profileProperties;
+
+        #endregion
+
+        #region "Protected Members"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -90,10 +90,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
@@ -109,11 +107,11 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                if (_ProfileProperties == null)
+                if (_profileProperties == null)
                 {
-                    _ProfileProperties = ProfileController.GetPropertyDefinitionsByPortal(UsersPortalId, false);
+                    _profileProperties = ProfileController.GetPropertyDefinitionsByPortal(UsersPortalId, false);
                 }
-                return _ProfileProperties;
+                return _profileProperties;
             }
         }
 
@@ -129,27 +127,27 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                string _ReturnURL;
-                var FilterParams = new string[String.IsNullOrEmpty(Request.QueryString["filterproperty"]) ? 1 : 2];
+                string returnURL;
+                var filterParams = new string[String.IsNullOrEmpty(Request.QueryString["filterproperty"]) ? 1 : 2];
 
                 if (String.IsNullOrEmpty(Request.QueryString["filterProperty"]))
                 {
-                    FilterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
+                    filterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
                 }
                 else
                 {
-                    FilterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
-                    FilterParams.SetValue("filterProperty=" + Request.QueryString["filterProperty"], 1);
+                    filterParams.SetValue("filter=" + Request.QueryString["filter"], 0);
+                    filterParams.SetValue("filterProperty=" + Request.QueryString["filterProperty"], 1);
                 }
                 if (string.IsNullOrEmpty(Request.QueryString["filter"]))
                 {
-                    _ReturnURL = Globals.NavigateURL(TabId);
+                    returnURL = Globals.NavigateURL(TabId);
                 }
                 else
                 {
-                    _ReturnURL = Globals.NavigateURL(TabId, "", FilterParams);
+                    returnURL = Globals.NavigateURL(TabId, "", filterParams);
                 }
-                return _ReturnURL;
+                return returnURL;
             }
         }
 
@@ -173,8 +171,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 return intPortalId;
             }
         }
-		
-		#endregion
+
+        #endregion
 
         #region IActionable Members
 
@@ -182,8 +180,8 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
+                var actions = new ModuleActionCollection();
+                actions.Add(GetNextActionID(),
                             Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
                             ModuleActionType.AddContent,
                             "",
@@ -193,7 +191,7 @@ namespace DotNetNuke.Modules.Admin.Users
                             SecurityAccessLevel.Admin,
                             true,
                             false);
-                Actions.Add(GetNextActionID(),
+                actions.Add(GetNextActionID(),
                             Localization.GetString("Cancel.Action", LocalResourceFile),
                             ModuleActionType.AddContent,
                             "",
@@ -203,13 +201,13 @@ namespace DotNetNuke.Modules.Admin.Users
                             SecurityAccessLevel.Admin,
                             true,
                             false);
-                return Actions;
+                return actions;
             }
         }
 
         #endregion
 
-		#region "Private Methods"
+        #region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -235,9 +233,7 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void DeleteProperty(int index)
         {
-            ProfilePropertyDefinition objProperty = ProfileProperties[index];
-
-            ProfileController.DeletePropertyDefinition(objProperty);
+            ProfileController.DeletePropertyDefinition(ProfileProperties[index]);
 
             RefreshGrid();
         }
@@ -254,15 +250,15 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void MoveProperty(int index, int destIndex)
         {
-            ProfilePropertyDefinition objProperty = ProfileProperties[index];
-            ProfilePropertyDefinition objNext = ProfileProperties[destIndex];
+            ProfilePropertyDefinition profileProperty = ProfileProperties[index];
+            ProfilePropertyDefinition nextProfileProperty = ProfileProperties[destIndex];
 
-            int currentOrder = objProperty.ViewOrder;
-            int nextOrder = objNext.ViewOrder;
+            int currentOrder = profileProperty.ViewOrder;
+            int nextOrder = nextProfileProperty.ViewOrder;
 
             //Swap ViewOrders
-            objProperty.ViewOrder = nextOrder;
-            objNext.ViewOrder = currentOrder;
+            profileProperty.ViewOrder = nextOrder;
+            nextProfileProperty.ViewOrder = currentOrder;
 
             //Refresh Grid
             ProfileProperties.Sort();
@@ -328,17 +324,17 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             foreach (DataGridColumn column in grdProfileProperties.Columns)
             {
-                if (ReferenceEquals(column.GetType(), typeof (CheckBoxColumn)))
+                if (ReferenceEquals(column.GetType(), typeof(CheckBoxColumn)))
                 {
-					//Manage CheckBox column events
-                    var cbColumn = (CheckBoxColumn) column;
-                    if (cbColumn.DataField == "Required")
+                    //Manage CheckBox column events
+                    var checkBoxColumn = (CheckBoxColumn)column;
+                    if (checkBoxColumn.DataField == "Required")
                     {
-                        cbColumn.Checked = allRequired;
+                        checkBoxColumn.Checked = allRequired;
                     }
-                    if (cbColumn.DataField == "Visible")
+                    if (checkBoxColumn.DataField == "Visible")
                     {
-                        cbColumn.Checked = allVisible;
+                        checkBoxColumn.Checked = allVisible;
                     }
                 }
             }
@@ -356,7 +352,7 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void RefreshGrid()
         {
-            _ProfileProperties = null;
+            _profileProperties = null;
             BindGrid();
         }
 
@@ -371,15 +367,15 @@ namespace DotNetNuke.Modules.Admin.Users
         private void UpdateProperties()
         {
             ProcessPostBack();
-            foreach (ProfilePropertyDefinition objProperty in ProfileProperties)
+            foreach (ProfilePropertyDefinition property in ProfileProperties)
             {
-                if (objProperty.IsDirty)
+                if (property.IsDirty)
                 {
                     if (UsersPortalId == Null.NullInteger)
                     {
-                        objProperty.Required = false;
+                        property.Required = false;
                     }
-                    ProfileController.UpdatePropertyDefinition(objProperty);
+                    ProfileController.UpdatePropertyDefinition(property);
                 }
             }
         }
@@ -395,56 +391,47 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void ProcessPostBack()
         {
-            try
+
+            string[] newOrder = ClientAPI.GetClientSideReorder(grdProfileProperties.ClientID, Page);
+            for (int i = 0; i <= grdProfileProperties.Items.Count - 1; i++)
             {
-                string[] aryNewOrder = ClientAPI.GetClientSideReorder(grdProfileProperties.ClientID, Page);
-                ProfilePropertyDefinition objProperty;
-                DataGridItem objItem;
-                CheckBox chk;
-                for (int i = 0; i <= grdProfileProperties.Items.Count - 1; i++)
-                {
-                    objItem = grdProfileProperties.Items[i];
-                    objProperty = ProfileProperties[i];
-                    chk = (CheckBox) objItem.Cells[COLUMN_REQUIRED].Controls[0];
-                    objProperty.Required = chk.Checked;
-                    chk = (CheckBox) objItem.Cells[COLUMN_VISIBLE].Controls[0];
-                    objProperty.Visible = chk.Checked;
-                }
-				
-				//assign vieworder
-                for (int i = 0; i <= aryNewOrder.Length - 1; i++)
-                {
-                    ProfileProperties[Convert.ToInt32(aryNewOrder[i])].ViewOrder = i;
-                }
-                ProfileProperties.Sort();
+                DataGridItem dataGridItem = grdProfileProperties.Items[i];
+                ProfilePropertyDefinition profileProperty = ProfileProperties[i];
+                CheckBox checkBox = (CheckBox)dataGridItem.Cells[COLUMN_REQUIRED].Controls[0];
+                profileProperty.Required = checkBox.Checked;
+                checkBox = (CheckBox)dataGridItem.Cells[COLUMN_VISIBLE].Controls[0];
+                profileProperty.Visible = checkBox.Checked;
             }
-            catch (Exception ex)
+
+            //assign vieworder
+            for (int i = 0; i <= newOrder.Length - 1; i++)
             {
-                throw ex;
+                ProfileProperties[Convert.ToInt32(newOrder[i])].ViewOrder = i;
             }
+            ProfileProperties.Sort();
         }
 
-		#endregion
+        #endregion
 
-		#region "Protected Methods"
+        #region "Protected Methods"
 
         protected override void LoadViewState(object savedState)
         {
-            if ((savedState != null))
+            if (savedState != null)
             {
-				//Load State from the array of objects that was saved with SaveViewState.
-                var myState = (object[]) savedState;
-				
-				//Load Base Controls ViewState
-                if ((myState[0] != null))
+                //Load State from the array of objects that was saved with SaveViewState.
+                var myState = (object[])savedState;
+
+                //Load Base Controls ViewState
+                if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
-				
-				//Load ModuleID
-                if ((myState[1] != null))
+
+                //Load ModuleID
+                if (myState[1] != null)
                 {
-                    _ProfileProperties = (ProfilePropertyDefinitionCollection) myState[1];
+                    _profileProperties = (ProfilePropertyDefinitionCollection)myState[1];
                 }
             }
         }
@@ -452,23 +439,23 @@ namespace DotNetNuke.Modules.Admin.Users
         protected override object SaveViewState()
         {
             var allStates = new object[2];
-			
-			//Save the Base Controls ViewState
+
+            //Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
             allStates[1] = ProfileProperties;
 
             return allStates;
         }
-		
-		#endregion
 
-		#region "Public Methods"
+        #endregion
+
+        #region "Public Methods"
 
         public string DisplayDataType(ProfilePropertyDefinition definition)
         {
             string retValue = Null.NullString;
-            var objListController = new ListController();
-            ListEntryInfo definitionEntry = objListController.GetListEntryInfo(definition.DataType);
+            var listController = new ListController();
+            ListEntryInfo definitionEntry = listController.GetListEntryInfo(definition.DataType);
             if (definitionEntry != null)
             {
                 retValue = definitionEntry.Value;
@@ -476,9 +463,9 @@ namespace DotNetNuke.Modules.Admin.Users
             return retValue;
         }
 
-		#endregion
+        #endregion
 
-		#region "Event Handlers"
+        #region "Event Handlers"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -496,22 +483,22 @@ namespace DotNetNuke.Modules.Admin.Users
 
             foreach (DataGridColumn column in grdProfileProperties.Columns)
             {
-                if (ReferenceEquals(column.GetType(), typeof (CheckBoxColumn)))
+                if (ReferenceEquals(column.GetType(), typeof(CheckBoxColumn)))
                 {
-                    var cbColumn = (CheckBoxColumn) column;
-                    if (cbColumn.DataField == "Required" && UsersPortalId == Null.NullInteger)
+                    var checkBoxColumn = (CheckBoxColumn)column;
+                    if (checkBoxColumn.DataField == "Required" && UsersPortalId == Null.NullInteger)
                     {
-                        cbColumn.Visible = false;
+                        checkBoxColumn.Visible = false;
                     }
                     if (SupportsRichClient() == false)
                     {
-                        cbColumn.CheckedChanged += grdProfileProperties_ItemCheckedChanged;
+                        checkBoxColumn.CheckedChanged += grdProfileProperties_ItemCheckedChanged;
                     }
                 }
-                else if (ReferenceEquals(column.GetType(), typeof (ImageCommandColumn)))
+                else if (ReferenceEquals(column.GetType(), typeof(ImageCommandColumn)))
                 {
-					//Manage Delete Confirm JS
-                    var imageColumn = (ImageCommandColumn) column;
+                    //Manage Delete Confirm JS
+                    var imageColumn = (ImageCommandColumn)column;
                     switch (imageColumn.CommandName)
                     {
                         case "Delete":
@@ -525,6 +512,7 @@ namespace DotNetNuke.Modules.Admin.Users
                             string formatString = EditUrl("PropertyDefinitionID", "KEYFIELD", "EditProfileProperty");
                             formatString = formatString.Replace("KEYFIELD", "{0}");
                             imageColumn.NavigateURLFormatString = formatString;
+                            imageColumn.Text = Localization.GetString("Edit", LocalResourceFile);
                             break;
                         case "MoveUp":
                             imageColumn.Text = Localization.GetString("MoveUp", LocalResourceFile);
@@ -547,16 +535,6 @@ namespace DotNetNuke.Modules.Admin.Users
             grdProfileProperties.ItemCreated += grdProfileProperties_ItemCreated;
             grdProfileProperties.ItemDataBound += grdProfileProperties_ItemDataBound;
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Page_Load runs when the control is loaded
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/16/2006  Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
             try
             {
                 if (!Page.IsPostBack)
@@ -626,11 +604,10 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             string propertyName = e.Field;
             bool propertyValue = e.Checked;
-            bool isAll = e.IsAll;
-            int index = e.Item.ItemIndex;
-            if (isAll)
+
+            if (e.IsAll)
             {
-				//Update All the properties
+                //Update All the properties
                 foreach (ProfilePropertyDefinition profProperty in ProfileProperties)
                 {
                     switch (propertyName)
@@ -646,15 +623,15 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             else
             {
-				//Update the indexed property
-                ProfilePropertyDefinition profProperty = ProfileProperties[index];
+                //Update the indexed property
+                ProfilePropertyDefinition profileProperty = ProfileProperties[e.Item.ItemIndex];
                 switch (propertyName)
                 {
                     case "Required":
-                        profProperty.Required = propertyValue;
+                        profileProperty.Required = propertyValue;
                         break;
                     case "Visible":
-                        profProperty.Visible = propertyValue;
+                        profileProperty.Visible = propertyValue;
                         break;
                 }
             }
@@ -674,11 +651,9 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void grdProfileProperties_ItemCommand(object source, DataGridCommandEventArgs e)
         {
-            string commandName = e.CommandName;
-            int commandArgument = Convert.ToInt32(e.CommandArgument);
             int index = e.Item.ItemIndex;
 
-            switch (commandName)
+            switch (e.CommandName)
             {
                 case "Delete":
                     DeleteProperty(index);
@@ -712,15 +687,15 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     case ListItemType.Header:
                         //we combined the header label and checkbox in same place, so it is control 1 instead of 0
-                        ((WebControl) e.Item.Cells[COLUMN_REQUIRED].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_REQUIRED + ");");
-                        ((CheckBox) e.Item.Cells[COLUMN_REQUIRED].Controls[1]).AutoPostBack = false;
-                        ((WebControl) e.Item.Cells[COLUMN_VISIBLE].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_VISIBLE + ");");
-                        ((CheckBox) e.Item.Cells[COLUMN_VISIBLE].Controls[1]).AutoPostBack = false;
+                        ((WebControl)e.Item.Cells[COLUMN_REQUIRED].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_REQUIRED + ");");
+                        ((CheckBox)e.Item.Cells[COLUMN_REQUIRED].Controls[1]).AutoPostBack = false;
+                        ((WebControl)e.Item.Cells[COLUMN_VISIBLE].Controls[1]).Attributes.Add("onclick", "dnn.util.checkallChecked(this," + COLUMN_VISIBLE + ");");
+                        ((CheckBox)e.Item.Cells[COLUMN_VISIBLE].Controls[1]).AutoPostBack = false;
                         break;
                     case ListItemType.AlternatingItem:
                     case ListItemType.Item:
-                        ((CheckBox) e.Item.Cells[COLUMN_REQUIRED].Controls[0]).AutoPostBack = false;
-                        ((CheckBox) e.Item.Cells[COLUMN_VISIBLE].Controls[0]).AutoPostBack = false;
+                        ((CheckBox)e.Item.Cells[COLUMN_REQUIRED].Controls[0]).AutoPostBack = false;
+                        ((CheckBox)e.Item.Cells[COLUMN_VISIBLE].Controls[0]).AutoPostBack = false;
                         ClientAPI.EnableClientSideReorder(e.Item.Cells[COLUMN_MOVE_DOWN].Controls[0], Page, false, grdProfileProperties.ClientID);
                         ClientAPI.EnableClientSideReorder(e.Item.Cells[COLUMN_MOVE_UP].Controls[0], Page, true, grdProfileProperties.ClientID);
                         break;
@@ -747,8 +722,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 Control imgColumnControl = item.Controls[1].Controls[0];
                 if (imgColumnControl is ImageButton)
                 {
-                    var delImage = (ImageButton) imgColumnControl;
-                    var profProperty = (ProfilePropertyDefinition) item.DataItem;
+                    var delImage = (ImageButton)imgColumnControl;
+                    var profProperty = (ProfilePropertyDefinition)item.DataItem;
 
                     switch (profProperty.PropertyName.ToLower())
                     {
@@ -765,7 +740,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
             }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

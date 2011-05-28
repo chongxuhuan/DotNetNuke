@@ -21,12 +21,13 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
@@ -48,7 +49,6 @@ using DotNetNuke.Services.Tokens;
 using DotNetNuke.Services.Exceptions;
 
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
@@ -68,12 +68,42 @@ namespace DotNetNuke.Modules.Html
     public class HtmlTextController : ISearchable, IPortable, IUpgradeable
     {
         private const int MAX_DESCRIPTION_LENGTH = 100;
-
-        private const string WORKFLOW_SETTING = "WorkflowID";
+        private const string PortalRootToken = "{{PortalRoot}}";
 
         private static readonly MessagingController _messagingController = new MessagingController();
 
-        #region "Public Methods"
+        private string DeTokeniseLinks(string content, int portalId)
+        {
+
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
+            if (!portalRoot.StartsWith("/"))
+            {
+                portalRoot = "/" + portalRoot;
+            }
+            content = content.Replace(PortalRootToken, portalRoot);
+
+            return content;
+        }
+
+        private string TokeniseLinks(string content, int portalId)
+        {
+            //Replace any relative portal root reference by a token "{{PortalRoot}}"
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
+            if (!portalRoot.StartsWith("/"))
+            {
+                portalRoot = "/" + portalRoot;
+            }
+            Regex exp = new Regex(portalRoot, RegexOptions.IgnoreCase);
+            content = exp.Replace(content, PortalRootToken);
+
+            return content;
+        }
+
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -317,7 +347,7 @@ namespace DotNetNuke.Modules.Html
         /// -----------------------------------------------------------------------------
         public HtmlTextInfo GetHtmlText(int ModuleID, int ItemID)
         {
-            return (HtmlTextInfo) CBO.FillObject(DataProvider.Instance().GetHtmlText(ModuleID, ItemID), typeof (HtmlTextInfo));
+            return (HtmlTextInfo) (CBO.FillObject(DataProvider.Instance().GetHtmlText(ModuleID, ItemID), typeof (HtmlTextInfo)));
         }
 
         /// -----------------------------------------------------------------------------
@@ -334,8 +364,8 @@ namespace DotNetNuke.Modules.Html
         /// -----------------------------------------------------------------------------
         public HtmlTextInfo GetTopHtmlText(int ModuleID, bool IsPublished, int WorkflowID)
         {
-            var objHtmlText = (HtmlTextInfo) CBO.FillObject(DataProvider.Instance().GetTopHtmlText(ModuleID, IsPublished), typeof (HtmlTextInfo));
-            if ((objHtmlText != null))
+            var objHtmlText = (HtmlTextInfo) (CBO.FillObject(DataProvider.Instance().GetTopHtmlText(ModuleID, IsPublished), typeof (HtmlTextInfo)));
+            if (objHtmlText != null)
             {
                 // check if workflow has changed
                 if (IsPublished == false && objHtmlText.WorkflowID != WorkflowID)
@@ -355,7 +385,7 @@ namespace DotNetNuke.Modules.Html
                     // update object
                     UpdateHtmlText(objHtmlText, GetMaximumVersionHistory(objHtmlText.PortalID));
                     // get object again
-                    objHtmlText = (HtmlTextInfo) CBO.FillObject(DataProvider.Instance().GetTopHtmlText(ModuleID, IsPublished), typeof (HtmlTextInfo));
+                    objHtmlText = (HtmlTextInfo) (CBO.FillObject(DataProvider.Instance().GetTopHtmlText(ModuleID, IsPublished), typeof (HtmlTextInfo)));
                 }
             }
             return objHtmlText;
@@ -381,7 +411,7 @@ namespace DotNetNuke.Modules.Html
             // get from module settings
             var moduleController = new ModuleController();
             Hashtable settings = moduleController.GetModuleSettings(ModuleId);
-            if ((settings["WorkflowID"] != null))
+            if (settings["WorkflowID"] != null)
             {
                 workFlowId = Convert.ToInt32(settings["WorkflowID"]);
                 workFlowType = "Module";
@@ -390,7 +420,7 @@ namespace DotNetNuke.Modules.Html
             {
                 // if undefined at module level, get from tab settings
                 settings = new TabController().GetTabSettings(TabId);
-                if ((settings["WorkflowID"] != null))
+                if (settings["WorkflowID"] != null)
                 {
                     workFlowId = Convert.ToInt32(settings["WorkflowID"]);
                     workFlowType = "Page";
@@ -435,7 +465,7 @@ namespace DotNetNuke.Modules.Html
             if (!string.IsNullOrEmpty(strHTML))
             {
                 tLen = strToken.Length + 2;
-                string _UploadDirectory = strUploadDirectory.ToLower();
+                string uploadDirectory = strUploadDirectory.ToLower();
 
                 //find position of first occurrance:
                 P = strHTML.IndexOf(strToken + "=\"", StringComparison.InvariantCultureIgnoreCase);
@@ -460,7 +490,11 @@ namespace DotNetNuke.Modules.Html
                     if (strURL.Contains("://") == false)
                     {
                         // remove the leading portion of the path if the URL contains the upload directory structure
-                        string strDirectory = strUploadDirectory + "/";
+                        string strDirectory = uploadDirectory;
+                        if (!strDirectory.EndsWith("/"))
+                        {
+                            strDirectory += "/";
+                        }
                         if (strURL.IndexOf(strDirectory) != -1)
                         {
                             S = S + strURL.IndexOf(strDirectory) + strDirectory.Length;
@@ -469,7 +503,7 @@ namespace DotNetNuke.Modules.Html
                         // add upload directory
                         if (strURL.StartsWith("/") == false)
                         {
-                            sbBuff.Append(strUploadDirectory);
+                            sbBuff.Append(uploadDirectory);
                         }
                     }
                     //find position of next occurrance
@@ -508,7 +542,7 @@ namespace DotNetNuke.Modules.Html
                 if (htmlContent.WorkflowName != "[REPAIR_WORKFLOW]")
                 {
                     HtmlTextInfo objContent = GetTopHtmlText(htmlContent.ModuleID, false, htmlContent.WorkflowID);
-                    if ((objContent != null))
+                    if (objContent != null)
                     {
                         if (objContent.StateID == _workflowStateController.GetLastWorkflowStateID(htmlContent.WorkflowID))
                         {
@@ -592,7 +626,7 @@ namespace DotNetNuke.Modules.Html
                     if (ReplaceExistingSettings)
                     {
                         //Get All Modules on the current Tab
-                        foreach (KeyValuePair<int, ModuleInfo> kvp in moduleController.GetTabModules(ObjectID))
+                        foreach (var kvp in moduleController.GetTabModules(ObjectID))
                         {
                             ClearModuleSettings(kvp.Value);
                         }
@@ -603,7 +637,7 @@ namespace DotNetNuke.Modules.Html
                     if (ReplaceExistingSettings)
                     {
                         //Get All Tabs aon the Site
-                        foreach (KeyValuePair<int, TabInfo> kvp in tabController.GetTabsByPortal(ObjectID))
+                        foreach (var kvp in tabController.GetTabsByPortal(ObjectID))
                         {
                             tabController.DeleteTabSetting(kvp.Value.TabID, "WorkFlowID");
                         }
@@ -684,38 +718,37 @@ namespace DotNetNuke.Modules.Html
 
         #endregion
 
-        #region "Optional Interfaces"
+        #region Optional Interfaces
 
         #region IPortable Members
 
-        /// -----------------------------------------------------------------------------
+         /// -----------------------------------------------------------------------------
         /// <summary>
         ///   ExportModule implements the IPortable ExportModule Interface
         /// </summary>
         /// <remarks>
         /// </remarks>
-        /// <param name = "ModuleID">The Id of the module to be exported</param>
+        /// <param name = "moduleId">The Id of the module to be exported</param>
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public string ExportModule(int ModuleID)
+        public string ExportModule(int moduleId)
         {
-            string strXML = "";
+            string xml = "";
 
-            var objModules = new ModuleController();
-            ModuleInfo objModule = objModules.GetModule(ModuleID);
-            var objWorkflow = new WorkflowStateController();
-            int WorkflowID = GetWorkflow(ModuleID, objModule.TabID, objModule.PortalID).Value;
+            var moduleController = new ModuleController();
+            ModuleInfo module = moduleController.GetModule(moduleId);
+            int workflowID = GetWorkflow(moduleId, module.TabID, module.PortalID).Value;
 
-            HtmlTextInfo objContent = GetTopHtmlText(ModuleID, true, WorkflowID);
-            if ((objContent != null))
+            HtmlTextInfo content = GetTopHtmlText(moduleId, true, workflowID);
+            if ((content != null))
             {
-                strXML += "<htmltext>";
-                strXML += "<content>" + XmlUtils.XMLEncode(objContent.Content) + "</content>";
-                strXML += "</htmltext>";
+                xml += "<htmltext>";
+                xml += "<content>" + XmlUtils.XMLEncode(TokeniseLinks(content.Content, module.PortalID)) + "</content>";
+                xml += "</htmltext>";
             }
 
-            return strXML;
+            return xml;
         }
 
         /// -----------------------------------------------------------------------------
@@ -733,30 +766,30 @@ namespace DotNetNuke.Modules.Html
         /// -----------------------------------------------------------------------------
         public void ImportModule(int ModuleID, string Content, string Version, int UserId)
         {
-            var objModules = new ModuleController();
-            ModuleInfo objModule = objModules.GetModule(ModuleID);
-            var objWorkflow = new WorkflowStateController();
-            int intWorkflowID = GetWorkflow(ModuleID, objModule.TabID, objModule.PortalID).Value;
-            XmlNode xmlContent = Globals.GetContent(Content, "htmltext");
+            var moduleController = new ModuleController();
+            ModuleInfo module = moduleController.GetModule(ModuleID);
+            var workflowStateController = new WorkflowStateController();
+            int workflowID = GetWorkflow(ModuleID, module.TabID, module.PortalID).Value;
+            XmlNode xml = Globals.GetContent(Content, "htmltext");
 
-            var objContent = new HtmlTextInfo();
-            objContent.ModuleID = ModuleID;
+            var htmlContent = new HtmlTextInfo();
+            htmlContent.ModuleID = ModuleID;
             // convert Version to System.Version
             var objVersion = new Version(Version);
             if (objVersion >= new Version(5, 1, 0))
             {
                 // current module content
-                objContent.Content = xmlContent.SelectSingleNode("content").InnerText;
+                htmlContent.Content = DeTokeniseLinks(xml.SelectSingleNode("content").InnerText, module.PortalID);
             }
             else
             {
                 // legacy module content
-                objContent.Content = xmlContent.SelectSingleNode("desktophtml").InnerText;
+                htmlContent.Content = DeTokeniseLinks(xml.SelectSingleNode("desktophtml").InnerText, module.PortalID);
             }
-            objContent.WorkflowID = intWorkflowID;
-            objContent.StateID = objWorkflow.GetFirstWorkflowStateID(intWorkflowID);
+            htmlContent.WorkflowID = workflowID;
+            htmlContent.StateID = workflowStateController.GetFirstWorkflowStateID(workflowID);
             // import
-            UpdateHtmlText(objContent, GetMaximumVersionHistory(objModule.PortalID));
+            UpdateHtmlText(htmlContent, GetMaximumVersionHistory(module.PortalID));
         }
 
         #endregion
@@ -780,7 +813,7 @@ namespace DotNetNuke.Modules.Html
             var SearchItemCollection = new SearchItemInfoCollection();
             HtmlTextInfo objContent = GetTopHtmlText(ModInfo.ModuleID, true, WorkflowID);
 
-            if ((objContent != null))
+            if (objContent != null)
             {
                 //content is encoded in the Database so Decode before Indexing
                 string strContent = HttpUtility.HtmlDecode(objContent.Content);

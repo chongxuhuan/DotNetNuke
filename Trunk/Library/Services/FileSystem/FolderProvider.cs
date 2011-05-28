@@ -27,7 +27,6 @@ using System.IO;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
-using DotNetNuke.Framework.Providers;
 using DotNetNuke.Common;
 
 namespace DotNetNuke.Services.FileSystem
@@ -112,7 +111,11 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>
         /// Gets a value indicating if the provider ensures the files/folders it manages are secure from outside access.
         /// </summary>
-        public virtual bool SupportsSecureOutsideAccess
+        /// <remarks>
+        /// Some providers (e.g. Standard) store their files/folders in a way that allows for anonymous access that bypasses DotNetNuke.
+        /// These providers cannot guarantee that files are only accessed by authorized users and must return false.
+        /// </remarks>
+        public virtual bool IsStorageSecure
         {
             get
             {

@@ -1,8 +1,0 @@
-<string>Version 5.1.1</strong>
-<br/><br/>
-<ul>
-	<li>added Workflow support and included two default configurations - Direct Publish and Content Staging. Direct Publish maintains the legacy behavior of the module and allows content to be published directly to the site. Content Staging allows the author to save and view content in a staging area prior to publishing.</li>
-	<li>Added ability to create Custom Workflows, each with an unlimited number of States. Each State can have specific Review Permissions assigned to it and can optionally Notify the Reviewers when content reaches the State in the Workflow.</li>
-	<li>Added ability to customize the amount of Version History you wish to retain for content.</li>
-	<li>enhanced processing of relative paths so that links to resources within content are more portable between environments.</li>
-</ul>

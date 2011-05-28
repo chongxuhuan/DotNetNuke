@@ -33,15 +33,11 @@ using System.Xml.XPath;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
-using DotNetNuke.Framework;
-using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Upgrade;
 using DotNetNuke.UI.Modules;
-using DotNetNuke.UI.Skins.Controls;
 
 using ICSharpCode.SharpZipLib.Zip;
 using System.Net;
@@ -412,12 +408,13 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                 DataGrid extensionsGrid = item.Controls[1] as DataGrid;
 
+                Localization.LocalizeDataGrid(ref extensionsGrid, LocalResourceFile); 
                 BindGrid(kvp.Value, extensionsGrid);
             }
         }
 
         
-        protected void btnSnow_Click(object sender, EventArgs e)
+        protected void BtnSnowClick(object sender, EventArgs e)
         {
             if (CheckCanCallSnowcovered())
             {
@@ -431,47 +428,35 @@ namespace DotNetNuke.Modules.Admin.Extensions
             string fileCheck = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
              HttpWebRequest oRequest;
             WebResponse oResponse;
-            XmlTextReader oReader;
-            XPathDocument oXMLDocument;
 
             //temp code for snowcovered feed issue
             StreamReader sReader;
 
+            string sRequest = fileCheck;
+                
             try
             {
-                string sRequest = fileCheck;
-                Stream oStream;
-                try
-                {
-                    oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
-                    oResponse = oRequest.GetResponse();
-                    oStream = oResponse.GetResponseStream();
-                    sReader= new StreamReader(oResponse.GetResponseStream());
-                }
-                catch (Exception oExc)
-                {
-                    throw;
-                }
-                //temp code to workaround snowcovered feed issue
-
-                string returnText = sReader.ReadToEnd();
-              //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
-
-                string orderPass = "<orders>";
-                if (returnText.Contains(orderPass))
-                {
-                    
-                    oReader = new XmlTextReader(returnText);
-
-                    grdSnow.DataSource = oReader;
-                    grdSnow.DataBind();    
-                }
-               
-                
+                oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
+                oResponse = oRequest.GetResponse();
+                sReader= new StreamReader(oResponse.GetResponseStream());
             }
-            catch (Exception oExc)
+            catch (Exception)
             {
-                throw ;
+                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                throw;
+            }
+            //temp code to workaround snowcovered feed issue
+
+            string returnText = sReader.ReadToEnd();
+            //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
+
+            string orderPass = "<orders>";
+            if (returnText.Contains(orderPass))
+            {
+                XmlTextReader oReader = new XmlTextReader(returnText);
+
+                grdSnow.DataSource = oReader;
+                grdSnow.DataBind();    
             }
         }
 
@@ -507,16 +492,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             return true;
         }
 
-        private HttpWebRequest GetExternalRequest(string Address)
+        private HttpWebRequest GetExternalRequest(string address)
         {
             try
             {
                 PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-                //need to enable cookiecontainer http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.cookiecontainer.aspx / http://forums.asp.net/t/1051670.aspx/1
+                
+                CookieContainer cookieJar = new CookieContainer();
 
-                CookieContainer CC = new CookieContainer();
-                var objRequest = (HttpWebRequest)WebRequest.Create(Address);
-                objRequest.CookieContainer = CC;
+                var objRequest = (HttpWebRequest)WebRequest.Create(address);
+                objRequest.CookieContainer = cookieJar;
                 objRequest.Timeout = Host.WebRequestTimeout;
                 objRequest.UserAgent = "DotNetNuke";
                 if (!string.IsNullOrEmpty(Host.ProxyServer))

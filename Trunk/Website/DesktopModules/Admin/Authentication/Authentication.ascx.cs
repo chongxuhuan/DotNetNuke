@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Localization;
@@ -39,96 +38,94 @@ using DotNetNuke.UI.UserControls;
 
 namespace DotNetNuke.Modules.Admin.Authentication
 {
-    /// -----------------------------------------------------------------------------
-    /// Project	 : DotNetNuke
-    /// Class	 : Authentication
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// Manages the Authentication settings
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    ///     [cnurse]        06/29/2007   Created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    public partial class Authentication : PortalModuleBase
-    {
-        private readonly List<AuthenticationSettingsBase> settingControls = new List<AuthenticationSettingsBase>();
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+	/// <summary>
+	/// Manages the Authentication settings
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	///     [cnurse]        06/29/2007   Created
+	/// </history>
+	public partial class Authentication : PortalModuleBase
+	{
 
-            cmdUpdate.Click += cmdUpdate_Click;
+		private readonly List<AuthenticationSettingsBase> _settingControls = new List<AuthenticationSettingsBase>();
 
-            List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
 
-            foreach (AuthenticationInfo authSystem in authSystems)
-            {
+			cmdUpdate.Click += OnUpdateClick;
+
+			var authSystems = AuthenticationController.GetEnabledAuthenticationServices();
+
+			foreach (var authSystem in authSystems)
+			{
 				//Add a Section Header
-                var sectionHeadControl = (SectionHeadControl) LoadControl("~/controls/SectionHeadControl.ascx");
-                sectionHeadControl.IncludeRule = true;
-                sectionHeadControl.CssClass = "Head";
+				var sectionHeadControl = (SectionHeadControl) LoadControl("~/controls/SectionHeadControl.ascx");
+				sectionHeadControl.IncludeRule = true;
+				sectionHeadControl.CssClass = "Head";
 
-                //Create a <div> to hold the control
-                var container = new HtmlGenericControl();
-                container.ID = authSystem.AuthenticationType;
+				//Create a <div> to hold the control
+				var container = new HtmlGenericControl();
+				container.ID = authSystem.AuthenticationType;
 
-                var authSettingsControl = (AuthenticationSettingsBase) LoadControl("~/" + authSystem.SettingsControlSrc);
+				var authSettingsControl = (AuthenticationSettingsBase) LoadControl("~/" + authSystem.SettingsControlSrc);
 
-                //set the control ID to the resource file name ( ie. controlname.ascx = controlname )
-                //this is necessary for the Localization in PageBase
-                authSettingsControl.ID = Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc) + "_" + authSystem.AuthenticationType;
+				//set the control ID to the resource file name ( ie. controlname.ascx = controlname )
+				//this is necessary for the Localization in PageBase
+				authSettingsControl.ID = Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc) + "_" + authSystem.AuthenticationType;
 
-                //Add Settings Control to Container
-                container.Controls.Add(authSettingsControl);
-                settingControls.Add(authSettingsControl);
+				//Add Settings Control to Container
+				container.Controls.Add(authSettingsControl);
+				_settingControls.Add(authSettingsControl);
 
-                //Add Section Head Control to Container
-                pnlSettings.Controls.Add(sectionHeadControl);
+				//Add Section Head Control to Container
+				pnlSettings.Controls.Add(sectionHeadControl);
 
-                //Add Container to Controls
-                pnlSettings.Controls.Add(container);
+				//Add Container to Controls
+				pnlSettings.Controls.Add(container);
 
-                //Attach Settings Control's container to Section Head Control
-                sectionHeadControl.Section = container.ID;
+				//Attach Settings Control's container to Section Head Control
+				sectionHeadControl.Section = container.ID;
 
-                //Get Section Head Text from the setting controls LocalResourceFile
-                authSettingsControl.LocalResourceFile = authSettingsControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
-                                                        Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc);
-                sectionHeadControl.Text = Localization.GetString("Title", authSettingsControl.LocalResourceFile);
-                pnlSettings.Controls.Add(new LiteralControl("<br/>"));
-                cmdUpdate.Visible = IsEditable;
-            }
-        }
+				//Get Section Head Text from the setting controls LocalResourceFile
+				authSettingsControl.LocalResourceFile = authSettingsControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
+														Path.GetFileNameWithoutExtension(authSystem.SettingsControlSrc);
+				sectionHeadControl.Text = Localization.GetString("Title", authSettingsControl.LocalResourceFile);
+				pnlSettings.Controls.Add(new LiteralControl("<br/>"));
+				cmdUpdate.Visible = IsEditable;
+			}
+		}
 
-        protected void cmdUpdate_Click(object sender, EventArgs e)
-        {
-            foreach (AuthenticationSettingsBase settingControl in settingControls)
-            {
-                settingControl.UpdateSettings();
-            }
+		protected void OnUpdateClick(object sender, EventArgs e)
+		{
+			foreach (var settingControl in _settingControls)
+			{
+				settingControl.UpdateSettings();
+			}
 			
-            //Validate Enabled
-            bool enabled = false;
-            List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
-            foreach (AuthenticationInfo authSystem in authSystems)
-            {
-                var authLoginControl = (AuthenticationLoginBase) LoadControl("~/" + authSystem.LoginControlSrc);
+			//Validate Enabled
+			var enabled = false;
+			var authSystems = AuthenticationController.GetEnabledAuthenticationServices();
+			foreach (var authSystem in authSystems)
+			{
+				var authLoginControl = (AuthenticationLoginBase) LoadControl("~/" + authSystem.LoginControlSrc);
 
-                //Check if AuthSystem is Enabled
-                if (authLoginControl.Enabled)
-                {
-                    enabled = true;
-                    break;
-                }
-            }
-            if (!enabled)
-            {
+				//Check if AuthSystem is Enabled
+				if (authLoginControl.Enabled)
+				{
+					enabled = true;
+					break;
+				}
+			}
+			if (!enabled)
+			{
 				//Display warning
-                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoProvidersEnabled", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
-            }
-        }
-    }
+				UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoProvidersEnabled", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
+			}
+		}
+
+	}
 }

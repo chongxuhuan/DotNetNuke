@@ -3,21 +3,24 @@
 		return '<div id="dnnCPWrap"><div id="dnnCPWrapLeft"><div id="dnnCPWrapRight"></div></div></div>'
 	});
 
-	function cpHoverOver() {
-		if ($("#dnnCPWrap").hasClass("Pinned")) return;
-		$(this).find(".dnnCPContent").stop().slideDown('fast').show();
-	}
+$('[id$="CommonTasksPanel"]').detach().appendTo('#dnnCommonTasks .megaborder');
+$('[id$="CurrentPagePanel"]').detach().appendTo('#dnnCurrentPage .megaborder');
+$('[id$="AdminPanel"]').detach().appendTo('#dnnOtherTools .megaborder');
+//	function cpHoverOver() {
+//		if ($("#dnnCPWrap").hasClass("Pinned")) return;
+//		$(this).find(".dnnCPContent").stop().slideDown('fast').show();
+//	}
 
-	function cpHoverOut() {
-		if ($("#dnnCPWrap").hasClass("Pinned")) return;
-		$("#dnnCPWrap").animate({ opacity: 1.0 }, 100, function () {
-			if ($("#dnnCPWrap").find('.dnnCPContent.focused').size() == 0) {
-				$("#dnnCPWrap").find(".dnnCPContent").stop().slideUp('fast', function () {
-					$(".dnnCPContent").hide();
-				});
-			}
-		});
-	}
+//	function cpHoverOut() {
+//		if ($("#dnnCPWrap").hasClass("Pinned")) return;
+//		$("#dnnCPWrap").animate({ opacity: 1.0 }, 100, function () {
+//			if ($("#dnnCPWrap").find('.dnnCPContent.focused').size() == 0) {
+//				$("#dnnCPWrap").find(".dnnCPContent").stop().slideUp('fast', function () {
+//					$(".dnnCPContent").hide();
+//				});
+//			}
+//		});
+//	}
 
 	function fixPadding() {
 		var $wrapper = $('#dnnCPWrap');
@@ -28,65 +31,65 @@
 		}
 	}
 
-	var config = {
-		sensitivity: 2,
-		interval: 100,
-		over: cpHoverOver,
-		timeout: 500,
-		out: cpHoverOut
-	};
+//	var config = {
+//		sensitivity: 2,
+//		interval: 200,
+//		over: cpHoverOver,
+//		timeout: 200,
+//		out: cpHoverOut
+//	};
 
-	$("#dnnCPWrap")
-  	.hoverIntent(config)
-  	.live('mouseenter mouseleave', function (event) {
-  		if (event.type == 'mouseenter') {
-  			$(this).addClass('moused');
-  		} else {
-  			$(this).removeClass('moused');
-  		}
-  	})
-    .parent()
-    .css({ position: 'relative' });
+//	$("#dnnCPWrap")
+//  	.hoverIntent(config)
+//  	.live('mouseenter mouseleave', function (event) {
+//  		if (event.type == 'mouseenter') {
+//  			$(this).addClass('moused');
+//  		} else {
+//  			$(this).removeClass('moused');
+//  		}
+//  	})
+//    .parent()
+//    .css({ position: 'relative' });
 
-	$('.dnnCPContent').live('focus blur', function (event) {
-		if (event.type == 'focusout') {
-			$(this).removeClass('focused');
-			if ($("#dnnCPWrap.moused").size() == 0) cpHoverOut();
+//	$('.dnnCPContent').live('focus blur', function (event) {
+//		if (event.type == 'focusout') {
+//			$(this).removeClass('focused');
+//			if ($("#dnnCPWrap.moused").size() == 0) cpHoverOut();
 
-		} else {
-			$(this).addClass('focused');
-		}
-	});
+//		} else {
+//			$(this).addClass('focused');
+//		}
+//	});
 
-	$('.dnnCPDock').click(function () {
-		togglePinned(!$(this).hasClass("Pinned"));
-	});
+//	$('.dnnCPDock').click(function () {
+//		togglePinned(!$(this).hasClass("Pinned"));
+//	});
 
-	var togglePinned = function (pinned) {
-		var cookie;
-		if (pinned) {
-			$(".dnnCPDock").addClass('Pinned');
-			$('#dnnCPWrap').addClass('Pinned');
-			$(".dnnCPContent").show();
-			cookie = "Pinned";
-		}
-		else {
-			$(".dnnCPDock").removeClass('Pinned');
-			$('#dnnCPWrap').removeClass('Pinned');
-			$(".dnnCPContent").hide();
-			cookie = "";
-		}
+//	var togglePinned = function (pinned) {
+//		var cookie;
+//		if (pinned) {
+//			$(".dnnCPDock").addClass('Pinned');
+//			$('#dnnCPWrap').addClass('Pinned');
+//			$(".dnnCPContent").show();
+//			cookie = "Pinned";
+//		}
+//		else {
+//			$(".dnnCPDock").removeClass('Pinned');
+//			$('#dnnCPWrap').removeClass('Pinned');
+//			$(".dnnCPContent").hide();
+//			cookie = "";
+//		}
 
-		fixPadding();
-		dnn.dom.setCookie("CP_Pinned", cookie, 1, '/', '', false);
-	}
+//		fixPadding();
+//		dnn.dom.setCookie("CP_Pinned", cookie, 1, '/', '', false);
+//	}
 
 	fixPadding();
 
-	var cookie = dnn.dom.getCookie("CP_Pinned");
-	if (cookie == "Pinned") {
-		togglePinned(true);
-	}
+//	var cookie = dnn.dom.getCookie("CP_Pinned");
+//	if (cookie == "Pinned") {
+//		togglePinned(true);
+//	}
 });
 
 //jQuery(document).ready(function() {

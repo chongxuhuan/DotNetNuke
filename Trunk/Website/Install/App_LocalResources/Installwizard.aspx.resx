@@ -600,4 +600,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
   <data name="DbNameError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;You must enter the name of the database.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
+  <data name="Page11.Title" xml:space="preserve">
+    <value>Installation Complete</value>
+  </data>
 </root>

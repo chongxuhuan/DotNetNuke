@@ -46,14 +46,10 @@
     </MasterTableView>
 </dnn:DnnGrid>
 <asp:PlaceHolder ID="footerPlaceHolder" runat="server">
-    <table>
-        <tr>
-            <td><dnn:CommandButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="dnnPrimaryAction" ImageUrl="~/images/moduleunbind.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;</td>
-            <td><dnn:CommandButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="dnnPrimaryAction" ImageUrl="~/images/modulebind.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;</td>
-        </tr>
-        <tr>
-            <td><dnn:CommandButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="dnnPrimaryAction" ImageUrl="~/images/translate.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;</td>
-            <td><dnn:CommandButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="dnnPrimaryAction" ImageUrl="~/images/untranslate.gif" CausesValidation="False" /></td>
-        </tr>
-    </table>  
+<ul class="dnnActions dnnClear">
+	<li><asp:LinkButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+	<li><asp:LinkButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+	<li><asp:LinkButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" />
+	<li><asp:LinkButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+</li>    
 </asp:PlaceHolder>

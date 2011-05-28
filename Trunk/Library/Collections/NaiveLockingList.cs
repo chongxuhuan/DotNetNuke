@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace DotNetNuke.Collections.Internal
 {
     public class NaiveLockingList<T> : IList<T>
     {
-        private readonly List<T> _list = new List<T>();
+        private readonly SharedList<T> _list = new SharedList<T>();
         //TODO is no recursion the correct policy
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-
+        
         void DoInReadLock(Action action)
         {
             DoInReadLock(() =>{ action.Invoke(); return true; });
@@ -18,14 +16,9 @@ namespace DotNetNuke.Collections.Internal
 
         TRet DoInReadLock<TRet>(Func<TRet> func)
         {
-            _lock.EnterReadLock();
-            try
+            using (_list.GetReadLock())
             {
                 return func.Invoke();
-            }
-            finally
-            {
-                _lock.ExitReadLock();
             }
         }
 
@@ -34,16 +27,25 @@ namespace DotNetNuke.Collections.Internal
             DoInWriteLock(() => { action.Invoke(); return true; });
         }
 
-        TRet DoInWriteLock<TRet>(Func<TRet> func)
+        private TRet DoInWriteLock<TRet>(Func<TRet> func)
         {
-            _lock.EnterWriteLock();
-            try
+            using (_list.GetWriteLock())
             {
                 return func.Invoke();
             }
-            finally
+        }
+
+        /// <summary>
+        /// Access to the underlying SharedList
+        /// <remarks>
+        /// Allows locking to be explicitly managed for the sake of effeciency
+        /// </remarks>
+        /// </summary>
+        public SharedList<T> SharedList
+        {
+            get
             {
-                _lock.ExitWriteLock();
+                return _list;
             }
         }
 
@@ -52,8 +54,8 @@ namespace DotNetNuke.Collections.Internal
             //disposal of enumerator will release read lock
             //TODO is there a need for some sort of timed release?  the timmer must release from the correct thread
             //if using RWLS
-            _lock.EnterReadLock();
-            return new NaiveLockingEnumerator(_list.GetEnumerator(), _lock);
+            var readLock = _list.GetReadLock();
+            return new NaiveLockingEnumerator(_list.GetEnumerator(), readLock);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -133,12 +135,12 @@ namespace DotNetNuke.Collections.Internal
         {
             private readonly IEnumerator<T> _enumerator;
             private bool _isDisposed;
-            private readonly ReaderWriterLockSlim _readerWriterLock;
+            private readonly ISharedCollectionLock _readLock;
 
-            public NaiveLockingEnumerator(IEnumerator<T> enumerator, ReaderWriterLockSlim readerWriterLock)
+            public NaiveLockingEnumerator(IEnumerator<T> enumerator, ISharedCollectionLock readLock)
             {
                 _enumerator = enumerator;
-                _readerWriterLock = readerWriterLock;
+                _readLock = readLock;
             }
 
             public bool MoveNext()
@@ -182,7 +184,7 @@ namespace DotNetNuke.Collections.Internal
                     {
                         //dispose managed resrources here
                         _enumerator.Dispose();
-                        _readerWriterLock.ExitReadLock();
+                        _readLock.Dispose();
                     }
 
                     //dispose unmanaged resrources here

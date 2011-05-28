@@ -232,7 +232,7 @@
     <value>{0} is not a valid Portal Template File.</value>
   </data>
   <data name="InvalidName.Text" xml:space="preserve">
-    <value>The Portal Name Must Not Contain Spaces Or Punctuation.</value>
+    <value>The Portal Alias Must Not Contain Spaces Or Punctuation.</value>
   </data>
   <data name="InvalidPassword.Text" xml:space="preserve">
     <value>The Password Values Entered Do Not Match.</value>

@@ -279,6 +279,8 @@
 </div>
 <dnn:audit id="ctlAudit" runat="server" />
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnManageTabs() {
         $('#tabSettingsForm').dnnTabs().dnnPanels();
         $('#dnnAdvancedSettings .dnnFormExpandContent a').dnnExpandAll({
@@ -308,4 +310,5 @@
             setUpDnnManageTabs();
         });
     });
+} (jQuery, window.Sys));
 </script>

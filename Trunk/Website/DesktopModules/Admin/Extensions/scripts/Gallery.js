@@ -529,6 +529,10 @@ Gallery.prototype.getTags = function (callback) {
 
     var max = (this.TagCount ? this.TagCount : 15);
     var url = this.TagCloudUrl + "?tagcount=" + max;
+    url = url + "&extensionType='" + this.extensionFilter + "'";
+    url = url + "&minDnnVersion='0'";
+    //&extensionType='Module'&minDnnVersion='0'
+
     //url=url + "&$filter=Extension/extensionType eq '" + this.extensionFilter + "'";
     url = url + "&$callback=Gallery.gotTags&$format=json";
 

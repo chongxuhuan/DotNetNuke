@@ -238,12 +238,12 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
-        public bool SupportsSecureOutsideAccess
+        public bool IsStorageSecure
         {
             get
             {
                 var folderMapping = FolderMappingController.Instance.GetFolderMapping(FolderMappingID);
-                return FolderProvider.Instance(folderMapping.FolderProviderType).SupportsSecureOutsideAccess;
+                return FolderProvider.Instance(folderMapping.FolderProviderType).IsStorageSecure;
             }   
         }
 

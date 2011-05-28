@@ -1,11 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Extensions.LanguagePackEditor" CodeFile="LanguagePackEditor.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-
 <h2 class="dnnFormSectionHead"><a href="" class="dnnLabelExpanded"><%=LocalizeString("Title")%></a></h2>
 <fieldset>
-    <legend></legend>
-    <asp:Label ID="lblHelp" runat="server" cssClass="Normal" />
+    <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server" /></div>
     <div class="dnnFormItem">
         <dnn:Label ID="plPackageLanguage" runat="server" ControlName="cboLanguage" />
         <asp:DropDownList ID="cboLanguage" runat="server" DataTextField="Text" DataValueField="LanguageID"/>

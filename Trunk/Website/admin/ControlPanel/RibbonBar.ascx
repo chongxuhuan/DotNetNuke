@@ -10,35 +10,22 @@
 <asp:Panel id="ControlPanel" runat="server" CssClass="dnnForm dnnControlPanel dnnClear">
     <div class="dnnCPHeader dnnClear">
         <div class="dnnCPHMode dnnLeft">
-            <dnn:MENU ID="adminMenus" MenuStyle="admin/Menus/DNNAdmin" IncludeNodes="Admin, Host" IncludeHidden="True" runat="server" />
+            <dnn:MENU ID="adminMenus" MenuStyle="admin/Menus/DNNAdmin" IncludeHidden="True" runat="server" OnInit="DetermineNodesToInclude" />
             <asp:HyperLink ID="hypMessage" runat="server" Target="_new" CssClass="dnnCPHMessage dnnLeft" />
         </div>
         <div class="dnnCPHNav dnnRight">
-            <dnn:DnnLabel id="lblMode" runat="server" Text="Mode" />
-            <asp:radiobuttonlist id="optMode" cssclass="SubHead" runat="server" repeatdirection="Horizontal" repeatlayout="Flow" autopostback="True">
+            <asp:Label id="lblMode" runat="server" ResourceKey="Mode" />
+            <asp:DropDownList ID="ddlMode" runat="server" AutoPostBack="true">
                 <asp:listitem value="VIEW" ResourceKey="ModeView" />
                 <asp:listitem value="EDIT" ResourceKey="ModeEdit" />
                 <asp:listitem value="LAYOUT" ResourceKey="ModeLayout" />
-            </asp:radiobuttonlist>
-            <span id="cmdDock" class="dnnCPDock" runat="server"></span>
+            </asp:DropDownList>
             <asp:LinkButton ID="cmdVisibility" Runat="server" CausesValidation="False"><asp:Image ID="imgVisibility" Runat="server" /></asp:LinkButton>
         </div>
     </div>
     <asp:Panel ID="BodyPanel" runat="server" CssClass="dnnCPContent">
-        <ul class="dnnCPCNav dnnClear">
-            <li><a href="#<%= CommonTasksPanel.ClientID %>"><asp:Literal runat="server" ID="CommonTasksTabLiteral" /></a></li>
-            <li><a href="#<%= CurrentPagePanel.ClientID %>"><asp:Literal runat="server" ID="CurrentPageTabLiteral" /></a></li>
-            <li runat="server" id="AdminTabListItem"><a href="#<%= AdminPanel.ClientID %>"><asp:Literal runat="server" ID="AdminTabLiteral" /></a></li>
-        </ul>
         <asp:Panel ID="CommonTasksPanel" runat="server" CssClass="cpcbCommonTasks dnnClear">
-            <div class="cbctAddPage dnnLeft">
-                <div class="cbctActions dnnClear">
-                    <h4><dnn:DnnLiteral id="CommonTabActions" runat="server" Text="CommonTabActions" /></h4>
-                    <dnn:DnnRibbonBarTool id="PageSettings" runat="server" ToolName="PageSettings" ToolCssClass="cpEditPage" />
-                    <dnn:DnnRibbonBarTool id="NewPage" runat="server" ToolName="NewPage" ToolCssClass="cpAddNewPage" />
-                </div>
-                <dnn:AddPage id="AddPage" runat="server" />
-            </div>
+
             <div class="cbctAddModule dnnLeft"><dnn:AddModule id="AddMod" runat="server" /></div>
         </asp:Panel>
         <asp:Panel ID="CurrentPagePanel" runat="server" CssClass="cpcbCurrentPage dnnClear">
@@ -49,6 +36,7 @@
                 </div>
                 <div class="cbcpPageActions dnnClear">
                     <h4><dnn:DnnLiteral id="CurrentTabActions" runat="server" Text="CurrentTabActions" /></h4>
+                    <dnn:DnnRibbonBarTool id="NewPage" runat="server" ToolName="NewPage" ToolCssClass="cpAddNewPage" />
                     <dnn:DnnRibbonBarTool id="CopyPage" runat="server" ToolName="CopyPage" ToolCssClass="cpCopyPage" />
                     <dnn:DnnRibbonBarTool id="DeletePage" runat="server" ToolName="DeletePage" ToolCssClass="cpDeletePage" />
                     <dnn:DnnRibbonBarTool id="ImportPage" runat="server" ToolName="ImportPage" ToolCssClass="cpImportPage" />
@@ -64,6 +52,10 @@
                     <dnn:DnnRibbonBarTool id="Help" runat="server" ToolName="Help" ToolCssClass="cpPageHelp" />
                 </div>
             </div>
+            <div class="cbctAddPage dnnLeft">
+                <h4><dnn:DnnLiteral id="CurrentTabAddPage" runat="server" Text="CurrentTabAddPage" /></h4>
+                <dnn:AddPage id="AddPage" runat="server" />
+            </div>
             <div class="cbcpPageEdit dnnLeft">
                 <h4><dnn:DnnLiteral id="CurrentTabEditPage" runat="server" Text="CurrentTabEditPage" /></h4>
                 <dnn:UpdatePage id="EditPage" runat="server" />
@@ -74,7 +66,6 @@
 				<h4><dnn:DnnLiteral id="SiteTabManage" runat="server" Text="SiteTabManage" /></h4>
                 <dnn:DnnRibbonBarTool id="NewUser" runat="server" ToolName="NewUser" ToolCssClass="cpNewUser" />
                 <dnn:DnnRibbonBarTool id="NewRole" runat="server" ToolName="NewRole" ToolCssClass="cpNewRole" />
-                <dnn:DnnRibbonBarTool id="SiteNewPage" runat="server" ToolName="NewPage" ToolCssClass="cpSiteNewPage" />
                 <dnn:DnnRibbonBarTool id="UploadFile" runat="server" ToolName="UploadFile" ToolCssClass="cpUploadFile" />
             </div>
             <asp:Panel runat="server" ID="AdvancedToolsPanel" CssClass="cbhTools dnnClear">
@@ -91,29 +82,29 @@
         </asp:Panel>
     </asp:Panel>
 </asp:Panel>
-<dnn:DnnWindowManager ID="DnnWindowManager1" runat="server" />
+
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#<%= BodyPanel.ClientID %>').dnnTabs();
+    $(function () {
+//        $('#<%= BodyPanel.ClientID %>').dnnTabs();
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
         var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
         var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
 
         // Client IDs for the following three have _CPCommandBtn appended as a rule
         $('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= this.GetButtonConfirmMessage("DeletePage") %>',
+            text: '<%= GetButtonConfirmMessage("DeletePage") %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
         $('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= this.GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
+            text: '<%= GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
         $('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= this.GetButtonConfirmMessage("CopyDesignToChildren") %>',
+            text: '<%= GetButtonConfirmMessage("CopyDesignToChildren") %>',
             yesText: yesText,
             noText: noText,
             title: titleText

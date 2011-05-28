@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System;
 using System.Collections;
 
 using DotNetNuke.Common.Utilities;
@@ -32,6 +33,7 @@ using DotNetNuke.Data;
 
 namespace DotNetNuke.Services.Vendors
 {
+    [Obsolete("Obsoleted in 6.0.0, the Vendor Classifications feature was never fully implemented and will be removed from the API")]
     public class ClassificationController
     {
         public ArrayList GetVendorClassifications(int VendorId)

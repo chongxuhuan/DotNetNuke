@@ -1221,7 +1221,7 @@
   <data name="PACKAGE_NoLicense.Text" xml:space="preserve">
     <value>The license for this package is not currently included within the installation file, please check with the vendor for full license details.</value>
   </data>
-  <data name="PACKAGE_NoReleaseNotes" xml:space="preserve">
+  <data name="PACKAGE_NoReleaseNotes.Text" xml:space="preserve">
     <value>This package has no Release Notes</value>
   </data>
   <data name="FOLDER_Deleted.Text" xml:space="preserve">
@@ -1439,5 +1439,11 @@
   </data>
   <data name="MODULE_InvalidVersion.Text" xml:space="preserve">
     <value>Version {0} is invalid - not adding to UpgradeVersions list.</value>
+  </data>
+  <data name="EVENTMESSAGE_CommandMissing.Text" xml:space="preserve">
+    <value>Processor command is missing from the manifest</value>
+  </data>
+  <data name="EVENTMESSAGE_TypeMissing.Text" xml:space="preserve">
+    <value>Processor type is missing from the manifest</value>
   </data>
 </root>

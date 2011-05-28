@@ -3,6 +3,8 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDashboardTabs() {
         $('#dnnDashBoard').dnnTabs();
     }
@@ -13,6 +15,7 @@
             setUpDashboardTabs();
         });
     });
+} (jQuery, window.Sys));
 </script>
 <div class="dnnForm dnnDashBoard dnnClear" id="dnnDashBoard">
     <asp:Repeater ID="rptTabs" runat="server">

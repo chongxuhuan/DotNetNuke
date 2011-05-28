@@ -1,7 +1,8 @@
-	.dnnLogViewer, .dnnEditLogTypes{width:900px;margin:2em auto;}
+	.dnnLogViewer, .dnnEditLogTypes{width:100%;margin:2em auto;}
 	.dnnlvOptions, .dnnlvLegend{width:49%;}
 		.dnnlvOptions{border-right:1px #ccc solid}
 		.dnnForm .dnnlvOptions .dnnFormItem label{width:36%;}
+		.dnnLogViewer .dnnFormItem input[type="text"], .dnnLogViewer .dnnFormItem textarea{width:35%;}
 		.dnnlvFilter{}
 			.dnnlvFilter fieldset a{display:block;width:65px;text-align:right;padding-right:25px;font-weight:bold;float:left;}
 			.dnnlvFilter fieldset .dnnLeft{width:320px;margin-left:25px;}
@@ -27,7 +28,6 @@
 	.dnnLogViewer .AdminAlert{color:#fff;background-color:#148aff;}
 	.dnnLogViewer .HostAlert{color:#fff;background-color:#ff8a14;}
 	.dnnLogViewer .SecurityException{color:#fff;background-color:#000;}
-	
 	.dnnLogHeader{font-weight: bold;font-size:110%;padding:3px 20px;}
 	    .dnnLogHeader div, .dnnLogItemHeader input, .dnnLogItemHeader div, .dnnLogItemHeader p{float:left;}
 	.dnnLogItemHeader{border-bottom:1px #fff solid;line-height:2;height:2em;cursor:pointer;width:100%;clear:both;overflow:hidden;color:#fff;}

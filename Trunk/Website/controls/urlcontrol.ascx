@@ -2,7 +2,7 @@
 <div class="urlControl">
     <asp:Panel ID="TypeRow" runat="server" CssClass="urlControlLinkType dnnClear">
         <asp:Label ID="lblURLType" runat="server" EnableViewState="False" resourcekey="Type" CssClass="dnnFormLabel" />
-        <asp:RadioButtonList ID="optType" AutoPostBack="True" RepeatLayout="Flow" runat="server" CssClass="ucLinkTypeRadioButtons" />
+        <asp:RadioButtonList ID="optType" AutoPostBack="True" runat="server" RepeatDirection="Vertical" CssClass="ucLinkTypeRadioButtons" />
     </asp:Panel>
     <asp:Panel ID="URLRow" runat="server" CssClass="urlControlFile dnnClear">
         <asp:Label ID="lblURL" runat="server" EnableViewState="False" resourcekey="URL" />

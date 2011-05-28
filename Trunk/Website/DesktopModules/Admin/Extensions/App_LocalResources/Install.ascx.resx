@@ -252,4 +252,7 @@
   <data name="AcceptLicense.Help" xml:space="preserve">
     <value>Check this box to accept the terms of the license.</value>
   </data>
+  <data name="ControlTitle_install.Text" xml:space="preserve">
+    <value>Install Extension</value>
+  </data>
 </root>

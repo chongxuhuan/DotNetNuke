@@ -21,6 +21,8 @@
     </ul>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpViewMessage() {
         $('#<%= deleteMessage.ClientID %>').dnnConfirm({
             text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
@@ -36,4 +38,5 @@
             setUpViewMessage();
         });
     });
+} (jQuery, window.Sys));
 </script>

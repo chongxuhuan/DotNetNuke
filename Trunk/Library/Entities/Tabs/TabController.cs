@@ -218,17 +218,20 @@ namespace DotNetNuke.Entities.Tabs
             var siblingTabs = GetSiblingTabs(tab);
 
             //Get the Parent Tab
-            var parentTab = GetTab(tab.ParentId, tab.PortalID, false);
-            if (parentTab == null)
-            {
-                tab.Level = 0;
-            }
-            else
-            {
-                tab.Level = parentTab.Level + 1;
-            }
+			if (!Null.IsNull(tab.ParentId))
+			{
+				var parentTab = GetTab(tab.ParentId, tab.PortalID, false);
+				if (parentTab == null)
+				{
+					tab.Level = 0;
+				}
+				else
+				{
+					tab.Level = parentTab.Level + 1;
+				}
+			}
 
-            //Update the TabOrder for the Siblings
+        	//Update the TabOrder for the Siblings
             UpdateTabOrder(siblingTabs, tab.CultureCode, tab.PortalID, 2);
 
             //UpdateOrder for the new tab

@@ -36,10 +36,8 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.FileManager
 {
-
     public partial class FolderMappings : PortalModuleBase
     {
-
         #region Private Variables
 
         private readonly IFolderMappingController _folderMappingController = FolderMappingController.Instance;
@@ -137,12 +135,22 @@ namespace DotNetNuke.Modules.Admin.FileManager
         protected void grdMappings_ItemDataBound(object sender, GridItemEventArgs e)
         {
             if (e.Item.ItemType != GridItemType.Item && e.Item.ItemType != GridItemType.AlternatingItem) return;
-            
+
             var folderMapping = (e.Item.DataItem as FolderMappingInfo);
-            if (folderMapping == null || !folderMapping.IsEditable) return;
+            if (folderMapping == null || !folderMapping.IsEditable)
+            {
+                var dragDropColumn = e.Item.FindControl("DragDropColumnRowDragHandle");
+                if (dragDropColumn != null) dragDropColumn.Visible = false;
+                return;
+            }
+
+            var cmdEditMapping = (e.Item.FindControl("cmdEditMapping") as CommandButton);
+            if (cmdEditMapping != null) cmdEditMapping.ToolTip = Localization.GetString("cmdEdit");
             
             var cmdDeleteMapping = (e.Item.FindControl("cmdDeleteMapping") as CommandButton);
             if (cmdDeleteMapping == null) return;
+
+            cmdDeleteMapping.ToolTip = Localization.GetString("cmdDelete");
             
             var deleteMessage = string.Format(Localization.GetString("DeleteConfirm", LocalResourceFile), folderMapping.MappingName);
             cmdDeleteMapping.OnClientClick = "return confirm(\"" + ClientAPI.GetSafeJSString(deleteMessage) + "\");";

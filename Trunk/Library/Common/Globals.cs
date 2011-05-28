@@ -3532,23 +3532,27 @@ namespace DotNetNuke.Common
         {
             string strTabPath = "";
             var objTabs = new TabController();
-            TabInfo objTab;
-            string strTabName;
-            objTab = objTabs.GetTab(ParentId, Null.NullInteger, false);
-            while (objTab != null)
-            {
-                strTabName = HtmlUtils.StripNonWord(objTab.TabName, false);
-                strTabPath = "//" + strTabName + strTabPath;
-                if (Null.IsNull(objTab.ParentId))
-                {
-                    objTab = null;
-                }
-                else
-                {
-                    objTab = objTabs.GetTab(objTab.ParentId, objTab.PortalID, false);
-                }
-            }
-            strTabPath = strTabPath + "//" + HtmlUtils.StripNonWord(TabName, false);
+
+			if (!Null.IsNull(ParentId))
+			{
+				string strTabName;
+				var objTab = objTabs.GetTab(ParentId, Null.NullInteger, false);
+				while (objTab != null)
+				{
+					strTabName = HtmlUtils.StripNonWord(objTab.TabName, false);
+					strTabPath = "//" + strTabName + strTabPath;
+					if (Null.IsNull(objTab.ParentId))
+					{
+						objTab = null;
+					}
+					else
+					{
+						objTab = objTabs.GetTab(objTab.ParentId, objTab.PortalID, false);
+					}
+				}
+			}
+
+        	strTabPath = strTabPath + "//" + HtmlUtils.StripNonWord(TabName, false);
             return strTabPath;
         }
 

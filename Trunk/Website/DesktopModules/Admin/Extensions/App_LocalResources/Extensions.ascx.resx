@@ -351,36 +351,37 @@
   <data name="TagLabel.Text" xml:space="preserve">
     <value>Tag:</value>
   </data>
-    <data name="VendorLabel.Text" xml:space="preserve">
+  <data name="VendorLabel.Text" xml:space="preserve">
     <value>Vendor:</value>
-    </data>
-    <data name="ExtensionsLabel.Text" xml:space="preserve">
+  </data>
+  <data name="ExtensionsLabel.Text" xml:space="preserve">
     <value>Extensions</value>
-    </data>
-    <data name="NoneLabel.Text" xml:space="preserve">
+  </data>
+  <data name="NoneLabel.Text" xml:space="preserve">
     <value>None</value>
-    </data>
-    <data name="ErrorLabel.Text" xml:space="preserve">
+  </data>
+  <data name="ErrorLabel.Text" xml:space="preserve">
     <value>Error...</value>
-    </data>
-    <data name="LoadingLabel.Text" xml:space="preserve">
+  </data>
+  <data name="LoadingLabel.Text" xml:space="preserve">
     <value>Loading</value>
-    </data>
-    <data name="OrderLabel.Text" xml:space="preserve">
+  </data>
+  <data name="OrderLabel.Text" xml:space="preserve">
     <value>Order:</value>
-    </data>
-
-    <data name="AppgGalleryDisplayName.Text" xml:space="preserve">
+  </data>
+  <data name="AppgGalleryDisplayName.Text" xml:space="preserve">
     <value>DotNetNuke App Gallery (SnowCovered)</value>
-    </data>
-    <data name="AppgGalleryUrl.Text" xml:space="preserve">
+  </data>
+  <data name="AppgGalleryUrl.Text" xml:space="preserve">
     <value>http://www.snowcovered.com/</value>
-    </data>
-    <data name="ForgeDisplayName.Text" xml:space="preserve">
+  </data>
+  <data name="ForgeDisplayName.Text" xml:space="preserve">
     <value>The Forge</value>
-    </data>
-    <data name="ForgeUrl.Text" xml:space="preserve">
+  </data>
+  <data name="ForgeUrl.Text" xml:space="preserve">
     <value>http://forge.dotnetnuke.com</value>
-    </data>
-  
-  </root>
+  </data>
+  <data name="InUse.Header" xml:space="preserve">
+    <value>In Use</value>
+  </data>
+</root>

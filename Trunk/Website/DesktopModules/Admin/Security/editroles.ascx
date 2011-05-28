@@ -40,9 +40,7 @@
     <div class="erAdvancedSettings" id="erAdvancedSettings">
         <div class="erasContent dnnClear">
             <fieldset>
-                <div class="dnnFormItem">
-                    <asp:Label ID="lblProcessorWarning" visible="false" runat="server" resourcekey="ProcessorWarning" EnableViewState="False" />
-                </div>
+                <div class="dnnFormItem dnnClear"><asp:Label ID="lblProcessorWarning" visible="false" runat="server" resourcekey="ProcessorWarning" EnableViewState="False" CssClass="dnnFormMessage dnnFormWarning" /></div>
                 <div class="dnnFormItem" id="divServiceFee" runat="server">
                     <dnn:Label ID="plServiceFee" runat="server" ResourceKey="ServiceFee" Suffix=":" ControlName="txtServiceFee" />
                     <asp:TextBox ID="txtServiceFee" runat="server" MaxLength="50" Columns="30" />
@@ -58,13 +56,13 @@
                 </div>
                 <div class="dnnFormItem" id="divTrialFee" runat="server">
                     <dnn:Label ID="plTrialFee" runat="server" ResourceKey="TrialFee" Suffix=":" ControlName="txtTrialFee" />
-                    <asp:TextBox ID="txtTrialFee" runat="server" MaxLength="50" Columns="30" Width="100" />
+                    <asp:TextBox ID="txtTrialFee" runat="server" MaxLength="50" Columns="30" />
                     <asp:CompareValidator ID="valTrialFee1" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialFee1" ControlToValidate="txtTrialFee" Display="Dynamic" Type="Currency" Operator="DataTypeCheck" />
                     <asp:CompareValidator ID="valTrialFee2" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialFee2" ControlToValidate="txtTrialFee" Display="Dynamic" Operator="GreaterThanEqual" ValueToCompare="0" />
                 </div>
                 <div class="dnnFormItem" id="divTrialPeriod" runat="server">
                     <dnn:Label ID="plTrialPeriod" runat="server" ResourceKey="TrialPeriod" Suffix=":" ControlName="txtTrialPeriod" />
-                    <asp:TextBox ID="txtTrialPeriod" runat="server" MaxLength="50" Columns="30" Width="100" />
+                    <asp:TextBox ID="txtTrialPeriod" runat="server" MaxLength="50" Columns="30" />
                     <asp:DropDownList ID="cboTrialFrequency" runat="server" Width="100px" DataValueField="value" DataTextField="text" AutoPostBack="true" />
                     <asp:CompareValidator ID="valTrialPeriod1" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialPeriod1" ControlToValidate="txtTrialPeriod" Display="Dynamic" Type="Integer" Operator="DataTypeCheck" />
                     <asp:CompareValidator ID="valTrialPeriod2" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valTrialPeriod2" ControlToValidate="txtTrialPeriod" Display="Dynamic" Operator="GreaterThan" ValueToCompare="0" />
@@ -79,7 +77,7 @@
                 </div>
                  <div class="dnnFormItem">
                     <dnn:Label ID="plIcon" Text="Icon:" runat="server" ControlName="ctlIcon" />
-                    <dnn:Url ID="ctlIcon" runat="server" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False" />
+                    <div class="dnnLeft"><dnn:Url ID="ctlIcon" runat="server" ShowUrls="False" ShowTabs="False" ShowLog="False" ShowTrack="False" Required="False" /></div>
                 </div>
             </fieldset>
         </div>
@@ -93,6 +91,8 @@
 </div>
 
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnEditRoles() {
         $('#dnnEditRole').dnnTabs();
         var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
@@ -111,4 +111,5 @@
             setUpDnnEditRoles();
         });
     });
+}(jQuery, window.Sys));
 </script>

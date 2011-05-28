@@ -21,11 +21,9 @@
 
 #endregion
 
-#region Usings
 
 using System.Collections;
 
-#endregion
 
 namespace DotNetNuke.Security.Permissions
 {
@@ -43,7 +41,7 @@ namespace DotNetNuke.Security.Permissions
     /// -----------------------------------------------------------------------------
     internal class CompareWorkflowStatePermissions : IComparer
     {
-        #region "IComparer Interface"
+        #region IComparer Interface
 
         public int Compare(object x, object y)
         {

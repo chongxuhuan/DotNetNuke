@@ -177,4 +177,10 @@
   <data name="DefaultVisibility.Header" xml:space="preserve">
     <value>Default Visibility</value>
   </data>
+  <data name="Delete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Edit.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
 </root>

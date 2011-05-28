@@ -209,17 +209,16 @@ namespace DotNetNuke.UI.Skins.Controls
             bool islocalized = false;
 
             TabInfo localizedTab = new TabController().GetTabByCulture(tabId, objPortal.PortalId, newLocale);
-            if (localizedTab != null)
-            {
-                islocalized = true;
-                tabId = localizedTab.TabID;
-                return
-                    objSecurity.InputFilter(
-                        Globals.NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString["ctl"], newLanguage, getQSParams(newLocale.ToString(), islocalized)),
-                        PortalSecurity.FilterFlag.NoScripting);
-            }
+			if (localizedTab != null)
+			{
+				islocalized = true;
+				tabId = localizedTab.TabID;
+			}
 
-            return null;
+        	return
+                objSecurity.InputFilter(
+                    Globals.NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString["ctl"], newLanguage, getQSParams(newLocale.ToString(), islocalized)),
+                    PortalSecurity.FilterFlag.NoScripting);
         }
     }
 }

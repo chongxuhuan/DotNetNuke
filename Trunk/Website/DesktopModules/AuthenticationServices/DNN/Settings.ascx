@@ -4,7 +4,6 @@
     editcontrolwidth="200px" 
     labelwidth="250px" 
     width="450px" 
-    editcontrolstyle-cssclass="NormalTextBox" 
     helpstyle-cssclass="Help" 
     labelstyle-cssclass="SubHead" 
     editmode="Edit"

@@ -1984,16 +1984,19 @@ namespace DotNetNuke.Data
                                       bool.Parse(Authorized));
         }
 
+        [Obsolete("Obsoleted in 6.0.0, the Vendor Classifications feature was never fully implemented and will be removed from the API")]
         public override IDataReader GetVendorClassifications(int VendorId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetVendorClassifications", GetNull(VendorId));
         }
 
+        [Obsolete("Obsoleted in 6.0.0, the Vendor Classifications feature was never fully implemented and will be removed from the API")]
         public override void DeleteVendorClassifications(int VendorId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteVendorClassifications", VendorId);
         }
 
+        [Obsolete("Obsoleted in 6.0.0, the Vendor Classifications feature was never fully implemented and will be removed from the API")]
         public override int AddVendorClassification(int VendorId, int ClassificationId)
         {
             return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "AddVendorClassification", VendorId, ClassificationId));

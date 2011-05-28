@@ -225,7 +225,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 //Add module to all portals
                 DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID);
 
-                var objModuleDefinitions = new ModuleDefinitionController();
+				//Save module definition
                 moduleDefinition = new ModuleDefinitionInfo();
 
                 moduleDefinition.ModuleDefID = Null.NullInteger;
@@ -233,9 +233,9 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 moduleDefinition.FriendlyName = friendlyName;
                 moduleDefinition.DefaultCacheTime = 0;
 
-                moduleDefinition.ModuleDefID = objModuleDefinitions.AddModuleDefinition(moduleDefinition);
+				moduleDefinition.ModuleDefID = ModuleDefinitionController.SaveModuleDefinition(moduleDefinition, false, true);
 
-                var objModuleControls = new ModuleControlController();
+				//Save module control
                 var objModuleControl = new ModuleControlInfo();
 
                 objModuleControl.ModuleControlID = Null.NullInteger;

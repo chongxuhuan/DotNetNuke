@@ -1964,37 +1964,6 @@ BEGIN
 END
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFile]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFile]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFile]
-	@FileName nvarchar(246),
-	@FolderID int
-AS
-BEGIN
-	SELECT FileId,
-		   folders.PortalId,
-		   [FileName],
-		   Extension,
-		   Size,
-		   Width,
-		   Height,
-		   ContentType,
-		   files.FolderID,
-		   'Folder' = FolderPath,
-		   StorageLocation,
-		   IsCached,
-		   files.UniqueId,
-		   files.VersionGuid,	   
-		   files.SHA1Hash,
-		   FolderMappingID
-	FROM {databaseOwner}[{objectQualifier}Files] AS files
-	INNER JOIN {databaseOwner}[{objectQualifier}Folders] AS folders ON files.FolderID = folders.FolderID
-	WHERE [FileName] = @FileName AND files.FolderID = @FolderID
-END
-GO
-
 /* DNNPRO-16023 - Partial match is not supported by Vendors module as to Email search */
 /**************************************************************************************/
 

@@ -306,7 +306,6 @@ namespace DotNetNuke.Modules.Admin.Sitemap
                         var editor = editMan.GetColumnEditor(editableCol);
 
                         //var editorType = (editor).ToString();
-                        var editorText = "unknown";
                         object editorValue = null;
 
                         if ((editor is GridTextColumnEditor))

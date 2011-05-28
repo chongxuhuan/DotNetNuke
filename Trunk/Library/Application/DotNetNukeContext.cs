@@ -25,6 +25,7 @@
 
 using System.Collections.Generic;
 
+using DotNetNuke.Collections.Internal;
 using DotNetNuke.UI.Containers.EventListeners;
 using DotNetNuke.UI.Skins.EventListeners;
 
@@ -37,10 +38,10 @@ namespace DotNetNuke.Application
     /// </summary>
     public class DotNetNukeContext
     {
-        private static DotNetNukeContext _Current;
-        private readonly Application _Application;
-        private readonly List<ContainerEventListener> _ContainerEventListeners;
-        private readonly List<SkinEventListener> _SkinEventListeners;
+        private static DotNetNukeContext _current;
+        private readonly Application _application;
+        private readonly IList<ContainerEventListener> _containerEventListeners;
+        private readonly IList<SkinEventListener> _skinEventListeners;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DotNetNukeContext" /> class.
@@ -55,9 +56,9 @@ namespace DotNetNuke.Application
         /// <param name="application">The application.</param>
         protected DotNetNukeContext(Application application)
         {
-            _Application = application;
-            _ContainerEventListeners = new List<ContainerEventListener>();
-            _SkinEventListeners = new List<SkinEventListener>();
+            _application = application;
+            _containerEventListeners = new NaiveLockingList<ContainerEventListener>();
+            _skinEventListeners = new NaiveLockingList<SkinEventListener>();
         }
 
 		/// <summary>
@@ -67,7 +68,7 @@ namespace DotNetNuke.Application
         {
             get
             {
-                return _Application;
+                return _application;
             }
         }
 
@@ -79,11 +80,11 @@ namespace DotNetNuke.Application
 		/// <seealso cref="DotNetNuke.UI.Containers.Container.OnLoad"/>
 		/// <seealso cref="DotNetNuke.UI.Containers.Container.OnPreRender"/>
 		/// <seealso cref="DotNetNuke.UI.Containers.Container.OnUnload"/>
-        public List<ContainerEventListener> ContainerEventListeners
+        public IList<ContainerEventListener> ContainerEventListeners
         {
             get
             {
-                return _ContainerEventListeners;
+                return _containerEventListeners;
             }
         }
 
@@ -95,11 +96,11 @@ namespace DotNetNuke.Application
 		/// <seealso cref="DotNetNuke.UI.Skins.Skin.OnLoad"/>
 		/// <seealso cref="DotNetNuke.UI.Skins.Skin.OnPreRender"/>
 		/// <seealso cref="DotNetNuke.UI.Skins.Skin.OnUnload"/>
-        public List<SkinEventListener> SkinEventListeners
+        public IList<SkinEventListener> SkinEventListeners
         {
             get
             {
-                return _SkinEventListeners;
+                return _skinEventListeners;
             }
         }
 
@@ -110,15 +111,15 @@ namespace DotNetNuke.Application
         {
             get
             {
-                if (_Current == null)
+                if (_current == null)
                 {
-                    _Current = new DotNetNukeContext();
+                    _current = new DotNetNukeContext();
                 }
-                return _Current;
+                return _current;
             }
             set
             {
-                _Current = value;
+                _current = value;
             }
         }
     }

@@ -8,8 +8,8 @@
 			<asp:ListItem Value="email" resourcekey="Email.Header" />
 		</asp:DropDownList>
 		<asp:LinkButton ID="btnSearch" Runat="server" resourcekey="Search" />
-        <div class="vPageSize">
-            <asp:Label ID="Label5" Runat="server" resourcekey="RecordsPage" CssClass="SubHead" />
+        <div class="vPageSize dnnRight">
+            <asp:Label ID="Label5" Runat="server" resourcekey="RecordsPage" />
 			<asp:DropDownList id="ddlRecordsPerPage" Runat="server" AutoPostBack="True">
 				<asp:ListItem Value="10">10</asp:ListItem>
 				<asp:ListItem Value="25">25</asp:ListItem>
@@ -23,11 +23,11 @@
 	    <asp:Repeater id="rptLetterSearch" Runat="server">
 		    <ItemTemplate>
 			    <asp:HyperLink runat="server" CssClass="CommandButton" NavigateUrl='<%# FilterURL(Container.DataItem.ToString(),"1") %>' Text='<%# Container.DataItem %>' ID="Hyperlink2" NAME="Hyperlink2">
-			    </asp:HyperLink>&nbsp;&nbsp;
+			    </asp:HyperLink>
 		    </ItemTemplate>
 	    </asp:Repeater>
     </div>
-    <asp:datagrid id="grdVendors" CellPadding="4" width="100%" AutoGenerateColumns="False" EnableViewState="False" runat="server" BorderStyle="None" BorderWidth="0px" GridLines="None" >
+    <asp:datagrid id="grdVendors" CellPadding="0" width="100%" AutoGenerateColumns="False" EnableViewState="False" runat="server" BorderStyle="None" BorderWidth="0px" GridLines="None" CssClass="dnnGrid">
         <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
 	    <itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 	    <alternatingitemstyle cssclass="dnnGridAltItem" />

@@ -58,7 +58,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
 
         public abstract IDataReader GetLogTypeConfigInfoByID(int id);
 
-        public abstract void UpdateLogTypeConfigInfo(string id, bool loggingIsActive, string logTypeKey, string logTypePortalID, int keepMostRecent, string logFileName, bool emailNotificationIsActive,
+        public abstract void UpdateLogTypeConfigInfo(string id, bool loggingIsActive, string logTypeKey, string logTypePortalID, int keepMostRecent, bool emailNotificationIsActive,
                                                      int threshold, int notificationThresholdTime, int notificationThresholdTimeType, string mailFromAddress, string mailToAddress);
 
         public abstract void AddLogType(string logTypeKey, string logTypeFriendlyName, string logTypeDescription, string logTypeCSSClass, string logTypeOwner);

@@ -50,11 +50,11 @@ namespace DotNetNuke.UI.Containers
     public partial class Title : SkinObjectBase
     {
         private const string MyFileName = "Title.ascx";
-		#region "Public Members"
+        #region "Public Members"
         public string CssClass { get; set; }
 
-		#endregion
-		
+        #endregion
+
         private bool CanEditModule()
         {
             var canEdit = false;
@@ -72,57 +72,35 @@ namespace DotNetNuke.UI.Containers
             titleLabel.UpdateLabel += UpdateTitle;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Assign the CssClass and Text Attributes for the Title label.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[sun1]	2/1/2004	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnLoad(EventArgs e)
+
+        protected override void OnPreRender(EventArgs e)
         {
-            base.OnLoad(e);
+            base.OnPreRender(e);
 
-            try
+            //public attributes
+            if (!String.IsNullOrEmpty(CssClass))
             {
-				//public attributes
-                if (!String.IsNullOrEmpty(CssClass))
-                {
-                    titleLabel.CssClass = CssClass;
-                }
-                string moduleTitle = Null.NullString;
-                if (ModuleControl != null)
-                {
-                    moduleTitle = Localization.LocalizeControlTitle(ModuleControl);
-                }
-                if (moduleTitle == Null.NullString)
-                {
-                    moduleTitle = "&nbsp;";
-                }
-                titleLabel.Text = moduleTitle;
-                titleLabel.EditEnabled = false;
-                titleToolbar.Visible = false;
-
-                if (CanEditModule() && PortalSettings.InlineEditorEnabled)
-                {
-                    titleLabel.EditEnabled = true;
-                    titleToolbar.Visible = true;
-
-                    foreach (DNNToolBarButton barButton in titleToolbar.Buttons)
-                    {
-                        barButton.ToolTip = Localization.GetString("cmd" + barButton.ToolTip, Localization.GetResourceFile(this, MyFileName));
-                    }
-                }
+                titleLabel.CssClass = CssClass;
             }
-            catch (Exception ex) //Module failed to load
+            string moduleTitle = Null.NullString;
+            if (ModuleControl != null)
             {
-                Exceptions.ProcessModuleLoadException(this, ex);
+                moduleTitle = Localization.LocalizeControlTitle(ModuleControl);
             }
+            if (moduleTitle == Null.NullString)
+            {
+                moduleTitle = "&nbsp;";
+            }
+            titleLabel.Text = moduleTitle;
+            titleLabel.EditEnabled = false;
+            titleToolbar.Visible = false;
+
+            if (CanEditModule() && PortalSettings.InlineEditorEnabled)
+            {
+                titleLabel.EditEnabled = true;
+                titleToolbar.Visible = true;
+            }
+
         }
 
         private void UpdateTitle(object source, DNNLabelEditEventArgs e)

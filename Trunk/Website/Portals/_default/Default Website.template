@@ -533,8 +533,6 @@
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>true</visible>
       <keywords />
@@ -628,7 +626,11 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;Social-Links&amp;quot;&amp;gt;&amp;lt;a href=&amp;quot;/&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoIN&amp;quot; alt=&amp;quot;in?&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;/&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoTwitter&amp;quot; alt=&amp;quot;Twitter&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;/&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoFacebook&amp;quot; alt=&amp;quot;Facebook&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;Social-Links&amp;quot;&amp;gt;
+&amp;lt;a href=&amp;quot;http://www.facebook.com/dotnetnuke&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoFacebook&amp;quot; title=&amp;quot;Like us on Facebook&amp;quot; alt=&amp;quot;Like us on Facebook&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;
+&amp;lt;a href=&amp;quot;http://www.linkedin.com/groups?gid=35599&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoIN&amp;quot; title=&amp;quot;Join our Network on LinkedIn&amp;quot; alt=&amp;quot;Join our Network on LinkedIn&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;
+&amp;lt;a href=&amp;quot;http://www.twitter.com/DNNCorp&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img class=&amp;quot;icoTwitter&amp;quot; title=&amp;quot;Follow DNN Corporate on Twitter&amp;quot; alt=&amp;quot;Follow DNN Corporate on Twitter&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>WorkflowID</settingname>
@@ -687,8 +689,8 @@
               <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;p&amp;gt;In order to get started, you should login to your site and review the default settings under the Host&amp;amp;gt;Host Settings menu and the Admin&amp;amp;gt;Site Settings menu.&amp;amp;nbsp; DotNetNuke is highly configurable and these pages are the first step in customizing your site. &amp;lt;/p&amp;gt;
 &amp;lt;p&amp;gt;If your site was installed using the &amp;quot;Auto&amp;quot; option in the installation wizard, a couple of default user accounts were created which will allow you to access the various site management features offered by the application. In this case, please take note of the following user account information:&amp;lt;/p&amp;gt;
 &amp;lt;ul id=&amp;quot;Passwords&amp;quot;&amp;gt;
-    &amp;lt;li class=&amp;quot;Administrator&amp;quot;&amp;gt;&amp;lt;span class=&amp;quot;SubHead&amp;quot;&amp;gt;Administrator Login*&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Username: &amp;lt;/strong&amp;gt;admin&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Password: &amp;lt;/strong&amp;gt;dnnadmin&amp;lt;/span&amp;gt; &amp;lt;/li&amp;gt;
-    &amp;lt;li class=&amp;quot;Host&amp;quot;&amp;gt;&amp;lt;span class=&amp;quot;SubHead&amp;quot;&amp;gt;Host Login**&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Username: &amp;lt;/strong&amp;gt;host&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Password: &amp;lt;/strong&amp;gt;ArrowDesigns1&amp;lt;/span&amp;gt; &amp;lt;/li&amp;gt;
+    &amp;lt;li class=&amp;quot;Administrator rounded&amp;quot;&amp;gt;&amp;lt;span class=&amp;quot;SubHead&amp;quot;&amp;gt;Administrator Login*&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Username: &amp;lt;/strong&amp;gt;admin&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Password: &amp;lt;/strong&amp;gt;dnnadmin&amp;lt;/span&amp;gt; &amp;lt;/li&amp;gt;
+    &amp;lt;li class=&amp;quot;Host rounded&amp;quot;&amp;gt;&amp;lt;span class=&amp;quot;SubHead&amp;quot;&amp;gt;Host Login**&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Username: &amp;lt;/strong&amp;gt;host&amp;lt;/span&amp;gt;&amp;lt;span class=&amp;quot;Password&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;Password: &amp;lt;/strong&amp;gt;dnnhost&amp;lt;/span&amp;gt; &amp;lt;/li&amp;gt;
 &amp;lt;/ul&amp;gt;
 &amp;lt;p class=&amp;quot;Disclaimer&amp;quot;&amp;gt;* The Administrator account is a privileged user account which allows you to manage various aspects of your site. Once you login as the Administrator, an Admin menu option will be visible in the site navigation. Please note that the first time you login to the site using this account, you will be prompted to enter a new password for security purposes.&amp;lt;/p&amp;gt;
 &amp;lt;p class=&amp;quot;Disclaimer&amp;quot;&amp;gt;** The Host account is a highly privileged user account which allows you to manage various aspects of your hosting environment. Once you login as the Host, a Host menu option will be visible in the site navigation. Please note that the first time you login to the site using this account, you will be prompted to enter a new password for security purposes.&amp;lt;/p&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
@@ -748,20 +750,20 @@
                 </permission>
               </modulepermissions>
               <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;ul id=&amp;quot;RightLinks&amp;quot;&amp;gt;
-    &amp;lt;li class=&amp;quot;icoCommunity&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Community Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;
-    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Community&amp;lt;/span&amp;gt;Engage with other members of the DotNetNuke community&amp;lt;/p&amp;gt;
+    &amp;lt;li&amp;gt;&amp;lt;img alt=&amp;quot;Manuals Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; class=&amp;quot;dnnsprite Manuals&amp;quot; /&amp;gt;
+    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Get Manuals&amp;lt;/span&amp;gt;Download the DotNetNuke User and SuperUser Manuals&amp;lt;/p&amp;gt;
     &amp;lt;/li&amp;gt;
-    &amp;lt;li class=&amp;quot;icoManuals&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Manuals Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;
-    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Manuals&amp;lt;/span&amp;gt;Download the DotNetNuke User and SuperUser Manuals&amp;lt;/p&amp;gt;
+    &amp;lt;li&amp;gt;&amp;lt;img alt=&amp;quot;Training Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; class=&amp;quot;dnnsprite Training&amp;quot; /&amp;gt;
+    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Get Training&amp;lt;/span&amp;gt;View training videos or register for upcoming sessions&amp;lt;/p&amp;gt;
     &amp;lt;/li&amp;gt;
-    &amp;lt;li class=&amp;quot;icoTraining&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Training Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;
-    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Training&amp;lt;/span&amp;gt;View training videos or register for upcoming sessions&amp;lt;/p&amp;gt;
+    &amp;lt;li&amp;gt;&amp;lt;img alt=&amp;quot;Marketplace Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; class=&amp;quot;dnnsprite Marketplace&amp;quot; /&amp;gt;
+    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Find Apps&amp;lt;/span&amp;gt;Select from nearly 10,000 commercial and open source apps&amp;lt;/p&amp;gt;
     &amp;lt;/li&amp;gt;
-    &amp;lt;li class=&amp;quot;icoConferences&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Conferences Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;
-    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Conferences&amp;lt;/span&amp;gt;Look for DotNetNuke conferences and user groups in your area&amp;lt;/p&amp;gt;
+    &amp;lt;li&amp;gt;&amp;lt;img alt=&amp;quot;Community Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; class=&amp;quot;dnnsprite Community&amp;quot; /&amp;gt;
+    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Engage with Community&amp;lt;/span&amp;gt;Engage with other members of the DotNetNuke community&amp;lt;/p&amp;gt;
     &amp;lt;/li&amp;gt;
-    &amp;lt;li class=&amp;quot;icoMarketplace&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Marketplace Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;
-    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Marketplace&amp;lt;/span&amp;gt;Select from nearly 10,000 apps at Snowcovered.com&amp;lt;/p&amp;gt;
+    &amp;lt;li&amp;gt;&amp;lt;img alt=&amp;quot;Conferences Icon&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; class=&amp;quot;dnnsprite Conferences&amp;quot; /&amp;gt;
+    &amp;lt;p&amp;gt;&amp;lt;span&amp;gt;Attend Conferences&amp;lt;/span&amp;gt;Look for DotNetNuke conferences and events in your area&amp;lt;/p&amp;gt;
     &amp;lt;/li&amp;gt;
 &amp;lt;/ul&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
@@ -819,7 +821,7 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div id=&amp;quot;Sponsors&amp;quot;&amp;gt;&amp;lt;a href=&amp;quot;http://www.asp.net/&amp;quot; class=&amp;quot;Logo1&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;ASP.net&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.maximumasp.com/&amp;quot; class=&amp;quot;Logo2&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;MaximumASP - Smart Hosting, Smart Choices&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.telerik.com/products/aspnet-ajax/dnn.aspx?gad=CNLulugEEggsAuePN1AU7BiF1bL_AyDWyfsU&amp;quot; class=&amp;quot;Logo3&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Telerik - Deliver more than expected&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.exacttarget.com/&amp;quot; class=&amp;quot;Logo4&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Exact Target&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://msdn.microsoft.com/en-us/windowslive/default.aspx&amp;quot; class=&amp;quot;Logo5&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Windows Live - Click here for developer resources&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.red-gate.com/&amp;quot; class=&amp;quot;Logo6&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Redgate&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.appliedi.net/windows-hosting/application/DotNetNuke/&amp;quot; class=&amp;quot;Logo7&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Applied Innovations - Hosting with freedom to grow&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.arrowdesigns.com/&amp;quot; class=&amp;quot;Logo8&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Arrow Consulting &amp;amp;amp; Design&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div id=&amp;quot;Sponsors&amp;quot;&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=24&amp;amp;amp;VendorId=21&amp;quot; class=&amp;quot;aspnet&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;ASP.net&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=35&amp;amp;amp;VendorId=49&amp;quot; class=&amp;quot;maxasp&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;MaximumASP - Smart Hosting, Smart Choices&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=73&amp;amp;amp;VendorId=63&amp;quot; class=&amp;quot;telerik&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Telerik - Deliver more than expected&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=78&amp;amp;amp;VendorId=66&amp;quot; class=&amp;quot;exacttarget&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Exact Target&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/Admin/Vendors/BannerClickThrough.aspx?BannerId=629&amp;amp;amp;VendorId=21&amp;quot; class=&amp;quot;winlive&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Windows Live - Click here for developer resources&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=29&amp;amp;amp;VendorId=42&amp;quot; class=&amp;quot;redgate&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Redgate&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;https://www.dotnetnuke.com/DesktopModules/Admin/Banners/BannerClickThrough.aspx?BannerId=1386&amp;amp;amp;VendorId=143&amp;quot; class=&amp;quot;appliedi&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Applied Innovations - Hosting with freedom to grow&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;a href=&amp;quot;http://www.arrowdesigns.com/&amp;quot; class=&amp;quot;arrowdesign&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;&amp;lt;img alt=&amp;quot;Arrow Consulting &amp;amp;amp; Design&amp;quot; src=&amp;quot;Images/DNN/Spacer.gif&amp;quot; /&amp;gt;&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>WorkflowID</settingname>
@@ -950,10 +952,10 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;
-&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide02.jpg&amp;quot; /&amp;gt;
-&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide03.jpg&amp;quot; /&amp;gt;
-&amp;lt;img alt=&amp;quot;Rotator Slide&amp;quot; src=&amp;quot;/dnn600ce_873/Portals/0/Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;Explore DotNetNuke&amp;quot; src=&amp;quot;Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;
+&amp;lt;img alt=&amp;quot;Enterprise Solutions&amp;quot; src=&amp;quot;Images/DNN/Slide02.jpg&amp;quot; /&amp;gt;
+&amp;lt;img alt=&amp;quot;DotNetNuke Community&amp;quot; src=&amp;quot;Images/DNN/Slide03.jpg&amp;quot; /&amp;gt;
+&amp;lt;img alt=&amp;quot;DotNetNuke Marketplace&amp;quot; src=&amp;quot;Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>WorkflowID</settingname>
@@ -982,8 +984,6 @@
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>true</visible>
       <keywords />
@@ -1135,7 +1135,10 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;&amp;quot; src=&amp;quot;http://design2010.dotnetnuke.com/Portals/salarobusiness/images/homepage_banner.gif&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;contentHeader&amp;quot;&amp;gt;
+&amp;lt;img alt=&amp;quot;&amp;quot; class=&amp;quot;homeImage&amp;quot; src=&amp;quot;Images/Home.png&amp;quot; /&amp;gt;
+&amp;lt;div class=&amp;quot;message&amp;quot;&amp;gt;Welcome to Puppies Co.&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>WorkflowID</settingname>
@@ -1273,8 +1276,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>true</visible>
       <keywords />
@@ -1308,15 +1309,73 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         </permission>
       </tabpermissions>
       <tabsettings />
-      <panes />
+      <panes>
+        <pane>
+          <name>ContentPane</name>
+          <modules>
+            <module>
+              <moduleID>396</moduleID>
+              <title>Text/HTML</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>1200</cachetime>
+              <cachemethod>FileModuleCachingProvider</cachemethod>
+              <alignment />
+              <color />
+              <border />
+              <iconfile />
+              <visibility>Maximized</visibility>
+              <containersrc>[G]Containers/DarkKnight/Invisible.ascx</containersrc>
+              <displaytitle>true</displaytitle>
+              <displayprint>false</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions>
+                <permission>
+                  <permissioncode>SYSTEM_MODULE_DEFINITION</permissioncode>
+                  <permissionkey>EDIT</permissionkey>
+                  <allowaccess>true</allowaccess>
+                  <rolename>Administrators</rolename>
+                </permission>
+              </modulepermissions>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;contentHeader&amp;quot;&amp;gt;
+&amp;lt;img alt=&amp;quot;&amp;quot; class=&amp;quot;serviceImage&amp;quot; src=&amp;quot;Images/Services.png&amp;quot; /&amp;gt;
+&amp;lt;div class=&amp;quot;message&amp;quot;&amp;gt;Pamper Your Pet&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <modulesettings>
+                <modulesetting>
+                  <settingname>WorkflowID</settingname>
+                  <settingvalue>1</settingvalue>
+                </modulesetting>
+                <modulesetting>
+                  <settingname>HtmlText_ReplaceTokens</settingname>
+                  <settingvalue>False</settingvalue>
+                </modulesetting>
+              </modulesettings>
+              <tabmodulesettings>
+                <tabmodulesetting>
+                  <settingname>hideadminborder</settingname>
+                  <settingvalue>False</settingvalue>
+                </tabmodulesetting>
+              </tabmodulesettings>
+              <definition>DNN_HTML</definition>
+              <moduledefinition>Text/HTML</moduledefinition>
+            </module>
+          </modules>
+        </pane>
+      </panes>
     </tab>
     <tab>
       <containersrc />
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>true</visible>
       <keywords />
@@ -1350,15 +1409,52 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         </permission>
       </tabpermissions>
       <tabsettings />
-      <panes />
+      <panes>
+        <pane>
+          <name>ContentPane</name>
+          <modules>
+            <module>
+              <moduleID>397</moduleID>
+              <title>Text/HTML</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>1200</cachetime>
+              <cachemethod>FileModuleCachingProvider</cachemethod>
+              <alignment />
+              <color />
+              <border />
+              <iconfile />
+              <visibility>Maximized</visibility>
+              <containersrc>[G]Containers/DarkKnight/Invisible.ascx</containersrc>
+              <displaytitle>true</displaytitle>
+              <displayprint>false</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions />
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;contentHeader&amp;quot;&amp;gt;
+&amp;lt;img alt=&amp;quot;&amp;quot; class=&amp;quot;aboutImage&amp;quot; src=&amp;quot;Images/About.png&amp;quot; /&amp;gt;
+&amp;lt;div class=&amp;quot;message&amp;quot;&amp;gt;About Us&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>DNN_HTML</definition>
+              <moduledefinition>Text/HTML</moduledefinition>
+            </module>
+          </modules>
+        </pane>
+      </panes>
     </tab>
     <tab>
       <containersrc />
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>true</visible>
       <keywords />
@@ -1417,15 +1513,52 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
           <settingvalue></settingvalue>
         </tabsetting>
       </tabsettings>
-      <panes />
+      <panes>
+        <pane>
+          <name>ContentPane</name>
+          <modules>
+            <module>
+              <moduleID>398</moduleID>
+              <title>Text/HTML</title>
+              <alltabs>false</alltabs>
+              <inheritviewpermissions>true</inheritviewpermissions>
+              <header />
+              <footer />
+              <startdate>0001-01-01T00:00:00</startdate>
+              <enddate>0001-01-01T00:00:00</enddate>
+              <cachetime>1200</cachetime>
+              <cachemethod>FileModuleCachingProvider</cachemethod>
+              <alignment />
+              <color />
+              <border />
+              <iconfile />
+              <visibility>Maximized</visibility>
+              <containersrc>[G]Containers/DarkKnight/Invisible.ascx</containersrc>
+              <displaytitle>true</displaytitle>
+              <displayprint>false</displayprint>
+              <displaysyndicate>false</displaysyndicate>
+              <iswebslice>false</iswebslice>
+              <websliceexpirydate>0001-01-01T00:00:00</websliceexpirydate>
+              <webslicettl>0</webslicettl>
+              <modulepermissions />
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;div class=&amp;quot;contentHeader&amp;quot;&amp;gt;
+&amp;lt;img alt=&amp;quot;&amp;quot; class=&amp;quot;contactImage&amp;quot; src=&amp;quot;Images/contact.png&amp;quot; /&amp;gt;
+&amp;lt;div class=&amp;quot;message&amp;quot;&amp;gt;Contact Us&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <modulesettings />
+              <tabmodulesettings />
+              <definition>DNN_HTML</definition>
+              <moduledefinition>Text/HTML</moduledefinition>
+            </module>
+          </modules>
+        </pane>
+      </panes>
     </tab>
     <tab>
       <containersrc />
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>false</visible>
       <keywords />
@@ -1556,8 +1689,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>false</visible>
       <keywords />
@@ -1695,8 +1826,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       <description />
       <disabled>false</disabled>
       <enddate>0001-01-01T00:00:00</enddate>
-      <iconfile />
-      <iconfilelarge />
       <issecure>false</issecure>
       <visible>false</visible>
       <keywords />
@@ -3313,14 +3442,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       </folderpermissions>
       <files>
         <file>
-          <contenttype>image/gif</contenttype>
-          <extension>gif</extension>
-          <filename>icon_extensions_16px.gif</filename>
-          <height>16</height>
-          <size>972</size>
-          <width>16</width>
-        </file>
-        <file>
           <contenttype>image/png</contenttype>
           <extension>png</extension>
           <filename>Logo.png</filename>
@@ -3345,13 +3466,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3363,13 +3484,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3382,13 +3503,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3400,13 +3521,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3419,13 +3540,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3437,13 +3558,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3456,13 +3577,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3474,17 +3595,74 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
-      <files />
+      <files>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>About.png</filename>
+          <height>150</height>
+          <size>36790</size>
+          <width>102</width>
+        </file>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>AsideIcons.png</filename>
+          <height>60</height>
+          <size>17256</size>
+          <width>310</width>
+        </file>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>Contact.png</filename>
+          <height>150</height>
+          <size>29762</size>
+          <width>99</width>
+        </file>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>ContentHeaderBG.png</filename>
+          <height>120</height>
+          <size>33514</size>
+          <width>960</width>
+        </file>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>Home.png</filename>
+          <height>150</height>
+          <size>49332</size>
+          <width>181</width>
+        </file>
+        <file>
+          <contenttype>image/jpeg</contenttype>
+          <extension>jpg</extension>
+          <filename>Logos.jpg</filename>
+          <height>116</height>
+          <size>47728</size>
+          <width>472</width>
+        </file>
+        <file>
+          <contenttype>image/png</contenttype>
+          <extension>png</extension>
+          <filename>Services.png</filename>
+          <height>150</height>
+          <size>37167</size>
+          <width>119</width>
+        </file>
+      </files>
     </folder>
     <folder>
       <folderpath>Images/DNN/</folderpath>
@@ -3539,24 +3717,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
       <folderpermissions>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>WRITE</permissionkey>
           <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
@@ -3565,6 +3725,24 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
           <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>BROWSE</permissionkey>
+          <rolename>All Users</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>READ</permissionkey>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3586,13 +3764,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3604,13 +3782,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3623,13 +3801,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3641,13 +3819,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3660,13 +3838,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
+          <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
@@ -3678,13 +3856,13 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename>All Users</rolename>
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>
@@ -3697,24 +3875,6 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>BROWSE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename>Administrators</rolename>
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>READ</permissionkey>
           <rolename>All Users</rolename>
           <allowaccess>true</allowaccess>
         </permission>
@@ -3726,20 +3886,20 @@ Nullam vulputate, libero sit amet faucibus cursus, elit erat faucibus purus, eu 
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
+          <permissionkey>WRITE</permissionkey>
+          <rolename>Administrators</rolename>
+          <allowaccess>true</allowaccess>
+        </permission>
+        <permission>
+          <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>READ</permissionkey>
-          <rolename />
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
         <permission>
           <permissioncode>SYSTEM_FOLDER</permissioncode>
           <permissionkey>BROWSE</permissionkey>
-          <rolename />
-          <allowaccess>true</allowaccess>
-        </permission>
-        <permission>
-          <permissioncode>SYSTEM_FOLDER</permissioncode>
-          <permissionkey>WRITE</permissionkey>
-          <rolename />
+          <rolename>Administrators</rolename>
           <allowaccess>true</allowaccess>
         </permission>
       </folderpermissions>

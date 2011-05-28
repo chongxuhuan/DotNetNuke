@@ -40,8 +40,8 @@
             maxHeight: 1080,
             resizable: true,
             closeOnEscape: true,
-            close: function (event, ui) { windowTop.location.reload(); }
-        }).width(950 - 10).height(550 - 10);
+            close: function (event, ui) { windowTop.location.reload(); $(this).close(); }
+        }).width(950 - 11).height(550 - 10);
 
         if (showReturn.toString() == "true") {
             return false;

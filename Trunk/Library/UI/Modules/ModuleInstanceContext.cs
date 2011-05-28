@@ -360,7 +360,7 @@ namespace DotNetNuke.UI.Modules
             helpAction.CommandName = ModuleActionType.ModuleHelp;
             helpAction.CommandArgument = "";
             helpAction.Icon = "action_help.gif";
-            helpAction.Url = Globals.NavigateURL(TabId, "Help", "ctlid=" + Configuration.ModuleControlId, "moduleid=" + ModuleId);
+            helpAction.Url = EditNavUrl(TabId, "Help", false, "ctlid=" + Configuration.ModuleControlId, "moduleid=" + ModuleId);
             helpAction.Secure = SecurityAccessLevel.Edit;
             helpAction.Visible = true;
             helpAction.NewWindow = false;
@@ -393,12 +393,11 @@ namespace DotNetNuke.UI.Modules
             action.CommandName = ModuleActionType.PrintModule;
             action.CommandArgument = "";
             action.Icon = "action_print.gif";
-            action.Url = Globals.NavigateURL(TabId,
-                                             "",
-                                             "mid=" + ModuleId,
-                                             "SkinSrc=" + Globals.QueryStringEncode("[G]" + SkinController.RootSkin + "/" + Globals.glbHostSkinFolder + "/" + "No Skin"),
-                                             "ContainerSrc=" + Globals.QueryStringEncode("[G]" + SkinController.RootContainer + "/" + Globals.glbHostSkinFolder + "/" + "No Container"),
-                                             "dnnprintmode=true");
+            action.Url = EditNavUrl(TabId, "", false,
+                                    "mid=" + ModuleId,
+                                    "SkinSrc=" + Globals.QueryStringEncode("[G]" + SkinController.RootSkin + "/" + Globals.glbHostSkinFolder + "/" + "No Skin"),
+                                    "ContainerSrc=" + Globals.QueryStringEncode("[G]" + SkinController.RootContainer + "/" + Globals.glbHostSkinFolder + "/" + "No Container"),
+                                    "dnnprintmode=true");
             action.Secure = SecurityAccessLevel.Anonymous;
             action.UseActionEvent = true;
             action.Visible = true;
@@ -413,7 +412,7 @@ namespace DotNetNuke.UI.Modules
             action.CommandName = ModuleActionType.SyndicateModule;
             action.CommandArgument = "";
             action.Icon = "action_rss.gif";
-            action.Url = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "", "moduleid=" + ModuleId).Replace(Globals.glbDefaultPage, "RSS.aspx");
+            action.Url = EditNavUrl(PortalSettings.ActiveTab.TabID, "", false, "moduleid=" + ModuleId).Replace(Globals.glbDefaultPage, "RSS.aspx");
             action.Secure = SecurityAccessLevel.Anonymous;
             action.UseActionEvent = true;
             action.Visible = true;
@@ -607,7 +606,8 @@ namespace DotNetNuke.UI.Modules
                                      "",
                                      "",
                                      "action_export.gif",
-                                     Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "ExportModule", "moduleid=" + ModuleId),
+                                     EditNavUrl(PortalSettings.ActiveTab.TabID, "ExportModule", false,"moduleid=" + ModuleId),
+
                                      "",
                                      false,
                                      SecurityAccessLevel.View,
@@ -621,7 +621,7 @@ namespace DotNetNuke.UI.Modules
                                      "",
                                      "",
                                      "action_import.gif",
-                                     Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "ImportModule", "moduleid=" + ModuleId),
+                                     EditNavUrl(PortalSettings.ActiveTab.TabID, "ImportModule", false, "moduleid=" + ModuleId),
                                      "",
                                      false,
                                      SecurityAccessLevel.View,
@@ -655,7 +655,7 @@ namespace DotNetNuke.UI.Modules
                              ModuleActionType.ViewSource,
                              "",
                              "action_source.gif",
-                             Globals.NavigateURL(TabId, "ViewSource", "ctlid=" + Configuration.ModuleControlId),
+                             EditNavUrl(TabId, "ViewSource", false, "ctlid=" + Configuration.ModuleControlId),
                              false,
                              SecurityAccessLevel.Host,
                              true,
@@ -671,7 +671,7 @@ namespace DotNetNuke.UI.Modules
                                  ModuleActionType.ModuleSettings,
                                  "",
                                  "action_settings.gif",
-                                 Globals.NavigateURL(TabId, "Module", "ModuleId=" + ModuleId),
+                                 EditNavUrl(TabId, "Module", false, "ModuleId=" + ModuleId),
                                  false,
                                  SecurityAccessLevel.Edit,
                                  true,

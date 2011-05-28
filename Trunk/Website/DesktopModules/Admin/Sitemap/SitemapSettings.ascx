@@ -5,6 +5,8 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUp() {
         $('#dnnSiteMap').dnnPanels();
     }
@@ -15,6 +17,7 @@
             setUp();
         });
     });
+} (jQuery, window.Sys));
 </script>
 <div class="dnnForm dnnSiteMap dnnClear" id="dnnSiteMap">
     <fieldset>

@@ -26,10 +26,12 @@
 using System;
 using System.Collections;
 using System.Data.Common;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -68,7 +70,7 @@ namespace DotNetNuke.Services.Install
     /// -----------------------------------------------------------------------------
     public partial class InstallWizard : PageBase, IClientAPICallbackEventHandler
     {
-		#region "Private Members"
+        #region "Private Members"
 
         private readonly DataProvider _dataProvider = DataProvider.Instance();
         protected new string LocalResourceFile = "~/Install/App_LocalResources/InstallWizard.aspx.resx";
@@ -77,10 +79,10 @@ namespace DotNetNuke.Services.Install
         private const string LocalesFile = "/Install/App_LocalResources/Locales.xml";
         private string _connectionString = Null.NullString;
 
-		#endregion
+        #endregion
 
-		#region "Protected Members"
-		
+        #region "Protected Members"
+
         protected Version ApplicationVersion
         {
             get
@@ -168,8 +170,8 @@ namespace DotNetNuke.Services.Install
                 ViewState["Versions"] = value;
             }
         }
-		
-		#endregion
+
+        #endregion
 
         #region IClientAPICallbackEventHandler Members
 
@@ -180,7 +182,7 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-		#region "Private Methods"
+        #region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -422,9 +424,9 @@ namespace DotNetNuke.Services.Install
             lstPermissions.Items.Clear();
             var permissionItem = new ListItem();
             var verifier = new FileSystemPermissionVerifier(Server.MapPath("~"));
-            
-			//FolderCreate
-			if (test)
+
+            //FolderCreate
+            if (test)
             {
                 permissionItem.Selected = verifier.VerifyFolderCreate();
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
@@ -599,8 +601,8 @@ namespace DotNetNuke.Services.Install
             if (button != null)
             {
                 button.OnClientClick = "return !checkDisabled(this);";
-                button.CssClass = enabled 
-                                    ? ((button.CommandName == "MoveNext") ? "dnnPrimaryAction" : "dnnSecondaryAction") 
+                button.CssClass = enabled
+                                    ? ((button.CommandName == "MoveNext") ? "dnnPrimaryAction" : "dnnSecondaryAction")
                                     : "dnnPrimaryAction dnnDisabledAction";
             }
         }
@@ -629,8 +631,8 @@ namespace DotNetNuke.Services.Install
                     {
                         var objLocale = new Locale
                                             {
-                                                Text = nav.GetAttribute("name", ""), 
-                                                Code = nav.GetAttribute("key", ""), 
+                                                Text = nav.GetAttribute("name", ""),
+                                                Code = nav.GetAttribute("key", ""),
                                                 Fallback = nav.GetAttribute("fallback", "")
                                             };
 
@@ -642,8 +644,8 @@ namespace DotNetNuke.Services.Install
             {
                 var objLocale = new Locale
                                     {
-                                        Text = "English", 
-                                        Code = "en-US", 
+                                        Text = "English",
+                                        Code = "en-US",
                                         Fallback = ""
                                     };
                 supportedLocales.Add(objLocale);
@@ -676,7 +678,7 @@ namespace DotNetNuke.Services.Install
 
                 if (arrScripts.Count > 0)
                 {
-					//First Script is next script
+                    //First Script is next script
                     strScriptVersion = Path.GetFileNameWithoutExtension(Convert.ToString(arrScripts[0]));
                 }
                 if (!string.IsNullOrEmpty(strScriptVersion))
@@ -722,21 +724,21 @@ namespace DotNetNuke.Services.Install
         {
             if (TestDataBaseInstalled())
             {
-				//running current version, so redirect to site home page
+                //running current version, so redirect to site home page
                 Response.Redirect("~/Default.aspx", true);
             }
             else
             {
                 if (DatabaseVersion > new Version(0, 0, 0))
                 {
-					//Upgrade
+                    //Upgrade
                     languagePanel.Visible = false;
                     lblStep0Title.Text = string.Format(LocalizeString("UpgradeTitle"), ApplicationVersion.ToString(3));
                     lblStep0Detail.Text = string.Format(LocalizeString("Upgrade"), Upgrade.Upgrade.GetStringVersion(DatabaseVersion));
                 }
                 else
                 {
-					//Install
+                    //Install
                     UpdateMachineKey();
                 }
             }
@@ -774,17 +776,17 @@ namespace DotNetNuke.Services.Install
             string strProviderPath = _dataProvider.GetProviderPath();
             if (!strProviderPath.StartsWith("ERROR:"))
             {
-				//Install Base Version
+                //Install Base Version
                 strErrorMessage = Upgrade.Upgrade.InstallDatabase(BaseVersion, strProviderPath, InstallTemplate, false);
             }
             else
             {
-				//provider error
+                //provider error
                 strErrorMessage = strProviderPath;
             }
             if (string.IsNullOrEmpty(strErrorMessage))
             {
-				//Get Next Version
+                //Get Next Version
                 strErrorMessage = GetNextScriptVersion(strProviderPath, BaseVersion);
             }
             else if (!strErrorMessage.StartsWith("ERROR:"))
@@ -822,7 +824,7 @@ namespace DotNetNuke.Services.Install
             {
                 try
                 {
-					//Initialise Host Settings
+                    //Initialise Host Settings
                     Upgrade.Upgrade.InitialiseHostSettings(InstallTemplate, false);
 
                     //Create Host User
@@ -845,7 +847,7 @@ namespace DotNetNuke.Services.Install
                         HostController.Instance.Update("SMTPPassword", txtSMTPPassword.Text, true);
                         HostController.Instance.Update("SMTPEnableSSL", chkSMTPEnableSSL.Checked ? "Y" : "N");
                     }
-					
+
                     //Clear Host Cache
                     DataCache.ClearHostCache(false);
 
@@ -926,7 +928,7 @@ namespace DotNetNuke.Services.Install
             }
             finally
             {
-				//restore Script timeout
+                //restore Script timeout
                 Server.ScriptTimeout = scriptTimeOut;
             }
             if (!success)
@@ -989,6 +991,10 @@ namespace DotNetNuke.Services.Install
 
                     Config.Touch();
                     Response.Redirect("~/Default.aspx", true);
+                }
+                catch (ThreadAbortException)
+                {
+                    //do nothing - we swallow this exception - becuase of redirect
                 }
                 catch (Exception ex)
                 {
@@ -1054,19 +1060,19 @@ namespace DotNetNuke.Services.Install
             string strProviderPath = _dataProvider.GetProviderPath();
             if (!strProviderPath.StartsWith("ERROR:"))
             {
-				//Install Version
+                //Install Version
                 strScriptFile = Upgrade.Upgrade.GetScriptFile(strProviderPath, version);
                 strErrorMessage += Upgrade.Upgrade.UpgradeVersion(strScriptFile, false);
                 Versions += "," + strVersion;
             }
             else
             {
-				//provider error
+                //provider error
                 strErrorMessage = strProviderPath;
             }
             if (string.IsNullOrEmpty(strErrorMessage))
             {
-				//Get Next Version
+                //Get Next Version
                 strErrorMessage = GetNextScriptVersion(strProviderPath, version);
             }
             else
@@ -1100,7 +1106,7 @@ namespace DotNetNuke.Services.Install
             //Wizard Buttons
             LinkButton nextButton = GetWizardButton("StepNavigationTemplateContainerID", "StepNextButton");
             nextButton.Text = LocalizeString("Next");
-            
+
             nextButton = GetWizardButton("StartNavigationTemplateContainerID", "StartNextButton");
             nextButton.Text = LocalizeString("Next");
 
@@ -1113,51 +1119,23 @@ namespace DotNetNuke.Services.Install
                     lblStep0Title.Text = string.Format(LocalizeString("IntroTitle"), Globals.FormatVersion(ApplicationVersion));
                     lblStep0Detail.Text = LocalizeString("IntroDetail");
 
-                    rblInstall.Items[0].Text = LocalizeString("Full");
-                    rblInstall.Items[1].Text = LocalizeString("Typical");
-                    rblInstall.Items[2].Text = LocalizeString("Auto");
+                    installTypeRadioButton.Items[0].Text = LocalizeString("Full");
+                    installTypeRadioButton.Items[1].Text = LocalizeString("Typical");
+                    installTypeRadioButton.Items[2].Text = LocalizeString("Auto");
                     break;
-                case 1:
-                    lblStep1Title.Text = LocalizeString("PermissionsTitle");
-                    lblStep1Detail.Text = LocalizeString("PermissionsDetail");
-                    //File Permissions
+				case 1: //Page 1 - File Permissions
                     BindPermissions(false);
                     break;
-                case 2: //Page 2 - Database Configuration
-                    lblStep2Title.Text = LocalizeString("DatabaseConfigTitle");
-                    lblStep2Detail.Text = LocalizeString("DatabaseConfigDetail");
+				case 2://Page 2 - Database Configuration
+					lblStep2Title.Text = LocalizeString("DatabaseConfigTitle");
+					lblStep2Detail.Text = LocalizeString("DatabaseConfigDetail");
 
-                    rblDatabases.Items[0].Text = LocalizeString("SQLServerXPress");
-                    rblDatabases.Items[1].Text = LocalizeString("SQLServer");
-
-                    serverLabel.Text = LocalizeString("Server");
-                    serverLabel.HelpText = LocalizeString("ServerHelp");
-
-                    fileLabel.Text = LocalizeString("DatabaseFile");
-                    fileLabel.HelpText = LocalizeString("DatabaseFileHelp");
-
-                    databaseLabel.Text = LocalizeString("Database");
-                    databaseLabel.HelpText = LocalizeString("DatabaseHelp");
-
-                    integratedLabel.Text = LocalizeString("Integrated");
-                    integratedLabel.HelpText = LocalizeString("IntegratedHelp");
-
-                    userIdLabel.Text = LocalizeString("UserId");
-                    userIdLabel.HelpText = LocalizeString("UserHelp");
-
-                    passwordLabel.Text = LocalizeString("Password");
-                    passwordLabel.HelpText = LocalizeString("PasswordHelp");
-
-                    ownerLabel.Text = LocalizeString("Owner");
-                    ownerLabel.HelpText = LocalizeString("OwnerHelp");
-
-                    qualifierLabel.Text = LocalizeString("Qualifier");
-                    qualifierLabel.HelpText = LocalizeString("QualifierHelp");
-                    break;
-                case 3:
+					rblDatabases.Items[0].Text = LocalizeString("SQLServerXPress");
+					rblDatabases.Items[1].Text = LocalizeString("SQLServer");
+					break;
+				case 3: //Page 3 - Database Installation
                     lblStep3Title.Text = LocalizeString("DatabaseInstallTitle");
                     lblStep3Detail.Text = LocalizeString("DatabaseInstallDetail");
-
                     break;
                 case 4: //Page 4 - SuperUser Configuration
                     lblStep4Title.Text = LocalizeString("HostUserTitle");
@@ -1492,7 +1470,7 @@ namespace DotNetNuke.Services.Install
                 }
                 else
                 {
-					//403-3 Error - Redirect to ErrorPage
+                    //403-3 Error - Redirect to ErrorPage
                     string strURL = "~/ErrorPage.aspx?status=403_3&error=" + strError;
                     HttpContext.Current.Response.Clear();
                     HttpContext.Current.Server.Transfer(strURL);
@@ -1500,9 +1478,9 @@ namespace DotNetNuke.Services.Install
             }
         }
 
-		#endregion
+        #endregion
 
-		#region "Protected Methods"
+        #region "Protected Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1540,9 +1518,9 @@ namespace DotNetNuke.Services.Install
             HttpContext.Current.Server.Transfer("~/ErrorPage.aspx");
         }
 
-		#endregion
+        #endregion
 
-		#region "Event Handlers"
+        #region "Event Handlers"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1587,13 +1565,16 @@ namespace DotNetNuke.Services.Install
 
             lblHostWarning.Visible = !Regex.IsMatch(Request.Url.Host, "^([a-zA-Z0-9.-]+)$", RegexOptions.IgnoreCase);
 
+			//update current thread culture to make dnn label work correctly
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo(cboLanguages.SelectedValue);
+
             if (!Page.IsPostBack)
             {
-                rblInstall.Items.Clear();
-                rblInstall.Items.Add(new ListItem(LocalizeString("Full"), "Full"));
-                rblInstall.Items.Add(new ListItem(LocalizeString("Typical"), "Typical"));
-                rblInstall.Items.Add(new ListItem(LocalizeString("Auto"), "Auto"));
-                rblInstall.SelectedIndex = 1;
+                installTypeRadioButton.Items.Clear();
+                installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Full"), "Full"));
+                installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Typical"), "Typical"));
+                installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Auto"), "Auto"));
+                installTypeRadioButton.SelectedIndex = 1;
 
                 rblDatabases.Items.Clear();
                 rblDatabases.Items.Add(new ListItem(LocalizeString("SQLServerXPress"), "SQLFile"));
@@ -1609,20 +1590,21 @@ namespace DotNetNuke.Services.Install
                 {
                     Initialise();
 
-                    rblInstall.Items[2].Enabled = true;
+                    installTypeRadioButton.Items[2].Enabled = true;
                     lblDataBaseWarning.Visible = false;
                 }
                 else
                 {
-					//Install but connection string not configured to point at a valid SQL Server
+                    //Install but connection string not configured to point at a valid SQL Server
                     UpdateMachineKey();
 
-                    rblInstall.Items[2].Enabled = false;
+                    installTypeRadioButton.Items[2].Enabled = false;
                     lblDataBaseWarning.Visible = true;
                 }
                 cboLanguages.DataSource = GetInstallerLocales();
                 cboLanguages.DataBind();
                 wizInstall.ActiveStepIndex = 0;
+
                 LocalizePage();
                 SetupPage();
             }
@@ -1641,9 +1623,9 @@ namespace DotNetNuke.Services.Install
         protected override void OnPreRenderComplete(EventArgs e)
         {
             base.OnPreRenderComplete(e);
-            
-			//Make sure that the password is not cleared on pastback
-			txtPassword.Attributes["value"] = txtPassword.Text;
+
+            //Make sure that the password is not cleared on pastback
+            txtPassword.Attributes["value"] = txtPassword.Text;
             txtSMTPPassword.Attributes["value"] = txtSMTPPassword.Text;
         }
 
@@ -1709,14 +1691,14 @@ namespace DotNetNuke.Services.Install
                 string result = InstallDatabase();
                 if (result == "Done")
                 {
-					//Complete Installation
+                    //Complete Installation
                     Upgrade.Upgrade.UpgradeApplication();
                 }
                 return result;
             }
             else if (someAction.Contains("."))
             {
-				//Upgrade Database
+                //Upgrade Database
                 string result = InstallVersion(someAction);
                 if (result == "Done")
                 {
@@ -1737,7 +1719,7 @@ namespace DotNetNuke.Services.Install
                             strErrorMessage += Upgrade.Upgrade.UpdateConfig(strProviderPath, version, false);
                         }
                     }
-					
+
                     //Complete Installation
                     Upgrade.Upgrade.UpgradeApplication();
                     if (!string.IsNullOrEmpty(strErrorMessage))
@@ -1785,6 +1767,8 @@ namespace DotNetNuke.Services.Install
             //Main Title
             Title = LocalizeString("Title") + " - " + LocalizeString("Page" + wizInstall.ActiveStepIndex + ".Title");
 
+			LocalizePage();
+
             switch (wizInstall.ActiveStepIndex)
             {
                 case 1:
@@ -1792,62 +1776,62 @@ namespace DotNetNuke.Services.Install
                     BindPermissions(true);
                     break;
                 case 4: //Page 4 - SMTP Settings
-                    if (rblInstall.SelectedValue == "Full")
+                    if (installTypeRadioButton.SelectedValue == "Full")
                     {
                         SMTPSettingsPanel.Visible = true;
                     }
                     break;
                 case 5: //Page 5 - Modules
-                    if (rblInstall.SelectedValue == "Typical")
+                    if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindModules();
                         if (InstallModules())
                         {
-							//Skip Modules Page
+                            //Skip Modules Page
                             wizInstall.ActiveStepIndex = 6;
                         }
                     }
                     break;
                 case 6: //Page 6 - Skins/Conatiners
-                    if (rblInstall.SelectedValue == "Typical")
+                    if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindSkins();
                         if (InstallSkins())
                         {
-							//Skip Skins Page
+                            //Skip Skins Page
                             wizInstall.ActiveStepIndex = 7;
                         }
                     }
                     break;
                 case 7: //Page 7 - Languages
-                    if (rblInstall.SelectedValue == "Typical")
+                    if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindLanguages();
                         if (InstallLanguages())
                         {
-							//Skip Languages Page
+                            //Skip Languages Page
                             wizInstall.ActiveStepIndex = 8;
                         }
                     }
                     break;
                 case 8: //Page 8 - Auth Systems
-                    if (rblInstall.SelectedValue == "Typical")
+                    if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindAuthSystems();
                         if (InstallAuthSystems())
                         {
-							//Skip Auth Systems Page
+                            //Skip Auth Systems Page
                             wizInstall.ActiveStepIndex = 9;
                         }
                     }
                     break;
                 case 9: //Page 9 - Providers
-                    if (rblInstall.SelectedValue == "Typical")
+                    if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindProviders();
                         if (InstallProviders())
                         {
-							//Skip Providers Page
+                            //Skip Providers Page
                             wizInstall.ActiveStepIndex = 10;
                         }
                     }
@@ -1855,7 +1839,7 @@ namespace DotNetNuke.Services.Install
                 default:
                     break;
             }
-            LocalizePage();
+            
             SetupPage();
         }
 
@@ -1874,7 +1858,7 @@ namespace DotNetNuke.Services.Install
             switch (e.CurrentStepIndex)
             {
                 case 0:
-                    if (rblInstall.SelectedValue == "Auto")
+                    if (installTypeRadioButton.SelectedValue == "Auto")
                     {
                         Response.Redirect("~/Install/Install.aspx?mode=install");
                     }
@@ -1887,7 +1871,7 @@ namespace DotNetNuke.Services.Install
                     bool canConnect = TestDatabaseConnection();
                     if (canConnect)
                     {
-						//Update Connection String
+                        //Update Connection String
                         Config.UpdateConnectionString(_connectionString);
                         string dbOwner;
                         if (chkOwner.Checked)
@@ -1896,8 +1880,8 @@ namespace DotNetNuke.Services.Install
                         }
                         else
                         {
-                            dbOwner = (string.IsNullOrEmpty(GetUpgradeConnectionStringUserID())) 
-                                            ? txtUserId.Text 
+                            dbOwner = (string.IsNullOrEmpty(GetUpgradeConnectionStringUserID()))
+                                            ? txtUserId.Text
                                             : GetUpgradeConnectionStringUserID();
                         }
                         if (rblDatabases.SelectedValue == "Oracle")
@@ -1908,15 +1892,15 @@ namespace DotNetNuke.Services.Install
                         {
                             Config.UpdateDataProvider("SqlDataProvider", dbOwner, txtqualifier.Text);
                         }
-						
-						//Get Base DatabaseVersion
+
+                        //Get Base DatabaseVersion
                         GetBaseDatabaseVersion();
                     }
                     else
                     {
                         e.Cancel = true;
                     }
- 
+
                     break;
                 case 3: //Page 3 - Database Installation
                     e.Cancel = !TestDataBaseInstalled();
@@ -1954,7 +1938,7 @@ namespace DotNetNuke.Services.Install
                     break;
             }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

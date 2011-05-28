@@ -21,7 +21,6 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Data;
@@ -30,13 +29,12 @@ using DotNetNuke.Common;
 
 using Microsoft.ApplicationBlocks.Data;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
     public partial class SqlDataProvider : DataProvider
     {
-        #region "Public Methods"
+        #region Public Methods
 
         public override int AddWorkflow(int PortalID, string WorkflowName, string Description, bool IsDeleted)
         {
@@ -60,12 +58,12 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetWorkflow(int WorkflowID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflow", WorkflowID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflow", WorkflowID));
         }
 
         public override IDataReader GetWorkflowState(int StateID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowState", StateID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowState", StateID));
         }
 
         public override void UpdateWorkflow(int WorkflowID, string WorkflowName, string Description, bool IsDeleted)
@@ -92,12 +90,12 @@ namespace DotNetNuke.Modules.Html
 
         public override IDataReader GetPermissionsByStateID(int StateID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPermissionsByStateID", StateID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPermissionsByStateID", StateID));
         }
 
         public override IDataReader GetWorkflowStatePermission(int WorkflowStatePermissionID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermission", WorkflowStatePermissionID);
+            return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetWorkflowStatePermission", WorkflowStatePermissionID));
         }
 
         public override void DeleteWorkflowStatePermissionsByStateID(int StateID)

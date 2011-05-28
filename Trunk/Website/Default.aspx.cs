@@ -720,23 +720,6 @@ namespace DotNetNuke.Framework
             MetaKeywords.Visible = (!String.IsNullOrEmpty(KeyWords));
             MetaDescription.Content = Description;
             MetaDescription.Visible = (!String.IsNullOrEmpty(Description));
-			
-			//Because we have delayed registration of the jQuery script,
-            //Modules can override the standard behavior by including their own script on the page.
-            //The module must register the script with the "jQuery" key and should notify user
-            //of potential version conflicts with core jQuery support.
-            if (jQuery.IsRequested)
-            {
-                jQuery.RegisterJQuery(Page);
-            }
-            if (jQuery.IsUIRequested)
-            {
-                jQuery.RegisterJQueryUI(Page);
-            }
-            if (jQuery.AreDnnPluginsRequested)
-            {
-                jQuery.RegisterDnnJQueryPlugins(Page);
-            }
         }
 		
 		#endregion

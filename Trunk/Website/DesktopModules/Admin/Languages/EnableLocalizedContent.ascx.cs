@@ -123,9 +123,11 @@ namespace DotNetNuke.Modules.Admin.Languages
 
                 progress.SecondaryTotal = total;
                 progress.SecondaryValue = stepNo;
-                progress.SecondaryPercent = (stepNo*100) % (float)total;
-                progress.PrimaryPercent = (((languageCount*total) + stepNo)*100) % (float)(total*totalLanguages);
-
+                float secondaryPercent = ((float) stepNo/(float) total) * 100;
+                progress.SecondaryPercent = Convert.ToInt32(secondaryPercent);
+                float primaryPercent = ((((float)languageCount + ((float)stepNo / (float)total)) / (float)totalLanguages)) * 100;
+                progress.PrimaryPercent = Convert.ToInt32(primaryPercent);
+                
                 progress.CurrentOperationText = string.Format(Localization.GetString("ProcessingPage", LocalResourceFile), locale.Code, stepNo, total, currentTab.TabName);
 
                 if (!Response.IsClientConnected)

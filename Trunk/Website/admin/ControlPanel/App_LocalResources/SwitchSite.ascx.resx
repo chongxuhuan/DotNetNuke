@@ -120,7 +120,4 @@
   <data name="Sites.Text" xml:space="preserve">
     <value>Sites</value>
   </data>
-  <data name="SwitchButton.Text" xml:space="preserve">
-    <value>Switch Site</value>
-  </data>
 </root>

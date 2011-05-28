@@ -5,24 +5,18 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Security.Permissions.Controls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
-
-
 <div class="dnnForm dnnEditExtension dnnClear" id="dnnEditExtension">
-    <div id="extensionSection" runat="server">
-         <asp:PlaceHolder ID="phEditor" runat="server" />
-    </div>    
-
+    <div id="extensionSection" runat="server"><asp:PlaceHolder ID="phEditor" runat="server" /></div>
     <h2 class="dnnFormSectionHead" id="dnnPanel-ExtensionPackageSettings"><a href="" class="dnnLabelExpanded"><%=LocalizeString("PackageSettings")%></a></h2>
     <fieldset>
-        <legend></legend>
-        <asp:Label ID="lblHelp" runat="server" cssClass="Normal" />
+        <asp:Label ID="lblHelp" runat="server" />
         <div id="trLanguagePackType" runat="server" class="dnnFormItem">
             <dnn:Label ID="plPackageType" runat="server" ControlName="rbPackageType" />
             <asp:RadioButtonList ID="rbPackageType" runat="server" RepeatDirection="Horizontal">
                 <asp:ListItem Value="Core" resourcekey="Core" />
                 <asp:ListItem Value="Package" resourcekey="Package" />
             </asp:RadioButtonList>
-            <asp:RequiredFieldValidator ID="valPackageType" runat="server" CssClass="NormalRed" Display="Dynamic" ControlToValidate="rbPackageType" ResourceKey="PackageType.Error" />
+            <asp:RequiredFieldValidator ID="valPackageType" runat="server" CssClass="dnnFormMessage dnnFormError" Display="Dynamic" ControlToValidate="rbPackageType" ResourceKey="PackageType.Error" />
         </div>
         <dnn:DnnFormEditor id="packageForm" runat="Server" FormMode="Short">
             <Items>
@@ -30,10 +24,10 @@
                 <dnn:DnnFormLiteralItem ID="packageType" runat="server" DataField = "PackageType" />
                 <dnn:DnnFormTextBoxItem ID="packageFriendlyName" runat="server" DataField = "FriendlyName" Required="true" />
                 <dnn:DnnFormTextBoxItem ID="iconFile" runat="server" DataField = "IconFile" />
-                <dnn:DnnFormTextBoxItem ID="description" runat="server" DataField = "Description" TextMode="MultiLine" Rows="3" />
+                <dnn:DnnFormTextBoxItem ID="description" runat="server" DataField = "Description" TextMode="MultiLine" Rows="10" />
                 <dnn:DnnFormEditControlItem ID="version" runat="server" DataField = "Version" ControlType="DotNetNuke.UI.WebControls.VersionEditControl, DotNetNuke"/>
-                <dnn:DnnFormTextBoxItem ID="license" runat="server" DataField = "License" TextMode="MultiLine" Rows="5" />
-                <dnn:DnnFormTextBoxItem ID="releaseNotes" runat="server" DataField = "ReleaseNotes" TextMode="MultiLine" Rows="5" />
+                <dnn:DnnFormTextBoxItem ID="license" runat="server" DataField = "License" TextMode="MultiLine" Rows="10" />
+                <dnn:DnnFormTextBoxItem ID="releaseNotes" runat="server" DataField = "ReleaseNotes" TextMode="MultiLine" Rows="10" />
                 <dnn:DnnFormTextBoxItem ID="owner" runat="server" DataField = "Owner" />
                 <dnn:DnnFormTextBoxItem ID="organization" runat="server" DataField = "Organization" />
                 <dnn:DnnFormTextBoxItem ID="url" runat="server" DataField = "Url" />
@@ -64,10 +58,10 @@
         <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" Causesvalidation="False" /></li>
     </ul>
 </div>
-
 <dnn:audit id="ctlAudit" runat="server" />
-
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
     function setUpDnnExtensions() {
         $('#dnnEditExtension').dnnPanels();
     }
@@ -77,4 +71,5 @@
             setUpDnnExtensions();
         });
     });
+} (jQuery, window.Sys));
 </script>

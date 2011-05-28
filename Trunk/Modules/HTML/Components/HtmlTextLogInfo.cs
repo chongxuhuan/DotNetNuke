@@ -21,11 +21,9 @@
 
 #endregion
 
-#region Usings
 
 using System;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {

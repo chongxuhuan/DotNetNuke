@@ -225,7 +225,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             
             var user = UserController.GetCurrentUserInfo();
 
-            var folders = FolderManager.Instance.GetFolders(user, "ADD", true, true);
+            var folders = FolderManager.Instance.GetFolders(user, "ADD");
 
             foreach (FolderInfo folder in folders)
             {

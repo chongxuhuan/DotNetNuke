@@ -267,13 +267,15 @@ namespace DotNetNuke.Services.Installer
                 nsmgr.AddNamespace(xmlNameSpacePrefix, xmlNameSpace);
                 rootNode = TargetConfig.SelectSingleNode(rootNodePath, nsmgr);
             }
-            if (rootNode == null)
+
+			string nodeAction = node.Attributes["action"].Value.ToLowerInvariant();
+
+			if (rootNode == null)
             {
 				//TODO: what happens if Node can't be found
-				DnnLog.Error("Can't found the root path: {0} defined in '{1}'", rootNodePath, node.OuterXml);
             }
-            string nodeAction = node.Attributes["action"].Value;
-            switch (nodeAction.ToLowerInvariant())
+            
+            switch (nodeAction)
             {
                 case "add":
                     AddNode(rootNode, node);

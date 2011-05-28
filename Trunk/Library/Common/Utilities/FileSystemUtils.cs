@@ -1074,7 +1074,7 @@ namespace DotNetNuke.Common.Utilities
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolders(UserInfo user, string permissions, bool includeSecure, bool includeDatabase) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.GetFolders(UserInfo user, string permissions) or FolderManager.Instance.GetFileSystemFolders(UserInfo user, string permissions) ")]
         public static ArrayList GetFoldersByUser(int portalID, bool includeSecure, bool includeDatabase, string permissions)
         {
             var userFoldersArray = new ArrayList();
@@ -1082,7 +1082,8 @@ namespace DotNetNuke.Common.Utilities
             var user = UserController.GetCurrentUserInfo();
 
             //Create Home folder if it doesn't exist
-            var userFolders = FolderManager.Instance.GetFolders(user, permissions, includeSecure, includeDatabase);
+            var userFolders = (!includeSecure && !includeDatabase) ? FolderManager.Instance.GetFileSystemFolders(user, permissions) : 
+                FolderManager.Instance.GetFolders(user, permissions);
 
             foreach (var userFolder in userFolders)
             {

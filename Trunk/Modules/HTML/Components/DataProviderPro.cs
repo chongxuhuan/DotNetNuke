@@ -21,17 +21,15 @@
 
 #endregion
 
-#region Usings
 
 using System.Data;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
     public abstract partial class DataProvider
     {
-        #region "Abstract methods"
+        #region Abstract methods
 
         public abstract int AddWorkflow(int PortalID, string WorkflowName, string Description, bool IsDeleted);
 

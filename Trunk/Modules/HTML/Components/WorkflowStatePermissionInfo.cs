@@ -21,7 +21,6 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Data;
@@ -29,7 +28,6 @@ using System.Data;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 
-#endregion
 
 namespace DotNetNuke.Security.Permissions
 {
@@ -53,7 +51,7 @@ namespace DotNetNuke.Security.Permissions
         private int _StateID;
         private int _WorkflowStatePermissionID;
 
-        #region "Constructors"
+        #region Constructors
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -89,7 +87,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -133,7 +131,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -191,7 +189,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "IHydratable Implementation"
+        #region IHydratable Implementation
 
         /// -----------------------------------------------------------------------------
         /// <summary>

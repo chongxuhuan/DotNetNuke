@@ -999,9 +999,6 @@ namespace DotNetNuke.Entities.Portals
             UserTabId = portal.UserTabId;
             SearchTabId = portal.SearchTabId;
             DefaultLanguage = portal.DefaultLanguage;
-#pragma warning disable 612,618 //needed for upgrades and backwards compatibility
-            TimeZoneOffset = portal.TimeZoneOffset;
-#pragma warning restore 612,618
             HomeDirectory = portal.HomeDirectory;
             HomeDirectoryMapPath = portal.HomeDirectoryMapPath;
             Pages = portal.Pages;
@@ -1260,8 +1257,18 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        [Obsolete("Deprecated in DNN 6.0")]
-        public int TimeZoneOffset { get; set; }
+        [Obsolete("Deprecated in DNN 6.0")]        
+        public int TimeZoneOffset
+        {
+            get
+            {
+                return Convert.ToInt32(TimeZone.BaseUtcOffset.TotalMinutes);
+            }
+            set
+            {
+                TimeZone = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(value);
+            }
+        }
 
         [Obsolete("Deprecated in DNN 5.0. Replaced by DataProvider.ExecuteScript")]
         public static string ExecuteScript(string strScript)

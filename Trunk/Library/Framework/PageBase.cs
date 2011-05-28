@@ -276,6 +276,10 @@ namespace DotNetNuke.Framework
             }
         }
 
+		#endregion
+
+        #region Protected Methods
+
         protected override void OnError(EventArgs e)
         {
             base.OnError(e);
@@ -294,7 +298,7 @@ namespace DotNetNuke.Framework
             }
             else
             {
-                strURL += (strURL.IndexOf("?") == -1 ? "?" : "&") + "error=" +  (exc == null ? "": Server.UrlEncode(exc.Message));
+                strURL += (strURL.IndexOf("?") == -1 ? "?" : "&") + "error=" + (exc == null ? "" : Server.UrlEncode(exc.Message));
                 if (!Globals.IsAdminControl())
                 {
                     strURL += "&content=0";
@@ -316,6 +320,28 @@ namespace DotNetNuke.Framework
             base.OnInit(e);
         }
 
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            //Because we have delayed registration of the jQuery script,
+            //Modules can override the standard behavior by including their own script on the page.
+            //The module must register the script with the "jQuery" key and should notify user
+            //of potential version conflicts with core jQuery support.
+            if (jQuery.IsRequested)
+            {
+                jQuery.RegisterJQuery(Page);
+            }
+            if (jQuery.IsUIRequested)
+            {
+                jQuery.RegisterJQueryUI(Page);
+            }
+            if (jQuery.AreDnnPluginsRequested)
+            {
+                jQuery.RegisterDnnJQueryPlugins(Page);
+            }
+        }
+
         protected override void Render(HtmlTextWriter writer)
         {
             IterateControls(Controls, _localizedControls, LocalResourceFile);
@@ -324,52 +350,54 @@ namespace DotNetNuke.Framework
             base.Render(writer);
         }
 		
-		#endregion
-		
-		#region "Public Methods"
+
+        #endregion
+
+
+        #region "Public Methods"
 
         /// <summary>
         /// <para>GetControlAttribute looks a the type of control and does it's best to find an AttributeCollection.</para>
         /// </summary>
-        /// <param name="c">Control to find the AttributeCollection on</param>
+		/// <param name="control">Control to find the AttributeCollection on</param>
         /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
         /// <returns>A string containing the key for the specified control or null if a key attribute wasn't found</returns>
-        internal static string GetControlAttribute(Control c, ArrayList affectedControls)
+        internal static string GetControlAttribute(Control control, ArrayList affectedControls)
         {
-            AttributeCollection ac = null;
+            AttributeCollection attributeCollection = null;
             string key = null;
-            if (!(c is LiteralControl))
+            if (!(control is LiteralControl))
             {
-                if (c is WebControl)
+                if (control is WebControl)
                 {
-                    var w = (WebControl)c;
-                    ac = w.Attributes;
-                    key = ac[Localization.KeyName];
+                    var webControl = (WebControl)control;
+                    attributeCollection = webControl.Attributes;
+                    key = attributeCollection[Localization.KeyName];
                 }
                 else
                 {
-                    if (c is HtmlControl)
+                    if (control is HtmlControl)
                     {
-                        var h = (HtmlControl)c;
-                        ac = h.Attributes;
-                        key = ac[Localization.KeyName];
+                        var htmlControl = (HtmlControl)control;
+                        attributeCollection = htmlControl.Attributes;
+                        key = attributeCollection[Localization.KeyName];
                     }
                     else
                     {
-                        if (c is UserControl)
+                        if (control is UserControl)
                         {
-                            var u = (UserControl)c;
-                            ac = u.Attributes;
-                            key = ac[Localization.KeyName];
+                            var userControl = (UserControl)control;
+                            attributeCollection = userControl.Attributes;
+                            key = attributeCollection[Localization.KeyName];
                         }
                         else
                         {
-                            Type controlType = c.GetType();
+                            Type controlType = control.GetType();
                             PropertyInfo attributeProperty = controlType.GetProperty("Attributes", typeof(AttributeCollection));
                             if (attributeProperty != null)
                             {
-                                ac = (AttributeCollection)attributeProperty.GetValue(c, null);
-                                key = ac[Localization.KeyName];
+                                attributeCollection = (AttributeCollection)attributeProperty.GetValue(control, null);
+                                key = attributeCollection[Localization.KeyName];
                             }
                         }
                     }
@@ -377,7 +405,7 @@ namespace DotNetNuke.Framework
             }
             if (key != null && affectedControls != null)
             {
-                affectedControls.Add(ac);
+                affectedControls.Add(attributeCollection);
             }
             return key;
         }
@@ -385,133 +413,144 @@ namespace DotNetNuke.Framework
         /// <summary>
         /// <para>ProcessControl peforms the high level localization for a single control and optionally it's children.</para>
         /// </summary>
-        /// <param name="c">Control to find the AttributeCollection on</param>
+		/// <param name="control">Control to find the AttributeCollection on</param>
         /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
         /// <param name="includeChildren">If true, causes this method to process children of this controls.</param>
-        /// <param name="ResourceFileRoot">Root Resource File.</param>
-        internal void ProcessControl(Control c, ArrayList affectedControls, bool includeChildren, string ResourceFileRoot)
+        /// <param name="resourceFileRoot">Root Resource File.</param>
+        internal void ProcessControl(Control control, ArrayList affectedControls, bool includeChildren, string resourceFileRoot)
         {
 			//Perform the substitution if a key was found
-            string key = GetControlAttribute(c, affectedControls);
+            string key = GetControlAttribute(control, affectedControls);
             if (!string.IsNullOrEmpty(key))
             {
 				//Translation starts here ....
-                string value;
-                value = Localization.GetString(key, ResourceFileRoot);
-                if (c is Label)
+                string value = Localization.GetString(key, resourceFileRoot);
+                if (control is Label)
                 {
-                    Label ctrl;
-                    ctrl = (Label)c;
+                    var label = (Label)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.Text = value;
+                        label.Text = value;
                     }
                 }
-                if (c is LinkButton)
+                if (control is LinkButton)
                 {
-                    LinkButton ctrl;
-                    ctrl = (LinkButton)c;
+                    var linkButton = (LinkButton)control;
                     if (!String.IsNullOrEmpty(value))
                     {
                         MatchCollection imgMatches = Regex.Matches(value, "<(a|link|img|script|input|form).[^>]*(href|src|action)=(\\\"|'|)(.[^\\\"']*)(\\\"|'|)[^>]*>", RegexOptions.IgnoreCase);
-                        foreach (Match _match in imgMatches)
+                        foreach (Match match in imgMatches)
                         {
-                            if ((_match.Groups[_match.Groups.Count - 2].Value.IndexOf("~") != -1))
+                            if ((match.Groups[match.Groups.Count - 2].Value.IndexOf("~") != -1))
                             {
-                                string resolvedUrl = Page.ResolveUrl(_match.Groups[_match.Groups.Count - 2].Value);
-                                value = value.Replace(_match.Groups[_match.Groups.Count - 2].Value, resolvedUrl);
+                                string resolvedUrl = Page.ResolveUrl(match.Groups[match.Groups.Count - 2].Value);
+                                value = value.Replace(match.Groups[match.Groups.Count - 2].Value, resolvedUrl);
                             }
                         }
-                        ctrl.Text = value;
-                        if (string.IsNullOrEmpty(ctrl.ToolTip))
+                        linkButton.Text = value;
+                        if (string.IsNullOrEmpty(linkButton.ToolTip))
                         {
-                            ctrl.ToolTip = value;
+                            linkButton.ToolTip = value;
                         }
                     }
                 }
-                if (c is HyperLink)
+                if (control is HyperLink)
                 {
-                    HyperLink ctrl;
-                    ctrl = (HyperLink)c;
+                    var hyperLink = (HyperLink)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.Text = value;
+                        hyperLink.Text = value;
                     }
                 }
-                if (c is ImageButton)
+                if (control is ImageButton)
                 {
-                    ImageButton ctrl;
-                    ctrl = (ImageButton)c;
+                    var imageButton = (ImageButton)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.AlternateText = value;
+                        imageButton.AlternateText = value;
                     }
                 }
-                if (c is Button)
+                if (control is Button)
                 {
-                    Button ctrl;
-                    ctrl = (Button)c;
+                    var button = (Button)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.Text = value;
+                        button.Text = value;
                     }
                 }
-                if (c is HtmlImage)
+                if (control is HtmlImage)
                 {
-                    HtmlImage ctrl;
-                    ctrl = (HtmlImage)c;
+                    var htmlImage = (HtmlImage)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.Alt = value;
+                        htmlImage.Alt = value;
                     }
                 }
-                if (c is CheckBox)
+                if (control is CheckBox)
                 {
-                    CheckBox ctrl;
-                    ctrl = (CheckBox)c;
+                    var checkBox = (CheckBox)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.Text = value;
+                        checkBox.Text = value;
                     }
                 }
-                if (c is BaseValidator)
+                if (control is BaseValidator)
                 {
-                    BaseValidator ctrl;
-                    ctrl = (BaseValidator)c;
+                    var baseValidator = (BaseValidator)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.ErrorMessage = value;
+                        baseValidator.ErrorMessage = value;
                     }
                 }
-                if (c is Image)
+                if (control is Image)
                 {
-                    Image ctrl;
-                    ctrl = (Image)c;
+                    var image = (Image)control;
                     if (!String.IsNullOrEmpty(value))
                     {
-                        ctrl.AlternateText = value;
-                        ctrl.ToolTip = value;
+                        image.AlternateText = value;
+                        image.ToolTip = value;
                     }
                 }
             }
 			
             //Translate radiobuttonlist items here 
-            if (c is RadioButtonList)
+            if (control is RadioButtonList)
             {
-                RadioButtonList ctrl;
-                ctrl = (RadioButtonList)c;
+                var radioButtonList = (RadioButtonList)control;
+                for (int i = 0; i <= radioButtonList.Items.Count - 1; i++)
+                {
+                    AttributeCollection attributeCollection = null;
+                    attributeCollection = radioButtonList.Items[i].Attributes;
+                    key = attributeCollection[Localization.KeyName];
+                    if (key != null)
+                    {
+                        string value = Localization.GetString(key, resourceFileRoot);
+                        if (!String.IsNullOrEmpty(value))
+                        {
+                            radioButtonList.Items[i].Text = value;
+                        }
+                    }
+                    if (key != null && affectedControls != null)
+                    {
+                        affectedControls.Add(attributeCollection);
+                    }
+                }
+            }
+            if (control is DropDownList)
+            {
+                var dropDownList = (DropDownList)control;
                 int i;
-                for (i = 0; i <= ctrl.Items.Count - 1; i++)
+                for (i = 0; i <= dropDownList.Items.Count - 1; i++)
                 {
                     AttributeCollection ac = null;
-                    ac = ctrl.Items[i].Attributes;
+                    ac = dropDownList.Items[i].Attributes;
                     key = ac[Localization.KeyName];
                     if (key != null)
                     {
-                        string value = Localization.GetString(key, ResourceFileRoot);
+                        string value = Localization.GetString(key, resourceFileRoot);
                         if (!String.IsNullOrEmpty(value))
                         {
-                            ctrl.Items[i].Text = value;
+                            dropDownList.Items[i].Text = value;
                         }
                     }
                     if (key != null && affectedControls != null)
@@ -522,61 +561,36 @@ namespace DotNetNuke.Framework
             }
 			
             //Translate dropdownlist items here 
-            if (c is DropDownList)
+
+			
+			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+            //Manual Override to ResolveUrl
+            if (control is Image)
             {
-                DropDownList ctrl;
-                ctrl = (DropDownList)c;
-                int i;
-                for (i = 0; i <= ctrl.Items.Count - 1; i++)
+                var image = (Image)control;
+                if (image.ImageUrl.IndexOf("~") != -1)
                 {
-                    AttributeCollection ac = null;
-                    ac = ctrl.Items[i].Attributes;
-                    key = ac[Localization.KeyName];
-                    if (key != null)
-                    {
-                        string value = Localization.GetString(key, ResourceFileRoot);
-                        if (!String.IsNullOrEmpty(value))
-                        {
-                            ctrl.Items[i].Text = value;
-                        }
-                    }
-                    if (key != null && affectedControls != null)
-                    {
-                        affectedControls.Add(ac);
-                    }
+                    image.ImageUrl = Page.ResolveUrl(image.ImageUrl);
                 }
             }
 			
 			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
             //Manual Override to ResolveUrl
-            if (c is Image)
+            if (control is HtmlImage)
             {
-                Image ctrl;
-                ctrl = (Image)c;
-                if ((ctrl.ImageUrl.IndexOf("~") != -1))
+                var htmlImage = (HtmlImage)control;
+                if (htmlImage.Src.IndexOf("~") != -1)
                 {
-                    ctrl.ImageUrl = Page.ResolveUrl(ctrl.ImageUrl);
+                    htmlImage.Src = Page.ResolveUrl(htmlImage.Src);
                 }
             }
 			
 			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
             //Manual Override to ResolveUrl
-            if (c is HtmlImage)
-            {
-                HtmlImage ctrl;
-                ctrl = (HtmlImage)c;
-                if ((ctrl.Src.IndexOf("~") != -1))
-                {
-                    ctrl.Src = Page.ResolveUrl(ctrl.Src);
-                }
-            }
-			
-			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
-            //Manual Override to ResolveUrl
-            if (c is HyperLink)
+            if (control is HyperLink)
             {
                 HyperLink ctrl;
-                ctrl = (HyperLink)c;
+                ctrl = (HyperLink)control;
                 if ((ctrl.NavigateUrl.IndexOf("~") != -1))
                 {
                     ctrl.NavigateUrl = Page.ResolveUrl(ctrl.NavigateUrl);
@@ -588,27 +602,27 @@ namespace DotNetNuke.Framework
             }
 			
 			//Process child controls
-            if (includeChildren && c.HasControls())
+            if (includeChildren && control.HasControls())
             {
-                var objModuleControl = c as IModuleControl;
+                var objModuleControl = control as IModuleControl;
                 if (objModuleControl == null)
                 {
-                    PropertyInfo pi = c.GetType().GetProperty("LocalResourceFile");
-                    if (pi != null && pi.GetValue(c, null) != null)
+                    PropertyInfo pi = control.GetType().GetProperty("LocalResourceFile");
+                    if (pi != null && pi.GetValue(control, null) != null)
                     {
 						//If controls has a LocalResourceFile property use this
-                        IterateControls(c.Controls, affectedControls, pi.GetValue(c, null).ToString());
+                        IterateControls(control.Controls, affectedControls, pi.GetValue(control, null).ToString());
                     }
                     else
                     {
 						//Pass Resource File Root through
-                        IterateControls(c.Controls, affectedControls, ResourceFileRoot);
+                        IterateControls(control.Controls, affectedControls, resourceFileRoot);
                     }
                 }
                 else
                 {
 					//Get Resource File Root from Controls LocalResourceFile Property
-                    IterateControls(c.Controls, affectedControls, objModuleControl.LocalResourceFile);
+                    IterateControls(control.Controls, affectedControls, objModuleControl.LocalResourceFile);
                 }
             }
         }

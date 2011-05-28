@@ -199,7 +199,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         var parameters = new string[2];
                         parameters[0] = "rtab=" + ModuleContext.TabId;
                         parameters[1] = "packageId=KEYFIELD";
-                        string formatString = Globals.NavigateURL(ModuleContext.TabId, "UnInstall", parameters);
+                        var formatString = ModuleContext.EditNavUrl(ModuleContext.TabId, "UnInstall", false, parameters);                        
                         formatString = formatString.Replace("KEYFIELD", "{0}");
                         imageColumn.NavigateURLFormatString = formatString;
                     }
@@ -441,6 +441,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 DataGrid extensionsGrid = item.Controls[1] as DataGrid;
                 Label noResultsLabel = item.Controls[3] as Label;
 
+                Localization.LocalizeDataGrid(ref extensionsGrid, LocalResourceFile);
                 BindGrid(kvp.Key, extensionsGrid, noResultsLabel);
             }
         }

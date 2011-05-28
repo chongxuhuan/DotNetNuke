@@ -1,4 +1,4 @@
-#dnnCPWrap{width:960px;position:fixed;top:0;z-index:10;margin:0 auto}
+#dnnCPWrap{width:960px;position:fixed;top:0;z-index:1300;margin:0 auto}
 	#dnnCPWrap.Pinned {position:static;}
 	#dnnCPWrap .dnnCPContent {display:none;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border-radius:3px;-webkit-border-radius:3px;-moz-border-radius:3px;}
 	.dnnCPDock{display:inline-block;width:16px;height:16px;cursor:pointer;background: url('images/iconbar_undocked.png') no-repeat;vertical-align:middle;margin:3px 15px 0 0;}
@@ -20,7 +20,7 @@
 	.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom{background:url(images/cp-header-bg.gif) repeat-x top;}
 	.dnnCPContent .ui-tabs-panel {min-height:190px;}
 	.cpcbCommonTasks .cbctAddPage{width:400px;}
-	.cpcbCommonTasks .cbctAddModule{width:550px;overflow:hidden;border-left:1px #ccc solid;min-height:190px;}
+	.cpcbCommonTasks .cbctAddModule{width:550px;overflow:hidden;min-height:190px;/*border-left:1px #ccc solid;*/}
 	.cbctAddModule .dnnFormItem label{float:left;width:60px;padding-right:10px;margin-top:0;}
 		.amCatList, .amPageList{width:230px;float:left}
 		.amPageList{width:250px}
@@ -56,10 +56,10 @@
 	.cbhSwitchSite.dnnClear .dnnFormItem{clear:none;float:left;width:auto;}
 			.cbhSwitchSite.dnnClear .dnnFormItem select{float:left;}
 	.dnnControlPanel .cpcbCurrentPage.dnnClear h4{display:block;clear:both;float:none;overflow:hidden;width:65%;text-align:left;padding:0;margin:0;}
-		.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpPageEdit h4{width:auto;padding-left:85px;}
+		.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpPageEdit h4{width:auto;/*padding-left:85px;*/}
 	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettingsContent, 
 	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettings.dnnClear{margin-botton:0 !important;}
-		.cbcpFiCol.dnnLeft{width:380px;border-right:1px #ccc solid;margin-right:20px;padding:10px 0 10px 20px;height:170px;}
+		.cbcpFiCol.dnnLeft{margin-right:20px;padding:10px 0 10px 20px;height:170px;/*width:380px;border-right:1px #ccc solid;*/}
 		.cbcpPageEdit.dnnLeft{width:460px;padding:10px 20px}
 		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:2.5;height:2.5em;padding:0 15px 0 20px;font-weight:bold;float:left;}
 			.cpcbAdmin a {line-height:3;height:3em;}

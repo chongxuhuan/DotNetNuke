@@ -21,14 +21,12 @@
 
 #endregion
 
-#region Usings
 
 using System.Collections;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
@@ -47,7 +45,7 @@ namespace DotNetNuke.Modules.Html
     /// -----------------------------------------------------------------------------
     public class HtmlTextLogController
     {
-        #region "Public Methods"
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

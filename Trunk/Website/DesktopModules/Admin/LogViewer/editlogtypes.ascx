@@ -39,10 +39,6 @@
                     <dnn:label id="plKeepMostRecent" runat="server" controlname="ddlKeepMostRecent" suffix=":" />
                     <asp:dropdownlist id="ddlKeepMostRecent" runat="server" />
                 </div>
-                <div class="dnnFormItem">
-                    <dnn:label id="plFileName" runat="server" controlname="txtFileName" suffix=":" />
-                    <asp:textbox id="txtFileName" runat="server" />
-                </div>
             </fieldset>
             <h2 id="Panel-EmailSettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("EmailSettings")%></a></h2>
             <fieldset>
@@ -96,6 +92,8 @@
 	    </ul>
 		<dnn:DnnScriptBlock ID="scriptBlock1" runat="server">
 			<script type="text/javascript">
+                /*globals jQuery */
+                (function ($) {
 				$('#eltContent').dnnPanels();
 				var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
 				var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -106,6 +104,7 @@
 					noText: noText,
 					title: titleText
 				});
+                } (jQuery));
 			</script>
 		</dnn:DnnScriptBlock>
     </asp:panel>

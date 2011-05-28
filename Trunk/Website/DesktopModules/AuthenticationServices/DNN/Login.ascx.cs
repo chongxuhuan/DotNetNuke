@@ -38,202 +38,179 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Modules.Admin.Authentication
 {
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// The Login AuthenticationLoginBase is used to provide a login for a registered user
-    /// portal.
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    /// 	[cnurse]	9/24/2004	Updated to reflect design changes for Help, 508 support
-    ///                       and localisation
-    ///     [cnurse]    08/07/2007  Ported to new Authentication Framework
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    public partial class Login : AuthenticationLoginBase
-    {
-		#region "Protected Properties"
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets whether the Captcha control is used to validate the login
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/17/2006  Created
-        ///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected bool UseCaptcha
-        {
-            get
-            {
-                return AuthenticationConfig.GetConfig(PortalId).UseCaptcha;
-            }
-        }
+	/// <summary>
+	/// The Login AuthenticationLoginBase is used to provide a login for a registered user
+	/// portal.
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/24/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	///     [cnurse]    08/07/2007  Ported to new Authentication Framework
+	/// </history>
+	public partial class Login : AuthenticationLoginBase
+	{
+
+		#region Protected Properties
+
+		/// <summary>
+		/// Gets whether the Captcha control is used to validate the login
+		/// </summary>
+		/// <history>
+		/// 	[cnurse]	03/17/2006  Created
+		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
+		/// </history>
+		protected bool UseCaptcha
+		{
+			get
+			{
+				return AuthenticationConfig.GetConfig(PortalId).UseCaptcha;
+			}
+		}
 
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Check if the Auth System is Enabled (for the Portal)
-        /// </summary>
-        /// <remarks></remarks>
-        /// <history>
-        /// 	[cnurse]	07/04/2007	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override bool Enabled
-        {
-            get
-            {
-                return AuthenticationConfig.GetConfig(PortalId).Enabled;
-            }
-        }
+		/// <summary>
+		/// Check if the Auth System is Enabled (for the Portal)
+		/// </summary>
+		/// <remarks></remarks>
+		/// <history>
+		/// 	[cnurse]	07/04/2007	Created
+		/// </history>
+		public override bool Enabled
+		{
+			get
+			{
+				return AuthenticationConfig.GetConfig(PortalId).Enabled;
+			}
+		}
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Page_Load runs when the control is loaded
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	9/8/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+		/// <summary>
+		/// Page_Load runs when the control is loaded
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	9/8/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		/// </history>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
 
-            cmdLogin.Click += cmdLogin_Click;
+			cmdLogin.Click += OnLoginClick;
 
-            ClientAPI.RegisterKeyCapture(Parent, cmdLogin, 13);
-            if (!Request.IsAuthenticated)
-            {
-                if (Page.IsPostBack == false)
-                {
-                    try
-                    {
-                        if (Request.QueryString["username"] != null)
-                        {
-                            txtUsername.Text = Request.QueryString["username"];
-                        }
-                        if (Request.QueryString["verificationcode"] != null)
-                        {
-                            if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
-                            {
+			ClientAPI.RegisterKeyCapture(Parent, cmdLogin, 13);
+			if (!Request.IsAuthenticated)
+			{
+				if (Page.IsPostBack == false)
+				{
+					try
+					{
+						if (Request.QueryString["username"] != null)
+						{
+							txtUsername.Text = Request.QueryString["username"];
+						}
+						if (Request.QueryString["verificationcode"] != null)
+						{
+							if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
+							{
 								//Display Verification Rows 
-                                rowVerification1.Visible = true;
-                                rowVerification2.Visible = true;
-                                txtVerification.Text = Request.QueryString["verificationcode"];
-                            }
-                        }
-                    }
+								divVerify1.Visible = true;
+								divVerify2.Visible = true;
+								txtVerification.Text = Request.QueryString["verificationcode"];
+							}
+						}
+					}
 					catch (Exception ex)
 					{
 						//control not there 
 						DnnLog.Error(ex);
 					}
-                }
-                try
-                {
-                    if (string.IsNullOrEmpty(txtUsername.Text))
-                    {
-                        Globals.SetFormFocus(txtUsername);
-                    }
-                    else
-                    {
-                        Globals.SetFormFocus(txtPassword);
-                    }
-                }
+				}
+				try
+				{
+					Globals.SetFormFocus(string.IsNullOrEmpty(txtUsername.Text) ? txtUsername : txtPassword);
+				}
 				catch (Exception ex)
 				{
 					//Not sure why this Try/Catch may be necessary, logic was there in old setFormFocus location stating the following
-                    //control not there or error setting focus
+					//control not there or error setting focus
 					DnnLog.Error(ex);
 				}
-            }
-            trCaptcha1.Visible = UseCaptcha;
-            trCaptcha2.Visible = UseCaptcha;
-        }
+			}
+			divCaptcha1.Visible = UseCaptcha;
+			divCaptcha2.Visible = UseCaptcha;
+		}
 
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
 
-            txtPassword.Attributes.Add("value", txtPassword.Text);
-        }
+			txtPassword.Attributes.Add("value", txtPassword.Text);
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// cmdLogin_Click runs when the login button is clicked
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	9/24/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
-        ///     [cnurse]    12/11/2005  Updated to reflect abstraction of Membership
-        ///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void cmdLogin_Click(object sender, EventArgs e)
-        {
-            if ((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha))
-            {
-                UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
-                UserInfo objUser = UserController.ValidateUser(PortalId, txtUsername.Text, txtPassword.Text, "DNN", txtVerification.Text, PortalSettings.PortalName, IPAddress, ref loginStatus);
-                bool authenticated = Null.NullBoolean;
-                string message = Null.NullString;
-                if (loginStatus == UserLoginStatus.LOGIN_USERNOTAPPROVED)
-                {
+		/// <summary>
+		/// cmdLogin_Click runs when the login button is clicked
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	9/24/2004	Updated to reflect design changes for Help, 508 support
+		///                       and localisation
+		///     [cnurse]    12/11/2005  Updated to reflect abstraction of Membership
+		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
+		/// </history>
+		private void OnLoginClick(object sender, EventArgs e)
+		{
+			if ((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha))
+			{
+				var loginStatus = UserLoginStatus.LOGIN_FAILURE;
+				var objUser = UserController.ValidateUser(PortalId, txtUsername.Text, txtPassword.Text, "DNN", txtVerification.Text, PortalSettings.PortalName, IPAddress, ref loginStatus);
+				var authenticated = Null.NullBoolean;
+				var message = Null.NullString;
+				if (loginStatus == UserLoginStatus.LOGIN_USERNOTAPPROVED)
+				{
 					//Check if its the first time logging in to a verified site
-                    if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
-                    {
-                        if (!rowVerification1.Visible)
-                        {
+					if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
+					{
+						if (!divVerify1.Visible)
+						{
 							//Display Verification Rows so User can enter verification code
-                            rowVerification1.Visible = true;
-                            rowVerification2.Visible = true;
-                            message = "EnterCode";
-                        }
-                        else
-                        {
-                            if (!String.IsNullOrEmpty(txtVerification.Text))
-                            {
-                                message = "InvalidCode";
-                            }
-                            else
-                            {
-                                message = "EnterCode";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        message = "UserNotAuthorized";
-                    }
-                }
-                else
-                {
-                    authenticated = (loginStatus != UserLoginStatus.LOGIN_FAILURE);
-                }
+							divVerify1.Visible = true;
+							divVerify2.Visible = true;
+							message = "EnterCode";
+						}
+						else
+						{
+							message = !String.IsNullOrEmpty(txtVerification.Text) ? "InvalidCode" : "EnterCode";
+						}
+					}
+					else
+					{
+						message = "UserNotAuthorized";
+					}
+				}
+				else
+				{
+					authenticated = (loginStatus != UserLoginStatus.LOGIN_FAILURE);
+				}
 				
-                //Raise UserAuthenticated Event
-                var eventArgs = new UserAuthenticatedEventArgs(objUser, txtUsername.Text, loginStatus, "DNN");
-                eventArgs.Authenticated = authenticated;
-                eventArgs.Message = message;
-                OnUserAuthenticated(eventArgs);
-            }
-        }
+				//Raise UserAuthenticated Event
+				var eventArgs = new UserAuthenticatedEventArgs(objUser, txtUsername.Text, loginStatus, "DNN") {Authenticated = authenticated, Message = message};
+				OnUserAuthenticated(eventArgs);
+			}
+		}
 		
 		#endregion
-    }
+
+	}
 }

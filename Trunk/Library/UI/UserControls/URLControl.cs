@@ -334,6 +334,7 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.0")]
         public bool ShowSecure
         {
             get
@@ -357,6 +358,7 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.0")]
         public bool ShowDatabase
         {
             get
@@ -657,7 +659,7 @@ namespace DotNetNuke.UI.UserControls
             {
                 PortalId = _objPortal.PortalID;
             }
-            var folders = FolderManager.Instance.GetFolders(UserController.GetCurrentUserInfo(), Permissions, ShowSecure, ShowDatabase);
+            var folders = FolderManager.Instance.GetFolders(UserController.GetCurrentUserInfo(), Permissions);
             foreach (FolderInfo folder in folders)
             {
                 var FolderItem = new ListItem();

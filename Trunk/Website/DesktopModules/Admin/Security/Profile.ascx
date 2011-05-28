@@ -2,9 +2,7 @@
 <%@ Register TagPrefix="dnn" TagName="Sectionhead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <div class="dnnForm dnnProfile dnnClear">
-    <div id="divTitle" runat="server">
-        <asp:label id="lblTitle" cssclass="Head" runat="server" />
-    </div>
+    <h2 id="divTitle" runat="server" class="dnnFormSectionHead"><asp:label id="lblTitle" runat="server" /></h2>
 	<div class="propertyList">
 		<dnn:ProfileEditorControl id="ProfileProperties" runat="Server" enableClientValidation="true" CssClass="dnnFormItem" />
 	</div>

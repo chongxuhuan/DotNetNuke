@@ -21,7 +21,6 @@
 
 #endregion
 
-#region Usings
 
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,6 @@ using DotNetNuke.Modules.Html;
 using DotNetNuke.Services.Exceptions;
 
 
-#endregion
 
 namespace DotNetNuke.Security.Permissions
 {
@@ -56,7 +54,7 @@ namespace DotNetNuke.Security.Permissions
         public const int WorkflowStatePermissionCacheTimeOut = 20;
         private static readonly DataProvider provider = DataProvider.Instance();
 
-        #region "Private Shared Methods"
+        #region Private Shared Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -132,7 +130,7 @@ namespace DotNetNuke.Security.Permissions
             finally
             {
                 // close datareader
-                if ((dr != null))
+                if (dr != null)
                 {
                     dr.Close();
                 }
@@ -142,7 +140,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Shared Methods"
+        #region Public Shared Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

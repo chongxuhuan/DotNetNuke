@@ -2,7 +2,6 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>  
 <div id="dnnAppGallery" class="dnnForm dnnAppGallery dnnClear">
     <span id="loading" class="dnnAppGalleryLoading">Loading...</span>
-
     <div class="dnnAppGalleryTags">
         <div class="header"><h1><%=LocalizeString("AppGallery") %></h1></div>
         <div class="dnnAppGallerySearch">
@@ -35,22 +34,18 @@
                     <input type="text" id="searchText" title=""<%=LocalizeString("SearchLabel.Help")%>" />        
                </div>
             </div>
-            <div class="dnnFormItem">
+            <div class="dnnClear">
+               <a href="javascript:void(0);" id="search-go" class="dnnPrimaryAction"><%=LocalizeString("Search")%></a>
                <a href="javascript:void(0);" id="search-reset" class="dnnSecondaryAction"><%=LocalizeString("ClearSearch")%></a>
-               <a href="javascript:void(0);" id="search-go" class="dnnSecondaryAction"><%=LocalizeString("Search")%></a>
             </div>
-        </div>            
+        </div>      
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("TagCloud")%></h2>
-        <span class="dnnAppGalleryTagList" id="tag-list"></span>
-
+        <div class="dnnAppGalleryTagList dnnClear" id="tag-list"></div>
     </div>
     <div class="dnnAppGalleryListing">
-        <div id="extensionDetail">
-            <div id="extensionDetailInner"></div>
-        </div>
+        <div id="extensionDetail"><div id="extensionDetailInner"></div></div>
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("Extensions")%></h2>
         <fieldset id="extensionsSummary">
-            <legend></legend>
             <div class="sort-options fullWidth-Center">
                <span class="sort-button-off"><a href="javascript:void(0);" id="NameSorter"><%=LocalizeString("NameAZ") %></a></span> 
                <span class="sort-button-off"><a href="javascript:void(0);" id="PriceSorter"><%=LocalizeString("PriceLowHigh") %></a></span>
@@ -59,7 +54,6 @@
             <span id="extensionList" class="extensionList"></span>
         </fieldset>
     </div>
-
     <script id="tag-tmpl" type="text/html">
 {{if tagName}}
     <a href="javascript:void(0);" style="font-size:${fontSize}%" class="tag" alt="${tagName} (${TagCount})" title="${tagName} (${TagCount})" value="${tagID}">${tagName}</a>&nbsp;

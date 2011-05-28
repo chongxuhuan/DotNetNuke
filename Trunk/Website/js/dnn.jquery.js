@@ -9,13 +9,15 @@
         };
 
         $wrap.each(function () {
-            var showEvent = null;
+            var showEvent = null,
+                cookieId;
+
             if (this.id) {
-                var id = 'dnnTabs-' + this.id;
+                cookieId = 'dnnTabs-' + this.id;
                 if (opts.selected === -1) {
-                    var tabCookie = dnn.dom.getCookie(id);
-                    if (tabCookie) {
-                        opts.selected = tabCookie;
+                    var cookieValue = dnn.dom.getCookie(cookieId);
+                    if (cookieValue) {
+                        opts.selected = cookieValue;
                     }
                     if (opts.selected === -1) {
                         opts.selected = 0;
@@ -25,9 +27,9 @@
 
             showEvent = (function (cookieId) {
                 return function (event, ui) {
-                    dnn.dom.setCookie(cookieId, ui.index, 1, '/', '', false);
+                    dnn.dom.setCookie(cookieId, ui.index, opts.cookieDays, '/', '', false, opts.cookieMilleseconds);
                 }
-            })(id);
+            })(cookieId);
 
             $wrap.tabs({
                 show: showEvent,
@@ -45,7 +47,9 @@
     $.fn.dnnTabs.defaultOptions = {
         opacity: 'toggle',
         duration: 'fast',
-        selected: -1
+        selected: -1,
+        cookieDays: 0,
+        cookieMilleseconds: 120000 // two minutes
     };
 
 })(jQuery);
@@ -56,34 +60,47 @@
         $wrap = this;
 
         $wrap.each(function(){
-            var $this = $(this);
-            var defaultAction = $this.attr('href');
-            if (defaultAction) {
-                var $dnnDialog = $("<div class='dnnDialog'></div>").html(opts.text).dialog(opts);
+            var $this = $(this),
+                defaultAction = $this.attr('href'),
+                $dnnDialog;
+
+            if (defaultAction || opts.isButton) {
+                $dnnDialog = $("<div class='dnnDialog'></div>").html(opts.text).dialog(opts);
                 $this.click(function (e) {
+
+                    if ($dnnDialog.is(':visible')) {
+                        $dnnDialog.dialog("close");
+                        return true;
+                    }
+
                     e.preventDefault();
+                    
                     $dnnDialog.dialog({
                         buttons: [
                         {
                             text: opts.yesText,
                             click: function () {
-                                $(this).dialog("close");
-                                if (typeof (opts.callbackTrue) === 'function') {
+                                if ($.isFunction(opts.callbackTrue)) {
                                     opts.callbackTrue.call(this);
-                                } else {
-                                    window.location.href = defaultAction;
-                                };
-                                return true;
+                                }
+                                else {
+                                    if (opts.isButton) {
+                                        $this.click();
+                                    }
+                                    else {
+                                        $dnnDialog.dialog("close");
+                                        window.location.href = defaultAction;
+                                    }
+                                }
                             }
                         },
                         {
                             text: opts.noText,
                             click: function () {
                                 $(this).dialog("close");
-                                if (typeof (opts.callbackFalse) === 'function') {
+                                if ($.isFunction(opts.callbackFalse)) {
                                     opts.callbackFalse.call(this);
                                 };
-                                return false;
                             }
                         }
                     ]
@@ -105,22 +122,24 @@
         resizable: false,
         modal: true,
         title: 'Confirm',
-        dialogClass: 'dnnForm'
+        dialogClass: 'dnnForm',
+        isButton: false
     };
 
 })(jQuery);
 
 (function ($) {
     $.dnnAlert = function (options) {
-        var opts = $.extend({}, $.dnnAlert.defaultOptions, options)
-        var $dnnDialog = $("<div class='dnnDialog'></div>").html(opts.text).dialog(opts);
+        var opts = $.extend({}, $.dnnAlert.defaultOptions, options),
+        $dnnDialog = $("<div class='dnnDialog'></div>").html(opts.text).dialog(opts);
+
         $dnnDialog.dialog({
             buttons: [
                 {
                     text: opts.okText,
                     click: function () {
                         $(this).dialog("close");
-                        if (typeof (opts.callback) === 'function') {
+                        if ($.isFunction(opts.callback)) {
                             opts.callback.call(this);
                         };
                         return false;
@@ -154,37 +173,58 @@
                 e.preventDefault();
                 var toggle = $(this).toggleClass(opts.toggleClass).parent().next(opts.regionToToggleSelector).slideToggle(function () {
                     var id = $(toggle.context.parentNode).attr("id");
-                    dnn.dom.setCookie(id, $(this).is(':visible'), 1, '/', '', false);
+                    dnn.dom.setCookie(id, $(this).is(':visible'), opts.cookieDays, '/', '', false, opts.cookieMilleseconds);
                 });
             });
 
-            // walk over each selector and check its cookie, expand or collapse as necessary
-            $this.find(opts.sectionHeadSelector).each(function (i, v) {
-                var elm = $(v);
-                var id = elm.attr("id");
-                var idValue = dnn.dom.getCookie(id);
-                if ((idValue === null && i != 0) || idValue === "false") {
-                    elm.find(opts.clickToToggleIsolatedSelector).removeClass(opts.toggleClass);
-                    elm.next(opts.regionToToggleSelector).hide();
+            function collapsePanel($clicker, $region){
+                $clicker.removeClass(opts.toggleClass);
+                $region.hide();
+            }
+
+            function expandPanel($clicker, $region){
+                $clicker.addClass(opts.toggleClass);
+                $region.show();
+            }
+
+            // walk over each selector and expand or collapse as necessary
+            $this.find(opts.sectionHeadSelector).each(function (indexInArray, valueOfElement) {
+                var $this = $(valueOfElement),
+                    elementId = $this.attr("id"),
+                    cookieValue = dnn.dom.getCookie(elementId),
+                    $clicker = $this.find(opts.clickToToggleIsolatedSelector),
+                    $region = $this.next(opts.regionToToggleSelector),
+                    $parentSeparator = $this.parents(opts.panelSeparatorSelector),
+                    groupPanelIndex = $parentSeparator.find(opts.sectionHeadSelector).index($this)
+
+                if (cookieValue == "false") { // cookie explicitly set to false
+                    collapsePanel($clicker, $region);
                 }
-                else if ((idValue === null && i === 0) || idValue === "true") {
-                    elm.find(opts.clickToToggleIsolatedSelector).addClass(opts.toggleClass);
-                    elm.next(opts.regionToToggleSelector).show();
+                else if (cookieValue == "true" || indexInArray === 0) { // cookie set to true OR first panel
+                    expandPanel($clicker, $region);
+                }
+                else if ($parentSeparator.size() > 0 && groupPanelIndex === 0) { // grouping is used & its the first panel in its group
+                    expandPanel($clicker, $region);
+                }
+                else { // nada...
+                    collapsePanel($clicker, $region);
                 }
             });
 
             // page validation integration - expand collapsed panels that contain tripped validators
             $this.find(opts.validationTriggerSelector).click(function(e){
-                if (typeof(Page_ClientValidate) == 'function') {
-                    Page_ClientValidate(opts.validationGroup);
-                    $this.find(opts.invalidItemSelector).each(function(){
-                        var $parent = $(this).closest(opts.regionToToggleSelector);
-                        if ($parent.is(':hidden')){
-                            $parent.prev(opts.sectionHeadSelector).find(opts.clickToToggleIsolatedSelector).click();
-                        }
-                    });
+                if ($.isFunction(Page_ClientValidate)) {
+                    if (!Page_ClientValidate(opts.validationGroup)) {
+                        $this.find(opts.invalidItemSelector).each(function(){
+                            var $parent = $(this).closest(opts.regionToToggleSelector);
+                            if ($parent.is(':hidden')){
+                                $parent.prev(opts.sectionHeadSelector).find(opts.clickToToggleIsolatedSelector).click();
+                            }
+                        });
+                    }
                 }
             });
+
         });
 
         return $wrap;
@@ -198,7 +238,10 @@
         clickToToggleIsolatedSelector: 'a',
         validationTriggerSelector: '.dnnPrimaryAction',
         invalidItemSelector: '.dnnFormError[style*="inline"]',
-        validationGroup: '' 
+        validationGroup: '',
+        panelSeparatorSelector: '.ui-tabs-panel',
+        cookieDays: 0,
+        cookieMilleseconds: 120000 // two minutes
     };
 
 })(jQuery);
@@ -274,5 +317,59 @@
         targetArea: '#dnnHostSettings',
         targetSelector: 'h2.dnnFormSectionHead a',
         targetExpandedSelector: '.dnnSectionExpanded'
+    };
+})(jQuery);
+
+(function ($) {
+    $.fn.dnnTooltip = function (options) {
+        var opts = $.extend({}, $.fn.dnnTooltip.defaultOptions, options),
+        $wrap = this;
+
+        $wrap.each(function () {
+            var $this = $(this);
+
+            $this.click(function(e){
+                e.preventDefault();
+            });
+
+            $wrap.data("left", $wrap.position().left).data("top", $wrap.position().top);
+            
+            $this.hoverIntent({
+                over: function () {
+                    $this.find(opts.helpSelector).show();
+                },
+                out: function () {
+                    if (!$this.hasClass(opts.pinnedClass)) {
+                        $this.find(opts.helpSelector).hide();
+                    }
+                },
+                timeout: 200,
+                interval: 200
+            });
+
+            $this.find(opts.pinSelector).click(function (e) {
+                e.preventDefault();
+                if ($this.hasClass(opts.pinnedClass)){
+                    $this.find(opts.helpSelector).animate({ "left": $wrap.data("left"), "top": $wrap.data("top")}, "fast", function(){
+                        $this.removeClass(opts.pinnedClass);
+                        $(this).hide().draggable('destroy');
+                    });
+                }
+                else {
+                    $this.addClass(opts.pinnedClass);
+                    if ($.isFunction($().draggable)) {
+                        $this.find(opts.helpSelector).draggable();
+                    }
+                }
+            });
+        });
+
+        return $wrap;
+    };
+
+    $.fn.dnnTooltip.defaultOptions = {
+        pinSelector: 'a.pinHelp',
+        helpSelector: '.dnnFormHelpContent',
+        pinnedClass: 'dnnTooltipPinned'
     };
 })(jQuery);

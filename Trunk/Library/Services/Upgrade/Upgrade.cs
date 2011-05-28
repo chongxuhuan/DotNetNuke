@@ -557,16 +557,8 @@ namespace DotNetNuke.Services.Upgrade
                         "~/images/icon_appintegrity_32px.gif");
 
             AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
-                        "//Host//ProfessionalFeatures//SpecialOffers",
-                        "http://www.dotnetnuke.com/tabid/1227/Default.aspx",
-                        "Special Offers",
-                        "View special offers exclusive to customers who have purchased product subscriptions.",
-                        "~/images/icon_specialoffers_16px.gif",
-                        "~/images/icon_specialoffers_32px.gif");
-
-            AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
                         "//Host//ProfessionalFeatures//KnowledgeBase",
-                        "http://customers.dotnetnuke.com/KB/root.aspx",
+                        "ProfessionalPreview",
                         "Knowledge Base",
                         "Comprehensive Knowledge Base that provides guidance for DotNetNuke administrative tasks and answers to common technical questions.",
                         "~/images/icon_kb_16px.gif",
@@ -582,7 +574,7 @@ namespace DotNetNuke.Services.Upgrade
 
             AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
                         "//Host//ProfessionalFeatures//TechnicalSupport",
-                        "http://customers.dotnetnuke.com",
+                        "ProfessionalPreview",
                         "Technical Support",
                         "Visit the technical support home page to find the latest support news, knowledge base articles and more.",
                         "~/images/icon_support_16px.gif",
@@ -590,7 +582,7 @@ namespace DotNetNuke.Services.Upgrade
 
             AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
                         "//Host//ProfessionalFeatures//MySupportTickets",
-                        "http://customers.dotnetnuke.com/Main/frmTickets.aspx",
+                        "ProfessionalPreview",
                         "My Support Tickets",
                         "The Support Ticket system will allow you to email support questions to our staff. A staff member will promptly reply to your request and progress will be tracked using the ticket. You can 'Start a new Ticket' and view your existing tickets here.",
                         "~/images/icon_mytickets_16px.gif",
@@ -606,7 +598,7 @@ namespace DotNetNuke.Services.Upgrade
 
             AddLinkedProfessionalPreviewPage(advancedFeaturesTabID,
                         "//Host//ProfessionalFeatures//LicenseManagement",
-                        "http://www.dotnetnuke.com/tabid/1205/Default.aspx",
+                        "ProfessionalPreview",
                         "License Management",
                         "Manage licenses for your subscribed products.",
                         "~/images/icon_licensemgmt_16px.gif",
@@ -2891,6 +2883,7 @@ namespace DotNetNuke.Services.Upgrade
                 superUser.Profile.FirstName = firstName;
                 superUser.Profile.LastName = lastName;
                 superUser.Profile.PreferredLocale = locale;
+                superUser.Profile.PreferredTimeZone = TimeZoneInfo.Local;
             }
             return superUser;
         }

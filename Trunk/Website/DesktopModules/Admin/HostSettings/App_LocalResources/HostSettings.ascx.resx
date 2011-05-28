@@ -805,7 +805,7 @@
     <value>Email Address is invalid</value>
   </data>
   <data name="JQuery.Text" xml:space="preserve">
-    <value>JQuery Settings</value>
+    <value>jQuery Settings</value>
   </data>
   <data name="plProduct.Text" xml:space="preserve">
     <value>DotNetNuke Product:</value>
@@ -877,7 +877,7 @@
     <value>Identifies the version string embedded in the local jQuery UI script.</value>
   </data>
   <data name="plJQueryUIVersion.Text" xml:space="preserve">
-    <value>Installed JQuery UI Version</value>
+    <value>Installed jQuery UI Version</value>
   </data>
   <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
     <value>Please select a skin and/or container to preview.</value>

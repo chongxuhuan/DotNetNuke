@@ -9,6 +9,7 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css" />
     <link rel="stylesheet" type="text/css" href="Install.css" />
+    <asp:placeholder id="SCRIPTS" runat="server" />
 </head>
 <body>
     <script type="text/javascript">
@@ -183,8 +184,8 @@
                         <hr />
                         <div id="languagePanel" runat="server" class="dnnForm">
                             <div class="dnnFormItem">
-                                <label for="<%=rblInstall.ClientID%>"><%=LocalizeString("ChooseInstall")%></label>
-                                <asp:RadioButtonList ID="rblInstall" runat="Server" RepeatDirection="Vertical" CssClass="installRadioButtons" />
+                                <label for="<%=installTypeRadioButton.ClientID%>"><%=LocalizeString("ChooseInstall")%></label>
+                                <asp:RadioButtonList ID="installTypeRadioButton" runat="Server" RepeatDirection="Vertical" CssClass="installRadioButtons" />
                             </div>                   
                             <div class="dnnFormItem">
                                 <label for="<%=cboLanguages.ClientID%>"><%=LocalizeString("ChooseLanguage")%></label>
@@ -195,8 +196,8 @@
                         <asp:Label ID="lblHostWarning" runat="server" CssClass="NormalRed" ResourceKey="HostWarning" />
                     </asp:WizardStep>
                     <asp:WizardStep ID="Step1" runat="server" Title="FilePermissions">
-                        <h2><asp:Label ID="lblStep1Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep1Detail" runat="Server" />
+                        <h2><asp:Label ID="lblStep1Title" runat="server"  resourceKey="PermissionsTitle" /></h2>
+                        <asp:Label ID="lblStep1Detail" runat="Server"  resourceKey= "PermissionsDetail"/>
                         <hr />
                         <div class="dnnForm">
                             <div class="dnnFormItem">
@@ -221,35 +222,35 @@
                         </div>
                         <div id="databasePanel" runat="Server" visible="False" class="dnnForm">
                             <div class="dnnFormItem">
-                                <dnn:Label ID="serverLabel" runat="server" ControlName="txtServer" />
+                                <dnn:Label runat="server"  ResourceKey="Server" HelpKey="ServerHelp" ControlName="txtServer" />
                                 <asp:TextBox ID="txtServer" runat="Server" />
                             </div>
                             <div id="fileRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="fileLabel" runat="server" ControlName="txtFile" />
+                                <dnn:Label  ResourceKey="DatabaseFile" HelpKey="DatabaseFileHelp" runat="server" ControlName="txtFile" />
                                 <asp:TextBox ID="txtFile" runat="Server" />
                             </div>
                             <div id="databaseRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="databaseLabel" runat="server" ControlName="txtDatabase" />
+                                <dnn:Label ResourceKey="Database" HelpKey="DatabaseHelp" runat="server" ControlName="txtDatabase" />
                                 <asp:TextBox ID="txtDatabase" runat="Server" />
                             </div>
                             <div id="integratedRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="integratedLabel" runat="server" ControlName="chkIntegrated" />
+                                <dnn:Label runat="server" ResourceKey="Integrated" HelpKey="IntegratedHelp" ControlName="chkIntegrated" />
                                 <asp:CheckBox ID="chkIntegrated" runat="Server" AutoPostBack="True" />
                             </div>
                             <div id="userRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="userIdLabel" runat="server" ControlName="txtUserId" ResourceKey="UserId" HelpKey="UserHelp" />
+                                <dnn:Label runat="server" ControlName="txtUserId" ResourceKey="UserId" HelpKey="UserHelp" />
                                 <asp:TextBox ID="txtUserId" runat="Server" />
                             </div>
                             <div id="passwordRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ID="passwordLabel" runat="server" ControlName="txtPassword" />
+                                <dnn:Label runat="server" ControlName="txtPassword" ResourceKey="Password" HelpKey="PasswordHelp"  />
                                 <asp:TextBox ID="txtPassword" runat="Server" TextMode="Password" />
                             </div>
                             <div class="dnnFormItem">
-                                <dnn:Label ID="ownerLabel" runat="server" ControlName="chkOwner" />
+                                <dnn:Label runat="server" ControlName="chkOwner" ResourceKey="Owner" HelpKey="OwnerHelp" />
                                 <asp:CheckBox ID="chkOwner" runat="Server" />
                             </div>
                             <div class="dnnFormItem">
-                                <dnn:Label ID="qualifierLabel" runat="server" ControlName="txtqualifier" />
+                                <dnn:Label runat="server" ControlName="txtqualifier" ResourceKey="Qualifier" HelpKey="QualifierHelp"  />
                                 <asp:TextBox ID="txtqualifier" runat="Server" />
                             </div>
                         </div>
@@ -276,11 +277,11 @@
                             <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
                             <div class="dnnForm">
                                 <div class="dnnFormItem">
-                                    <label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
+									<label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
                                     <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256"  />
                                 </div>                   
                                 <div class="dnnFormItem">
-                                    <label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
+									<label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
                                     <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
                                         <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
                                         <asp:ListItem Value="1" resourcekey="SMTPBasic" />
@@ -288,18 +289,18 @@
                                     </asp:RadioButtonList>
                                 </div>
                                 <div class="dnnFormItem">
-                                    <label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
+									<label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
                                     <asp:Checkbox ID="chkSMTPEnableSSL" runat="server" />
                                 </div>                           
                                 <div id="SMTPUserNameRow" class="dnnFormItem">
-                                    <label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
+									<label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
                                     <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256"  />
                                 </div>                   
                                 <div id="SMTPPasswordRow" class="dnnFormItem">
-                                    <label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
+									<label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
                                     <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password"  />
                                 </div>                   
-                            </div>                   
+                            </div>
                         </asp:Panel>
                         <asp:Label ID="lblHostUserError" runat="server" />
                     </asp:WizardStep>
@@ -388,8 +389,9 @@
         <input type="hidden" id="__dnnVariable" runat="server" />
         <asp:Label ID="txtErrorMessage" runat="server" />
     </form>
-    <script src="../Resources/Shared/scripts/jquery/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+    /*globals jQuery, window, Sys */
+    (function ($, Sys) {
         function toggleSmtpCredentials() {
             var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
             if (smtpVal == "1") {
@@ -414,6 +416,7 @@
                 setUp();
             });
         });
+    } (jQuery, window.Sys));
     </script>
 </body>
 </html>

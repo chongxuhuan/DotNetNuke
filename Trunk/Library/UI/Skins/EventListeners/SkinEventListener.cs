@@ -25,29 +25,13 @@ namespace DotNetNuke.UI.Skins.EventListeners
 {
     public class SkinEventListener
     {
-        private readonly SkinEventType _Type;
-        private readonly SkinEventHandler _skinEvent;
-
         public SkinEventListener(SkinEventType type, SkinEventHandler e)
         {
-            _Type = type;
-            _skinEvent = e;
+            EventType = type;
+            SkinEvent = e;
         }
 
-        public SkinEventType EventType
-        {
-            get
-            {
-                return _Type;
-            }
-        }
-
-        public SkinEventHandler SkinEvent
-        {
-            get
-            {
-                return _skinEvent;
-            }
-        }
+        public SkinEventType EventType { get; private set; }
+        public SkinEventHandler SkinEvent { get; private set; }
     }
 }

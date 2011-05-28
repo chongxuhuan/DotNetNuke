@@ -163,7 +163,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
                     cboFolders.Items.Insert(0, new ListItem("<" + Localization.GetString("None_Specified") + ">", "-"));
                     var user = UserController.GetCurrentUserInfo();
-                    var folders = FolderManager.Instance.GetFolders(user, "BROWSE, ADD", false, false);
+                    var folders = FolderManager.Instance.GetFileSystemFolders(user, "BROWSE, ADD");
                     foreach (FolderInfo folder in folders)
                     {
                         var folderItem = new ListItem {Text = folder.FolderPath == Null.NullString ? Localization.GetString("Root", LocalResourceFile) : folder.DisplayPath, Value = folder.FolderPath};

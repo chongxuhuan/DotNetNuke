@@ -21,13 +21,11 @@
 
 #endregion
 
-#region Usings
 
 using System.Data;
 
 using DotNetNuke.Framework;
 
-#endregion
 
 namespace DotNetNuke.Modules.Html
 {
@@ -42,7 +40,7 @@ namespace DotNetNuke.Modules.Html
     /// -----------------------------------------------------------------------------
     public abstract partial class DataProvider
     {
-        #region "Shared/Static Methods"
+        #region Shared/Static Methods
 
         // singleton reference to the instantiated object 
 
@@ -67,7 +65,7 @@ namespace DotNetNuke.Modules.Html
 
         #endregion
 
-        #region "Abstract methods"
+        #region Abstract methods
 
         public abstract IDataReader GetHtmlText(int ModuleID, int ItemID);
 
@@ -97,8 +95,8 @@ namespace DotNetNuke.Modules.Html
 
         public abstract IDataReader GetWorkflowStatePermissions();
 
-        #endregion
 
         public abstract IDataReader GetWorkflowStatePermissionsByStateID(int StateID);
+        #endregion
     }
 }

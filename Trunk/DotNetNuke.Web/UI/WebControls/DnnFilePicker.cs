@@ -512,6 +512,7 @@ namespace DotNetNuke.Web.UI.WebControls
         ///   [cnurse]	7/31/2005  created
         /// </history>
         /// -----------------------------------------------------------------------------
+        [Obsolete("Deprecated in DNN 6.0")]
         public bool ShowDatabase
         {
             get
@@ -562,6 +563,7 @@ namespace DotNetNuke.Web.UI.WebControls
         ///   [cnurse]	7/31/2005  created
         /// </history>
         /// -----------------------------------------------------------------------------
+        [Obsolete("Deprecated in DNN 6.0")]
         public bool ShowSecure
         {
             get
@@ -850,7 +852,7 @@ namespace DotNetNuke.Web.UI.WebControls
             }
             else
             {
-                var folders = FolderManager.Instance.GetFolders(UserController.GetCurrentUserInfo(), "READ,ADD", ShowSecure, ShowDatabase);
+                var folders = FolderManager.Instance.GetFolders(UserController.GetCurrentUserInfo(), "READ,ADD");
                 foreach (FolderInfo folder in folders)
                 {
                     ListItem folderItem = new ListItem();

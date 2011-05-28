@@ -3,11 +3,9 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.WebControls" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
-
 <h2 class="dnnFormSectionHead"><a href="" class="dnnLabelExpanded"><%=LocalizeString("AuthenticationSettings")%></a></h2>
 <fieldset>
-    <legend></legend>
-    <asp:Label ID="lblHelp" runat="server" />
+    <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server" /></div>
     <dnn:DnnFormEditor id="authenticationForm" runat="Server" FormMode="Short">
         <Items>
             <dnn:DnnFormTextBoxItem ID="authenticationType" runat="server" DataField = "AuthenticationType" />
@@ -32,4 +30,3 @@
         </ul>
     </asp:Panel>
 </fieldset>
-

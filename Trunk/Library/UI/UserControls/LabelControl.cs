@@ -29,6 +29,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Framework;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
@@ -215,60 +216,75 @@ namespace DotNetNuke.UI.UserControls
             base.OnLoad(e);
             try
             {
-                DNNClientAPI.EnableMinMax(cmdHelp, pnlHelp, true, DNNClientAPI.MinMaxPersistanceType.None);
+                RegisterClientDependencies();
+
                 
-				//get the localised text
-				if (String.IsNullOrEmpty(ResourceKey))
-                {
-                    //Set Resource Key to the ID of the control
-					ResourceKey = ID;
-                }
-                if ((!string.IsNullOrEmpty(ResourceKey)))
-                {
-                    string localText = Localization.GetString(ResourceKey, this);
-                    if (!string.IsNullOrEmpty(localText))
-                    {
-                        Text = localText + Suffix;
-                    }
-                    else
-                    {
-                        Text += Suffix;
-                    }
-                }
-				
-				//Set Help Key to the Resource Key plus ".Help"
-                if (String.IsNullOrEmpty(HelpKey))
-                {
-                    HelpKey = ResourceKey + ".Help";
-                }
-				
-                string helpText = Localization.GetString(HelpKey, this);
-                if ((!string.IsNullOrEmpty(helpText)) || (string.IsNullOrEmpty(HelpText)))
-                {
-                    HelpText = helpText;
-                }
-				
-                if (!string.IsNullOrEmpty(CssClass))
-                {
-                    lblLabel.CssClass = CssClass;
-                }
-				
-				//find the reference control in the parents Controls collection
-                if (!String.IsNullOrEmpty(ControlName))
-                {
-                    Control c = Parent.FindControl(ControlName);
-                    if (c != null)
-                    {
-                        label.Attributes["for"] = c.ClientID;
-                    }
-                }
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-		
-		#endregion
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            //get the localised text
+            if (String.IsNullOrEmpty(ResourceKey))
+            {
+                //Set Resource Key to the ID of the control
+                ResourceKey = ID;
+            }
+            if ((!string.IsNullOrEmpty(ResourceKey)))
+            {
+                string localText = Localization.GetString(ResourceKey, this);
+                if (!string.IsNullOrEmpty(localText))
+                {
+                    Text = localText + Suffix;
+                }
+                else
+                {
+                    Text += Suffix;
+                }
+            }
+
+            //Set Help Key to the Resource Key plus ".Help"
+            if (String.IsNullOrEmpty(HelpKey))
+            {
+                HelpKey = ResourceKey + ".Help";
+            }
+
+            string helpText = Localization.GetString(HelpKey, this);
+            if ((!string.IsNullOrEmpty(helpText)) || (string.IsNullOrEmpty(HelpText)))
+            {
+                HelpText = helpText;
+            }
+
+            if (!string.IsNullOrEmpty(CssClass))
+            {
+                lblLabel.CssClass = CssClass;
+            }
+
+            //find the reference control in the parents Controls collection
+            if (!String.IsNullOrEmpty(ControlName))
+            {
+                Control c = Parent.FindControl(ControlName);
+                if (c != null)
+                {
+                    label.Attributes["for"] = c.ClientID;
+                }
+            }
+        }
+
+        private void RegisterClientDependencies()
+        {
+            ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
+            this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+            jQuery.RequestDnnPluginsRegistration();
+            this.Page.ClientScript.RegisterClientScriptBlock(typeof(LabelControl), "dnnTooltip", "$(document).ready(function(){ $('.dnnTooltip').dnnTooltip(); });", true);
+        }
+
+        #endregion
     }
 }

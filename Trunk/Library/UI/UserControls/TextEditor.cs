@@ -65,7 +65,6 @@ namespace DotNetNuke.UI.UserControls
         protected Panel PanelTextEditor;
         protected RadioButtonList OptRender;
         protected RadioButtonList OptView;
-        protected LabelControl PlView;
         protected PlaceHolder PlcEditor;
         protected HtmlGenericControl DivBasicTextBox;
         protected HtmlGenericControl DivBasicRender;

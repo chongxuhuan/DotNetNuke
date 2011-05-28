@@ -2,10 +2,8 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-
 <div class="dnnForm dnnUnInstallExtension dnnClear" id="dnnUnInstallExtension">
     <fieldset>
-        <legend></legend>
         <dnn:DnnFormEditor id="packageForm" runat="Server" FormMode="Short">
             <Items>
                 <dnn:DnnFormLiteralItem ID="name" runat="server" DataField = "Name" />
@@ -21,41 +19,14 @@
             <asp:CheckBox ID="chkDelete" runat="server" />
         </div>    
     </fieldset>
-        <ul class="dnnActions dnnClear">
+    <ul class="dnnActions dnnClear">
     	<li><asp:LinkButton id="cmdUninstall" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUninstall" /></li>
         <li><asp:HyperLink id="cmdReturn1" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReturn" Causesvalidation="False" /></li>
     </ul>
 </div>
-
-<asp:Label ID="lblMessage" runat="server" CssClass="Normal" Width="500px" EnableViewState="False" />
-
-<table id="tblLogs" cellspacing="0" cellpadding="0" summary="Resource Upload Logs Table"
-    runat="server" visible="False">
-    <tr>
-        <td>
-            <asp:Label ID="lblLogTitle" runat="server" resourcekey="LogTitle" CssClass="Head" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            &nbsp;
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <asp:PlaceHolder ID="phPaLogs" runat="server" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            &nbsp;
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <ul class="dnnActions dnnClear">
-    	        <li><asp:HyperLink ID="cmdReturn2" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReturn" /></li>
-            </ul>
-        </td>
-    </tr>
-</table>
+<div class="dnnClear"><asp:Label ID="lblMessage" runat="server" EnableViewState="False" /></div>
+<div id="tblLogs" runat="server" visible="False">
+	<h2 class="dnnFormSectionHead"><asp:Label ID="lblLogTitle" runat="server" resourcekey="LogTitle" /></h2>
+	<div class="dnnClear"><asp:PlaceHolder ID="phPaLogs" runat="server" /></div>
+    <ul class="dnnActions dnnClear"><li><asp:HyperLink ID="cmdReturn2" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li></ul>
+</div>

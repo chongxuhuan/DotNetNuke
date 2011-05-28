@@ -6,13 +6,12 @@
         <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=Localization.GetString("RequiredFields", Localization.SharedResourceFile)%></span></p></div>
         <div class="dnnFormItem">
             <dnn:label id="plRoleGroupName" runat="server" controlname="txtRoleGroupName"/>
-			<asp:textbox id="txtRoleGroupName" cssclass="dnnFormRequired" runat="server" maxlength="50" columns="30" />
-			<asp:requiredfieldvalidator id="valRoleGroupName" cssclass="dnnFormMessage dnnFormError" runat="server" resourcekey="valRoleGroupName" 
-                controltovalidate="txtRoleGroupName"  display="Dynamic"/>
+			<asp:textbox id="txtRoleGroupName" cssclass="dnnFormRequired" runat="server" maxlength="50" />
+			<asp:requiredfieldvalidator id="valRoleGroupName" cssclass="dnnFormMessage dnnFormError" runat="server" resourcekey="valRoleGroupName" controltovalidate="txtRoleGroupName"  display="Dynamic"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plDescription" runat="server" controlname="txtDescription"/>
-            <asp:textbox id="txtDescription" cssclass="NormalTextBox" runat="server" maxlength="1000" columns="50" textmode="MultiLine" rows="4"/>
+            <asp:textbox id="txtDescription" cssclass="NormalTextBox" runat="server" maxlength="1000" textmode="MultiLine" rows="10" />
         </div>
     </fieldset >   
     <ul class="dnnActions dnnClear">

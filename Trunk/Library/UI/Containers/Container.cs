@@ -32,6 +32,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Application;
+using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
@@ -506,10 +507,7 @@ namespace DotNetNuke.UI.Containers
         {
             base.OnInit(e);
 
-            foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerInit))
-            {
-                listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
-            }
+            InvokeContainerEvents(ContainerEventType.OnContainerInit);
         }
 
         /// <summary>
@@ -523,10 +521,8 @@ namespace DotNetNuke.UI.Containers
         {
             base.OnLoad(e);
 
-            foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerLoad))
-            {
-                listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
-            }
+
+            InvokeContainerEvents(ContainerEventType.OnContainerLoad);
         }
 
         /// -----------------------------------------------------------------------------
@@ -541,10 +537,7 @@ namespace DotNetNuke.UI.Containers
         {
             base.OnPreRender(e);
 
-            foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerPreRender))
-            {
-                listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
-            }
+            InvokeContainerEvents(ContainerEventType.OnContainerPreRender);
         }
 
         /// -----------------------------------------------------------------------------
@@ -559,9 +552,19 @@ namespace DotNetNuke.UI.Containers
         {
             base.OnUnload(e);
 
-            foreach (var listener in DotNetNukeContext.Current.ContainerEventListeners.Where(listener => listener.EventType == ContainerEventType.OnContainerUnLoad))
+            InvokeContainerEvents(ContainerEventType.OnContainerUnLoad);
+        }
+
+        private void InvokeContainerEvents(ContainerEventType containerEventType)
+        {
+            SharedList<ContainerEventListener> list = ((NaiveLockingList<ContainerEventListener>)DotNetNukeContext.Current.ContainerEventListeners).SharedList;
+
+            using (list.GetReadLock())
             {
-                listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
+                foreach (var listener in list.Where(x => x.EventType == containerEventType))
+                {
+                    listener.ContainerEvent.Invoke(this, new ContainerEventArgs(this));
+                }
             }
         }
 		

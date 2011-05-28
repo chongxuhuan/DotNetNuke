@@ -21,26 +21,18 @@
 
 #endregion
 
-#region Usings
 
 using System.Collections;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 
-//
-// DotNetNuke?- http://www.dotnetnuke.com
-// Copyright (c) 2002-2009
-// by DotNetNuke Corporation
-//
-
-#endregion
 
 namespace DotNetNuke.Security.Permissions
 {
     public partial class WorkflowStatePermissionController
     {
-        #region "Private Shared Methods"
+        #region Private Shared Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -56,7 +48,7 @@ namespace DotNetNuke.Security.Permissions
 
         #endregion
 
-        #region "Public Shared Methods"
+        #region Public Shared Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -213,14 +213,7 @@
   </ProjectExtensions>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ItemGroup>
-    <Content Include="05.01.02_Pro.txt" />
-    <Content Include="05.01.03_Pro.txt" />
-    <Content Include="05.01.04_Pro.txt" />
-    <Content Include="05.02.00_Pro.txt" />
-    <Content Include="05.02.01_Pro.txt" />
     <Content Include="App_LocalResources\Workflow.ascx.resx" />
-    <Content Include="LicensePro.txt" />
-    <Content Include="ReleaseNotesPro.txt" />
     <Compile Include="Components\SqlDataProviderPro.cs" />
     <Compile Include="Components\WorkflowStateControllerPro.cs" />
     <Compile Include="Components\WorkflowStatePermissionControllerPro.cs" />

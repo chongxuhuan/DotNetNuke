@@ -25,8 +25,6 @@
 
 using System;
 using System.Collections;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -37,7 +35,6 @@ using DotNetNuke.Services.Mail;
 using DotNetNuke.Services.Vendors;
 using DotNetNuke.UI;
 using DotNetNuke.UI.Skins.Controls;
-using DotNetNuke.UI.Utilities;
 
 using Globals = DotNetNuke.Common.Globals;
 using DotNetNuke.Framework;
@@ -66,7 +63,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
         /// <summary>
         /// Return url redirects to the previous page, with or without filter info
         /// </summary>
-        /// <param name="Filter"></param>
+        /// <param name="filter"></param>
         /// <history>
         /// 	[erikvb]	10/18/2007
         /// </history>
@@ -147,19 +144,6 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     addresssVendor.ModuleId = ModuleId;
                     addresssVendor.StartTabIndex = 4;
 
-
-                    var objClassifications = new ClassificationController();
-                    var arr = objClassifications.GetVendorClassifications(VendorID);
-                    int i;
-                    for (i = 0; i <= arr.Count - 1; i++)
-                    {
-                        var lstItem = new ListItem();
-                        var objClassification = (ClassificationInfo) arr[i];
-                        lstItem.Text = objClassification.ClassificationName;
-                        lstItem.Value = objClassification.ClassificationId.ToString();
-                        lstItem.Selected = objClassification.IsAssociated;
-                        lstClassifications.Items.Add(lstItem);
-                    }
                     var objVendors = new VendorController();
                     if (VendorID != -1)
                     {
@@ -326,22 +310,21 @@ namespace DotNetNuke.Modules.Admin.Vendors
         {
             try
             {
-                int intPortalID;
-
                 if (Page.IsValid)
                 {
+                    int portalID;
                     if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
                     {
-                        intPortalID = -1;
+                        portalID = -1;
                     }
                     else
                     {
-                        intPortalID = PortalId;
+                        portalID = PortalId;
                     }
                     var objVendors = new VendorController();
                     var objVendor = new VendorInfo
                                         {
-                                            PortalId = intPortalID,
+                                            PortalId = portalID,
                                             VendorId = VendorID,
                                             VendorName = txtVendorName.Text,
                                             Unit = addresssVendor.Unit,
@@ -376,9 +359,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     }
                     else
                     {
-                        var objVendorCheck = new VendorInfo();
-                        objVendorCheck = objVendors.GetVendor(VendorID, intPortalID);
-                        if (objVendorCheck != null)
+                        VendorInfo vendorCheck = objVendors.GetVendor(VendorID, portalID);
+                        if (vendorCheck != null)
                         {
                             objVendors.UpdateVendor(objVendor);
                         }
@@ -387,52 +369,42 @@ namespace DotNetNuke.Modules.Admin.Vendors
                             Response.Redirect(Globals.NavigateURL());
                         }
                     }
-					
-                    //update vendor classifications
-                    var objClassifications = new ClassificationController();
-                    objClassifications.DeleteVendorClassifications(VendorID);
-                    foreach (ListItem lstItem in lstClassifications.Items)
-                    {
-                        if (lstItem.Selected)
-                        {
-                            objClassifications.AddVendorClassification(VendorID, Int32.Parse(lstItem.Value));
-                        }
-                    }
+
                     if (cmdUpdate.Text == "Signup")
                     {
-                        var Custom = new ArrayList();
-                        Custom.Add(DateTime.Now.ToString());
-                        Custom.Add(txtVendorName.Text);
-                        Custom.Add(txtFirstName.Text);
-                        Custom.Add(txtLastName.Text);
-                        Custom.Add(addresssVendor.Unit);
-                        Custom.Add(addresssVendor.Street);
-                        Custom.Add(addresssVendor.City);
-                        Custom.Add(addresssVendor.Region);
-                        Custom.Add(addresssVendor.Country);
-                        Custom.Add(addresssVendor.Postal);
-                        Custom.Add(addresssVendor.Telephone);
-                        Custom.Add(addresssVendor.Fax);
-                        Custom.Add(addresssVendor.Cell);
-                        Custom.Add(txtEmail.Text);
-                        Custom.Add(txtWebsite.Text);
+                        var custom = new ArrayList();
+                        custom.Add(DateTime.Now.ToString());
+                        custom.Add(txtVendorName.Text);
+                        custom.Add(txtFirstName.Text);
+                        custom.Add(txtLastName.Text);
+                        custom.Add(addresssVendor.Unit);
+                        custom.Add(addresssVendor.Street);
+                        custom.Add(addresssVendor.City);
+                        custom.Add(addresssVendor.Region);
+                        custom.Add(addresssVendor.Country);
+                        custom.Add(addresssVendor.Postal);
+                        custom.Add(addresssVendor.Telephone);
+                        custom.Add(addresssVendor.Fax);
+                        custom.Add(addresssVendor.Cell);
+                        custom.Add(txtEmail.Text);
+                        custom.Add(txtWebsite.Text);
                         //send email to Admin
                         Mail.SendEmail(PortalSettings.Email,
                                        PortalSettings.Email,
                                        Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_SUBJECT"),
-                                       Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_BODY", Localization.GlobalResourceFile, Custom));
+                                       Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_ADMINISTRATOR_BODY", Localization.GlobalResourceFile, custom));
 
 
                         //send email to vendor
-                        Custom.Clear();
-                        Custom.Add(txtFirstName.Text);
-                        Custom.Add(txtLastName.Text);
-                        Custom.Add(txtVendorName.Text);
+                        custom.Clear();
+                        custom.Add(txtFirstName.Text);
+                        custom.Add(txtLastName.Text);
+                        custom.Add(txtVendorName.Text);
 
                         Mail.SendEmail(PortalSettings.Email,
                                        txtEmail.Text,
                                        Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_SUBJECT"),
-                                       Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_BODY", Localization.GlobalResourceFile, Custom));
+                                       Localization.GetSystemMessage(PortalSettings, "EMAIL_VENDOR_REGISTRATION_BODY", Localization.GlobalResourceFile, custom));
 
 
                         ReturnUrl(txtVendorName.Text.Substring(0, 1));

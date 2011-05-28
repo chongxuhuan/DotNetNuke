@@ -81,20 +81,22 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public virtual void LocalizeStrings()
         {
-            if ((Localize))
+            if (Localize)
             {
-                if ((!string.IsNullOrEmpty(ToolTip)))
+                if (!string.IsNullOrEmpty(ToolTip))
                 {
                     ToolTip = Localization.GetString(ToolTip, LocalResourceFile);
                 }
 
-                if ((!string.IsNullOrEmpty(Text)))
+                if (!string.IsNullOrEmpty(Text))
                 {
-                    Text = Localization.GetString(Text, LocalResourceFile);
+                    var unLocalized = Text;
 
-                    if ((string.IsNullOrEmpty(ToolTip)))
+                    Text = Localization.GetString(unLocalized, LocalResourceFile);
+
+                    if (string.IsNullOrEmpty(ToolTip))
                     {
-                        ToolTip = Localization.GetString(string.Format("{0}.ToolTip", Text), LocalResourceFile);
+                        ToolTip = Localization.GetString(unLocalized + ".ToolTip", LocalResourceFile);
                     }
                 }
             }
