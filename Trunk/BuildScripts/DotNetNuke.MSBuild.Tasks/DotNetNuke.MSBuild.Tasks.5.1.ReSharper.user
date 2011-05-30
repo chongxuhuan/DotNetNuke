@@ -1,0 +1,69 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Default">
+      <Item value="return" priority="0" />
+      <Item value="true" priority="0" />
+      <Item value="Committer" priority="0" />
+      <Item value="var" priority="1" />
+      <Item value="cs" priority="1" />
+      <Item value="foreach" priority="0" />
+      <Item value="in" priority="0" />
+      <Item value="if" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Microsoft.TeamFoundation.VersionControl.Client.Changeset">
+      <Item value="Changes" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Microsoft.TeamFoundation.VersionControl.Client.Change">
+      <Item value="Item" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Microsoft.TeamFoundation.VersionControl.Client.Item">
+      <Item value="ServerItem" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.String">
+      <Item value="Contains`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Microsoft.TeamFoundation.VersionControl.Client.RecursionType">
+      <Item value="Full" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:CodePlexDelete.cs" caret="0" fromTop="0" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2604" fromTop="20" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="285" fromTop="13" />
+      <File id="d:Miscellaneous Files/f:CodePlexSVNCheckin.build/l:C!?DotNetNuke?TFS?DotNetNuke?src?DotNetNuke_CS?Tools?CodePlex?CodePlexSVNCheckin.build" caret="597" fromTop="6" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:ExtensionPackager.cs" caret="0" fromTop="0" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="533" fromTop="8" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="780" fromTop="15" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="154" fromTop="14" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="97" fromTop="4" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="207" fromTop="10" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2669" fromTop="19" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2761" fromTop="17" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2550" fromTop="15" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2183" fromTop="6" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2293" fromTop="10" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="1156" fromTop="10" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+</Configuration>

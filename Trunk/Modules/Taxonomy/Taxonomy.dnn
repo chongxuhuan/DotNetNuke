@@ -3,7 +3,7 @@
 		<package name="DotNetNuke.Taxonomy" type="Module" version="06.00.00">
 			<friendlyName>Taxonomy Manager</friendlyName>
 			<description>Administrators can manage the Taxonomy for their portal.</description>
-      <iconFile>taxonomy.gif</iconFile>
+      <iconFile>DesktopModules/Admin/Taxonomy/Images/taxonomy.gif</iconFile>
 			<owner>
 				<name>DotNetNuke Corporation</name>
 				<organization>DotNetNuke Corporation</organization>
@@ -79,48 +79,15 @@
 						</assembly>
 					</assemblies>
 				</component>
-				<component type="File">
-					<files>
-						<basePath>DesktopModules\Admin\Taxonomy</basePath>
-						<file>
-							<path>App_LocalResources</path>
-							<name>CreateVocabulary.ascx.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>EditVocabulary.ascx.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>SharedResources.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>VocabularyList.ascx.resx</name>
-						</file>
-						<file>
-							<path>Controls</path>
-							<name>EditTermControl.ascx</name>
-						</file>
-						<file>
-							<path>Controls</path>
-							<name>EditVocabularyControl.ascx</name>
-						</file>
-						<file>
-							<name>CreateVocabulary.ascx</name>
-						</file>
-						<file>
-							<name>EditVocabulary.ascx</name>
-						</file>
-						<file>
-							<name>VocabularyList.ascx</name>
-						</file>
-            <file>
-              <name>taxonomy.gif</name>
-            </file>
-					</files>
-				</component>
-			</components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/Admin/Taxonomy</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+      </components>
 		</package>
 	</packages>
 </dotnetnuke>

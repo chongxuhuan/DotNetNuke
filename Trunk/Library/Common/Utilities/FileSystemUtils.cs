@@ -442,7 +442,16 @@ namespace DotNetNuke.Common.Utilities
             if (folderMapping != null)
             {
                 var folderManager = FolderManager.Instance;
-                var folderPath = PathUtils.Instance.GetRelativePath(folderMapping.PortalID, parentFolder + newFolder);
+
+				//get relative folder path.
+            	var folderPath = newFolder;
+
+				if (Path.IsPathRooted(folderPath))
+				{
+					folderPath = folderPath.TrimStart(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+				}
+
+				folderPath = folderPath.Replace("\\", "/");
                 
                 var folder = folderManager.AddFolder(folderMapping, folderPath);
                 folder.UniqueId = uniqueId;

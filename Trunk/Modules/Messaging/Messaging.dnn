@@ -81,40 +81,15 @@
 						</assembly>
 					</assemblies>
 				</component>
-				<component type="File">
-					<files>
-						<basePath>DesktopModules\Admin\Messaging</basePath>
-						<file>
-							<path>App_LocalResources</path>
-							<name>EditMessage.ascx.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>MessageList.ascx.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>SharedResources.resx</name>
-						</file>
-						<file>
-							<path>App_LocalResources</path>
-							<name>ViewMessage.ascx.resx</name>
-						</file>
-						<file>
-							<name>EditMessage.ascx</name>
-						</file>
-						<file>
-							<name>MessageList.ascx</name>
-						</file>
-						<file>
-							<name>ViewMessage.ascx</name>
-						</file>
-            <file>
-              <name>messaging.gif</name>
-            </file>
-					</files>
-				</component>
-			</components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules\Admin\Messaging</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+      </components>
 		</package>
 	</packages>
 </dotnetnuke>

@@ -31,7 +31,6 @@
     </asp:Repeater>
     <asp:Repeater ID="rptControls" runat="server">
         <ItemTemplate>
-
             <div id='<%# Eval("DashboardControlKey") %>-tab' class="dnnDashboardPanel">
                 <div class="dashboardHeader">
                 </div>

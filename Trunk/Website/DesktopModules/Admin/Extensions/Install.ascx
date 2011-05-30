@@ -93,7 +93,7 @@
                 <div class="dnnFormItem"><asp:PlaceHolder ID="phAcceptLogs" runat="server" /></div>
             </asp:WizardStep>
             <asp:WizardStep ID="Step5" runat="Server" Title="InstallResults" StepType="Finish">
-                <div class="dnnFormMessage dnnFormValidationSummary"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" /></div>
+                <div class="dnnFormMessage dnnFormValidationSummary" id="lblInstallMessageRow" runat="server"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" /></div>
                 <div class="dnnFormItem dnnClear"><asp:PlaceHolder ID="phInstallLogs" runat="server" /></div>
             </asp:WizardStep>
         </WizardSteps>

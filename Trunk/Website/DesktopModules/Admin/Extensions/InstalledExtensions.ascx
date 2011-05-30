@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.WebControls" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>                
-<div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblUpdate" runat="server" resourceKey="lblUpdate" /></div>
+<div class="dnnFormMessage dnnFormInfo" id="lblUpdateRow" runat="server"><asp:Label ID="lblUpdate" runat="server" resourceKey="lblUpdate" /></div>
 <div class="dnnFormItem" id="languageSelectorRow" runat="server">
     <dnn:Label ID="plLocales" runat="server" ControlName="cboLocales" />
     <asp:DropDownList ID="cboLocales" runat="server" DataTextField="Text" DataValueField="Code" AutoPostBack="true" />

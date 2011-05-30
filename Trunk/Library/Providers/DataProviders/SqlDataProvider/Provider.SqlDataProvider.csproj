@@ -109,12 +109,15 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <Extension>zip</Extension>
+    <DNNFileName>SQLDataProvider</DNNFileName>
+    <PackageName>SQLDataProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\..\..\Website\Install\Provider</WebsiteInstallPath>
   </PropertyGroup>
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject">
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;Package">
   </Target>
   <Target Name="DebugProject">
     <Copy SourceFiles="..\..\..\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll" DestinationFolder="..\..\..\..\Website\bin\" />

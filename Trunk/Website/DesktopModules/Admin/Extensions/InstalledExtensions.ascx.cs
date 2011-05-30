@@ -127,6 +127,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             UpdateGridColumns(grid);
 
+			if (String.IsNullOrEmpty(Upgrade.UpgradeIndicator(DotNetNukeContext.Current.Application.Version, "", "~", "", Request.IsLocal, Request.IsSecureConnection)))
+			{
+				lblUpdateRow.Visible = false;
+				grid.Columns[8].HeaderText = "";
+			}
+
+			Localization.LocalizeDataGrid(ref grid, LocalResourceFile);
+
             switch (packageType)
             {
                 case "Module":
@@ -167,14 +175,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 grid.Visible = false;
                 noResultsLabel.Visible = true;
             }
-
-            if (String.IsNullOrEmpty(Upgrade.UpgradeIndicator(DotNetNukeContext.Current.Application.Version, "", "~", "", Request.IsLocal, Request.IsSecureConnection)))
-            {
-                lblUpdate.Visible = false;
-                grid.Columns[8].HeaderText = "";
-            }
-
-            Localization.LocalizeDataGrid(ref grid, LocalResourceFile);
         }
 
         private void BindPackageTypes()
@@ -439,10 +439,12 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 var kvp = (KeyValuePair<string, PackageType>)e.Item.DataItem;
 
                 DataGrid extensionsGrid = item.Controls[1] as DataGrid;
+            	
                 Label noResultsLabel = item.Controls[3] as Label;
 
-                Localization.LocalizeDataGrid(ref extensionsGrid, LocalResourceFile);
                 BindGrid(kvp.Key, extensionsGrid, noResultsLabel);
+
+				
             }
         }
 

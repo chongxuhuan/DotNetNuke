@@ -345,7 +345,6 @@ namespace DotNetNuke.UI.WebControls
                 }
                 if (ItemStyle != LanguageItemStyle.FlagOnly)
                 {
-                    lblLocale.Attributes["class"] = "Normal";
                     lblLocale.Controls.Add(new LiteralControl("&nbsp;" + c.DisplayName));
                 }
                 if (ListDirection == LanguageListDirection.Vertical)

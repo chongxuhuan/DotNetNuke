@@ -35,187 +35,163 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.WebControls
 {
-    /// -----------------------------------------------------------------------------
-    /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.UI.WebControls
-    /// Class:      VisibilityControl
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// The VisibilityControl control provides a base control for defining visibility
-    /// options
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    ///     [cnurse]	05/03/2006	created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    [ToolboxData("<{0}:VisibilityControl runat=server></{0}:VisibilityControl>")]
-    public class VisibilityControl : WebControl, IPostBackDataHandler, INamingContainer
-    {
-		#region "Public Properties"
+
+	/// <summary>
+	/// The VisibilityControl control provides a base control for defining visibility
+	/// options
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	///     [cnurse]	05/03/2006	created
+	/// </history>
+	[ToolboxData("<{0}:VisibilityControl runat=server></{0}:VisibilityControl>")]
+	public class VisibilityControl : WebControl, IPostBackDataHandler, INamingContainer
+	{
+
+		#region Public Properties
 		
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Caption
-        /// </summary>
-        /// <value>A string representing the Name of the property</value>
-        /// <history>
-        ///     [cnurse]	05/08/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public string Caption { get; set; }
+		/// <summary>
+		/// Caption
+		/// </summary>
+		/// <value>A string representing the Name of the property</value>
+		/// <history>
+		///     [cnurse]	05/08/2006	created
+		/// </history>
+		public string Caption { get; set; }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Name is the name of the field as a string
-        /// </summary>
-        /// <value>A string representing the Name of the property</value>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public string Name { get; set; }
+		/// <summary>
+		/// Name is the name of the field as a string
+		/// </summary>
+		/// <value>A string representing the Name of the property</value>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		public string Name { get; set; }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// StringValue is the value of the control expressed as a String
-        /// </summary>
-        /// <value>A string representing the Value</value>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public object Value { get; set; }
+		/// <summary>
+		/// StringValue is the value of the control expressed as a String
+		/// </summary>
+		/// <value>A string representing the Value</value>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		public object Value { get; set; }
 		
 		#endregion
 
-        #region IPostBackDataHandler Members
+		#region IPostBackDataHandler Members
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// LoadPostData loads the Post Back Data and determines whether the value has change
-        /// </summary>
-        /// <param name="postDataKey">A key to the PostBack Data to load</param>
-        /// <param name="postCollection">A name value collection of postback data</param>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-        {
-            bool dataChanged = false;
-            string presentValue = Convert.ToString(Value);
-            string postedValue = postCollection[postDataKey];
-            if (!presentValue.Equals(postedValue))
-            {
-                Value = postedValue;
-                dataChanged = true;
-            }
-            return dataChanged;
-        }
+		/// <summary>
+		/// LoadPostData loads the Post Back Data and determines whether the value has change
+		/// </summary>
+		/// <param name="postDataKey">A key to the PostBack Data to load</param>
+		/// <param name="postCollection">A name value collection of postback data</param>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			var dataChanged = false;
+			var presentValue = Convert.ToString(Value);
+			var postedValue = postCollection[postDataKey];
+			if (!presentValue.Equals(postedValue))
+			{
+				Value = postedValue;
+				dataChanged = true;
+			}
+			return dataChanged;
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// RaisePostDataChangedEvent runs when the PostBackData has changed.  It triggers
-        /// a ValueChanged Event
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void RaisePostDataChangedEvent()
-        {
+		/// <summary>
+		/// RaisePostDataChangedEvent runs when the PostBackData has changed.  It triggers
+		/// a ValueChanged Event
+		/// </summary>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		public void RaisePostDataChangedEvent()
+		{
 			//Raise the VisibilityChanged Event
-            int intValue = Convert.ToInt32(Value);
-            var args = new PropertyEditorEventArgs(Name);
-            args.Value = Enum.ToObject(typeof (UserVisibilityMode), intValue);
-            OnVisibilityChanged(args);
-        }
+			int intValue = Convert.ToInt32(Value);
+			var args = new PropertyEditorEventArgs(Name);
+			args.Value = Enum.ToObject(typeof (UserVisibilityMode), intValue);
+			OnVisibilityChanged(args);
+		}
 
-        #endregion
+		#endregion
 		
-		#region "Events"
+		#region Events
 
-        public event PropertyChangedEventHandler VisibilityChanged;
+		public event PropertyChangedEventHandler VisibilityChanged;
 		
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// OnVisibilityChanged runs when the Visibility has changed.  It raises the VisibilityChanged
-        /// Event
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected virtual void OnVisibilityChanged(PropertyEditorEventArgs e)
-        {
-            if (VisibilityChanged != null)
-            {
-                VisibilityChanged(this, e);
-            }
-        }
+		/// <summary>
+		/// OnVisibilityChanged runs when the Visibility has changed.  It raises the VisibilityChanged
+		/// Event
+		/// </summary>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		protected virtual void OnVisibilityChanged(PropertyEditorEventArgs e)
+		{
+			if (VisibilityChanged != null)
+			{
+				VisibilityChanged(this, e);
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Render renders the control
-        /// </summary>
-        /// <param name="writer">A HtmlTextWriter.</param>
-        /// <history>
-        ///     [cnurse]	05/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void Render(HtmlTextWriter writer)
-        {
-            var propValue = (UserVisibilityMode) (Convert.ToInt32(Value));
+		/// <summary>
+		/// Render renders the control
+		/// </summary>
+		/// <param name="writer">A HtmlTextWriter.</param>
+		/// <history>
+		///     [cnurse]	05/03/2006	created
+		/// </history>
+		protected override void Render(HtmlTextWriter writer)
+		{
+			//writer.RenderBeginTag(HtmlTextWriterTag.Label);
+			//writer.Write(Caption);
+			//writer.RenderEndTag();
 
-            //Render Outer Div
-            ControlStyle.AddAttributesToRender(writer);
-            AddAttributesToRender(writer);
+			var propValue = (UserVisibilityMode)(Convert.ToInt32(Value));
 
-            //Render Caption
-            writer.RenderBeginTag(HtmlTextWriterTag.Div);
-            writer.Write(Caption);
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
+			writer.RenderBeginTag(HtmlTextWriterTag.Select);
 
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            if ((propValue == UserVisibilityMode.AllUsers))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, "0");
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
-            writer.Write(Localization.GetString("Public"));
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            if ((propValue == UserVisibilityMode.MembersOnly))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, "1");
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
-            writer.Write(Localization.GetString("MemberOnly"));
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            if ((propValue == UserVisibilityMode.AdminOnly))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, "2");
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
-            writer.Write(Localization.GetString("AdminOnly"));
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, "0");
+			if ((propValue == UserVisibilityMode.AllUsers))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Option);
+			writer.Write(Localization.GetString("Public").Trim());
+			writer.RenderEndTag();
 
-            //End render outer div
-            writer.RenderEndTag();
-        }
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, "1");
+			if ((propValue == UserVisibilityMode.MembersOnly))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Option);
+			writer.Write(Localization.GetString("MemberOnly"));
+			writer.RenderEndTag();
+
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, "2");
+			if ((propValue == UserVisibilityMode.AdminOnly))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Option);
+			writer.Write(Localization.GetString("AdminOnly"));
+			writer.RenderEndTag();
+
+			writer.RenderEndTag();
+		}
 		
 		#endregion
-    }
+	}
 }

@@ -102,6 +102,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\WebControls\DnnTreeNode.cs" />
     <Compile Include="Mvp\IWebServiceViewOfT.cs" />
     <Compile Include="Mvp\IWebServiceView.cs" />
     <Compile Include="Mvp\WebServicePresenter.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="UI\WebControls\DnnToolBar.cs" />
     <Compile Include="UI\WebControls\DnnTreeList.cs" />
     <Compile Include="UI\WebControls\DnnTreeView.cs" />
+    <Compile Include="UI\WebControls\DnnTreeViewContextMenu.cs" />
     <Compile Include="UI\WebControls\DnnUpload.cs" />
     <Compile Include="UI\WebControls\DnnWindow.cs" />
     <Compile Include="UI\WebControls\DnnWindowManager.cs" />

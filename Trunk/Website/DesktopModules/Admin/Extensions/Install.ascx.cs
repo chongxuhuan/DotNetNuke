@@ -397,6 +397,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
                 e.Cancel = true;
             }
+
+        	lblInstallMessageRow.Visible = !string.IsNullOrEmpty(lblInstallMessage.Text);
         }
 
         private bool ValidatePackage()

@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<div class="dnnForm dnnUnInstallExtension dnnClear" id="dnnUnInstallExtension">
+<div class="dnnForm dnnUnInstallExtension dnnClear" id="dnnUnInstallExtension" runat="server">
     <fieldset>
         <dnn:DnnFormEditor id="packageForm" runat="Server" FormMode="Short">
             <Items>

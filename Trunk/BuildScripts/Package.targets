@@ -17,6 +17,7 @@
       </Output>
     </ExtensionPackager>
     <Copy SourceFiles="$(DNNFileName).dnn" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Zip Files="@(Resources)" WorkingDirectory="$(MSBuildProjectDirectory)" ZipFileName="$(MSBuildProjectDirectory)\Package\Resources.zip" />
     <ItemGroup>
       <LicenseFiles Include="license.txt"/>
     </ItemGroup>

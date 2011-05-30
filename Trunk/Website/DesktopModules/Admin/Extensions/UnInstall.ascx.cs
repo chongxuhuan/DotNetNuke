@@ -265,8 +265,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                 if (phPaLogs.Controls.Count > 0)
                 {
-                    deleteRow.Visible = false; 
-                    packageForm.Visible = false;
+					dnnUnInstallExtension.Visible = false; 
                     tblLogs.Visible = true;
                 }
             }

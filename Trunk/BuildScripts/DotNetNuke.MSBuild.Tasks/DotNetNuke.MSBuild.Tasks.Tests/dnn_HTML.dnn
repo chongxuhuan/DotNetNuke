@@ -1,0 +1,223 @@
+﻿<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DNN_HTML" type="Module" version="06.00.00">
+      <friendlyName>HTML</friendlyName>
+      <description>This module renders a block of HTML or Text content. The Html/Text module allows authorized users to edit the content either inline or in a separate administration page. Optional tokens can be used that get replaced dynamically during display. All versions of content are stored in the database including the ability to rollback to an older version.</description>
+      <iconFile>html.gif</iconFile>
+      <owner>
+        <name>DotNetNuke Corporation</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>http://www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <components>
+        <component type="Script">
+          <scripts>
+            <basePath>DesktopModules\HTML</basePath>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>03.00.00.SqlDataProvider</name>
+              <version>03.00.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>03.01.00.SqlDataProvider</name>
+              <version>03.01.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>04.05.00.SqlDataProvider</name>
+              <version>04.05.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>04.06.00.SqlDataProvider</name>
+              <version>04.06.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>04.06.01.SqlDataProvider</name>
+              <version>04.06.01</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>04.07.00.SqlDataProvider</name>
+              <version>04.07.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>04.08.01.SqlDataProvider</name>
+              <version>04.08.01</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.01.00.SqlDataProvider</name>
+              <version>05.01.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.01.02.SqlDataProvider</name>
+              <version>05.01.02</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.01.03.SqlDataProvider</name>
+              <version>05.01.03</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.01.04.SqlDataProvider</name>
+              <version>05.01.04</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.02.00.SqlDataProvider</name>
+              <version>05.02.00</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>05.05.00.SqlDataProvider</name>
+              <version>05.05.00</version>
+            </script>
+            <script type="UnInstall">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>Uninstall.SqlDataProvider</name>
+              <version>05.01.04</version>
+            </script>
+          </scripts>
+        </component>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>DNN_HTML</moduleName>
+            <foldername>HTML</foldername>
+            <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController</businessControllerClass>
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Text/HTML</friendlyName>
+                <defaultCacheTime>1200</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/HTML/HtmlModule.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Edit</controlKey>
+                    <controlSrc>DesktopModules/HTML/EditHTML.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Edit Content</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>MyWork</controlKey>
+                    <controlSrc>DesktopModules/HTML/MyWork.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>My Work</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Settings</controlKey>
+                    <controlSrc>DesktopModules/HTML/Settings.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Settings</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+          <eventMessage>
+            <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+            <processorCommand>UpgradeModule</processorCommand>
+            <attributes>
+              <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController</businessControllerClass>
+              <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+              <upgradeVersionsList>05.01.02</upgradeVersionsList>
+            </attributes>
+          </eventMessage>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <path>bin</path>
+              <name>DotNetNuke.Modules.Html.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>DesktopModules\HTML</basePath>
+            <file>
+              <path>App_LocalResources</path>
+              <name>EditHtml.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>HtmlModule.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>MyWork.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>SharedResources.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>Settings.ascx.resx</name>
+            </file>
+            <file>
+              <name>EditHtml.ascx</name>
+            </file>
+            <file>
+              <name>HtmlModule.ascx</name>
+            </file>
+            <file>
+              <name>MyWork.ascx</name>
+            </file>
+            <file>
+              <name>Settings.ascx</name>
+            </file>
+            <file>
+              <name>license.txt</name>
+            </file>
+            <file>
+              <name>releaseNotes.txt</name>
+            </file>
+            <file>
+              <name>html.gif</name>
+            </file>
+          </files>
+        </component>
+        <component type="Cleanup" version="04.05.00" fileName ="04.05.00.txt" />
+        <component type="Cleanup" version="04.06.00" fileName ="04.06.00.txt" />
+        <component type="Cleanup" version="04.06.01" fileName ="04.06.01.txt" />
+        <component type="Cleanup" version="04.07.00" fileName ="04.07.00.txt" />
+        <component type="Cleanup" version="04.08.01" fileName ="04.08.01.txt" />
+        <component type="Cleanup" version="05.01.00" fileName ="05.01.00.txt" />
+        <component type="Cleanup" version="05.01.02" fileName ="05.01.02.txt" />
+        <component type="Cleanup" version="05.01.03" fileName ="05.01.03.txt" />
+        <component type="Cleanup" version="05.01.04" fileName ="05.01.04.txt" />
+        <component type="Cleanup" version="05.02.00" fileName ="05.02.00.txt" />
+        <component type="Cleanup" version="05.04.03" fileName ="05.04.03.txt" />
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

@@ -211,23 +211,25 @@
     <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
   <Import Project="$(BuildScriptsPath)\Package.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject;Package">
+  <Target Name="AfterBuild" DependsOnTargets="GetFiles;DebugProject;Package">
+  </Target>
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <Views Include="*.ascx" />
+    </ItemGroup>
+    <ItemGroup>
+      <ResourceFiles Include="App_LocalResources\*.resx" />
+    </ItemGroup>
+    <ItemGroup>
+      <Resources Include="@(ResourceFiles);@(Views)" />
+    </ItemGroup>
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <CreateItem Include="Views\*.ascx">
-      <Output TaskParameter="Include" ItemName="Views" />
-    </CreateItem>
-    <CreateItem Include="*.ascx">
-      <Output TaskParameter="Include" ItemName="Controls" />
-    </CreateItem>
-    <CreateItem Include="App_LocalResources\*.resx">
-      <Output TaskParameter="Include" ItemName="MyLocalResourceFilesFiles" />
-    </CreateItem>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="@(Views)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging" />
     <Copy SourceFiles="@(Controls)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging" />
-    <Copy SourceFiles="@(MyLocalResourceFilesFiles)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging\App_LocalResources" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging\App_LocalResources" />
   </Target>
 </Project>

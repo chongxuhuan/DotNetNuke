@@ -104,6 +104,7 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
             try
             {
+				cmdCancel.NavigateUrl = Globals.NavigateURL();
                 dgHistory.NeedDataSource += OnGridNeedDataSource;
             }
             catch (Exception exc) //Module failed to load

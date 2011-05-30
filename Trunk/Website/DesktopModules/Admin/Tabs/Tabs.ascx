@@ -1,346 +1,275 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="false" CodeFile="Tabs.ascx.cs" Inherits="DotNetNuke.Modules.Admin.Pages.View" %>
-<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
+<%@ Register TagPrefix="dnnweb" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Security.Permissions.Controls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="URL" Src="~/controls/URLControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinControl.ascx" %>
-<telerik:RadScriptBlock ID="RadScriptBlock1" runat="server">
-    <script type="text/javascript">
-	    function onContextClicking(sender, eventArgs) {
-		    var id = '<%=ctlContext.ClientID%>';
-		    var item = eventArgs.get_menuItem();
-		    var cmd = item.get_value();
-		    if (cmd == 'delete') {
-			    if (!confirm('<%=GetConfirmString()%>')) {
-				    item.get_menu().hide();
-				    eventArgs.set_cancel(true);
-			    }
-		    }
-	    }
-	    function onContextShowing(sender, eventArgs) {
-		    var node = eventArgs.get_node();
-		    var menu = eventArgs.get_menu();
-		    if (node) {
-			    var a = node.get_attributes();
+<script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
+	function setUpTabsModule() {
+		$('#dnnTabsModule').dnnPanels()
+			.find('.dnnFormExpandContent a').dnnExpandAll({
+				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+				targetArea: '#dnnTabsModule' 
+			});
+	}
 
-			    menu.findItemByValue('view').set_visible(a.getAttribute("CanView") == 'True');
-			    menu.findItemByValue('edit').set_visible(a.getAttribute("CanEdit") == 'True');
-			    menu.findItemByValue('add').set_visible(a.getAttribute("CanAdd") == 'True');
-			    menu.findItemByValue('hide').set_visible(a.getAttribute("CanHide") == 'True');
-			    menu.findItemByValue('show').set_visible(a.getAttribute("CanMakeVisible") == 'True');
-			    menu.findItemByValue('disable').set_visible(a.getAttribute("CanDisable") == 'True');
-			    menu.findItemByValue('enable').set_visible(a.getAttribute("CanEnable") == 'True');
-			    menu.findItemByValue('delete').set_visible(a.getAttribute("CanDelete") == 'True');
-			    menu.findItemByValue('moveup').set_visible(a.getAttribute("CanMoveUp") == 'True');
-			    menu.findItemByValue('movedown').set_visible(a.getAttribute("CanMoveDown") == 'True');
-			    menu.findItemByValue('makehome').set_visible(a.getAttribute("CanMakeHome") == 'True');
-		    }
-	    }
+	$(document).ready(function () {
+		setUpTabsModule();
+		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+			setUpTabsModule();
+		});
+	});
 
-    </script>
-</telerik:RadScriptBlock>
-<div class="dotnetnuke_pagesmain">
-	<div class="dnnFormMessage dnnFormInfo">
-		<asp:Label ID="lblHead" runat="server"/>
-	</div>
-	<telerik:RadAjaxPanel ID="ctlAjax" runat="server" LoadingPanelID="ctlLoading" EnablePageHeadUpdate="true" RestoreOriginalRenderDelegate="false" EnableViewState="true">
-        <asp:Panel ID="pnlError" runat="server" class="dnnFormMessage dnnFormError" Visible="false">
-            <asp:Label ID="lblError" runat="server"/>
-        </asp:Panel> 
-        <asp:Panel ID="pnlWarn" runat="server" class="dnnFormMessage dnnFormWarning" Visible="false">
-            <asp:Label ID="lblWarn" runat="server"/>
-        </asp:Panel> 
-        <asp:Panel ID="pnlSuccess" runat="server" class="dnnFormMessage dnnFormSuccess" Visible="false">
-            <asp:Label ID="lblSuccess" runat="server"/>
-        </asp:Panel> 
+	function toggleSection(id, isToggled) {
+		$("div[id$='"+ id + "']").toggle(isToggled);
+	}
+}(jQuery, window.Sys));
+</script>
+<dnnweb:DnnScriptBlock ID="RadScriptBlock1" runat="server">
+	<script type="text/javascript">
+		function onContextClicking(sender, eventArgs) {
+			var id = '<%=ctlContext.ClientID%>';
+			var item = eventArgs.get_menuItem();
+			var cmd = item.get_value();
+			if (cmd == 'delete') {
+				if (!confirm('<%=GetConfirmString()%>')) {
+					item.get_menu().hide();
+					eventArgs.set_cancel(true);
+				}
+			}
+		}
+		function onContextShowing(sender, eventArgs) {
+			var node = eventArgs.get_node();
+			var menu = eventArgs.get_menu();
+			if (node) {
+				var a = node.get_attributes();
 
-		<div class="dotnetnuke_pageselect">
-
-            <div class="btnLeft">
-                <asp:ImageButton ID="btnTreeCommand" runat="server" CommandName="Expand" ImageUrl="images/Icon_Expand.png" />
-			</div>
-
-            <asp:Panel ID="pnlHost" runat="server" class="pnlHost">
-                <div class="pnlHostLabel">
-					<asp:Label ID="lblHostOnly" runat="server" resourcekey="lblHostOnly"></asp:Label>
-				</div>
-                <div class="pnlHostRbl">
-					<asp:RadioButtonList ID="rblMode" runat="server" RepeatColumns="2" AutoPostBack="true">
-						<asp:ListItem Value="P" Selected="True"></asp:ListItem>
-						<asp:ListItem Value="H"></asp:ListItem>
-					</asp:RadioButtonList>
-				</div>
-			</asp:Panel> 
-			<div class="clearfix"></div>
-
-		</div> 
-
-		<div class="dotnetnuke_tree">
-			<telerik:RadTreeView ID="ctlPages" runat="server" AllowNodeEditing="true" EnableDragAndDrop="true" OnClientContextMenuShowing="onContextShowing" OnClientContextMenuItemClicking="onContextClicking" EnableDragAndDropBetweenNodes="true">
+				menu.findItemByValue('view').set_visible(a.getAttribute("CanView") == 'True');
+				menu.findItemByValue('edit').set_visible(a.getAttribute("CanEdit") == 'True');
+				menu.findItemByValue('add').set_visible(a.getAttribute("CanAdd") == 'True');
+				menu.findItemByValue('hide').set_visible(a.getAttribute("CanHide") == 'True');
+				menu.findItemByValue('show').set_visible(a.getAttribute("CanMakeVisible") == 'True');
+				menu.findItemByValue('disable').set_visible(a.getAttribute("CanDisable") == 'True');
+				menu.findItemByValue('enable').set_visible(a.getAttribute("CanEnable") == 'True');
+				menu.findItemByValue('delete').set_visible(a.getAttribute("CanDelete") == 'True');
+				menu.findItemByValue('moveup').set_visible(a.getAttribute("CanMoveUp") == 'True');
+				menu.findItemByValue('movedown').set_visible(a.getAttribute("CanMoveDown") == 'True');
+				menu.findItemByValue('makehome').set_visible(a.getAttribute("CanMakeHome") == 'True');
+			}
+		}
+	</script>
+</dnnweb:DnnScriptBlock>
+<div class="dnnForm dnnTabsModule dnnClear" id="dnnTabsModule">
+	<div class="dnnTreeArea">
+		<asp:Panel ID="pnlHost" runat="server">
+			<div class="dnnFormItem">
+				<asp:Label ID="lblHostOnly" runat="server" resourcekey="lblHostOnly" AssociatedControlID="rblMode" />
+				<asp:RadioButtonList ID="rblMode" runat="server" AutoPostBack="true" CssClass="dnnHSRadioButtons" RepeatLayout="Flow" RepeatDirection="Vertical">
+					<asp:ListItem Value="P" Selected="True" />
+					<asp:ListItem Value="H" />
+				</asp:RadioButtonList>
+			</div>		
+		</asp:Panel> 
+		<div class="dnnTreeExpand">
+			<asp:LinkButton ID="cmdExpandTree" runat="server" CommandName="Expand" />
+		</div>
+		<dnnweb:DnnTreeView ID="ctlPages" cssclass="dnnTreePages" runat="server" AllowNodeEditing="true" EnableDragAndDrop="true" OnClientContextMenuShowing="onContextShowing" OnClientContextMenuItemClicking="onContextClicking" EnableDragAndDropBetweenNodes="true">
 			<ContextMenus>                
-				<telerik:RadTreeViewContextMenu ID="ctlContext" runat="server">
+				<dnnweb:DnnTreeViewContextMenu ID="ctlContext" runat="server">
 					<Items>                                            
-						<telerik:RadMenuItem Text="View" Value="view"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Edit" Value="edit"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Delete" Value="delete"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="MoveUp" Value="moveup"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="MoveDown" Value="movedown"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Add" Value="add"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Hide Page in Menu" Value="hide"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Show Page in Menu" Value="show"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Enable Page" Value="enable"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Disable Page" Value="disable"></telerik:RadMenuItem>
-						<telerik:RadMenuItem Text="Make Homepage" Value="makehome"></telerik:RadMenuItem>
+						<dnnweb:DnnMenuItem Text="View" Value="view" />
+						<dnnweb:DnnMenuItem Text="Edit" Value="edit" />
+						<dnnweb:DnnMenuItem Text="Delete" Value="delete" />
+						<dnnweb:DnnMenuItem Text="MoveUp" Value="moveup" />
+						<dnnweb:DnnMenuItem Text="MoveDown" Value="movedown" />
+						<dnnweb:DnnMenuItem Text="Add" Value="add" />
+						<dnnweb:DnnMenuItem Text="Hide Page in Menu" Value="hide" />
+						<dnnweb:DnnMenuItem Text="Show Page in Menu" Value="show" />
+						<dnnweb:DnnMenuItem Text="Enable Page" Value="enable" />
+						<dnnweb:DnnMenuItem Text="Disable Page" Value="disable" />
+						<dnnweb:DnnMenuItem Text="Make Homepage" Value="makehome" />
 					</Items>
-				</telerik:RadTreeViewContextMenu>               
+				</dnnweb:DnnTreeViewContextMenu>               
 			</ContextMenus>
-		</telerik:RadTreeView>
-		</div>        
-
-		<div class="dotnetnuke_details" runat="server" visible="false" id="pnlDetails">
-
-			<telerik:RadTabStrip ID="ctlTabstrip" runat="server" MultiPageID="ctlTabPages" SelectedIndex="0" Skin="Sunset" Align="Justify">
-				<Tabs>
-					<telerik:RadTab Text="Common" PageViewID="ctlPageDetails"></telerik:RadTab>
-					<telerik:RadTab Text="Permissions" PageViewID="ctlPagePermissions"></telerik:RadTab>
-					<telerik:RadTab Text="Modules" PageViewID="ctlPageModules"></telerik:RadTab>
-					<telerik:RadTab Text="SEO" PageViewID="ctlPageCEO"></telerik:RadTab>
-					<telerik:RadTab Text="Metatags" PageViewID="ctlPageMeta"></telerik:RadTab>
-					<telerik:RadTab Text="Appearance" PageViewID="ctlPageAppearance"></telerik:RadTab>
-					<telerik:RadTab Text="Link" PageViewID="ctlPageLink"></telerik:RadTab>                    
-				</Tabs>
-			</telerik:RadTabStrip>
-
-			<telerik:RadMultiPage ID="ctlTabPages" runat="server" SelectedIndex="0">
-
-				<telerik:RadPageView ID="ctlPageDetails" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblHelp_Common" runat="server" resourcekey="lblHelp_Common"></asp:Label></p>
-
-					<table>
-						<tr>
-							<td><asp:Label ID="lblName" runat="server" Text="Page Name:" resourcekey="lblName"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtName" runat="server" Width="200px"></telerik:RadTextBox></td>
-						</tr>                     
-						<tr>
-							<td><asp:Label ID="lblTitle" runat="server" Text="Page Title:" resourcekey="lblTitle"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtTitle" runat="server" Width="200px"></telerik:RadTextBox></td>
-						</tr>
-						<tr><td colspan="2">&nbsp;</td></tr>
-						<tr>
-							<td><asp:Label ID="lblVisible" runat="server" Text="Visible in Navigation:" resourcekey="lblVisible"></asp:Label></td>
-							<td><asp:CheckBox ID="chkVisible" runat="server" /></td>
-						</tr> 
-						<tr>
-							<td><asp:Label ID="lblPageDisabled" runat="server" Text="Disabled Link in Navigation:" resourcekey="lblDisabledPage"></asp:Label></td>
-							<td><asp:CheckBox ID="chkDisabled" runat="server" /></td>
-						</tr>
-						<tr>
-							<td><asp:Label ID="lblPageSSL" runat="server" Text="SSL enabled:" resourcekey="lblPageSSL"></asp:Label></td>
-							<td><asp:CheckBox ID="chkSecure" runat="server" /></td>
-						</tr>                                                                                                                                                                
-					</table>                                                       
-
-				</telerik:RadPageView>
-
-				<telerik:RadPageView ID="ctlPagePermissions" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblhelp_Permissions" runat="server" resourcekey="lblHelp_Permissions"></asp:Label></p>
-
-					<dnn:TabPermissionsGrid ID="dgPermissions" runat="server" />
-
-				</telerik:RadPageView>
-
-				<telerik:RadPageView ID="ctlPageModules" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblhelp_Modules" runat="server" resourcekey="lblHelp_Modules"></asp:Label></p>
-
-					<telerik:RadGrid ID="grdModules" runat="server">
-						<MasterTableView AutoGenerateColumns="false" NoMasterRecordsText="<p style='padding:20px;'>No modules on that page...</p>">
-							<Columns>
-								<telerik:GridTemplateColumn HeaderText="ModuleTitle">
-									<ItemTemplate>
-
-										<%#DataBinder.Eval(Container.DataItem, "ModuleTitle")%>
-
-									</ItemTemplate>
-								</telerik:GridTemplateColumn>
-								<telerik:GridTemplateColumn HeaderText="Module">
-									<ItemTemplate>
-
-										<%#DataBinder.Eval(Container.DataItem, "FriendlyName")%>
-
-									</ItemTemplate>
-								</telerik:GridTemplateColumn>
-								<telerik:GridTemplateColumn HeaderText="Options">
-									<ItemTemplate>
-
-										<asp:ImageButton ID="cmdDeleteModule" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "ModuleId")%>' OnClick="CmdDeleteModuleClick" ImageUrl="images/Icon_Delete.png" />
-										&nbsp;
-										<a href='<%#ModuleEditUrl((int)DataBinder.Eval(Container.DataItem, "ModuleId"))%>' target="_blank">
-											<asp:Image ID="imgEdit" runat="server" ImageUrl="images/Icon_Edit.png" />
-										</a>
-
-									</ItemTemplate>
-								</telerik:GridTemplateColumn>
-							</Columns>
-						</MasterTableView>
-					</telerik:RadGrid>
-
-				</telerik:RadPageView>                              
-
-				<telerik:RadPageView ID="ctlPageCEO" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblHelp_SEO" runat="server" resourcekey="lblHelp_SEO"></asp:Label></p>
-
-					<table>
-						<tr>
-							<td><asp:Label ID="lblSitemapPriority" runat="server" Text="Sitemap Priority:" resourcekey="lblSitemapPriority"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtSitemapPriority" runat="server" Width="250px"></telerik:RadTextBox></td>
-						</tr>
-						<tr>
-							<td><asp:Label ID="lblDescription" runat="server" Text="Page Description:" resourcekey="lblDescription"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtDescription" runat="server" Width="250px" TextMode="MultiLine" Height="40px"></telerik:RadTextBox></td>
-						</tr>  
-						<tr>
-							<td><asp:Label ID="lblKeywords" runat="server" Text="Page Keywords:" resourcekey="lblKeywords"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtKeywords" runat="server" Width="250px" TextMode="MultiLine" Height="40px"></telerik:RadTextBox></td>
-						</tr> 
-						<tr>
-							<td><asp:Label ID="lblTags" runat="server" Text="Page Keywords:" resourcekey="lblTags"></asp:Label></td>
-							<td><dnn:TermsSelector ID="termsSelector" runat="server" Height="250" Width="254"/></td>
-						</tr>                                                                                                               
-					</table> 
-
-				</telerik:RadPageView>
-
-				<telerik:RadPageView ID="ctlPageMeta" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblHelp_Meta" runat="server" resourcekey="lblHelp_Meta"></asp:Label></p>
-
-					<table>
-						<tr>
-							<td><asp:Label ID="lblMetaRefresh" runat="server" Text="Refresh Interval (seconds):" resourcekey="lblMetaRefresh"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtRefresh" runat="server" Width="200px"></telerik:RadTextBox></td>
-						</tr>
-						<tr>
-							<td><asp:Label ID="lblMetaHead" runat="server" Text="Page Header Tags:" resourcekey="lblMetaHead"></asp:Label></td>
-							<td><telerik:RadTextBox ID="txtMeta" runat="server" Width="200px" TextMode="MultiLine" Height="40px"></telerik:RadTextBox></td>
-						</tr>                                                                                         
-					</table> 
-
-				</telerik:RadPageView> 
-
-				<telerik:RadPageView ID="ctlPageAppearance" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblHelp_Appearance" runat="server" resourcekey="lblHelp_Appearance"></asp:Label></p>
-
-					<table>
-						<tr>
-                            <td class="tdLabel"><asp:Label ID="lblSkin" runat="server" Text="Skin:" resourcekey="lblSkin"></asp:Label></td>
-                            <td class="tdControl">
-								<telerik:RadComboBox ID="drpSkin" runat="server" Width="250px"></telerik:RadComboBox>
-							</td>
-                            <td class="tdControl">
-								<asp:RadioButtonList ID="rblSkinMode" runat="server" RepeatDirection="Horizontal">
-									<asp:ListItem resourcekey="Host" Value="H" Selected="True"></asp:ListItem>
-									<asp:ListItem resourcekey="Site" Value="S"></asp:ListItem>
-								</asp:RadioButtonList>
-							</td>                            
-						</tr>
-						<tr>
-                            <td class="tdLabel"><asp:Label ID="lblContainer" runat="server" Text="Container:" resourcekey="lblContainer"></asp:Label></td>
-                            <td class="tdControl">
-								<telerik:RadComboBox ID="drpContainer" runat="server" Width="250px"></telerik:RadComboBox>
-							</td>
-                            <td class="tdControl">
-								<asp:RadioButtonList ID="rblContainerMode" runat="server" RepeatDirection="Horizontal">
-									<asp:ListItem resourcekey="Host" Value="H" Selected="True"></asp:ListItem>
-									<asp:ListItem resourcekey="Site" Value="S"></asp:ListItem>
-								</asp:RadioButtonList>
-							</td>
-						</tr>  
-						<tr>
-							<td colspan="3">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="3"><asp:LinkButton ID="cmdCopySkin" runat="server" CssClass="cmd Copy" resourcekey="cmdCopySkin"></asp:LinkButton></td>
-						</tr>
-						<tr>
-							<td colspan="3">&nbsp;</td>
-						</tr>                                                
-						<tr>
-                            <td class="tdIconLabel"><asp:Label ID="lblIconLarge" runat="server" Text="Large Icon:" resourcekey="lblIconLarge"></asp:Label></td>
-                            <td class="tdControl" colspan="2">
-								<dnn:URL ID="ctlIconLarge" runat="server" Width="300" ShowLog="False" ShowTrack="false"></dnn:URL>
-							</td>
-						</tr>
-						<tr>
-                            <td class="tdIconLabel"><asp:Label ID="lblIconSmall" runat="server" Text="Small Icon:" resourcekey="lblIconSmall"></asp:Label></td>
-                            <td class="tdControl" colspan="2">
-								<dnn:URL ID="ctlIcon" runat="server" Width="300" ShowLog="False"></dnn:URL>
-							</td>
-						</tr>                                                                                                                                         
-					</table> 
-
-				</telerik:RadPageView>                                                
-
-				<telerik:RadPageView ID="ctlPageLink" runat="server" CssClass="pageview">
-
-					<p class="tabhelp"><asp:Label ID="lblHelp_Link" runat="server" resourcekey="lblHelp_Link"></asp:Label></p>
-
-					<table>
-						<tr>
-                            <td class="tdIconLabel"><asp:Label ID="lblUrl" runat="server" resourcekey="Url"></asp:Label></td>
-                            <td class="tdControl"><dnn:URL ID="ctlURL" runat="server" Width="300" ShowLog="False" ShowNone="True" ShowTrack="False"/></td>
-						</tr>
-						<tr>
-							<td><asp:Label ID="lblPermanentRedirect" runat="server" Text="Permanent Redirect:" resourcekey="lblPermanentRedirect"></asp:Label></td>
-							<td><asp:CheckBox ID="chkPermanentRedirect" runat="server" /></td>
-						</tr>                                                               
-					</table> 
-
-				</telerik:RadPageView>                                                                
-
-			</telerik:RadMultiPage>        
-
-			<div class="dtBtn">
-				<div class="btnLeft"><asp:HyperLink ID="cmdMore" runat="server" Text="More" resourcekey="cmdMore" CssClass="cmd More"></asp:HyperLink></div>
-				<div class="btnRight"><asp:LinkButton ID="cmdUpdate" runat="server" Text="Update" resourcekey="cmdUpdate" CssClass="cmd Update"></asp:LinkButton></div>
-				<div class="clearfix"></div>
+		</dnnweb:DnnTreeView>
+		<div class="dnnTreeLegend">
+			<h3><asp:Label ID="lblLegend" runat="server" resourcekey="lblLegend" /></h3>
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_Home.png" alt="" />
+				<asp:Literal ID="lblHome" runat="server" />
 			</div>
-
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_Everyone.png" alt="" />
+				<asp:Literal ID="lblEveryone" runat="server" />
+			</div>
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_User.png" alt="" />
+				<asp:Literal ID="lblRegistered" runat="server" />
+			</div>
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_UserSecure.png" alt="" />
+				<asp:Literal ID="lblSecure" runat="server" />
+			</div>
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_UserAdmin.png" alt="" />
+				<asp:Literal ID="lblAdminOnly" runat="server" />
+			</div>
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_Hidden.png" alt="" />
+				<asp:Literal ID="lblHidden" runat="server" />
+			</div>                
+			<div class="dtlItem">
+				<img runat="server" src="images/Icon_Disabled.png" alt="" />
+				<asp:Literal ID="lblDisabled" runat="server" />
+			</div>
 		</div>
-
-		<div class="dotnetnuke_details" runat="server" visible="false" id="pnlBulk">
-
-			<p>
-				<asp:Literal ID="lblBulkIntro" runat="server"></asp:Literal>
-			</p>
-
-			<telerik:RadTextBox ID="txtBulk" runat="server" Height="200" Width="400" TextMode="MultiLine"></telerik:RadTextBox>
-
-			<asp:Button ID="btnBulkCreate" runat="server" resourcekey="btnBulkCreate" Text="Create Pages" />            
-
+	</div>        
+	<div class="tmTabContainer" runat="server" visible="false" id="pnlDetails">
+		<div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-Common" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Common.Tabname")%></a></h2>
+			<fieldset>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblName" runat="server" Suffix=":" />
+					<asp:TextBox ID="txtName" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblTitle" runat="server" suffix=":" />
+					<asp:TextBox ID="txtTitle" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblVisible" runat="server" suffix="?" />
+					<asp:CheckBox ID="chkVisible" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblDisabledPage" runat="server" suffix="?" />
+					<asp:CheckBox ID="chkDisabled" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblPageSSL" runat="server" suffix="?" />
+					<asp:CheckBox ID="chkSecure" runat="server" />
+				</div>   
+			</fieldset>
+		</div>    														 
+		<div id="PermissionsSection" class="ssasContent dnnClear" runat="server">
+			<h2 id="Panel-Permissions" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Permissions.Tabname")%></a></h2>
+			<fieldset>
+				<dnn:TabPermissionsGrid ID="dgPermissions" runat="server" />
+			</fieldset>
 		</div>
-
-		<div class="dotnetnuke_legend">
-			<div class="legenditem"><img id="Img1" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_Home.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblHome" runat="server"></asp:Literal></div>
-			<div class="legenditem"><img id="Img2" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_Everyone.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblEveryone" runat="server"></asp:Literal></div>
-			<div class="legenditem"><img id="Img3" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_User.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblRegistered" runat="server"></asp:Literal></div>
-			<div class="legenditem"><img id="Img4" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_UserSecure.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblSecure" runat="server"></asp:Literal></div>
-			<div class="legenditem"><img id="Img5" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_UserAdmin.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblAdminOnly" runat="server"></asp:Literal></div>
-			<div class="legenditem"><img id="Img6" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_Hidden.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblHidden" runat="server"></asp:Literal></div>                
-			<div class="legenditem"><img id="Img7" runat="server" src="~/Desktopmodules/Admin/Tabs/images/Icon_Disabled.png" alt="Icon Visible" />&nbsp;<asp:Literal ID="lblDisabled" runat="server"></asp:Literal></div>
-			<div class="clearfix"></div>
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-Modules" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Modules.Tabname")%></a></h2>
+			<fieldset>
+				<dnnweb:DnnGrid ID="grdModules" runat="server" AllowPaging="false" AllowSorting="false">
+					<MasterTableView AutoGenerateColumns="false">
+						<Columns>
+							<dnnweb:DnnGridTemplateColumn HeaderText="ModuleTitle">
+								<ItemTemplate>
+									<%#DataBinder.Eval(Container.DataItem, "ModuleTitle")%>
+								</ItemTemplate>
+							</dnnweb:DnnGridTemplateColumn>
+							<dnnweb:DnnGridTemplateColumn HeaderText="Module">
+								<ItemTemplate>
+									<%#DataBinder.Eval(Container.DataItem, "FriendlyName")%>
+								</ItemTemplate>
+							</dnnweb:DnnGridTemplateColumn>
+							<dnnweb:DnnGridTemplateColumn HeaderText="Options">
+								<ItemTemplate>
+									<asp:ImageButton ID="cmdDeleteModule" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "ModuleId")%>' OnClick="CmdDeleteModuleClick" ImageUrl="images/Icon_Delete.png" resourcekey="cmdDelete" />
+									<a href="<%#ModuleEditUrl((int)DataBinder.Eval(Container.DataItem, "ModuleId"))%>">
+										<asp:Image ID="imgEdit" runat="server" ImageUrl="images/Icon_Edit.png" resourcekey="Edit" />
+									</a>
+								</ItemTemplate>
+							</dnnweb:DnnGridTemplateColumn>
+						</Columns>
+						<NoRecordsTemplate>
+							<div class="dnnFormMessage dnnFormWarning">
+								<asp:Label ID="lblNoRecords" runat="server" resourcekey="lblNoRecords" />
+							</div>
+						</NoRecordsTemplate>
+					</MasterTableView>
+				</dnnweb:DnnGrid>
+			</fieldset>
 		</div>
-
-		<div class="clearfix"></div>
-
-	</telerik:RadAjaxPanel>
-
-	<telerik:RadAjaxLoadingPanel ID="ctlLoading" runat="server" Skin="Default">
-	</telerik:RadAjaxLoadingPanel>
-
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-SEO" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("SEO.Tabname")%></a></h2>
+			<fieldset>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblSitemapPriority" runat="server" suffix=":" />
+					<asp:TextBox ID="txtSitemapPriority" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblDescription" runat="server" suffix=":" />
+					<asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" Height="40px" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblKeywords" runat="server" suffix=":" />
+					<asp:TextBox ID="txtKeywords" runat="server" TextMode="MultiLine" Height="40px" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblTags" runat="server" suffix=":" />
+					<dnnweb:TermsSelector ID="termsSelector" runat="server" Height="250" Width="354" />
+				</div>
+			</fieldset>
+		</div>
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-Meta" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Metatags.Tabname")%></a></h2>
+			<fieldset>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblMetaRefresh" runat="server" suffix=":" />
+					<asp:TextBox ID="txtRefresh" runat="server" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblMetaHead" runat="server" suffix=":" />
+					<asp:TextBox ID="txtMeta" runat="server" TextMode="MultiLine" Height="40px" />
+				</div>
+			</fieldset>
+		</div>
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-Appearance" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Appearance.Tabname")%></a></h2>
+			<fieldset>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblSkin" runat="server" suffix=":" />
+					<asp:DropDownList ID="drpSkin" runat="server" DataTextField="Key" DataValueField ="Value" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblContainer" runat="server" suffix=":" />
+					<asp:DropDownList ID="drpContainer" runat="server" DataTextField="Key" DataValueField ="Value"  />
+					<asp:LinkButton ID="cmdCopySkin" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCopySkin" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblIconLarge" runat="server" suffix=":" />
+					<dnn:URL ID="ctlIconLarge" runat="server" ShowLog="False" ShowTrack="false" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblIconSmall" runat="server" suffix=":" />
+					<dnn:URL ID="ctlIcon" runat="server" ShowLog="False" />
+				</div>
+			</fieldset>
+		</div>
+		<div class="ssasContent dnnClear">
+			<h2 id="Panel-Link" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Link.Tabname")%></a></h2>
+			<fieldset>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblUrl" runat="server" suffix=":" />
+					<dnn:URL ID="ctlURL" runat="server" ShowLog="False" ShowNone="True" ShowTrack="False" />
+				</div>
+				<div class="dnnFormItem">
+					<dnn:Label ID="lblPermanentRedirect" runat="server" suffix=":" />
+					<asp:CheckBox ID="chkPermanentRedirect" runat="server" />
+				</div>
+			</fieldset>
+		</div>
+	    <ul class="dnnActions dnnClear">
+		    <li><asp:LinkButton ID="cmdUpdate" runat="server" resourcekey="cmdUpdate" CssClass="dnnPrimaryAction" /></li>
+		    <li><asp:HyperLink ID="cmdMore" runat="server" resourcekey="cmdMore" CssClass="dnnSecondaryAction" /></li>
+	    </ul>     
+	</div>
+	<div runat="server" visible="false" id="pnlBulk">
+		<p><asp:Literal ID="lblBulkIntro" runat="server" /></p>
+		<asp:TextBox ID="txtBulk" runat="server" Height="200" Width="400" TextMode="MultiLine" />
+		<asp:LinkButton ID="btnBulkCreate" runat="server" resourcekey="btnBulkCreate" Text="Create Pages" CssClass="dnnSecondaryAction" />            
+	</div>
 </div>

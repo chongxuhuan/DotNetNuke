@@ -147,9 +147,6 @@
   <data name="lblDisabled.Text" xml:space="preserve">
     <value>Page is disabled</value>
   </data>
-  <data name="lblHead.Text" xml:space="preserve">
-    <value>The pages module allows you to manage pages within your portal. You can move pages by using drag &amp; drop - other operations are available on right click.  Changes made are immediately available to other users - but are not reflected on this page without a page refresh.</value>
-  </data>
   <data name="lblHidden.Text" xml:space="preserve">
     <value>Page is hidden in menu</value>
   </data>
@@ -190,7 +187,7 @@
     <value>Hide from navigation</value>
   </data>
   <data name="lblHostOnly.Text" xml:space="preserve">
-    <value>&lt;strong&gt;Host only:&lt;/strong&gt;  Manage</value>
+    <value>Manage:</value>
   </data>
   <data name="ShowPage.Text" xml:space="preserve">
     <value>Show in navigation</value>
@@ -200,27 +197,6 @@
   </data>
   <data name="lblRegistered.Text" xml:space="preserve">
     <value>Visible to registered users</value>
-  </data>
-  <data name="lblHelp_Appearance.Text" xml:space="preserve">
-    <value>From here you can override the site's default skin and container. Page Icons may or may not be supported by the skin that you are using on the page.</value>
-  </data>
-  <data name="lblHelp_Common.Text" xml:space="preserve">
-    <value>This is the place to set common properties like the page name (used in the navigation or the page title (used in the title bar of the browser). A disabled page is shown in the navigation but cannot be clicked while a hidden page is not even shown in the navigation (but can still be browsed)</value>
-  </data>
-  <data name="lblHelp_Link.Text" xml:space="preserve">
-    <value>You may link the page to another resource. Resources can be other portal pages, external urls, files in the portal's filesystem or even user profiles. If a page is linked you can set the link to be a permanent redirection.</value>
-  </data>
-  <data name="lblHelp_Meta.Text" xml:space="preserve">
-    <value>Setup metatags like page refresh intervall and other meta tags from here.</value>
-  </data>
-  <data name="lblHelp_Modules.Text" xml:space="preserve">
-    <value>These are the modules currently used on the page. You can edit settings for each module from here or remove the module from the page.</value>
-  </data>
-  <data name="lblHelp_Permissions.Text" xml:space="preserve">
-    <value>Page permissions allows you to configure security roles and their right for the page.</value>
-  </data>
-  <data name="lblHelp_SEO.Text" xml:space="preserve">
-    <value>Configure SEO settings for the page. You can override the sitemap priority (default is 0.5 for each page) and setup keywords and a page description.</value>
   </data>
   <data name="btnBulkCreate.Text" xml:space="preserve">
     <value>Create Page(s)</value>
@@ -268,52 +244,52 @@
     <value>SEO</value>
   </data>
   <data name="lblContainer.Text" xml:space="preserve">
-    <value>Default Container:</value>
+    <value>Default Container</value>
   </data>
   <data name="lblDescription.Text" xml:space="preserve">
-    <value>Page Description:</value>
+    <value>Page Description</value>
   </data>
   <data name="lblDisabledPage.Text" xml:space="preserve">
-    <value>Clicking the Page is disabled</value>
+    <value>Disabled</value>
   </data>
   <data name="lblIconLarge.Text" xml:space="preserve">
-    <value>Large Icon:</value>
+    <value>Large Icon</value>
   </data>
   <data name="lblIconSmall.Text" xml:space="preserve">
-    <value>Small Icon:</value>
+    <value>Small Icon</value>
   </data>
   <data name="lblKeywords.Text" xml:space="preserve">
-    <value>Page Keywords:</value>
+    <value>Page Keywords</value>
   </data>
   <data name="lblMetaHead.Text" xml:space="preserve">
-    <value>Page Header Tags:</value>
+    <value>Page Header Tags</value>
   </data>
   <data name="lblMetaRefresh.Text" xml:space="preserve">
-    <value>Refresh Interval (seconds):</value>
+    <value>Refresh Interval (seconds)</value>
   </data>
   <data name="lblName.Text" xml:space="preserve">
-    <value>Page Name:</value>
+    <value>Page Name</value>
   </data>
   <data name="lblPageSSL.Text" xml:space="preserve">
-    <value>Page is SSL secured</value>
+    <value>Secure</value>
   </data>
   <data name="lblPermanentRedirect.Text" xml:space="preserve">
-    <value>Permanent Redirect:</value>
+    <value>Permanent Redirect</value>
   </data>
   <data name="lblSitemapPriority.Text" xml:space="preserve">
-    <value>Sitemap Priority:</value>
+    <value>Sitemap Priority</value>
   </data>
   <data name="lblSkin.Text" xml:space="preserve">
-    <value>Page Skin:</value>
+    <value>Page Skin</value>
   </data>
   <data name="lblTitle.Text" xml:space="preserve">
-    <value>Page Title:</value>
+    <value>Page Title</value>
   </data>
   <data name="lblVisible.Text" xml:space="preserve">
-    <value>Page is shown in Navigation</value>
+    <value>Include In Menu</value>
   </data>
   <data name="lblTags.Text" xml:space="preserve">
-    <value>Page Tags:</value>
+    <value>Page Tags</value>
   </data>
   <data name="cmdCopySkin.Text" xml:space="preserve">
     <value>Copy selected Skin to Childpages</value>
@@ -339,11 +315,14 @@
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About Pages&lt;/h1&gt;&lt;p&gt;The Admin user can manage pages in the site.&lt;/p&gt;</value>
   </data>
-  <data name="Url.Text" xml:space="preserve">
-    <value>Link: </value>
+  <data name="lblUrl.Text" xml:space="preserve">
+    <value>Link</value>
   </data>
   <data name="TabRecycled.Text" xml:space="preserve">
     <value>A page with this name exists in the Recycle Bin.  To restore this page use the Recycle Bin.</value>
+  </data>
+  <data name="lblNoRecords.Text" xml:space="preserve">
+    <value>There are no modules on the selected page.</value>
   </data>
   <data name="TabExists.Text" xml:space="preserve">
     <value>The Page Name you chose is already being used for another page at the same level of the page heirarchy.</value>
@@ -377,5 +356,59 @@
   </data>
   <data name="EmptyTabName.Text" xml:space="preserve">
     <value>Tab Name is Empty</value>
+  </data>
+  <data name="lblLegend.Text" xml:space="preserve">
+    <value>Legend</value>
+  </data>
+  <data name="lblContainer.Help" xml:space="preserve">
+    <value>The selected container will be applied to all modules on this page.</value>
+  </data>
+  <data name="lblDescription.Help" xml:space="preserve">
+    <value>Enter a description about this page here.</value>
+  </data>
+  <data name="lblDisabledPage.Help" xml:space="preserve">
+    <value>If the page is disabled it is not available to users of the site.  You can use this option to suppress content that you might wish to show at a later time.</value>
+  </data>
+  <data name="lblIconLarge.Help" xml:space="preserve">
+    <value>You can choose a large icon that will be used in the console.</value>
+  </data>
+  <data name="lblIconSmall.Help" xml:space="preserve">
+    <value>You can choose an icon that can be used in the menu.</value>
+  </data>
+  <data name="lblKeywords.Help" xml:space="preserve">
+    <value>Enter some keywords for this page (separated by commas).  These keywords are used by search engines to help index your site's pages.</value>
+  </data>
+  <data name="lblMetaHead.Help" xml:space="preserve">
+    <value>Enter any tags (i.e. META tags) that should be rendered in the "HEAD" tag of the HTML for this page.</value>
+  </data>
+  <data name="lblMetaRefresh.Help" xml:space="preserve">
+    <value>Enter the interval to wait between automatic page refeshes. (Example: Enter "60" for 1 minute or leave blank to disable.)</value>
+  </data>
+  <data name="lblName.Help" xml:space="preserve">
+    <value>This is the name of the Page.  The text you enter will be displayed in the menu system.</value>
+  </data>
+  <data name="lblPageSSL.Help" xml:space="preserve">
+    <value>Specify whether or not this page should be forced to use a secure connection (SSL). This option will only be enabled if the administrator has Enabled SSL in the site settings.</value>
+  </data>
+  <data name="lblPermanentRedirect.Help" xml:space="preserve">
+    <value>Check this box if you want to notify the client that this page should be considered as permanently moved.  This would allow SearchEngines to modify their urls to directly link to the resource.  This is ignored if the LinkType is None.</value>
+  </data>
+  <data name="lblSitemapPriority.Help" xml:space="preserve">
+    <value>Enter the desired priority (between 0 and 1.0).  This helps determine how this page is ranked in Google with respect to other pages on your site (0.5 is the default).</value>
+  </data>
+  <data name="lblSkin.Help" xml:space="preserve">
+    <value>The selected skin will be applied to this page.</value>
+  </data>
+  <data name="lblTags.Help" xml:space="preserve">
+    <value>Select items from the drop-down to tag this Page.</value>
+  </data>
+  <data name="lblTitle.Help" xml:space="preserve">
+    <value>Enter a title for the Page here. The text you enter will be displayed in the browser window title.</value>
+  </data>
+  <data name="lblUrl.Help" xml:space="preserve">
+    <value>If you would like this page to behave as a navigation link to another resource, you can specify the Link URL value here. Please note that this field is optional.</value>
+  </data>
+  <data name="lblVisible.Help" xml:space="preserve">
+    <value>You have the choice on whether or not to include the page in the main navigation menu. If a page is not included in the menu, you can still link to it based on its page URL.</value>
   </data>
 </root>
