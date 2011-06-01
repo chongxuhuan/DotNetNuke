@@ -3,6 +3,11 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <asp:Label ID="lbDescription" runat="server" resourcekey="Description"></asp:Label>
 <div class="dnnForm dnnEditFolderMapping dnnClear" id="dnnEditFolderMapping">
+    <asp:PlaceHolder id="phSyncWarning" runat="server">
+        <div class="dnnFormMessage dnnFormInfo">
+            <asp:Label runat="server" Visible="true" ResourceKey="SyncWarning" />
+        </div>
+    </asp:PlaceHolder>
     <div class="dnnFormItem dnnFormHelp dnnRight dnnClear">
         <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
         <div id="exFolderMappingSettings" class="exFolderMappingSettings dnnClear">

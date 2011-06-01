@@ -225,7 +225,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             cmdExpandTree.Click += OnExpandTreeClick;
             grdModules.NeedDataSource += GrdModulesNeedDataSource;
             ctlPages.NodeExpand += CtlPagesNodeExpand;
-            btnBulkCreate.Click += BtnBulkCreateClick;
+            btnBulkCreate.Click += OnCreatePagesClick;
             cmdUpdate.Click += CmdUpdateClick;
 
             jQuery.RequestDnnPluginsRegistration();
@@ -473,7 +473,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             AddChildnodes(e.Node);
         }
 
-        protected void BtnBulkCreateClick(object sender, EventArgs e)
+        protected void OnCreatePagesClick(object sender, EventArgs e)
         {
             var strValue = txtBulk.Text;
             strValue = strValue.Replace("\r", "\n");
@@ -486,7 +486,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
 
             var pages = strValue.Split(char.Parse("\n"));
-            var parentId = Convert.ToInt32(((Button) sender).CommandArgument);
+            var parentId = Convert.ToInt32(((LinkButton) sender).CommandArgument);
             var tabController = new TabController();
             var rootTab = tabController.GetTab(parentId, PortalId, true);
             var tabs = new List<TabInfo>();
@@ -523,8 +523,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                 }
             }
 
-            BindTree();
-
             var tabId = Convert.ToInt32(tabs[0].TabID);
             if (tabId != Null.NullInteger)
             {
@@ -537,8 +535,9 @@ namespace DotNetNuke.Modules.Admin.Pages
             {
                 tabId = parentId;
             }
-            ctlPages.FindNodeByValue(tabId.ToString()).Selected = true;
-            ctlPages.FindNodeByValue(tabId.ToString()).ExpandParentNodes();            
+
+            txtBulk.Text = string.Empty;
+            BindTreeAndShowTab(tabId);       
         }
 
         protected void CmdDeleteModuleClick(object sender, EventArgs e)

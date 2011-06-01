@@ -200,6 +200,11 @@ namespace DotNetNuke.Common.Utilities
 
         public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect)
         {
+            return PopUpUrl(url, control, portalSettings, onClickEvent, responseRedirect, 550, 950);
+        }
+
+        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect, int windowHeight, int windowWidth)
+        {
             string popUpSkinSrc;
             string delimiter;
             var popUpScriptFormat = String.Empty;
@@ -222,9 +227,9 @@ namespace DotNetNuke.Common.Utilities
                     popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
                     if (!String.IsNullOrEmpty(popUpSkinSrc))
                     {
-                        popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2})";
+                        popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2},{3},{4})";
                         delimiter = popUpUrl.Contains("?") ? "&" : "?";
-                        popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
+                        popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
                     }
                 }
                 else
@@ -237,7 +242,7 @@ namespace DotNetNuke.Common.Utilities
                     {
                         popUpUrl = popUpUrl.Replace("/*showReturn*/true", "/*showReturn*/" + onClickEvent.ToString().ToLower());
                     }
-                }            
+                }
             }
 
             // Removes the javascript txt for onClick scripts

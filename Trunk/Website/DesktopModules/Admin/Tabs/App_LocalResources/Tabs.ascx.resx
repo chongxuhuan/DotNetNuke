@@ -411,4 +411,7 @@
   <data name="lblVisible.Help" xml:space="preserve">
     <value>You have the choice on whether or not to include the page in the main navigation menu. If a page is not included in the menu, you can still link to it based on its page URL.</value>
   </data>
+  <data name="valName.Text" xml:space="preserve">
+    <value>Page Name is required</value>
+  </data>
 </root>

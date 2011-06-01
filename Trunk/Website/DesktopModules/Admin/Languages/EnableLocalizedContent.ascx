@@ -35,4 +35,14 @@
     <dnn:DnnProgressManager id="progressManager" runat="server" />
     <dnn:DnnProgressArea id="pageCreationProgressArea" runat="server"  Width="100%" TimeElapsed="true"  />
 </div>
+
+<dnn:DnnScriptBlock ID="scriptBlock" runat="server">
+	<script type="text/javascript">
+		(function ($) {
+			$("#<%=updateButton.ClientID %>").click(function (e) {
+				$(this).hide();
+			});
+		}(jQuery));
+	</script>
+</dnn:DnnScriptBlock>
            

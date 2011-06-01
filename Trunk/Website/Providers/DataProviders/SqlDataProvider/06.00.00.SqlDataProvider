@@ -485,11 +485,11 @@ GO
 /*****************************************************/
 
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}ModuleControls' AND COLUMN_NAME='SupportsPopUps')
-    BEGIN
-        -- Add new Column
-        ALTER TABLE {databaseOwner}{objectQualifier}ModuleControls
-            ADD SupportsPopUps bit NOT NULL CONSTRAINT DF_{objectQualifier}ModuleControls_SupportsPopUps DEFAULT ((1))
-    END
+	BEGIN
+		-- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}ModuleControls
+			ADD SupportsPopUps bit NOT NULL CONSTRAINT DF_{objectQualifier}ModuleControls_SupportsPopUps DEFAULT ((1))
+	END
 GO
 
 /* Update AddModuleControl */
@@ -602,22 +602,22 @@ UPDATE {databaseOwner}{objectQualifier}ModuleControls
 /* Add FolderName Column to Packages  */
 /**************************************/
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Packages' AND COLUMN_NAME='FolderName')
-    BEGIN
-        -- Add new Column
+	BEGIN
+		-- Add new Column
 		ALTER TABLE {databaseOwner}{objectQualifier}Packages
 			ADD FolderName nvarchar(128) NULL
-    END
+	END
 GO
 
 
 /* Add IconFile Column to Packages  */
 /************************************/
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Packages' AND COLUMN_NAME='IconFile')
-    BEGIN
-        -- Add new Column
+	BEGIN
+		-- Add new Column
 		ALTER TABLE {databaseOwner}{objectQualifier}Packages
 			ADD IconFile nvarchar(100) NULL
-    END
+	END
 GO
 
 /* Update AddPackage */
@@ -812,11 +812,11 @@ GO
 /****************************************************/
 
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}DesktopModules' AND COLUMN_NAME='ContentItemId')
-    BEGIN
-        -- Add new Column
-        ALTER TABLE {databaseOwner}{objectQualifier}DesktopModules
-            ADD ContentItemId int NOT NULL CONSTRAINT DF_{objectQualifier}DesktopModules_ContentItemId DEFAULT (-1)
-    END
+	BEGIN
+		-- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}DesktopModules
+			ADD ContentItemId int NOT NULL CONSTRAINT DF_{objectQualifier}DesktopModules_ContentItemId DEFAULT (-1)
+	END
 
 GO
 
@@ -824,36 +824,36 @@ GO
 /************************************/
 
 IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_DesktopModules]') and OBJECTPROPERTY(id, N'IsView') = 1)
-    DROP VIEW {databaseOwner}[{objectQualifier}vw_DesktopModules]
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_DesktopModules]
 GO
 
 CREATE VIEW {databaseOwner}[{objectQualifier}vw_DesktopModules]
 AS
-    SELECT     
+	SELECT     
 		DM.DesktopModuleID, 
 		DM.FriendlyName, 
 		DM.Description, 
 		DM.Version, 
-        DM.IsPremium, 
+		DM.IsPremium, 
 		DM.IsAdmin, 
 		DM.BusinessControllerClass, 
-        DM.FolderName, 
+		DM.FolderName, 
 		DM.ModuleName, 
 		DM.SupportedFeatures, 
-        DM.CompatibleVersions, 
+		DM.CompatibleVersions, 
 		DM.Dependencies, 
 		DM.Permissions, 
-        DM.PackageID, 
+		DM.PackageID, 
 		DM.CreatedByUserID, 
 		DM.CreatedOnDate, 
-        DM.LastModifiedByUserID, 
+		DM.LastModifiedByUserID, 
 		DM.LastModifiedOnDate, 
 		CI.ContentItemID, 
-        CI.[Content], 
+		CI.[Content], 
 		CI.ContentTypeID, 
 		CI.TabID, 
 		CI.ModuleID, 
-        CI.ContentKey, 
+		CI.ContentKey, 
 		CI.Indexed
 	FROM {databaseOwner}{objectQualifier}DesktopModules AS DM 
 		 LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI ON DM.ContentItemId = CI.ContentItemID
@@ -877,8 +877,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddDesktopModule]
 	@BusinessController nvarchar(200),
 	@SupportedFeatures	int,
 	@CompatibleVersions	nvarchar(500),
-    @Dependencies       nvarchar(400),
-    @Permissions		nvarchar(400),
+	@Dependencies       nvarchar(400),
+	@Permissions		nvarchar(400),
 	@ContentItemId		int,
 	@CreatedByUserID	int
 
@@ -947,8 +947,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateDesktopModule]
 	@BusinessController		nvarchar(200),
 	@SupportedFeatures		int,
 	@CompatibleVersions		nvarchar(500),
-    @Dependencies			nvarchar(400),
-    @Permissions			nvarchar(400),
+	@Dependencies			nvarchar(400),
+	@Permissions			nvarchar(400),
 	@ContentItemId			int,
 	@LastModifiedByUserID	int
 
@@ -1087,7 +1087,7 @@ BEGIN
 	BEGIN
 		SET @ViewOrder = 1
 	END
-    INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (NULL, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+	INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (NULL, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
 END 
 
 --Create new entries for Portals
@@ -1111,11 +1111,11 @@ WHILE @@FETCH_STATUS = 0
 			BEGIN
 				SET @ViewOrder = 1
 			END
-            INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (@PortalID, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
+			INSERT INTO {databaseOwner}[{objectQualifier}ProfilePropertyDefinition] ([PortalID], [ModuleDefID], [Deleted], [DataType], [PropertyCategory], [PropertyName], [Length], [Required], [ValidationExpression], [ViewOrder], [Visible], [DefaultValue], [DefaultVisibility]) VALUES (@PortalID, -1, 0, @DataType, N'Preferences', N'PreferredTimeZone', 0, 0, NULL, @ViewOrder, 1, N'', 2)
 	   END 
 
-       FETCH NEXT FROM Portals_Cursor
-       into @PortalID
+	   FETCH NEXT FROM Portals_Cursor
+	   into @PortalID
    END
 CLOSE Portals_Cursor
 DEALLOCATE Portals_Cursor
@@ -1186,26 +1186,26 @@ GO
 /**********************************************************************/
 
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeletePortalDesktopModules]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-    DROP PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
+	DROP PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
 GO
 
 CREATE PROCEDURE {databaseOwner}{objectQualifier}DeletePortalDesktopModules
-    @PortalID        int,
-    @DesktopModuleId int
+	@PortalID        int,
+	@DesktopModuleId int
 AS
 BEGIN
-    IF @PortalID is not null AND @DesktopModuleId is not null
-        DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID AND DesktopModuleId = @DesktopModuleId
-    ELSE 
-        BEGIN
-            IF @PortalID is not null
-                DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID
-            ELSE
-                BEGIN 
-                    IF @DesktopModuleId is not null
-                        DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE DesktopModuleId = @DesktopModuleId
-                END
-        END
+	IF @PortalID is not null AND @DesktopModuleId is not null
+		DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID AND DesktopModuleId = @DesktopModuleId
+	ELSE 
+		BEGIN
+			IF @PortalID is not null
+				DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE PortalId = @PortalID
+			ELSE
+				BEGIN 
+					IF @DesktopModuleId is not null
+						DELETE FROM {databaseOwner}{objectQualifier}PortalDesktopModules WHERE DesktopModuleId = @DesktopModuleId
+				END
+		END
 END
 GO
 
@@ -1291,11 +1291,10 @@ BEGIN
 END
 GO
 
-/* Set SupportsPartialRendering = 0 for the new Tabs module */
-/* (dnnwerks codeplex project has this turned off as well)  */
+/* Set SupportsPartialRendering = 1 for the new Tabs module */
 /************************************************************/
 UPDATE {databaseOwner}{objectQualifier}ModuleControls
-SET SupportsPartialRendering = 0
+SET SupportsPartialRendering = 1
 WHERE ControlSrc = 'DesktopModules/Admin/Tabs/Tabs.ascx'  
 GO
 
@@ -1352,8 +1351,65 @@ GO
 /* Replace incorrect SiteMap module icon */
 /*****************************************/
 UPDATE {databaseOwner}{objectQualifier}ModuleControls 
-	SET IconFile = '~/images/icon_siteMap_32px.gif' 
+	SET IconFile = '~/images/icon_siteMap_32px.gif' , 
+		SupportsPartialRendering = 1
 	WHERE ControlSrc = 'DesktopModules/Admin/Sitemap/SitemapSettings.ascx'
+GO
+
+/* Set SupportsPartialRendering = 1 for upgraded core module controls (minus SiteMapSettings.ascx and Tabs.ascx)  */
+/************************************************************/
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+SET SupportsPartialRendering = 1
+WHERE 
+	ControlSrc = 'DesktopModules/Admin/Security/Roles.ascx'  
+	OR ControlSrc = 'DesktopModules/Admin/Security/EditRoles.ascx'  
+	OR ControlSrc = 'DesktopModules/Admin/Tabs/ManageTabs.ascx'  
+	OR ControlSrc = 'DesktopModules/Admin/Portals/SiteSettings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Security/Users.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Security/ManageUsers.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Vendors/Vendors.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Vendors/EditVendors.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/FileManager/FileManager.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SiteLog/SiteLog.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Newsletters/Newsletter.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Vendors/EditBanner.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Security/SecurityRoles.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Portals/Signup.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Portals/Portals.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SQL/SQL.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/HostSettings/HostSettings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Authentication/Login.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/RecycleBin/RecycleBin.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Vendors/EditAffiliate.ascx'
+	OR ControlSrc = 'Admin/Modules/Import.ascx'
+	OR ControlSrc = 'Admin/Modules/Export.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/LogViewer/LogViewer.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/LogViewer/EditLogTypes.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Scheduler/EditSchedule.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Scheduler/ViewScheduleHistory.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Scheduler/ViewScheduleStatus.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SearchInput/InputSettings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SearchResults/ResultsSettings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SiteWizard/SiteWizard.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Lists/ListEditor.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Security/EditProfileDefinition.ascx'
+	OR ControlSrc = 'Admin/Tabs/Import.ascx'
+	OR ControlSrc = 'Admin/Tabs/Export.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/FileManager/FolderMappings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Dashboard/DashboardControls.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/EditLanguage.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/languageeditorext.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/LanguageSettings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/resourceverifier.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/LanguagePackWriter.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Skins/editskins.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/SkinDesigner/Attributes.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Console/Settings.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Analytics/GoogleAnalyticsSettings.ascx'
+	OR ControlSrc = 'Admin/Modules/ViewSource.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/languageEnabler.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/Languages/languageeditor.ascx'
+	OR ControlSrc = 'DesktopModules/Admin/ViewProfile/Settings.ascx'
 GO
 
 /*************************/
@@ -1369,9 +1425,9 @@ IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'aspnet_Membership_GetNum
 GO
 
 CREATE PROCEDURE dbo.aspnet_Membership_GetNumberOfUsersOnline
-    @ApplicationName            nvarchar(256),
-    @MinutesSinceLastInActive   int,
-    @CurrentTimeUtc             datetime
+	@ApplicationName            nvarchar(256),
+	@MinutesSinceLastInActive   int,
+	@CurrentTimeUtc             datetime
 AS
 	BEGIN
 		DECLARE @DateActive datetime
@@ -1542,21 +1598,21 @@ AS
 BEGIN
 	SELECT
 		F.FileId,
-        FO.PortalId,
-        F.[FileName],
-        F.Extension,
-        F.Size,
-        F.Width,
-        F.Height,
-        F.ContentType,
-        F.FolderID,
-        'Folder' = FolderPath,
-	    FO.StorageLocation,
-        FO.IsCached,
-        F.UniqueId,
-        F.VersionGuid,
-        F.SHA1Hash,
-        FO.FolderMappingID
+		FO.PortalId,
+		F.[FileName],
+		F.Extension,
+		F.Size,
+		F.Width,
+		F.Height,
+		F.ContentType,
+		F.FolderID,
+		'Folder' = FolderPath,
+		FO.StorageLocation,
+		FO.IsCached,
+		F.UniqueId,
+		F.VersionGuid,
+		F.SHA1Hash,
+		FO.FolderMappingID
 	FROM {databaseOwner}[{objectQualifier}Files] F
 	INNER JOIN {databaseOwner}[{objectQualifier}Folders] FO on F.FolderID = FO.FolderID
 END
@@ -1602,16 +1658,16 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddFolder]
-    @PortalID 			int,
-    @UniqueId	 		uniqueidentifier,
-    @VersionGuid 		uniqueidentifier,
-    @FolderPath 		nvarchar(300),
-    @StorageLocation 	int,
-    @IsProtected 		bit,
-    @IsCached 			bit,
-    @LastUpdated 		datetime,
-    @CreatedByUserID  	int,
-    @FolderMappingID	int = 0
+	@PortalID 			int,
+	@UniqueId	 		uniqueidentifier,
+	@VersionGuid 		uniqueidentifier,
+	@FolderPath 		nvarchar(300),
+	@StorageLocation 	int,
+	@IsProtected 		bit,
+	@IsCached 			bit,
+	@LastUpdated 		datetime,
+	@CreatedByUserID  	int,
+	@FolderMappingID	int = 0
 AS
 BEGIN
 	IF @FolderMappingID = 0 BEGIN
@@ -1628,37 +1684,37 @@ BEGIN
 		)
 	END
 	
-    INSERT INTO {databaseOwner}[{objectQualifier}Folders] (
-        PortalID, 
-        UniqueId,
-        VersionGuid,
-        FolderPath, 
-        StorageLocation, 
-        IsProtected, 
-        IsCached, 
-        LastUpdated,
-        CreatedByUserID,
-        CreatedOnDate,
-        LastModifiedByUserID,
-        LastModifiedOnDate,
-        FolderMappingID
-    )
-    VALUES (
-        @PortalID, 
-        @UniqueId,
-        @VersionGuid,
-        @FolderPath, 
-        @StorageLocation, 
-        @IsProtected, 
-        @IsCached, 
-        @LastUpdated,
-        @CreatedByUserID,
-        getdate(),
-        @CreatedByUserID,
-        getdate(),
-        @FolderMappingID
-    )
-    SELECT SCOPE_IDENTITY()
+	INSERT INTO {databaseOwner}[{objectQualifier}Folders] (
+		PortalID, 
+		UniqueId,
+		VersionGuid,
+		FolderPath, 
+		StorageLocation, 
+		IsProtected, 
+		IsCached, 
+		LastUpdated,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate,
+		FolderMappingID
+	)
+	VALUES (
+		@PortalID, 
+		@UniqueId,
+		@VersionGuid,
+		@FolderPath, 
+		@StorageLocation, 
+		@IsProtected, 
+		@IsCached, 
+		@LastUpdated,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate(),
+		@FolderMappingID
+	)
+	SELECT SCOPE_IDENTITY()
 END
 GO
 
@@ -1670,20 +1726,20 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFolder]
-    @PortalID 				int,
-    @VersionGuid 			uniqueidentifier,	
-    @FolderID 				int,
-    @FolderPath 			nvarchar(300),
-    @StorageLocation 		int,
-    @IsProtected 			bit,
-    @IsCached 				bit,
-    @LastUpdated 			datetime,
-    @LastModifiedByUserID  	int,
-    @FolderMappingID		int
+	@PortalID 				int,
+	@VersionGuid 			uniqueidentifier,	
+	@FolderID 				int,
+	@FolderPath 			nvarchar(300),
+	@StorageLocation 		int,
+	@IsProtected 			bit,
+	@IsCached 				bit,
+	@LastUpdated 			datetime,
+	@LastModifiedByUserID  	int,
+	@FolderMappingID		int
 AS
 BEGIN
-    UPDATE {databaseOwner}[{objectQualifier}Folders]
-    SET
+	UPDATE {databaseOwner}[{objectQualifier}Folders]
+	SET
 		FolderPath = @FolderPath,
 		VersionGuid = @VersionGuid,
 		StorageLocation = @StorageLocation,
@@ -1693,7 +1749,7 @@ BEGIN
 		LastModifiedByUserID = @LastModifiedByUserID,
 		LastModifiedOnDate = getdate(),
 		FolderMappingID = @FolderMappingID
-    WHERE FolderID = @FolderID
+	WHERE FolderID = @FolderID
 END
 GO
 
@@ -1708,8 +1764,8 @@ GO
 WITH temp AS
 (
 SELECT  ROW_NUMBER() OVER (PARTITION BY PortalID, CultureCode ORDER BY PortalId ASC, CultureCode ASC ) IndexId ,
-        PortalID ,
-        CultureCode
+		PortalID ,
+		CultureCode
 FROM    {databaseOwner}[{objectQualifier}PortalLocalization]
 
 ) 
@@ -1726,51 +1782,51 @@ GO
 
 CREATE VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
 AS
-    SELECT DISTINCT    
-        P.PortalID,   
-        PL.PortalName as PortalName, 
-        PL.LogoFile,       
-        PL.FooterText as FooterText,   
-        P.ExpiryDate,   
-        P.UserRegistration,   
-        P.BannerAdvertising,   
-        P.AdministratorId,   
-        P.Currency,   
-        P.HostFee,   
-        P.HostSpace,   
-        P.PageQuota,   
-        P.UserQuota,   
-        P.AdministratorRoleId,   
-        P.RegisteredRoleId,   
-        PL.Description as Description,   
-        PL.KeyWords as KeyWords,   
-        PL.BackgroundFile,   
-        P.GUID,   
-        P.PaymentProcessor,   
-        P.ProcessorUserId,   
-        P.ProcessorPassword,   
-        P.SiteLogHistory,   
-        U.Email,   
-        P.DefaultLanguage,   
-        P.TimezoneOffset,   
-        PL.AdminTabId as AdminTabId,   
-        P.HomeDirectory,   
-        PL.SplashTabId as SplashTabId,   
-        PL.HomeTabId as HomeTabId,   
-        PL.LoginTabId as LoginTabId,   
-        PL.RegisterTabId as RegisterTabId,   
-        PL.UserTabId as UserTabId,  
-        PL.SearchTabId as SearchTabId,  
-        (SELECT TOP 1 TabID FROM {databaseOwner}{objectQualifier}Tabs WHERE (PortalID IS NULL) AND (ParentId IS NULL)) AS SuperTabId,
-        P.CreatedByUserID, 
-        P.CreatedOnDate, 
-        P.LastModifiedByUserID, 
-        P.LastModifiedOnDate,
-        PL.CultureCode
+	SELECT DISTINCT    
+		P.PortalID,   
+		PL.PortalName as PortalName, 
+		PL.LogoFile,       
+		PL.FooterText as FooterText,   
+		P.ExpiryDate,   
+		P.UserRegistration,   
+		P.BannerAdvertising,   
+		P.AdministratorId,   
+		P.Currency,   
+		P.HostFee,   
+		P.HostSpace,   
+		P.PageQuota,   
+		P.UserQuota,   
+		P.AdministratorRoleId,   
+		P.RegisteredRoleId,   
+		PL.Description as Description,   
+		PL.KeyWords as KeyWords,   
+		PL.BackgroundFile,   
+		P.GUID,   
+		P.PaymentProcessor,   
+		P.ProcessorUserId,   
+		P.ProcessorPassword,   
+		P.SiteLogHistory,   
+		U.Email,   
+		P.DefaultLanguage,   
+		P.TimezoneOffset,   
+		PL.AdminTabId as AdminTabId,   
+		P.HomeDirectory,   
+		PL.SplashTabId as SplashTabId,   
+		PL.HomeTabId as HomeTabId,   
+		PL.LoginTabId as LoginTabId,   
+		PL.RegisterTabId as RegisterTabId,   
+		PL.UserTabId as UserTabId,  
+		PL.SearchTabId as SearchTabId,  
+		(SELECT TOP 1 TabID FROM {databaseOwner}{objectQualifier}Tabs WHERE (PortalID IS NULL) AND (ParentId IS NULL)) AS SuperTabId,
+		P.CreatedByUserID, 
+		P.CreatedOnDate, 
+		P.LastModifiedByUserID, 
+		P.LastModifiedOnDate,
+		PL.CultureCode
 	FROM  {databaseOwner}{objectQualifier}Portals AS P 
 	INNER JOIN ( SELECT PortalID ,
-                        PortalName ,
-                        CASE WHEN LEFT(LOWER(LogoFile), 7) = 'fileid='
+						PortalName ,
+						CASE WHEN LEFT(LOWER(LogoFile), 7) = 'fileid='
 								THEN ( SELECT  Folder + FileName
 									FROM    {databaseOwner}{objectQualifier}Files
 									WHERE   fileid = CAST(( RIGHT(LOWER(LogoFile),
@@ -1778,10 +1834,10 @@ AS
 									)
 								ELSE LogoFile
 						END AS LogoFile ,
-                        FooterText ,
-                        Description ,
-                        KeyWords ,
-                        CASE WHEN LEFT(LOWER(BackgroundFile), 7) = 'fileid='
+						FooterText ,
+						Description ,
+						KeyWords ,
+						CASE WHEN LEFT(LOWER(BackgroundFile), 7) = 'fileid='
 								THEN ( SELECT  Folder + FileName
 									FROM    {databaseOwner}{objectQualifier}Files
 									WHERE   fileid = CAST(( RIGHT(LOWER(BackgroundFile),
@@ -1790,17 +1846,17 @@ AS
 									)
 								ELSE BackgroundFile
 						END AS BackgroundFile ,
-                        AdminTabId ,
-                        SplashTabId ,
-                        HomeTabId ,
-                        LoginTabId ,
-                        RegisterTabId ,
-                        UserTabId ,
-                        SearchTabId ,
-                        CultureCode
-                    FROM   {databaseOwner}{objectQualifier}PortalLocalization
-                ) AS PL ON P.PortalID = PL.PortalID AND PL.CultureCode = P.DefaultLanguage 
-        LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+						AdminTabId ,
+						SplashTabId ,
+						HomeTabId ,
+						LoginTabId ,
+						RegisterTabId ,
+						UserTabId ,
+						SearchTabId ,
+						CultureCode
+					FROM   {databaseOwner}{objectQualifier}PortalLocalization
+				) AS PL ON P.PortalID = PL.PortalID AND PL.CultureCode = P.DefaultLanguage 
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
 
 GO
 
@@ -1913,22 +1969,22 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateFile]
-    @FileId int,
-    @VersionGuid uniqueidentifier,	
-    @FileName nvarchar(246),
-    @Extension nvarchar(100),
-    @Size int,
-    @Width int,
-    @Height int,
-    @ContentType nvarchar(200),	
-    @Folder nvarchar(246),
-    @FolderID int,
+	@FileId int,
+	@VersionGuid uniqueidentifier,	
+	@FileName nvarchar(246),
+	@Extension nvarchar(100),
+	@Size int,
+	@Width int,
+	@Height int,
+	@ContentType nvarchar(200),	
+	@Folder nvarchar(246),
+	@FolderID int,
 	@LastModifiedByUserID int,
 	@Hash varchar(40)
 AS
 BEGIN
-    UPDATE {databaseOwner}[{objectQualifier}Files]
-    SET
+	UPDATE {databaseOwner}[{objectQualifier}Files]
+	SET
 		[FileName] = @FileName,
 		VersionGuid = @VersionGuid,
 		Extension = @Extension,
@@ -1941,7 +1997,7 @@ BEGIN
 		LastModifiedByUserID = @LastModifiedByUserID,
 		LastModifiedOnDate = getdate(),
 		SHA1Hash = @Hash
-    WHERE FileId = @FileId
+	WHERE FileId = @FileId
 END
 GO
 
@@ -1950,17 +2006,17 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteFile]
-    @PortalID int,
+	@PortalID int,
 	@FileName nvarchar(246),
 	@FolderID int
 AS
 BEGIN
-    IF @PortalID is null
-    BEGIN
-        DELETE FROM {databaseOwner}[{objectQualifier}Files] WHERE [FileName] = @FileName AND FolderID = @FolderID AND PortalId IS Null
-    END ELSE BEGIN
-        DELETE FROM {databaseOwner}[{objectQualifier}Files] WHERE [FileName] = @FileName AND FolderID = @FolderID AND PortalId = @PortalID
-    END
+	IF @PortalID is null
+	BEGIN
+		DELETE FROM {databaseOwner}[{objectQualifier}Files] WHERE [FileName] = @FileName AND FolderID = @FolderID AND PortalId IS Null
+	END ELSE BEGIN
+		DELETE FROM {databaseOwner}[{objectQualifier}Files] WHERE [FileName] = @FileName AND FolderID = @FolderID AND PortalId = @PortalID
+	END
 END
 GO
 
@@ -2002,7 +2058,7 @@ AS
 
 
 	SELECT {databaseOwner}{objectQualifier}Vendors.*,
-       		'Banners' = ( select count(*) from {databaseOwner}{objectQualifier}Banners where {databaseOwner}{objectQualifier}Banners.VendorId = {databaseOwner}{objectQualifier}Vendors.VendorId )
+			'Banners' = ( select count(*) from {databaseOwner}{objectQualifier}Banners where {databaseOwner}{objectQualifier}Banners.VendorId = {databaseOwner}{objectQualifier}Vendors.VendorId )
 	FROM {databaseOwner}{objectQualifier}Vendors
 	INNER JOIN #PageIndex PageIndex
 		ON {databaseOwner}{objectQualifier}Vendors.VendorId = PageIndex.VendorId
@@ -2031,25 +2087,25 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}GetBanner
 @BannerId int
 as
 select B.BannerId,
-       B.VendorId,
-       'ImageFile' = case when F.FileName is null then B.ImageFile else F.Folder + F.FileName end,
-       B.BannerName,
-       B.Impressions,
-       B.CPM,
-       B.Views,
-       B.ClickThroughs,
-       B.StartDate,
-       B.EndDate,
-       'CreatedByUser' = U.FirstName + ' ' + U.LastName,
-       B.CreatedDate,
-       B.BannerTypeId,
-       B.Description,
-       B.GroupName,
-       B.Criteria,
-       B.URL,        
-       B.Width,
-       B.Height,
-       B.ImageFile AS ImageFileRaw
+	   B.VendorId,
+	   'ImageFile' = case when F.FileName is null then B.ImageFile else F.Folder + F.FileName end,
+	   B.BannerName,
+	   B.Impressions,
+	   B.CPM,
+	   B.Views,
+	   B.ClickThroughs,
+	   B.StartDate,
+	   B.EndDate,
+	   'CreatedByUser' = U.FirstName + ' ' + U.LastName,
+	   B.CreatedDate,
+	   B.BannerTypeId,
+	   B.Description,
+	   B.GroupName,
+	   B.Criteria,
+	   B.URL,        
+	   B.Width,
+	   B.Height,
+	   B.ImageFile AS ImageFileRaw
 from   {databaseOwner}{objectQualifier}Banners B 
 inner join {databaseOwner}{objectQualifier}Vendors V ON B.VendorId = V.VendorId 
 left outer join {databaseOwner}{objectQualifier}Users U ON B.CreatedByUser = U.UserID
@@ -2069,9 +2125,9 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}FindBanners]
 
 AS
 SELECT  B.BannerId,
-        B.VendorId,
-        BannerName,
-        URL,
+		B.VendorId,
+		BannerName,
+		URL,
 		CASE WHEN LEFT(LOWER(ImageFile), 6) = 'fileid' 
 			THEN
 				(SELECT Folder + FileName  
@@ -2082,19 +2138,19 @@ SELECT  B.BannerId,
 				ImageFile  
 			END 
 		AS ImageFile,
-        Impressions,
-        CPM,
-        B.Views,
-        B.ClickThroughs,
-        StartDate,
-        EndDate,
-        BannerTypeId,
-        Description,
-        GroupName,
-        Criteria,
-        B.Width,
-        B.Height,
-        B.ImageFile AS ImageFileRaw
+		Impressions,
+		CPM,
+		B.Views,
+		B.ClickThroughs,
+		StartDate,
+		EndDate,
+		BannerTypeId,
+		Description,
+		GroupName,
+		Criteria,
+		B.Width,
+		B.Height,
+		B.ImageFile AS ImageFileRaw
 FROM    {databaseOwner}{objectQualifier}Banners B
 INNER JOIN {databaseOwner}{objectQualifier}Vendors V ON B.VendorId = V.VendorId
 WHERE   (B.BannerTypeId = @BannerTypeId or @BannerTypeId is null)
@@ -2132,6 +2188,22 @@ AS
 BEGIN
 	SELECT GETDATE()
 END
+GO
+
+/* Update foreign keys in Files table */
+/**************************************/
+
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}Files_{objectQualifier}Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Files]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Files] DROP CONSTRAINT [FK_{objectQualifier}Files_{objectQualifier}Portals]
+GO
+
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}Files_{objectQualifier}Folders]') AND parent_object_id = OBJECT_ID(N'[dbo].[{objectQualifier}Files]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Files] DROP CONSTRAINT [FK_{objectQualifier}Files_{objectQualifier}Folders]
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Files] ADD
+	CONSTRAINT [FK_{objectQualifier}Files_{objectQualifier}Portals] FOREIGN KEY ([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]),
+	CONSTRAINT [FK_{objectQualifier}Files_{objectQualifier}Folders] FOREIGN KEY ([FolderID]) REFERENCES {databaseOwner}[{objectQualifier}Folders] ([FolderID]) ON DELETE CASCADE
 GO
 
 /************************************************************/

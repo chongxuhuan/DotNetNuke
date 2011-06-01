@@ -82,6 +82,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var controlTitle = Localization.GetString("ControlTitle", LocalResourceFile);
             var controlTitlePrefix = (FolderMappingID == Null.NullInteger) ? Localization.GetString("New") : Localization.GetString("Edit");
 
+            phSyncWarning.Visible = (FolderMappingID != Null.NullInteger);
+
             ModuleConfiguration.ModuleControl.ControlTitle = string.Format(controlTitle, controlTitlePrefix);
         }
 
@@ -138,6 +140,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 folderMapping.FolderProviderType = cboFolderProviders.SelectedValue;
                 folderMapping.PortalID = FolderPortalID;
 
+                var originalSettings = folderMapping.FolderMappingSettings;
+
                 try
                 {
                     var folderMappingID = FolderMappingID;
@@ -166,6 +170,23 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                 _folderMappingController.DeleteFolderMapping(folderMappingID);
                             }
                             return;
+                        }
+                    }
+
+                    if (FolderMappingID != Null.NullInteger)
+                    {
+                        // Check if some setting has changed
+                        var updatedSettings = _folderMappingController.GetFolderMappingSettings(FolderMappingID);
+
+                        if (originalSettings.Keys.Cast<object>().Any(key => updatedSettings.ContainsKey(key) && !originalSettings[key].ToString().Equals(updatedSettings[key].ToString())))
+                        {
+                            // Re-synchronize folders using the existing mapping. It's important to synchronize them in descending order
+                            var folders = FolderManager.Instance.GetFolders(FolderPortalID).Where(f => f.FolderMappingID == FolderMappingID).OrderByDescending(f => f.FolderPath);
+
+                            foreach (var folder in folders)
+                            {
+                                FolderManager.Instance.Synchronize(FolderPortalID, folder.FolderPath, false, true);
+                            }
                         }
                     }
                 }

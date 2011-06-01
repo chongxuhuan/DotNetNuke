@@ -3,7 +3,7 @@
 		<package name="Admin.Messaging" type="Module" version="06.00.00" isSystem="true">
 			<friendlyName>Messaging</friendlyName>
 			<description>The Messaging module allows users to send and receive private messages.</description>
-      <iconFile>messaging.gif</iconFile>
+	  <iconFile>messaging.gif</iconFile>
 			<owner>
 				<name>DotNetNuke Corporation</name>
 				<organization>DotNetNuke Corporation</organization>
@@ -52,7 +52,7 @@
 									<moduleControl>
 										<controlKey>ViewMessage</controlKey>
 										<controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
-										<supportsPartialRendering>True</supportsPartialRendering>
+										<supportsPartialRendering>False</supportsPartialRendering>
 										<controlTitle>View Message</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />
@@ -76,20 +76,20 @@
 				<component type="Assembly">
 					<assemblies>
 						<assembly>
-              <path>bin</path>
-              <name>DotNetNuke.Modules.Messaging.dll</name>
+			  <path>bin</path>
+			  <name>DotNetNuke.Modules.Messaging.dll</name>
 						</assembly>
 					</assemblies>
 				</component>
-        <component type="ResourceFile">
-          <resourceFiles>
-            <basePath>DesktopModules\Admin\Messaging</basePath>
-            <resourceFile>
-              <name>Resources.zip</name>
-            </resourceFile>
-          </resourceFiles>
-        </component>
-      </components>
+		<component type="ResourceFile">
+		  <resourceFiles>
+			<basePath>DesktopModules\Admin\Messaging</basePath>
+			<resourceFile>
+			  <name>Resources.zip</name>
+			</resourceFile>
+		  </resourceFiles>
+		</component>
+	  </components>
 		</package>
 	</packages>
 </dotnetnuke>

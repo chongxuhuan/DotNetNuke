@@ -22,7 +22,5 @@
     <div class="dnnFormItem" id="divCaptcha2" runat="server" visible="false">
         <dnn:captchacontrol id="ctlCaptcha" captchawidth="130" captchaheight="40" runat="server" errorstyle-cssclass="dnnFormMessage dnnFormError" />
     </div>
-    <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdLogin" resourcekey="cmdLogin" cssclass="dnnPrimaryAction" text="Login" runat="server" /></li>
-    </ul>
+    <p><asp:LinkButton id="cmdLogin" resourcekey="cmdLogin" cssclass="dnnPrimaryAction" text="Login" runat="server" /></p>
 </div>

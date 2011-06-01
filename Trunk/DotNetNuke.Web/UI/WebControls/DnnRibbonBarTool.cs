@@ -37,6 +37,7 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
+using DotNetNuke.Services.Log.EventLog;
 
 #endregion
 
@@ -163,7 +164,9 @@ namespace DotNetNuke.Web.UI.WebControls
                                         {"HostConsole", new RibbonBarToolInfo("HostConsole", true, false, "", "Console", "", false)},
                                         {"UploadFile", new RibbonBarToolInfo("UploadFile", false, false, "", "File Manager", "Edit", true)},
                                         {"NewRole", new RibbonBarToolInfo("NewRole", false, false, "", "Security Roles", "Edit", true)},
-                                        {"NewUser", new RibbonBarToolInfo("NewUser", false, false, "", "User Accounts", "Edit", true)}
+                                        {"NewUser", new RibbonBarToolInfo("NewUser", false, false, "", "User Accounts", "Edit", true)},
+                                        {"ClearCache", new RibbonBarToolInfo("ClearCache", true, true, "", "", "", false)},
+                                        {"RecycleApp", new RibbonBarToolInfo("RecycleApp", true, true, "", "", "", false)}
                                     };
                 }
 
@@ -244,6 +247,20 @@ namespace DotNetNuke.Web.UI.WebControls
                     if ((HasToolPermissions("CopyDesignToChildren")))
                     {
                         TabController.CopyDesignToChildren(PortalSettings.ActiveTab, PortalSettings.ActiveTab.SkinSrc, PortalSettings.ActiveTab.ContainerSrc);
+                        Page.Response.Redirect(Page.Request.RawUrl);
+                    }
+                    break;
+                case "ClearCache":
+                    if ((HasToolPermissions("ClearCache")))
+                    {
+                        ClearCache();
+                        Page.Response.Redirect(Page.Request.RawUrl);
+                    }
+                    break;
+                case "RecycleApp":
+                    if ((HasToolPermissions("RecycleApp")))
+                    {
+                        RestartApplication();
                         Page.Response.Redirect(Page.Request.RawUrl);
                     }
                     break;
@@ -571,6 +588,20 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             var moduleCtrl = new ModuleController();
             return moduleCtrl.GetModuleByDefinition(portalID, friendlyName);
+        }
+
+        protected virtual void ClearCache()
+        {
+            DataCache.ClearCache();
+        }
+
+        protected virtual void RestartApplication()
+        {
+            var objEv = new EventLogController();
+            var objEventLogInfo = new LogInfo { BypassBuffering = true, LogTypeKey = EventLogController.EventLogType.HOST_ALERT.ToString() };
+            objEventLogInfo.AddProperty("Message", GetString("UserRestart"));
+            objEv.AddLog(objEventLogInfo);
+            Config.Touch();
         }
 
         #endregion

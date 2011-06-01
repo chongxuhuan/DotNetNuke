@@ -57,9 +57,9 @@ namespace DotNetNuke.Modules.Admin.Security
 
 		#region Private Members
 
-        private UserInfo _User;
-        private int _UserCount = Null.NullInteger;
-        private string ipAddress;
+        private UserInfo _user;
+        private int _userCount = Null.NullInteger;
+        private string _ipAddress;
 
 		#endregion
 
@@ -127,15 +127,15 @@ namespace DotNetNuke.Modules.Admin.Security
             ArrayList arrUsers;
             if (MembershipProviderConfig.RequiresUniqueEmail && !String.IsNullOrEmpty(txtEmail.Text.Trim()) && String.IsNullOrEmpty(txtUsername.Text.Trim()))
             {
-                arrUsers = UserController.GetUsersByEmail(PortalSettings.PortalId, txtEmail.Text, 0, Int32.MaxValue, ref _UserCount);
+                arrUsers = UserController.GetUsersByEmail(PortalSettings.PortalId, txtEmail.Text, 0, Int32.MaxValue, ref _userCount);
                 if (arrUsers != null && arrUsers.Count == 1)
                 {
-                    _User = (UserInfo) arrUsers[0];
+                    _user = (UserInfo) arrUsers[0];
                 }
             }
             else
             {
-                _User = UserController.GetUserByName(PortalSettings.PortalId, txtUsername.Text);
+                _user = UserController.GetUserByName(PortalSettings.PortalId, txtUsername.Text);
             }
         }
 
@@ -191,7 +191,7 @@ namespace DotNetNuke.Modules.Admin.Security
 
             if (Request.UserHostAddress != null)
             {
-                ipAddress = Request.UserHostAddress;
+                _ipAddress = Request.UserHostAddress;
             }
             divEmail.Visible = MembershipProviderConfig.RequiresUniqueEmail;
             divCaptcha.Visible = UseCaptcha;
@@ -226,20 +226,22 @@ namespace DotNetNuke.Modules.Admin.Security
         /// </history>
         protected void OnSendPasswordClick(Object sender, EventArgs e)
         {
-            var strMessage = Null.NullString;
-            var strLogMessage = Null.NullString;
+            //pretty much alwasy display the same message to avoid hinting on the existance of a user name
+            var message = Null.NullString;
+            var moduleMessageType = ModuleMessage.ModuleMessageType.GreenSuccess;
             var canSend = true;
 
             if (MembershipProviderConfig.RequiresQuestionAndAnswer && String.IsNullOrEmpty(txtAnswer.Text))
             {
                 GetUser();
-                if (_User != null)
+                if (_user != null)
                 {
-                    lblQuestion.Text = _User.Membership.PasswordQuestion;
+                    lblQuestion.Text = _user.Membership.PasswordQuestion;
                 }
                 divQA.Visible = true;
                 return;
             }
+
             if ((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha))
             {
                 if (String.IsNullOrEmpty(txtUsername.Text.Trim()))
@@ -251,26 +253,28 @@ namespace DotNetNuke.Modules.Admin.Security
                         {
 							//No email address either (cannot retrieve password)
                             canSend = false;
-                            strMessage = Localization.GetString("EnterUsernameEmail", LocalResourceFile);
+                            message = Localization.GetString("EnterUsernameEmail", LocalResourceFile);
+                            moduleMessageType = ModuleMessage.ModuleMessageType.RedError;
                         }
                     }
                     else
                     {
 						//Cannot retrieve password
                         canSend = false;
-                        strMessage = Localization.GetString("EnterUsername", LocalResourceFile);
+                        message = Localization.GetString("EnterUsername", LocalResourceFile);
+                        moduleMessageType = ModuleMessage.ModuleMessageType.RedError;
                     }
                 }
+
                 if (canSend)
                 {
-                    var objSecurity = new PortalSecurity();
+                    var portalSecurity = new PortalSecurity();
                     GetUser();
-                    if (_User != null)
+                    if (_user != null)
                     {
-                        if (_User.IsDeleted)
+                        if (_user.IsDeleted)
                         {
                             canSend = false;
-                            strMessage = Localization.GetString("UsernameError", LocalResourceFile);
                         }
                         else
                         {
@@ -278,97 +282,83 @@ namespace DotNetNuke.Modules.Admin.Security
                             {
                                 try
                                 {
-                                    _User.Membership.Password = UserController.GetPassword(ref _User, txtAnswer.Text);
+                                    _user.Membership.Password = UserController.GetPassword(ref _user, txtAnswer.Text);
                                 }
                                 catch (Exception exc)
                                 {
                                     DnnLog.Error(exc);
 
                                     canSend = false;
-                                    strMessage = Localization.GetString("PasswordRetrievalError", LocalResourceFile);
                                 }
                             }
                             else
                             {
                                 try
                                 {
-                                    _User.Membership.Password = UserController.GeneratePassword();
-                                    UserController.ResetPassword(_User, txtAnswer.Text);
+                                    _user.Membership.Password = UserController.GeneratePassword();
+                                    UserController.ResetPassword(_user, txtAnswer.Text);
                                 }
                                 catch (Exception exc)
                                 {
                                     DnnLog.Error(exc);
 
                                     canSend = false;
-                                    strMessage = Localization.GetString("PasswordResetError", LocalResourceFile);
                                 }
                             }
                             if (canSend)
                             {
-                                if (Mail.SendMail(_User, MessageType.PasswordReminder, PortalSettings) != string.Empty)
+                                if (Mail.SendMail(_user, MessageType.PasswordReminder, PortalSettings) != string.Empty)
                                 {
-                                    strMessage = Localization.GetString("SendMailError", LocalResourceFile);
                                     canSend = false;
-                                }
-                                else
-                                {
-                                    strMessage = Localization.GetString("PasswordSent", LocalResourceFile);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        if (_UserCount > 1)
+                        if (_userCount > 1)
                         {
-                            strMessage = Localization.GetString("MultipleUsers", LocalResourceFile);
+                            message = Localization.GetString("MultipleUsers", LocalResourceFile);
                         }
-                        else if (MembershipProviderConfig.RequiresUniqueEmail && !String.IsNullOrEmpty(txtEmail.Text.Trim()) && String.IsNullOrEmpty(txtUsername.Text.Trim()))
-                        {
-                            strMessage = Localization.GetString("EmailError", LocalResourceFile);
-                        }
-                        else
-                        {
-                            strMessage = Localization.GetString("UsernameError", LocalResourceFile);
-                        }
+
                         canSend = false;
                     }
                     if (canSend)
                     {
                         var objEventLog = new EventLogController();
                         var objEventLogInfo = new LogInfo();
-                        objEventLogInfo.AddProperty("IP", ipAddress);
+                        objEventLogInfo.AddProperty("IP", _ipAddress);
                         objEventLogInfo.LogPortalID = PortalSettings.PortalId;
                         objEventLogInfo.LogPortalName = PortalSettings.PortalName;
                         objEventLogInfo.LogUserID = UserId;
-                        objEventLogInfo.LogUserName = objSecurity.InputFilter(txtUsername.Text,
+                        objEventLogInfo.LogUserName = portalSecurity.InputFilter(txtUsername.Text,
                                                                               PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
                         objEventLogInfo.LogTypeKey = "PASSWORD_SENT_SUCCESS";
                         objEventLog.AddLog(objEventLogInfo);
 
-                        UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.GreenSuccess);
+                        UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
                     }
                     else
                     {
                         var objEventLog = new EventLogController();
                         var objEventLogInfo = new LogInfo();
-                        objEventLogInfo.AddProperty("IP", ipAddress);
+                        objEventLogInfo.AddProperty("IP", _ipAddress);
                         objEventLogInfo.LogPortalID = PortalSettings.PortalId;
                         objEventLogInfo.LogPortalName = PortalSettings.PortalName;
                         objEventLogInfo.LogUserID = UserId;
-                        objEventLogInfo.LogUserName = objSecurity.InputFilter(txtUsername.Text,
+                        objEventLogInfo.LogUserName = portalSecurity.InputFilter(txtUsername.Text,
                                                                               PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
                         objEventLogInfo.LogTypeKey = "PASSWORD_SENT_FAILURE";
-                        objEventLogInfo.LogProperties.Add(new LogDetailInfo("Cause", strMessage));
+                        objEventLogInfo.LogProperties.Add(new LogDetailInfo("Cause", message));
                         objEventLog.AddLog(objEventLogInfo);
 
-                        UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.RedError);
+                        UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
                     }
                     liLogin.Visible = true;
                 }
                 else
                 {
-                    UI.Skins.Skin.AddModuleMessage(this, strMessage, ModuleMessage.ModuleMessageType.RedError);
+                    UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
                 }
             }
         }

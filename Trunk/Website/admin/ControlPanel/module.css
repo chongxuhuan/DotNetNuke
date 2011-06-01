@@ -16,11 +16,12 @@
 			.dnnCPHNav.dnnRight span{display:inline-block;padding:8px 0 0 0;}
 			.dnnCPHNav label{margin:10px 10px 10px 3px;}			
 	
+/*	
 	.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbCurrentPage.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbAdmin.ui-tabs-panel.ui-widget-content.ui-corner-bottom, .cpcbHost.ui-tabs-panel.ui-widget-content.ui-corner-bottom{border:1px #ccc solid;padding:0;background:#fff;overflow:hidden;}
 	.cpcbCommonTasks.ui-tabs-panel.ui-widget-content.ui-corner-bottom{background:url(images/cp-header-bg.gif) repeat-x top;}
 	.dnnCPContent .ui-tabs-panel {min-height:190px;}
 	.cpcbCommonTasks .cbctAddPage{width:400px;}
-	.cpcbCommonTasks .cbctAddModule{width:550px;overflow:hidden;min-height:190px;/*border-left:1px #ccc solid;*/}
+	.cpcbCommonTasks .cbctAddModule{width:550px;overflow:hidden;min-height:190px;}
 	.cbctAddModule .dnnFormItem label{float:left;width:60px;padding-right:10px;margin-top:0;}
 		.amCatList, .amPageList{width:230px;float:left}
 		.amPageList{width:250px}
@@ -56,10 +57,10 @@
 	.cbhSwitchSite.dnnClear .dnnFormItem{clear:none;float:left;width:auto;}
 			.cbhSwitchSite.dnnClear .dnnFormItem select{float:left;}
 	.dnnControlPanel .cpcbCurrentPage.dnnClear h4{display:block;clear:both;float:none;overflow:hidden;width:65%;text-align:left;padding:0;margin:0;}
-		.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpPageEdit h4{width:auto;/*padding-left:85px;*/}
+		.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpPageEdit h4{width:auto;}
 	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettingsContent, 
 	.dnnControlPanel .cpcbCurrentPage.dnnClear .cbcpFiCol.dnnLeft div.cbcpPageSettings.dnnClear{margin-botton:0 !important;}
-		.cbcpFiCol.dnnLeft{margin-right:20px;padding:10px 0 10px 20px;height:170px;/*width:380px;border-right:1px #ccc solid;*/}
+		.cbcpFiCol.dnnLeft{margin-right:20px;padding:10px 0 10px 20px;height:170px;width:380px;border-right:1px #ccc solid;}
 		.cbcpPageEdit.dnnLeft{width:460px;padding:10px 20px}
 		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:2.5;height:2.5em;padding:0 15px 0 20px;font-weight:bold;float:left;}
 			.cpcbAdmin a {line-height:3;height:3em;}
@@ -88,3 +89,15 @@
 			.cppeNavOptions .dnnFormItem.dnnLeft label{width:auto}
 			.cppeNavOptions .dnnFormItem.dnnLeft.penoDisabled{width:20%;margin:0;}
 	.cbcpPageEdit.dnnLeft input.dnnPrimaryAction{margin-left:85px;}	
+*/
+		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:2.5;height:2.5em;padding:0 15px 0 20px;font-weight:bold;float:left;}
+			span.cpNewUser a{background:url(images/iconbar_add_users_16.gif) no-repeat left;}
+			span.cpNewRole a{background:url(images/icon_securityroles_16px.gif) no-repeat left;}
+			span.cpSiteNewPage a{background:url(images/iconbar_addtab_16.gif) no-repeat left;}
+			span.cpUploadFile a{background:url(images/action_up.gif) no-repeat left;}
+			span.cpWebServerManager a{background:url(images/icon_webservers_16px.gif) no-repeat left;}
+			span.cpSupportTickets a{background:url(images/icon_mytickets_16px.gif) no-repeat left;}
+			span.cpImpersonateUser a{background:url(images/icon_usersSwitcher_16px.gif) no-repeat left;}
+			span.cpIntegrityChecker a{background:url(images/icon_appintegrity_16px.gif) no-repeat left;}
+			a.cpRecycleApp {background:url(images/iconbar_recycleapp_16px.gif) no-repeat left;}
+			a.cpClearCache {background:url(images/iconbar_clearcache_16px.gif) no-repeat left;}

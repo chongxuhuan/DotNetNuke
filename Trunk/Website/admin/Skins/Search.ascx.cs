@@ -441,6 +441,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     optSite.Checked = true;
                 }
+				
                 ClientAPI.RegisterKeyCapture(txtSearch, cmdSearch, 13);
                 ClientAPI.RegisterKeyCapture(txtSearchNew, cmdSearchNew, 13);
 
@@ -504,16 +505,15 @@ namespace DotNetNuke.UI.Skins.Controls
             ExecuteSearch(txtSearchNew.Text.Trim(), ClientAPI.GetClientVariable(Page, "SearchIconSelected"));
         }
 
-        protected override void OnPreRender(EventArgs e)
+		/// <summary>
+		/// Handles the PreRender event of the Page control.
+		/// </summary>
+		/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+		/// <remarks>This event performs final initialization tasks for the search object UI.</remarks>
+		protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
 
-        /// <summary>
-        /// Handles the PreRender event of the Page control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        /// <remarks>This event performs final initialization tasks for the search object UI.</remarks>
             ClassicSearch.Visible = !UseDropDownList;
             DropDownSearch.Visible = UseDropDownList;
 
@@ -528,6 +528,8 @@ namespace DotNetNuke.UI.Skins.Controls
                     //We are going to use a dnn client variable to store which search option (web/site) is selected.
                     ClientAPI.RegisterClientVariable(Page, "SearchIconSelected", "S", true);
                 }
+
+				ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
                 string script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/Search/Search.js"));
 
                 ClientAPI.RegisterStartUpScript(Page, "initSearch", script);

@@ -128,12 +128,14 @@
 	</div>        
 	<div class="tmTabContainer" runat="server" visible="false" id="pnlDetails">
 		<div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
+		<div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
 		<div class="ssasContent dnnClear">
 			<h2 id="Panel-Common" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Common.Tabname")%></a></h2>
 			<fieldset>
 				<div class="dnnFormItem">
 					<dnn:Label ID="lblName" runat="server" Suffix=":" />
-					<asp:TextBox ID="txtName" runat="server" />
+					<asp:TextBox ID="txtName" runat="server" CssClass="dnnFormRequired" />
+					<asp:RequiredFieldValidator ID="valName" runat="server" Display="Dynamic" resourcekey="valName" ControlToValidate="txtName" CssClass="dnnFormMessage dnnFormError" ValidationGroup="Page" SetFocusOnError="true" />
 				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="lblTitle" runat="server" suffix=":" />
@@ -262,14 +264,16 @@
 				</div>
 			</fieldset>
 		</div>
-	    <ul class="dnnActions dnnClear">
-		    <li><asp:LinkButton ID="cmdUpdate" runat="server" resourcekey="cmdUpdate" CssClass="dnnPrimaryAction" /></li>
-		    <li><asp:HyperLink ID="cmdMore" runat="server" resourcekey="cmdMore" CssClass="dnnSecondaryAction" /></li>
-	    </ul>     
+		<ul class="dnnActions dnnClear">
+			<li><asp:LinkButton ID="cmdUpdate" runat="server" resourcekey="cmdUpdate" CssClass="dnnPrimaryAction" ValidationGroup="Page" /></li>
+			<li><asp:HyperLink ID="cmdMore" runat="server" resourcekey="cmdMore" CssClass="dnnSecondaryAction" /></li>
+		</ul>     
 	</div>
-	<div runat="server" visible="false" id="pnlBulk">
-		<p><asp:Literal ID="lblBulkIntro" runat="server" /></p>
-		<asp:TextBox ID="txtBulk" runat="server" Height="200" Width="400" TextMode="MultiLine" />
-		<asp:LinkButton ID="btnBulkCreate" runat="server" resourcekey="btnBulkCreate" Text="Create Pages" CssClass="dnnSecondaryAction" />            
+	<div runat="server" visible="false" id="pnlBulk" class="tmTabContainer">
+		<div class="dnnFormMessage dnnFormHelpContent"><asp:Literal ID="lblBulkIntro" runat="server" /></div>
+		<div class="dnnFormItem"><asp:TextBox ID="txtBulk" runat="server" TextMode="MultiLine" /></div>
+		<ul class="dnnActions dnnClear">
+			<li><asp:LinkButton ID="btnBulkCreate" runat="server" resourcekey="btnBulkCreate" CssClass="dnnPrimaryAction" /></li>
+		</ul>
 	</div>
 </div>

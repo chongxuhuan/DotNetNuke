@@ -64,16 +64,16 @@ namespace DotNetNuke.Framework
     /// -----------------------------------------------------------------------------
     public abstract class PageBase : Page
     {
-		#region "Private Members"
-		
+        #region "Private Members"
+
         private readonly NameValueCollection _htmlAttributes = new NameValueCollection();
         private readonly ArrayList _localizedControls;
         private CultureInfo _pageCulture;
         private string _localResourceFile;
-		
-		#endregion
-		
-		#region "Constructors"
+
+        #endregion
+
+        #region "Constructors"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -87,11 +87,11 @@ namespace DotNetNuke.Framework
         {
             _localizedControls = new ArrayList();
         }
-		
-		#endregion
-		
 
-		#region "Protected Properties"
+        #endregion
+
+
+        #region "Protected Properties"
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// PageStatePersister returns an instance of the class that will be used to persist the Page State
@@ -105,7 +105,7 @@ namespace DotNetNuke.Framework
         {
             get
             {
-				//Set ViewState Persister to default (as defined in Base Class)
+                //Set ViewState Persister to default (as defined in Base Class)
                 PageStatePersister persister = base.PageStatePersister;
                 switch (Host.PageStatePersister)
                 {
@@ -119,10 +119,10 @@ namespace DotNetNuke.Framework
                 return persister;
             }
         }
-		
-		#endregion
 
-		#region "Public Properties"
+        #endregion
+
+        #region "Public Properties"
 
         public PortalSettings PortalSettings
         {
@@ -169,10 +169,10 @@ namespace DotNetNuke.Framework
                 _localResourceFile = value;
             }
         }
-		
-		#endregion
-		
-		#region "Private Methpds"
+
+        #endregion
+
+        #region "Private Methpds"
 
         private static void AddStyleSheetInternal(Page page, string key, bool isFirst)
         {
@@ -276,7 +276,7 @@ namespace DotNetNuke.Framework
             }
         }
 
-		#endregion
+        #endregion
 
         #region Protected Methods
 
@@ -349,7 +349,7 @@ namespace DotNetNuke.Framework
             AJAX.RemoveScriptManager(this);
             base.Render(writer);
         }
-		
+
 
         #endregion
 
@@ -359,7 +359,7 @@ namespace DotNetNuke.Framework
         /// <summary>
         /// <para>GetControlAttribute looks a the type of control and does it's best to find an AttributeCollection.</para>
         /// </summary>
-		/// <param name="control">Control to find the AttributeCollection on</param>
+        /// <param name="control">Control to find the AttributeCollection on</param>
         /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
         /// <returns>A string containing the key for the specified control or null if a key attribute wasn't found</returns>
         internal static string GetControlAttribute(Control control, ArrayList affectedControls)
@@ -413,17 +413,19 @@ namespace DotNetNuke.Framework
         /// <summary>
         /// <para>ProcessControl peforms the high level localization for a single control and optionally it's children.</para>
         /// </summary>
-		/// <param name="control">Control to find the AttributeCollection on</param>
+        /// <param name="control">Control to find the AttributeCollection on</param>
         /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
         /// <param name="includeChildren">If true, causes this method to process children of this controls.</param>
         /// <param name="resourceFileRoot">Root Resource File.</param>
         internal void ProcessControl(Control control, ArrayList affectedControls, bool includeChildren, string resourceFileRoot)
         {
-			//Perform the substitution if a key was found
+            if (!control.Visible) return;
+
+            //Perform the substitution if a key was found
             string key = GetControlAttribute(control, affectedControls);
             if (!string.IsNullOrEmpty(key))
             {
-				//Translation starts here ....
+                //Translation starts here ....
                 string value = Localization.GetString(key, resourceFileRoot);
                 if (control is Label)
                 {
@@ -512,7 +514,7 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
-			
+
             //Translate radiobuttonlist items here 
             if (control is RadioButtonList)
             {
@@ -559,11 +561,11 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
-			
+
             //Translate dropdownlist items here 
 
-			
-			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+
+            //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
             //Manual Override to ResolveUrl
             if (control is Image)
             {
@@ -573,8 +575,8 @@ namespace DotNetNuke.Framework
                     image.ImageUrl = Page.ResolveUrl(image.ImageUrl);
                 }
             }
-			
-			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+
+            //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
             //Manual Override to ResolveUrl
             if (control is HtmlImage)
             {
@@ -584,8 +586,8 @@ namespace DotNetNuke.Framework
                     htmlImage.Src = Page.ResolveUrl(htmlImage.Src);
                 }
             }
-			
-			//UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
+
+            //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
             //Manual Override to ResolveUrl
             if (control is HyperLink)
             {
@@ -600,8 +602,8 @@ namespace DotNetNuke.Framework
                     ctrl.ImageUrl = Page.ResolveUrl(ctrl.ImageUrl);
                 }
             }
-			
-			//Process child controls
+
+            //Process child controls
             if (includeChildren && control.HasControls())
             {
                 var objModuleControl = control as IModuleControl;
@@ -610,18 +612,18 @@ namespace DotNetNuke.Framework
                     PropertyInfo pi = control.GetType().GetProperty("LocalResourceFile");
                     if (pi != null && pi.GetValue(control, null) != null)
                     {
-						//If controls has a LocalResourceFile property use this
+                        //If controls has a LocalResourceFile property use this
                         IterateControls(control.Controls, affectedControls, pi.GetValue(control, null).ToString());
                     }
                     else
                     {
-						//Pass Resource File Root through
+                        //Pass Resource File Root through
                         IterateControls(control.Controls, affectedControls, resourceFileRoot);
                     }
                 }
                 else
                 {
-					//Get Resource File Root from Controls LocalResourceFile Property
+                    //Get Resource File Root from Controls LocalResourceFile Property
                     IterateControls(control.Controls, affectedControls, objModuleControl.LocalResourceFile);
                 }
             }
@@ -659,8 +661,8 @@ namespace DotNetNuke.Framework
                 var ac = (AttributeCollection)affectedControls[i];
                 ac.Remove(Localization.KeyName);
             }
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

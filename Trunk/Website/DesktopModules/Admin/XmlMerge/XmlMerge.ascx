@@ -2,16 +2,8 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
-<script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-        $('#dnnConfigManager').dnnPanels();
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-            $('#dnnConfigManager').dnnPanels();
-        });
-    });
-</script>
 <div class="dnnForm dnnConfigManager dnnClear" id="dnnConfigManager">
-    <h2 id="dnnPanel-XmlMergeConfiguration" class="dnnFormSectionHead"><a href="" class=""><%=LocalizeString("Configuration")%></a></h2>
+    <h2 class="dnnFormSectionHead"><%=LocalizeString("Configuration")%></h2>
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label ID="plConfig" runat="server" ControlName="ddlConfig" />
@@ -25,7 +17,7 @@
             <li><asp:LinkButton ID="cmdSave" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdSave" /></li>
         </ul>
     </fieldset>       
-    <h2 id="dnnPanel-XmlMerge" class="dnnFormSectionHead"><a href="" class=""><%=LocalizeString("Merge")%></a></h2>
+    <h2 class="dnnFormSectionHead"><%=LocalizeString("Merge")%></h2>
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label ID="plScript" runat="server" ControlName="uplScript" Suffix="" />

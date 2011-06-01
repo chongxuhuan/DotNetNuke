@@ -117,7 +117,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
                     if (PortalSettings.EnablePopUps)
                     {
-                        loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false));
+                        loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
                     }
                 }
             }

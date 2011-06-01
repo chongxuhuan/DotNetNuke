@@ -39,7 +39,7 @@
                             <ItemStyle HorizontalAlign="Left" />
                             <ItemTemplate><asp:Label ID="lblVersion" runat="server" Text='<%# FormatVersion(Container.DataItem) %>' /></ItemTemplate>
                         </asp:TemplateColumn>
-                        <asp:TemplateColumn HeaderText="In Use">
+                        <asp:TemplateColumn HeaderText="InUse">
                             <HeaderStyle HorizontalAlign="Left" Wrap="False" />
                             <ItemStyle HorizontalAlign="Left" />
                             <ItemTemplate>

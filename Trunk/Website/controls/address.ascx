@@ -19,15 +19,15 @@
 		<asp:textbox id="txtCity" runat="server" MaxLength="50" />
 		<asp:checkbox ID="chkCity" Runat="server" Visible="False" AutoPostBack="True" />
 		<asp:label ID="lblCityRequired" Runat="server" />
-		<label class="SubHead" style="display:none;" for="<%=chkCity.ClientID%>" />
+		<label style="display:none;" for="<%=chkCity.ClientID%>" />
 		<asp:requiredfieldvalidator id="valCity" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtCity" Display="Dynamic" />
 	</div>
 	<div id="divCountry" runat="server" class="dnnFormItem">
 		<dnn:label id="plCountry" runat="server" controlname="cboCountry" />
-		<wc:CountryListBox TestIP="" LocalhostCountryCode="US" id="cboCountry" Width="200px" DataValueField="Value" DataTextField="Text" AutoPostBack="True" runat="server" />
-		<asp:checkbox ID="chkCountry" Runat="server" Visible="False" AutoPostBack="True" />
+		<div class="dnnLeft"><wc:CountryListBox TestIP="" LocalhostCountryCode="US" id="cboCountry" DataValueField="Value" DataTextField="Text" AutoPostBack="True" runat="server" /></div>
+		<asp:checkbox ID="chkCountry" Runat="server" Visible="False" AutoPostBack="True" />        
 		<asp:label ID="lblCountryRequired" Runat="server" />
-		<label  class="SubHead" style="display:none;" for="<%=chkCountry.ClientID%>" />
+		<label  style="display:none;" for="<%=chkCountry.ClientID%>" />
 		<asp:requiredfieldvalidator id="valCountry" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="cboCountry" Display="Dynamic" />
 	</div>
 	<div id="divRegion" runat="server" class="dnnFormItem">
@@ -36,7 +36,7 @@
         <asp:textbox id="txtRegion" runat="server" MaxLength="50" />
         <asp:checkbox ID="chkRegion" Runat="server" Visible="False" AutoPostBack="True" />
         <asp:label ID="lblRegionRequired" Runat="server" />
-        <label class="SubHead" style="display:none;" for="<%=chkRegion.ClientID%>" />
+        <label style="display:none;" for="<%=chkRegion.ClientID%>" />
         <asp:requiredfieldvalidator id="valRegion1" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="cboRegion" Display="Dynamic" />
         <asp:requiredfieldvalidator id="valRegion2" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtRegion" Display="Dynamic" />
 	</div>
@@ -45,7 +45,7 @@
         <asp:textbox id="txtPostal" runat="server" MaxLength="50" />
         <asp:checkbox ID="chkPostal" Runat="server" Visible="False" AutoPostBack="True" />
         <asp:label ID="lblPostalRequired" Runat="server" />
-        <label class="SubHead" style="display:none;" for="<%=chkPostal.ClientID%>" />
+        <label style="display:none;" for="<%=chkPostal.ClientID%>" />
         <asp:requiredfieldvalidator id="valPostal" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtPostal" ErrorMessage="<br>Postal Code Is Required." Display="Dynamic" />
     </div>
     <div id="divTelephone" runat="server" class="dnnFormItem">
@@ -53,7 +53,7 @@
         <asp:textbox id="txtTelephone" runat="server" MaxLength="50" />
         <asp:checkbox ID="chkTelephone" Runat="server" Visible="False" AutoPostBack="True" />
         <asp:label ID="lblTelephoneRequired" Runat="server" />
-        <label class="SubHead" style="display:none;" for="<%=chkTelephone.ClientID%>" />
+        <label style="display:none;" for="<%=chkTelephone.ClientID%>" />
         <asp:requiredfieldvalidator id="valTelephone" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtTelephone" Display="Dynamic" />
     </div>
     <div id="divCell" runat="server" class="dnnFormItem">
@@ -61,7 +61,7 @@
         <asp:textbox id="txtCell" runat="server" MaxLength="50" />
         <asp:checkbox ID="chkCell" Runat="server" Visible="False" AutoPostBack="True" />
         <asp:label ID="lblCellRequired" Runat="server" />
-        <label class="SubHead" style="DISPLAY:none" for="<%=chkCell.ClientID%>" />
+        <label style="DISPLAY:none" for="<%=chkCell.ClientID%>" />
         <asp:requiredfieldvalidator id="valCell" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtCell" Display="Dynamic" />
     </div>
     <div id="divFax" runat="server" class="dnnFormItem">
@@ -69,7 +69,7 @@
         <asp:textbox id="txtFax" runat="server" MaxLength="50" />
         <asp:checkbox ID="chkFax" Runat="server" Visible="False" AutoPostBack="True" />
         <asp:label ID="lblFaxRequired" Runat="server" />
-        <label class="SubHead" style="DISPLAY:none" for="<%=chkFax.ClientID%>" />
+        <label style="display:none" for="<%=chkFax.ClientID%>" />
         <asp:requiredfieldvalidator id="valFax" runat="server" CssClass="dnnFormMessage dnnFormError" ControlToValidate="txtFax" Display="Dynamic" />
     </div>
 </div>

@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -513,6 +514,11 @@ namespace DotNetNuke.Services.FileSystem
 
             Requires.NotNull("relativePath", relativePath);
 
+            var scriptTimeOut = GetCurrentScriptTimeout();
+
+            // Synchronization could be a time-consuming process. To not get a time-out, we need to modify the request time-out value
+            SetScriptTimeout(int.MaxValue);
+
             var collisionNotifications = new List<string>();
             var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
 
@@ -537,6 +543,9 @@ namespace DotNetNuke.Services.FileSystem
             {
                 LogCollisions(portalID, collisionNotifications);
             }
+
+            // Restore original time-out
+            SetScriptTimeout(scriptTimeOut);
 
             return collisionNotifications.Count;
         }
@@ -877,6 +886,12 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        internal virtual int GetCurrentScriptTimeout()
+        {
+            return HttpContext.Current.Server.ScriptTimeout;
+        }
+
+        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual int GetCurrentUserID()
         {
             return UserController.GetCurrentUserInfo().UserID;
@@ -1181,7 +1196,10 @@ namespace DotNetNuke.Services.FileSystem
                     {
                         if (folderMapping.IsEditable)
                         {
-                            if (itemIndex < (mergedTree.Count - 1) && mergedTree.Values[itemIndex + 1].FolderPath.StartsWith(item.FolderPath))
+                            var folder = GetFolder(portalID, item.FolderPath);
+
+                            if ((itemIndex < (mergedTree.Count - 1) && mergedTree.Values[itemIndex + 1].FolderPath.StartsWith(item.FolderPath)) ||
+                                (mergedTree.Count == 1 && GetFolders(folder).Count > 0))
                             {
                                 UpdateFolderMappingID(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
                             }
@@ -1424,6 +1442,12 @@ namespace DotNetNuke.Services.FileSystem
         internal virtual void SaveFolderPermissions(IFolderInfo folder)
         {
             FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
+        }
+
+        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        internal virtual void SetScriptTimeout(int timeout)
+        {
+            HttpContext.Current.Server.ScriptTimeout = timeout;
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>

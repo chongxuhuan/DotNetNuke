@@ -1,8 +1,2 @@
-@import url("/Portals/_default/admin.css");
-
-/* ===========   Razor Host Module Styling   =========== */
-
-.dnnRazorHost{width:900px;margin:2em auto;}
-.dnnRazorHost textarea.dnnFormInput {width: 75%;}
-
-/* ===========   End Razor Host Module Styling   =========== */
+.dnnRazorHost input[type="text"], .dnnRazorHost textarea{width:45%;}
+	.razorHostModSource{margin:1em 0 1em 24.5%;}

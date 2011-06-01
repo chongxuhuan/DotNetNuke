@@ -51,4 +51,5 @@
 	#dnnTabsModule .dotnetnuke_tree li{float:none;}
 #dnnTabsModule .dnnFormExpandContent {position:static;text-align:right;}
 .dnnTreeExpand {position:static;text-align:right;padding-right:8px;}
+.tmTabContainer .dnnFormItem textarea{width: 400px;min-height: 200px;}
 /* ===========   End Pages Module Styling   =========== 

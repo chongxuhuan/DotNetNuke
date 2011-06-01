@@ -217,8 +217,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             grid.DataSource = packages;
             grid.DataBind();
-
-            Localization.LocalizeDataGrid(ref grid, LocalResourceFile);           
+      
         }
 
         private void BindPackageTypes()
@@ -374,8 +373,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
             //cmdInstall.Click += cmdInstall_Click;
             extensionTypeRepeater.ItemDataBound += extensionTypeRepeater_ItemDataBound;
             
+
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
             BindPackageTypes();
         }
+
 
         //protected void cmdInstall_Click(object sender, EventArgs e)
         //{

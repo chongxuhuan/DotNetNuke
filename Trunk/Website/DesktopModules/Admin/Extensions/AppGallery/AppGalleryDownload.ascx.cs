@@ -72,7 +72,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             WebResponse wr;
             string myfile = "";
 
-            wr = HTTPAsWebResponse(downloadURL,
+            wr = HttpAsWebResponse(downloadURL,
                                    null,
                                    null,
                                    null,
@@ -91,7 +91,18 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             WebResponse wr;
             string myfile = "";
 
-            wr = HTTPAsWebResponse(downloadURL,
+            //convert path to download version
+            string directdownloadURL = "";
+            if (downloadURL.Contains("#DownloadId="))
+            {
+                int start = downloadURL.IndexOf("#DownloadId=");
+                directdownloadURL = downloadURL.Substring(start);
+            }
+            else
+            {
+                directdownloadURL = downloadURL;
+            }
+            wr = HttpAsWebResponse(directdownloadURL,
                                    null,
                                    null,
                                    null,
@@ -176,7 +187,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
         }
 
 
-        public static WebResponse HTTPAsWebResponse(string URL, byte[] Data, string Username, string Password, string Domain, string ProxyAddress, int ProxyPort, bool DoPOST, string UserAgent,
+        public static WebResponse HttpAsWebResponse(string URL, byte[] Data, string Username, string Password, string Domain, string ProxyAddress, int ProxyPort, bool DoPOST, string UserAgent,
                                                     string Referer, out string Filename)
         {
             if (!DoPOST && Data != null && Data.Length > 0)

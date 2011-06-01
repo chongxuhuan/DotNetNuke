@@ -288,14 +288,14 @@ namespace DotNetNuke.UI.ControlPanels
           
 
           //Set initial value
-          DNNClientAPI.EnableMinMax(imgVisibility,
-                                    BodyPanel,
-                                    PortalSettings.DefaultControlPanelVisibility,
-                                    Globals.ApplicationPath + "/images/collapse.gif",
-                                    Globals.ApplicationPath + "/images/expand.gif",
-                                    DNNClientAPI.MinMaxPersistanceType.Personalization,
-                                    "Usability",
-                                    "ControlPanelVisible" + PortalSettings.PortalId);
+          //DNNClientAPI.EnableMinMax(imgVisibility,
+          //                          BodyPanel,
+          //                          PortalSettings.DefaultControlPanelVisibility,
+          //                          Globals.ApplicationPath + "/images/collapse.gif",
+          //                          Globals.ApplicationPath + "/images/expand.gif",
+          //                          DNNClientAPI.MinMaxPersistanceType.Personalization,
+          //                          "Usability",
+          //                          "ControlPanelVisible" + PortalSettings.PortalId);
         }
 
         protected void CmdVisibilityClick(object sender, EventArgs e)

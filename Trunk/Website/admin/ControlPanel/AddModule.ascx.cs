@@ -321,7 +321,7 @@ namespace DotNetNuke.UI.ControlPanel
         private void LoadPageList()
         {
             PageListPanel.Visible = AddExistingModule.Checked;
-            TitlePanel.Visible = !AddExistingModule.Checked;
+            TitlePanel.Enabled = !AddExistingModule.Checked;
             chkCopyModule.Visible = AddExistingModule.Checked;
 
             if ((AddExistingModule.Checked))
