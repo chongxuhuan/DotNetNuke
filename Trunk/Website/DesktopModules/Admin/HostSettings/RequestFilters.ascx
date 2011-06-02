@@ -1,6 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Host.RequestFilters" CodeFile="RequestFilters.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div id="lblErr" class="NormalRed" runat="server" visible="false"></div>
 <asp:DataList ID="rptRules" runat="server" CssClass="dnnRequestFilter">
 	<HeaderStyle CssClass="" />
@@ -40,7 +41,7 @@
             </tr>
             <tr>
                 <td rowspan="5" valign="top">
-                    <asp:ImageButton ID="cmdSave" runat="server" CommandName="Update" ImageUrl="~/images/save.gif" CssClass="dnnPrimaryAction" />
+                    <dnn:DnnImageButton ID="cmdSave" runat="server" CommandName="Update" IconKey="Save" CssClass="dnnPrimaryAction" />
                     <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Cancel" ImageUrl="~/images/delete.gif" CssClass="dnnSecondaryAction" CausesValidation="false" />
                 </td>
                 <td width="188"><dnn:label id="plServerVar" runat="server" controlname="txtServerVar" suffix=":" /></td>

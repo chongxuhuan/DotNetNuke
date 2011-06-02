@@ -31,7 +31,7 @@
         </div>
     </ItemTemplate>
 </asp:Repeater>
-<p><dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" ImageUrl="~/images/save.gif" ResourceKey="cmdInstall" /></p>
+<p><dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" IconKey="Save" ResourceKey="cmdInstall" /></p>
 <asp:Button ID="btnSnow" runat="server" Text="Snowcovered records" onclick="BtnSnowClick" />
 <asp:Label ID="lblMessage" runat="server" Text=""></asp:Label>
 <asp:GridView ID="grdSnow" runat="server"></asp:GridView>

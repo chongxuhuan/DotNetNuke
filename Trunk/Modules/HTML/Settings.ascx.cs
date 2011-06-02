@@ -26,16 +26,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
-
 
 #endregion
 
 namespace DotNetNuke.Modules.Html
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     ///   The Settings ModuleSettingsBase is used to manage the 
     ///   settings for the HTML Module
@@ -45,36 +43,38 @@ namespace DotNetNuke.Modules.Html
     /// <history>
     ///   [leupold]	    08/12/2007	created
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class Settings : ModuleSettingsBase
     {
-        #region "Protected Methods"
+
+        #region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            cboWorkflow.SelectedIndexChanged += cboWorkflow_SelectedIndexChanged;
+            cboWorkflow.SelectedIndexChanged += OnWorkflowSelectedIndexChanged;
+        }
+
+        protected void OnWorkflowSelectedIndexChanged(object sender, EventArgs e)
+        {
+            DisplayWorkflowDetails();
         }
 
         #endregion
 
-        protected void cboWorkflow_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DisplayWorkflowDetails();
-        }
+        #region Private Methods
 
         private void DisplayWorkflowDetails()
         {
             if ((cboWorkflow.SelectedValue != null))
             {
                 var objWorkflow = new WorkflowStateController();
-                string strDescription = "";
-                ArrayList arrStates = objWorkflow.GetWorkflowStates(int.Parse(cboWorkflow.SelectedValue));
+                var strDescription = "";
+                var arrStates = objWorkflow.GetWorkflowStates(int.Parse(cboWorkflow.SelectedValue));
                 if (arrStates.Count > 0)
                 {
                     foreach (WorkflowStateInfo objState in arrStates)
                     {
-                        strDescription = strDescription + " >> " + "<span class=\"NormalBold\">" + objState.StateName + "</span>";
+                        strDescription = strDescription + " >> " + "<strong>" + objState.StateName + "</strong>";
                     }
                     strDescription = strDescription + "<br />" + ((WorkflowStateInfo) arrStates[0]).Description;
                 }
@@ -82,9 +82,10 @@ namespace DotNetNuke.Modules.Html
             }
         }
 
-        #region "Base Method Implementations"
+        #endregion
 
-        /// -----------------------------------------------------------------------------
+        #region Base Method Implementations
+
         /// <summary>
         ///   LoadSettings loads the settings from the Database and displays them
         /// </summary>
@@ -92,15 +93,14 @@ namespace DotNetNuke.Modules.Html
         /// </remarks>
         /// <history>
         /// </history>
-        /// -----------------------------------------------------------------------------
         public override void LoadSettings()
         {
             try
             {
                 if (!Page.IsPostBack)
                 {
-                    var _htmlTextController = new HtmlTextController();
-                    var _workflowStateController = new WorkflowStateController();
+                    var htmlTextController = new HtmlTextController();
+                    var workflowStateController = new WorkflowStateController();
 
                     // get replace token settings
                     if (ModuleSettings["HtmlText_ReplaceTokens"] != null)
@@ -110,7 +110,7 @@ namespace DotNetNuke.Modules.Html
 
                     // get workflow/version settings
                     var arrWorkflows = new ArrayList();
-                    foreach (WorkflowStateInfo objState in _workflowStateController.GetWorkflows(PortalId))
+                    foreach (WorkflowStateInfo objState in workflowStateController.GetWorkflows(PortalId))
                     {
                         if (!objState.IsDeleted)
                         {
@@ -119,7 +119,7 @@ namespace DotNetNuke.Modules.Html
                     }
                     cboWorkflow.DataSource = arrWorkflows;
                     cboWorkflow.DataBind();
-                    KeyValuePair<string, int> workflow = _htmlTextController.GetWorkflow(ModuleId, TabId, PortalId);
+                    var workflow = htmlTextController.GetWorkflow(ModuleId, TabId, PortalId);
                     if ((cboWorkflow.Items.FindByValue(workflow.Value.ToString()) != null))
                     {
                         cboWorkflow.Items.FindByValue(workflow.Value.ToString()).Selected = true;
@@ -140,16 +140,14 @@ namespace DotNetNuke.Modules.Html
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         ///   UpdateSettings saves the modified settings to the Database
         /// </summary>
-        /// -----------------------------------------------------------------------------
         public override void UpdateSettings()
         {
             try
             {
-                var _htmlTextController = new HtmlTextController();
+                var htmlTextController = new HtmlTextController();
                 var objWorkflow = new WorkflowStateController();
 
                 // update replace token setting
@@ -171,13 +169,13 @@ namespace DotNetNuke.Modules.Html
                 switch (rblApplyTo.SelectedValue)
                 {
                     case "Module":
-                        _htmlTextController.UpdateWorkflow(ModuleId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
+                        htmlTextController.UpdateWorkflow(ModuleId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
                         break;
                     case "Page":
-                        _htmlTextController.UpdateWorkflow(TabId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
+                        htmlTextController.UpdateWorkflow(TabId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
                         break;
                     case "Site":
-                        _htmlTextController.UpdateWorkflow(PortalId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
+                        htmlTextController.UpdateWorkflow(PortalId, rblApplyTo.SelectedValue, Int32.Parse(cboWorkflow.SelectedValue), chkReplace.Checked);
                         break;
                 }
 
@@ -190,5 +188,6 @@ namespace DotNetNuke.Modules.Html
         }
 
         #endregion
+
     }
 }

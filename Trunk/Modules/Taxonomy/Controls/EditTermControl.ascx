@@ -4,7 +4,7 @@
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="nameFieldLabel" runat="server" Text="TermName.Text" ToolTip="TermName.ToolTip" />
         <asp:TextBox ID="nameTextBox" runat="server" />
-        <asp:RequiredFieldValidator ID="nameValidator" ControlToValidate="nameTextBox" runat="server" ResourceKey="TermName.Required" Display="Dynamic" />
+        <asp:RequiredFieldValidator ID="nameValidator" ControlToValidate="nameTextBox" runat="server" Display="Dynamic" SetFocusOnError="true" CssClass="dnnFormMessage dnnFormError" />
     </div>
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="descriptionFieldLabel" runat="server" Text="Description.Text" ToolTip="Description.ToolTip" />
@@ -12,6 +12,6 @@
     </div>
     <div class="dnnFormItem" id="divParentTerm" runat="server">
         <dnn:DnnFieldLabel id="parentTermLabel" runat="server" Text="ParentTerm.Text" ToolTip="ParentTerm.ToolTip" />
-        <dnn:DnnComboBox ID="parentTermCombo" runat="server" DataTextField="Name" DataValueField="TermId" Width="200px"/>
+        <dnn:DnnComboBox ID="parentTermCombo" runat="server" DataTextField="Name" DataValueField="TermId" Width="300px"/>
     </div>
 </div>

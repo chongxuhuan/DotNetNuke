@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Portals.PortalAliases" CodeFile="PortalAliases.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <asp:DataGrid ID="dgPortalAlias" Runat="server" AutoGenerateColumns="false" width="100%" GridLines="None" CssClass="dnnGrid">
     <headerstyle CssClass="dnnGridHeader" />
     <itemstyle CssClass="dnnGridItem" horizontalalign="Left" />
@@ -8,8 +9,8 @@
     <selecteditemstyle />
     <footerstyle />
 	<Columns>
-		<dnn:imagecommandcolumn commandname="Edit" imageurl="~/images/edit.gif"/>
-		<dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/delete.gif" />
+		<dnn:imagecommandcolumn commandname="Edit" IconKey="Edit"/>
+		<dnn:imagecommandcolumn commandname="Delete" IconKey="Delete" />
 		<asp:TemplateColumn HeaderText="HTTPAlias">
 		    <HeaderStyle  HorizontalAlign="Left" />
 		    <ItemStyle  HorizontalAlign="Left" Width="85%" />
@@ -23,15 +24,15 @@
 		</asp:TemplateColumn>
         <asp:TemplateColumn>
             <EditItemTemplate>
-	            <asp:ImageButton Runat="server" ID="lnkSave" resourcekey="saveRule" OnCommand="SaveAlias" ImageUrl="~/images/save.gif" />
+	            <dnn:DnnImageButton Runat="server" ID="lnkSave" resourcekey="saveRule" OnCommand="SaveAlias" IconKey="Save" />
             </EditItemTemplate>
         </asp:TemplateColumn>
         <asp:TemplateColumn>
             <EditItemTemplate>
-	            <asp:ImageButton Runat="server" ID="lnkCancelEdit" resourcekey="cmdCancel" OnCommand="CancelEdit" ImageUrl="~/images/cancel.gif" />
+	            <dnn:DnnImageButton Runat="server" ID="lnkCancelEdit" resourcekey="cmdCancel" OnCommand="CancelEdit" IconKey="Cancel" />
             </EditItemTemplate>
         </asp:TemplateColumn>
 	</Columns>
 </asp:DataGrid>
 <asp:Label ID="lblError" runat="server" Visible="false" CssClass="dnnFormMessage dnnFormError" />
-<dnn:CommandButton ID="cmdAddAlias" runat="server" ResourceKey="cmdAdd" ImageUrl="~/images/add.gif" />
+<dnn:CommandButton ID="cmdAddAlias" runat="server" ResourceKey="cmdAdd" IconKey="Add" />

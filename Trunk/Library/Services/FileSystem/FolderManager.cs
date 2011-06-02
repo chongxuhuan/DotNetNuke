@@ -1190,6 +1190,8 @@ namespace DotNetNuke.Services.FileSystem
             {
                 if (item.ExistsInDatabase)
                 {
+                    if (item.FolderPath == "") return null; // Do not process root folder
+
                     var folderMapping = FolderMappingController.Instance.GetFolderMapping(item.FolderMappingID);
 
                     if (item.ExistsInFolderMappings.Count == 0)
@@ -1244,7 +1246,7 @@ namespace DotNetNuke.Services.FileSystem
                 }
                 else
                 {
-                    if (item.ExistsInFolderMappings.Count == 0)
+                    if (item.ExistsInFolderMappings.Count == 0 || item.FolderPath == "")
                     {
                         CreateFolderInDatabase(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
                     }

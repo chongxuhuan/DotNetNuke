@@ -90,10 +90,33 @@
 			.cppeNavOptions .dnnFormItem.dnnLeft.penoDisabled{width:20%;margin:0;}
 	.cbcpPageEdit.dnnLeft input.dnnPrimaryAction{margin-left:85px;}	
 */
+
+.dnnCPHMessage {display:block;margin:0 auto;width:260px;}
+
 		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:2.5;height:2.5em;padding:0 15px 0 20px;font-weight:bold;float:left;}
+			span.cpEditCurrentPage a{background:url(images/iconbar_edittab_16.gif) no-repeat left;}
+			span.cpAddNewPage a{background:url(images/iconbar_addtab_16.gif) no-repeat left;}
+			span.cpCopyPage a{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+			a.cpDeletePage{background:url(images/iconbar_deletetab_16.gif) no-repeat left;}
+				a.cpDeletePage.dnnDisabled{background:url(images/iconbar_deletetab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
+			span.cpImportPage a{background:url(images/iconbar_importtab_16.gif) no-repeat left;}
+			span.cpExportPage a{background:url(images/iconbar_exporttab_16.gif) no-repeat left;}
+			a.cpCopyPermissions{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+				a.cpCopyPermissions.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
+			a.cpCopyDesign{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
+				a.cpCopyDesign.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
+		.cbctAddPage {width:49%; margin-right:1em;} 
+		.cbcpPageEdit {width:49%;} 
+		.cbcpPageSettingsContent input {width:70%}
+		.dnnadminmega .megaborder .cpcbCurrentPage label {width: 15%;}
+		#cpIncludeInMenu label {width:auto; padding-left:6px;}
+		#cppeNavOptions .dnnFormItem {width: 40%;clear:none;}
+		#cppeNavOptions .dnnFormItem label {width:auto; padding-left:6px;}
+        
+		
+		
 			span.cpNewUser a{background:url(images/iconbar_add_users_16.gif) no-repeat left;}
 			span.cpNewRole a{background:url(images/icon_securityroles_16px.gif) no-repeat left;}
-			span.cpSiteNewPage a{background:url(images/iconbar_addtab_16.gif) no-repeat left;}
 			span.cpUploadFile a{background:url(images/action_up.gif) no-repeat left;}
 			span.cpWebServerManager a{background:url(images/icon_webservers_16px.gif) no-repeat left;}
 			span.cpSupportTickets a{background:url(images/icon_mytickets_16px.gif) no-repeat left;}
@@ -101,3 +124,6 @@
 			span.cpIntegrityChecker a{background:url(images/icon_appintegrity_16px.gif) no-repeat left;}
 			a.cpRecycleApp {background:url(images/iconbar_recycleapp_16px.gif) no-repeat left;}
 			a.cpClearCache {background:url(images/iconbar_clearcache_16px.gif) no-repeat left;}
+			span.cpPageHelp a{background:url(images/iconbar_help_16.gif) no-repeat left;}
+
+			.cpcbAdmin .cbhSwitchSite a {float:none}

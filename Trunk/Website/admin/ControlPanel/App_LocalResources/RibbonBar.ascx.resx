@@ -244,7 +244,7 @@
     <value>Settings</value>
   </data>
   <data name="SystemTabSwitchSite.Text" xml:space="preserve">
-    <value>Select a site to switch</value>
+    <value>View Website</value>
   </data>
   <data name="SystemTabTools.Text" xml:space="preserve">
     <value>Advanced Tools</value>
@@ -422,5 +422,11 @@
   </data>
   <data name="Tool.RecycleApp.Text" xml:space="preserve">
     <value>Recycle Application Pool</value>
+  </data>
+  <data name="Tool.ClearCache.ToolTip" xml:space="preserve">
+    <value>Forces the application to purge all of its cache.</value>
+  </data>
+  <data name="Tool.RecycleApp.ToolTip" xml:space="preserve">
+    <value>Forces the application pool to recycle. Your website will be unavilable for a few moments.</value>
   </data>
 </root>

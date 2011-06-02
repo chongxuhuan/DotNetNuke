@@ -253,23 +253,26 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         private void BindPortalDesktopModules()
         {
-            var objPortals = new PortalController();
-            ArrayList arrPortals = objPortals.GetPortals();
-            Dictionary<int, PortalDesktopModuleInfo> dicPortalDesktopModules = DesktopModuleController.GetPortalDesktopModulesByDesktopModuleID(DesktopModule.DesktopModuleID);
-            foreach (PortalDesktopModuleInfo objPortalDesktopModule in dicPortalDesktopModules.Values)
-            {
-                foreach (PortalInfo objPortal in arrPortals)
-                {
-                    if (objPortal.PortalID == objPortalDesktopModule.PortalID)
-                    {
-                        arrPortals.Remove(objPortal);
-                        break;
-                    }
-                }
-            }
-            ctlPortals.AvailableDataSource = arrPortals;
-            ctlPortals.SelectedDataSource = dicPortalDesktopModules.Values;
-            ctlPortals.Visible = !DesktopModule.IsAdmin;
+			if (!IsWizard && !DesktopModule.IsAdmin)
+			{
+				var objPortals = new PortalController();
+				ArrayList arrPortals = objPortals.GetPortals();
+				Dictionary<int, PortalDesktopModuleInfo> dicPortalDesktopModules = DesktopModuleController.GetPortalDesktopModulesByDesktopModuleID(DesktopModule.DesktopModuleID);
+				foreach (PortalDesktopModuleInfo objPortalDesktopModule in dicPortalDesktopModules.Values)
+				{
+					foreach (PortalInfo objPortal in arrPortals)
+					{
+						if (objPortal.PortalID == objPortalDesktopModule.PortalID)
+						{
+							arrPortals.Remove(objPortal);
+							break;
+						}
+					}
+				}
+
+				ctlPortals.AvailableDataSource = arrPortals;
+				ctlPortals.SelectedDataSource = dicPortalDesktopModules.Values;
+			}
         }
 
         private void UpdateModuleInterfaces(string BusinessControllerClass)
@@ -355,7 +358,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             lblHelp.Visible = !IsWizard;
             pnlDefinitions.Visible = (!IsWizard) && IsSuperTab;
             cmdUpdate.Visible = (!IsWizard) && (!IsSuperTab && pnlPermissions.Visible);
-            PremiumModules.Visible = !IsWizard;
+			PremiumModules.Visible = !IsWizard && !DesktopModule.IsAdmin;
         }
 
 		#endregion

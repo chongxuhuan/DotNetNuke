@@ -29,6 +29,7 @@ using System.Xml.XPath;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Installer.Log;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.UI.Modules;
@@ -380,7 +381,8 @@ namespace DotNetNuke.Services.Installer
             {
                 parameters[1] = "ptype=" + type;
             }
-            return Globals.NavigateURL(tabId, "Install", parameters);
+            var context = new ModuleInstanceContext();
+            return context.EditNavUrl(tabId, "Install", false, parameters);
         }
 
         public static string InstallURL(int tabId, string returnUrl, string type)
@@ -392,7 +394,8 @@ namespace DotNetNuke.Services.Installer
             {
                 parameters[2] = "ptype=" + type;
             }
-            return Globals.NavigateURL(tabId, "Install", parameters);
+            var context = new ModuleInstanceContext();
+            return context.EditNavUrl(tabId, "Install", false, parameters);            
         }
 
         public static string UnInstallURL(int tabId, int packageId, string returnUrl)

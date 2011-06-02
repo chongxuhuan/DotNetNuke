@@ -18,6 +18,6 @@
 	<div class="dnnLTextEditor dnnClear"><dnn:texteditor id="teContent" runat="server" height="400" width="600" /></div>
 </div>
 <ul class="dnnActions dnnClear">
-    <li><dnn:CommandButton ID="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" ImageUrl="~/images/save.gif" /></li>
+    <li><dnn:CommandButton ID="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" IconKey="Save" /></li>
     <li><dnn:CommandButton ID="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" ImageUrl="~/images/lt.gif" CausesValidation="false" /></li>
 </ul>

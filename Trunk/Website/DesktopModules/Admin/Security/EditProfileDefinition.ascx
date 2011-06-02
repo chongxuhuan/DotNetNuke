@@ -59,7 +59,7 @@
                     <td><asp:TextBox ID="txtCategoryName" runat="Server" Width="200px" /></td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center"><dnn:commandbutton class="CommandButton" id="cmdSaveKeys" imageUrl="~/images/save.gif" resourcekey="cmdSaveKeys" runat="server" text="Save"/></td>
+                    <td colspan="2" align="center"><dnn:commandbutton class="CommandButton" id="cmdSaveKeys" IconKey="Save" resourcekey="cmdSaveKeys" runat="server" text="Save"/></td>
                 </tr>
             </table>
         </asp:WizardStep>

@@ -1,5 +1,6 @@
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Users.UserAccounts" Language="C#" AutoEventWireup="false" CodeFile="Users.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnUsers dnnClear" id="dnnUsers">
     <div class="dnnFormItem">
         <asp:textbox id="txtSearch" Runat="server" CssClass="dnnUserSearchInput" />
@@ -23,14 +24,14 @@
             <footerstyle cssclass="dnnGridFooter" />
             <pagerstyle cssclass="dnnGridPager" />
             <columns>
-                <dnn:imagecommandcolumn CommandName="Edit" ImageUrl="~/images/edit.gif" EditMode="URL" KeyField="UserID" />
-                <dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/action_delete.gif" keyfield="UserID" />
+                <dnn:imagecommandcolumn CommandName="Edit" IconKey="Edit" EditMode="URL" KeyField="UserID" />
+                <dnn:imagecommandcolumn commandname="Delete" IconKey="ActionDelete" keyfield="UserID" />
                 <dnn:imagecommandcolumn CommandName="UserRoles" ImageUrl="~/images/icon_securityroles_16px.gif" EditMode="URL" KeyField="UserID" />
-                <dnn:imagecommandcolumn commandname="Restore" imageurl="~/images/restore.gif" keyfield="UserID" />
-                <dnn:imagecommandcolumn commandname="Remove" imageurl="~/images/delete.gif" keyfield="UserID"  />
+                <dnn:imagecommandcolumn commandname="Restore" IconKey="Restore" keyfield="UserID" />
+                <dnn:imagecommandcolumn commandname="Remove" IconKey="Delete" keyfield="UserID"  />
                 <asp:templatecolumn>
                     <itemtemplate>
-                        <asp:image id="imgOnline" runat="Server" imageurl="~/images/userOnline.gif" />		
+                        <dnn:DnnImage id="imgOnline" runat="Server" IconKey="userOnline" />		
                     </itemtemplate>
                 </asp:templatecolumn>
                 <dnn:textcolumn datafield="UserName" headertext="Username"/>
@@ -69,10 +70,10 @@
                 </asp:TemplateColumn>
                 <asp:TemplateColumn HeaderText="Authorized">
                     <itemtemplate>
-                        <asp:Image Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible="False" />
-                        <asp:Image Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible="False" />
-                        <asp:Image Runat="server" ID="imgApprovedDeleted" ImageUrl="~/images/checked-disabled.gif" Visible="False" />
-                        <asp:Image Runat="server" ID="imgNotApprovedDeleted" ImageUrl="~/images/unchecked-disabled.gif" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgApprovedDeleted" ImageUrl="~/images/checked-disabled.gif" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgNotApprovedDeleted" ImageUrl="~/images/unchecked-disabled.gif" Visible="False" />
                     </ItemTemplate>
                 </asp:TemplateColumn>
             </columns>

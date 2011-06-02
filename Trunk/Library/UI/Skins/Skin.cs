@@ -87,13 +87,6 @@ namespace DotNetNuke.UI.Skins
 		public static string CONTAINERLOAD_ERROR = Localization.GetString("ContainerLoad.Error");
 		public static string MODULEADD_ERROR = Localization.GetString("ModuleAdd.Error");
 		private readonly ModuleCommunicate _communicator = new ModuleCommunicate();
-		public string CONTRACTEXPIRED_ERROR = Localization.GetString("ContractExpired.Error");
-		public string CRITICAL_ERROR = Localization.GetString("CriticalError.Error");
-		public string MODULEACCESS_ERROR = Localization.GetString("ModuleAccess.Error");
-		public string MODULELOAD_WARNING = Localization.GetString("ModuleLoadWarning.Error");
-		public string MODULELOAD_WARNINGTEXT = Localization.GetString("ModuleLoadWarning.Text");
-		public string PANE_LOAD_ERROR = Localization.GetString("PaneNotFound.Error");
-		public string TABACCESS_ERROR = Localization.GetString("TabAccess.Error");
 		// ReSharper restore InconsistentNaming
 		
 		#endregion
@@ -354,7 +347,7 @@ namespace DotNetNuke.UI.Skins
 				}
 				else
 				{
-					var lex = new ModuleLoadException(PANE_LOAD_ERROR);
+                    var lex = new ModuleLoadException(Localization.GetString("PaneNotFound.Error"));
 					Controls.Add(new ErrorContainer(PortalSettings, MODULELOAD_ERROR, lex).Container);
 					Exceptions.LogException(lex);
 				}
@@ -394,20 +387,20 @@ namespace DotNetNuke.UI.Skins
 					}
 					else
 					{
-						AddPageMessage(this, "", TABACCESS_ERROR, ModuleMessage.ModuleMessageType.YellowWarning);
+                        AddPageMessage(this, "", Localization.GetString("TabAccess.Error"), ModuleMessage.ModuleMessageType.YellowWarning);
 					}
 				}
 				else
 				{
 					AddPageMessage(this,
 								   "",
-								   string.Format(CONTRACTEXPIRED_ERROR, PortalSettings.PortalName, Globals.GetMediumDate(PortalSettings.ExpiryDate.ToString()), PortalSettings.Email),
+                                   string.Format(Localization.GetString("ContractExpired.Error"), PortalSettings.PortalName, Globals.GetMediumDate(PortalSettings.ExpiryDate.ToString()), PortalSettings.Email),
 								   ModuleMessage.ModuleMessageType.RedError);
 				}
 			}
 			else
 			{
-				Response.Redirect(Globals.AccessDeniedURL(TABACCESS_ERROR), true);
+                Response.Redirect(Globals.AccessDeniedURL(Localization.GetString("TabAccess.Error")), true);
 			}
 			return success;
 		}
@@ -468,7 +461,7 @@ namespace DotNetNuke.UI.Skins
 				}
 				else
 				{
-					Response.Redirect(Globals.AccessDeniedURL(MODULEACCESS_ERROR), true);
+                    Response.Redirect(Globals.AccessDeniedURL(Localization.GetString("ModuleAccess.Error")), true);
 				}
 			}
 
@@ -509,13 +502,13 @@ namespace DotNetNuke.UI.Skins
             //Register any error messages on the Skin
 			if (Request.QueryString["error"] != null)
 			{
-				AddPageMessage(this, CRITICAL_ERROR, Server.HtmlEncode(Request.QueryString["error"]), ModuleMessage.ModuleMessageType.RedError);
+                AddPageMessage(this, Localization.GetString("CriticalError.Error"), Server.HtmlEncode(Request.QueryString["error"]), ModuleMessage.ModuleMessageType.RedError);
 			}
 
 			if (!TabPermissionController.CanAdminPage() && !success)
 			{
-                //only display the warning to non-administrators (adminsitrators will see the errors)
-				AddPageMessage(this, MODULELOAD_WARNING, string.Format(MODULELOAD_WARNINGTEXT, PortalSettings.Email), ModuleMessage.ModuleMessageType.YellowWarning);
+                //only display the warning to non-administrators (administrators will see the errors)
+                AddPageMessage(this, Localization.GetString("ModuleLoadWarning.Error"), string.Format(Localization.GetString("ModuleLoadWarning.Text"), PortalSettings.Email), ModuleMessage.ModuleMessageType.YellowWarning);
 			}
 
             InvokeSkinEvents(SkinEventType.OnSkinInit);

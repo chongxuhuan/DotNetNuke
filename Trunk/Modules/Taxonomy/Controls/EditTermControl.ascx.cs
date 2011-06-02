@@ -49,6 +49,8 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
 
         public void BindTerm(Term term, IEnumerable<Term> terms, bool isHeirarchical, bool loadFromControl, bool editEnabled)
         {
+            //nameValidator.Text = Services.Localization.Localization.GetString("TermName.Required", SharedResourceFile);
+
             if (loadFromControl)
             {
                 term.Name = nameTextBox.Text;

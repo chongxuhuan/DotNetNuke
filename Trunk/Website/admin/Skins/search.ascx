@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.UI.Skins.Controls.Search" CodeFile="Search.ascx.cs" %>
 <span id="ClassicSearch" runat="server" visible="true">
-  <asp:RadioButton ID="optWeb" runat="server" CssClass="SkinObject" GroupName="Search" />
-  <asp:RadioButton ID="optSite" runat="server" CssClass="SkinObject" GroupName="Search" />
+  <asp:RadioButton ID="WebRadioButton" runat="server" CssClass="SkinObject" GroupName="Search" />
+  <asp:RadioButton ID="SiteRadioButton" runat="server" CssClass="SkinObject" GroupName="Search" />
   <asp:TextBox ID="txtSearch" runat="server" CssClass="NormalTextBox" Columns="20" MaxLength="255" EnableViewState="False"></asp:TextBox>&nbsp;
   <asp:LinkButton ID="cmdSearch" runat="server" CausesValidation="False" CssClass="SkinObject"></asp:LinkButton>
 </span>

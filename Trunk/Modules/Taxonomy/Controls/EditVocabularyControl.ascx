@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="True" CodeBehind="EditVocabularyControl.ascx.cs" Inherits="DotNetNuke.Modules.Taxonomy.Views.Controls.EditVocabularyControl" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnEditVocabControl dnnClear">
+    <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=DotNetNuke.Services.Localization.Localization.GetString("RequiredFields")%></span></p></div>
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="nameFieldLabel" runat="server" Text="Name.Text" ToolTip="Name.ToolTip" />
         <asp:Label ID="nameLabel" runat="server" />
@@ -13,7 +14,7 @@
     </div>
     <div class="dnnFormItem">
         <dnn:DnnFieldLabel id="typeFieldLabel" runat="server" Text="Type.Text" ToolTip="Type.ToolTip" />
-        <asp:RadioButtonList ID="typeList" runat="server" RepeatDirection="Horizontal" CssClass="dnnVocabRadioButtons">
+        <asp:RadioButtonList ID="typeList" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
             <asp:ListItem Value="Simple" resourceKey="Simple" />
             <asp:ListItem Value="Hierarchy" resourceKey="Hierarchy" />
         </asp:RadioButtonList>
@@ -21,7 +22,7 @@
     </div>
     <div class="dnnFormItem" id="divScope" runat="server">
         <dnn:DnnFieldLabel id="scopeFieldLabel" runat="server" Text="Scope.Text" ToolTip="Scope.ToolTip" />
-        <asp:RadioButtonList ID="scopeList" runat="server" RepeatDirection="Horizontal" CssClass="dnnVocabRadioButtons">
+        <asp:RadioButtonList ID="scopeList" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
             <asp:ListItem Value="Application" resourceKey="Application" />
             <asp:ListItem Value="Portal" resourceKey="Portal" />
         </asp:RadioButtonList>

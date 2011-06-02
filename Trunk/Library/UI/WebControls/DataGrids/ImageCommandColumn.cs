@@ -91,6 +91,8 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
+        private string _imageURL = string.Empty;
+
 		/// -----------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the URL of the Image
@@ -100,7 +102,44 @@ namespace DotNetNuke.UI.WebControls
 		/// 	[cnurse]	02/17/2006	Created
 		/// </history>
 		/// -----------------------------------------------------------------------------
-        public string ImageURL { get; set; }
+        public string ImageURL 
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_imageURL))
+                    return _imageURL;
+                else
+                    return Entities.Icons.IconController.IconURL(IconKey, IconSize, IconStyle);
+            }
+            set
+            {
+                _imageURL = value;
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Key to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconKey { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Siz to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconSize { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Style to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconStyle { get; set; }
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>

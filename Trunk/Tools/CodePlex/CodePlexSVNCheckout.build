@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Checkout" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="Variables.build" />
-  <Target Name="Checkout">
-    <RemoveDir Directories ="$(CodePlexRootFolder)\WorkingDirectory\CodePlex" />
-    <Exec Command="svn checkout https://dotnetnuke.svn.codeplex.com/svn/Trunk $(CodePlexRootFolder)\WorkingDirectory\CodePlex --username dnnsvn --password 86wmt3R3OK9KI2FY33fo" />
-  </Target>
-</Project>

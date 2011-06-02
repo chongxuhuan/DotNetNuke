@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web.UI;
-
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Localization;
@@ -36,254 +35,244 @@ using DotNetNuke.Services.Localization;
 
 namespace DotNetNuke.UI.WebControls
 {
-    /// -----------------------------------------------------------------------------
-    /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.UI.WebControls
-    /// Class:      DNNLocaleEditControl
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// The DNNLocaleEditControl control provides a standard UI component for selecting
-    /// a Locale
-    /// </summary>
-    /// <history>
-    ///     [cnurse]	02/23/2006	created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    [ToolboxData("<{0}:DNNLocaleEditControl runat=server></{0}:DNNLocaleEditControl>")]
-    public class DNNLocaleEditControl : TextEditControl, IPostBackEventHandler
-    {
-        private string _DisplayMode = "Native";
-        private LanguagesListType _ListType = LanguagesListType.Enabled;
 
-        protected LanguagesListType ListType
-        {
-            get
-            {
-                return _ListType;
-            }
-        }
+	/// <summary>
+	/// The DNNLocaleEditControl control provides a standard UI component for selecting
+	/// a Locale
+	/// </summary>
+	/// <history>
+	///     [cnurse]	02/23/2006	created
+	/// </history>
+	[ToolboxData("<{0}:DNNLocaleEditControl runat=server></{0}:DNNLocaleEditControl>")]
+	public class DNNLocaleEditControl : TextEditControl, IPostBackEventHandler
+	{
+		private string _DisplayMode = "Native";
+		private LanguagesListType _ListType = LanguagesListType.Enabled;
 
-        protected string DisplayMode
-        {
-            get
-            {
-                return _DisplayMode;
-            }
-        }
+		protected LanguagesListType ListType
+		{
+			get
+			{
+				return _ListType;
+			}
+		}
 
-        protected PortalSettings PortalSettings
-        {
-            get
-            {
-                return PortalController.GetCurrentPortalSettings();
-            }
-        }
+		protected string DisplayMode
+		{
+			get
+			{
+				return _DisplayMode;
+			}
+		}
 
-        #region IPostBackEventHandler Members
+		protected PortalSettings PortalSettings
+		{
+			get
+			{
+				return PortalController.GetCurrentPortalSettings();
+			}
+		}
 
-        public void RaisePostBackEvent(string eventArgument)
-        {
-            _DisplayMode = eventArgument;
-        }
+		#region IPostBackEventHandler Members
 
-        #endregion
+		public void RaisePostBackEvent(string eventArgument)
+		{
+			_DisplayMode = eventArgument;
+		}
 
-        private bool IsSelected(string locale)
-        {
-            return locale == StringValue;
-        }
+		#endregion
 
+		private bool IsSelected(string locale)
+		{
+			return locale == StringValue;
+		}
 
-        private void RenderModeButtons(HtmlTextWriter writer)
-        {
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            if (DisplayMode == "English")
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            else
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference(this, "English"));
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
-            writer.Write(Localization.GetString("DisplayEnglish", Localization.SharedResourceFile));
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            if (DisplayMode == "Native")
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            else
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference(this, "Native"));
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.RenderEndTag();
+		private void RenderModeButtons(HtmlTextWriter writer)
+		{
+			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
+			if (DisplayMode == "English")
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+			}
+			else
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference(this, "English"));
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Input);
+			writer.RenderEndTag();
+			writer.Write(Localization.GetString("DisplayEnglish", Localization.SharedResourceFile));
+			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
+			if (DisplayMode == "Native")
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+			}
+			else
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference(this, "Native"));
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Input);
+			writer.RenderEndTag();
 
-            writer.Write(Localization.GetString("DisplayNative", Localization.SharedResourceFile));
-        }
+			writer.Write(Localization.GetString("DisplayNative", Localization.SharedResourceFile));
+		}
 
-        private void RenderOption(HtmlTextWriter writer, CultureInfo culture)
-        {
-            string localeName;
+		private void RenderOption(HtmlTextWriter writer, CultureInfo culture)
+		{
+			string localeName;
 
-            if (DisplayMode == "Native")
-            {
-                localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.NativeName);
-            }
-            else
-            {
-                localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.EnglishName);
-            }
+			if (DisplayMode == "Native")
+			{
+				localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.NativeName);
+			}
+			else
+			{
+				localeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(culture.EnglishName);
+			}
 			
-            //Add the Value Attribute
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, culture.Name);
+			//Add the Value Attribute
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, culture.Name);
 
-            if (IsSelected(culture.Name))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
-            }
+			if (IsSelected(culture.Name))
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
+			}
 			
-            //Render Option Tag
-            writer.RenderBeginTag(HtmlTextWriterTag.Option);
-            writer.Write(localeName);
-            writer.RenderEndTag();
-        }
+			//Render Option Tag
+			writer.RenderBeginTag(HtmlTextWriterTag.Option);
+			writer.Write(localeName);
+			writer.RenderEndTag();
+		}
 
-		#region "Protected Methods"
+		#region Protected Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// OnAttributesChanged runs when the CustomAttributes property has changed.
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	02/18/2008	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnAttributesChanged()
-        {
+		/// <summary>
+		/// OnAttributesChanged runs when the CustomAttributes property has changed.
+		/// </summary>
+		/// <history>
+		///     [cnurse]	02/18/2008	created
+		/// </history>
+		protected override void OnAttributesChanged()
+		{
 			//Get the List settings out of the "Attributes"
-            if ((CustomAttributes != null))
-            {
-                foreach (Attribute attribute in CustomAttributes)
-                {
-                    var listAtt = attribute as LanguagesListTypeAttribute;
-                    if (listAtt != null)
-                    {
-                        _ListType = listAtt.ListType;
-                        break;
-                    }
-                }
-            }
-        }
+			if ((CustomAttributes != null))
+			{
+				foreach (Attribute attribute in CustomAttributes)
+				{
+					var listAtt = attribute as LanguagesListTypeAttribute;
+					if (listAtt != null)
+					{
+						_ListType = listAtt.ListType;
+						break;
+					}
+				}
+			}
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// RenderViewMode renders the View (readonly) mode of the control
-        /// </summary>
-        /// <param name="writer">A HtmlTextWriter.</param>
-        /// <history>
-        ///     [cnurse]	05/02/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void RenderViewMode(HtmlTextWriter writer)
-        {
-            Locale locale = LocaleController.Instance.GetLocale(StringValue);
+		/// <summary>
+		/// RenderViewMode renders the View (readonly) mode of the control
+		/// </summary>
+		/// <param name="writer">A HtmlTextWriter.</param>
+		/// <history>
+		///     [cnurse]	05/02/2006	created
+		/// </history>
+		protected override void RenderViewMode(HtmlTextWriter writer)
+		{
+			Locale locale = LocaleController.Instance.GetLocale(StringValue);
 
-            ControlStyle.AddAttributesToRender(writer);
-            writer.RenderBeginTag(HtmlTextWriterTag.Span);
-            if (locale != null)
-            {
-                writer.Write(locale.Text);
-            }
-            writer.RenderEndTag();
-        }
+			ControlStyle.AddAttributesToRender(writer);
+			writer.RenderBeginTag(HtmlTextWriterTag.Div);
+			if (locale != null)
+			{
+				writer.Write(locale.Text);
+			}
+			writer.RenderEndTag();
+		}
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// RenderEditMode renders the Edit mode of the control
-        /// </summary>
-        /// <param name="writer">A HtmlTextWriter.</param>
-        /// <history>
-        ///     [cnurse]	02/27/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void RenderEditMode(HtmlTextWriter writer)
-        {
-            //Render div
-            ControlStyle.AddAttributesToRender(writer);
-            writer.RenderBeginTag(HtmlTextWriterTag.Div);
+		/// <summary>
+		/// RenderEditMode renders the Edit mode of the control
+		/// </summary>
+		/// <param name="writer">A HtmlTextWriter.</param>
+		/// <history>
+		///     [cnurse]	02/27/2006	created
+		/// </history>
+		protected override void RenderEditMode(HtmlTextWriter writer)
+		{
+			//Render div
+			//ControlStyle.AddAttributesToRender(writer);
 
-            //Render Button Row
-            RenderModeButtons(writer);
+			writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormRadioButtons");
+			writer.RenderBeginTag(HtmlTextWriterTag.Span);
 
-            //Render break
-            writer.WriteBreak();
+			//Render Button Row
+			RenderModeButtons(writer);
 
-            //Render the Select Tag
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-            writer.RenderBeginTag(HtmlTextWriterTag.Select);
+			////Render break
+			//writer.Write("<br />");
 
-            //Render None selected option
-            //Add the Value Attribute
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
+			//Render the Select Tag
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
+			writer.RenderBeginTag(HtmlTextWriterTag.Select);
 
-            if (StringValue == Null.NullString)
-            {
+			//Render None selected option
+			//Add the Value Attribute
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, Null.NullString);
+
+			if (StringValue == Null.NullString)
+			{
 				//Add the Selected Attribute
-                writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Option);
-            writer.Write(Localization.GetString("Not_Specified", Localization.SharedResourceFile));
-            writer.RenderEndTag();
+				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "selected");
+			}
+			writer.RenderBeginTag(HtmlTextWriterTag.Option);
+			writer.Write(Localization.GetString("Not_Specified", Localization.SharedResourceFile));
+			writer.RenderEndTag();
 
-            int languageCount = 0;
-            switch (ListType)
-            {
-                case LanguagesListType.All:
-                    CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-                    Array.Sort(cultures, new CultureInfoComparer(DisplayMode));
+			int languageCount = 0;
+			switch (ListType)
+			{
+				case LanguagesListType.All:
+					CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+					Array.Sort(cultures, new CultureInfoComparer(DisplayMode));
 
-                    foreach (CultureInfo culture in cultures)
-                    {
-                        RenderOption(writer, culture);
-                    }
-                    languageCount = cultures.Length;
-                    break;
-                case LanguagesListType.Supported:
-                    Dictionary<string, Locale> cultures1 = LocaleController.Instance.GetLocales(Null.NullInteger);
-                    foreach (Locale language in cultures1.Values)
-                    {
-                        RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code));
-                    }
-                    languageCount = cultures1.Count;
-                    break;
-                case LanguagesListType.Enabled:
-                    Dictionary<string, Locale> cultures2 = LocaleController.Instance.GetLocales(PortalSettings.PortalId);
-                    foreach (Locale language in cultures2.Values)
-                    {
-                        RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code));
-                    }
-                    languageCount = cultures2.Count;
-                    break;
-            }
-            //Close Select Tag
-            writer.RenderEndTag();
+					foreach (CultureInfo culture in cultures)
+					{
+						RenderOption(writer, culture);
+					}
+					languageCount = cultures.Length;
+					break;
+				case LanguagesListType.Supported:
+					Dictionary<string, Locale> cultures1 = LocaleController.Instance.GetLocales(Null.NullInteger);
+					foreach (Locale language in cultures1.Values)
+					{
+						RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code));
+					}
+					languageCount = cultures1.Count;
+					break;
+				case LanguagesListType.Enabled:
+					Dictionary<string, Locale> cultures2 = LocaleController.Instance.GetLocales(PortalSettings.PortalId);
+					foreach (Locale language in cultures2.Values)
+					{
+						RenderOption(writer, CultureInfo.CreateSpecificCulture(language.Code));
+					}
+					languageCount = cultures2.Count;
+					break;
+			}
+			//Close Select Tag
+			writer.RenderEndTag();
 
-            if (StringValue == Null.NullString && languageCount > 1)
-            {
-                writer.WriteBreak();
+			if (StringValue == Null.NullString && languageCount > 1)
+			{
+				writer.WriteBreak();
 
-                writer.AddAttribute(HtmlTextWriterAttribute.Class, "NormalRed");
-                writer.RenderBeginTag(HtmlTextWriterTag.Div);
-                writer.Write(Localization.GetString("LanguageNotSelected", Localization.SharedResourceFile));
-                writer.RenderEndTag();
-            }
+				writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormMessage dnnFormError");
+				writer.RenderBeginTag(HtmlTextWriterTag.Span);
+				writer.Write(Localization.GetString("LanguageNotSelected", Localization.SharedResourceFile));
+				writer.RenderEndTag();
+			}
 
-            //close div
-            writer.RenderEndTag();
-        }
+			//close div
+			writer.RenderEndTag();
+		}
 		
 		#endregion
-    }
+	}
 }

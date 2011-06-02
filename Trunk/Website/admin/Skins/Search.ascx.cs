@@ -40,8 +40,8 @@ namespace DotNetNuke.UI.Skins.Controls
 {
     public partial class Search : SkinObjectBase
     {
-		#region "Private Members"
-		
+        #region "Private Members"
+
         private const string MyFileName = "Search.ascx";
         private bool _showSite = true;
         private bool _showWeb = true;
@@ -53,10 +53,10 @@ namespace DotNetNuke.UI.Skins.Controls
         private string _webText;
         private string _webToolTip;
         private string _webURL;
-		
-		#endregion
 
-		#region "Public Members"
+        #endregion
+
+        #region "Public Members"
 
         /// <summary>
         /// Gets or sets the CSS class for the option buttons and search button
@@ -304,10 +304,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 _webURL = value;
             }
         }
-		
-		#endregion
-		
-		#region "Private Methods"
+
+        #endregion
+
+        #region "Private Methods"
 
         private int GetSearchTabId()
         {
@@ -328,7 +328,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 else if (arrModules.Count == 1)
                 {
-                    searchTabId = ((ModuleInfo) arrModules[0]).TabID;
+                    searchTabId = ((ModuleInfo)arrModules[0]).TabID;
                 }
             }
 
@@ -405,10 +405,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
             }
         }
-		
-		#endregion
 
-		#region "Event Handlers"
+        #endregion
+
+        #region "Event Handlers"
 
 
         /// <summary>
@@ -425,23 +425,6 @@ namespace DotNetNuke.UI.Skins.Controls
 
             if (!Page.IsPostBack)
             {
-                optWeb.Text = WebText;
-                optWeb.ToolTip = WebToolTip;
-                optSite.Text = SiteText;
-                optSite.ToolTip = SiteToolTip;
-                optWeb.Visible = ShowWeb;
-                optSite.Visible = ShowSite;
-                downArrow.AlternateText = Localization.GetString("DropDownGlyph.AltText", Localization.GetResourceFile(this, MyFileName));
-                downArrow.ToolTip = Localization.GetString("DropDownGlyph.AltText", Localization.GetResourceFile(this, MyFileName));
-                if (optWeb.Visible)
-                {
-                    optWeb.Checked = true;
-                }
-                if (optSite.Visible)
-                {
-                    optSite.Checked = true;
-                }
-				
                 ClientAPI.RegisterKeyCapture(txtSearch, cmdSearch, 13);
                 ClientAPI.RegisterKeyCapture(txtSearchNew, cmdSearchNew, 13);
 
@@ -461,8 +444,8 @@ namespace DotNetNuke.UI.Skins.Controls
                 cmdSearchNew.Text = Submit;
                 if (!String.IsNullOrEmpty(CssClass))
                 {
-                    optWeb.CssClass = CssClass;
-                    optSite.CssClass = CssClass;
+                    WebRadioButton.CssClass = CssClass;
+                    SiteRadioButton.CssClass = CssClass;
                     cmdSearch.CssClass = CssClass;
                     cmdSearchNew.CssClass = CssClass;
                 }
@@ -484,9 +467,9 @@ namespace DotNetNuke.UI.Skins.Controls
         private void cmdSearch_Click(object sender, EventArgs e)
         {
             string SearchType = "S";
-            if (optWeb.Visible)
+            if (WebRadioButton.Visible)
             {
-                if (optWeb.Checked)
+                if (WebRadioButton.Checked)
                 {
                     SearchType = "W";
                 }
@@ -505,12 +488,12 @@ namespace DotNetNuke.UI.Skins.Controls
             ExecuteSearch(txtSearchNew.Text.Trim(), ClientAPI.GetClientVariable(Page, "SearchIconSelected"));
         }
 
-		/// <summary>
-		/// Handles the PreRender event of the Page control.
-		/// </summary>
-		/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-		/// <remarks>This event performs final initialization tasks for the search object UI.</remarks>
-		protected override void OnPreRender(EventArgs e)
+        /// <summary>
+        /// Handles the PreRender event of the Page control.
+        /// </summary>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        /// <remarks>This event performs final initialization tasks for the search object UI.</remarks>
+        protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
 
@@ -522,6 +505,10 @@ namespace DotNetNuke.UI.Skins.Controls
                 //Client Variables will survive a postback so there is no reason to register them.
                 if (!Page.IsPostBack)
                 {
+
+                    downArrow.AlternateText = Localization.GetString("DropDownGlyph.AltText", Localization.GetResourceFile(this, MyFileName));
+                    downArrow.ToolTip = downArrow.AlternateText;
+
                     ClientAPI.RegisterClientVariable(Page, "SearchIconWebUrl", string.Format("url({0})", ResolveUrl(WebIconURL)), true);
                     ClientAPI.RegisterClientVariable(Page, "SearchIconSiteUrl", string.Format("url({0})", ResolveUrl(SiteIconURL)), true);
 
@@ -529,13 +516,43 @@ namespace DotNetNuke.UI.Skins.Controls
                     ClientAPI.RegisterClientVariable(Page, "SearchIconSelected", "S", true);
                 }
 
-				ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
+                ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
                 string script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/Search/Search.js"));
 
                 ClientAPI.RegisterStartUpScript(Page, "initSearch", script);
+
+
+
+            }
+            else
+            {
+
+                if (!Page.IsPostBack)
+                {
+
+                    WebRadioButton.Visible = ShowWeb;
+                    SiteRadioButton.Visible = ShowSite;
+
+                    if (WebRadioButton.Visible)
+                    {
+                        WebRadioButton.Checked = true;
+                        WebRadioButton.Text = WebText;
+                        WebRadioButton.ToolTip = WebToolTip;
+                    }
+                    if (SiteRadioButton.Visible)
+                    {
+                        SiteRadioButton.Checked = true;
+                        SiteRadioButton.Text = SiteText;
+                        SiteRadioButton.ToolTip = SiteToolTip;
+                    }
+
+
+                }
+
+
             }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

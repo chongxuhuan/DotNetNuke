@@ -97,10 +97,12 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             var hlEdit = ((HyperLink)(dataItem)["EditItem"].FindControl("hlEdit"));
             hlEdit.NavigateUrl = ModuleContext.EditNavUrl(ModuleContext.TabId, "EditVocabulary", false,"mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
+            hlEdit.Visible = IsEditable;
 
             var imgEdit = ((Image)(dataItem)["EditItem"].FindControl("imgEdit"));
             imgEdit.AlternateText = Localization.GetString("Edit", LocalResourceFile);
             imgEdit.ToolTip = Localization.GetString("Edit", LocalResourceFile);
+            imgEdit.Visible = IsEditable;
         }
 
         #endregion

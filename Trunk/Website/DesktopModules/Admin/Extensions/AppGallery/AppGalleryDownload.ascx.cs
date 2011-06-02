@@ -57,14 +57,42 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             string extensionFolder = GetInstallationFolder(Request.QueryString["eType"]);
             string installFolder = HttpContext.Current.Server.MapPath("~/Install/") + extensionFolder;
 
+            bool unknownCatalog = true;
+
             if (downloadURL.Contains("codeplex.com"))
             {
                 ProcessCodeplex(downloadURL, installFolder, catalogAction);
+                unknownCatalog = false;
             }
             if (downloadURL.Contains("snowcovered.com"))
             {
                 ProcessSnowcovered(downloadURL, installFolder, catalogAction);
+                unknownCatalog = false;
             }
+            if (unknownCatalog)
+            {
+                ProcessUnknown(downloadURL, installFolder, catalogAction);
+            }
+        
+        }
+
+        private void ProcessUnknown(string downloadURL, string installFolder, string catalogAction)
+        {
+            WebResponse wr;
+            string myfile = "";
+
+            wr = HttpAsWebResponse(downloadURL,
+                                   null,
+                                   null,
+                                   null,
+                                   null,
+                                   null,
+                                   -1,
+                                   false,
+                                   "DotNetNuke-Appgallery/1.0.0.0(Microsoft Windows NT 6.1.7600.0",
+                                   "wpi://2.1.0.0/Microsoft Windows NT 6.1.7600.0",
+                                   out myfile);
+            DownloadDeploy(wr, myfile, installFolder, catalogAction);
         }
 
         private void ProcessSnowcovered(string downloadURL, string installFolder, string catalogAction)

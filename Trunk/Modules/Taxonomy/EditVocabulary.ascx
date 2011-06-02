@@ -8,7 +8,7 @@
         <dnn:EditVocabularyControl ID="editVocabularyControl" runat="server" IsAddMode="false" />
         <div class="dnnFormItem">
             <dnn:DnnFieldLabel id="termsLabel" runat="server" Text="Terms.Text" ToolTip="Terms.ToolTip" />
-            <dnn:TermsList id="termsList" runat="server" Width="260px" />
+            <dnn:TermsList id="termsList" runat="server" Width="300px" />
         </div>
         <ul class="dnnActions dnnClear">
             <li><asp:LinkButton ID="saveVocabulary" runat="server" resourcekey="SaveVocabulary" CssClass="dnnPrimaryAction" /></li>
@@ -18,13 +18,13 @@
         </ul>
     </asp:Panel>
     <asp:Panel ID="pnlTermEditor" runat="server" Visible="false">
+        <h2><asp:Label ID="termLabel" runat="server" /></h2>
         <fieldset>
-            <legend><asp:Label ID="termLabel" runat="server" /></legend>
             <dnn:EditTermControl ID="editTermControl" runat="server" />
             <ul class="dnnActions dnnClear">
                 <li><asp:LinkButton ID="saveTermButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="saveTermButton" /></li>
                 <li><asp:LinkButton ID="deleteTermButton" runat="server" resourceKey="DeleteTerm" CausesValidation="false" CssClass="dnnSecondaryAction" /></li>
-                <li><asp:LinkButton ID="cancelTermButton" runat="server" resourceKey="cmdCancel" CssClass="dnnSecondaryAction" /></li>
+                <li><asp:LinkButton ID="cancelTermButton" runat="server" resourceKey="cmdCancel" CssClass="dnnSecondaryAction" CausesValidation="false" /></li>
             </ul>
         </fieldset>
     </asp:Panel>

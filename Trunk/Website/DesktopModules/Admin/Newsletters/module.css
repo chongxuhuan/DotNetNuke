@@ -4,9 +4,9 @@
 .dnnTextEditor td{padding:10px 0;}
 span.dnnNewsletterRadios{display:block;float:left;overflow:hidden;width:50%;}
 	.dnnNewsletterRadios label{width:auto;text-align:left;font-weight:normal;margin-top:0;padding:0 15px 0 5px}
-.dnnFormItem.dnnNewsletterAttachment .urlControl{float:left;width:50%;}
+.dnnFormItem.dnnNewsletterAttachment .urlControl{float:left;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnFormItem{padding:0;margin:0;}
-	.dnnFormItem.dnnNewsletterAttachment .dnnFormLabel{text-align:left;width:20%;}
+	.dnnFormItem.dnnNewsletterAttachment .dnnFormLabel{text-align:left;font-weight:normal}
 	.dnnFormItem.dnnNewsletterAttachment .urlControlFileRow a.dnnSecondaryAction{padding:0;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnFormMessage{margin:0;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnUrlControl .dnnFormLabel{font-weight:normal;width:auto;margin-top:0;}

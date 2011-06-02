@@ -212,7 +212,10 @@ namespace DotNetNuke.UI.WebControls
         {
             get
             {
-                EnsureChildControls();
+                EnsureChildControls();                
+                if (string.IsNullOrEmpty(icon.ImageUrl))
+                    icon.ImageUrl = Entities.Icons.IconController.IconURL(IconKey, IconSize, IconStyle);
+
                 return icon.ImageUrl;
             }
             set
@@ -221,6 +224,30 @@ namespace DotNetNuke.UI.WebControls
                 icon.ImageUrl = value;
             }
         }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Key to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconKey { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Siz to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconSize { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Style to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconStyle { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>

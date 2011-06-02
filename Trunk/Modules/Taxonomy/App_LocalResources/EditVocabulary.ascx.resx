@@ -142,7 +142,7 @@
     <value>Update</value>
   </data>
   <data name="AddTerm.Text" xml:space="preserve">
-    <value>Add New</value>
+    <value>Add Term</value>
   </data>
   <data name="CreateTerm.Text" xml:space="preserve">
     <value>Save</value>
@@ -178,6 +178,6 @@
     <value>The name of the Term</value>
   </data>
   <data name="TermName.Required" xml:space="preserve">
-    <value>The term name is a required field.</value>
+    <value>The term name is a required field</value>
   </data>
 </root>

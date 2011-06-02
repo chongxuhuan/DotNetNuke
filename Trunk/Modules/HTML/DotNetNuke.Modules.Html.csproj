@@ -161,6 +161,7 @@
     <Content Include="html.gif" />
     <Content Include="HtmlModule.ascx" />
     <Content Include="license.txt" />
+    <Content Include="module.css" />
     <Content Include="MyWork.ascx" />
     <Content Include="releaseNotes.txt" />
     <Content Include="Settings.ascx" />

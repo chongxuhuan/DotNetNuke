@@ -24,7 +24,6 @@
 #region Usings
 
 using System;
-
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
@@ -33,7 +32,7 @@ using DotNetNuke.Services.Exceptions;
 
 namespace DotNetNuke.Modules.Html
 {
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     ///   MyWork allows a user to view any outstanding workflow items
     /// </summary>
@@ -41,10 +40,10 @@ namespace DotNetNuke.Modules.Html
     /// </remarks>
     /// <history>
     /// </history>
-    /// -----------------------------------------------------------------------------
     public partial class MyWork : PortalModuleBase
     {
-        #region "Protected Methods"
+
+        #region Protected Methods
 
         public string FormatURL(object dataItem)
         {
@@ -54,9 +53,8 @@ namespace DotNetNuke.Modules.Html
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         ///   Page_Load runs when the control is loaded
         /// </summary>
@@ -64,19 +62,18 @@ namespace DotNetNuke.Modules.Html
         /// </remarks>
         /// <history>
         /// </history>
-        /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            cmdCancel.Click += cmdCancel_Click;
+            hlCancel.NavigateUrl = Globals.NavigateURL();
 
             try
             {
                 if (!Page.IsPostBack)
                 {
                     var objHtmlTextUsers = new HtmlTextUserController();
-                    grdTabs.DataSource = objHtmlTextUsers.GetHtmlTextUser(UserInfo.UserID);
-                    grdTabs.DataBind();
+                    dgTabs.DataSource = objHtmlTextUsers.GetHtmlTextUser(UserInfo.UserID);
+                    dgTabs.DataBind();
                 }
             }
             catch (Exception exc)
@@ -85,27 +82,7 @@ namespace DotNetNuke.Modules.Html
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        ///   cmdCancel_Click runs when the cancel button is clicked
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void cmdCancel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Response.Redirect(Globals.NavigateURL(), true);
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
         #endregion
+
     }
 }

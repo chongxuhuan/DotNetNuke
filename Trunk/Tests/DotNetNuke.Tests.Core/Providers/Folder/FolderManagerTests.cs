@@ -1150,7 +1150,6 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region ProcessMergedTreeItem
 
         [Test]
-        [Ignore]
         public void ProcessMergedTreeItem_Returns_Null_And_Sets_StorageLocation_To_Default_When_Folder_Exists_Only_In_FileSystem_And_Database_And_FolderMapping_Is_Not_Default_And_Has_SubFolders()
         {
             var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
@@ -1173,6 +1172,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMappingOfItem);
             _folderMappingController.Setup(fmc => fmc.GetDefaultFolderMapping(Constants.CONTENT_ValidPortalId)).Returns(defaultFolderMapping);
 
+            _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(_folderInfo.Object);
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(_folderInfo.Object)).Returns(new List<IFolderInfo>());
             _mockFolderManager.Setup(mfm => mfm.UpdateFolderMappingID(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, 1)).Verifiable();
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
@@ -1186,7 +1187,6 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        [Ignore]
         public void ProcessMergedTreeItem_Returns_Null_And_Deletes_Folder_From_FileSystem_And_Database_When_Folder_Exists_Only_In_FileSystem_And_Database_And_FolderMapping_Is_Not_Default_And_Has_Not_SubFolders()
         {
             var mergedTree = new SortedList<string, FolderManager.MergedTreeItem>
@@ -1208,6 +1208,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
             _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Verifiable();
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Returns(_folderInfo.Object);
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(_folderInfo.Object)).Returns(new List<IFolderInfo>());
 
             var result = _mockFolderManager.Object.ProcessMergedTreeItem(mergedTree.Values[0], 0, mergedTree, Constants.CONTENT_ValidPortalId);
 

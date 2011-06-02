@@ -126,7 +126,7 @@ div.SearchIcon img{margin-top:3px;}
 
 /*  === Common Reusable Selectors === */
 
-.dnnForm{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;width:95%;}
+.dnnForm{padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;width:95%;margin:0}
 	h2.dnnFormSectionHead{margin:0.5em auto 0.6em;padding:0;letter-spacing:-0.03em;font-weight:bold;border-bottom:1px #ccc solid;text-align:left;line-height:1.2;font-size:1.5em;}
 		.dnnForm h2.dnnFormSectionHead a, .dnnForm h2.dnnFormSectionHead a:visited{display:block;text-decoration:none;padding:0.4em 0.8em;color:#000;letter-spacing:-0.03em;font-weight:bold;background:url(../../images/down-icn.png) no-repeat 98% center;display:block}
 			.dnnForm h2.dnnFormSectionHead a:hover{background:#f1f1f1 url(../../images/down-icn.png) no-repeat 98% center;}
@@ -185,8 +185,8 @@ div.SearchIcon img{margin-top:3px;}
 
 	.dnnForm input[type=checkbox]{margin-top:5px;width:auto;}
 	.dnnForm input[type=radio]{margin-top:4px;width:auto;}
-	
 	.dnnTextEditor label{margin:0;padding:0 20px 0 5px;font-weight:normal;text-align:left;width:auto}
+	.dnnModuleAuditControl{width:95%;margin:0 auto}
 	
     ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
         ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
@@ -208,7 +208,7 @@ div.SearchIcon img{margin-top:3px;}
 /*  === Url Control === */
 	.urlControlLinkType{width:auto;}
 		.urlControlLinkType span, .dnnFormItem .urlControlLinkType span{display:block;float:none;text-align:left;width:auto;}
-		.dnnFormItem .ucLinkTypeRadioButtons label{width:auto;font-weight:normal;}
+		.dnnFormItem .ucLinkTypeRadioButtons label{width:auto;font-weight:normal;text-align:left;padding-right:0;}
 		.ucLinkTypeRadioButtons{}
 			.urlControlLinkType span input{min-width:3%;}
 			.dnnForm.dnnModuleSettings .dnnFormItem .urlControlLinkType span label{text-align:left;}
@@ -292,35 +292,31 @@ a.TreeMenu_Node:active, a.TreeMenu_NodeSelected:active{text-decoration:none;colo
 	.ui-state-hover a, .ui-state-hover a:hover {color:#026890;text-decoration:none;}
 	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {border:none;background:none;font-weight:normal;color:#fff;}
 	.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color:#fff;text-decoration:none;}
-	.ui-widget :active {outline:none;}
+	.ui-widget:active {outline:none;}
 	
 	.ui-helper-clearfix:after {content: ".";display:block; height: 0; clear: both; visibility: hidden; }
 	.ui-helper-clearfix {display: inline-block;}
-	/* required comment for clearfix to work in Opera \*/
 	* html .ui-helper-clearfix { height:1%; }
 	.ui-helper-clearfix { display:block; }
-	/* end clearfix */
 	
 	.dnnForm .ui-corner-tl, .dnnForm .ui-corner-tr, .dnnForm .ui-corner-bl, .dnnForm .ui-corner-br, .dnnForm .ui-corner-top, .dnnForm .ui-corner-bottom, .dnnForm .ui-corner-right, .dnnForm .ui-corner-left, .dnnForm .ui-corner-all{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0; border-top-left-radius:0; -moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;border-bottom-left-radius:0;-moz-border-radius:0;-webkit-border-radius:0;border-radius:0;}
-	
 	.ui-widget-overlay {background:#000;opacity:.60;filter:Alpha(Opacity=60);position:absolute;top:0;left:0;width:100%;height:100%;}
 	.ui-widget-shadow {margin:5px 0 0 5px;padding:0px;background:#999;opacity:.45;filter:Alpha(Opacity=45);-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}
 	
 	.ui-dialog{position:absolute;padding:0;width:300px;border:5px #ccc solid;background:#fff;}
 	.dnnFormPopup{border-radius:10px;}
-	#iPopUp{overflow:hidden}
-		.ui-dialog .ui-dialog-titlebar {padding:0.8em 1.2em;position:relative;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );color:#fff;font-weight:bold;text-shadow:0px 1px 1px #000;font-size:1.25em}
+	#iPopUp{width:100% !important}
+		.ui-dialog .ui-dialog-titlebar {padding:0.8em 1.2em;position:relative;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );color:#fff;font-weight:bold;text-shadow:0px 1px 1px #000;font-size:1.25em;cursor:move;-webkit-border-top-left-radius: 6px;-webkit-border-top-right-radius: 6px;-webkit-border-bottom-right-radius: 0px;-webkit-border-bottom-left-radius: 0px;-moz-border-radius-topleft: 6px;-moz-border-radius-topright: 6px;-moz-border-radius-bottomright: 0px;-moz-border-radius-bottomleft: 0px;border-top-left-radius: 6px;border-top-right-radius: 6px;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
 		.ui-dialog .ui-dialog-title{float:left;margin:.1em 16px .1em 0;position:relative;}
-			/*.ui-dialog .ui-dialog-titlebar-close {position:absolute;right:3em;top:50%;width:19px;margin:-10px 0 0 0;padding:1px;height:18px;}*/
-				.ui-dialog a.ui-dialog-titlebar-close{text-indent:-9999em;display:block;position:absolute;right:-16px;top:-16px;background:url(../../images/close-icn.png) no-repeat;height:32px;width:32px;}
-				/*.ui-dialog .ui-dialog-titlebar-close span {display:block;margin:1px;}*/
+			.ui-dialog a.ui-dialog-titlebar-close{text-indent:-9999em;display:block;position:absolute;right:8px;top:8px;background:url(../../images/close-icn.png) no-repeat;height:24px;width:24px;}
 			.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus {padding:0;}
+			a.dnnToggleMax{float:right;display:block;text-indent:-9999em;background:url(../../images/modal-max-min-icn.png) no-repeat bottom;height:24px;width:24px;margin:-4px 18px 0 0}
+			a.dnnToggleMax.ui-dialog-titlebar-max{background:url(../../images/modal-max-min-icn.png) no-repeat top;}
 		.ui-dialog .ui-dialog-content{position:relative;border:0;padding:0;background:#fff;overflow:auto;zoom:1;}
 			.ui-dialog .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em .5em .4em;}
 			.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {float:right;}
 			.ui-dialog .ui-dialog-buttonpane button {margin:.5em .4em .5em 0;cursor:pointer;}
-		.ui-dialog .ui-resizable-se {width:14px;height:14px;right:3px;bottom:3px;}
-		.ui-draggable .ui-dialog-titlebar {cursor:move;}
+		.ui-dialog .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}
 	
 	.ui-tabs{position:relative;padding:.1em .2em;zoom:1;}
 		.ui-tabs .ui-tabs-nav {margin:0;padding:0;border-bottom:3px #282828 solid;}

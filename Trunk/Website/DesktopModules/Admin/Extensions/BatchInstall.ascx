@@ -38,5 +38,5 @@
     <asp:Label ID="lblAuthSystemsError" runat="server" />
 </div>
 <p>
-	<dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" ImageUrl="~/images/save.gif" ResourceKey="cmdInstall" />
+	<dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" IconKey="Save" ResourceKey="cmdInstall" />
 </p>

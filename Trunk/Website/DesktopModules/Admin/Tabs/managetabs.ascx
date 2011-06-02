@@ -138,7 +138,7 @@
                 </div>
                 <div id="publishRow" runat="server" class="dnnFormItem" visible="false">
                     <dnn:Label ID="publishPageLabel" runat="server" ControlName="publishPageButton"></dnn:Label>
-                    <dnn:CommandButton ID="publishPageButton" runat="server" ImageUrl="~/images/save.gif" DisplayLink = "false" ResourceKey="PublishPage" />
+                    <dnn:CommandButton ID="publishPageButton" runat="server" IconKey="Save" DisplayLink = "false" ResourceKey="PublishPage" />
                 </div>
                 <div id="readyForTranslationRow" runat="server" visible="false" class="dnnFormItem">
                     <asp:Label ID="readyToTranslateLabel" runat="server" resourceKey="readyToTranslateLabel" />

@@ -193,6 +193,7 @@
     <Compile Include="Entities\Host\HostSettingsController.cs" />
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
+    <Compile Include="Entities\Icons\IconController.cs" />
     <Compile Include="Entities\Modules\Actions\ActionEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>

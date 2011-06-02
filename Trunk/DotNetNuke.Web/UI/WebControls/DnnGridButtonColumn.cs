@@ -69,6 +69,45 @@ namespace DotNetNuke.Web.UI.WebControls
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Key to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconKey { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Siz to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconSize { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The Icon Style to obtain ImageURL
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string IconStyle { get; set; }
+
+        public override string ImageUrl
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(base.ImageUrl))
+                    base.ImageUrl = Entities.Icons.IconController.IconURL(IconKey, IconSize, IconStyle);
+
+                return base.ImageUrl;
+            }
+            set
+            {
+                base.ImageUrl = value;
+            }
+        }
+
         #endregion
     }
 }

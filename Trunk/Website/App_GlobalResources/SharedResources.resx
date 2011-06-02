@@ -1446,4 +1446,7 @@
   <data name="EVENTMESSAGE_TypeMissing.Text" xml:space="preserve">
     <value>Processor type is missing from the manifest</value>
   </data>
+  <data name="ModuleHelp.Text" xml:space="preserve">
+    <value>Module Help</value>
+  </data>
 </root>

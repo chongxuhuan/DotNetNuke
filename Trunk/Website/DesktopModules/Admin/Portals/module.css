@@ -1,5 +1,5 @@
 /* ===========   Admin Settings Module Styling   =========== */
-.dnnSiteSettings{width:100%;margin:2em auto;}
+.dnnSiteSettings, .dnnPortalSignup, .dnnExportPortal{width:95%;margin:2em auto;}
 	.dnnSiteSettings div.ssBasicSettings, .dnnSiteSettings div.ssAdvancedSettings, .dnnSiteSettings div.ssStylesheetEditor{padding:0;margin-top:1em;}
 		.dnnSiteSettings .dnnFormItem input[type="text"], .dnnSiteSettings .dnnFormItem .dnnFormInput, .dnnSiteSettings .dnnFormItem textarea, 
 		.dnnPortalSignup .dnnFormItem input[type="text"], .dnnPortalSignup .dnnFormItem .dnnFormInput, .dnnPortalSignup .dnnFormItem textarea,

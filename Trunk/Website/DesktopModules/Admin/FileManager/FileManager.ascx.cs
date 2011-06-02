@@ -1552,6 +1552,15 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 {
                     lnkOkRename.CommandName = e.Item.ItemIndex.ToString();
                 }
+                
+                if (Framework.AJAX.IsEnabled())
+                {
+                    var lnkDLFile = (LinkButton) e.Item.FindControl("lnkDLFile");
+                    if (lnkDLFile != null)
+                    {
+                        Framework.AJAX.RegisterPostBackControl(lnkDLFile);
+                    }
+                }
             }
         }
 

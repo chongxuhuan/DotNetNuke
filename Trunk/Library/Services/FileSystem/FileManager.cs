@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Web;
 
 using DotNetNuke.Common;
@@ -1007,7 +1008,13 @@ namespace DotNetNuke.Services.FileSystem
         internal virtual bool IsAllowedExtension(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            return !string.IsNullOrEmpty(extension) && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension);
+
+            //regex matches a dot followed by 1 or more chars followed by a semi-colon
+            //regex is meant to block files like "foo.asp;.png" which can take advantage
+            //of a vulnerability in IIS6 which treasts such files as .asp, not .png
+            return !string.IsNullOrEmpty(extension) 
+                   && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension) 
+                   && !Regex.IsMatch(fileName, @"\..+;");
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
@@ -1074,20 +1081,16 @@ namespace DotNetNuke.Services.FileSystem
             var bytBuffer = new byte[10000];
             try
             {
-                var lngDataToRead = objStream.Length;
-                while (lngDataToRead > 0)
+                if (objResponse.IsClientConnected)
                 {
-                    if (objResponse.IsClientConnected)
+                    var intLength = objStream.Read(bytBuffer, 0, 10000);
+
+                    while (objResponse.IsClientConnected && intLength > 0)
                     {
-                        var intLength = objStream.Read(bytBuffer, 0, 10000);
                         objResponse.OutputStream.Write(bytBuffer, 0, intLength);
                         objResponse.Flush();
 
-                        lngDataToRead = lngDataToRead - intLength;
-                    }
-                    else
-                    {
-                        lngDataToRead = -1;
+                        intLength = objStream.Read(bytBuffer, 0, 10000);
                     }
                 }
             }

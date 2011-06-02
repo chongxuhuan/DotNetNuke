@@ -1,27 +1,24 @@
 <%@ Control Inherits="DotNetNuke.Modules.Html.Settings" CodeBehind="Settings.ascx.cs" language="C#" AutoEventWireup="false" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<table width="550" cellspacing="0" cellpadding="4" border="0" width=100%>
-	<tr>
-		<td class="SubHead" width="150" valign="top"><dnn:label id="plReplaceTokens" controlname="chkReplaceTokens" runat="server" /></td>
-		<td><asp:CheckBox ID="chkReplaceTokens" runat="server" CssClass="NormalTextBox" Checked="false" /></td>
-	</tr>
-	<tr>
-		<td class="SubHead" width="150" valign="top"><dnn:label id="plWorkflow" controlname="cboWorkflow" runat="server" Text="Workflow" suffix=":" /></td>
-		<td valign="top">
-		    <asp:DropDownList ID="cboWorkflow" runat="server" CssClass="NormalTextBox" Width="300" DataTextField="WorkflowName" DataValueField="WorkflowID" AutoPostBack="True" />
-            <br /><br /><asp:Label ID="lblDescription" runat="server" CssClass="Normal"  />
-		</td>
-	</tr>
-	<tr id="rowApplyTo" runat="server">
-	    <td class="SubHead" width="150" valign="top"><dnn:label id="plApplyTo" controlname="cboWorkflow" runat="server" Text="Apply" /></td>
-	    <td valign="top">
-	        <asp:RadioButtonList ID="rblApplyTo" runat="server" RepeatDirection="Horizontal" RepeatColumns="3">
-	            <asp:ListItem Value="Module" ResourceKey="Module" />
-	            <asp:ListItem Value="Page" ResourceKey="Page" />
-	            <asp:ListItem Value="Site" ResourceKey="Site" />
-	        </asp:RadioButtonList>
-            <asp:CheckBox ID="chkReplace" runat="server" CssClass="NormalBold" resourcekey="chkReplace" Text="Replace Existing Settings?" Checked="False" />
-	    </td>
-	</tr>
-</table>
-
+<div class="dnnForm dnnHTMLSettings dnnClear">
+	<div class="dnnFormItem">
+		<dnn:label id="plReplaceTokens" controlname="chkReplaceTokens" runat="server" />
+		<asp:CheckBox ID="chkReplaceTokens" runat="server" />
+	</div>
+	<div class="dnnFormItem">
+		<dnn:label id="plWorkflow" controlname="cboWorkflow" runat="server" suffix=":" />
+		<asp:DropDownList ID="cboWorkflow" runat="server" DataTextField="WorkflowName" DataValueField="WorkflowID" AutoPostBack="True" />
+	</div>
+	<div class="dnnFormMessage dnnFormInfo">
+		<asp:Label ID="lblDescription" runat="server" />
+	</div>
+	<div class="dnnFormItem" id="divApplyTo" runat="server">
+		<dnn:label id="plApplyTo" controlname="rblApplyTo" runat="server" />
+		<asp:RadioButtonList ID="rblApplyTo" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
+			<asp:ListItem Value="Module" ResourceKey="Module" />
+			<asp:ListItem Value="Page" ResourceKey="Page" />
+			<asp:ListItem Value="Site" ResourceKey="Site" />
+		</asp:RadioButtonList>
+		<asp:CheckBox ID="chkReplace" runat="server" resourcekey="chkReplace" />
+	</div>
+</div>

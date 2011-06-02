@@ -2,8 +2,8 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<dnn:DnnToolTipManager ID="toolTipManager" runat="server" Position="Center" RelativeTo="BrowserWindow"
-    Width="500px" Height="200px" HideEvent="ManualClose" ShowEvent="OnClick" Modal="true"
+<dnn:DnnToolTipManager ID="toolTipManager" runat="server" Position="TopCenter" RelativeTo="BrowserWindow"
+    Width="620px" Height="200px" HideEvent="ManualClose" ShowEvent="OnClick" Modal="true"
     Skin="Default" RenderInPageRoot="true" AnimationDuration="200" ManualCloseButtonText="Close" />
 
 <div class="dnnForm dnnLanguages dnnClear" id="dnnLanguages">
