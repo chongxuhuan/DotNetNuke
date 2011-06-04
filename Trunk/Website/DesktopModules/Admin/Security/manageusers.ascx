@@ -8,6 +8,7 @@
 <%@ Register TagPrefix="dnn" TagName="Password" Src="~/DesktopModules/Admin/Security/Password.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Profile" Src="~/DesktopModules/Admin/Security/Profile.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="MemberServices" Src="~/DesktopModules/Admin/Security/MemberServices.ascx" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
@@ -39,8 +40,8 @@
             <fieldset>
                 <div id="titleRow" runat="server" class="dnnFormItem">
 				    <asp:label id="lblTitle" cssclass="Head" runat="server"/>
-				    <asp:image id="imgLockedOut" imageurl="~/images/icon_securityroles_16px.gif" runat="server" visible="False" />
-				    <asp:image id="imgOnline" imageurl="~/images/userOnline.gif" runat="server" visible="False" />
+				    <dnn:DnnImage id="imgLockedOut" IconKey="SecurityRoles" runat="server" visible="False" />
+				    <dnn:DnnImage id="imgOnline" IconKey="UserOnline" runat="server" visible="False" />
                 </div>
                 <div id="helpRow" runat="server" visible="false" class="dnnFormItem">
                     <asp:label id="lblUserHelp" runat="server"/>

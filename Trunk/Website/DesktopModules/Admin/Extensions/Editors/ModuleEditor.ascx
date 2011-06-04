@@ -58,8 +58,8 @@
                     <HeaderStyle CssClass="dnnGridHeader" />
                     <ItemStyle CssClass="dnnGridItem" />
                     <Columns>
-                        <dnn:imagecommandcolumn headerStyle-width="20px" CommandName="Edit" ImageUrl="~/images/edit.gif" EditMode="URL" KeyField="ModuleControlID" />
-                        <dnn:imagecommandcolumn headerStyle-width="20px" commandname="Delete" imageurl="~/images/delete.gif" keyfield="ModuleControlID" />
+                        <dnn:imagecommandcolumn headerStyle-width="20px" CommandName="Edit" IconKey="Edit" EditMode="URL" KeyField="ModuleControlID" />
+                        <dnn:imagecommandcolumn headerStyle-width="20px" commandname="Delete" IconKey="Delete" keyfield="ModuleControlID" />
                         <dnn:textcolumn  DataField="ControlKey" HeaderText="Control" />
                         <dnn:textcolumn  DataField="ControlTitle" HeaderText="Title" />
                         <dnn:textcolumn  DataField="ControlSrc" HeaderText="Source" />

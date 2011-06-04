@@ -389,13 +389,36 @@ namespace DotNetNuke.Services.Installer
         {
             var parameters = new string[3];
             parameters[0] = "rtab=" + tabId;
-            parameters[1] = "returnUrl=" + returnUrl;
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                parameters[1] = "returnUrl=" + returnUrl;
+            } 
             if (!string.IsNullOrEmpty(type))
             {
                 parameters[2] = "ptype=" + type;
             }
             var context = new ModuleInstanceContext();
             return context.EditNavUrl(tabId, "Install", false, parameters);            
+        }
+
+        public static string InstallURL(int tabId, string returnUrl, string type, string package)
+        {
+            var parameters = new string[4];
+            parameters[0] = "rtab=" + tabId;
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                parameters[1] = "returnUrl=" + returnUrl;
+            }
+            if (!string.IsNullOrEmpty(type))
+            {
+                parameters[2] = "ptype=" + type;
+            }
+            if (!string.IsNullOrEmpty(package))
+            {
+                parameters[3] = "package=" + package;
+            }
+            var context = new ModuleInstanceContext();
+            return context.EditNavUrl(tabId, "Install", false, parameters);
         }
 
         public static string UnInstallURL(int tabId, int packageId, string returnUrl)

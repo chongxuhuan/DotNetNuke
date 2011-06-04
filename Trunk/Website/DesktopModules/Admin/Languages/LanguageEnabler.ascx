@@ -70,7 +70,7 @@
                             </HeaderTemplate>
                             <ItemTemplate>
                                 <asp:HyperLink ID="editLink" runat="server" NavigateUrl='<%# GetEditUrl(Eval("LanguageId").ToString()) %>'>
-                                    <asp:Image ID="editImage" runat="server" ImageUrl="~/images/edit.gif" resourcekey="Edit" />
+                                    <dnn:DnnImage ID="editImage" runat="server" IconKey="Edit" resourcekey="Edit" />
                                 </asp:HyperLink>
                             </ItemTemplate>
                         </dnn:DnnGridTemplateColumn>
@@ -126,19 +126,19 @@
                                                 %>
                                                 <td id="Td4" style="width: 60px; border-width: 0px">
                                                     <asp:HyperLink ID="editSystemLink" runat="server" NavigateUrl='<%# GetEditKeysUrl(Eval("Code").ToString(), "System") %>'>
-                                                        <asp:Image ID="editSystemImage" runat="server" ImageUrl="~/images/edit.gif" resourcekey="System.Help" />
+                                                        <dnn:DnnImage ID="editSystemImage" runat="server" IconKey="Edit" resourcekey="System.Help" />
                                                     </asp:HyperLink>
                                                 </td>
                                                 <td id="Td3" style="width: 60px;" runat="server">
                                                     <asp:HyperLink ID="editHostLink" runat="server" NavigateUrl='<%# GetEditKeysUrl(Eval("Code").ToString(), "Host") %>'>
-                                                        <asp:Image ID="editHostImage" runat="server" ImageUrl="~/images/edit.gif" resourcekey="Host.Help" />
+                                                        <dnn:DnnImage ID="editHostImage" runat="server" IconKey="Edit" resourcekey="Host.Help" />
                                                     </asp:HyperLink>
                                                 </td>
                                                 <%
                                                 }%>
                                                 <td style="width: 60px;">
                                                     <asp:HyperLink ID="editPortalLink" runat="server" NavigateUrl='<%# GetEditKeysUrl(Eval("Code").ToString(), "Portal") %>'>
-                                                        <asp:Image ID="editPortalImage" runat="server" ImageUrl="~/images/edit.gif" resourcekey="Portal.Help" />
+                                                        <dnn:DnnImage ID="editPortalImage" runat="server" IconKey="Edit" resourcekey="Portal.Help" />
                                                     </asp:HyperLink>
                                                 </td>
                                             </tr>
@@ -153,11 +153,11 @@
                                         <%# Localization.GetString("Content.Header", this.LocalResourceFile)%></caption>
                                     <tr>
                                         <td style="width: 50px;">
-                                            <asp:Image ID="pagesImage" runat="server" ImageUrl="~/images/icon_language_16px.gif"
+                                            <dnn:DnnImage ID="pagesImage" runat="server" IconKey="Language"
                                                 resourcekey="LocalizePages" />
                                         </td>
                                         <td style="width: 50px;">
-                                            <asp:Image ID="translatedImage" runat="server" ImageUrl="~/images/translated.gif"
+                                            <dnn:DnnImage ID="translatedImage" runat="server" IconKey="Translated"
                                                 resourcekey="TranslatedPages" />
                                         </td>
                                         <td style="width: 75px;">
@@ -183,7 +183,7 @@
                                                 <br />
                                                 <span style="font-size: 0.8em">
                                                     <%# GetLocalizedStatus(Eval("Code").ToString()) %></span> </asp:PlaceHolder>
-                                            <asp:ImageButton ID="localizeButton" runat="server" ImageAlign="Middle" ImageUrl="~/images/icon_language_16px.gif"
+                                            <dnn:DnnImageButton ID="localizeButton" runat="server" ImageAlign="Middle" IconKey="Language"
                                                 CommandArgument='<%# Eval("Code") %>' Visible='<%# !IsLocalized(Eval("Code").ToString()) && CanLocalize(Eval("Code").ToString()) %>'
                                                 ResourceKey="CreateLocalizedPages" OnCommand="localizePages" />
                                         </td>
@@ -201,7 +201,7 @@
                                                 Visible='<%# IsLocalized(Eval("Code").ToString()) %>' />
                                         </td>
                                         <td style="width: 75px;">
-                                            <asp:ImageButton ID="publishButton" runat="server" ImageAlign="Middle" ImageUrl="~/images/icon_publishlanguage_16.gif"
+                                            <dnn:DnnImageButton ID="publishButton" runat="server" ImageAlign="Middle" IconKey="PublishLanguage"
                                                 CommandArgument='<%# Eval("Code") %>' Visible='<%# IsLanguageEnabled(Eval("Code").ToString()) && !IsDefaultLanguage(Eval("Code").ToString()) %>'
                                                 ResourceKey="PublishTranslatedPages" OnCommand="PublishPages" />
                                         </td>

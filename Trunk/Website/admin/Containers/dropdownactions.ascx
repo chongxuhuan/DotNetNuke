@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.UI.Containers.DropDownActions" CodeFile="DropDownActions.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <script>
 	function cmdGo_OnClick(o)
 	{
@@ -22,7 +23,7 @@
 	<tr>
 		<td nowrap>
 			<span id="spActions" runat="server"/>
-			<asp:ImageButton id="cmdGo" runat="server" ImageUrl="~/images/fwd.gif" AlternateText="Go" ToolTip="Go"></asp:ImageButton>
+			<dnn:DnnImageButton id="cmdGo" runat="server" IconKey="Fwd" AlternateText="Go" ToolTip="Go"></dnn:DnnImageButton>
 		</td>
 	</tr>
 </table>

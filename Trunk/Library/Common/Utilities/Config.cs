@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Web.Configuration;
 using System.Xml;
@@ -505,13 +506,15 @@ namespace DotNetNuke.Common.Utilities
 
         public static XmlDocument UpdateMachineKey(XmlDocument xmlConfig)
         {
-            var objSecurity = new PortalSecurity();
-            string validationKey = objSecurity.CreateKey(20);
-            string decryptionKey = objSecurity.CreateKey(24);
+            var portalSecurity = new PortalSecurity();
+            string validationKey = portalSecurity.CreateKey(20);
+            string decryptionKey = portalSecurity.CreateKey(24);
+
             XmlNode xmlMachineKey = xmlConfig.SelectSingleNode("configuration/system.web/machineKey");
             XmlUtils.UpdateAttribute(xmlMachineKey, "validationKey", validationKey);
             XmlUtils.UpdateAttribute(xmlMachineKey, "decryptionKey", decryptionKey);
-            xmlConfig = AddAppSetting(xmlConfig, "InstallationDate", DateTime.Today.ToShortDateString());
+            
+            xmlConfig = AddAppSetting(xmlConfig, "InstallationDate", DateTime.Today.ToString("d", new CultureInfo("en-US")));
             return xmlConfig;
         }
 

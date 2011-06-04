@@ -163,6 +163,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                                         package.Version = new Version(XmlUtils.GetAttributeValue(nav, "version"));
                                         package.FriendlyName = XmlUtils.GetNodeValue(nav, "friendlyName");
                                         package.Description = XmlUtils.GetNodeValue(nav, "description");
+                                        package.FileName = file.Replace(installPath + "\\", "");
 
                                         XPathNavigator foldernameNav = null;
                                         switch (package.PackageType)
@@ -225,66 +226,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
             extensionTypeRepeater.DataSource = PackageTypesList;
             extensionTypeRepeater.DataBind();
         }
-
-        //private bool InstallAuthSystems()
-        //{
-        //    return InstallPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "InstallAuthSystemError");
-        //}
-
-        //private bool InstallLanguages()
-        //{
-        //    return InstallPackageItems("Language", lstLanguages, lblLanguagesError, "InstallLanguageError");
-        //}
-
-        //private bool InstallModules()
-        //{
-        //    return InstallPackageItems("Module", lstModules, lblModulesError, "InstallModuleError");
-        //}
-
-        //private bool InstallPackageItems(string packageType, CheckBoxList list, Label errorLabel, string errorKey)
-        //{
-        //    bool success = false;
-        //    string strErrorMessage = Null.NullString;
-        //    int scriptTimeOut = Server.ScriptTimeout;
-        //    try
-        //    {
-        //        Server.ScriptTimeout = int.MaxValue;
-        //        string InstallPath = Globals.ApplicationMapPath + "\\Install\\" + packageType;
-        //        foreach (ListItem packageItem in list.Items)
-        //        {
-        //            if (packageItem.Selected)
-        //            {
-        //                success = Upgrade.InstallPackage(InstallPath + "\\" + packageItem.Value, packageType, false);
-        //                if (!success)
-        //                {
-        //                    strErrorMessage += string.Format(Localization.GetString(errorKey, LocalResourceFile), packageItem.Text);
-        //                }
-        //            }
-        //        }
-        //        success = string.IsNullOrEmpty(strErrorMessage);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        DnnLog.Debug(ex);
-        //        strErrorMessage = ex.StackTrace;
-        //    }
-        //    finally
-        //    {
-        //        Server.ScriptTimeout = scriptTimeOut;
-        //    }
-        //    if (!success)
-        //    {
-        //        errorLabel.Text += strErrorMessage;
-        //    }
-        //    return success;
-        //}
-
-        //private bool InstallSkins()
-        //{
-        //    bool skinSuccess = InstallPackageItems("Skin", lstSkins, lblSkinsError, "InstallSkinError");
-        //    bool containerSuccess = InstallPackageItems("Container", lstContainers, lblSkinsError, "InstallContainerError");
-        //    return skinSuccess && containerSuccess;
-        //}
 
         protected string FormatVersion(object version)
         {
@@ -372,7 +313,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             //cmdInstall.Click += cmdInstall_Click;
             extensionTypeRepeater.ItemDataBound += extensionTypeRepeater_ItemDataBound;
-            
 
         }
 
@@ -382,29 +322,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
             BindPackageTypes();
         }
 
-
-        //protected void cmdInstall_Click(object sender, EventArgs e)
-        //{
-        //    bool moduleSuccess;
-        //    bool skinSuccess;
-        //    bool languagesSuccess;
-        //    bool AuthSystemSuccess;
-        //    if (lstAuthSystems.SelectedIndex == Null.NullInteger && lstContainers.SelectedIndex == Null.NullInteger && lstSkins.SelectedIndex == Null.NullInteger &&
-        //        lstModules.SelectedIndex == Null.NullInteger && lstLanguages.SelectedIndex == Null.NullInteger)
-        //    {
-        //        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoneSelected", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
-        //        return;
-        //    }
-        //    moduleSuccess = InstallModules();
-        //    skinSuccess = InstallSkins();
-        //    languagesSuccess = InstallLanguages();
-        //    AuthSystemSuccess = InstallAuthSystems();
-        //    if (moduleSuccess && skinSuccess && languagesSuccess && AuthSystemSuccess)
-        //    {
-        //        Response.Redirect(Request.RawUrl, true);
-        //    }
-        //}
-
         private void extensionTypeRepeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             RepeaterItem item = e.Item;
@@ -413,125 +330,25 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 var kvp = (KeyValuePair<string, string>)e.Item.DataItem;
 
                 DataGrid extensionsGrid = item.Controls[1] as DataGrid;
+                extensionsGrid.ItemDataBound += extensionsGrid_ItemDataBound;
 
                 Localization.LocalizeDataGrid(ref extensionsGrid, LocalResourceFile); 
                 BindGrid(kvp.Value, extensionsGrid);
             }
         }
 
-        
-        protected void BtnSnowClick(object sender, EventArgs e)
+        void extensionsGrid_ItemDataBound(object sender, DataGridItemEventArgs e)
         {
-            if (CheckCanCallSnowcovered())
+            DataGridItem item = e.Item;
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                GetSnowcoveredFiles();
-            }
+                var package = (PackageInfo) e.Item.DataItem;
 
-        }
+                HyperLink installLink = (HyperLink)item.Controls[4].Controls[1];
 
-        private void GetSnowcoveredFiles()
-        {
-            string fileCheck = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-             HttpWebRequest oRequest;
-            WebResponse oResponse;
+                installLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "", package.PackageType, package.FileName);
 
-            //temp code for snowcovered feed issue
-            StreamReader sReader;
-
-            string sRequest = fileCheck;
-                
-            try
-            {
-                oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
-                oResponse = oRequest.GetResponse();
-                sReader= new StreamReader(oResponse.GetResponseStream());
-            }
-            catch (Exception)
-            {
-                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-                throw;
-            }
-            //temp code to workaround snowcovered feed issue
-
-            string returnText = sReader.ReadToEnd();
-            //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
-
-            string orderPass = "<orders>";
-            if (returnText.Contains(orderPass))
-            {
-                XmlTextReader oReader = new XmlTextReader(returnText);
-
-                grdSnow.DataSource = oReader;
-                grdSnow.DataBind();    
             }
         }
-
-        private bool CheckCanCallSnowcovered()
-        {
-            //if (SecurityPolicy.HasWebPermission()==false)
-            //{
-            //    lblMessage.Text = Localization.GetString("WebservicePermission", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-            //    return false;
-            //}
-            string cookieCheck=Localization.GetString("SnowcoveredCookie", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-            
-
-            //code added until snowcovered feed is changed
-            //string failCookie = null;
-            string failCookie = "Authenticated: False";
-            //check if logged in
-            HttpWebRequest oRequest;
-            
-            oRequest = (HttpWebRequest) GetExternalRequest(cookieCheck);
-            WebResponse oResponse;
-            oResponse = oRequest.GetResponse();
-            StreamReader sReader;
-            sReader = new StreamReader(oResponse.GetResponseStream());
-            
-            string returnText = sReader.ReadToEnd();
-            if (returnText.Contains(failCookie))
-            {
-                lblMessage.Text = Localization.GetString("SnowcoveredLogin", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-                return false;
-            }
-            
-            return true;
-        }
-
-        private HttpWebRequest GetExternalRequest(string address)
-        {
-            try
-            {
-                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-                
-                CookieContainer cookieJar = new CookieContainer();
-
-                var objRequest = (HttpWebRequest)WebRequest.Create(address);
-                objRequest.CookieContainer = cookieJar;
-                objRequest.Timeout = Host.WebRequestTimeout;
-                objRequest.UserAgent = "DotNetNuke";
-                if (!string.IsNullOrEmpty(Host.ProxyServer))
-                {
-                    WebProxy Proxy;
-                    NetworkCredential ProxyCredentials;
-                    Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
-                    if (!string.IsNullOrEmpty(Host.ProxyUsername))
-                    {
-                        ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
-                        Proxy.Credentials = ProxyCredentials;
-                    }
-                    objRequest.Proxy = Proxy;
-                }
-                return objRequest;
-            }
-            catch (Exception)
-            {
-
-                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-                return null;
-            }
-            
-        }
-       
-}
+    }
 }

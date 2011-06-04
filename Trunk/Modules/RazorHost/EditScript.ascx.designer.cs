@@ -40,13 +40,13 @@ namespace DotNetNuke.Modules.RazorHost {
         protected global::System.Web.UI.WebControls.DropDownList scriptList;
         
         /// <summary>
-        /// addNewButton control.
+        /// cmdAdd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton addNewButton;
+        protected global::System.Web.UI.WebControls.LinkButton cmdAdd;
         
         /// <summary>
         /// lblSourceFile control.

@@ -30,6 +30,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.WebControls;
 
@@ -113,7 +114,7 @@ namespace DotNetNuke.UI.Containers
             {
                 if (_ActionRoot == null)
                 {
-                    _ActionRoot = new ModuleAction(ModuleContext.GetNextActionID(), " ", "", "", "action.gif");
+                    _ActionRoot = new ModuleAction(ModuleContext.GetNextActionID(), Localization.GetString("Manage.Text", Localization.GlobalResourceFile), string.Empty, string.Empty, "manage-icn.png");
                 }
                 return _ActionRoot;
             }

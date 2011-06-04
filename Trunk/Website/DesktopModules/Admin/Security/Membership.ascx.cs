@@ -27,6 +27,7 @@ using System;
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Web.UI.WebControls;
 
 #endregion
 
@@ -61,12 +62,12 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                UserMembership _Membership = null;
+                UserMembership membership = null;
                 if (User != null)
                 {
-                    _Membership = User.Membership;
+                    membership = User.Membership;
                 }
-                return _Membership;
+                return membership;
             }
         }
 		
@@ -186,6 +187,16 @@ namespace DotNetNuke.Modules.Admin.Users
                 cmdAuthorize.Visible = !UserMembership.Approved;
                 cmdPassword.Visible = !UserMembership.UpdatePassword;
             }
+
+            if (UserMembership.LastLockoutDate.Year > 2000)
+            {
+               lastLockoutDate.Value = UserMembership.LastLockoutDate;
+            }
+            else
+            {
+                lastLockoutDate.Value = LocalizeString("Never");
+            }
+
             membershipForm.DataSource = UserMembership;
             membershipForm.DataBind();
         }

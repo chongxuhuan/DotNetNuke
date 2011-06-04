@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using log4net;
+
 using Microsoft.Build.Utilities;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
@@ -25,20 +20,22 @@ namespace DotNetNuke.MSBuild.Tasks
             Root = @"$/DotNetNuke/src/DotNetNuke_CS/";
             Committer = "MAXIMUMASPLOCAL\\DED275DNETCCNet";
 
+#pragma warning disable 612,618
             TeamFoundationServer tfs = TeamFoundationServerFactory.GetServer(Server);
-            VersionControlServer vcs = (VersionControlServer)tfs.GetService(typeof(VersionControlServer));
+#pragma warning restore 612,618
+            var vcs = (VersionControlServer)tfs.GetService(typeof(VersionControlServer));
 
             string path = Root;
             VersionSpec version = VersionSpec.Latest;
-            int deletionId = 0;
-            RecursionType recursion = RecursionType.Full;
+            const int deletionId = 0;
+            const RecursionType recursion = RecursionType.Full;
             string user = null;// "mahesh_lambe";
             VersionSpec versionFrom = null; // VersionSpec.ParseSingleSpec("115894", "mahesh_lambe"); //keep it 'null' for first version
             VersionSpec versionTo = null; // VersionSpec.ParseSingleSpec("109014", "mahesh_lambe"); //keep it 'null' for latest version
-            int maxCount = 100;// Int32.MaxValue;
-            bool includeChanges = true;
-            bool slotMode = true;
-            bool includeDownloadInfo = true;
+            const int maxCount = 100;
+            const bool includeChanges = true;
+            const bool slotMode = true;
+            const bool includeDownloadInfo = true;
 
             IEnumerable enumerable =
               vcs.QueryHistory(path,
@@ -72,26 +69,5 @@ namespace DotNetNuke.MSBuild.Tasks
             }
             return true;
         }
-
-        private void LogFormat(string level, string message, params object[] args)
-        {
-            if (BuildEngine != null)
-            {
-                switch (level)
-                {
-                    case "Message":
-                        Log.LogMessage(message, args);
-                        break;
-                    case "Error":
-                        Log.LogError(message, args);
-                        break;
-                }
-            }
-            else
-            {
-                Debug.Print(message, args);
-            }
-        }
-
     }
 }

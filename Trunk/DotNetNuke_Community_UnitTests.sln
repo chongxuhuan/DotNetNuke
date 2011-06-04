@@ -431,7 +431,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks", 
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 62
+		SccNumberOfProjects = 63
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -675,6 +675,10 @@ Global
 		SccProjectTopLevelParentUniqueName61 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName61 = Modules/Commerce
 		SccLocalPath61 = Modules\\Commerce
+		SccProjectUniqueName62 = BuildScripts\\DotNetNuke.MSBuild.Tasks\\DotNetNuke.MSBuild.Tasks.csproj
+		SccProjectTopLevelParentUniqueName62 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName62 = BuildScripts/DotNetNuke.MSBuild.Tasks
+		SccLocalPath62 = BuildScripts\\DotNetNuke.MSBuild.Tasks
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET

@@ -9,7 +9,7 @@
 	    <asp:datagrid id="dgLogTypeConfigInfo" runat="server" autogeneratecolumns="false" cellpadding="4" datakeyfield="ID" border="0">
 		    <itemstyle horizontalalign="Left" />
 		    <columns>
-		        <dnn:imagecommandcolumn CommandName="Edit" ImageUrl="~/images/edit.gif" KeyField="ID" />
+		        <dnn:imagecommandcolumn CommandName="Edit" IconKey="Edit" KeyField="ID" />
 			    <asp:boundcolumn headertext="LogType" datafield="LogTypeFriendlyName" />
 			    <asp:boundcolumn headertext="Portal" datafield="LogTypePortalID" />
 			    <asp:boundcolumn headertext="Active" datafield="LoggingIsActive" />

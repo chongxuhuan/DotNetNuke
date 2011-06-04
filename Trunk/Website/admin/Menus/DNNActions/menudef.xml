@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+  <template relativeTo="DDRMenu">[DDRMENU]/DefaultTemplate.xslt</template>
+  <scripts>
+    <script jsObject="DDRjQuery" />
+    <script jsObject="DDR.Menu.Providers.Mega1">Mega1Menu.min.js</script>
+  </scripts>
+  <defaultClientOptions>
+    <clientOption name="MenuStyle" type="string" value="Mega1" />
+    <clientOption name="Columns" type="number" value="3" />
+  </defaultClientOptions>
+</manifest>

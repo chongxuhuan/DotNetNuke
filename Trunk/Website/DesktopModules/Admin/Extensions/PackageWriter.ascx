@@ -41,7 +41,7 @@
                 <div class="dnnFormItem">
                     <dnn:Label ID="plBasePath" runat="server" ControlName="txtBasePath" />
                     <asp:TextBox ID="txtBasePath" runat="server" />
-                    <dnn:CommandButton ID="cmdGetFiles" runat="server" ResourceKey="cmdGetFiles" ImageUrl="~/images/action_refresh.gif" class="dnnSecondaryAction" />
+                    <dnn:CommandButton ID="cmdGetFiles" runat="server" ResourceKey="cmdGetFiles" IconKey="ActionRefresh" class="dnnSecondaryAction" />
                 </div>
                 <div class="dnnFormItem"><asp:CheckBox ID="chkIncludeSource" runat="server" resourceKey="chkIncludeSource" TextAlign="Left" /></div>
                 <div class="dnnFormItem extPWMiltiLine"><asp:TextBox ID="txtFiles" runat="server" TextMode="MultiLine" Rows="25" /></div>

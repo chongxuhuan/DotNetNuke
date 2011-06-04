@@ -48,7 +48,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
     /// </history>
     public partial class Extensions : ModuleUserControlBase, IActionable
     {
-
         #region Protected Methods
 
         protected override void OnInit(EventArgs e)
@@ -69,6 +68,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 availableExtensionsTab.Visible = true;
                 availableExtensionsControl.Visible = true;
                 availableExtensionsTabExpand.Visible = true;
+            }
+
+            var snowCoveredUri = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+
+            if (!String.IsNullOrEmpty(snowCoveredUri) && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
+            {
+                purchasedExtensionsControl.LocalResourceFile = LocalResourceFile;
+                purchasedExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
+                purchasedExtensionsTab.Visible = true;
+                purchasedExtensionsControl.Visible = true;
             }
 
             var appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");

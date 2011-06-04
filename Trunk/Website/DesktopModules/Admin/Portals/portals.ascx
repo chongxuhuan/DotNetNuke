@@ -17,8 +17,8 @@
 	<footerstyle cssclass="dnnGridFooter" />
 	<pagerstyle cssclass="dnnGridPager" />
     <Columns>
-		<dnn:imagecommandcolumn CommandName="Edit" ImageUrl="~/images/edit.gif" EditMode="URL" KeyField="PortalID" />
-		<dnn:imagecommandcolumn commandname="Delete" imageurl="~/images/delete.gif" keyfield="PortalID" />
+		<dnn:imagecommandcolumn CommandName="Edit" IconKey="Edit" EditMode="URL" KeyField="PortalID" />
+		<dnn:imagecommandcolumn commandname="Delete" IconKey="Delete" keyfield="PortalID" />
         <asp:TemplateColumn HeaderText="PortalId">
             <ItemTemplate>
                 <asp:Label ID="lblPortalId" runat="server" Text='<%# DataBinder.Eval(Container.DataItem, "PortalId") %>' />

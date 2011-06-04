@@ -41,12 +41,22 @@
                     <controlKey>Edit</controlKey>
                     <controlSrc>DesktopModules/RazorModules/RazorHost/EditScript.ascx</controlSrc>
                     <supportsPartialRendering>True</supportsPartialRendering>
-                    <controlTitle>Edit Script</controlTitle>
+                    <controlTitle>Edit Razor Script</controlTitle>
                     <controlType>Host</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
                   </moduleControl>
+                  <moduleControl>
+                    <controlKey>Add</controlKey>
+                    <controlSrc>DesktopModules/RazorModules/RazorHost/AddScript.ascx</controlSrc>
+                    <supportsPartialRendering>True</supportsPartialRendering>
+                    <controlTitle>Add Razor Script</controlTitle>
+                    <controlType>Host</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>                 
                   <moduleControl>
                     <controlKey>CreateModule</controlKey>
                     <controlSrc>DesktopModules/RazorModules/RazorHost/CreateModule.ascx</controlSrc>
@@ -130,6 +140,10 @@
             <file>
               <path>App_LocalResources</path>
               <name>EditScript.ascx.resx</name>
+            </file>
+            <file>
+              <path>App_LocalResources</path>
+              <name>CreateModule.ascx.resx</name>
             </file>
             <file>
               <path>App_LocalResources</path>

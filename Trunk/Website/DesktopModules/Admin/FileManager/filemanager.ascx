@@ -6,6 +6,7 @@
 <%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnntv" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke.WebControls" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 
 <script language="javascript" type="text/javascript">
 //Localization Vars
@@ -490,7 +491,7 @@ function gridCheckAll(sender) {
 			<table class="FileManager_Explorer" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
 					<td class="FileManager_Header" style="vertical-align:middle">
-					    <asp:ImageButton ID="lnkSyncFolders" runat="server" ImageUrl="~/images/FileManager/ToolBarSynchronizeEnabled.gif" ToolTip="Synchronize Folders" />
+					    <dnn:DnnImageButton ID="lnkSyncFolders" runat="server" IconKey="SynchronizeEnabled" ToolTip="Synchronize Folders" />
 					    <asp:label id="lblFolders" Runat="server" EnableViewState="False" resourcekey="Folders" Width="100%" CssClass="SubHead"/>
 					</td>
 				</tr>
@@ -566,25 +567,25 @@ function gridCheckAll(sender) {
 								<asp:TemplateColumn>
 									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
 									<ItemTemplate>
-										<asp:ImageButton Runat="server" ID="lnkEditFile" Visible = '<%# HasPermission("MANAGE") %>' OnCommand="lnkEditFile_Command" resourcekey="RenameFileImg.AlternateText" ImageUrl="~/images/FileManager/DNNExplorer_Edit.gif"  />
+										<dnn:DnnImageButton Runat="server" ID="lnkEditFile" Visible = '<%# HasPermission("MANAGE") %>' OnCommand="lnkEditFile_Command" resourcekey="RenameFileImg.AlternateText" IconKey="Edit"  />
 									</ItemTemplate>
 									<EditItemTemplate>
-										<asp:ImageButton Runat="server" ID="lnkOkRename" OnCommand="lnkOkRename_Command" resourcekey="SaveChangesImg.AlternateText" ImageUrl="~/images/FileManager/DNNExplorer_OK.gif" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
+										<dnn:DnnImageButton Runat="server" ID="lnkOkRename" OnCommand="lnkOkRename_Command" resourcekey="SaveChangesImg.AlternateText" IconKey="Save" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
 									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
 									<ItemTemplate>
-										<asp:ImageButton Runat="server" ID="lnkDeleteFile" Visible = '<%# HasPermission("DELETE") %>' OnCommand="lnkDeleteFile_Command" resourcekey="DeleteFileImg.AlternateText" ImageUrl="~/images/FileManager/DNNExplorer_trash.gif" CommandName='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
+										<dnn:DnnImageButton Runat="server" ID="lnkDeleteFile" Visible = '<%# HasPermission("DELETE") %>' OnCommand="lnkDeleteFile_Command" resourcekey="DeleteFileImg.AlternateText" IconKey="Trash" CommandName='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</ItemTemplate>
 									<EditItemTemplate>
-										<asp:ImageButton Runat="server" ID="lnkCancelRename" OnCommand="lnkCancelRename_Command" resourcekey="CancelRenameImg.AlternateText" ImageUrl="~/images/FileManager/DNNExplorer_Cancel.gif" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
+										<dnn:DnnImageButton Runat="server" ID="lnkCancelRename" OnCommand="lnkCancelRename_Command" resourcekey="CancelRenameImg.AlternateText" IconKey="Cancel" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
 									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
 									<ItemTemplate>
-										<asp:image id="lnkUnzip" style="CURSOR: pointer" runat="server" Visible = '<%# HasPermission("ADD,COPY") %>' name="lnkMove" ImageUrl="~/images/FileManager/DNNExplorer_Unzip.gif" resourcekey="UnzipFileImg.AlternateText" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' extension='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' />
+										<dnn:DnnImage id="lnkUnzip" style="CURSOR: pointer" runat="server" Visible = '<%# HasPermission("ADD,COPY") %>' name="lnkMove" IconKey="Unzip" resourcekey="UnzipFileImg.AlternateText" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' extension='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' />
 									</ItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="center">

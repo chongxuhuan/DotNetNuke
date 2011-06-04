@@ -45,13 +45,21 @@ namespace DotNetNuke.MSBuild.Tasks
                                 select new
                                            {
                                                Path = file.Element("path"),
-                                               Name = file.Element("name").Value
+                                               Name = file.Element("name").Value,
+                                               SourceFileName = file.Element("sourceFileName")
                                            };
                     foreach (var file in files)
                     {
                         string filename;
-                        filename = file.Path != null ? string.Format("{0}\\{1}", file.Path.Value, file.Name) : file.Name;
-                        var item = new TaskItem( filename);
+                        if (file.SourceFileName != null)
+                        {
+                            filename = file.SourceFileName.Value;
+                        }
+                        else
+                        {
+                            filename = file.Path != null ? string.Format("{0}\\{1}", file.Path.Value, file.Name) : file.Name;
+                        }
+                        var item = new TaskItem(filename);
                         packageFiles.Add(item);
                     }
                 }

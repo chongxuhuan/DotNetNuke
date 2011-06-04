@@ -568,7 +568,7 @@
         </div>
         <div>
             <asp:DropDownList ID="cboVersion" runat="server" />
-            <dnn:CommandButton ID="cmdUpgrade" ResourceKey="cmdGo" runat="server" ImageUrl="~/images/view.gif"
+            <dnn:CommandButton ID="cmdUpgrade" ResourceKey="cmdGo" runat="server" IconKey="View"
                 CausesValidation="false" />
         </div>
         <div>

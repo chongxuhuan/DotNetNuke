@@ -58,13 +58,13 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         protected global::System.Web.UI.WebControls.LinkButton saveVocabulary;
         
         /// <summary>
-        /// deleteVocabulary control.
+        /// addTermButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton deleteVocabulary;
+        protected global::System.Web.UI.WebControls.LinkButton addTermButton;
         
         /// <summary>
         /// cancelEdit control.
@@ -76,13 +76,13 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         protected global::System.Web.UI.WebControls.HyperLink cancelEdit;
         
         /// <summary>
-        /// addTermButton control.
+        /// deleteVocabulary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton addTermButton;
+        protected global::System.Web.UI.WebControls.LinkButton deleteVocabulary;
         
         /// <summary>
         /// pnlTermEditor control.
@@ -121,15 +121,6 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         protected global::System.Web.UI.WebControls.LinkButton saveTermButton;
         
         /// <summary>
-        /// deleteTermButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton deleteTermButton;
-        
-        /// <summary>
         /// cancelTermButton control.
         /// </summary>
         /// <remarks>
@@ -137,5 +128,14 @@ namespace DotNetNuke.Modules.Taxonomy.Views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton cancelTermButton;
+        
+        /// <summary>
+        /// deleteTermButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton deleteTermButton;
     }
 }

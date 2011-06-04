@@ -9,7 +9,7 @@
                 <dnn:DnnGridTemplateColumn UniqueName="EditItem">
                     <ItemTemplate>
                         <asp:HyperLink ID="hlEdit" runat="server">
-                            <asp:Image ImageUrl="~/images/edit.gif" id="imgEdit" runat="server" />
+                            <dnn:DnnImage IconKey="Edit" id="imgEdit" runat="server" />
                         </asp:HyperLink>
                     </ItemTemplate>
                 </dnn:DnnGridTemplateColumn>

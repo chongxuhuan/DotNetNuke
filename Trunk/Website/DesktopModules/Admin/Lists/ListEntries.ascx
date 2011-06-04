@@ -2,6 +2,7 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnntv" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke.WebControls" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnListEntries dnnClear">
     <div id="rowListdetails" runat="server">
         <div id="rowListParent" runat="server" class="dnnFormItem">
@@ -31,18 +32,18 @@
 	        <footerstyle cssclass="dnnGridFooter" />
 	        <pagerstyle cssclass="dnnGridPager" />
 			<Columns>
-				<dnn:ImageCommandColumn CommandName="Edit" ImageURL="~/images/edit.gif" EditMode="Command" KeyField="EntryID" />
-				<dnn:ImageCommandColumn CommandName="Delete" ImageURL="~/images/delete.gif" EditMode="Command" KeyField="EntryID" />
+				<dnn:ImageCommandColumn CommandName="Edit" IconKey="Edit" EditMode="Command" KeyField="EntryID" />
+				<dnn:ImageCommandColumn CommandName="Delete" IconKey="Delete" EditMode="Command" KeyField="EntryID" />
 				<asp:BoundColumn DataField="Text" HeaderText="Text" />
 				<asp:BoundColumn DataField="Value" HeaderText="Value" />
 				<asp:TemplateColumn>
 					<ItemTemplate>
-						<asp:ImageButton ID="btnUp" Visible="<%# EnableSortOrder %>" ImageUrl="~/Images/up.gif" runat="server" AlternateText="Move entry up" resourcekey="btnUp.AlternateText" 	CommandName="up" />
+						<dnn:DnnImageButton ID="btnUp" Visible="<%# EnableSortOrder %>" IconKey="Up" runat="server" AlternateText="Move entry up" resourcekey="btnUp.AlternateText" 	CommandName="up" />
 					</ItemTemplate>
 				</asp:TemplateColumn>
 				<asp:TemplateColumn>
 					<ItemTemplate>
-						<asp:ImageButton ID="btnDown" Visible="<%# EnableSortOrder %>" ImageUrl="~/Images/dn.gif" runat="server" AlternateText="Move entry down" resourcekey="btnDown.AlternateText" CommandName="down" />
+						<dnn:DnnImageButton ID="btnDown" Visible="<%# EnableSortOrder %>" IconKey="Dn" runat="server" AlternateText="Move entry down" resourcekey="btnDown.AlternateText" CommandName="down" />
 					</ItemTemplate>
 				</asp:TemplateColumn>
 			</Columns>

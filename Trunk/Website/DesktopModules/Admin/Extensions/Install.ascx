@@ -28,7 +28,7 @@
         </StepNavigationTemplate>
         <FinishNavigationTemplate>
             <ul class="dnnActions dnnClear">
-    	        <li><asp:LinkButton id="finishButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="Cancel" resourcekey="Return" /></li>
+    	        <li><asp:LinkButton id="finishButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveComplete" resourcekey="Return" /></li>
             </ul>
         </FinishNavigationTemplate>
         <WizardSteps>
@@ -94,7 +94,7 @@
             </asp:WizardStep>
             <asp:WizardStep ID="Step5" runat="Server" Title="InstallResults" StepType="Finish">
                 <div class="dnnFormMessage dnnFormValidationSummary" id="lblInstallMessageRow" runat="server"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" /></div>
-                <div class="dnnFormItem dnnClear"><asp:PlaceHolder ID="phInstallLogs" runat="server" /></div>
+                <div class="dnnFormItem dnnInstallLogs dnnClear"><asp:PlaceHolder ID="phInstallLogs" runat="server" /></div>
             </asp:WizardStep>
         </WizardSteps>
     </asp:Wizard>

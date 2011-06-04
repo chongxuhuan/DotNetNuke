@@ -41,17 +41,17 @@ namespace DotNetNuke.UI.UserControls
 {
     public abstract class ModuleAuditControl : UserControl
     {
-        private string MyFileName = "ModuleAuditControl.ascx";
-        private string _SystemUser = Localization.GetString("SystemUser");
+        private const string MyFileName = "ModuleAuditControl.ascx";
+        private string _systemUser;
         protected Label lblCreatedBy;
         protected Label lblUpdatedBy;
 
         public ModuleAuditControl()
         {
-            LastModifiedDate = string.Empty;
-            LastModifiedByUser = string.Empty;
-            CreatedByUser = "";
-            CreatedDate = "";
+            LastModifiedDate = String.Empty;
+            LastModifiedByUser = String.Empty;
+            CreatedByUser = String.Empty;
+            CreatedDate = String.Empty;
         }
 
         public string CreatedDate { private get; set; }
@@ -77,7 +77,7 @@ namespace DotNetNuke.UI.UserControls
                     LastModifiedByUser = Entity.LastModifiedByUserID.ToString();
                     LastModifiedDate = Entity.LastModifiedOnDate.ToString();
                 }
-				
+
                 //check to see if updated check is redundant
                 bool isCreatorAndUpdater = false;
                 if (Regex.IsMatch(CreatedByUser, "^\\d+$") && Regex.IsMatch(LastModifiedByUser, "^\\d+$") && CreatedByUser == LastModifiedByUser)
@@ -85,8 +85,8 @@ namespace DotNetNuke.UI.UserControls
                     isCreatorAndUpdater = true;
                 }
 
-				_SystemUser = Localization.GetString("SystemUser", Localization.GetResourceFile(this, MyFileName));
-				ShowCreatedString();
+                _systemUser = Localization.GetString("SystemUser", Localization.GetResourceFile(this, MyFileName));
+                ShowCreatedString();
                 ShowUpdatedString(isCreatorAndUpdater);
             }
             catch (Exception exc) //Module failed to load
@@ -95,38 +95,36 @@ namespace DotNetNuke.UI.UserControls
             }
         }
 
-        private string ShowCreatedString()
+        private void ShowCreatedString()
         {
             if (Regex.IsMatch(CreatedByUser, @"^-?\d+$"))
             {
                 if (int.Parse(CreatedByUser) == Null.NullInteger)
                 {
-                    CreatedByUser = _SystemUser;
+                    CreatedByUser = _systemUser;
                 }
                 else
                 {
-					//contains a UserID
-                    var objUsers = new UserController();
-                    UserInfo objUser = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(CreatedByUser));
-                    if (objUser != null)
+                    //contains a UserID
+                    UserInfo userInfo = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(CreatedByUser));
+                    if (userInfo != null)
                     {
-                        CreatedByUser = objUser.DisplayName;
+                        CreatedByUser = userInfo.DisplayName;
                     }
                 }
             }
-            string str = Localization.GetString("CreatedBy", Localization.GetResourceFile(this, MyFileName));
-            lblCreatedBy.Text = string.Format(str, CreatedByUser, CreatedDate);
-            return str;
+            string createdString = Localization.GetString("CreatedBy", Localization.GetResourceFile(this, MyFileName));
+            lblCreatedBy.Text = string.Format(createdString, CreatedByUser, CreatedDate);
+
         }
 
         private void ShowUpdatedString(bool isCreatorAndUpdater)
         {
-			//check to see if audit contains update information
+            //check to see if audit contains update information
             if (string.IsNullOrEmpty(LastModifiedDate))
             {
                 return;
             }
-            string str = string.Empty;
 
             if (Regex.IsMatch(LastModifiedByUser, @"^-?\d+$"))
             {
@@ -136,22 +134,21 @@ namespace DotNetNuke.UI.UserControls
                 }
                 else if (int.Parse(LastModifiedByUser) == Null.NullInteger)
                 {
-                    LastModifiedByUser = _SystemUser;
+                    LastModifiedByUser = _systemUser;
                 }
                 else
                 {
-					//contains a UserID
-                    var objUsers = new UserController();
-                    UserInfo objUser = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(LastModifiedByUser));
-                    if (objUser != null)
+                    //contains a UserID
+                    UserInfo userInfo = UserController.GetUserById(PortalController.GetCurrentPortalSettings().PortalId, int.Parse(LastModifiedByUser));
+                    if (userInfo != null)
                     {
-                        LastModifiedByUser = objUser.DisplayName;
+                        LastModifiedByUser = userInfo.DisplayName;
                     }
                 }
             }
-            
-            str = Localization.GetString("UpdatedBy", Localization.GetResourceFile(this, MyFileName));
-            lblUpdatedBy.Text = string.Format(str, LastModifiedByUser, LastModifiedDate);
+
+            string updatedByString = Localization.GetString("UpdatedBy", Localization.GetResourceFile(this, MyFileName));
+            lblUpdatedBy.Text = string.Format(updatedByString, LastModifiedByUser, LastModifiedDate);
         }
     }
 }

@@ -288,6 +288,8 @@ namespace DotNetNuke.Modules.Admin.Vendors
             ddlRecordsPerPage.SelectedIndexChanged += OnRecordsPerPageIndexChanged;
             btnSearch.Click += OnSearchClick;
 
+			ClientAPI.RegisterKeyCapture(txtSearch, btnSearch, 13);
+
             try
             {
             	AddActionHandler(OnModuleActionClick);

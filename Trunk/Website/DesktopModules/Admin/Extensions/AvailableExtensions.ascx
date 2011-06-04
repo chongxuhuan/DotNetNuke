@@ -19,10 +19,15 @@
                         <dnn:textcolumn headerStyle-width="150px" DataField="FriendlyName" HeaderText="Name" />
                         <dnn:textcolumn headerStyle-width="275px" ItemStyle-HorizontalAlign="Left" DataField="Description" HeaderText="Description" />
                         <asp:TemplateColumn HeaderText="Version" >
-                            <HeaderStyle HorizontalAlign="Left" Wrap="False" Width="40px"/>
+                            <HeaderStyle HorizontalAlign="Left" Wrap="False" Width="75px"/>
                             <ItemStyle HorizontalAlign="Left"/>
                             <ItemTemplate>
                                 <asp:Label ID="lblVersion" runat="server" Text='<%# FormatVersion(Container.DataItem) %>' />
+                            </ItemTemplate>
+                        </asp:TemplateColumn>
+                        <asp:TemplateColumn headerStyle-width="75px">
+                            <ItemTemplate>
+                                    <asp:HyperLink id="cmdInstall" runat="server" CssClass="dnnPrimaryAction" ResourceKey="installExtension" />
                             </ItemTemplate>
                         </asp:TemplateColumn>
                     </Columns>
@@ -31,7 +36,3 @@
         </div>
     </ItemTemplate>
 </asp:Repeater>
-<p><dnn:commandbutton id="cmdInstall" runat="server" CssClass="CommandButton" IconKey="Save" ResourceKey="cmdInstall" /></p>
-<asp:Button ID="btnSnow" runat="server" Text="Snowcovered records" onclick="BtnSnowClick" />
-<asp:Label ID="lblMessage" runat="server" Text=""></asp:Label>
-<asp:GridView ID="grdSnow" runat="server"></asp:GridView>

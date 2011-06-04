@@ -18,8 +18,8 @@
    </NodeTemplate>
 </dnn:DnnTreeView>
 <div>
-    <dnn:CommandButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="CommandButton" ImageUrl="~/images/Modulebind.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
-    <dnn:CommandButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="CommandButton" ImageUrl="~/images/moduleunbind.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
+    <dnn:CommandButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="CommandButton"  IconKey="ModuleBind" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
+    <dnn:CommandButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="CommandButton" IconKey="ModuleUnbind" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
     <dnn:CommandButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/translate.gif" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
-    <dnn:CommandButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="CommandButton" ImageUrl="~/images/untranslate.gif" CausesValidation="False" />
+    <dnn:CommandButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="CommandButton" IconKey="Untranslate" CausesValidation="False" />
 </div>

@@ -98,18 +98,18 @@
 							<HeaderTemplate>
 								<table cellpadding="2px" class="DnnGridNestedTable">
 									<tr>
-										<td><asp:Image ID="imgDelete" runat="server" ImageUrl="~/images/action_delete.gif" resourcekey="VersionsRemove" /></td>
-										<td><asp:Image ID="imgPreview" runat="server" ImageUrl="~/images/view.gif"  resourcekey="VersionsPreview" /></td>
-										<td><asp:Image ID="imgRollback" runat="server" ImageUrl="~/images/restore.gif"  resourcekey="VersionsRollback" /></td>
+										<td><dnnweb:DnnImage ID="imgDelete" runat="server" IconKey="ActionDelete" resourcekey="VersionsRemove" /></td>
+										<td>dnnweb:DnnImage ID="imgPreview" runat="server" IconKey="View"  resourcekey="VersionsPreview" /></td>
+										<td><dnnweb:DnnImage ID="imgRollback" runat="server" IconKey="Restore"  resourcekey="VersionsRollback" /></td>
 									</tr>
 								</table>
 							</HeaderTemplate>
 							<ItemTemplate>
 								<table cellpadding="2px" class="DnnGridNestedTable">
 									<tr style="vertical-align: top;">
-										<td><asp:ImageButton ID="btnRemove" runat="server" CommandName="Remove" ImageUrl="~/images/action_delete.gif" Text="Delete" resourcekey="VersionsRemove" /></td>
-										<td><asp:ImageButton ID="btnPreview" runat="server" CommandName="Preview"  ImageUrl="~/images/view.gif" Text="Preview" resourcekey="VersionsPreview" /></td>
-										<td><asp:ImageButton ID="btnRollback" runat="server" CommandName="RollBack" ImageUrl="~/images/restore.gif" Text="Rollback" resourcekey="VersionsRollback" /></td>
+										<td><dnnweb:DnnImageButton ID="btnRemove" runat="server" CommandName="Remove" IconKey="ActionDelete" Text="Delete" resourcekey="VersionsRemove" /></td>
+										<td><dnnweb:DnnImageButton ID="btnPreview" runat="server" CommandName="Preview"  IconKey="View" Text="Preview" resourcekey="VersionsPreview" /></td>
+										<td><dnnweb:DnnImageButton ID="btnRollback" runat="server" CommandName="RollBack" IconKey="Restore" Text="Rollback" resourcekey="VersionsRollback" /></td>
 									</tr>
 								</table>
 							</ItemTemplate>

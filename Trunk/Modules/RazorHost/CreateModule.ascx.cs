@@ -251,7 +251,6 @@ namespace DotNetNuke.Modules.RazorHost
         private void DisplayFile()
         {
             string scriptFile = string.Format(razorScriptFileFormatString, scriptList.SelectedValue);
-            string srcFile = Server.MapPath(scriptFile);
 
             lblSourceFile.Text = string.Format(Localization.GetString("SourceFile", LocalResourceFile), scriptFile);
             lblModuleControl.Text = string.Format(Localization.GetString("SourceControl", LocalResourceFile), ModuleControl);

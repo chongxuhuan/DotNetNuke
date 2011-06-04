@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.UI.Skins.Controls.Search" CodeFile="Search.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <span id="ClassicSearch" runat="server" visible="true">
   <asp:RadioButton ID="WebRadioButton" runat="server" CssClass="SkinObject" GroupName="Search" />
   <asp:RadioButton ID="SiteRadioButton" runat="server" CssClass="SkinObject" GroupName="Search" />
@@ -9,7 +10,7 @@
 <div id="DropDownSearch" runat="server" class="SearchContainer" visible="false">
   <div class="SearchBorder">
   <div id="SearchIcon" class="SearchIcon" onclick="document.getElementById('SearchChoices').style.display='block'" >
-    <asp:Image ID="downArrow" runat="server" ImageUrl="~/images/action.gif" />
+    <dnn:DnnImage ID="downArrow" runat="server" IconKey="Action" />
   </div>
   <asp:TextBox ID="txtSearchNew" runat="server" CssClass="SearchTextBox" MaxLength="255" EnableViewState="False"></asp:TextBox>&nbsp;
   <ul id="SearchChoices">

@@ -1159,7 +1159,10 @@ Sincerely,
   <data name="UnTranslate.Action" xml:space="preserve">
     <value>Mark Not Translated</value>
   </data>
-  <data name="SearchCrawler Admin.String">
+  <data name="SearchCrawler Admin.String" xml:space="preserve">
     <value>SearchCrawler Admin</value>
+  </data>
+  <data name="Manage.Text" xml:space="preserve">
+    <value>Manage</value>
   </data>
 </root>

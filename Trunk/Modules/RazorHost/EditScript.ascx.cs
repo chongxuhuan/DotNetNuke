@@ -25,7 +25,6 @@
 
 using System;
 using System.IO;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
@@ -34,8 +33,6 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
-
-using Telerik.Web.UI;
 
 #endregion
 
@@ -53,7 +50,7 @@ namespace DotNetNuke.Modules.RazorHost
             {
                 string m_RazorScriptFile = Null.NullString;
                 var scriptFileSetting = ModuleContext.Settings["ScriptFile"] as string;
-                if (! (string.IsNullOrEmpty(scriptFileSetting)))
+                if (!(string.IsNullOrEmpty(scriptFileSetting)))
                 {
                     m_RazorScriptFile = string.Format(razorScriptFileFormatString, scriptFileSetting);
                 }
@@ -70,7 +67,7 @@ namespace DotNetNuke.Modules.RazorHost
             {
                 string scriptPath = script.Replace(basePath, "");
                 var item = new ListItem(scriptPath, scriptPath);
-                if (! (string.IsNullOrEmpty(scriptFileSetting)) && scriptPath.ToLowerInvariant() == scriptFileSetting.ToLowerInvariant())
+                if (!(string.IsNullOrEmpty(scriptFileSetting)) && scriptPath.ToLowerInvariant() == scriptFileSetting.ToLowerInvariant())
                 {
                     item.Selected = true;
                 }
@@ -91,7 +88,7 @@ namespace DotNetNuke.Modules.RazorHost
             txtSource.Text = objStreamReader.ReadToEnd();
             objStreamReader.Close();
 
-            if (! (string.IsNullOrEmpty(scriptFileSetting)))
+            if (!(string.IsNullOrEmpty(scriptFileSetting)))
             {
                 isCurrentScript.Checked = (scriptList.SelectedValue.ToLowerInvariant() == scriptFileSetting.ToLowerInvariant());
             }
@@ -122,22 +119,19 @@ namespace DotNetNuke.Modules.RazorHost
             cmdCancel.Click += cmdCancel_Click;
             cmdSave.Click += cmdSave_Click;
             cmdSaveClose.Click += cmdSaveClose_Click;
+            cmdAdd.Click += cmdAdd_Click;
             scriptList.SelectedIndexChanged += scriptList_SelectedIndexChanged;
-            toolTipManager.AjaxUpdate += toolTipManager_AjaxUpdate;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            if (! Page.IsPostBack)
+            if (!Page.IsPostBack)
             {
                 LoadScripts();
                 DisplayFile();
             }
-
-            //Add the enable content Localization Button to the ToolTip Manager
-            toolTipManager.TargetControls.Add(addNewButton.ID);
         }
 
         private void cmdCancel_Click(object sender, EventArgs e)
@@ -176,16 +170,24 @@ namespace DotNetNuke.Modules.RazorHost
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+       
+        private void cmdAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Response.Redirect(ModuleContext.EditUrl("Add"), true);
+            }
+            catch (Exception exc) //Module failed to load
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
 
         private void scriptList_SelectedIndexChanged(object sender, EventArgs e)
         {
             DisplayFile();
         }
 
-        protected void toolTipManager_AjaxUpdate(object sender, ToolTipUpdateEventArgs e)
-        {
-            Control ctrl = Page.LoadControl("~/DesktopModules/RazorModules/RazorHost/AddScript.ascx");
-            e.UpdatePanel.ContentTemplateContainer.Controls.Add(ctrl);
-        }
+
     }
 }

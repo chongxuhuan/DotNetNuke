@@ -25,7 +25,7 @@
         var $modal = $("#iPopUp");
         if ($modal.length == 0) {
             $modal = $("<iframe id=\"iPopUp\" src=\"about:blank\" scrolling=\"auto\" frameborder=\"0\" ></iframe>");
-            $modal.find('html').css('overflow', 'hidden');
+            $(document).find('html').css('overflow', 'hidden');
             $(document).append($modal);
         }
         $modal[0].src = url;

@@ -62,7 +62,7 @@
                                             <td style="width:49%;">
                                                 <asp:TextBox ID="txtValue" runat="server" />
                                                 <asp:HyperLink ID="lnkEdit" runat="server" NavigateUrl='<%# OpenFullEditor(Eval("key").ToString()) %>'>
-                                                    <asp:Image runat="server" AlternateText="Edit" ID="imgEdit" ImageUrl="~/images/edit.gif" resourcekey="cmdEdit" Style="vertical-align:top"></asp:Image>
+                                                    <dnn:DnnImage runat="server" AlternateText="Edit" ID="imgEdit" IconKey="Edit" resourcekey="cmdEdit" Style="vertical-align:top"></dnn:DnnImage>
                                                 </asp:HyperLink>
                                             </td>
                                         </tr>

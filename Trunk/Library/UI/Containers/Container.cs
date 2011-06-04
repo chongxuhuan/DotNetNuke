@@ -40,6 +40,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Framework;
+using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -402,6 +403,12 @@ namespace DotNetNuke.UI.Containers
             {
 				//Process Content Pane Attributes
                 ProcessContentPane();
+
+                // always add the actions menu as the first item in the content pane.
+                if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
+                {
+                    ContentPane.Controls.Add(LoadControl("~/admin/Menus/DNNActions/DDRActionsMenu.ascx"));
+                }
 
                 //Process Module Header
                 ProcessHeader();

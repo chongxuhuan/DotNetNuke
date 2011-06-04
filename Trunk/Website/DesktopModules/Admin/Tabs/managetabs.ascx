@@ -133,8 +133,8 @@
                 <div id="defaultCultureRow" runat="server" class="dnnFormItem">
                     <dnn:Label ID="defaultCultureLabel" runat="server" ControlName="defaultCultureLink"></dnn:Label>
                     <dnn:DnnLanguageLabel ID="defaultCultureLanguageLabel" runat="server"  />
-                    <dnn:CommandButton ID="viewDefaultCultureButton" runat="server" ImageUrl="~/images/view.gif" ResourceKey="view" />&nbsp;&nbsp;
-                    <dnn:CommandButton ID="editDefaultCultureButton" runat="server" ImageUrl="~/images/edit.gif" ResourceKey="edit" />
+                    <dnn:CommandButton ID="viewDefaultCultureButton" runat="server" IconKey="View" ResourceKey="view" />&nbsp;&nbsp;
+                    <dnn:CommandButton ID="editDefaultCultureButton" runat="server" IconKey="Edit" ResourceKey="edit" />
                 </div>
                 <div id="publishRow" runat="server" class="dnnFormItem" visible="false">
                     <dnn:Label ID="publishPageLabel" runat="server" ControlName="publishPageButton"></dnn:Label>
@@ -142,7 +142,7 @@
                 </div>
                 <div id="readyForTranslationRow" runat="server" visible="false" class="dnnFormItem">
                     <asp:Label ID="readyToTranslateLabel" runat="server" resourceKey="readyToTranslateLabel" />
-                    <dnn:CommandButton ID="readyForTranslationButton" runat="server" ImageUrl="~/images/icon_language_16px.gif" ResourceKey="ReadyForTranslation" />
+                    <dnn:CommandButton ID="readyForTranslationButton" runat="server" IconKey="Language" ResourceKey="ReadyForTranslation" />
                 </div>
                 <div id="localizedTabsRow" runat="server" class="dnnFormItem">
                     <asp:Label ID="localizedTabsLabel" runat="server" resourcekey="LocalizedTabs" EnableViewState="False" />

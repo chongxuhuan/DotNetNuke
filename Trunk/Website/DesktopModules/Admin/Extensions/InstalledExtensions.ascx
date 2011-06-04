@@ -2,6 +2,7 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.WebControls" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>                
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnFormMessage dnnFormInfo" id="lblUpdateRow" runat="server"><asp:Label ID="lblUpdate" runat="server" resourceKey="lblUpdate" /></div>
 <div class="dnnFormItem" id="languageSelectorRow" runat="server">
     <dnn:Label ID="plLocales" runat="server" ControlName="cboLocales" />
@@ -17,8 +18,8 @@
                     <ItemStyle CssClass="dnnGridItem" VerticalAlign="Top" />
                     <AlternatingItemStyle CssClass="dnnGridAltItem" />
                     <Columns>
-                        <dnn:imagecommandcolumn headerStyle-width="18px" CommandName="Edit" ImageUrl="~/images/edit.gif" EditMode="URL" KeyField="PackageID" />
-                        <dnn:imagecommandcolumn headerStyle-width="18px" commandname="Delete" imageurl="~/images/delete.gif" EditMode="URL" keyfield="PackageID" />
+                        <dnn:imagecommandcolumn headerStyle-width="18px" CommandName="Edit" IconKey="Edit" EditMode="URL" KeyField="PackageID" />
+                        <dnn:imagecommandcolumn headerStyle-width="18px" commandname="Delete" IconKey="Delete" EditMode="URL" keyfield="PackageID" />
 					    <asp:TemplateColumn>
                             <ItemStyle HorizontalAlign="Center" Width="32px" Height="32px"/>
                             <ItemTemplate><asp:Image ID="imgIcon" runat="server" Width="32px" Height="32px" ImageUrl='<%# GetPackageIcon(Container.DataItem) %>' ToolTip='<%# GetPackageDescription(Container.DataItem) %>' /></ItemTemplate>
@@ -30,7 +31,7 @@
                             <HeaderStyle HorizontalAlign="Left" Wrap="False" Width="18px" />
                             <ItemStyle HorizontalAlign="Left" />
                             <ItemTemplate>
-							    <asp:Image ID="imgAbout" runat="server" ToolTip='<%# GetAboutTooltip(Container.DataItem) %>' ImageUrl="~/images/about.gif" Visible='<%# ((String)(DataBinder.Eval(Container.DataItem, "PackageType")) == "Skin" || ((String)DataBinder.Eval(Container.DataItem, "PackageType")) == "Container") %>' />
+							    <dnn:DnnImage ID="imgAbout" runat="server" ToolTip='<%# GetAboutTooltip(Container.DataItem) %>' IconKey="About" Visible='<%# ((String)(DataBinder.Eval(Container.DataItem, "PackageType")) == "Skin" || ((String)DataBinder.Eval(Container.DataItem, "PackageType")) == "Container") %>' />
                             </ItemTemplate>
                         </asp:TemplateColumn>
                         <dnn:textcolumn headerStyle-width="275px" ItemStyle-HorizontalAlign="Left" DataField="Description" HeaderText="Description" />

@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Vendors.Vendors" CodeFile="Vendors.ascx.cs" %>
 <%@ Register TagPrefix="dnnsc" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnVendors dnnClear" id="dnnVendors">
     <div class="dnnFormItem">
 		<asp:TextBox id="txtSearch" Runat="server" />
@@ -40,7 +41,7 @@
 			    <ItemStyle Width="20px"></ItemStyle>
 			    <ItemTemplate>
 				    <asp:HyperLink NavigateUrl='<%# FormatURL("VendorID",DataBinder.Eval(Container.DataItem,"VendorID").ToString()) %>' Visible="<%# IsEditable %>" runat="server" ID="Hyperlink1">
-					    <asp:Image ImageUrl="~/images/edit.gif" AlternateText="Edit" Visible="<%# IsEditable %>" runat="server" ID="Hyperlink1Image" resourcekey="Edit"/>
+					    <dnn:DnnImage IconKey="Edit" AlternateText="Edit" Visible="<%# IsEditable %>" runat="server" ID="Hyperlink1Image" resourcekey="Edit"/>
 				    </asp:HyperLink>
 			    </ItemTemplate>
 		    </asp:TemplateColumn>
@@ -56,8 +57,8 @@
 		    <asp:BoundColumn DataField="Email" HeaderText="Email" />
 		    <asp:TemplateColumn HeaderText="Authorized">
 			    <ItemTemplate>
-				    <asp:Image Runat="server" ID="Image1" ImageUrl="~/images/checked.gif" Visible='<%# DataBinder.Eval(Container.DataItem,"Authorized") %>'/>
-				    <asp:Image Runat="server" ID="Image2" ImageUrl="~/images/unchecked.gif" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"Authorized") %>'/>
+				    <dnn:DnnImage Runat="server" ID="Image1" IconKey="Checked" Visible='<%# DataBinder.Eval(Container.DataItem,"Authorized") %>'/>
+				    <dnn:DnnImage Runat="server" ID="Image2" IconKey="Unchecked" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"Authorized") %>'/>
 			    </ItemTemplate>
 		    </asp:TemplateColumn>
 		    <asp:BoundColumn DataField="Banners" HeaderText="Banners" />

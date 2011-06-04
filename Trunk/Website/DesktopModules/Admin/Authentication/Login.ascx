@@ -70,7 +70,7 @@
     <asp:panel id="pnlPassword" runat="server" visible="false">
         <dnn:password id="ctlPassword" runat="server" />
         <asp:panel ID="pnlProceed" runat="Server" Visible="false">
-            <dnn:commandbutton cssClass="dnnSecondaryAction" id="cmdProceed" runat="server" resourcekey="cmdProceed" imageurl="~/images/rt.gif" />
+            <dnn:commandbutton cssClass="dnnSecondaryAction" id="cmdProceed" runat="server" resourcekey="cmdProceed"  IconKey="Rt" />
         </asp:panel>
     </asp:panel>
     <asp:panel id="pnlProfile" runat="server" visible="false">

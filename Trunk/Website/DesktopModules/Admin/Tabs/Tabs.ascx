@@ -179,9 +179,9 @@
 							</dnnweb:DnnGridTemplateColumn>
 							<dnnweb:DnnGridTemplateColumn HeaderText="Options">
 								<ItemTemplate>
-									<asp:ImageButton ID="cmdDeleteModule" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "ModuleId")%>' OnClick="CmdDeleteModuleClick" ImageUrl="images/Icon_Delete.png" resourcekey="cmdDelete" />
+									<dnnweb:DnnImageButton ID="cmdDeleteModule" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "ModuleId")%>' OnClick="CmdDeleteModuleClick" IconKey="Delete" resourcekey="cmdDelete" />
 									<a href="<%#ModuleEditUrl((int)DataBinder.Eval(Container.DataItem, "ModuleId"))%>">
-										<asp:Image ID="imgEdit" runat="server" ImageUrl="images/Icon_Edit.png" resourcekey="Edit" />
+										<dnnweb:DnnImage ID="imgEdit" runat="server" IconKey="Edit" resourcekey="Edit" />
 									</a>
 								</ItemTemplate>
 							</dnnweb:DnnGridTemplateColumn>

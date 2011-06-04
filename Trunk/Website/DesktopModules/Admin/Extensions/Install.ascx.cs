@@ -31,6 +31,7 @@ using System.Web.UI.WebControls;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
@@ -68,6 +69,19 @@ namespace DotNetNuke.Modules.Admin.Extensions
 		#endregion
 
 		#region "Protected Properties"
+
+        protected bool DeleteFile
+        {
+            get
+            {
+                return Convert.ToBoolean(ViewState["DeleteFile"]);
+            }
+            set
+            {
+                ViewState["DeleteFile"] = value;
+            }
+        }
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -349,6 +363,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
             manifestWriter.Close();
         }
 
+        private void Initialize()
+        {
+            var package = String.Empty;
+            if (!String.IsNullOrEmpty(Request.QueryString["package"]))
+            {
+                package = Request.QueryString["package"];
+            }
+
+            if (!String.IsNullOrEmpty(package))
+            {
+                LoadPackage(package);
+            }
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// This routine installs the uploaded package
@@ -399,6 +427,57 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
 
         	lblInstallMessageRow.Visible = !string.IsNullOrEmpty(lblInstallMessage.Text);
+        }
+
+        private void LoadPackage(string package)
+        {
+            var packageType = String.Empty;
+            var installFolder = String.Empty;
+
+            if (!String.IsNullOrEmpty(Request.QueryString["ptype"]))
+            {
+                packageType = Request.QueryString["ptype"];
+            }
+            switch (packageType)
+            {
+                case "Auth_System":
+                    installFolder = "AuthSystem";
+                    break;
+                case "CoreLanguagePack":
+                case "ExtensionLanguagePack":
+                    installFolder = "Language";
+                    break;
+                case "Module":
+                case "Skin":
+                case "Container":
+                case "Provider":
+                    installFolder = packageType;
+                    break;
+                default:
+                    break;
+            }
+
+            if (!String.IsNullOrEmpty(installFolder))
+            {
+                FileName = String.Format("{0}\\Install\\{1}\\{2}", Globals.ApplicationMapPath, installFolder, package);
+                if (File.Exists(FileName) &&
+                        (Path.GetExtension(FileName.ToLower()) == ".zip"
+                            || Path.GetExtension(FileName.ToLower()) == ".resources"))
+                {
+                    _Installer = new Installer(new FileStream(FileName, FileMode.Open, FileAccess.Read), 
+                                                    Globals.ApplicationMapPath, 
+                                                    true, 
+                                                    false);
+                    TempInstallFolder = Installer.TempInstallFolder;
+                    if (Installer.InstallerInfo.ManifestFile != null)
+                    {
+                        ManifestFile = Path.GetFileName(Installer.InstallerInfo.ManifestFile.TempFileName);
+                    }
+
+                    DeleteFile = true;
+                    wizInstall.ActiveStepIndex = 1;
+                }
+            }           
         }
 
         private bool ValidatePackage()
@@ -530,6 +609,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
             try
             {
                 CheckSecurity();
+
+                if(!Page.IsPostBack)
+                {
+                    Initialize();
+                }
             }
             catch (Exception exc)
             {
@@ -624,11 +708,25 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             try
             {
-                if (Installer != null)
+                if (!String.IsNullOrEmpty(TempInstallFolder) && Directory.Exists(TempInstallFolder))
                 {
-                    Installer.DeleteTempFolder();
+                    Directory.Delete(TempInstallFolder, true);
                 }
-				
+
+                if (DeleteFile)
+                {
+                    // delete file
+                    try
+                    {
+                        File.SetAttributes(FileName, FileAttributes.Normal);
+                        File.Delete(FileName);
+                    }
+                    catch (Exception exc)
+                    {
+                        DnnLog.Error(exc);
+                    }
+                }
+  				
                 //Redirect to Definitions page
                 Response.Redirect(ReturnURL, true);
             }

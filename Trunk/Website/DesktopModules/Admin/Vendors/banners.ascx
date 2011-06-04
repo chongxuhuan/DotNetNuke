@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Vendors.Banners" CodeFile="Banners.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnBanners dnnClear">
     <asp:datagrid id="grdBanners" runat="server" Width="100%" AutoGenerateColumns="false" EnableViewState="true" GridLines="None" CssClass="dnnBannersGrid">
         <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
@@ -12,8 +13,8 @@
             <asp:TemplateColumn>
                 <ItemStyle Width="20px"/>
                 <ItemTemplate>
-				    <asp:HyperLink NavigateUrl='<%# FormatURL("BannerId",DataBinder.Eval(Container.DataItem,"BannerId").ToString()) %>' runat="server" ID="Hyperlink1">
-					    <asp:image imageurl="~/images/edit.gif" resourcekey="Edit" alternatetext="Edit" runat="server" id="Hyperlink1Image" />
+				    <asp:HyperLink NavigateUrl='<%# FormatURL("BannerId",DataBinder.Eval(Container.DataItem,"BannerId").ToString()) %>' runat="server" ID="Hyperlink1">					    
+                        <dnn:DnnImage iconKey="edit" resourcekey="Edit" alternatetext="Edit" runat="server" id="Hyperlink1Image" />
 				    </asp:HyperLink>
                 </ItemTemplate>
             </asp:TemplateColumn>

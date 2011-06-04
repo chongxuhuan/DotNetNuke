@@ -88,12 +88,12 @@ namespace DotNetNuke.Modules.Taxonomy.Views
             if (isAddMode)
             {
                 termLabel.Text = Localization.GetString("NewTerm", LocalResourceFile);
-                saveTermButton.Text = "CreateTerm";
+                saveTermButton.Text = Localization.GetString("NewTerm", LocalResourceFile);
             }
             else
             {
                 termLabel.Text = Localization.GetString("CurrentTerm", LocalResourceFile);
-                saveTermButton.Text = "SaveTerm";
+                saveTermButton.Text = Localization.GetString("CurrentTerm", LocalResourceFile); 
             }
 
             deleteVocabulary.Visible = !isAddMode;
@@ -128,6 +128,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
         {
             if (AddTerm != null)
             {
+                deleteTermButton.Visible = false;
                 AddTerm(this, e);
             }
         }
@@ -176,6 +177,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views
         {
             if (SelectTerm != null)
             {
+                deleteTermButton.Visible = true;
                 SelectTerm(this, e);
             }
         }

@@ -35,8 +35,8 @@
                     <telerik:GridDragDropColumn HeaderStyle-Width="18px" />
                     <dnn:DnnGridTemplateColumn HeaderStyle-Width="60px">
                         <ItemTemplate>
-                            <dnn:commandbutton id="cmdEditMapping" runat="server" imageurl="~/images/edit.gif" commandname="Edit" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
-                            <dnn:commandbutton id="cmdDeleteMapping" runat="server" imageurl="~/images/delete.gif" commandname="Delete" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
+                            <dnn:commandbutton id="cmdEditMapping" runat="server" IconKey="Edit" commandname="Edit" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
+                            <dnn:commandbutton id="cmdDeleteMapping" runat="server" IconKey="Delete" commandname="Delete" commandargument='<%# Eval("FolderMappingID") %>' causesvalidation="false" visible='<%# Eval("IsEditable") %>' />
                         </ItemTemplate>
                     </dnn:DnnGridTemplateColumn>
                     <dnn:DnnGridBoundColumn DataField="MappingName" HeaderText="Name" />

@@ -2,23 +2,16 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<style type="text/css">
-    .RadUploadProgressArea .ruProgress { padding-top: 15px; }
-    .RadUploadProgressArea_Default .ruProgress { background-image: none; }
-    .RadUploadProgressArea_Simple .ruProgress { background-image: none; }
-</style>
-
 <div class="dnnForm dnnLanguages dnnClear" id="dnnLanguages">
     <fieldset>
-        <legend></legend>
         <div class="dnnFormItem">
-            <h2><asp:Label ID="headerLabel"  runat="server" resourceKey="header" /></h2>
+            <h2 class="dnnFormSectionHead"><asp:Label ID="headerLabel" runat="server" resourceKey="header" /></h2>
         </div>
         <div class="dnnFormItem">
             <asp:Label ID="enableLocalizationLabel" runat="server" resourceKey="enableLocalization" />
         </div>
         <div class="dnnFormItem">
-            <asp:Label ID="siteDefaultLabel" runat="server" CssClass="SubHead" resourceKey="siteDefaultLabel" />
+            <asp:Label ID="siteDefaultLabel" runat="server" resourceKey="siteDefaultLabel" />
             <dnn:DnnLanguageLabel ID="defaultLanguageLabel" runat="server"  />
         </div>
         <div class="dnnFormItem">
@@ -26,16 +19,14 @@
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">
-    	<li><asp:LinkButton id="updateButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="Update"/></li>
+    	<li><asp:LinkButton id="updateButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="Update" /></li>
     	<li><asp:LinkButton id="cancelButton" runat="server" CssClass="dnnSecondaryAction" ResourceKey="Cancel" /></li>
     </ul>
 </div>
-<br />
 <div style="text-align:center">
     <dnn:DnnProgressManager id="progressManager" runat="server" />
-    <dnn:DnnProgressArea id="pageCreationProgressArea" runat="server"  Width="100%" TimeElapsed="true"  />
+    <dnn:DnnProgressArea id="pageCreationProgressArea" runat="server" TimeElapsed="true"  />
 </div>
-
 <dnn:DnnScriptBlock ID="scriptBlock" runat="server">
 	<script type="text/javascript">
 		(function ($) {
@@ -45,4 +36,3 @@
 		}(jQuery));
 	</script>
 </dnn:DnnScriptBlock>
-           

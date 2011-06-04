@@ -4,11 +4,13 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>                
 <%@ Register TagPrefix="dnn" TagName="InstalledExtensions" Src="~/DesktopModules/Admin/Extensions/InstalledExtensions.ascx" %>                
 <%@ Register TagPrefix="dnn" TagName="AvailableExtensions" Src="~/DesktopModules/Admin/Extensions/AvailableExtensions.ascx" %>                
+<%@ Register TagPrefix="dnn" TagName="PurchasedExtensions" Src="~/DesktopModules/Admin/Extensions/PurchasedExtensions.ascx" %>    
 <%@ Register TagPrefix="dnn" TagName="MoreExtensions" Src="~/DesktopModules/Admin/Extensions/MoreExtensions.ascx" %>    
 <div class="dnnForm dnnExtensions dnnClear" id="dnnExtensions">
 	<ul class="dnnAdminTabNav dnnClear">
 		<li id="installedExtensionsTab" runat="server" visible="false"><a href="#installedExtensions"><%=LocalizeString("InstalledExtensions")%></a></li>
 		<li id="availableExtensionsTab" runat="server" visible="false"><a href="#availableExtensions"><%=LocalizeString("AvailableExtensions")%></a></li>
+		<li id="purchasedExtensionsTab" runat="server" visible="false"><a href="#purchasedExtensions"><%=LocalizeString("PurchasedExtensions")%></a></li>
 		<li id="moreExtensionsTab" runat="server" visible="false"><a href="#moreExtensions"><%=LocalizeString("MoreExtensions")%></a></li>
 	</ul>
 	<div id="installedExtensions" class="exInstalledExtensions dnnClear">
@@ -21,9 +23,14 @@
 			<dnn:AvailableExtensions id="availableExtensionsControl" runat="Server" Visible="false"/>
 		</div>
 	</div>
+    <div id="purchasedExtensions" class="exPurchasedExtensions dnnClear">
+		<div class="exmeContent dnnClear">
+		    <dnn:PurchasedExtensions id="purchasedExtensionsControl" runat="Server" Visible="false"/>
+		</div>
+    </div>
 	<div id="moreExtensions" class="exMoreExtensions dnnClear">
 		<div class="exmeContent dnnClear">
-		<dnn:MoreExtensions id="moreExtensionsControl" runat="Server" Visible="false"/>
+		    <dnn:MoreExtensions id="moreExtensionsControl" runat="Server" Visible="false"/>
 		</div>
 	</div>
 </div>

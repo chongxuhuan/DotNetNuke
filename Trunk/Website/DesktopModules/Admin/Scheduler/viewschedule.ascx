@@ -7,7 +7,7 @@
             <Columns>
                 <dnn:DnnGridTemplateColumn UniqueName="EditItem">
                     <ItemTemplate>
-                        <asp:HyperLink ID="hlEdit" runat="server"><asp:Image ImageUrl="~/images/edit.gif" id="imgEdit" runat="server" /></asp:HyperLink>
+                        <asp:HyperLink ID="hlEdit" runat="server"><dnn:DnnImage IconKey="Edit" id="imgEdit" runat="server" /></asp:HyperLink>
                     </ItemTemplate>
                 </dnn:DnnGridTemplateColumn>
                 <dnn:DnnGridBoundColumn DataField="FriendlyName" HeaderText="Name" />
@@ -24,7 +24,7 @@
                 <dnn:DnnGridTemplateColumn UniqueName="ViewHistory">
                     <ItemTemplate>
                         <asp:HyperLink ID="hlHistory" runat="server">
-                            <asp:Image ImageUrl="~/images/icon_viewScheduleHistory_16px.gif" id="imgHistory" runat="server" />
+                            <dnn:DnnImage IconKey="ScheduleHistory" id="imgHistory" runat="server" />
                         </asp:HyperLink>
                     </ItemTemplate>
                 </dnn:DnnGridTemplateColumn>

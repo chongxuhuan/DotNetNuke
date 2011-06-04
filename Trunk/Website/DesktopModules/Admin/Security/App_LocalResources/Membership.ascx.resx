@@ -189,4 +189,7 @@
   <data name="cmdPassword.Text" xml:space="preserve">
     <value>Force Password Change</value>
   </data>
+  <data name="Never.Text" xml:space="preserve">
+    <value>Never</value>
+  </data>
 </root>

@@ -1,5 +1,5 @@
 /* ===========   Extensions Module Styling   =========== */
-.dnnEditExtension, .dnnInstallExtension, .dnnUnInstallExtension, .dnnEditDefinition, .dnnForm.dnnEditModuleControl{width:100%;margin:2em auto;}
+.dnnEditExtension, .dnnInstallExtension, .dnnUnInstallExtension, .dnnEditDefinition, .dnnForm.dnnEditModuleControl{width:96%;margin:2em auto;}
     .dnnEditExtension .dnnFormItem input[type="text"], .dnnEditExtension .dnnFormItem textarea, .dnnCreateExtension .dnnFormItem input[type="text"], .dnnEditDefinition .dnnFormItem input[type="text"], .dnnEditDefinition .dnnFormItem textarea,
 	.dnnEditModuleControl .dnnFormItem input[type="text"]{min-width:35%;}
 		.dnnExtensionsPackageWriter .dnnFormItem input[type="text"]{margin-right:15px;min-width:35%;}
@@ -15,6 +15,7 @@
 #dnnExtensions .dnnGridHeader{font-size:14px;color:#333;text-shadow:1px 1px 0 #fff;background:#eee}
 	#dnnExtensions .dnnGrid td{padding:14px 10px;}
 .dnnEditDefinition .dnnFormRadioButtons{min-width:35%;}
+.dnnInstallLogs{height:350px; overflow:auto;}
 /* ===========   Extensions Module Styling   =========== */
 
 /* ===========   More Extensions Module Styling   =========== */

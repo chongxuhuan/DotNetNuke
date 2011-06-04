@@ -7,7 +7,7 @@
         <dnn:DnnFormLiteralItem ID="lastLoginDate" runat="server" DataField="LastLoginDate" />
         <dnn:DnnFormLiteralItem ID="lastActivityDate" runat="server" DataField="LastActivityDate" />
         <dnn:DnnFormLiteralItem ID="lastPasswordChangeDate" runat="server" DataField="LastPasswordChangeDate" />
-        <dnn:DnnFormLiteralItem ID="lastLockoutDate" runat="server" DataField="LastLockoutDate" />
+        <dnn:DnnFormLiteralItem ID="lastLockoutDate" runat="server" ResourceKey="LastLockoutDate" />
         <dnn:DnnFormLiteralItem ID="isOnLine" runat="server" DataField="IsOnLine" />
         <dnn:DnnFormLiteralItem ID="lockedOut" runat="server" DataField="LockedOut" />
         <dnn:DnnFormLiteralItem ID="approved" runat="server" DataField="Approved" />

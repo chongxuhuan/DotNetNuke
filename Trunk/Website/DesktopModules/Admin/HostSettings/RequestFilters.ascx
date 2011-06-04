@@ -10,8 +10,8 @@
         <table width="100%">
             <tr>
                 <td rowspan="5" valign="top">
-                    <asp:ImageButton ID="cmdEdit" runat="server" CommandName="Edit" ImageUrl="~/images/edit.gif" CausesValidation="false" />
-                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Delete" ImageUrl="~/images/delete.gif" CausesValidation="false" />
+                    <dnn:DnnImageButton ID="cmdEdit" runat="server" CommandName="Edit" IconKey="Edit" CausesValidation="false" />
+                    <dnn:DnnImageButton ID="cmdDelete" runat="server" CommandName="Delete" IconKey="Delete" CausesValidation="false" />
                 </td>
                 <td width="188"><dnn:label id="plServerVar" runat="server" controlname="lblServerVar" suffix=":" /></td>
                 <td ><asp:label runat="server" Text='<%#Eval("ServerVariable") %>' ID="lblServerVar" /></td>
@@ -42,7 +42,7 @@
             <tr>
                 <td rowspan="5" valign="top">
                     <dnn:DnnImageButton ID="cmdSave" runat="server" CommandName="Update" IconKey="Save" CssClass="dnnPrimaryAction" />
-                    <asp:ImageButton ID="cmdDelete" runat="server" CommandName="Cancel" ImageUrl="~/images/delete.gif" CssClass="dnnSecondaryAction" CausesValidation="false" />
+                    <dnn:DnnImageButton ID="cmdDelete" runat="server" CommandName="Cancel" IconKey="Delete" CssClass="dnnSecondaryAction" CausesValidation="false" />
                 </td>
                 <td width="188"><dnn:label id="plServerVar" runat="server" controlname="txtServerVar" suffix=":" /></td>
                 <td>

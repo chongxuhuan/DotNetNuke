@@ -36,6 +36,6 @@
     </div>
 </div>
 <ul class="dnnActions dnnClear">
-    <li><dnn:CommandButton ID="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" ResourceKey="cmdUpdate" ImageUrl="~/images/add.gif" ValidationGroup="vgEditFolderMapping" /></li>
+    <li><dnn:CommandButton ID="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" ResourceKey="cmdUpdate" IconKey="Add" ValidationGroup="vgEditFolderMapping" /></li>
     <li><asp:HyperLink ID="cancelHyperLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 </ul>

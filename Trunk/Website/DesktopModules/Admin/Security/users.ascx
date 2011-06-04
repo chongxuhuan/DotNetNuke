@@ -26,7 +26,7 @@
             <columns>
                 <dnn:imagecommandcolumn CommandName="Edit" IconKey="Edit" EditMode="URL" KeyField="UserID" />
                 <dnn:imagecommandcolumn commandname="Delete" IconKey="ActionDelete" keyfield="UserID" />
-                <dnn:imagecommandcolumn CommandName="UserRoles" ImageUrl="~/images/icon_securityroles_16px.gif" EditMode="URL" KeyField="UserID" />
+                <dnn:imagecommandcolumn CommandName="UserRoles" IconKey="SecurityRoles" EditMode="URL" KeyField="UserID" />
                 <dnn:imagecommandcolumn commandname="Restore" IconKey="Restore" keyfield="UserID" />
                 <dnn:imagecommandcolumn commandname="Remove" IconKey="Delete" keyfield="UserID"  />
                 <asp:templatecolumn>
@@ -70,10 +70,10 @@
                 </asp:TemplateColumn>
                 <asp:TemplateColumn HeaderText="Authorized">
                     <itemtemplate>
-                        <dnn:DnnImage Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible="False" />
-                        <dnn:DnnImage Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible="False" />
-                        <dnn:DnnImage Runat="server" ID="imgApprovedDeleted" ImageUrl="~/images/checked-disabled.gif" Visible="False" />
-                        <dnn:DnnImage Runat="server" ID="imgNotApprovedDeleted" ImageUrl="~/images/unchecked-disabled.gif" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgApproved" IconKey="Checked" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgNotApproved" IconKey="Unchecked" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgApprovedDeleted" IconKey="CheckedDisabled" Visible="False" />
+                        <dnn:DnnImage Runat="server" ID="imgNotApprovedDeleted" IconKey="UncheckedDisabled" Visible="False" />
                     </ItemTemplate>
                 </asp:TemplateColumn>
             </columns>

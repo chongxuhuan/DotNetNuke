@@ -70,7 +70,7 @@ namespace DotNetNuke.Web.UI.WebControls
             }
         }
 
-        protected object Value
+        public object Value
         {
             get { return _value; }
             set { _value = value; }

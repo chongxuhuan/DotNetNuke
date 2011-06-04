@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Vendors.Affiliates" CodeFile="Affiliates.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnAffiliates dnnClear">
     <asp:DataGrid ID="grdAffiliates" runat="server" Width="100%" AutoGenerateColumns="false" EnableViewState="true" GridLines="None" CssClass="dnnAffiliatesGrid">
         <headerstyle cssclass="dnnGridHeader" verticalalign="Top"/>
@@ -14,7 +15,7 @@
                 <ItemTemplate>
                     <asp:HyperLink NavigateUrl='<%# FormatURL("AffilId",DataBinder.Eval(Container.DataItem,"AffiliateId").ToString()) %>'
                         runat="server" ID="Hyperlink1">
-                        <asp:Image ImageUrl="~/images/edit.gif" resourcekey="Edit" AlternateText="Edit" runat="server" ID="Hyperlink1Image" />
+                        <dnn:DnnImage IconKey="Edit" resourcekey="Edit" AlternateText="Edit" runat="server" ID="Hyperlink1Image" />
                     </asp:HyperLink>
                 </ItemTemplate>
             </asp:TemplateColumn>

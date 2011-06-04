@@ -10,7 +10,10 @@
     <Unzip ZipFileName="$(MSBuildProjectDirectory)\unzip\resources.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip\resources" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\DotNetNuke.Web.DDRMenu.dll" DestinationFolder="../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\providers\DotNetNuke.Web.DDRMenu.NET40.dll" DestinationFolder="../Website/bin/providers" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\resources\menu.ascx" DestinationFolder="../Website/DesktopModules/DDRMenu" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\unzip\resources\*.*">
+      <Output TaskParameter="Include" ItemName="DDRMenuFiles" />
+    </CreateItem>
+    <Copy SourceFiles="@(DDRMenuFiles)" DestinationFolder="../Website/DesktopModules/DDRMenu" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\unzip" />
   </Target>
   <Target Name="RadEditor">

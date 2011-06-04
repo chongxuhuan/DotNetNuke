@@ -1,15 +1,16 @@
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Security.Roles" Language="C#" AutoEventWireup="false" CodeFile="Roles.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnSecurityRoles">
     <div runat="server" id="divGroups">
         <div class="dnnFormItem">
             <dnn:label id="plRoleGroups" runat="server" suffix="" controlname="cboRoleGroups" />
             <asp:dropdownlist id="cboRoleGroups" Runat="server" AutoPostBack="True" />
 			<asp:hyperlink ID="lnkEditGroup" runat="server">
-				<asp:image ID="imgEditGroup" ImageUrl="~/images/edit.gif" AlternateText="Edit" runat="server" resourcekey="Edit" />
+				<dnn:dnnImage ID="imgEditGroup" IconKey="Edit" AlternateText="Edit" runat="server" resourcekey="Edit" />
 			</asp:hyperlink>
-			<asp:imagebutton ID="cmdDelete" Runat="server" ImageUrl="~/images/delete.gif" />
+			<dnn:DnnImagebutton ID="cmdDelete" Runat="server" IconKey="Delete" />
         </div>
     </div>
 	<asp:datagrid id="grdRoles" Width="98%" AutoGenerateColumns="false" EnableViewState="false" runat="server" BorderStyle="None" GridLines="None" CssClass="dnnGrid">
@@ -21,8 +22,8 @@
 	    <footerstyle cssclass="dnnGridFooter" />
 	    <pagerstyle cssclass="dnnGridPager" />
 		<columns>
-			<dnn:imagecommandcolumn commandname="Edit" imageurl="~/images/edit.gif" editmode="URL" keyfield="RoleID" />
-			<dnn:imagecommandcolumn commandname="UserRoles" imageurl="~/images/icon_users_16px.gif" editmode="URL" keyfield="RoleID" />
+			<dnn:imagecommandcolumn commandname="Edit" IconKey="Edit" editmode="URL" keyfield="RoleID" />
+			<dnn:imagecommandcolumn commandname="UserRoles" IconKey="Users" editmode="URL" keyfield="RoleID" />
 			<asp:boundcolumn DataField="RoleName" HeaderText="Name">
 			</asp:boundcolumn>
 			<asp:boundcolumn DataField="Description" HeaderText="Description">
@@ -51,14 +52,14 @@
 			<asp:boundcolumn DataField="TrialFrequency" HeaderText="Period" />
 			<asp:templatecolumn HeaderText="Public">
 				<itemtemplate>
-					<asp:image Runat="server" ID="imgApproved" ImageUrl="~/images/checked.gif" Visible='<%# DataBinder.Eval(Container.DataItem,"IsPublic") %>' />
-					<asp:image Runat="server" ID="imgNotApproved" ImageUrl="~/images/unchecked.gif" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"IsPublic")%>' />
+					<dnn:DnnImage Runat="server" ID="imgApproved" IconKey="Checked" Visible='<%# DataBinder.Eval(Container.DataItem,"IsPublic") %>' />
+					<dnn:DnnImage Runat="server" ID="imgNotApproved" IconKey="Unchecked" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"IsPublic")%>' />
 				</ItemTemplate>
 			</asp:templatecolumn>
 			<asp:templatecolumn HeaderText="Auto">
 				<itemtemplate>
-					<asp:image Runat="server" ID="Image1" ImageUrl="~/images/checked.gif" Visible='<%# DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
-					<asp:image Runat="server" ID="Image2" ImageUrl="~/images/unchecked.gif" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
+					<dnn:Dnnimage Runat="server" ID="Image1" IconKey="Checked" Visible='<%# DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
+					<dnn:Dnnimage Runat="server" ID="Image2" IconKey="Unchecked" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
 				</ItemTemplate>
 			</asp:templatecolumn>
 		</columns>

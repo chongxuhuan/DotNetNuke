@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.UI.ControlPanels.IconBar" CodeFile="IconBar.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <table id="tblControlPanel" runat="server" class="ControlPanel" cellspacing="0" cellpadding="0" border="0">
 	<tr>
 		<td>
@@ -14,9 +15,9 @@
 					</td>
 					<td style="text-align:center; vertical-align:middle; width:33%;"><asp:HyperLink ID="hypMessage" runat="server" Target="_new" /></td>
 					<td style="text-align:right; vertical-align:middle; white-space: nowrap; width:33%;">
-                        <asp:ImageButton ID="imgAdmin" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_console.gif" CausesValidation="False" Visible="false" />
+                        <dnn:DnnImageButton ID="imgAdmin" Runat="server" IconKey="Console" CausesValidation="False" Visible="false" />
                         <asp:linkbutton id="cmdAdmin" runat="server" cssclass="CommandButton" CausesValidation="False" />&nbsp;&nbsp;&nbsp;
-						<asp:ImageButton ID="imgHost" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_hostconsole.gif" CausesValidation="False"  Visible="false" />
+						<dnn:DnnImageButton ID="imgHost" Runat="server" IconKey="HostConsole" CausesValidation="False"  Visible="false" />
                         <asp:linkbutton id="cmdHost" runat="server" cssclass="CommandButton" CausesValidation="False" />&nbsp;
                         <asp:LinkButton ID="cmdVisibility" Runat="server" CausesValidation="False"><asp:Image ID="imgVisibility" Runat="server" /></asp:LinkButton>&nbsp;
 					</td>
@@ -30,17 +31,17 @@
 							<tr style="height:24px; vertical-align:bottom">
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdAddTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgAddTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_addtab.gif" />
+										<dnn:DnnImage ID="imgAddTabIcon" Runat="server" IconKey="AddTab" />
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdEditTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgEditTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_edittab.gif" />
+										<dnn:DnnImage ID="imgEditTabIcon" Runat="server" IconKey="EditTab" />
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdDeleteTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgDeleteTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_deletetab.gif" />
+										<dnn:DnnImage ID="imgDeleteTabIcon" Runat="server" IconKey="DeleteTab" />
 									</asp:LinkButton>
 								</td>
 							</tr>
@@ -52,17 +53,17 @@
 							<tr style="height:24px; vertical-align:bottom">
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdCopyTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgCopyTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_copytab.gif" />
+										<dnn:DnnImage ID="imgCopyTabIcon" Runat="server" IconKey="CopyTab" />
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdExportTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgExportTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_exporttab.gif" />
+										<dnn:DnnImage ID="imgExportTabIcon" Runat="server" IconKey="ExportTab" />
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdImportTabIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgImportTabIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_importtab.gif" />
+										<dnn:DnnImage ID="imgImportTabIcon" Runat="server" IconKey="ImportTab" />
 									</asp:LinkButton>
 								</td>
 							</tr>
@@ -121,7 +122,7 @@
 							    </tr>
                                 <tr>
                                         <td>
-										    <asp:ImageButton ID="imgAddModule" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_addmodule.gif" CausesValidation="False" />
+										    <dnn:DnnImageButton ID="imgAddModule" Runat="server" IconKey="Add" CausesValidation="False" />
                                             <asp:LinkButton id="cmdAddModule" runat="server" cssclass="CommandButton" CausesValidation="False" />
                                         </td>
                                 </tr>
@@ -134,17 +135,17 @@
 							<tr style="height:24px; vertical-align:bottom">
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdSiteIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgSiteIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_site.gif" />
+										<dnn:DnnImage ID="imgSiteIcon" Runat="server" IconKey="Site" />
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdUsersIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgUsersIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_users.gif"></asp:Image>
+										<dnn:DnnImage ID="imgUsersIcon" Runat="server" IconKey="Users"></dnn:DnnImage>
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdRolesIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgRolesIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_roles.gif"></asp:Image>
+										<dnn:DnnImage ID="imgRolesIcon" Runat="server" IconKey="SecurityRoles"></dnn:DnnImage>
 									</asp:LinkButton>
 								</td>
 							</tr>
@@ -156,17 +157,17 @@
 							<tr style="height:24px; vertical-align:bottom">
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdFilesIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgFilesIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_files.gif"></asp:Image>
+										<dnn:DnnImage ID="imgFilesIcon" Runat="server" IconKey="Files"></dnn:DnnImage>
 									</asp:LinkButton>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:Hyperlink ID="cmdHelpIcon" Runat="server" CssClass="CommandButton" CausesValidation="False" Target="_new">
-										<asp:Image ID="imgHelpIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_help.gif"></asp:Image>
+										<dnn:DnnImage ID="imgHelpIcon" Runat="server" IconKey="Help"></dnn:DnnImage>
 									</asp:Hyperlink>
 								</td>
 								<td style="width:60px; text-align:center;">
 								    <asp:LinkButton ID="cmdExtensionsIcon" Runat="server" CssClass="CommandButton" CausesValidation="False">
-										<asp:Image ID="imgExtensionsIcon" Runat="server" ImageUrl="~/admin/ControlPanel/images/iconbar_extensions.gif"></asp:Image>
+										<dnn:DnnImage ID="imgExtensionsIcon" Runat="server" IconKey="Extensions"></dnn:DnnImage>
 									</asp:LinkButton>
 								</td>
 							</tr>

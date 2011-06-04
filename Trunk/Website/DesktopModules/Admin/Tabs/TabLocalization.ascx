@@ -18,7 +18,7 @@
                     <ItemTemplate>
                         <asp:PlaceHolder ID="viewPlaceHolder" runat="server" Visible='<%# CanView(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString()) %>'>
                             <a href='<%# DotNetNuke.Common.Globals.NavigateURL(Convert.ToInt32(Eval("TabId")), Null.NullBoolean, PortalSettings, "", Eval("CultureCode").ToString(), new string[]{}) %>' >
-                                <asp:Image ID="viewCultureImage" runat="server" ResourceKey="view" ImageUrl="~/images/view.gif" />
+                                <dnnweb:DnnImage ID="viewCultureImage" runat="server" ResourceKey="view" IconKey="View" />
                             </a>
                         </asp:PlaceHolder>
                     </ItemTemplate>
@@ -27,7 +27,7 @@
                     <ItemTemplate>
                         <asp:PlaceHolder ID="editPlaceHolder" runat="server" Visible='<%# CanEdit(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString()) %>'>
                             <a href='<%# DotNetNuke.Common.Globals.NavigateURL(Convert.ToInt32(Eval("TabId")), Null.NullBoolean, PortalSettings, "Tab", Eval("CultureCode").ToString(), new []{"action=edit"}) %>' >
-                                <asp:Image ID="editCultureImage" runat="server" ResourceKey="edit" ImageUrl="~/images/edit.gif" />
+                                <dnnweb:DnnImage ID="editCultureImage" runat="server" ResourceKey="edit" IconKey="Edit" />
                             </a>
                         </asp:PlaceHolder>
                     </ItemTemplate>
@@ -41,7 +41,7 @@
                 </dnnweb:DnnGridTemplateColumn>
                 <dnnweb:DnnGridTemplateColumn  HeaderStyle-HorizontalAlign="Center" ItemStyle-Width="40px" ItemStyle-HorizontalAlign="Center" ItemStyle-VerticalAlign="Middle">
                     <HeaderTemplate>
-                        <asp:Image ID="totalModulesImage" runat="server" ImageUrl="~/images/total.gif" resourceKey="TotalModules" />
+                        <dnnweb:DnnImage ID="totalModulesImage" runat="server" IconKey="Total" resourceKey="TotalModules" />
                     </HeaderTemplate>
                     <ItemTemplate>
                         <span><%# GetTotalModules(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString())%></span>
@@ -49,7 +49,7 @@
                 </dnnweb:DnnGridTemplateColumn>
                 <dnnweb:DnnGridTemplateColumn  HeaderStyle-HorizontalAlign="Center" ItemStyle-Width="40px" ItemStyle-HorizontalAlign="Center" ItemStyle-VerticalAlign="Middle">
                     <HeaderTemplate>
-                        <asp:Image ID="sharedModulesImage" runat="server" ImageUrl="~/images/shared.gif" resourceKey="SharedModules" />
+                        <dnnweb:DnnImage ID="sharedModulesImage" runat="server" IconKey="Shared" resourceKey="SharedModules" />
                     </HeaderTemplate>
                     <ItemTemplate>
                         <span><%# GetSharedModules(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString())%></span>
@@ -57,7 +57,7 @@
                 </dnnweb:DnnGridTemplateColumn>
                 <dnnweb:DnnGridTemplateColumn  HeaderStyle-HorizontalAlign="Center" ItemStyle-Width="40px" ItemStyle-HorizontalAlign="Center" ItemStyle-VerticalAlign="Middle">
                     <HeaderTemplate>
-                        <asp:Image ID="localizedModulesImage" runat="server" ImageUrl="~/images/moduleUnbind.gif" resourceKey="LocalizedModules" />
+                        <dnnweb:DnnImage ID="localizedModulesImage" runat="server" IconKey="ModuleUnbind" resourceKey="LocalizedModules" />
                     </HeaderTemplate>
                     <ItemTemplate>
                         <span><%# GetLocalizedModules(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString())%></span>
@@ -67,7 +67,7 @@
                 </dnnweb:DnnGridTemplateColumn>
                 <dnnweb:DnnGridTemplateColumn HeaderStyle-HorizontalAlign="Center" ItemStyle-Width="40px" ItemStyle-HorizontalAlign="Center" ItemStyle-VerticalAlign="Middle">
                     <HeaderTemplate>
-                        <asp:Image ID="translatedModulesImage" runat="server" ImageUrl="~/images/translated.gif" resourceKey="TranslatedModules" />
+                        <dnnweb:DnnImage ID="translatedModulesImage" runat="server" IconKey="Translated" resourceKey="TranslatedModules" />
                     </HeaderTemplate>
                     <ItemTemplate>
                         <span><%# GetTranslatedModules(Convert.ToInt32(Eval("TabId")), Eval("CultureCode").ToString())%></span>

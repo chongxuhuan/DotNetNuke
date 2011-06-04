@@ -384,4 +384,10 @@
   <data name="InUse.Header" xml:space="preserve">
     <value>In Use</value>
   </data>
+  <data name="PurchasedExtensions.Text" xml:space="preserve">
+    <value>Purchased Extensions</value>
+  </data>
+  <data name="installExtension.Text" xml:space="preserve">
+    <value>Install</value>
+  </data>
 </root>

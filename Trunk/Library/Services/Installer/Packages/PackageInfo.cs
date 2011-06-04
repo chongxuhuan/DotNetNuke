@@ -157,6 +157,14 @@ namespace DotNetNuke.Services.Installer.Packages
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        /// Gets the FileName of this package
+        /// </summary>
+        /// <value>A String</value>
+        /// -----------------------------------------------------------------------------
+        public string FileName { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         /// Gets a Dictionary of Files that are included in the Package
         /// </summary>
         /// <value>A Dictionary(Of String, InstallFile)</value>

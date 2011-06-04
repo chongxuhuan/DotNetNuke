@@ -26,6 +26,8 @@
 using System;
 using System.IO;
 
+using DotNetNuke.Common;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
 
@@ -36,7 +38,7 @@ namespace DotNetNuke.Modules.RazorHost
     public partial class AddScript : ModuleUserControlBase
     {
         private string razorScriptFileFormatString = "~/DesktopModules/RazorModules/RazorHost/Scripts/{0}";
-
+        
         private void DisplayExtension()
         {
             fileExtension.Text = "." + scriptFileType.SelectedValue.ToLowerInvariant();
@@ -47,10 +49,8 @@ namespace DotNetNuke.Modules.RazorHost
             base.OnInit(e);
  
             cmdCancel.Click += cmdCancel_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
+            cmdAdd.Click += cmdAdd_Click;
             scriptFileType.SelectedIndexChanged += scriptFileType_SelectedIndexChanged;
-        
-            LocalResourceFile = Localization.GetResourceFile(this, "AddScript.ascx");
         }
 
         protected override void OnLoad(EventArgs e)
@@ -62,24 +62,44 @@ namespace DotNetNuke.Modules.RazorHost
 
         protected void cmdCancel_Click(object sender, EventArgs e)
         {
-            //Redirect to refresh page (and skinobjects)
-            Response.Redirect(Request.RawUrl, true);
+            try
+            {
+                Response.Redirect(ModuleContext.EditUrl("Edit"), true);
+            }
+            catch (Exception exc) //Module failed to load
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
         }
 
-        protected void cmdUpdate_Click(object sender, EventArgs e)
+        protected void cmdAdd_Click(object sender, EventArgs e)
         {
-            string scriptFileName = "_" + Path.GetFileNameWithoutExtension(fileName.Text) + "." + scriptFileType.SelectedValue.ToLowerInvariant();
+            try
+            {
+                if (!ModuleContext.PortalSettings.UserInfo.IsSuperUser)
+                {
+                    Response.Redirect(Globals.NavigateURL("Access Denied"), true);
+                }
 
-            string srcFile = Server.MapPath(string.Format(razorScriptFileFormatString, scriptFileName));
+                if (Page.IsValid)
+                {
+                    string scriptFileName = "_" + Path.GetFileNameWithoutExtension(fileName.Text) + "." + scriptFileType.SelectedValue.ToLowerInvariant();
 
-            // write file
-            StreamWriter objStream = null;
-            objStream = File.CreateText(srcFile);
-            objStream.WriteLine(Localization.GetString("NewScript", LocalResourceFile));
-            objStream.Close();
+                    string srcFile = Server.MapPath(string.Format(razorScriptFileFormatString, scriptFileName));
 
-            //Redirect to refresh page (and skinobjects)
-            Response.Redirect(Request.RawUrl, true);
+                    // write file
+                    StreamWriter objStream = null;
+                    objStream = File.CreateText(srcFile);
+                    objStream.WriteLine(Localization.GetString("NewScript", LocalResourceFile));
+                    objStream.Close();
+
+                    Response.Redirect(ModuleContext.EditUrl("Edit"), true);
+                }
+            }
+            catch (Exception exc) //Module failed to load
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
         }
 
         private void scriptFileType_SelectedIndexChanged(object sender, EventArgs e)

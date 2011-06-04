@@ -36,11 +36,11 @@ namespace DotNetNuke.MSBuild.Tasks
         {
             DirectoryEntry e = _iisServer.Children.Find(name, "VirDirSchemaName");
             if (e != null) DeleteVDir(e);
-
         }
-        public void DeleteVDir(DirectoryEntry VDirEntry)
+
+        public void DeleteVDir(DirectoryEntry virtualDirectoryEntry)
         {
-            VDirEntry.DeleteTree();
+            virtualDirectoryEntry.DeleteTree();
         }
 
 
@@ -49,6 +49,7 @@ namespace DotNetNuke.MSBuild.Tasks
         /// </summary>
         /// <param name="nameDirectory">Name of the new virtual directory</param>
         /// <param name="realPath">Path of the directory</param>
+        ///<param name="appPoolName">Name of the app pool</param>
         public void CreateVirtualDirectory(string nameDirectory, string realPath, string appPoolName)
         {
             var folderRoot = GetFolderRoot();
@@ -112,7 +113,7 @@ namespace DotNetNuke.MSBuild.Tasks
             {
                 GetFolderRoot();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -158,39 +159,28 @@ namespace DotNetNuke.MSBuild.Tasks
 */
         public bool DeleteVirtualDirectory(string sWebSite, string sAppName)
         {
-            System.DirectoryServices.DirectoryEntry iISSchema = new System.DirectoryServices.DirectoryEntry("IIS://" + sWebSite + "/Schema/AppIsolated");
-            bool bCanCreate = !(iISSchema.Properties["Syntax"].Value.ToString().ToUpper() == "BOOLEAN");
-            iISSchema.Dispose();
+            var iisSchema = new DirectoryEntry("IIS://" + sWebSite + "/Schema/AppIsolated");
+            bool bCanCreate = iisSchema.Properties["Syntax"].Value.ToString().ToUpper() != "BOOLEAN";
+            iisSchema.Dispose();
 
             if (bCanCreate)
             {
                 try
                 {
-                    System.DirectoryServices.DirectoryEntry iISAdmin = new System.DirectoryServices.DirectoryEntry("IIS://" + sWebSite + "/W3SVC/1/Root");
-
-                    string sWebPath = iISAdmin.Properties["Path"].Value.ToString();
+                    var iisAdmin = new DirectoryEntry("IIS://" + sWebSite + "/W3SVC/1/Root");
 
                     //If the virtual directory already exists then delete it
-                    foreach (System.DirectoryServices.DirectoryEntry vd in iISAdmin.Children)
+                    foreach (DirectoryEntry vd in iisAdmin.Children)
                     {
                         if (vd.Name == sAppName)
                         {
-                            sWebPath += @"\" + vd.Name;
-
-                            //if(((System.DirectoryServices.PropertyCollection)((vd.Properties))).valueTable.Count > 0 )
-                            //Original = IIsWebDirectory
-                            //Custom = IIsWebVirtualDir
-                            if (vd.Properties["KeyType"].Value.ToString().Trim() == "IIsWebVirtualDir")
-                                sWebPath = vd.Properties["Path"].Value.ToString();
-
-                            //iISAdmin.Invoke("Delete", new string(){vd.SchemaClassName,AppName};);
-                            iISAdmin.Invoke("Delete", new string[] { vd.SchemaClassName, sAppName });
-                            iISAdmin.CommitChanges();
+                            iisAdmin.Invoke("Delete", new[] { vd.SchemaClassName, sAppName });
+                            iisAdmin.CommitChanges();
                             return true;
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }

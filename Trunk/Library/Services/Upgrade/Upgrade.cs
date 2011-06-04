@@ -2952,6 +2952,10 @@ namespace DotNetNuke.Services.Upgrade
                 {
                     HtmlUtils.WriteFeedback(HttpContext.Current.Response, 0, "Loading Host Settings:<br>");
                 }
+
+				//Need to clear the cache to pick up new HostSettings from the SQLDataProvider script
+				DataCache.RemoveCache(DataCache.HostSettingsCacheKey);
+
                 //Parse the Settings nodes
                 foreach (XmlNode settingNode in node.ChildNodes)
                 {
@@ -3001,8 +3005,6 @@ namespace DotNetNuke.Services.Upgrade
                         HostController.Instance.Update(settingName, settingValue, settingIsSecure);
                     }
                 }
-                //Need to clear the cache to pick up new HostSettings from the SQLDataProvider script
-                DataCache.RemoveCache("GetHostSettings");
             }
         }
 

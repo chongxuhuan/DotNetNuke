@@ -130,7 +130,7 @@
     <value>File Type:</value>
   </data>
   <data name="fileNameLabel.Help" xml:space="preserve">
-    <value>Enter a file name for the Script file</value>
+    <value>Enter a file name for the Script file. The file name will be prefixed with an underscore "_".</value>
   </data>
   <data name="fileNameLabel.Text" xml:space="preserve">
     <value>File Name:</value>
@@ -138,10 +138,10 @@
   <data name="createNewScript.Text" xml:space="preserve">
     <value>To create a new Razor script file, select the file type and enter a file name.  The file will be created in the Scripts folder.</value>
   </data>
-  <data name="header.Text" xml:space="preserve">
-    <value>Add New Razor Script File</value>
-  </data>
   <data name="NewScript.Text" xml:space="preserve">
     <value>&lt;h2&gt;New Razor Script&lt;/h2&gt;</value>
+  </data>
+  <data name="cmdAdd.Text" xml:space="preserve">
+    <value>Add New Script</value>
   </data>
 </root>

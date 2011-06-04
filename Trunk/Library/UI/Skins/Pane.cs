@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -35,6 +36,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.UI.Containers;
 using DotNetNuke.UI.Utilities;
 
 using Globals = DotNetNuke.Common.Globals;
@@ -457,6 +459,12 @@ namespace DotNetNuke.UI.Skins
 
                 //Add Container to Dictionary
                 Containers.Add(container.ID, container);
+
+                // Remove any action control from container, as we are always injecting the new action menu now.
+                foreach (ActionBase control in container.Controls.OfType<ActionBase>())
+                {
+                    control.Visible = false;
+                }
 
                 if (Globals.IsLayoutMode() && Globals.IsAdminControl() == false)
                 {

@@ -629,7 +629,7 @@
                   <rolename>Administrators</rolename>
                 </permission>
               </modulepermissions>
-              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;Rotator Slide 1&amp;quot; src=&amp;quot;/Portals/0/Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 2&amp;quot; src=&amp;quot;/Portals/0/Images/DNN/Slide02.jpg&amp;quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 3&amp;quot; src=&amp;quot;/Portals/0/Images/DNN/Slide03.jpg&amp;quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 4&amp;quot; src=&amp;quot;/Portals/0/Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
+              <content type="DNNHTML" version="06.00.00"><![CDATA[&lt;htmltext&gt;&lt;content&gt;&lt;![CDATA[&amp;lt;img alt=&amp;quot;Rotator Slide 1&amp;quot; src=&amp;quot;{{PortalRoot}}/Images/DNN/Slide01.jpg&amp;quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 2&amp;quot; src=&amp;quot;{{PortalRoot}}/Images/DNN/Slide02.jpg&quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 3&amp;quot; src=&amp;quot;{{PortalRoot}}/Images/DNN/Slide03.jpg&amp;quot; /&amp;gt;&amp;lt;img alt=&amp;quot;Rotator Slide 4&amp;quot; src=&amp;quot;{{PortalRoot}}/Images/DNN/Slide04.jpg&amp;quot; /&amp;gt;]]&gt;&lt;/content&gt;&lt;/htmltext&gt;]]></content>
               <modulesettings>
                 <modulesetting>
                   <settingname>HtmlText_ReplaceTokens</settingname>
