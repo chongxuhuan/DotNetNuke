@@ -225,6 +225,9 @@
       <Views Include="*.ascx" />
     </ItemGroup>
     <ItemGroup>
+      <Controls Include="Controls\*.ascx" />
+    </ItemGroup>
+    <ItemGroup>
       <Controls Include="Views\Controls\*.ascx" />
     </ItemGroup>
     <ItemGroup>

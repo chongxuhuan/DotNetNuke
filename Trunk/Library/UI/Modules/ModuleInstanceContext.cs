@@ -164,7 +164,7 @@ namespace DotNetNuke.UI.Modules
                 if (!_isEditable.HasValue)
                 {
                     bool blnPreview = (PortalSettings.UserMode == PortalSettings.Mode.View);
-                    if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+                    if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         blnPreview = false;
                     }
@@ -190,12 +190,7 @@ namespace DotNetNuke.UI.Modules
         {
             get
             {
-                bool _IsHost = false;
-                if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
-                {
-                    _IsHost = true;
-                }
-                return _IsHost;
+            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 

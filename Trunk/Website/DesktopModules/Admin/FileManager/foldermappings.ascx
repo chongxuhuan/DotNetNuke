@@ -25,11 +25,10 @@
 -->
 </script>
 <div class="dnnForm dnnFolderMappings dnnClear">
-    <div><asp:Label ID="lbDescription" runat="server" CssClass="Normal" resourcekey="Description.Text" /></div>
+    <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lbDescription" runat="server" resourcekey="Description.Text" /></div>
     <div>
         <h2><asp:Label ID="lbTableHeader" runat="server" resourcekey="TableHeader.Text" /></h2>
-        <dnn:dnngrid id="grdMappings" runat="server" autogeneratecolumns="false" Width="98%" OnRowDrop="grdMappings_OnRowDrop" OnNeedDataSource="grdMappings_NeedDataSource"
-            AllowAutomaticUpdates="false" AllowAutomaticDeletes="false" OnItemCommand="grdMappings_ItemCommand" OnItemDataBound="grdMappings_ItemDataBound">
+        <dnn:dnngrid id="grdMappings" runat="server" autogeneratecolumns="false" Width="98%" OnRowDrop="grdMappings_OnRowDrop" OnNeedDataSource="grdMappings_NeedDataSource" AllowAutomaticUpdates="false" AllowAutomaticDeletes="false" OnItemCommand="grdMappings_ItemCommand" OnItemDataBound="grdMappings_ItemDataBound">
             <MasterTableView DataKeyNames="FolderMappingID">
                 <Columns>
                     <telerik:GridDragDropColumn HeaderStyle-Width="18px" />

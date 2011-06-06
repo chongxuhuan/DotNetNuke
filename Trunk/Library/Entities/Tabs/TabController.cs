@@ -2325,26 +2325,19 @@ namespace DotNetNuke.Entities.Tabs
             }
         }
 
-
-        [Obsolete(
-            "This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")
-        ]
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
         public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, int PortalId)
         {
             return DeserializeTab(nodeTab, null, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
         }
 
-        [Obsolete(
-            "This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")
-        ]
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
         public static TabInfo DeserializeTab(XmlNode nodeTab, TabInfo objTab, int PortalId)
         {
             return DeserializeTab(nodeTab, objTab, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
         }
 
-        [Obsolete(
-            "This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)"
-            )]
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")]
         public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, TabInfo objTab, Hashtable hTabs, int PortalId, bool IsAdminTemplate, PortalTemplateModuleAction mergeTabs,
                                              Hashtable hModules)
         {
@@ -2427,7 +2420,6 @@ namespace DotNetNuke.Entities.Tabs
         {
             return GetTabPathDictionary(portalId, Null.NullString);
         }
-
 
         [Obsolete("This method has been replaced in 5.0 by GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer) ")]
         public static Dictionary<string, int> GetTabPathDictionary()

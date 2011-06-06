@@ -107,9 +107,9 @@
                 {{/if}}
             
                 {{if detailURL}}                
-                        <a href="${detailURL}" target="_new"><img class='productTypeImage dnnIcon' alt='${extensionType}' src='<%=ResolveUrl("~/images/appGallery_details.gif")%>' /></a>
+                        <a href="${detailURL}" target="_details"><img class='productTypeImage dnnIcon' alt='${extensionType}' src='<%=ResolveUrl("~/images/appGallery_details.gif")%>' /></a>
                 {{/if}}                
-                <a class="galleryLink inline" href="${detailURL}&PackageOptionID=0&action=Add" target="_new"><img class='dnnIcon shopping-cart galleryLink' alt='Buy ${extensionName}'  Title='Buy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_cart.gif")%>' /></a>                
+                <a class="galleryLink inline" href="${detailURL}&PackageOptionID=0&action=Add" target="_cart"><img class='dnnIcon shopping-cart galleryLink' alt='Buy ${extensionName}'  Title='Buy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_cart.gif")%>' /></a>                
                 <a class="galleryLink inline" href="<%=DotNetNuke.Common.Globals.NavigateURL(36, "appgallerydownload", "action=deploy","downloadURL=") %>"${downloadURL}><img class='dnnIcon deploy galleryLink' alt='Deploy ${extensionName}' Title='Deploy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_deploy.gif")%>' /></a>
                 {{if catalog.url}}                
                     <a class="galleryLink inline" href="${catalog.url}" target="_new"><img class='deploy galleryLink' alt='Browse ${catalog.name}' Title='Browse ${catalog.name}' src='${_gallery.resolveImage(catalog.icon)}' /></a>
@@ -146,10 +146,10 @@
                                             
             <img class='productTypeImage dnnIcon' alt='${extensionType}' src='<%=ResolveUrl("~/images/appGallery_${extensionType}.gif")%>' />
             {{if detailURL}}                      
-                    <a href="${detailURL}" target="_new"><img alt='Details ${extensionName}' class='productTypeImage dnnIcon' alt='${extensionType}' src='<%=ResolveUrl("~/images/appGallery_details.gif")%>' /></a>
+                    <a href="${detailURL}" target="_details"><img alt='Details ${extensionName}' class='productTypeImage dnnIcon' alt='${extensionType}' src='<%=ResolveUrl("~/images/appGallery_details.gif")%>' /></a>
             {{/if}}
             
-            <a class="galleryLink inline" href="${detailURL}&PackageOptionID=0&action=Add" target="_new"><img class='dnnIcon shopping-cart galleryLink' alt='Buy ${extensionName}'  Title='Buy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_cart.gif")%>' /></a>            
+            <a class="galleryLink inline" href="${detailURL}&PackageOptionID=0&action=Add" target="_cart"><img class='dnnIcon shopping-cart galleryLink' alt='Buy ${extensionName}'  Title='Buy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_cart.gif")%>' /></a>            
             <a class="galleryLink inline"><img class='dnnIcon deploy galleryLink' alt='Deploy ${extensionName}' Title='Deploy ${extensionName}' src='<%=ResolveUrl("~/images/appGallery_deploy.gif")%>' /></a>
             {{if catalog.url}}                
                 <a class="galleryLink inline" href="${catalog.url}" target="_new"><img class='deploy galleryLink' alt='Browse ${catalog.name}' Title='Browse ${catalog.name}' src='${_gallery.resolveImage(catalog.icon)}' /></a>

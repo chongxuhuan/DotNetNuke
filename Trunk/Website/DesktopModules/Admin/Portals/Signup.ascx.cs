@@ -231,7 +231,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     txtPortalName.Text = txtPortalName.Text.Replace("http://", "");
 
                     //Validate Portal Name
-                    if (PortalSettings.ActiveTab.ParentId != PortalSettings.SuperTabId)
+					if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         blnChild = true;
                         strPortalAlias = txtPortalName.Text;
@@ -271,7 +271,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             }
                             else
                             {
-                                if (PortalSettings.ActiveTab.ParentId != PortalSettings.SuperTabId)
+								if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                                 {
                                     strPortalAlias = Globals.GetDomainName(Request, true) + "/" + strPortalAlias;
                                 }
@@ -358,7 +358,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             string webUrl = Globals.AddHTTP(strPortalAlias);
                             try
                             {
-                                if (PortalSettings.ActiveTab.ParentId != PortalSettings.SuperTabId)
+								if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                                 {
                                     message = Mail.SendMail(PortalSettings.Email,
                                                                txtEmail.Text,

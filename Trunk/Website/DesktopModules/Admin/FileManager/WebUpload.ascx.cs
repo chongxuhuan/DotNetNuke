@@ -321,6 +321,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 string strHost = Localization.GetString("HostRoot", LocalResourceFile);
                 string strPortal = Localization.GetString("PortalRoot", LocalResourceFile);
 
+                maxSizeWarningLabel.Text = String.Format(Localization.GetString("FileSizeRestriction", LocalResourceFile), (Config.GetMaxUploadSize()/(1024 *1024)));
+
                 if (!Page.IsPostBack)
                 {
                     cmdAdd.Text = Localization.GetString("UploadType" + FileType, LocalResourceFile);

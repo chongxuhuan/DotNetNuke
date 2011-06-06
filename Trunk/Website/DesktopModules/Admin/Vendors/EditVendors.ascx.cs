@@ -148,7 +148,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     if (VendorID != -1)
                     {
                         VendorInfo objVendor;
-                        if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId && UserInfo.IsSuperUser)
+						if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) && UserInfo.IsSuperUser)
                         {
 							//Get Host Vendor
                             objVendor = objVendors.GetVendor(VendorID, Null.NullInteger);
@@ -223,7 +223,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     else
                     {
                         TabInfo objTab;
-                        if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+						if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                         {
                             objTab = objTabs.GetTabByName("Vendors", Null.NullInteger);
                         }
@@ -313,7 +313,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                 if (Page.IsValid)
                 {
                     int portalID;
-                    if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+					if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         portalID = -1;
                     }

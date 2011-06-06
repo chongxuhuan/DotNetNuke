@@ -86,18 +86,18 @@
                     <dnn:DnnRibbonBarTool id="IntegrityChecker" runat="server" ToolInfo-ToolName="IntegrityChecker" ToolInfo-IsHostTool="True" ToolInfo-ModuleFriendlyName="IntegrityChecker" ToolCssClass="cpIntegrityChecker" />
                 </div>
             </asp:Panel>
-            <div class="cbcpPageHelp dnnClear">
-                <h4><dnn:DnnLiteral ID="CurrentTabHelp" runat="server" Text="CurrentTabHelp" /></h4>
-                <div class="dnnCPContainer">
-                    <dnn:DnnRibbonBarTool id="Help" runat="server" ToolName="Help" ToolCssClass="cpPageHelp" />
-                </div>
-            </div>            
             <div class="cbhSwitchSite dnnClear">
                 <h4><dnn:DnnLiteral id="SystemTabSwitchSite" runat="server" Text="SystemTabSwitchSite" /></h4>
                 <div class="dnnCPContainer">
                     <dnn:SwitchSite id="SwitchSite" runat="server" />
                 </div>
             </div>
+            <div class="cbcpPageHelp dnnClear">
+                <h4><dnn:DnnLiteral ID="CurrentTabHelp" runat="server" Text="CurrentTabHelp" /></h4>
+                <div class="dnnCPContainer">
+                    <dnn:DnnRibbonBarTool id="Help" runat="server" ToolName="Help" ToolCssClass="cpPageHelp" />
+                </div>
+            </div>            
         </asp:Panel>
     </div>
 </asp:Panel>

@@ -26,7 +26,10 @@
 using System.ComponentModel;
 using System.Web.UI;
 
+using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Tabs;
 
 #endregion
 
@@ -46,12 +49,7 @@ namespace DotNetNuke.Framework
         {
             get
             {
-                bool _IsHost = false;
-                if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId || PortalSettings.ActiveTab.TabID == PortalSettings.SuperTabId)
-                {
-                    _IsHost = true;
-                }
-                return _IsHost;
+            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 

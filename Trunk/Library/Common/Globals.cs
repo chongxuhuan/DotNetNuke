@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -3777,6 +3778,16 @@ namespace DotNetNuke.Common
             return XmlUtils.SerializeDictionary(Source, "profile");
         }
 
+		/// <summary>
+		/// Check whether the specific tab is a host tab.
+		/// </summary>
+		/// <param name="tabId">tab id.</param>
+		/// <returns>if true means the tab is a host tab, otherwise means not a host page.</returns>
+		public static bool IsHostTab(int tabId)
+		{
+			return new TabController().GetTabsByPortal(Null.NullInteger).Any(t => t.Value.TabID == tabId);
+		}
+
         #region "Obsolete - retained for Binary Compatability"
 
         // TODO:  These constants are deprecated but cannot be removed until the next batch of breaking change
@@ -3931,7 +3942,7 @@ namespace DotNetNuke.Common
             // Obtain PortalSettings from Current Context
             PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
             string ParentFolderName = null;
-            if (_portalSettings.ActiveTab.ParentId == _portalSettings.SuperTabId)
+			if (IsHostTab(_portalSettings.ActiveTab.TabID))
             {
                 ParentFolderName = HostMapPath.Replace("/", "\\");
             }

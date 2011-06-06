@@ -7,7 +7,6 @@
 	<ul class="dnnAdminTabNav dnnClear">
 		<li id="liMaster" runat="server"><a href="#ehMaster"><%=LocalizeString("dshMaster")%></a></li>
 		<li id="liCurrent" runat="server"><a href="#ehCurrentContent"><%=LocalizeString("dshCurrentContent")%></a></li>
-		<li id="liComment" runat="server"><a href="#ehComment"><%=LocalizeString("Comment")%></a></li>
 		<li id="liVersions" runat="server"><a href="#ehVersions"><%=LocalizeString("dshVersions")%></a></li>
 	</ul>
 	<div class="ehMaster dnnClear" id="ehMaster">
@@ -41,8 +40,8 @@
 					<asp:checkbox id="chkPublish" runat="server" resourcekey="chkPublish" AutoPostBack="true" />
 				</div>
 				<ul class="dnnActions dnnClear">
-					<li><asp:LinkButton id="LinkButton1" runat="server" class="dnnPrimaryAction" resourcekey="cmdSave" /></li>
-					<li><asp:LinkButton id="LinkButton2" runat="server" class="dnnSecondaryAction" resourcekey="cmdPreview" /></li>
+					<li><asp:LinkButton id="cmdSave" runat="server" class="dnnPrimaryAction" resourcekey="cmdSave" /></li>
+					<li><asp:LinkButton id="cmdPreview" runat="server" class="dnnSecondaryAction" resourcekey="cmdPreview" /></li>
 				</ul>
 			</fieldset>
 			<h2 id="dnnPanel-EditHtmlPreview" class="dnnFormSectionHead"><a href=""><%=LocalizeString("dshPreview")%></a></h2>
@@ -80,7 +79,7 @@
 			</fieldset>
 		</div>
 	</div>
-	<div class="ehVersions" id="ehVersions">
+	<div class="ehVersions dnnClear" id="ehVersions">
 		<div class="ehvContent">
 			<div class="dnnFormItem">
 				<dnn:label id="plMaxVersions" runat="server" controlname="lblMaxVersions" suffix=":" />
@@ -96,16 +95,16 @@
 						<dnnweb:DnnGridBoundColumn HeaderText="State" DataField="StateName" />
 						<dnnweb:DnnGridTemplateColumn>
 							<HeaderTemplate>
-								<table cellpadding="2px" class="DnnGridNestedTable">
+								<table cellpadding="0" cellspacing="0" class="DnnGridNestedTable">
 									<tr>
 										<td><dnnweb:DnnImage ID="imgDelete" runat="server" IconKey="ActionDelete" resourcekey="VersionsRemove" /></td>
-										<td>dnnweb:DnnImage ID="imgPreview" runat="server" IconKey="View"  resourcekey="VersionsPreview" /></td>
+										<td><dnnweb:DnnImage ID="imgPreview" runat="server" IconKey="View"  resourcekey="VersionsPreview" /></td>
 										<td><dnnweb:DnnImage ID="imgRollback" runat="server" IconKey="Restore"  resourcekey="VersionsRollback" /></td>
 									</tr>
 								</table>
 							</HeaderTemplate>
 							<ItemTemplate>
-								<table cellpadding="2px" class="DnnGridNestedTable">
+								<table cellpadding="0" cellspacing="0" class="DnnGridNestedTable">
 									<tr style="vertical-align: top;">
 										<td><dnnweb:DnnImageButton ID="btnRemove" runat="server" CommandName="Remove" IconKey="ActionDelete" Text="Delete" resourcekey="VersionsRemove" /></td>
 										<td><dnnweb:DnnImageButton ID="btnPreview" runat="server" CommandName="Preview"  IconKey="View" Text="Preview" resourcekey="VersionsPreview" /></td>
@@ -123,8 +122,17 @@
 		</div>
 	</div>
 	<ul class="dnnActions dnnClear">
-		<li><asp:LinkButton id="cmdSave" runat="server" class="dnnPrimaryAction" resourcekey="cmdSave" /></li>
-		<li><asp:LinkButton id="cmdPreview" runat="server" class="dnnSecondaryAction" resourcekey="cmdPreview" /></li>
 		<li><asp:HyperLink id="hlCancel" runat="server" class="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 	</ul>
 </div>
+<script language="javascript" type="text/javascript">
+	function setupDnnEditHtml() {
+		$('#dnnEditHtml').dnnTabs().dnnPanels();
+	}
+	$(document).ready(function () {
+		setupDnnEditHtml();
+		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+			setupDnnEditHtml();
+		});
+	});
+</script>

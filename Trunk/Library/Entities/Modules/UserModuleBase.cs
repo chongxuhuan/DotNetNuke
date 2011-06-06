@@ -122,7 +122,7 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                return (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId);
+                return base.IsHostMenu;
             }
         }
 

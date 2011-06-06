@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -300,12 +301,13 @@ namespace DotNetNuke.Modules.Admin.Console
 					List<TabInfo> tempTabs;
 					if ((IsHostTab()))
 					{
-						tempTabs = TabController.GetTabsBySortOrder(Null.NullInteger);
+                        tempTabs = TabController.GetTabsBySortOrder(Null.NullInteger).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
 					}
 					else
 					{
-						tempTabs = TabController.GetTabsBySortOrder(PortalId);
+                        tempTabs = TabController.GetTabsBySortOrder(PortalId).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
 					}
+
 					IList<TabInfo> tabs = new List<TabInfo>();
 
 					IList<int> parentIDList = new List<int>();

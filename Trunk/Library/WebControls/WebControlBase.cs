@@ -89,12 +89,7 @@ namespace DotNetNuke.UI.WebControls
         {
             get
             {
-                bool _IsHost = false;
-                if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
-                {
-                    _IsHost = true;
-                }
-                return _IsHost;
+            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 

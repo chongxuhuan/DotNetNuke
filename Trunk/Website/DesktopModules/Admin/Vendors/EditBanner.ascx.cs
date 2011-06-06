@@ -70,7 +70,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
         {
             get
             {
-                if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+				if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                 {
                     return -1;
                 }

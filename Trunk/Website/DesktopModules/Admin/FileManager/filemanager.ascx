@@ -158,8 +158,8 @@ function deleteCheckedFiles() {
 
     strMessage += '<tr><td height="15">&nbsp;</td><tr>';
     strMessage += '<tr><td colspan="2" align="center">';
-    strMessage += '<INPUT id="btnConfirmDel" style="WIDTH: 81px;" Class="NormalBold" onclick="deleteAllChecked();" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
-    strMessage += '<INPUT id="btnClearError" style="WIDTH: 81px;" Class="NormalBold" onclick="clearErrorMessage();" type="button" value="' + m_sLocaleCancel + '">';
+    strMessage += '<INPUT id="btnConfirmDel" style="width: 81px;" Class="NormalBold" onclick="deleteAllChecked();" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
+    strMessage += '<INPUT id="btnClearError" style="width: 81px;" Class="NormalBold" onclick="clearErrorMessage();" type="button" value="' + m_sLocaleCancel + '">';
     strMessage += '</td></tr></table>';
     showErrorMessage(strTitle, strMessage);
     return false;
@@ -395,7 +395,7 @@ function gridCheckAll(sender) {
 
 </script>
 <asp:panel id="pnlMainScripts" Runat="server"/>
-<div style="DISPLAY: none">
+<div style="display: none">
     <asp:literal id="ctrlScripts1" Runat="server" EnableViewState="true"/>
     <asp:linkbutton id="lnkSelectFolder" Runat="server" EnableViewState="False"/>
     <asp:textbox id="txtCurFolderID" Runat="server" EnableViewState="true"/>
@@ -409,30 +409,30 @@ function gridCheckAll(sender) {
 			<table class="FileManager_ToolBar" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
 					<td style="width:5px"></td>
-					<td class="SubHead" style="vertical-align:middle; width:60px"><asp:label id="lblFolderBar" Runat="server" resourcekey="FolderBar"/></td>
-					<td class="NormalTextBox" style="vertical-align:middle; width:160px"><asp:dropdownlist id="ddlStorageLocation" Runat="server" Width="160px" /></td>
-					<td class="Normal" style="vertical-align:middle; width:100px" width="100"><asp:textbox id="txtNewFolder" Runat="server" EnableViewState="False" /></td>
-					<td class="Normal" style="vertical-align:middle; width:100px">
+					<td  style="vertical-align:middle; width:60px"><asp:label id="lblFolderBar" Runat="server" resourcekey="FolderBar"/></td>
+					<td class="NormalTextBox" style="vertical-align:middle; width:160px"><asp:dropdownlist id="ddlStorageLocation" Runat="server" width="160px" /></td>
+					<td  style="vertical-align:middle; width:100px" width="100"><asp:textbox id="txtNewFolder" Runat="server" EnableViewState="False" /></td>
+					<td  style="vertical-align:middle; width:100px">
 						<span id="addFolder" runat="server">
 						    <asp:linkbutton id="lnkAddFolder" EnableViewState="False" runat="server" Visible="False"/>
 							<asp:image id="lnkAddFolderIMG" Runat="server" resourcekey="AddFolderImg.AlternateText" name="lnkDelFolderIMG" style="vertical-align:middle" />
 							<asp:label id="lblAddFolder" EnableViewState="False" runat="server" resourcekey="AddFolder"/>
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle; width:120px">
+					<td  style="vertical-align:middle; width:120px">
 						<span id="deleteFolder" runat="server">
     						<asp:linkbutton id="lnkDeleteFolder" EnableViewState="False" runat="server" Visible="False"/>
 							<asp:image id="lnkDelFolderIMG" Runat="server" resourcekey="DeleteFolderImg.AlternateText" name="lnkDelFolderIMG" style="vertical-align:middle" />
 							<asp:label id="lblDelFolder" EnableViewState="False" runat="server" resourcekey="DeleteFolderLabel"/>
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle; width:210px">
+					<td  style="vertical-align:middle; width:210px">
 						<span id="syncFolder" runat="server">
 						    <asp:linkbutton id="lnkSyncFolder" EnableViewState="False" runat="server" Visible="False"/>
 							<asp:image id="lnkSyncFolderIMG" Runat="server" resourcekey="lnkSyncFolderIMG.AlternateText" name="lnkSyncFolderIMG"  style="vertical-align:middle"/>
 							<asp:label id="lblSynchronize" EnableViewState="False" runat="server" resourcekey="SynchronizeFolder"/>
 						</span>
-						<asp:CheckBox ID="chkRecursive" Runat="server" resourcekey="Recursive" CssClass="Normal"/>
+						<asp:CheckBox ID="chkRecursive" Runat="server" resourcekey="Recursive" />
 					</td>
 					<td style="width:5px"></td>
 				</tr>
@@ -440,40 +440,40 @@ function gridCheckAll(sender) {
 			<table class="FileManager_ToolBar" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
 					<td style="width:5px"></td>
-					<td class="SubHead" style="vertical-align:middle; width:60px"><asp:label id="lblFileBar" Runat="server" resourcekey="FileBar"/></td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle; width:60px"><asp:label id="lblFileBar" Runat="server" resourcekey="FileBar"/></td>
+					<td  style="vertical-align:middle">
 						<span id="refresh" runat="server">
 						    <asp:linkbutton id="lnkRefresh" EnableViewState="False" runat="server" Visible="False"/>
 							<asp:image id="lnkRefreshIMG" Runat="server" resourcekey="RefreshImg.AlternateText" name="lnkRefreshIMG" style="vertical-align:middle"/>
 							<asp:label id="lblRefresh" EnableViewState="False" runat="server" resourcekey="Refresh" />
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle">
 					    <span id="copy" runat="server">
 					        <asp:image id="lnkCopy" Runat="server" resourcekey="CopyImg.AlternateText" name="lnkCopy" style="vertical-align:middle"/>
 							<asp:label id="lblCopy" EnableViewState="False" runat="server" resourcekey="CopyFiles" />
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle">
 					    <span id="move" runat="server">
 					        <asp:image id="lnkMove" Runat="server" resourcekey="MoveImg.AlternateText" name="lnkMove" style="vertical-align:middle"/>
 					        <asp:label id="lblMove" EnableViewState="False" runat="server" resourcekey="MoveFiles"/>
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle">
 					    <span id="upload" runat="server">
     					    <asp:linkbutton id="lnkUpload" EnableViewState="False" runat="server" Visible="False"/>
 				            <asp:image id="lnkUploadIMG" Runat="server" resourcekey="UploadImg.AlternateText" name="lnkUploadIMG" style="vertical-align:middle"/>
 				            <asp:label id="lblUpload" EnableViewState="False" runat="server" resourcekey="Upload" />
     					</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle">
 					    <span id="delete" runat="server">
 					        <asp:image id="lnkDelete" Runat="server" resourcekey="DeleteImg.AlternateText" name="lnkDelete" style="vertical-align:middle"/>
 					        <asp:label id="lblDelete" EnableViewState="False" runat="server" resourcekey="DeleteFiles"/>
 						</span>
 					</td>
-					<td class="Normal" style="vertical-align:middle">
+					<td  style="vertical-align:middle">
 					    <asp:textbox id="txtFilter" EnableViewState="False" runat="server" CssClass="NormalTextBox"/>
 					    <span id="filter" runat="server">
     					    <asp:linkbutton id="lnkFilter" EnableViewState="False" runat="server" Visible="False" style="vertical-align:middle"/>
@@ -492,7 +492,7 @@ function gridCheckAll(sender) {
 				<tr>
 					<td class="FileManager_Header" style="vertical-align:middle">
 					    <dnn:DnnImageButton ID="lnkSyncFolders" runat="server" IconKey="SynchronizeEnabled" ToolTip="Synchronize Folders" />
-					    <asp:label id="lblFolders" Runat="server" EnableViewState="False" resourcekey="Folders" Width="100%" CssClass="SubHead"/>
+					    <asp:label id="lblFolders" Runat="server" EnableViewState="False" resourcekey="Folders" width="100%" />
 					</td>
 				</tr>
 				<tr>
@@ -513,30 +513,30 @@ function gridCheckAll(sender) {
 		<td valign="top" width="100%">
 			<table class="FileManager_FileList" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
-					<td class="FileManager_MessageBox" id="tdOverLay" style="DISPLAY: none" valign="top" width="100%">
+					<td class="FileManager_MessageBox" id="tdOverLay" style="display: none" valign="top" width="100%">
 						<div id="FileGridOverLay"></div>
 					</td>
 					<td id="tdGrid" valign="top" width="100%">
-					    <asp:datagrid id="dgFileList" runat="server" Width="100%" GridlInes="Horizontal" AllowPaging="True"
+					    <asp:datagrid id="dgFileList" runat="server" width="100%" GridlInes="Horizontal" AllowPaging="True"
 							AutoGenerateColumns="False" PageSize="10" cellpadding="0" AllowSorting="True" HeaderStyle-CssClass="FileManager_Header" ItemStyle-CssClass="FileManager_Item"
-							EditItemStyle-CssClass="Normal" AlternatingItemStyle-CssClass="FileManager_AltItem" SelectedItemStyle-CssClass="FileManager_SelItem">
+							EditItemStyle-AlternatingItemStyle-CssClass="FileManager_AltItem" SelectedItemStyle-CssClass="FileManager_SelItem">
 							<Columns>
 								<asp:TemplateColumn>
 									<ItemTemplate>
-										<asp:Image ID="imgFileICO" Runat="server" Extention='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' ImageUrl='<%# GetImageUrl(DataBinder.Eval(Container, "DataItem.Extension").ToString()) %>' Width="16" Height="16"/>
+										<asp:Image ID="imgFileICO" Runat="server" Extention='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' ImageUrl='<%# GetImageUrl(DataBinder.Eval(Container, "DataItem.Extension").ToString()) %>' width="16" Height="16"/>
 									</ItemTemplate>
 									<EditItemTemplate>
-										<asp:Image ID="imgFileEditICO" Runat="server" Extention='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' ImageUrl='<%# GetImageUrl(DataBinder.Eval(Container, "DataItem.Extension").ToString()) %>' Width="16" Height="16" />
+										<asp:Image ID="imgFileEditICO" Runat="server" Extention='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' ImageUrl='<%# GetImageUrl(DataBinder.Eval(Container, "DataItem.Extension").ToString()) %>' width="16" Height="16" />
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="Left" SortExpression="FileName" HeaderText="FileName">
 									<ItemTemplate>
-										<asp:LinkButton CssClass="Normal" Runat="server" OnCommand="lnkDLFile_Command" ID="lnkDLFile" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileId")%>'>
+										<asp:LinkButton Runat="server" OnCommand="lnkDLFile_Command" ID="lnkDLFile" CommandArgument='<%# DataBinder.Eval(Container, "DataItem.FileId")%>'>
 											<%# DataBinder.Eval(Container, "DataItem.FileName")%>
 										</asp:LinkButton>
 									</ItemTemplate>
 									<EditItemTemplate>
-										<asp:TextBox Runat="server" CssClass="Normal" id="txtEditFileName" Width="95%" Text='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
+										<asp:TextBox Runat="server" id="txtEditFileName" width="95%" Text='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="Left" HeaderText="Date" SortExpression="DateModified">
@@ -544,10 +544,10 @@ function gridCheckAll(sender) {
 										<%# DataBinder.Eval(Container, "DataItem.DateModified")%>
 									</ItemTemplate>
 									<EditItemTemplate>
-										<asp:CheckBox CssClass="Normal" id="chkReadOnly" original='<%# DataBinder.Eval(Container, "DataItem.ReadOnly")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.ReadOnly")%>' runat="server" Text="R:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
-										<asp:CheckBox CssClass="Normal" id="chkHidden" original='<%# DataBinder.Eval(Container, "DataItem.Hidden")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.Hidden")%>' runat="server" Text="H:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
-										<asp:CheckBox CssClass="Normal" id="chkSystem" original='<%# DataBinder.Eval(Container, "DataItem.System")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.System")%>' runat="server" Text="S:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
-										<asp:CheckBox CssClass="Normal" id="chkArchive" original='<%# DataBinder.Eval(Container, "DataItem.Archive")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.Archive")%>' runat="server" Text="A:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
+										<asp:CheckBox id="chkReadOnly" original='<%# DataBinder.Eval(Container, "DataItem.ReadOnly")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.ReadOnly")%>' runat="server" Text="R:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
+										<asp:CheckBox id="chkHidden" original='<%# DataBinder.Eval(Container, "DataItem.Hidden")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.Hidden")%>' runat="server" Text="H:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
+										<asp:CheckBox id="chkSystem" original='<%# DataBinder.Eval(Container, "DataItem.System")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.System")%>' runat="server" Text="S:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
+										<asp:CheckBox id="chkArchive" original='<%# DataBinder.Eval(Container, "DataItem.Archive")%>' Checked='<%# DataBinder.Eval(Container, "DataItem.Archive")%>' runat="server" Text="A:" Visible='<%# DataBinder.Eval(Container, "DataItem.SupportsFileAttributes") %>' />
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="Center" SortExpression="DateModified">
@@ -556,7 +556,7 @@ function gridCheckAll(sender) {
 									</ItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="Right" SortExpression="intFileSize" HeaderText="Size">
-									<ItemStyle HorizontalAlign="Right" CssClass="Normal"></ItemStyle>
+									<ItemStyle HorizontalAlign="Right" ></ItemStyle>
 									<ItemTemplate>
 										<%# DataBinder.Eval(Container, "DataItem.FileSize")%>
 									</ItemTemplate>
@@ -565,7 +565,7 @@ function gridCheckAll(sender) {
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
-									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
+									<ItemStyle HorizontalAlign="Right" width="1%"></ItemStyle>
 									<ItemTemplate>
 										<dnn:DnnImageButton Runat="server" ID="lnkEditFile" Visible = '<%# HasPermission("MANAGE") %>' OnCommand="lnkEditFile_Command" resourcekey="RenameFileImg.AlternateText" IconKey="Edit"  />
 									</ItemTemplate>
@@ -574,7 +574,7 @@ function gridCheckAll(sender) {
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
-									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
+									<ItemStyle HorizontalAlign="Right" width="1%"></ItemStyle>
 									<ItemTemplate>
 										<dnn:DnnImageButton Runat="server" ID="lnkDeleteFile" Visible = '<%# HasPermission("DELETE") %>' OnCommand="lnkDeleteFile_Command" resourcekey="DeleteFileImg.AlternateText" IconKey="Trash" CommandName='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</ItemTemplate>
@@ -583,13 +583,13 @@ function gridCheckAll(sender) {
 									</EditItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
-									<ItemStyle HorizontalAlign="Right" Width="1%"></ItemStyle>
+									<ItemStyle HorizontalAlign="Right" width="1%"></ItemStyle>
 									<ItemTemplate>
-										<dnn:DnnImage id="lnkUnzip" style="CURSOR: pointer" runat="server" Visible = '<%# HasPermission("ADD,COPY") %>' name="lnkMove" IconKey="Unzip" resourcekey="UnzipFileImg.AlternateText" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' extension='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' />
+										<dnn:DnnImage id="lnkUnzip" style="cursor: pointer" runat="server" Visible = '<%# HasPermission("ADD,COPY") %>' name="lnkMove" IconKey="Unzip" resourcekey="UnzipFileImg.AlternateText" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' extension='<%# DataBinder.Eval(Container, "DataItem.Extension")%>' />
 									</ItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn HeaderStyle-HorizontalAlign="center">
-									<ItemStyle HorizontalAlign="center" Width="30px"></ItemStyle>
+									<ItemStyle HorizontalAlign="center" width="30px"></ItemStyle>
 									<HeaderTemplate>
 									    <asp:panel ID="pnlCheckAll" runat="server" Visible = "<%# IsEditable %>">
     										<input onclick='return gridCheckAll(this);' type="image" src='<%# Page.ResolveUrl("~/images/FileManager/unchecked.gif") %>' alt='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'>
@@ -611,7 +611,7 @@ function gridCheckAll(sender) {
 					<td colspan="2">
 						<table class="FileManager_Pager" id="tblMessagePager" cellspacing="0" cellpadding="0" width="100%" border="0" runat="server">
 							<tr>
-								<td align="left">&nbsp;&nbsp;<asp:label id="lblCurPage" Runat="server" CssClass="NormalBold"></asp:label></td>
+								<td align="left">&nbsp;&nbsp;<asp:label id="lblCurPage" Runat="server"></asp:label></td>
 								<td valign="bottom" align="right" style="padding-right:5px">
 									<table cellspacing="2" cellpadding="2" border="0">
 										<tr valign="middle">
@@ -636,12 +636,12 @@ function gridCheckAll(sender) {
 			<table cellspacing="0" cellpadding="0" width="100%" border="1">
 				<tr>
 					<td align="left" width="50%">
-						<div style="OVERFLOW: visible; WIDTH: 100%">&nbsp;<asp:label id="lblCurFolder" Runat="server" CssClass="NormalBold"></asp:label></div>
+						<div style="overflow: visible; width: 100%">&nbsp;<asp:label id="lblCurFolder" Runat="server" ></asp:label></div>
 					</td>
-					<td width="25%"><asp:label id="lblFileSpace" Runat="server" CssClass="NormalBold"></asp:label></td>
+					<td width="25%"><asp:label id="lblFileSpace" Runat="server" ></asp:label></td>
 					<td class="NormalBold" align="right" width="25%">&nbsp;
-						<asp:label id="lblItemsPerPage" runat="server" CssClass="NormalBold" resourcekey="ItemsPerPage">Items Per Page:</asp:label>&nbsp;
-						<asp:dropdownlist id="selPageSize" Runat="server" CssClass="Normal" AutoPostBack="True">
+						<asp:label id="lblItemsPerPage" runat="server"  resourcekey="ItemsPerPage">Items Per Page:</asp:label>&nbsp;
+						<asp:dropdownlist id="selPageSize" Runat="server" AutoPostBack="True">
 							<asp:ListItem Selected="True" Value="10">10</asp:ListItem>
 							<asp:ListItem Value="15">15</asp:ListItem>
 							<asp:ListItem Value="20">20</asp:ListItem>
@@ -656,8 +656,7 @@ function gridCheckAll(sender) {
 	</tr>
 	<!-- Status Bar Row End -->
 </table>
-<br />
-<div style="DISPLAY: none">
+<div style="display: none">
     <asp:linkbutton id="lnkMoveFiles" Runat="server"  EnableViewState="False"/>
     <asp:linkbutton id="lnkGetMoreNodes" Runat="server" EnableViewState="False"/>
     <asp:textbox id="txtMailData" Runat="server" EnableViewState="False"/>

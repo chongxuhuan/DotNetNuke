@@ -104,14 +104,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 

@@ -25,6 +25,7 @@
 
 using System;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Host;
@@ -65,7 +66,7 @@ namespace DotNetNuke.Modules.Admin.Search
 
             if (!Page.IsPostBack)
             {
-                if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+				if (Globals.IsHostTab(ModuleContext.PortalSettings.ActiveTab.TabID))
                 {
                     txtMaxWordLength.Text = Host.SearchMaxWordlLength.ToString();
                     txtMinWordLength.Text = Host.SearchMinWordlLength.ToString();
@@ -101,7 +102,7 @@ namespace DotNetNuke.Modules.Admin.Search
                 if (Page.IsValid)
                 {
                     var se = new SearchEngine();
-                    if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+					if (Globals.IsHostTab(ModuleContext.PortalSettings.ActiveTab.TabID))
                     {
                         se.IndexContent();
                     }
@@ -136,7 +137,7 @@ namespace DotNetNuke.Modules.Admin.Search
                 Page.Validate();
                 if(Page.IsValid)
                 {
-                    if (ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.SuperTabId)
+					if (Globals.IsHostTab(ModuleContext.PortalSettings.ActiveTab.TabID))
                     {
                         HostController.Instance.Update("MaxSearchWordLength", txtMaxWordLength.Text);
                         HostController.Instance.Update("MinSearchWordLength", txtMinWordLength.Text);

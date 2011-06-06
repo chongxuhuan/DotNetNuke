@@ -139,8 +139,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
             var PageSize = Convert.ToInt32(ddlRecordsPerPage.SelectedItem.Value);
             var TotalRecords = 0;
             var objVendors = new VendorController();
-            int Portal;
-            Portal = PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId ? Null.NullInteger : PortalId;
+            int Portal = Globals.IsHostTab(PortalSettings.ActiveTab.TabID) ? Null.NullInteger : PortalId;
             
 			if (String.IsNullOrEmpty(strFilter))
             {
@@ -319,7 +318,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
                     try
                     {
                         var objVendors = new VendorController();
-                        if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+						if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                         {
                             objVendors.DeleteVendors();
                         }

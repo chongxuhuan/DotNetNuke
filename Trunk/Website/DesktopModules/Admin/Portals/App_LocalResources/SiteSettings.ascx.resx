@@ -648,4 +648,7 @@
   <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
     <value>Please select a skin and/or container to preview.</value>
   </data>
+  <data name="valExpiryDate.ErrorMessage" xml:space="preserve">
+    <value>Invalid expiry date</value>
+  </data>
 </root>

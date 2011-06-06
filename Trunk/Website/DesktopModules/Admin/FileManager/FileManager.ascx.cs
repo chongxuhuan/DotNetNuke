@@ -1274,7 +1274,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 string strDestFolder = PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath));
                 var objPortalController = new PortalController();
 
-                if (objPortalController.HasSpaceAvailable(FolderPortalID, intSize) || (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId))
+				if (objPortalController.HasSpaceAvailable(FolderPortalID, intSize) || Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                 {
                     return "";
                 }

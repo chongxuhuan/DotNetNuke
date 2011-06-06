@@ -567,7 +567,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             try
             {
-                if ((Request.QueryString["pid"] != null) && (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId || UserInfo.IsSuperUser))
+				if ((Request.QueryString["pid"] != null) && (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) || UserInfo.IsSuperUser))
                 {
                     _portalId = Int32.Parse(Request.QueryString["pid"]);
                     ctlLogo.ShowUpLoad = false;
@@ -585,8 +585,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                     cancelHyperLink.Visible = false;
                 }
 
-                //this needs to execute always to the client script code is registred in InvokePopupCal
-                cmdExpiryCalendar.NavigateUrl = Calendar.InvokePopupCal(txtExpiryDate);
+                ////this needs to execute always to the client script code is registred in InvokePopupCal
+                //cmdExpiryCalendar.NavigateUrl = Calendar.InvokePopupCal(txtExpiryDate);
 
                 BindDesktopModules();
 

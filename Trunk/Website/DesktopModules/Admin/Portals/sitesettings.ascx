@@ -277,13 +277,12 @@
                     <div class="dnnFormItem">
                         <dnn:Label ID="plExpiryDate" runat="server" ControlName="txtExpiryDate" />
                         <asp:TextBox ID="txtExpiryDate" runat="server" MaxLength="150" />
-                        <asp:HyperLink ID="cmdExpiryCalendar" runat="server" resourcekey="Calendar" CssClass="dnnSecondaryAction" />
-                        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" ControlToValidate="txtExpiryDate" ErrorMessage="Invalid expiry date!" Operator="DataTypeCheck" Type="Date" Display="Dynamic" />
+                        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormMessage dnnFormError" runat="server" ControlToValidate="txtExpiryDate" resourcekey="valExpiryDate.ErrorMessage" Operator="DataTypeCheck" Type="Date" Display="Dynamic" />
 				    </div>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plHostFee" runat="server" ControlName="txtHostFee" />
                         <asp:textbox id="txtHostFee" runat="server" maxlength="10" />
-                        <asp:CompareValidator ID="valHostFee" runat="server" ControlToValidate="txtHostFee" CssClass="dnnFormError" Display="Dynamic" ResourceKey="valHostFee.Error" Operator="DataTypeCheck" Type="Currency" />
+                        <asp:CompareValidator ID="valHostFee" runat="server" ControlToValidate="txtHostFee" CssClass="dnnFormMessage dnnFormError" Display="Dynamic" ResourceKey="valHostFee.Error" Operator="DataTypeCheck" Type="Currency" />
                     </div>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plHostSpace" runat="server" ControlName="txtHostSpace" />
@@ -381,6 +380,11 @@
                 searchEngine += "&submit=Add+URL";
             }
             window.open(searchEngine, 'new');
+        });
+
+        $("#<%= txtExpiryDate.ClientID %>").datepicker({
+            changeMonth: true,
+            changeYear: true
         });
     }
 

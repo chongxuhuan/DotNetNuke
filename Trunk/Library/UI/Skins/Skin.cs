@@ -229,7 +229,7 @@ namespace DotNetNuke.UI.Skins
 			bool blnExpired = false;
 			if (PortalSettings.ExpiryDate != Null.NullDate)
 			{
-				if (Convert.ToDateTime(PortalSettings.ExpiryDate) < DateTime.Now && PortalSettings.ActiveTab.ParentId != PortalSettings.SuperTabId)
+				if (Convert.ToDateTime(PortalSettings.ExpiryDate) < DateTime.Now && !Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
 				{
 					blnExpired = true;
 				}
@@ -496,9 +496,6 @@ namespace DotNetNuke.UI.Skins
             //Load the Control Panel
 			InjectControlPanel();
 
-            //Process the Panes attributes
-			ProcessPanes();
-
             //Register any error messages on the Skin
 			if (Request.QueryString["error"] != null)
 			{
@@ -512,7 +509,10 @@ namespace DotNetNuke.UI.Skins
 			}
 
             InvokeSkinEvents(SkinEventType.OnSkinInit);
-		}
+
+            //Process the Panes attributes
+            ProcessPanes();
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>

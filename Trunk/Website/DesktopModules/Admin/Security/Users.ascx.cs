@@ -123,7 +123,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId;
+            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 

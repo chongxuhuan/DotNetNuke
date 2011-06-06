@@ -2206,6 +2206,36 @@ ALTER TABLE {databaseOwner}[{objectQualifier}Files] ADD
 	CONSTRAINT [FK_{objectQualifier}Files_{objectQualifier}Folders] FOREIGN KEY ([FolderID]) REFERENCES {databaseOwner}[{objectQualifier}Folders] ([FolderID]) ON DELETE CASCADE
 GO
 
+/* DNNPRO-16326 - Incorrect dates in Settings window from Lists module */
+/***********************************************************************/
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'DF_{objectQualifier}Modules_CreatedOnDate') AND OBJECTPROPERTY(id, N'IsDefaultCnst') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}Modules] 
+		ADD  CONSTRAINT [DF_{objectQualifier}Modules_CreatedOnDate]  
+				DEFAULT (getdate()) 
+				FOR [CreatedOnDate]
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'DF_{objectQualifier}Modules_LastModifiedOnDate') AND OBJECTPROPERTY(id, N'IsDefaultCnst') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}Modules] 
+		ADD  CONSTRAINT [DF_{objectQualifier}Modules_LastModifiedOnDate]  
+				DEFAULT (getdate()) 
+				FOR [LastModifiedOnDate]
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'DF_{objectQualifier}TabModules_CreatedOnDate') AND OBJECTPROPERTY(id, N'IsDefaultCnst') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}TabModules] 
+		ADD  CONSTRAINT [DF_{objectQualifier}TabModules_CreatedOnDate]  
+				DEFAULT (getdate()) 
+				FOR [CreatedOnDate]
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'DF_{objectQualifier}TabModules_LastModifiedOnDate') AND OBJECTPROPERTY(id, N'IsDefaultCnst') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}TabModules] 
+		ADD  CONSTRAINT [DF_{objectQualifier}TabModules_LastModifiedOnDate]  
+				DEFAULT (getdate()) 
+				FOR [LastModifiedOnDate]
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

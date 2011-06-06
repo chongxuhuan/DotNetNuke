@@ -267,4 +267,7 @@
   <data name="plCurrentWorkVersion.Text" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="lblNoRecords.Text" xml:space="preserve">
+    <value>There is no history for this content. </value>
+  </data>
 </root>

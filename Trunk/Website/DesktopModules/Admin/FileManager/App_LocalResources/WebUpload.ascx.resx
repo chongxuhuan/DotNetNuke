@@ -204,4 +204,7 @@
   <data name="ControlTitle_install.Text" xml:space="preserve">
     <value>Install Extension</value>
   </data>
+  <data name="FileSizeRestriction.Text" xml:space="preserve">
+    <value>Your site is configured with a maximum file upload size of {0} MB. </value>
+  </data>
 </root>

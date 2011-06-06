@@ -26,6 +26,9 @@
             <asp:Label ID="lblMessage" runat="server" EnableViewState="False" />
         </div>
     </fieldset>
+    <div class="dnnFormMessage dnnFormInfo">
+        <asp:Label id="maxSizeWarningLabel" runat="server" />
+    </div>
     <ul class="dnnActions dnnClear">
     	<li><asp:LinkButton id="cmdReturn1" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li>
     </ul>

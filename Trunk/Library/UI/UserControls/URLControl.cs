@@ -1210,7 +1210,7 @@ namespace DotNetNuke.UI.UserControls
             try
             {
                 var objPortals = new PortalController();
-                if ((Request.QueryString["pid"] != null) && (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId || UserController.GetCurrentUserInfo().IsSuperUser))
+				if ((Request.QueryString["pid"] != null) && (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) || UserController.GetCurrentUserInfo().IsSuperUser))
                 {
                     _objPortal = objPortals.GetPortal(Int32.Parse(Request.QueryString["pid"]));
                 }
@@ -1381,7 +1381,7 @@ namespace DotNetNuke.UI.UserControls
                 return;
             }
             string ParentFolderName;
-            if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+			if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
             {
                 ParentFolderName = Globals.HostMapPath;
             }

@@ -453,7 +453,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                     cboTab.DataBind();
 
                     //if tab is a  host tab, then add current tab
-                    if (PortalSettings.ActiveTab.ParentId == PortalSettings.SuperTabId)
+					if (Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         cboTab.Items.Insert(0, new ListItem(PortalSettings.ActiveTab.LocalizedTabName, PortalSettings.ActiveTab.TabID.ToString()));
                     }

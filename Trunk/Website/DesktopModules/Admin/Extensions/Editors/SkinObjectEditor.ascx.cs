@@ -50,13 +50,13 @@ namespace DotNetNuke.Modules.Admin.SkinObjects
             {
                 skinObjectFormReadOnly.DataSource = skinControl;
                 skinObjectFormReadOnly.DataBind();
-                lblHelp.Visible = false;
+                helpPanel.Visible = false;
             }
             if (skinControl != null && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
                 skinObjectForm.DataSource = skinControl;
                 skinObjectForm.DataBind();
-                lblHelp.Visible = true;
+                helpPanel.Visible = true;
             }
         }
 

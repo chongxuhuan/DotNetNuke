@@ -29,3 +29,5 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnEditRoleGroups .dnnFormItem input, .dnnEditRoleGroups .dnnFormItem textarea{width:35%;}
 .erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}
 .dnnEditProfileDef .dnnFormMessage{display:block;}
+
+.dnnUserSettings .dnnFormItem span {padding: 0px 10px 0px 5px;}
