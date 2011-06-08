@@ -243,4 +243,10 @@
   <data name="plAnswer.Help" xml:space="preserve">
     <value>Enter an Answer to the Password Question.</value>
   </data>
+  <data name="FirstName.RegExError" xml:space="preserve">
+    <value>First Name is invalid</value>
+  </data>
+  <data name="LastName.RegExError" xml:space="preserve">
+    <value>Last name is invalid</value>
+  </data>
 </root>

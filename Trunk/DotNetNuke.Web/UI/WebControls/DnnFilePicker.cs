@@ -836,7 +836,7 @@ namespace DotNetNuke.Web.UI.WebControls
 			_pnlContainer.Controls.Add(_pnlLeftDiv);
 
 			_pnlRightDiv = new Panel();
-			_pnlRightDiv.CssClass = "dnnRight";
+			_pnlRightDiv.CssClass = "dnnLeft";
 
 			GeneratePreviewImage();
 		

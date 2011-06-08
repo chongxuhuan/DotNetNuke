@@ -445,7 +445,7 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNullOrEmpty("newFolderName", newFolderName);
 
             if (folder.FolderName.Equals(newFolderName)) return;
-            
+
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
 
             if (folderMapping == null) return;
@@ -514,10 +514,16 @@ namespace DotNetNuke.Services.FileSystem
 
             Requires.NotNull("relativePath", relativePath);
 
-            var scriptTimeOut = GetCurrentScriptTimeout();
+            Nullable<int> scriptTimeOut = null;
 
-            // Synchronization could be a time-consuming process. To not get a time-out, we need to modify the request time-out value
-            SetScriptTimeout(int.MaxValue);
+            if (HttpContext.Current != null)
+            {
+                scriptTimeOut = GetCurrentScriptTimeout();
+
+                // Synchronization could be a time-consuming process. To not get a time-out, we need to modify the request time-out value
+                SetScriptTimeout(int.MaxValue);
+            }
+
 
             var collisionNotifications = new List<string>();
             var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
@@ -545,7 +551,10 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             // Restore original time-out
-            SetScriptTimeout(scriptTimeOut);
+            if (HttpContext.Current != null)
+            {
+                SetScriptTimeout(scriptTimeOut.Value);
+            }
 
             return collisionNotifications.Count;
         }
@@ -657,7 +666,7 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folder", folder);
 
             if (String.IsNullOrEmpty(folder.FolderPath)) return;
-            
+
             var parentFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.Substring(0, folder.FolderPath.Length - 1).LastIndexOf("/") + 1);
 
             foreach (FolderPermissionInfo objPermission in

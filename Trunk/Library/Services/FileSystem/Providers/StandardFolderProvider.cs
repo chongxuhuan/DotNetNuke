@@ -28,6 +28,7 @@ using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
 
@@ -175,7 +176,7 @@ namespace DotNetNuke.Services.FileSystem
 
         public override string GetImageUrl()
         {
-            return GlobalsWrapper.Instance.ResolveUrl("~/images/folder.gif");
+            return IconController.IconURL("Folder");
         }
 
         public override DateTime GetLastModificationTime(IFileInfo file)

@@ -52,7 +52,7 @@ namespace DotNetNuke.Security.Permissions
     /// -----------------------------------------------------------------------------
     public class ModulePermissionController
     {
-        private static readonly PermissionProvider provider = PermissionProvider.Instance();
+        private static readonly PermissionProvider Provider = PermissionProvider.Instance();
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -72,45 +72,43 @@ namespace DotNetNuke.Security.Permissions
 
         private static bool CanAddContentToPage(ModuleInfo objModule)
         {
-            bool canManage = Null.NullBoolean;
             TabInfo objTab = new TabController().GetTab(objModule.TabID, objModule.PortalID, false);
-            canManage = TabPermissionController.CanAddContentToPage(objTab);
-            return canManage;
+            return TabPermissionController.CanAddContentToPage(objTab);
         }
 
         public static bool CanAdminModule(ModuleInfo objModule)
         {
-            return provider.CanAdminModule(objModule);
+            return Provider.CanAdminModule(objModule);
         }
 
         public static bool CanDeleteModule(ModuleInfo objModule)
         {
-            return CanAddContentToPage(objModule) || provider.CanDeleteModule(objModule);
+            return CanAddContentToPage(objModule) || Provider.CanDeleteModule(objModule);
         }
 
         public static bool CanEditModuleContent(ModuleInfo objModule)
         {
-            return CanAddContentToPage(objModule) || provider.CanEditModuleContent(objModule);
+            return CanAddContentToPage(objModule) || Provider.CanEditModuleContent(objModule);
         }
 
         public static bool CanExportModule(ModuleInfo objModule)
         {
-            return provider.CanExportModule(objModule);
+            return Provider.CanExportModule(objModule);
         }
 
         public static bool CanImportModule(ModuleInfo objModule)
         {
-            return provider.CanImportModule(objModule);
+            return Provider.CanImportModule(objModule);
         }
 
         public static bool CanManageModule(ModuleInfo objModule)
         {
-            return CanAddContentToPage(objModule) || provider.CanManageModule(objModule);
+            return CanAddContentToPage(objModule) || Provider.CanManageModule(objModule);
         }
 
         public static bool CanViewModule(ModuleInfo objModule)
         {
-            bool canView = Null.NullBoolean;
+            bool canView;
             if (objModule.InheritViewPermissions)
             {
                 TabInfo objTab = new TabController().GetTab(objModule.TabID, objModule.PortalID, false);
@@ -118,8 +116,9 @@ namespace DotNetNuke.Security.Permissions
             }
             else
             {
-                canView = provider.CanViewModule(objModule);
+                canView = Provider.CanViewModule(objModule);
             }
+
             return canView;
         }
 
@@ -134,7 +133,7 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         public static void DeleteModulePermissionsByUser(UserInfo objUser)
         {
-            provider.DeleteModulePermissionsByUser(objUser);
+            Provider.DeleteModulePermissionsByUser(objUser);
             DataCache.ClearModulePermissionsCachesByPortal(objUser.PortalID);
         }
 
@@ -150,7 +149,7 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         public static ModulePermissionCollection GetModulePermissions(int moduleID, int tabID)
         {
-            return provider.GetModulePermissions(moduleID, tabID);
+            return Provider.GetModulePermissions(moduleID, tabID);
         }
 
         /// -----------------------------------------------------------------------------
@@ -172,7 +171,7 @@ namespace DotNetNuke.Security.Permissions
             {
                 foreach (string permission in permissionKey.Split(','))
                 {
-                    if (provider.HasModulePermission(objModulePermissions, permission))
+                    if (Provider.HasModulePermission(objModulePermissions, permission))
                     {
                         hasPermission = true;
                         break;
@@ -181,7 +180,7 @@ namespace DotNetNuke.Security.Permissions
             }
             else
             {
-                hasPermission = provider.HasModulePermission(objModulePermissions, permissionKey);
+                hasPermission = Provider.HasModulePermission(objModulePermissions, permissionKey);
             }
             return hasPermission;
         }
@@ -191,44 +190,40 @@ namespace DotNetNuke.Security.Permissions
         /// Determines if user has the necessary permissions to access an item with the
         /// designated AccessLevel.
         /// </summary>
-        /// <param name="AccessLevel">The SecurityAccessLevel required to access a portal module or module action.</param>
+        /// <param name="accessLevel">The SecurityAccessLevel required to access a portal module or module action.</param>
         /// <param name="permissionKey">If Security Access is Edit the permissionKey is the actual "edit" permisison required.</param>
-        /// <param name="ModuleConfiguration">The ModuleInfo object for the associated module.</param>
+        /// <param name="moduleConfiguration">The ModuleInfo object for the associated module.</param>
         /// <returns>A boolean value indicating if the user has the necessary permissions</returns>
         /// <remarks>Every module control and module action has an associated permission level.  This
         /// function determines whether the user represented by UserName has sufficient permissions, as
         /// determined by the PortalSettings and ModuleSettings, to access a resource with the
         /// designated AccessLevel.</remarks>
-        /// <history>
-        ///     [cnurse]        02/27/2007  New overload
-        ///     [cnurse]        02/27/2007  Moved from PortalSecurity
-        /// </history>
         ///-----------------------------------------------------------------------------
-        public static bool HasModuleAccess(SecurityAccessLevel AccessLevel, string permissionKey, ModuleInfo ModuleConfiguration)
+        public static bool HasModuleAccess(SecurityAccessLevel accessLevel, string permissionKey, ModuleInfo moduleConfiguration)
         {
-            bool blnAuthorized = false;
-            UserInfo objUser = UserController.GetCurrentUserInfo();
-            if (objUser != null && objUser.IsSuperUser)
+            bool isAuthorized = false;
+            UserInfo userInfo = UserController.GetCurrentUserInfo();
+            if (userInfo != null && userInfo.IsSuperUser)
             {
-                blnAuthorized = true;
+                isAuthorized = true;
             }
             else
             {
-                switch (AccessLevel)
+                switch (accessLevel)
                 {
                     case SecurityAccessLevel.Anonymous:
-                        blnAuthorized = true;
+                        isAuthorized = true;
                         break;
                     case SecurityAccessLevel.View:
-                        if (TabPermissionController.CanViewPage() || CanViewModule(ModuleConfiguration))
+                        if (TabPermissionController.CanViewPage() || CanViewModule(moduleConfiguration))
                         {
-                            blnAuthorized = true;
+                            isAuthorized = true;
                         }
                         break;
                     case SecurityAccessLevel.Edit:
                         if (TabPermissionController.CanAddContentToPage())
                         {
-                            blnAuthorized = true;
+                            isAuthorized = true;
                         }
                         else
                         {
@@ -236,35 +231,21 @@ namespace DotNetNuke.Security.Permissions
                             {
                                 permissionKey = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE";
                             }
-                            if (ModuleConfiguration != null && CanViewModule(ModuleConfiguration) &&
-                                (HasModulePermission(ModuleConfiguration.ModulePermissions, permissionKey) || HasModulePermission(ModuleConfiguration.ModulePermissions, "EDIT")))
+                            if (moduleConfiguration != null && CanViewModule(moduleConfiguration) &&
+                                (HasModulePermission(moduleConfiguration.ModulePermissions, permissionKey) || HasModulePermission(moduleConfiguration.ModulePermissions, "EDIT")))
                             {
-                                blnAuthorized = true;
+                                isAuthorized = true;
                             }
                         }
                         break;
                     case SecurityAccessLevel.Admin:
-                        if (TabPermissionController.CanAdminPage())
-                        {
-                            blnAuthorized = true;
-                        }
-						else if (ModuleConfiguration != null && CanEditModuleContent(ModuleConfiguration))
-                        {
-                            if (String.IsNullOrEmpty(permissionKey))
-                            {
-                                permissionKey = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE";
-                            }
-                            if (CanViewModule(ModuleConfiguration) && HasModulePermission(ModuleConfiguration.ModulePermissions, permissionKey))
-                            {
-                                blnAuthorized = true;
-                            }
-                        }
+                        isAuthorized = TabPermissionController.CanAddContentToPage();
                         break;
                     case SecurityAccessLevel.Host:
                         break;
                 }
             }
-            return blnAuthorized;
+            return isAuthorized;
         }
 
         /// -----------------------------------------------------------------------------
@@ -278,7 +259,7 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         public static void SaveModulePermissions(ModuleInfo objModule)
         {
-            provider.SaveModulePermissions(objModule);
+            Provider.SaveModulePermissions(objModule);
             DataCache.ClearModulePermissionsCache(objModule.TabID);
         }
 
@@ -287,27 +268,27 @@ namespace DotNetNuke.Security.Permissions
         [Obsolete("Deprecated in DNN 5.1.")]
         public int AddModulePermission(ModulePermissionInfo objModulePermission, int tabId)
         {
-            int Id = DataProvider.Instance().AddModulePermission(objModulePermission.ModuleID,
+            int id = DataProvider.Instance().AddModulePermission(objModulePermission.ModuleID,
                                                                  objModulePermission.PermissionID,
                                                                  objModulePermission.RoleID,
                                                                  objModulePermission.AllowAccess,
                                                                  objModulePermission.UserID,
                                                                  UserController.GetCurrentUserInfo().UserID);
             DataCache.ClearModulePermissionsCache(tabId);
-            return Id;
+            return id;
         }
 
         [Obsolete("Deprecated in DNN 5.0.")]
         public int AddModulePermission(ModulePermissionInfo objModulePermission)
         {
-            int Id = DataProvider.Instance().AddModulePermission(objModulePermission.ModuleID,
+            int id = DataProvider.Instance().AddModulePermission(objModulePermission.ModuleID,
                                                                  objModulePermission.PermissionID,
                                                                  objModulePermission.RoleID,
                                                                  objModulePermission.AllowAccess,
                                                                  objModulePermission.UserID,
                                                                  UserController.GetCurrentUserInfo().UserID);
             ClearPermissionCache(objModulePermission.ModuleID);
-            return Id;
+            return id;
         }
 
         [Obsolete("Deprecated in DNN 5.1.")]
@@ -343,25 +324,25 @@ namespace DotNetNuke.Security.Permissions
         }
 
         [Obsolete("Deprecated in DNN 5.0.  This should have been declared as Friend as it was never meant to be used outside of the core.")]
-        public ArrayList GetModulePermissionsByPortal(int PortalID)
+        public ArrayList GetModulePermissionsByPortal(int portalID)
         {
-            return CBO.FillCollection(DataProvider.Instance().GetModulePermissionsByPortal(PortalID), typeof (ModulePermissionInfo));
+            return CBO.FillCollection(DataProvider.Instance().GetModulePermissionsByPortal(portalID), typeof (ModulePermissionInfo));
         }
 
         [Obsolete("Deprecated in DNN 5.0.  This should have been declared as Friend as it was never meant to be used outside of the core.")]
-        public ArrayList GetModulePermissionsByTabID(int TabID)
+        public ArrayList GetModulePermissionsByTabID(int tabID)
         {
-            return CBO.FillCollection(DataProvider.Instance().GetModulePermissionsByTabID(TabID), typeof (ModulePermissionInfo));
+            return CBO.FillCollection(DataProvider.Instance().GetModulePermissionsByTabID(tabID), typeof (ModulePermissionInfo));
         }
 
         [Obsolete("Deprecated in DNN 5.0.  Use GetModulePermissions(ModulePermissionCollection, String) ")]
-        public string GetModulePermissionsByModuleID(ModuleInfo objModule, string PermissionKey)
+        public string GetModulePermissionsByModuleID(ModuleInfo objModule, string permissionKey)
         {
             //Create a Module Permission Collection from the ArrayList
             var modulePermissions = new ModulePermissionCollection(objModule);
 
             //Return the permission string for permissions with specified TabId
-            return modulePermissions.ToString(PermissionKey);
+            return modulePermissions.ToString(permissionKey);
         }
 
         [Obsolete("Deprecated in DNN 5.1.  GetModulePermissions(integer, integer) ")]
@@ -383,14 +364,13 @@ namespace DotNetNuke.Security.Permissions
         }
 
         [Obsolete("Deprecated in DNN 5.0.  It was used to replace lists of RoleIds by lists of RoleNames.")]
-        public string GetRoleNamesFromRoleIDs(string Roles)
+        public string GetRoleNamesFromRoleIDs(string roles)
         {
             string strRoles = "";
-            if (Roles.IndexOf(";") > 0)
+            if (roles.IndexOf(";") > 0)
             {
-                string[] arrRoles = Roles.Split(';');
-                int i = 0;
-                for (i = 0; i <= arrRoles.Length - 1; i++)
+                string[] arrRoles = roles.Split(';');
+                for (int i = 0; i <= arrRoles.Length - 1; i++)
                 {
                     if (Regex.IsMatch(arrRoles[i], "^\\d+$"))
                     {
@@ -398,9 +378,9 @@ namespace DotNetNuke.Security.Permissions
                     }
                 }
             }
-            else if (Roles.Trim().Length > 0)
+            else if (roles.Trim().Length > 0)
             {
-                strRoles = Globals.GetRoleName(Convert.ToInt32(Roles.Trim()));
+                strRoles = Globals.GetRoleName(Convert.ToInt32(roles.Trim()));
             }
             if (!strRoles.StartsWith(";"))
             {
@@ -410,16 +390,16 @@ namespace DotNetNuke.Security.Permissions
         }
 
         [Obsolete("Deprecated in DNN 5.0.  Use HasModulePermission(ModulePermissionCollection, string)")]
-        public static bool HasModulePermission(int moduleID, string PermissionKey)
+        public static bool HasModulePermission(int moduleID, string permissionKey)
         {
             var objModulePermissions = new ModulePermissionCollection(CBO.FillCollection(DataProvider.Instance().GetModulePermissionsByModuleID(moduleID, -1), typeof (ModulePermissionInfo)));
-            return HasModulePermission(objModulePermissions, PermissionKey);
+            return HasModulePermission(objModulePermissions, permissionKey);
         }
 
         [Obsolete("Deprecated in DNN 5.1.  Use HasModulePermission(ModulePermissionCollection, string)")]
-        public static bool HasModulePermission(int moduleID, int tabID, string PermissionKey)
+        public static bool HasModulePermission(int moduleID, int tabID, string permissionKey)
         {
-            return HasModulePermission(GetModulePermissions(moduleID, tabID), PermissionKey);
+            return HasModulePermission(GetModulePermissions(moduleID, tabID), permissionKey);
         }
 
         [Obsolete("Deprecated in DNN 5.1.")]

@@ -188,14 +188,9 @@ namespace DotNetNuke.Modules.Admin.Users
                 cmdPassword.Visible = !UserMembership.UpdatePassword;
             }
 
-            if (UserMembership.LastLockoutDate.Year > 2000)
-            {
-               lastLockoutDate.Value = UserMembership.LastLockoutDate;
-            }
-            else
-            {
-                lastLockoutDate.Value = LocalizeString("Never");
-            }
+            lastLockoutDate.Value = UserMembership.LastLockoutDate.Year > 2000 
+                                        ? (object) UserMembership.LastLockoutDate 
+                                        : LocalizeString("Never");
 
             membershipForm.DataSource = UserMembership;
             membershipForm.DataBind();

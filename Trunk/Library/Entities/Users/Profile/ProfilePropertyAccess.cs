@@ -30,6 +30,7 @@ using System.Web;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
@@ -134,7 +135,7 @@ namespace DotNetNuke.Entities.Users
                         }
                         else
                         {
-                            result = Globals.ResolveUrl("~/images/spacer.gif");
+                            result = IconController.IconURL("Spacer","1X1");
                         }
                         break;
                     case "richtext":

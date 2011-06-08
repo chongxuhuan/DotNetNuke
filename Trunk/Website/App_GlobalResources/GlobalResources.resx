@@ -1165,4 +1165,94 @@ Sincerely,
   <data name="Manage.Text" xml:space="preserve">
     <value>Manage</value>
   </data>
+  <data name="ModuleGenericActions.Action" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="ModuleSpecificActions.Action" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="//AboutUs.String" xml:space="preserve">
+    <value>About Us</value>
+  </data>
+  <data name="//Admin//ContentStaging.String" xml:space="preserve">
+    <value>Content Staging</value>
+  </data>
+  <data name="//Admin//GoogleAnalytics.String" xml:space="preserve">
+    <value>Google Analytics</value>
+  </data>
+  <data name="//Admin//Pages.String" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="//Admin//SearchEngineSiteMap.String" xml:space="preserve">
+    <value>Search Engine Site Map</value>
+  </data>
+  <data name="//Admin//Taxonomy.String" xml:space="preserve">
+    <value>Taxonomy</value>
+  </data>
+  <data name="//GettingStarted.String" xml:space="preserve">
+    <value>Getting Started</value>
+  </data>
+  <data name="//Home.String" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="//Host//ConfigurationManager.String" xml:space="preserve">
+    <value>Configuration Manager</value>
+  </data>
+  <data name="//Host//Dashboard.String" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="//Host//HTMLEditorManager.String" xml:space="preserve">
+    <value>HTML Editor Manager</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures.String" xml:space="preserve">
+    <value>Professional Features</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//ActivateYourLicense.String" xml:space="preserve">
+    <value>Activate Your License</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//ApplicationIntegrity.String" xml:space="preserve">
+    <value>Application Integrity</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//HealthMonitoring.String" xml:space="preserve">
+    <value>Health Monitoring</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//KnowledgeBase.String" xml:space="preserve">
+    <value>Knowledge Base</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//LicenseManagement.String" xml:space="preserve">
+    <value>License Management</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//ManageWebServers.String" xml:space="preserve">
+    <value>Manage Web Servers</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//MySupportTickets.String" xml:space="preserve">
+    <value>My Support Tickets</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//SearchCrawlerAdmin.String" xml:space="preserve">
+    <value>Search Crawler Admin</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//SecurityCenter.String" xml:space="preserve">
+    <value>Security Center</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//SharePointConnector.String" xml:space="preserve">
+    <value>SharePoint Connector</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//SoftwareandDocumentation.String" xml:space="preserve">
+    <value>Software and Documentation</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//SpecialOffers.String" xml:space="preserve">
+    <value>Special Offers</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//TechnicalSupport.String" xml:space="preserve">
+    <value>Technical Support</value>
+  </data>
+  <data name="//Host//ProfessionalFeatures//UserSwitcher.String" xml:space="preserve">
+    <value>User Switcher</value>
+  </data>
+  <data name="//SearchResults.String" xml:space="preserve">
+    <value>Search Results</value>
+  </data>
+  <data name="//UserProfile.String" xml:space="preserve">
+    <value>User Profile</value>
+  </data>
 </root>

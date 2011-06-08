@@ -1,5 +1,6 @@
-<%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Control Inherits="DotNetNuke.Modules.Admin.SiteLog.SiteLog" Language="C#" AutoEventWireup="false" CodeFile="SiteLog.ascx.cs" %>
+<%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <div class="dnnForm dnnSiteLog dnnClear" id="dnnSiteLog">
     <div class="slContent dnnClear">
         <fieldset>
@@ -10,18 +11,18 @@
             </div>
             <div class="dnnFormItem">
                 <dnn:label id="plStartDate" runat="server" controlname="txtStartDate" suffix=":" />
-                <asp:TextBox id="txtStartDate" runat="server" Columns="20" />
-                <asp:HyperLink id="cmdStartCalendar" resourcekey="Calendar" Runat="server" CssClass="dnnSecondaryAction" />
-                <asp:comparevalidator id="valStartDate" cssclass="NormalRed" runat="server" resourcekey="valStartDate" display="Dynamic" type="Date" operator="DataTypeCheck" controltovalidate="txtStartDate" />
+                <dnn:dnndatepicker ID="diStartDate" runat="server" />
+                <asp:comparevalidator id="valStartDate" cssclass="NormalRed" runat="server" resourcekey="valStartDate" display="Dynamic" type="Date" operator="DataTypeCheck" controltovalidate="diStartDate" />
+
             </div>
             <div class="dnnFormItem">
                 <dnn:label id="plEndDate" runat="server" controlname="txtEndDate" suffix=":" />
-                <asp:TextBox id="txtEndDate" runat="server" Columns="20" />
-                <asp:HyperLink id="cmdEndCalendar" resourcekey="Calendar" Runat="server" CssClass="dnnSecondaryAction" />
-                <asp:comparevalidator id="valEndDate" cssclass="NormalRed" runat="server" resourcekey="valEndDate" display="Dynamic" type="Date" operator="DataTypeCheck" controltovalidate="txtEndDate" />
+                <dnn:dnndatepicker ID="diEndDate" runat="server" />
+                <asp:comparevalidator id="valEndDate" cssclass="NormalRed" runat="server" resourcekey="valEndDate" display="Dynamic" type="Date" operator="DataTypeCheck" controltovalidate="diEndDate" />
+
             </div>
             <div class="dnnFormItem">
-                <asp:comparevalidator id="valDates" cssclass="NormalRed" runat="server" resourcekey="valDates" display="Dynamic" type="Date" operator="GreaterThan" controltovalidate="txtEndDate" controltocompare="txtStartDate" />
+                <asp:comparevalidator id="valDates" cssclass="NormalRed" runat="server" resourcekey="valDates" display="Dynamic" type="Date" operator="GreaterThan" controltovalidate="diEndDate" controltocompare="diStartDate" />
             </div>
             <ul class="dnnActions dnnClear">
                 <li><asp:LinkButton id="cmdDisplay" resourcekey="cmdDisplay" cssclass="dnnPrimaryAction" Text="Display" runat="server"  /></li>
@@ -34,5 +35,3 @@
         </asp:datagrid>
     </div>
 </div>
-
-

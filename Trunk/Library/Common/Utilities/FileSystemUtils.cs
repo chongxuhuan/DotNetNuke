@@ -281,48 +281,30 @@ namespace DotNetNuke.Common.Utilities
         /// </history>
         /// -----------------------------------------------------------------------------
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FileManager.Instance.AddFile(IFolderInfo folder, string fileName, Stream fileContent, bool overwrite) ")]
         public static void AddFile(string FileName, int PortalId, string Folder, string HomeDirectoryMapPath, string contentType)
         {
-#pragma warning disable 612,618
-            string strFile = HomeDirectoryMapPath + Folder + FileName;
+            var fileManager = FileManager.Instance;
 
-            //add file to Files table
-            var objFiles = new FileController();
-            var finfo = new System.IO.FileInfo(strFile);
-            var objFolders = new FolderController();
-            FolderInfo objFolder = objFolders.GetFolder(PortalId, Folder, false);
-            FileInfo objFile;
-            objFile = objFiles.GetFile(FileName, PortalId, objFolder.FolderID);
-            if (objFile == null)
+            var folder = FolderManager.Instance.GetFolder(PortalId, Folder);
+
+            var file = fileManager.GetFile(folder, FileName);
+
+            if (file == null)
             {
-                objFile = new FileInfo();
-                objFile.UniqueId = Guid.NewGuid();
-                objFile.VersionGuid = Guid.NewGuid();
-
-                objFile.PortalId = PortalId;
-                objFile.FileName = FileName;
-                objFile.Extension = finfo.Extension;
-                objFile.Size = (int)finfo.Length;
-                objFile.Width = 0;
-                objFile.Height = 0;
-                objFile.ContentType = contentType;
-                objFile.Folder = FormatFolderPath("");
-                objFile.FolderId = objFolder.FolderID;
-
-                objFiles.AddFile(objFile);
+                file = new FileInfo { PortalId = PortalId, FolderId = folder.FolderID, FileName = FileName };
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    fileManager.AddFile(folder, FileName, fileContent, false);
+                }
             }
             else
             {
-                objFile.Extension = finfo.Extension;
-                objFile.Size = (int)finfo.Length;
-                objFile.Width = 0;
-                objFile.Height = 0;
-                objFile.ContentType = contentType;
-                objFile.SHA1Hash = GetHash(File.ReadAllBytes(strFile));
-                objFiles.UpdateFile(objFile);
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    fileManager.UpdateFile(file, fileContent);
+                }
             }
-#pragma warning restore 612,618
         }
 
         /// <summary>

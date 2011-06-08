@@ -1074,6 +1074,7 @@ namespace DotNetNuke.Services.Upgrade
                 if (nodes != null)
                 {
                     var folderManager = FolderManager.Instance;
+                    var fileManager = FileManager.Instance;
 
                     foreach (XmlNode fileNode in nodes)
                     {
@@ -1088,7 +1089,12 @@ namespace DotNetNuke.Services.Upgrade
                         var folderInfo = folderManager.GetFolder(portalId, folder);
                         var file = new FileInfo(portalId, fileName, extension, (int) size, width, height, contentType, folder, folderInfo.FolderID, folderInfo.StorageLocation, true);
 
-                        DatabaseFolderProvider.AddFile(file);
+                        using (var fileContent = fileManager.GetFileContent(file))
+                        {
+                            file.FileId = fileManager.AddFile(folderInfo, file.FileName, fileContent, false).FileId;
+                        }
+
+                        fileManager.UpdateFile(file);
                     }
                 }
             }
@@ -2089,6 +2095,8 @@ namespace DotNetNuke.Services.Upgrade
             var displayBetaNotice = Host.DisplayBetaNotice;
             HostController.Instance.Update("DisplayBetaNotice", displayBetaNotice ? "Y": "N");
 
+            moduleDefId = GetModuleDefinition("Languages", "Languages");
+            AddModuleControl(moduleDefId, "EnableContent", "Enable Localized Content", "DesktopModules/Admin/Languages/EnableLocalizedContent.ascx", "", SecurityAccessLevel.Host, 0, null, false);
             AddProfessionalPreviewPages();
 
             AddDefaultModuleIcons();
@@ -3175,7 +3183,7 @@ namespace DotNetNuke.Services.Upgrade
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 0, "Synchronizing Host Files:<br>");
             }
 
-            FolderManager.Instance.Synchronize(Null.NullInteger, "", true, false);
+            FolderManager.Instance.Synchronize(Null.NullInteger, "", true, true);
         }
 
         public static bool InstallPackage(string file, string packageType, bool writeFeedback)

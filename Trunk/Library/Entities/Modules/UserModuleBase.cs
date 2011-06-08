@@ -400,7 +400,7 @@ namespace DotNetNuke.Entities.Modules
         private UserInfo InitialiseUser()
         {
             var newUser = new UserInfo();
-            if (IsHostMenu)
+            if (IsHostMenu && !IsRegister)
             {
                 newUser.IsSuperUser = true;
             }

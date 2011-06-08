@@ -33,6 +33,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls.Design;
 
@@ -972,7 +973,7 @@ namespace DotNetNuke.UI.WebControls
                 {
                     var tbl = (Table) key.Value;
                     var icon = (Image) key.Key;
-                    DNNClientAPI.EnableMinMax(icon, tbl, false, Page.ResolveUrl("~/images/minus.gif"), Page.ResolveUrl("~/images/plus.gif"), DNNClientAPI.MinMaxPersistanceType.Page);
+                    DNNClientAPI.EnableMinMax(icon, tbl, false, IconController.IconURL("Minus", "12X15"), IconController.IconURL("Plus","12X15"), DNNClientAPI.MinMaxPersistanceType.Page);
                 }
             }
             base.OnPreRender(e);

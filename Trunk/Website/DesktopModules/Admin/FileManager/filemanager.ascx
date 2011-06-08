@@ -428,7 +428,6 @@ function gridCheckAll(sender) {
 					</td>
 					<td  style="vertical-align:middle; width:210px">
 						<span id="syncFolder" runat="server">
-						    <asp:linkbutton id="lnkSyncFolder" EnableViewState="False" runat="server" Visible="False"/>
 							<asp:image id="lnkSyncFolderIMG" Runat="server" resourcekey="lnkSyncFolderIMG.AlternateText" name="lnkSyncFolderIMG"  style="vertical-align:middle"/>
 							<asp:label id="lblSynchronize" EnableViewState="False" runat="server" resourcekey="SynchronizeFolder"/>
 						</span>
@@ -665,6 +664,7 @@ function gridCheckAll(sender) {
     <asp:textbox id="txtLastPath" Runat="server" EnableViewState="False"/>
     <asp:linkbutton id="lnkCancelMoveFiles" Runat="server" EnableViewState="False"/>
     <asp:hyperlink id="lnkUploadRedir" Runat="server" EnableViewState="False" Visible="False"/>
+	<asp:linkbutton id="lnkSyncFolder" EnableViewState="False" runat="server"/>
 </div>
 <asp:panel id="pnlSecurity" Runat="server" Visible="False" CssClass="dnnForm">
     <asp:PlaceHolder id="phSecureFolderWarning" runat="server">

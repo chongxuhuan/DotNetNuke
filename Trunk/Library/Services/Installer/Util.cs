@@ -382,7 +382,7 @@ namespace DotNetNuke.Services.Installer
                 parameters[1] = "ptype=" + type;
             }
             var context = new ModuleInstanceContext();
-            return context.EditNavUrl(tabId, "Install", false, parameters);
+            return context.NavigateUrl(tabId, "Install", false, parameters);
         }
 
         public static string InstallURL(int tabId, string returnUrl, string type)
@@ -398,7 +398,7 @@ namespace DotNetNuke.Services.Installer
                 parameters[2] = "ptype=" + type;
             }
             var context = new ModuleInstanceContext();
-            return context.EditNavUrl(tabId, "Install", false, parameters);            
+            return context.NavigateUrl(tabId, "Install", false, parameters);            
         }
 
         public static string InstallURL(int tabId, string returnUrl, string type, string package)
@@ -418,7 +418,7 @@ namespace DotNetNuke.Services.Installer
                 parameters[3] = "package=" + package;
             }
             var context = new ModuleInstanceContext();
-            return context.EditNavUrl(tabId, "Install", false, parameters);
+            return context.NavigateUrl(tabId, "Install", false, parameters);
         }
 
         public static string UnInstallURL(int tabId, int packageId, string returnUrl)
@@ -428,7 +428,7 @@ namespace DotNetNuke.Services.Installer
             parameters[1] = "returnUrl=" + returnUrl;
             parameters[2] = "packageId=" + packageId;
             var context = new ModuleInstanceContext();
-            return context.EditNavUrl(tabId, "UnInstall", true, parameters);
+            return context.NavigateUrl(tabId, "UnInstall", true, parameters);
         }
 
         /// -----------------------------------------------------------------------------
@@ -441,7 +441,7 @@ namespace DotNetNuke.Services.Installer
         /// <returns>The localized string</returns>
         /// <history>
         /// 	[cnurse]	01/31/2008  created
-        ///     [vnguyen]   05/24/2011  updated: calls EditNavUrl to handle popups
+        ///     [vnguyen]   05/24/2011  updated: calls NavigateUrl of Module Context to handle popups
         /// </history>
         /// -----------------------------------------------------------------------------
         public static string PackageWriterURL(ModuleInstanceContext context, int packageId)
@@ -451,7 +451,7 @@ namespace DotNetNuke.Services.Installer
             parameters[1] = "packageId=" + packageId;
             parameters[2] = "mid=" + context.ModuleId;
 
-            return context.EditNavUrl(context.TabId, "PackageWriter", true, parameters);
+            return context.NavigateUrl(context.TabId, "PackageWriter", true, parameters);
         }
         
         public static string ParsePackageIconFileName(PackageInfo package)
@@ -545,7 +545,7 @@ namespace DotNetNuke.Services.Installer
         /// <returns>The localized string</returns>
         /// <history>
         /// 	[cnurse]	07/31/2007  created
-        ///     [vnguyen]   05/24/2011  updated: calls EditNavUrl to handle popups
+        ///     [vnguyen]   05/24/2011  updated: calls NavigateUrl of Module Context to handle popups
         /// </history>
         /// -----------------------------------------------------------------------------
         public static string UnInstallURL(int tabId, int packageId)
@@ -554,7 +554,7 @@ namespace DotNetNuke.Services.Installer
             parameters[0] = "rtab=" + tabId;
             parameters[1] = "packageId=" + packageId;
             var context = new ModuleInstanceContext();
-            return context.EditNavUrl(tabId, "UnInstall", true, parameters);
+            return context.NavigateUrl(tabId, "UnInstall", true, parameters);
         }
 
         /// -----------------------------------------------------------------------------

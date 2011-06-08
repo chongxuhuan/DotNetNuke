@@ -28,6 +28,7 @@ using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Services.FileSystem
@@ -202,7 +203,7 @@ namespace DotNetNuke.Services.FileSystem
 
         public override string GetImageUrl()
         {
-            return GlobalsWrapper.Instance.ResolveUrl("~/images/icon_securityroles_16px.gif");
+            return IconController.IconURL("SecurityRoles");
         }
 
         public override DateTime GetLastModificationTime(IFileInfo file)

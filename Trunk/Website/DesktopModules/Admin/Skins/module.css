@@ -1,9 +1,6 @@
 ﻿.dnnEditSkins .dnnFormItem label, .dnnEditSkins .dnnFormItem .dnnFormLabel{width:15%;}
 .dnnFormItem .esCheckBoxes label{width:auto;font-weight:normal;margin-top:0;padding-left:5px;}
 .dnnEditSkins .dnnFormItem table.skinViewer{width:80%;float:left;}
-	.dnnEditSkins .dnnESRadioButtons{display:block;float:left;overflow:hidden;margin-top:1px;}
-	.dnnEditSkins .dnnESRadioButtons label{width:auto;padding-right:10px;}
-.dnnESRadioButtons label{width:auto;padding:0 5px 0 0;margin-left:3px;text-align:left;font-weight:normal;margin-top:0;}
 	.dnnFormItem.legacySkinNotice{margin-left:15%;}
 	.dnnFormItem.legacySkinNotice .dnnFormMessage{margin-top:0;margin-left:1.5em;}
 	.dnnFormItem.legacySkinNotice .dnnFormInfo{clear:both;overflow:hidden;display:block;width:30%;}

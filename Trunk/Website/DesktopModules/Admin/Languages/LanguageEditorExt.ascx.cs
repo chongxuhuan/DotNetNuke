@@ -64,7 +64,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         {
             get
             {
-                return Globals.NavigateURL("", "ctl=Editor", "mid=" + ModuleId, "Locale=" + locale, "ResourceFile=" + Globals.QueryStringEncode(resfile), "Mode=" + mode, "Highlight=" + highlight);
+                return ModuleContext.NavigateUrl(TabId, "", true, "ctl=Editor", "mid=" + ModuleId, "Locale=" + locale, "ResourceFile=" + Globals.QueryStringEncode(resfile), "Mode=" + mode, "Highlight=" + highlight);
             }
         }
 

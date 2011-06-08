@@ -37,7 +37,7 @@
         </div>
         <div id="pnlParse" Runat="server" Visible="False" class="dnnFormItem">
             <dnn:label id="lblParseOptions" runat="server" resourcekey="ParseOptions" />
-			<asp:RadioButtonList id="optParse" Runat="server"  RepeatDirection="Horizontal" CssClass="dnnESRadioButtons" RepeatLayout="Flow">
+			<asp:RadioButtonList id="optParse" Runat="server"  RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons" RepeatLayout="Flow">
 				<asp:ListItem resourcekey="Localized" Value="L" Selected="True" />
 				<asp:ListItem resourcekey="Portable" Value="P" />
 			</asp:RadioButtonList>

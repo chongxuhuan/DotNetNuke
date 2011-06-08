@@ -172,7 +172,7 @@
     <value>Add</value>
   </data>
   <data name="Tool.PageSettings.Text" xml:space="preserve">
-    <value>Edit Page Settings</value>
+    <value>Page Settings</value>
   </data>
   <data name="AdminConsole.ToolTip" xml:space="preserve">
     <value>Admin Console</value>
@@ -196,7 +196,7 @@
     <value>Create New Page</value>
   </data>
   <data name="Tool.PageSettings.ToolTip" xml:space="preserve">
-    <value>Edit Current Page Settings</value>
+    <value>Page Settings</value>
   </data>
   <data name="CurrentTabEditPage.Text" xml:space="preserve">
     <value>Update Current Page</value>

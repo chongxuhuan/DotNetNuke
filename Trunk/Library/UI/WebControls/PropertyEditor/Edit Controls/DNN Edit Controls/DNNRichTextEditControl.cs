@@ -27,18 +27,13 @@ using System;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 using DotNetNuke.Modules.HTMLEditorProvider;
 
 #endregion
 
 namespace DotNetNuke.UI.WebControls
 {
-    /// -----------------------------------------------------------------------------
-    /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.UI.WebControls
-    /// Class:      DNNRichTextEditControl
-    /// -----------------------------------------------------------------------------
+
     /// <summary>
     /// The DNNRichTextEditControl control provides a standard UI component for editing
     /// RichText
@@ -46,17 +41,21 @@ namespace DotNetNuke.UI.WebControls
     /// <history>
     ///     [cnurse]	03/31/2006	created
     /// </history>
-    /// -----------------------------------------------------------------------------
+    /// <remarks>This is still being used in 6.0.0 (edit a profile, biography field).</remarks>
     [Obsolete("Deprecated in DNN 5.6.2.  Replaced by control of same name in DotNetNuke.Web assembly")]
     [ToolboxData("<{0}:DNNRichTextEditControl runat=server></{0}:DNNRichTextEditControl>")]
     public class DNNRichTextEditControl : TextEditControl
     {
+
         private HtmlEditorProvider RichTextEditor;
 
         protected override void CreateChildControls()
         {
             if (EditMode == PropertyEditorMode.Edit)
             {
+                var pnlEditor = new Panel();
+                pnlEditor.CssClass = "dnnLeft";
+
                 RichTextEditor = HtmlEditorProvider.Instance();
                 RichTextEditor.ControlID = ID + "edit";
                 RichTextEditor.Initialize();
@@ -66,21 +65,21 @@ namespace DotNetNuke.UI.WebControls
                 {
                     RichTextEditor.Height = new Unit(300);
                 }
-                if (RichTextEditor.Width.IsEmpty)
-                {
-                    RichTextEditor.Width = new Unit(450);
-                }
+
+                RichTextEditor.Width = new Unit(450);
+
                 Controls.Clear();
-                Controls.Add(RichTextEditor.HtmlEditorControl);
+                pnlEditor.Controls.Add(RichTextEditor.HtmlEditorControl);
+                Controls.Add(pnlEditor);
             }
             base.CreateChildControls();
         }
 
         public override bool LoadPostData(string postDataKey, NameValueCollection postCollection)
         {
-            bool dataChanged = false;
-            string presentValue = StringValue;
-            string postedValue = RichTextEditor.Text;
+            var dataChanged = false;
+            var presentValue = StringValue;
+            var postedValue = RichTextEditor.Text;
             if (!presentValue.Equals(postedValue))
             {
                 Value = postedValue;
@@ -91,12 +90,9 @@ namespace DotNetNuke.UI.WebControls
 
         protected override void OnDataChanged(EventArgs e)
         {
-            string strValue = Convert.ToString(Value);
-            string strOldValue = Convert.ToString(OldValue);
-            var args = new PropertyEditorEventArgs(Name);
-            args.Value = Page.Server.HtmlEncode(strValue);
-            args.OldValue = Page.Server.HtmlEncode(strOldValue);
-            args.StringValue = Page.Server.HtmlEncode(StringValue);
+            var strValue = Convert.ToString(Value);
+            var strOldValue = Convert.ToString(OldValue);
+            var args = new PropertyEditorEventArgs(Name) {Value = Page.Server.HtmlEncode(strValue), OldValue = Page.Server.HtmlEncode(strOldValue), StringValue = Page.Server.HtmlEncode(StringValue)};
             base.OnValueChanged(args);
         }
 
@@ -132,5 +128,6 @@ namespace DotNetNuke.UI.WebControls
             writer.Write(propValue);
             writer.RenderEndTag();
         }
+
     }
 }

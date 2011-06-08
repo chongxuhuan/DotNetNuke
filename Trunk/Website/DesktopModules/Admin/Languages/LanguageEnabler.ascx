@@ -23,7 +23,7 @@
             <asp:CheckBox ID="chkBrowser" runat="server" />
         </div>
         <ul class="dnnActions dnnClear">
-    	    <li><asp:LinkButton id="updateButton" runat="server" CssClass="dnnSecondaryAction" resourcekey="Update" /></li>
+    	    <li><asp:LinkButton id="updateButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="Update" /></li>
         </ul>
         <div class="dnnFormItem">
             <asp:PlaceHolder ID="enabledPublishedPlaceHolder" runat="server">
@@ -33,7 +33,7 @@
             </asp:PlaceHolder>
             <asp:Label ID="defaultPortalLabel" runat="server" CssClass="NormalRed" Text="**" />
             <asp:Label ID="defaultPortalMessage" runat="server" CssClass="Normal" />
-            <asp:LinkButton ID="enableLocalizedContentButton" runat="server" CssClass="dnnSecondaryAction enableLocalization" ResourceKey="EnableLocalization" />
+            <asp:HyperLink ID="cmdEnableLocalizedContent" runat="server" CssClass="dnnSecondaryAction enableLocalization" ResourceKey="EnableLocalization" />
         </div>
         <div class="dnnFormItem">
             <dnn:DnnGrid ID="languagesGrid" runat="server" AutoGenerateColumns="false" Width="900px">

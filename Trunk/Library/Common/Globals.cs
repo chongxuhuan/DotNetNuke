@@ -3009,15 +3009,9 @@ namespace DotNetNuke.Common
 		/// <returns>Formatted url.</returns>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public static string NavigateURL(int TabID, PortalSettings settings, string ControlKey, params string[] AdditionalParameters)
-        {
-            bool isSuperTab = false;
-            if (settings != null)
-            {
-                if (settings.ActiveTab.IsSuperTab)
-                {
-                    isSuperTab = true;
-                }
-            }
+		{
+			bool isSuperTab = IsHostTab(TabID);
+
             return NavigateURL(TabID, isSuperTab, settings, ControlKey, AdditionalParameters);
         }
 
@@ -3785,7 +3779,14 @@ namespace DotNetNuke.Common
 		/// <returns>if true means the tab is a host tab, otherwise means not a host page.</returns>
 		public static bool IsHostTab(int tabId)
 		{
-			return new TabController().GetTabsByPortal(Null.NullInteger).Any(t => t.Value.TabID == tabId);
+		    bool isHostTab = false;
+		    TabCollection hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
+
+            if (hostTabs!= null)
+            {
+                isHostTab = hostTabs.Any(t => t.Value.TabID == tabId);
+            }
+            return isHostTab;
 		}
 
         #region "Obsolete - retained for Binary Compatability"

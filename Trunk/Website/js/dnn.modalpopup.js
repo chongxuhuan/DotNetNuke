@@ -81,7 +81,6 @@
             $this.toggleClass('ui-dialog-titlebar-max');
             $modal.dialog({ height: newHeight, width: newWidth });
             $modal.dialog({ position: 'center' });
-            $('#iPopUp').height(newHeight + 'px').width(newWidth + 'px');
 
         });
 

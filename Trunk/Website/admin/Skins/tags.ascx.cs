@@ -27,6 +27,7 @@ using System;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Modules;
 
 #endregion
@@ -36,12 +37,12 @@ namespace DotNetNuke.UI.Skins.Controls
     public partial class Tags : SkinObjectBase
     {
         private const string MyFileName = "Tags.ascx";
-        private string _AddImageUrl = "~/images/add.gif";
+        private string _AddImageUrl = IconController.IconURL("Add");
         private bool _AllowTagging = true;
-        private string _CancelImageUrl = "~/images/lt.gif";
+        private string _CancelImageUrl = IconController.IconURL("Lt");
         private string _ObjectType = "Page";
         private string _RepeatDirection = "Horizontal";
-        private string _SaveImageUrl = "~/images/save.gif";
+        private string _SaveImageUrl = IconController.IconURL("Save");
         private string _Separator = ",&nbsp;";
         private bool _ShowCategories = true;
         private bool _ShowTags = true;

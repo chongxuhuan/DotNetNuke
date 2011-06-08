@@ -9,7 +9,6 @@
 <%@ Register TagPrefix="dnn" TagName="Profile" Src="~/DesktopModules/Admin/Security/Profile.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="MemberServices" Src="~/DesktopModules/Admin/Security/MemberServices.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
-
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
@@ -25,7 +24,6 @@
     });
 } (jQuery, window.Sys));
 </script>
-
 <div class="dnnForm dnnManageUsers dnnClear" id="dnnManageUsers">
     <ul class="dnnAdminTabNav dnnClear" id="adminTabNav" runat="server">
         <li><a href="#dnnUserDetails"><%=LocalizeString("cmdUser")%></a></li>
@@ -39,12 +37,12 @@
             <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
             <fieldset>
                 <div id="titleRow" runat="server" class="dnnFormItem">
-				    <asp:label id="lblTitle" cssclass="Head" runat="server"/>
+				    <h2 class="dnnFormSectionHead"><asp:label id="lblTitle" runat="server" /></h2>
 				    <dnn:DnnImage id="imgLockedOut" IconKey="SecurityRoles" runat="server" visible="False" />
 				    <dnn:DnnImage id="imgOnline" IconKey="UserOnline" runat="server" visible="False" />
                 </div>
                 <div id="helpRow" runat="server" visible="false" class="dnnFormItem">
-                    <asp:label id="lblUserHelp" runat="server"/>
+                    <asp:label id="lblUserHelp" runat="server" />
                 </div>
                 <div id="userRow" runat="server" class="dnnFormItem">
                     <div class="dnnUser">
@@ -74,8 +72,10 @@
     	<dnn:MemberServices id="ctlServices" runat="server"></dnn:MemberServices>
     </div>
 </div>
-<ul id="actionsRow" runat="server" visible="false" class="dnnActions dnnClear">
-    <li><asp:LinkButton id="cmdRegister" runat="server" CssClass="dnnPrimaryAction" /></li>
-    <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" CausesValidation="false" /></li>
-    <li><asp:LinkButton id="cmdLogin" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdLogin" Visible="false" /></li>
-</ul>  
+<div class="dnnForm">
+    <ul id="actionsRow" runat="server" visible="false" class="dnnActions dnnClear">
+        <li><asp:LinkButton id="cmdRegister" runat="server" CssClass="dnnPrimaryAction" /></li>
+        <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" CausesValidation="false" /></li>
+        <li><asp:LinkButton id="cmdLogin" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdLogin" Visible="false" /></li>
+    </ul>
+</div>	    

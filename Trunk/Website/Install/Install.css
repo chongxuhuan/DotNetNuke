@@ -2,12 +2,12 @@
 body{position: relative; width: 900px; margin-right: auto; margin-left: auto; text-align: left;}
 
 .dnnForm{width:900px;}
-.dnnFormItem .installRadioButtons label{width:70%; text-align:left; font-weight:normal; margin-left:5px }
+.dnnFormItem .installRadioButtons label{width:70%; text-align:left; font-weight:normal; margin-left:5px;  }
 
 .dnnFormItem .permissionsCheckBoxes label{width:200px; text-align:left; font-weight:normal; margin-left:5px; display:inline-block; }
 .dnnInstall .dnnFormItem input[type="checkbox"]{width:auto; float:none; min-width: 25px;}
-
-.dnnFormItem .databaseRadioButtons label{width:auto; text-align:left; font-weight:normal; margin:0px 10px 0px 5px;}
+.dnnFormItem .databaseRadioButtons{width: 35%;}
+.dnnFormItem .databaseRadioButtons label{width:auto; text-align:left; font-weight:normal; margin:0px 10px 0px 5px; display:inline-block;}
 
 A.dnnDisabledAction:link, A.dnnDisabledAction:visited, A.dnnDisabledAction:active, A.dnnDisabledAction:hover
 {

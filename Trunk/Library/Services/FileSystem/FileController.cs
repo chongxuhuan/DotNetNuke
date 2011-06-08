@@ -59,10 +59,31 @@ namespace DotNetNuke.Services.FileSystem
         #region "Obsolete Methods"
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by DatabaseFolderProvider.AddFile(IFileInfo file) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FileManager.Instance.AddFile(IFolderInfo folder, string fileName, Stream fileContent, bool overwrite) ")]
         public int AddFile(FileInfo file)
         {
-            return DatabaseFolderProvider.AddFile(file);
+            var fileManager = FileManager.Instance;
+
+            var folder = FolderManager.Instance.GetFolder(file.FolderId);
+            
+            var existingFile = fileManager.GetFile(folder, file.FileName);
+
+            if (existingFile == null)
+            {
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    file.FileId = fileManager.AddFile(folder, file.FileName, fileContent, false).FileId;
+                }
+            }
+            else
+            {
+                using (var fileContent = fileManager.GetFileContent(file))
+                {
+                    file.FileId = fileManager.UpdateFile(file, fileContent).FileId;
+                }
+            }
+
+            return file.FileId;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -97,7 +118,9 @@ namespace DotNetNuke.Services.FileSystem
         [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FileManager.Instance.DeleteFile(IFileInfo file) ")]
         public void DeleteFile(int portalId, string fileName, int folderID, bool clearCache)
         {
-            DataProvider.Instance().DeleteFile(portalId, fileName, folderID);
+            var folder = FolderManager.Instance.GetFolder(folderID);
+            var file = FileManager.Instance.GetFile(folder, fileName);
+            FileManager.Instance.DeleteFile(file);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -212,39 +235,44 @@ namespace DotNetNuke.Services.FileSystem
         [Obsolete("Deprecated in DNN 6.0.")]
         public static FileInfo DeserializeFile(XmlNode nodeFile, int portalId, int folderId)
         {
-            var fileCtrl = new FileController();
-            var newFile = new FileInfo();
-
             var node = nodeFile.SelectSingleNode("file");
-
-            newFile.UniqueId = new Guid(XmlUtils.GetNodeValue(node.CreateNavigator(), "uniqueid"));
-            newFile.VersionGuid = new Guid(XmlUtils.GetNodeValue(node.CreateNavigator(), "versionguid"));
-            newFile.PortalId = portalId;
-            newFile.FileName = XmlUtils.GetNodeValue(node.CreateNavigator(), "filename");
-            newFile.Folder = XmlUtils.GetNodeValue(node.CreateNavigator(), "folder");
-            newFile.FolderId = folderId;
-            newFile.ContentType = XmlUtils.GetNodeValue(node.CreateNavigator(), "contenttype");
-            newFile.Extension = XmlUtils.GetNodeValue(node.CreateNavigator(), "extension");
-            newFile.StorageLocation = XmlUtils.GetNodeValueInt(node, "storagelocation");
-            newFile.IsCached = XmlUtils.GetNodeValueBoolean(node, "iscached", false);
-            newFile.Size = XmlUtils.GetNodeValueInt(node, "size", Null.NullInteger);
-            newFile.Width = XmlUtils.GetNodeValueInt(node, "width", Null.NullInteger);
-            newFile.Height = XmlUtils.GetNodeValueInt(node, "height", Null.NullInteger);
+            
+            var newFile = new FileInfo
+            {
+                UniqueId = new Guid(XmlUtils.GetNodeValue(node.CreateNavigator(), "uniqueid")),
+                VersionGuid = new Guid(XmlUtils.GetNodeValue(node.CreateNavigator(), "versionguid")),
+                PortalId = portalId,
+                FileName = XmlUtils.GetNodeValue(node.CreateNavigator(), "filename"),
+                Folder = XmlUtils.GetNodeValue(node.CreateNavigator(), "folder"),
+                FolderId = folderId,
+                ContentType = XmlUtils.GetNodeValue(node.CreateNavigator(), "contenttype"),
+                Extension = XmlUtils.GetNodeValue(node.CreateNavigator(), "extension"),
+                StorageLocation = XmlUtils.GetNodeValueInt(node, "storagelocation"),
+                IsCached = XmlUtils.GetNodeValueBoolean(node, "iscached", false),
+                Size = XmlUtils.GetNodeValueInt(node, "size", Null.NullInteger),
+                Width = XmlUtils.GetNodeValueInt(node, "width", Null.NullInteger),
+                Height = XmlUtils.GetNodeValueInt(node, "height", Null.NullInteger)
+            };
 
             // create/update file
+            var fileCtrl = new FileController();
+
             var originalFile = fileCtrl.GetFileByUniqueID(newFile.UniqueId);
+
             if (originalFile == null)
             {
-                newFile.FileId = DatabaseFolderProvider.AddFile(newFile);
+                var folder = FolderManager.Instance.GetFolder(folderId);
+                using (var fileContent = FileManager.Instance.GetFileContent(newFile))
+                {
+                    newFile.FileId = FileManager.Instance.AddFile(folder, newFile.FileName, fileContent, false).FileId;
+                }
             }
             else
             {
                 newFile.FileId = originalFile.FileId;
-                FileManager.Instance.UpdateFile(newFile);
-                newFile.FileId = fileCtrl.GetFileByUniqueID(newFile.UniqueId).FileId;
             }
 
-            return newFile;
+            return (FileInfo)FileManager.Instance.UpdateFile(newFile);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

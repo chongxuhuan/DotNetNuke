@@ -312,7 +312,7 @@ namespace DotNetNuke.Modules.Admin.Users
             if (User != null)
             {
 				//If trying to add a SuperUser - check that user is a SuperUser
-                if (AddUser && IsHostMenu && !UserInfo.IsSuperUser)
+                if (AddUser && !IsRegister && IsHostMenu && !UserInfo.IsSuperUser)
                 {
                     AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();

@@ -199,7 +199,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         var parameters = new string[2];
                         parameters[0] = "rtab=" + ModuleContext.TabId;
                         parameters[1] = "packageId=KEYFIELD";
-                        var formatString = ModuleContext.EditNavUrl(ModuleContext.TabId, "UnInstall", false, parameters);                        
+                        var formatString = ModuleContext.NavigateUrl(ModuleContext.TabId, "UnInstall", false, parameters);                        
                         formatString = formatString.Replace("KEYFIELD", "{0}");
                         imageColumn.NavigateURLFormatString = formatString;
                     }

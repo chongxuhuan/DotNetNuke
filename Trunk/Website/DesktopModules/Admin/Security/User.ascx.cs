@@ -24,8 +24,10 @@
 #region Usings
 
 using System;
+using System.Linq;
 
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
@@ -308,6 +310,18 @@ namespace DotNetNuke.Modules.Admin.Users
             if ((setting != null) && (!string.IsNullOrEmpty(Convert.ToString(setting))))
             {
                 email.ValidationExpression = Convert.ToString(setting);
+            }
+
+            foreach (ProfilePropertyDefinition def in User.Profile.ProfileProperties)
+            {
+                if (def.PropertyName == "FirstName")
+                {
+                    firstName.ValidationExpression = def.ValidationExpression;
+                }
+                if (def.PropertyName == "LastName")
+                {
+                    lastName.ValidationExpression = def.ValidationExpression;
+                }
             }
 
             setting = GetSetting(UserPortalID, "Security_DisplayNameFormat");

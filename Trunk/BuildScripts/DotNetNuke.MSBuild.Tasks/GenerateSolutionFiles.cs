@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using log4net;
@@ -29,6 +30,19 @@ namespace DotNetNuke.MSBuild.Tasks
             }
             try
             {
+                var builder = new StringBuilder();
+                foreach (var value in ProjectNames)
+                {
+                    builder.Append(value);
+                    builder.Append('.');
+                }
+
+                LogFormat("Message", "----------------------------------");
+                LogFormat("Message", "GenerateSolutionFiles Logging Info");
+                LogFormat("Message", "----------------------------------");
+                LogFormat("Message", CreatedFile);
+                LogFormat("Message", builder.ToString());
+
                 var tr = new StreamReader(OriginalFile, true);
                 tr.Peek();
                 var fileEncoding = tr.CurrentEncoding;
@@ -56,8 +70,17 @@ namespace DotNetNuke.MSBuild.Tasks
                 {
                     foreach (var project in projects)
                     {
-                        if (project.Contains("ProjectSection")) continue;
-                        var projectEntry = project.Replace("EndProject", string.Empty).Replace("\"", string.Empty).Replace(" ", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+                        var projectEntry = "";
+                        if (project.Contains("ProjectSection"))
+                        {
+                            var indexProjectSection = project.IndexOf("ProjectSection");
+                            projectEntry = project.Substring(0,  indexProjectSection).Replace("EndProject", string.Empty).Replace("\"", string.Empty).Replace(" ", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+                        }
+                        else
+                        {
+                            projectEntry = project.Replace("EndProject", string.Empty).Replace("\"", string.Empty).Replace(" ", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty).Replace("\t", string.Empty);
+                        }
+
                         var indexFirstEquals = projectEntry.IndexOf("=") + 1;
                         projectEntry = projectEntry.Remove(0, indexFirstEquals);
                         var projectNameGuid = projectEntry.Split(',');
@@ -73,7 +96,7 @@ namespace DotNetNuke.MSBuild.Tasks
                     }
                 }
                 var filteredNestedProjects = string.Concat(string.Join("\r\n\t\t", nestedProjects.ToArray()), "\r\n\t").Replace("\tEndGlobalSection", "EndGlobalSection");
-                content = content.Replace(nestedProjectsSection,filteredNestedProjects);
+                content = content.Replace(nestedProjectsSection, filteredNestedProjects);
 
                 if (Replacements != null)
                 {
@@ -94,13 +117,38 @@ namespace DotNetNuke.MSBuild.Tasks
                 var newSolutionFile = new StreamWriter(CreatedFile, false, fileEncoding);
                 newSolutionFile.WriteLine(content);
                 newSolutionFile.Close();
+
+                LogFormat("Message", "--------------------------------------");
+                LogFormat("Message", "End GenerateSolutionFiles Logging Info");
+                LogFormat("Message", "--------------------------------------");
             }
             catch (Exception ex)
             {
-                Log.LogMessage(ex.StackTrace);
+                LogFormat("Error", ex.StackTrace);
                 return false;
             }
             return true;
         }
+
+        private void LogFormat(string level, string message, params object[] args)
+        {
+            if (BuildEngine != null)
+            {
+                switch (level)
+                {
+                    case "Message":
+                        Log.LogMessage(message, args);
+                        break;
+                    case "Error":
+                        Log.LogError(message, args);
+                        break;
+                }
+            }
+            else
+            {
+                Debug.Print(message, args);
+            }
+        }
+
     }
 }

@@ -73,7 +73,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
 
             View.Model.IsEditable = IsEditable;
             View.Model.NewVocabUrl = (ModuleContext != null)
-                                         ? ModuleContext.EditNavUrl(TabId, "CreateVocabulary", false, "mid=" + ModuleId)
+                                         ? ModuleContext.NavigateUrl(TabId, "CreateVocabulary", false, "mid=" + ModuleId)
                                          : Globals.NavigateURL(TabId, "CreateVocabulary", "mid=" + ModuleId);
             View.ShowAddButton(IsEditable);
             View.GridsNeedDataSource += GridNeedDataSource;
@@ -96,7 +96,7 @@ namespace DotNetNuke.Modules.Taxonomy.Presenters
             var dataItem = (GridDataItem)e.Item;
 
             var hlEdit = ((HyperLink)(dataItem)["EditItem"].FindControl("hlEdit"));
-            hlEdit.NavigateUrl = ModuleContext.EditNavUrl(ModuleContext.TabId, "EditVocabulary", false,"mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
+            hlEdit.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "EditVocabulary", false,"mid=" + ModuleContext.ModuleId, "VocabularyId=" + vocabKey);
             hlEdit.Visible = IsEditable;
 
             var imgEdit = ((Image)(dataItem)["EditItem"].FindControl("imgEdit"));

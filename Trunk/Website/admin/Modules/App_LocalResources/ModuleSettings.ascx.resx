@@ -214,13 +214,13 @@
     <value>Start Date:</value>
   </data>
   <data name="plStartDate.Help" xml:space="preserve">
-    <value>Enter the start date for displaying this module.  You may use the Calendar to pick a date.</value>
+    <value>The start date for displaying this module. Prior to this date the module will only be visible to users with Manage permissions.</value>
   </data>
   <data name="plEndDate.Text" xml:space="preserve">
     <value>End Date:</value>
   </data>
   <data name="plEndDate.Help" xml:space="preserve">
-    <value>Enter the end date for displaying this module.  You may use the Calendar to pick a date.</value>
+    <value>The end date for displaying this module. After this date the module will only be visible to users with Manage permissions.</value>
   </data>
   <data name="plDefault.Text" xml:space="preserve">
     <value>Set As Default Settings?</value>
@@ -428,5 +428,11 @@
   </data>
   <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
     <value>Please select a container to preview.</value>
+  </data>
+  <data name="lblNoRecords.Text" xml:space="preserve">
+    <value>This module has not been added to any other pages.</value>
+  </data>
+  <data name="Page.Header" xml:space="preserve">
+    <value>Page</value>
   </data>
 </root>

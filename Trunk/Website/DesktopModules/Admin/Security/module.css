@@ -1,4 +1,4 @@
-.dnnSecurityRoles, .dnnManageUsers, .dnnProfileProperties, .dnnEditProfileDef, .dnnPassword, .dnnProfile, .dnnRoleDetails, .dnnManageSecurityRoles{margin:1em auto 2.5em;}
+.dnnSecurityRoles, .dnnManageUsers, .dnnProfileProperties, .dnnEditProfileDef, .dnnPassword, .dnnProfile, .dnnRoleDetails, .dnnManageSecurityRoles, .dnnUserSettings{margin:1em auto 2.5em;}
 	.dnnSecurityRoles .dnnGrid td, .dnnGrid.dnnSecurityRoles td{padding:12px 10px;}
 		.dnnProfileProperties .dnnGridHeader{font-size:11px;text-align:left;}
 	.dnnGrid.dnnSecurityRolesGrid td{padding:8px 5px;}
@@ -7,7 +7,9 @@
 	#dnnUsers select.dnnUsersSearchFilter{padding:5px;margin:0 8px;width:20%;}
 	#dnnUsers .uLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
-.dnnUser, .dnnMembership{width:48%;}
+.dnnUser, .dnnMembership{width:46%; float:left;}
+
+
 .dnnUserSettings .dnnFormItem input[type="radio"]{float:none;}
 .dnnUserSettings .dnnFormItem .dnnFormInput span{margin:0px 10px 0px 10px; }
 .dnnEditRole .dnnFormItem input[type="checkbox"]{width:auto;}
@@ -29,5 +31,4 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnEditRoleGroups .dnnFormItem input, .dnnEditRoleGroups .dnnFormItem textarea{width:35%;}
 .erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}
 .dnnEditProfileDef .dnnFormMessage{display:block;}
-
 .dnnUserSettings .dnnFormItem span {padding: 0px 10px 0px 5px;}

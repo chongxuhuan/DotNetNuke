@@ -207,7 +207,7 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>Taxonomy</DNNFileName>
-    <PackageName>Taxonomy</PackageName>
+    <PackageName>DNNCE_Taxonomy</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
     <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>

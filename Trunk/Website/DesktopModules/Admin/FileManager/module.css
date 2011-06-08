@@ -2,6 +2,7 @@
 .dnnEditFolderMapping, .dnnFolderMappings{margin:1em auto;}
 .EditFolderMappingContent{}
 .dnnFileUpload .dnnFormItem input[type="checkbox"]{width:auto;}
+.EditFolderMappingContent input[type="text"]{margin-right:5px;}
 .dnnEditFolderMapping div.exFolderMappingSettings{padding:0;margin-top:2.5em;}
 	.dnnEditFolderMapping .dnnFormItem input[type="text"], .dnnEditFolderMapping .dnnFormItem .dnnFormInput, .dnnEditFolderMapping .dnnFormItem textarea{text-align:left;min-width:50%;}
 	.dnnEditFolderMapping textarea{min-height:100px;}

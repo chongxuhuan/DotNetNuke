@@ -324,7 +324,19 @@ namespace DotNetNuke.Modules.Admin.Pages
                     Response.Redirect(objTab.FullUrl);
                     break;
                 case "edit":
-                    Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);                    
+                    //Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);
+					var editUrl = Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId);
+					if (PortalSettings.EnablePopUps)
+					{
+						editUrl = UrlUtils.PopUpUrl(editUrl, this, PortalSettings, true, false);
+						var script = string.Format("<script type=\"text/javascript\">{0}</script>", editUrl);
+						ClientAPI.RegisterStartUpScript(this.Page, "EditInPopup", script);
+					}
+					else
+					{
+						Response.Redirect(editUrl, true);
+					}
+            		
                     break;
                 case "delete":
                     TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);                    
@@ -609,6 +621,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tab.Terms.AddRange(termsSelector.Terms);
 
                 tabcontroller.UpdateTab(tab);
+                ShowSuccessMessage(string.Format(Localization.GetString("TabUpdated", LocalResourceFile), tab.TabName));
 
                 BindTree();
 
@@ -636,7 +649,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 dgPermissions.TabID = tab.TabID;
                 dgPermissions.DataBind();
 
-                cmdMore.NavigateUrl = ModuleContext.EditNavUrl(tabId, "",false, "ctl=Tab", "action=edit", "returntabid=" + TabId);
+                cmdMore.NavigateUrl = ModuleContext.NavigateUrl(tabId, "", false, "ctl=Tab", "action=edit", "returntabid=" + TabId);
 
                 txtTitle.Text = tab.Title;
                 txtName.Text = tab.TabName;
@@ -1186,7 +1199,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 var module = moduleController.GetModule(moduleId);
                 if (module != null)
                 {
-                    return ModuleContext.EditNavUrl(module.TabID, "", false,"ctl=Module", "ModuleId=" + moduleId);
+                    return ModuleContext.NavigateUrl(module.TabID, "", false, "ctl=Module", "ModuleId=" + moduleId);
                 }
             }
 

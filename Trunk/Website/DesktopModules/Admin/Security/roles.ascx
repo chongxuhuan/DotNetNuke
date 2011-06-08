@@ -80,7 +80,7 @@
     $(document).ready(function () {
         setupDnnRoles();
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-            setupDnnSiteSettingssetupDnnRoles();
+        	setupDnnRoles();
         });
     });
 } (jQuery, window.Sys));

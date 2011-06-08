@@ -24,14 +24,19 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
@@ -50,11 +55,28 @@ namespace DotNetNuke.Tests.Content.Presenters
     [TestFixture]
     public class EditVocabularyPresenterTests
     {
+        private Mock<CachingProvider> mockCache;
+        private Mock<DataProvider> mockData;
+
+        #region SetUp and TearDown
+
+        [SetUp]
+        public void SetUp()
+        {
+            //Register MockCachingProvider
+            mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+
+            //Register MockCachingProvider
+            mockData = MockComponentProvider.CreateNew<DataProvider>();
+        }
+
         [TearDown]
         public void TearDown()
         {
             MockComponentProvider.ResetContainer();
         }
+
+        #endregion
 
         #region Constructor Tests
 
@@ -394,6 +416,7 @@ namespace DotNetNuke.Tests.Content.Presenters
             // Arrange
             var mockView = new Mock<IEditVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new EditVocabularyModel());
+            var destinationUrl = Globals.NavigateURL(Constants.TAB_ValidId);
 
             var mockHttpResponse = new Mock<HttpResponseBase>();
 
@@ -404,7 +427,7 @@ namespace DotNetNuke.Tests.Content.Presenters
             mockView.Raise(v => v.Delete += null, EventArgs.Empty);
 
             // Assert
-            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+            mockHttpResponse.Verify(r => r.Redirect(destinationUrl));
         }
 
         #endregion
@@ -604,17 +627,20 @@ namespace DotNetNuke.Tests.Content.Presenters
             var mockView = new Mock<IEditVocabularyView>();
             var editModel = new EditVocabularyModel {Vocabulary = new Vocabulary {VocabularyId = Constants.VOCABULARY_UpdateVocabularyId, ScopeTypeId = 1}};
             mockView.Setup(v => v.Model).Returns(editModel);
-
+            var destinationUrl = Globals.NavigateURL(Constants.TAB_ValidId);
             var mockHttpResponse = new Mock<HttpResponseBase>();
 
-            EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, Constants.VOCABULARY_UpdateVocabularyId, true);
+            EditVocabularyPresenter presenter = CreatePresenter(mockView, mockHttpResponse, Constants.VOCABULARY_UpdateVocabularyId, false);
             presenter.TabId = Constants.TAB_ValidId;
+
+            mockView.Raise(v => v.Initialize += null, EventArgs.Empty);
+            mockView.Raise(v => v.Load += null, EventArgs.Empty);
 
             // Act
             mockView.Raise(v => v.Save += null, EventArgs.Empty);
 
             // Assert
-            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+            mockHttpResponse.Verify(r => r.Redirect(destinationUrl));
         }
 
         #endregion

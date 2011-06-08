@@ -152,12 +152,12 @@ namespace DotNetNuke.Modules.Admin.Languages
 
         protected string GetEditUrl(string id)
         {
-            return Globals.NavigateURL(TabId, "Edit", string.Format("mid={0}", ModuleId), string.Format("locale={0}", id));
+            return ModuleContext.NavigateUrl(TabId, "Edit", false, string.Format("mid={0}", ModuleId), string.Format("locale={0}", id));
         }
 
         protected string GetEditKeysUrl(string code, string mode)
         {
-            return Globals.NavigateURL(TabId, "Editor", string.Format("mid={0}", ModuleId), string.Format("locale={0}", code), string.Format("mode={0}", mode));
+            return ModuleContext.NavigateUrl(TabId, "Editor", false, string.Format("mid={0}", ModuleId), string.Format("locale={0}", code), string.Format("mode={0}", mode));
         }
 
         protected string GetLocalizedPages(string code)
@@ -248,8 +248,8 @@ namespace DotNetNuke.Modules.Admin.Languages
             languagesComboBox.ModeChanged += languagesComboBox_ModeChanged;
             languagesGrid.ItemCreated += languagesGrid_ItemCreated;
             languagesGrid.PreRender += languagesGrid_PreRender;
-            toolTipManager.AjaxUpdate += toolTipManager_AjaxUpdate;
             updateButton.Click += updateButton_Click;
+            cmdEnableLocalizedContent.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "EnableContent", false, "mid=" + ModuleContext.ModuleId);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -278,7 +278,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                     defaultLanguageLabel.Visible = true;
                     languagesComboBox.Visible = false;
                     updateButton.Visible = false;
-                    enableLocalizedContentButton.Visible = false;
+                    cmdEnableLocalizedContent.Visible = false;
                     defaultPortalMessage.Text = Localization.GetString("PortalDefaultPublished.Text", LocalResourceFile);
                     enabledPublishedPlaceHolder.Visible = true;
                 }
@@ -287,7 +287,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                     defaultLanguageLabel.Visible = false;
                     languagesComboBox.Visible = true;
                     updateButton.Visible = true;
-                    enableLocalizedContentButton.Visible = Host.EnableContentLocalization;
+                    cmdEnableLocalizedContent.Visible = Host.EnableContentLocalization;
                     defaultPortalMessage.Text = Localization.GetString("PortalDefaultEnabled.Text", LocalResourceFile);
                     enabledPublishedPlaceHolder.Visible = false;
                 }
@@ -302,20 +302,13 @@ namespace DotNetNuke.Modules.Admin.Languages
                 verifyLanguageResourcesLink.NavigateUrl = ModuleContext.EditUrl("Verify");
 
                 installLanguagePackLink.Visible = UserInfo.IsSuperUser;
-                installLanguagePackLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
-
-                //Add the enable content Localization Button to the ToolTip Manager
-                toolTipManager.TargetControls.Add(enableLocalizedContentButton.ID);
-                
-
+                installLanguagePackLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");                         
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-
 
         protected void enabledCheckbox_CheckChanged(object sender, EventArgs e)
         {
@@ -369,7 +362,6 @@ namespace DotNetNuke.Modules.Admin.Languages
                 Exceptions.ProcessModuleLoadException(this, ex);
             }
         }
-
 
         protected void languagesComboBox_ModeChanged(object sender, EventArgs e)
         {
@@ -483,12 +475,6 @@ namespace DotNetNuke.Modules.Admin.Languages
 
             //Redirect to refresh page (and skinobjects)
             Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        protected void toolTipManager_AjaxUpdate(object sender, ToolTipUpdateEventArgs e)
-        {
-            Control ctrl = Page.LoadControl("~/desktopmodules/admin/languages/EnableLocalizedContent.ascx");
-            e.UpdatePanel.ContentTemplateContainer.Controls.Add(ctrl);
         }
 
         protected void updateButton_Click(object sender, EventArgs e)

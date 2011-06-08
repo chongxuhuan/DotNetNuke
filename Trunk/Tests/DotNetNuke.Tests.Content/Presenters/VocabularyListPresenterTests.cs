@@ -29,7 +29,9 @@ using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Tests.Utilities;
+using DotNetNuke.Tests.Utilities.Mocks;
 
 using MbUnit.Framework;
 
@@ -43,6 +45,25 @@ namespace DotNetNuke.Tests.Content.Presenters
     [TestFixture]
     public class VocabularyListPresenterTests
     {
+         private Mock<CachingProvider> mockCache;
+
+        #region SetUp and TearDown
+
+        [SetUp]
+        public void SetUp()
+        {
+            //Register MockCachingProvider
+            mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            MockComponentProvider.ResetContainer();
+        }
+
+        #endregion       
+        
         #region Constructor Tests
 
         [Test]

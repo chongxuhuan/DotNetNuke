@@ -28,11 +28,15 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
-
+using System.Xml;
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
+using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
@@ -50,30 +54,125 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             //{
             //    Response.Redirect(Globals.NavigateURL("Access Denied"), true);
             //}
+            if (!Page.IsPostBack)
+            {
+            string extensionId = Request.QueryString["extensionID"];
+            string extensionRequest = "http://appgallery.dotnetnuke.com" +
+                                      "/AppGalleryService.svc/Extensions(" + extensionId.ToString() + ")";
+            
 
-            string catalogAction = Request.QueryString["action"];
-            string downloadURL = Request.QueryString["downloadURL"];
+            XmlDocument xmlDoc = new XmlDocument();
 
-            string extensionFolder = GetInstallationFolder(Request.QueryString["eType"]);
+            string xml = GetOData(extensionRequest);
+
+            XmlNamespaceManager xmlNsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
+            xmlNsMgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+            xmlNsMgr.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
+            xmlNsMgr.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
+           
+
+            xmlDoc.LoadXml(xml);
+
+            XmlNodeList elements = xmlDoc.DocumentElement.SelectNodes("/atom:entry", xmlNsMgr);
+            string extName="";
+            string extType = "";
+            string extDesc = "";
+            string extURL = "";
+            string extCatalogID = "";
+            foreach (XmlNode element in elements)
+            {
+           
+                XmlNodeList properties = element.SelectSingleNode("./atom:content/m:properties", xmlNsMgr).ChildNodes;
+                
+                foreach (XmlNode property in properties)
+                {
+
+                    string propertyName = property.LocalName;
+                    switch (propertyName)
+                    {
+                        case "extensionName":
+                            extName = property.InnerText;
+                            break;
+                        case "extensionType":
+                            extType = property.InnerText;
+                            ViewState["extType"] = extType;
+                            break;
+                        case "Description":
+                            extDesc = property.InnerText;
+                            break;
+                        case "downloadURL":
+                            extURL = property.InnerText;
+                            ViewState["extURL"] = extURL;
+                            break;
+                        case "catalogID":
+                            extCatalogID = property.InnerText;
+                            break;
+                        default:
+                            break;   
+                    }
+                }
+
+            }
+
+            if (extURL == "")
+            {
+                 UI.Skins.Skin.AddModuleMessage(this, "An attempt was made to access an unexpected external file.", ModuleMessage.ModuleMessageType.RedError);
+                return;
+            }
+            UI.Skins.Skin.AddModuleMessage(this, String.Format("A request is about to be made for the external file {0} - if you were not expecting to make this request please navigate away from this page, otherwise select from the available buttons below", extName.ToString()), ModuleMessage.ModuleMessageType.BlueInfo);
+            btnDownload.Visible = true;
+            if (extCatalogID=="2")
+            {
+                btnDeploy.Visible = true;
+                
+            }
+            }
+
+       }
+
+        private void ProcessRequest(string action,bool doInstall)
+        {
+        //string catalogAction = Request.QueryString["action"];
+        //    catalogAction = "deploy";
+            string downloadURL = ViewState["extURL"].ToString();
+           //downloadURL = @"http://dnnckeditor.codeplex.com/releases/view/57739#DownloadId=188245";
+
+            string extensionFolder= GetInstallationFolder(ViewState["extType"].ToString());
+           // extensionFolder = "module";
             string installFolder = HttpContext.Current.Server.MapPath("~/Install/") + extensionFolder;
 
             bool unknownCatalog = true;
 
             if (downloadURL.Contains("codeplex.com"))
             {
-                ProcessCodeplex(downloadURL, installFolder, catalogAction);
+                ProcessCodeplex(downloadURL, installFolder, action);
                 unknownCatalog = false;
             }
             if (downloadURL.Contains("snowcovered.com"))
             {
-                ProcessSnowcovered(downloadURL, installFolder, catalogAction);
+                ProcessSnowcovered(downloadURL, installFolder, action);
                 unknownCatalog = false;
             }
             if (unknownCatalog)
             {
-                ProcessUnknown(downloadURL, installFolder, catalogAction);
+                ProcessUnknown(downloadURL, installFolder, action);
             }
-        
+}
+
+        private string GetOData(string extensionRequest)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(extensionRequest));
+            request.Method = "GET";
+            request.Accept = "application/atom+xml";
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader readStream = new StreamReader(
+                    response.GetResponseStream(), Encoding.GetEncoding("utf-8")))
+                {
+                    return readStream.ReadToEnd();
+                }
+            }
+ 
         }
 
         private void ProcessUnknown(string downloadURL, string installFolder, string catalogAction)
@@ -119,12 +218,15 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             WebResponse wr;
             string myfile = "";
 
+            System.Uri url = new System.Uri(downloadURL.ToString());
+            string host = url.Host;
+
             //convert path to download version
             string directdownloadURL = "";
             if (downloadURL.Contains("#DownloadId="))
             {
-                int start = downloadURL.IndexOf("#DownloadId=");
-                directdownloadURL = downloadURL.Substring(start);
+                int start = downloadURL.IndexOf("DownloadId=");
+                directdownloadURL = "http://" + host + "/Project/Download/FileDownload.aspx?" + downloadURL.Substring(start);
             }
             else
             {
@@ -142,6 +244,8 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                                    "wpi://2.1.0.0/Microsoft Windows NT 6.1.7600.0",
                                    out myfile);
             DownloadDeploy(wr, myfile, installFolder, catalogAction);
+            cmdInstall.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "",ViewState["extType"].ToString(), myfile.ToString());
+            cmdInstall.Visible = true;
         }
 
         private void DownloadDeploy(WebResponse wr, string myfile, string installFolder, string catalogAction)
@@ -335,6 +439,14 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             return Localization.GetString(key, LocalResourceFile);
         }
 
-     
-    }
+
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            ProcessRequest("download",false);
+        }
+        protected void btnDeploy_Click(object sender, EventArgs e)
+        {
+            ProcessRequest("deploy", false);
+        }
+}
 }

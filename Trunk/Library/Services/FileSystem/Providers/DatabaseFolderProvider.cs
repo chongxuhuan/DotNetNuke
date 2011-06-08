@@ -30,7 +30,7 @@ using System.Linq;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Icons;
 
 namespace DotNetNuke.Services.FileSystem
 {
@@ -176,7 +176,7 @@ namespace DotNetNuke.Services.FileSystem
 
         public override string GetImageUrl()
         {
-            return GlobalsWrapper.Instance.ResolveUrl("~/images/icon_sql_16px.gif");
+            return IconController.IconURL("Sql");
         }
 
         public override DateTime GetLastModificationTime(IFileInfo file)
@@ -281,51 +281,6 @@ namespace DotNetNuke.Services.FileSystem
         #endregion
 
         #region Static Methods
-
-        /// <summary>
-        /// Adds the specified file to the database.
-        /// </summary>
-        /// <param name="file">The file to add to the database.</param>
-        /// <returns>The file identifier.</returns>
-        public static int AddFile(IFileInfo file)
-        {
-            Requires.NotNull("file", file);
-
-            if (string.IsNullOrEmpty(file.Extension))
-            {
-                file.Extension = Path.GetExtension(file.FileName).Replace(".", "");
-            }
-
-            if (string.IsNullOrEmpty(file.ContentType))
-            {
-                file.ContentType = new FileManager().GetContentType(file.Extension);
-            }
-
-            return DataProvider.Instance().AddFile(file.PortalId,
-                                                         file.UniqueId,
-                                                         file.VersionGuid,
-                                                         file.FileName,
-                                                         file.Extension,
-                                                         file.Size,
-                                                         file.Width,
-                                                         file.Height,
-                                                         file.ContentType,
-                                                         file.Folder,
-                                                         file.FolderId,
-                                                         UserController.GetCurrentUserInfo().UserID,
-                                                         file.SHA1Hash);
-        }
-
-        /// <summary>
-        /// Deletes the specified file from the database.
-        /// </summary>
-        /// <param name="portalId">The portal identifier.</param>
-        /// <param name="fileName">The file name.</param>
-        /// <param name="folderId">The folder identifier.</param>
-        public static void DeleteFile(int portalId, string fileName, int folderId)
-        {
-            DataProvider.Instance().DeleteFile(portalId, fileName, folderId);
-        }
 
         /// <summary>
         /// Clears the content of the file in the database.

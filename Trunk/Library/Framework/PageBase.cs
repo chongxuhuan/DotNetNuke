@@ -40,6 +40,7 @@ using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
@@ -361,8 +362,9 @@ namespace DotNetNuke.Framework
         /// </summary>
         /// <param name="control">Control to find the AttributeCollection on</param>
         /// <param name="affectedControls">ArrayList that hold the controls that have been localized. This is later used for the removal of the key attribute.</param>				
+        /// <param name="attributeName">Name of key to search for.</param>				
         /// <returns>A string containing the key for the specified control or null if a key attribute wasn't found</returns>
-        internal static string GetControlAttribute(Control control, ArrayList affectedControls)
+        internal static string GetControlAttribute(Control control, ArrayList affectedControls, string attributeName)
         {
             AttributeCollection attributeCollection = null;
             string key = null;
@@ -372,7 +374,7 @@ namespace DotNetNuke.Framework
                 {
                     var webControl = (WebControl)control;
                     attributeCollection = webControl.Attributes;
-                    key = attributeCollection[Localization.KeyName];
+                    key = attributeCollection[attributeName];
                 }
                 else
                 {
@@ -380,7 +382,7 @@ namespace DotNetNuke.Framework
                     {
                         var htmlControl = (HtmlControl)control;
                         attributeCollection = htmlControl.Attributes;
-                        key = attributeCollection[Localization.KeyName];
+                        key = attributeCollection[attributeName];
                     }
                     else
                     {
@@ -388,7 +390,7 @@ namespace DotNetNuke.Framework
                         {
                             var userControl = (UserControl)control;
                             attributeCollection = userControl.Attributes;
-                            key = attributeCollection[Localization.KeyName];
+                            key = attributeCollection[attributeName];
                         }
                         else
                         {
@@ -397,7 +399,7 @@ namespace DotNetNuke.Framework
                             if (attributeProperty != null)
                             {
                                 attributeCollection = (AttributeCollection)attributeProperty.GetValue(control, null);
-                                key = attributeCollection[Localization.KeyName];
+                                key = attributeCollection[attributeName];
                             }
                         }
                     }
@@ -422,7 +424,7 @@ namespace DotNetNuke.Framework
             if (!control.Visible) return;
 
             //Perform the substitution if a key was found
-            string key = GetControlAttribute(control, affectedControls);
+            string key = GetControlAttribute(control, affectedControls, Localization.KeyName);
             if (!string.IsNullOrEmpty(key))
             {
                 //Translation starts here ....
@@ -574,6 +576,14 @@ namespace DotNetNuke.Framework
                 {
                     image.ImageUrl = Page.ResolveUrl(image.ImageUrl);
                 }
+
+                if (string.IsNullOrEmpty(image.ImageUrl))
+                {
+                    string iconKey = GetControlAttribute(control, affectedControls, IconController.IconKeyName);
+                    string iconSize = GetControlAttribute(control, affectedControls, IconController.IconSizeName);
+                    string iconStyle = GetControlAttribute(control, affectedControls, IconController.IconStyleName);
+                    image.ImageUrl = IconController.IconURL(iconKey, iconSize, iconStyle);
+                }
             }
 
             //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
@@ -584,7 +594,7 @@ namespace DotNetNuke.Framework
                 if (htmlImage.Src.IndexOf("~") != -1)
                 {
                     htmlImage.Src = Page.ResolveUrl(htmlImage.Src);
-                }
+                }                
             }
 
             //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
@@ -660,6 +670,9 @@ namespace DotNetNuke.Framework
             {
                 var ac = (AttributeCollection)affectedControls[i];
                 ac.Remove(Localization.KeyName);
+                ac.Remove(IconController.IconKeyName);
+                ac.Remove(IconController.IconSizeName);
+                ac.Remove(IconController.IconStyleName);
             }
         }
 

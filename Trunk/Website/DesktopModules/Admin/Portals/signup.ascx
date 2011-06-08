@@ -16,7 +16,7 @@
         </div>
         <div id="rowType" runat="server" class="dnnFormItem">
             <dnn:label id="plType" runat="server" controlname="optType"/>
-            <asp:radiobuttonlist id="optType" CssClass="dnnPSRadioButtons" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" AutoPostBack="True">
+            <asp:radiobuttonlist id="optType" CssClass="dnnFormRadioButtons" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" AutoPostBack="True">
 				<asp:listitem resourcekey="Parent" value="P" />
 				<asp:listitem resourcekey="Child" value="C" />
 			</asp:radiobuttonlist>

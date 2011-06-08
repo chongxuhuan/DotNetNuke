@@ -165,7 +165,7 @@ namespace DotNetNuke.Web.UI.WebControls
             }
         }
 
-        private void CheckIsValid()
+        public void CheckIsValid()
         {
             IsValid = true;
             foreach (BaseValidator validator in Validators)
@@ -254,23 +254,31 @@ namespace DotNetNuke.Web.UI.WebControls
             DataBindInternal(DataField, ref _value);
         }
 
-        public override void DataBind()
+        public void DataBindItem(bool useDataSource)
         {
-            base.OnDataBinding(EventArgs.Empty);
-            Controls.Clear();
-            ClearChildViewState();
-            TrackViewState();
+            if (useDataSource)
+            {
+                base.OnDataBinding(EventArgs.Empty);
+                Controls.Clear();
+                ClearChildViewState();
+                TrackViewState();
 
-            DataBindInternal();
+                DataBindInternal();
 
-            CreateControlHierarchy();
-            ChildControlsCreated = true;
+                CreateControlHierarchy();
+                ChildControlsCreated = true;
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(DataField))
+                {
+                    UpdateDataSourceInternal(null, _value, DataField);
+                }
+            }
         }
 
-        protected void UpdateDataSource(object oldValue, object newValue, string dataField)
+        private void UpdateDataSourceInternal(object oldValue, object newValue, string dataField)
         {
-            CheckIsValid();
-
             if (DataSource != null)
             {
                 var dictionary = DataSource as IDictionary<string, string>;
@@ -291,7 +299,16 @@ namespace DotNetNuke.Web.UI.WebControls
                         }
                     }
                 }
-            }
+            }           
+        }
+
+        protected void UpdateDataSource(object oldValue, object newValue, string dataField)
+        {
+            CheckIsValid();
+
+            _value = newValue;
+
+            UpdateDataSourceInternal(oldValue, newValue, dataField);
         }
 
         #endregion

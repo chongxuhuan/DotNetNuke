@@ -1,6 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Security.SecurityRoles" CodeFile="SecurityRoles.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnManageSecurityRoles">
     <asp:Panel ID="pnlRoles" runat="server" Visible="True">
         <table cellspacing="0" cellpadding="0" border="0" class="dnnSecurityRoles dnnClear">
@@ -60,8 +61,8 @@
                 <asp:TemplateColumn>
                     <ItemTemplate>
                         <!-- [DNN-4285] Hide the button if the user cannot be removed from the role -->
-                        <asp:ImageButton ID="cmdDeleteUserRole" runat="server" AlternateText="Delete" CausesValidation="False" CommandName="Delete" ImageUrl="~/images/delete.gif" resourcekey="cmdDelete"  Visible='<%# DeleteButtonVisible(Convert.ToInt32(Eval("UserID")), Convert.ToInt32(Eval("RoleID")))  %>' OnClick="cmdDeleteUserRole_click">
-                        </asp:ImageButton>
+                        <dnn:DnnImageButton ID="cmdDeleteUserRole" runat="server" AlternateText="Delete" CausesValidation="False" CommandName="Delete" IconKey="Delete" resourcekey="cmdDelete"  Visible='<%# DeleteButtonVisible(Convert.ToInt32(Eval("UserID")), Convert.ToInt32(Eval("RoleID")))  %>' OnClick="cmdDeleteUserRole_click">
+                        </dnn:DnnImageButton>
                     </ItemTemplate>
                 </asp:TemplateColumn>
                 <asp:TemplateColumn HeaderText="UserName">

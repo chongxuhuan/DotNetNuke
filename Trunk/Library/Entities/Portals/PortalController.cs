@@ -1105,40 +1105,38 @@ namespace DotNetNuke.Entities.Portals
         /// -----------------------------------------------------------------------------
         private void ParseFiles(XmlNodeList nodeFiles, int portalId, FolderInfo objFolder)
         {
-            int FileId;
-            IFileInfo objInfo;
-            string fileName;
             var fileManager = FileManager.Instance;
 
             foreach (XmlNode node in nodeFiles)
             {
-                fileName = XmlUtils.GetNodeValue(node.CreateNavigator(), "filename");
+                var fileName = XmlUtils.GetNodeValue(node.CreateNavigator(), "filename");
 
                 //First check if the file exists
-				objInfo = fileManager.GetFile(objFolder, fileName);
-                
-                if (objInfo == null)
-                {
-                    objInfo = new FileInfo();
-					objInfo.PortalId = portalId;
-                    objInfo.FileName = fileName;
-                    objInfo.Extension = XmlUtils.GetNodeValue(node.CreateNavigator(), "extension");
-                    objInfo.Size = XmlUtils.GetNodeValueInt(node, "size");
-                    objInfo.Width = XmlUtils.GetNodeValueInt(node, "width");
-                    objInfo.Height = XmlUtils.GetNodeValueInt(node, "height");
-                    objInfo.ContentType = XmlUtils.GetNodeValue(node.CreateNavigator(), "contenttype");
-                    objInfo.SHA1Hash = XmlUtils.GetNodeValue(node.CreateNavigator(), "sha1hash");
-                    objInfo.FolderId = objFolder.FolderID;
-                    objInfo.Folder = objFolder.FolderPath;
+				var objInfo = fileManager.GetFile(objFolder, fileName);
 
-                    //Save new File 
-                    FileId = DatabaseFolderProvider.AddFile(objInfo);
-                }
-                else
+                if (objInfo != null) continue;
+                
+                objInfo = new FileInfo
                 {
-					//Get Id from File
-                    FileId = objInfo.FileId;
+                    PortalId = portalId,
+                    FileName = fileName,
+                    Extension = XmlUtils.GetNodeValue(node.CreateNavigator(), "extension"),
+                    Size = XmlUtils.GetNodeValueInt(node, "size"),
+                    Width = XmlUtils.GetNodeValueInt(node, "width"),
+                    Height = XmlUtils.GetNodeValueInt(node, "height"),
+                    ContentType = XmlUtils.GetNodeValue(node.CreateNavigator(), "contenttype"),
+                    SHA1Hash = XmlUtils.GetNodeValue(node.CreateNavigator(), "sha1hash"),
+                    FolderId = objFolder.FolderID,
+                    Folder = objFolder.FolderPath
+                };
+
+                //Save new File
+                using (var fileContent = fileManager.GetFileContent(objInfo))
+                {
+                    objInfo.FileId = fileManager.AddFile(objFolder, fileName, fileContent, false).FileId;
                 }
+
+                fileManager.UpdateFile(objInfo);
             }
         }
 

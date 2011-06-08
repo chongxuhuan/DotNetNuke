@@ -5,11 +5,6 @@
 		.dnnTabsModule .dnnFormItem input, .dnnTabsModule .dnnFormItem .dnnFormInput, .dnnTabsModule .dnnFormItem textarea{width:45%;}
 			.dnnTabsModule .dnnFormItem input[type=checkbox], .dnnTabsModule .dnnFormItem input[type=radio]{width:auto;}
 				.dnnTabsModule .dnnFormItem input[type=radio]{margin-top:4px;}
-	.dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons input, .dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons input{float:left;padding:0;width:auto;text-align:left;}
-		.dnnFormItem .dnnPSRadioButtons label, .dnnFormItem .dnnPSRadioButtons label{width:auto;padding:0 15px 0 6px;font-weight:normal;margin-top:0;}
-	.dnnTabsModule div.dnnPageDetails br, .dnnTabsModule .dnnPSRadioButtons br, .dnnTabsModule .urlControlFileRow br{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}
-	.ssasUsabilitySettings .dnnPSRadioButtons label{width:12%;}
-	.ssasPortalAlias .dnnPSRadioButtons label, .ssasSecuritySettings .dnnPSRadioButtons label{width:8%;}
 	.dnnFormItem.ssbsAppearance label{width:20%;text-align:right;padding-right:2%;font-weight:bold;}
 		.dnnFormItem.ssbsAppearance label label{width:100%;}
 		span.CacheDurationRowInfo{width:100%;float:none;clear:both;display:block}

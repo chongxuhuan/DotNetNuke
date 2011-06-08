@@ -37,7 +37,7 @@
 		<ul class="dnnActions dnnClear">
 			<li><asp:LinkButton id="cmdDisplay" runat="server" resourcekey="cmdDisplay" cssclass="dnnPrimaryAction" enableviewstate="False" /></li>
 		</ul>
-		<asp:datagrid id="grdLog" runat="server" EnableViewState="false" AutoGenerateColumns="false" CssClass="dnnURLGrid">
+		<asp:datagrid id="grdLog" runat="server" EnableViewState="false" AutoGenerateColumns="false" CssClass="dnnGrid">
 			<headerstyle cssclass="dnnGridHeader" verticalalign="Top" />
 			<itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 			<alternatingitemstyle cssclass="dnnGridAltItem" />

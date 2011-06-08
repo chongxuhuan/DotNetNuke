@@ -224,7 +224,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                 friendlyPath = GetFriendlyQueryString(tab, GetFriendlyAlias(path, portalAlias, isPagePath), pageName);
             }
 
-            friendlyPath = CheckPathLength(friendlyPath, path);
+			friendlyPath = CheckPathLength(Globals.ResolveUrl(friendlyPath), path);
 
             return friendlyPath;
         }

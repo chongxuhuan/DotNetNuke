@@ -3,7 +3,6 @@
 <asp:linkbutton id=cmdHelp tabindex="-1" runat="server" CausesValidation="False" enableviewstate="False">
   <dnn:DnnImage id="imgHelp"  runat="server" IconKey="Help" enableviewstate="False" />
 </asp:linkbutton>
-<br/>
-<asp:panel id=pnlHelp runat="server" cssClass="Help" enableviewstate="False">
+<asp:panel id=pnlHelp runat="server" CssClass="dnnFormMessge dnnFormInfo" enableviewstate="False">
   <asp:label id=lblHelp runat="server" enableviewstate="False" />
 </asp:panel>

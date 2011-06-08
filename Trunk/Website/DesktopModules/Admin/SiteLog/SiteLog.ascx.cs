@@ -46,7 +46,6 @@ using Calendar = DotNetNuke.Common.Utilities.Calendar;
 
 namespace DotNetNuke.Modules.Admin.SiteLog
 {
-
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The SiteLog PortalModuleBase is used to display Logs for the Site
@@ -59,11 +58,31 @@ namespace DotNetNuke.Modules.Admin.SiteLog
     /// </history>
     /// -----------------------------------------------------------------------------
     public partial class SiteLog : PortalModuleBase
-    {
+	{
 
-        #region Private Methods
+		#region "Private Properties"
 
-        /// -----------------------------------------------------------------------------
+    	private DateTime DefaultBeginDate
+    	{
+    		get
+    		{
+				return DateTime.Today.AddDays(-6);
+    		}
+    	}
+
+    	private DateTime DefaultEndDate
+    	{
+    		get
+    		{
+    			return DateTime.Today.AddDays(1);
+    		}
+    	}
+
+		#endregion
+
+		#region Private Methods
+
+		/// -----------------------------------------------------------------------------
         /// <summary>
         /// BindData binds the controls to the Data
         /// </summary>
@@ -81,18 +100,18 @@ namespace DotNetNuke.Modules.Admin.SiteLog
             {
                 strPortalAlias = strPortalAlias.Substring(0, strPortalAlias.LastIndexOf("/") - 1);
             }
-            var strStartDate = txtStartDate.Text;
-            var dtStart = DateTime.Parse(strStartDate);
-            if (!String.IsNullOrEmpty(strStartDate))
-            {
-                strStartDate = strStartDate + " 00:00";
-            }
-            var strEndDate = txtEndDate.Text;
-            var dtEnd = DateTime.Parse(strEndDate);
-            if (!String.IsNullOrEmpty(strEndDate))
-            {
-                strEndDate = strEndDate + " 23:59";
-            }
+			var dtStart = DefaultBeginDate;
+			var dtEnd = DefaultEndDate.Add(new TimeSpan(0, 23, 59, 59));
+
+			if(diStartDate.SelectedDate.HasValue)
+			{
+				dtStart = diStartDate.SelectedDate.Value;
+			}
+
+			if(diEndDate.SelectedDate.HasValue)
+			{
+				dtEnd = diEndDate.SelectedDate.Value.Add(new TimeSpan(0, 23, 59, 59));
+			}
 
             ArrayList arrUsers;
             var dt = new DataTable();
@@ -156,8 +175,8 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                     var reader = objSiteLog.GetSiteLog(PortalId,
                                                                strPortalAlias,
                                                                Convert.ToInt32(cboReportType.SelectedItem.Value),
-                                                               Convert.ToDateTime(strStartDate),
-                                                               Convert.ToDateTime(strEndDate));
+                                                               dtStart,
+                                                               dtEnd);
                     grdLog.DataSource = reader; //we are using a DataReader here because the resultset returned by GetSiteLog varies based on the report type selected and therefore does not conform to a static business object
                     grdLog.DataBind();
                     reader.Close();
@@ -198,10 +217,6 @@ namespace DotNetNuke.Modules.Admin.SiteLog
 
             try
             {
-                //this needs to execute always to the client script code is registred in InvokePopupCal
-                cmdStartCalendar.NavigateUrl = Calendar.InvokePopupCal(txtStartDate);
-                cmdEndCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEndDate);
-
                 //If this is the first visit to the page, bind the role data to the datalist
                 if (Page.IsPostBack == false)
                 {
@@ -239,8 +254,8 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                     cboReportType.DataBind();
                     cboReportType.SelectedIndex = 0;
 
-                    txtStartDate.Text = DateTime.Today.AddDays(-6).ToShortDateString();
-                    txtEndDate.Text = DateTime.Today.AddDays(1).ToShortDateString();
+                    diStartDate.SelectedDate = DefaultBeginDate;
+                    diEndDate.SelectedDate = DefaultEndDate;
                 }
             }
             catch (Exception exc) //Module failed to load

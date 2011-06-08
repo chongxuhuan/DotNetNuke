@@ -473,6 +473,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetImageUrl
 
         [Test]
+        [Ignore]
         public void GetImageUrl_Calls_GlobalsWrapper_ResolveUrl()
         {
             var globalsWrapper = new Mock<IGlobals>();

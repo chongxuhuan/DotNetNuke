@@ -20,7 +20,7 @@
                 <asp:Label ID="lblTemplateMessage" runat="server" />
                 <div class="dnnFormItem dnnSWMergeModules">
                     <asp:Label ID="lblMergeTitle" runat="server" resourcekey="MergeDetail" />    
-                    <asp:RadioButtonList ID="optMerge" CssClass="dnnSWRadioButtons" runat="server" RepeatDirection="Horizontal">
+                    <asp:RadioButtonList ID="optMerge" CssClass="dnnFormRadioButtons" runat="server" RepeatDirection="Horizontal">
                         <asp:ListItem SelectedValue="Ignore" resourcekey="Ignore"></asp:ListItem>
                         <asp:ListItem Value="Replace" resourcekey="Replace"></asp:ListItem>
                         <asp:ListItem Value="Merge" resourcekey="Merge"></asp:ListItem>

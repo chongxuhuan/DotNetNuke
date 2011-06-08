@@ -69,6 +69,9 @@ namespace DotNetNuke.Entities.Icons
         public const string DefaultIconSize = "16X16";
         public const string DefaultIconStyle = "Standard";
         public const string DefaultIconLocation = "icons/sigma";
+        public const string IconKeyName = "IconKey";
+        public const string IconSizeName = "IconSize";
+        public const string IconStyleName = "IconStyle";
 
         #endregion
 

@@ -366,7 +366,7 @@ namespace DotNetNuke.Entities.Modules
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string EditUrl(int TabID, string ControlKey, bool PageRedirect, params string[] AdditionalParameters)
         {
-            return ModuleContext.EditNavUrl(TabID, ControlKey, PageRedirect, AdditionalParameters);
+            return ModuleContext.NavigateUrl(TabID, ControlKey, PageRedirect, AdditionalParameters);
         }
 
         /// -----------------------------------------------------------------------------

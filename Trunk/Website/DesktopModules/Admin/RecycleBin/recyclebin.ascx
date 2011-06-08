@@ -8,7 +8,7 @@
 		<li><a href="#rbModules"><%=LocalizeString("Modules")%></a></li>
 	</ul>
     <div id="divMode" runat="server">
-        <asp:RadioButtonList ID="modeButtonList" runat="server" RepeatDirection="Horizontal" AutoPostBack="true">
+        <asp:RadioButtonList ID="modeButtonList" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" CssClass="dnnFormRadioButtons">
             <asp:ListItem Value="ALL" Selected="True" resourcekey="allLocales" />
             <asp:ListItem Value="SINGLE" resourcekey="singleLocale" />
         </asp:RadioButtonList>
@@ -44,29 +44,41 @@
     </ul>
 </div>
 
-<script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-        $('#dnnRecycleBin').dnnTabs();
-        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
-        $('#<%= cmdEmpty.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("DeleteAll") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-        $('#<%= cmdDeleteTab.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("DeleteTab") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-        $('#<%= cmdDeleteModule.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("DeleteModule") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-    });
+<script type="text/javascript">
+	(function ($, Sys) {
+		var setUpRecycleBin = function () {
+			$('#dnnRecycleBin').dnnTabs();
+
+			var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
+			var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
+			var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+			$('#<%= cmdEmpty.ClientID %>').dnnConfirm({
+				text: '<%= LocalizeString("DeleteAll") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+			$('#<%= cmdDeleteTab.ClientID %>').dnnConfirm({
+				text: '<%= LocalizeString("DeleteTab") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+			$('#<%= cmdDeleteModule.ClientID %>').dnnConfirm({
+				text: '<%= LocalizeString("DeleteModule") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+		}
+
+		$(document).ready(function () {
+			setUpRecycleBin();
+			Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+				setUpRecycleBin();
+			});
+
+		});
+	} (jQuery, window.Sys));
+	
 </script>

@@ -5,8 +5,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\BuildScripts\MSBuild.Community.Tasks.Targets" />
   <Target Name="DDRMenu">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\DDRMenu_01.99.03_Install.zip" DestinationFolder="../Website/Install/Module" />
-    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DDRMenu_01.99.03_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\DDRMenu_01.99.04_Install.zip" DestinationFolder="../Website/Install/Module" />
+    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DDRMenu_01.99.04_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
     <Unzip ZipFileName="$(MSBuildProjectDirectory)\unzip\resources.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip\resources" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\DotNetNuke.Web.DDRMenu.dll" DestinationFolder="../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\providers\DotNetNuke.Web.DDRMenu.NET40.dll" DestinationFolder="../Website/bin/providers" />

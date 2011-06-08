@@ -109,6 +109,7 @@ namespace DotNetNuke.Web.UI.WebControls
                 bool isValid = true;
                 foreach (var item in GetAllItems())
                 {
+                    item.CheckIsValid();
                     if(!item.IsValid)
                     {
                         isValid = false;
@@ -405,9 +406,13 @@ namespace DotNetNuke.Web.UI.WebControls
                 if (DataSource != null)
                 {
                     item.DataSource = DataSource;
-                    if (useDataSource)
+                    if(useDataSource)
                     {
-                        item.DataBind();
+                        item.DataBindItem(true);
+                    }
+                    else
+                    {
+                        item.DataBindItem(false);
                     }
                 }
             }

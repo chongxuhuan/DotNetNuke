@@ -100,7 +100,7 @@ div.SearchIcon img{margin-top:3px;}
 .paneOutline{border:1px #ccc dotted;}
 .containerAdminBorder .NormalRed.DNNAligncenter{background:#8E2F29;color:#fff;text-shadow:1px 1px 0 #000;padding:0.8em 0;}
 
-#UserProfile{border:1px #ccc solid;padding:10px;margin-bottom:10px;width:100%;}
+#UserProfile{border:1px #ccc solid;padding:10px;margin-bottom:10px;}
 	#UserProfile .ProfileName {font-weight:bold;color:#cb2027;margin-bottom:5px;}
 	#UserProfile .ProfilePhoto {background-image: url('../../images/no_avatar.gif');float:left;}
 	#UserProfile .ProfileAddress {margin:0 0 10px 130px;}
@@ -126,7 +126,7 @@ div.SearchIcon img{margin-top:3px;}
 
 /*  === Common Reusable Selectors === */
 
-.dnnForm{padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;width:95%;margin:0}
+.dnnForm{padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;width:95%;margin:0 auto}
 	h2.dnnFormSectionHead{margin:0.5em auto 0.6em;padding:0;letter-spacing:-0.03em;font-weight:bold;border-bottom:1px #ccc solid;text-align:left;line-height:1.2;font-size:1.5em;}
 		.dnnForm h2.dnnFormSectionHead a, .dnnForm h2.dnnFormSectionHead a:visited{display:block;text-decoration:none;padding:0.4em 0.8em;color:#000;letter-spacing:-0.03em;font-weight:bold;background:url(../../images/down-icn.png) no-repeat 98% center;display:block}
 			.dnnForm h2.dnnFormSectionHead a:hover{background:#f1f1f1 url(../../images/down-icn.png) no-repeat 98% center;}
@@ -143,7 +143,7 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnFormItem label, .dnnFormItem .dnnFormLabel{display:block;width:24%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
 		.dnnForm .dnnFormSecondItem label{float:none;}
 	.dnnFormItem input, .dnnFormItem .dnnFormInput, .dnnFormItem textarea{float:left;-moz-border-radius:3px;border-radius:3px;padding:5px;background:#fffff5;-moz-box-shadow:inset 0 0 3px 3px #fffbe1;-webkit-box-shadow:inset 0 0 3px 3px #fffbe1;box-shadow:inset 0 0 3px 3px #fffbe1;border-color:#bcb691;border-width:1px;margin:0;width:auto;}
-		.dnnFormItem input[type=checkbox], .dnnFormItem input[type=radio], .dnnFormItem input[type=file]{width:auto;border:none;-moz-border-radius:0;border-radius:0;background:none;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
+		.dnnFormItem input[type=checkbox], .dnnFormItem input[type=radio], .dnnFormItem input[type=file], .dnnFormItem input[type=button]{width:auto;border:none;-moz-border-radius:0;border-radius:0;background:none;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 		.dnnFormItem select{width:auto;padding:0;}
 		.dnnFormItem input[type="text"], .dnnFormItem textarea{min-width:35%;}
 		.dnnFormItem textarea{min-height:80px;}
@@ -178,13 +178,13 @@ div.SearchIcon img{margin-top:3px;}
 
 	.dnnForm .dnnFormItem.dnnFormHelp, .dnnFormItem.dnnFormHelp{clear:both;overflow:hidden;width:100%;padding:0;}
 		.dnnFormItem.dnnFormHelp p.dnnFormRequired{float:right;margin:0;padding:0;}
+		.dnnFormItem.dnnFormHelp p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 				
 	.dnnLeft{float:left;} .dnnRight{float:right;}
 	.dnnClear:after{clear:both;content:".";display:block;height:0;visibility:hidden;font-size:0;}
 		*+html .dnnClear{min-height:1%;}
 
-	.dnnForm input[type=checkbox]{margin-top:5px;width:auto;}
-	.dnnForm input[type=radio]{margin-top:4px;width:auto;}
+	.dnnForm input[type=checkbox], .dnnForm input[type=radio]{margin-top:4px;width:auto;margin-right:5px;}
 	.dnnTextEditor label{margin:0;padding:0 20px 0 5px;font-weight:normal;text-align:left;width:auto}
 	.dnnModuleAuditControl{width:95%;margin:0 auto}
 	
@@ -197,7 +197,7 @@ div.SearchIcon img{margin-top:3px;}
     a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited, a.dnnSecondaryAction, a.dnnSecondaryAction:link, a.dnnSecondaryAction:visited{display:inline-block;}
     a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited{background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #000;color:#fff;text-decoration:none;font-weight:bold;border-color:#fff}
 	a[disabled].dnnPrimaryAction, a[disabled].dnnPrimaryAction:link, a[disabled].dnnPrimaryAction:visited,a[disabled].dnnPrimaryAction:hover, a[disabled].dnnPrimaryAction:visited:hover,dnnForm.ui-widget-content a[disabled].dnnPrimaryAction{text-decoration:none;color:#bbb;background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-ms-filter:"progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 )";cursor:default;}
-        ul.dnnActions a.dnnPrimaryAction:hover, ul.dnnActions a.dnnPrimaryAction:visited:hover{background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );color:#fff;}
+        ul.dnnActions a.dnnPrimaryAction:hover, ul.dnnActions a.dnnPrimaryAction:visited:hover, a.dnnPrimaryAction:hover{background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );color:#fff;}
     ul.dnnActions a.dnnSecondaryAction, ul.dnnActions a.dnnSecondaryAction:link{font-weight:bold;text-decoration:none;padding:0 1em;}
         ul.dnnActions a.dnnSecondaryAction:hover, ul.dnnActions a.dnnSecondaryAction:visited:hover{text-decoration:underline;background:none;color:inherit;}
 		a[disabled].dnnSecondaryAction, a[disabled].dnnSecondaryAction:link, a[disabled].dnnSecondaryAction:visited,a[disabled].dnnSecondaryAction:hover, a[disabled].dnnSecondaryAction:visited:hover{text-decoration:none;color:#999;cursor:default;}
@@ -206,14 +206,19 @@ div.SearchIcon img{margin-top:3px;}
 /*  === End Common Reusable Selectors === */
 
 /*  === Url Control === */
+	.urlControl label{margin-top:0;width:auto;font-weight:normal}
 	.urlControlLinkType{width:auto;}
 		.urlControlLinkType span, .dnnFormItem .urlControlLinkType span{display:block;float:none;text-align:left;width:auto;}
-		.dnnFormItem .ucLinkTypeRadioButtons label{width:auto;font-weight:normal;text-align:left;padding-right:0;}
-		.ucLinkTypeRadioButtons{}
-			.urlControlLinkType span input{min-width:3%;}
-			.dnnForm.dnnModuleSettings .dnnFormItem .urlControlLinkType span label{text-align:left;}
+		.dnnFormItem .ucLinkTypeRadioButtons label{width:auto;font-weight:normal;text-align:left;padding-right:0;margin-top:0;}
+		.urlControlLinkType span input{min-width:3%;}
+		.dnnForm.dnnModuleSettings .dnnFormItem .urlControlLinkType span label{text-align:left;}
 	.urlControlFileRow{overflow:hidden;clear:both;}	
 		.urlControlFileRow span.dnnFormLabel{width:auto;text-align:right;}
+	.dnnFilePicker .dnnLeft .dnnFormItem{width:280px;overflow:hidden;padding:0;}
+	.dnnFilePicker .dnnLeft .dnnFormItem span{display:block;float:left;width:80px;text-align:right;padding-right:10px;}
+	.dnnFilePicker .dnnLeft .dnnFormItem select{float:left;width:180px;}
+	.dnnFilePicker .dnnLeft a.dnnSecondaryAction{margin-left:80px;}
+	.dnnFilePicker .dnnLeft .dnnFormItem input[type=file]{margin-left:90px;}
 /*  === End Url Control === */
 
 .dnnGrid{font-size:inherit;}
@@ -282,7 +287,7 @@ a.TreeMenu_Node:active, a.TreeMenu_NodeSelected:active{text-decoration:none;colo
 .dnnForm .ui-widget {font-family:inherit;font-size:inherit;}
 	.dnnForm .ui-widget .ui-widget {font-size:inherit;}
 		.dnnForm .ui-widget input, .dnnForm .ui-widget select, .dnnForm .ui-widget textarea, .dnnForm .ui-widget button {font-family:inherit;font-size:inherit;}
-		.dnnForm .ui-widget-content{border:none;background:#fff;color:#000;}
+		.dnnForm .ui-widget-content{border:none;color:#000;}
 			.dnnForm .ui-widget-header{border:none;background:none;}
 				.dnnForm .ui-widget-header a{color:#eaf5f7;}
 				
@@ -327,7 +332,77 @@ a.TreeMenu_Node:active, a.TreeMenu_NodeSelected:active{text-decoration:none;colo
 				.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {cursor:pointer;}
 			.ui-tabs .ui-tabs-panel {display:block;border-width:0;padding:0;background:none;position:relative;}
 			.ui-tabs .ui-tabs-hide {display:none !important;}
+
+
+/* Datepicker
+----------------------------------*/
+#ui-datepicker-div{ background-color: #eee; }
+.ui-datepicker { width: 17em; padding: .2em .2em 0; }
+.ui-datepicker .ui-datepicker-header { position:relative; padding:.2em 0; }
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next { position:absolute; top: 2px; width: 1.8em; height: 1.8em; }
+.ui-datepicker .ui-datepicker-prev-hover, .ui-datepicker .ui-datepicker-next-hover { top: 1px; }
+.ui-datepicker .ui-datepicker-prev { left:2px; }
+.ui-datepicker .ui-datepicker-next { right:2px; }
+.ui-datepicker .ui-datepicker-prev-hover { left:1px; }
+.ui-datepicker .ui-datepicker-next-hover { right:1px; }
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; position: absolute; left: 50%; margin-left: -8px; top: 50%; margin-top: -8px;  }
+.ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
+.ui-datepicker .ui-datepicker-title select { font-size:1em; margin:1px 0; }
+.ui-datepicker select.ui-datepicker-month-year {width: 100%;}
+.ui-datepicker select.ui-datepicker-month, 
+.ui-datepicker select.ui-datepicker-year { width: 49%;}
+.ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
+.ui-datepicker th { padding: .7em .3em; text-align: center; font-weight: bold; border: 0;  }
+.ui-datepicker td { border: 0; padding: 1px; }
+.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .2em; text-align: right; text-decoration: none; }
+.ui-datepicker .ui-datepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding:0 .2em; border-left: 0; border-right: 0; border-bottom: 0; }
+.ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
+.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float:left; }
+
+/* with multiple calendars */
+.ui-datepicker.ui-datepicker-multi { width:auto; }
+.ui-datepicker-multi .ui-datepicker-group { float:left; }
+.ui-datepicker-multi .ui-datepicker-group table { width:95%; margin:0 auto .4em; }
+.ui-datepicker-multi-2 .ui-datepicker-group { width:50%; }
+.ui-datepicker-multi-3 .ui-datepicker-group { width:33.3%; }
+.ui-datepicker-multi-4 .ui-datepicker-group { width:25%; }
+.ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header { border-left-width:0; }
+.ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { border-left-width:0; }
+.ui-datepicker-multi .ui-datepicker-buttonpane { clear:left; }
+.ui-datepicker-row-break { clear:both; width:100%; }
+
+/* RTL support */
+.ui-datepicker-rtl { direction: rtl; }
+.ui-datepicker-rtl .ui-datepicker-prev { right: 2px; left: auto; }
+.ui-datepicker-rtl .ui-datepicker-next { left: 2px; right: auto; }
+.ui-datepicker-rtl .ui-datepicker-prev:hover { right: 1px; left: auto; }
+.ui-datepicker-rtl .ui-datepicker-next:hover { left: 1px; right: auto; }
+.ui-datepicker-rtl .ui-datepicker-buttonpane { clear:right; }
+.ui-datepicker-rtl .ui-datepicker-buttonpane button { float: left; }
+.ui-datepicker-rtl .ui-datepicker-buttonpane button.ui-datepicker-current { float:right; }
+.ui-datepicker-rtl .ui-datepicker-group { float:right; }
+.ui-datepicker-rtl .ui-datepicker-group-last .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
+.ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
+
+/* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
+.ui-datepicker-cover {
+	display: none; /*sorry for IE5*/
+	display/**/: block; /*sorry for IE5*/
+	position: absolute; /*must have*/
+	z-index: -1; /*must have*/
+	filter: mask(); /*must have*/
+	top: -4px; /*must have*/
+	left: -4px; /*must have*/
+	width: 200px; /*must have*/
+	height: 200px; /*must have*/
+}
+
 		
-		
-/* DDR Template - temporary */
-.ddrmenulevel1{background:#fff;border:8px solid #ccc;padding:10px;border-radius:3px;-moz-border-radius:3px;}
+/* DDR Template*/
+    ul.dnnActionMenu li {list-style-type:none;}
+    ul.dnnActionMenu li.first.last {position:relative;}
+        ul.dnnActionMenu ul.first.last {display:none;background:#fff;border:8px solid #ccc;padding:10px;border-radius:3px;-moz-border-radius:3px;z-index:9999;position:absolute;left:0;top:0;width:360px;}
+        ul.dnnActionMenu ul.first.last li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
+        ul.dnnActionMenu ul.first.last li ul{overflow:hidden;padding-bottom:25px;}
+        ul.dnnActionMenu ul.first.last li ul li{float:left;display:block;width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;}
+        ul.dnnActionMenu ul.first.last li ul li a{display:block;line-height:16px;min-height:16px;}

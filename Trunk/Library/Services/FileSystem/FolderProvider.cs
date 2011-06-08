@@ -39,14 +39,6 @@ namespace DotNetNuke.Services.FileSystem
         #region Constants
 
         public const string SettingsControlID = "Settings.ascx";
-        
-        /// <summary>
-        /// Default maximum size (in bytes) for internal MemoryStreams. Beyond that size, it's recommended to use other type of Streams, like a FileStream to a temp file.
-        /// </summary>
-        /// <remarks>
-        /// This constant is not needed in default providers. Concrete providers could overwrite this value by defining their own setting.
-        /// </remarks>
-        public const int DefaultMaxMemoryStreamSize = 1048576; // 1MB
 
         #endregion
 

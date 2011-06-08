@@ -213,6 +213,7 @@ namespace DotNetNuke.Tests.Content.Presenters
             // Arrange
             var mockView = new Mock<ICreateVocabularyView>();
             mockView.Setup(v => v.Model).Returns(new CreateVocabularyModel());
+            var destinationUrl = Globals.NavigateURL(Constants.TAB_ValidId);
 
             var mockHttpResponse = new Mock<HttpResponseBase>();
 
@@ -223,7 +224,7 @@ namespace DotNetNuke.Tests.Content.Presenters
             mockView.Raise(v => v.Save += null, EventArgs.Empty);
 
             // Assert
-            mockHttpResponse.Verify(r => r.Redirect(Globals.NavigateURL(Constants.TAB_ValidId)));
+            mockHttpResponse.Verify(r => r.Redirect(destinationUrl));
         }
 
         #endregion

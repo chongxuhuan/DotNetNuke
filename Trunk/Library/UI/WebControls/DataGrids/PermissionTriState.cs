@@ -2,6 +2,7 @@
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
@@ -76,10 +77,10 @@ namespace DotNetNuke.UI.WebControls
 
         private static void LookupScriptValues(Control ctl, out string grantImagePath, out string denyImagePath, out string nullImagePath, out string lockImagePath, out string grantAltText, out string denyAltText, out string nullAltText)
         {
-            grantImagePath = ctl.ResolveUrl("~/images/grant.gif");
-            denyImagePath = ctl.ResolveUrl("~/images/deny.gif");
-            nullImagePath = ctl.ResolveUrl("~/images/unchecked.gif");
-            lockImagePath = ctl.ResolveUrl("~/images/lock.gif");
+            grantImagePath = IconController.IconURL("Grant");
+            denyImagePath = IconController.IconURL("Deny");
+            nullImagePath = IconController.IconURL("Unchecked");
+            lockImagePath = IconController.IconURL("Lock");
 
             grantAltText = Localization.GetString("PermissionTypeGrant");
             denyAltText = Localization.GetString("PermissionTypeDeny");

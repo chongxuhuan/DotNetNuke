@@ -1343,7 +1343,7 @@ IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE Mo
 	BEGIN
 		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
 			( ControlKey, ControlTitle, ControlSrc, ControlType )
-			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
+			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
 	END
 GO
 
@@ -2236,6 +2236,137 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'DF_{objectQua
 				DEFAULT (getdate()) 
 				FOR [LastModifiedOnDate]
 GO
+
+/* Update StoredProc, Removal of TimeZone Param */
+/************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalInfo]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdatePortalInfo
+	@PortalID           int,
+	@PortalName         nvarchar(128),
+	@LogoFile           nvarchar(50),
+	@FooterText         nvarchar(100),
+	@ExpiryDate         datetime,
+	@UserRegistration   int,
+	@BannerAdvertising  int,
+	@Currency           char(3),
+	@AdministratorId    int,
+	@HostFee            money,
+	@HostSpace          int,
+	@PageQuota          int,
+	@UserQuota          int,
+	@PaymentProcessor   nvarchar(50),
+	@ProcessorUserId    nvarchar(50),
+	@ProcessorPassword  nvarchar(50),
+	@Description        nvarchar(500),
+	@KeyWords           nvarchar(500),
+	@BackgroundFile     nvarchar(50),
+	@SiteLogHistory     int,
+	@SplashTabId        int,
+	@HomeTabId          int,
+	@LoginTabId         int,
+	@RegisterTabId      int,
+	@UserTabId          int,
+	@SearchTabId          int,
+	@DefaultLanguage    nvarchar(10),
+	@HomeDirectory		varchar(100),
+	@LastModifiedByUserID	int,
+	@CultureCode   nvarchar(50)
+AS
+	UPDATE {databaseOwner}{objectQualifier}Portals
+		SET    
+		   ExpiryDate = @ExpiryDate,
+		   UserRegistration = @UserRegistration,
+		   BannerAdvertising = @BannerAdvertising,
+		   Currency = @Currency,
+		   AdministratorId = @AdministratorId,
+		   HostFee = @HostFee,
+		   HostSpace = @HostSpace,
+		   PageQuota = @PageQuota,
+		   UserQuota = @UserQuota,
+		   PaymentProcessor = @PaymentProcessor,
+		   ProcessorUserId = @ProcessorUserId,
+		   ProcessorPassword = @ProcessorPassword,
+		   SiteLogHistory = @SiteLogHistory,
+		   DefaultLanguage = @DefaultLanguage,
+		   HomeDirectory = @HomeDirectory,
+		   LastModifiedByUserID = @LastModifiedByUserID,
+		   LastModifiedOnDate = getdate()
+	WHERE  PortalId = @PortalID
+
+IF EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE PortalId = @PortalID AND CultureCode = @CultureCode)
+	BEGIN 
+		UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+		SET
+			PortalName = @PortalName,
+			LogoFile = @LogoFile,
+			FooterText = @FooterText,
+			Description = @Description,
+			KeyWords = @KeyWords,
+			BackgroundFile = @BackgroundFile,
+			HomeTabId = @HomeTabId,
+			LoginTabId = @LoginTabId,
+			RegisterTabId = @RegisterTabId,
+			UserTabId = @UserTabId,
+			SplashTabId = @SplashTabId,
+			SearchTabId = @SearchTabId,
+			LastModifiedByUserID = @LastModifiedByUserID,
+			LastModifiedOnDate = getdate()
+		WHERE	PortalId = @PortalID AND CultureCode = @CultureCode
+	END 
+ELSE
+	BEGIN 
+		DECLARE @AdminTabId int
+		SET @AdminTabId = (SELECT AdminTabId 
+								FROM {databaseOwner}{objectQualifier}PortalLocalization 
+								WHERE PortalID = @PortalID and CultureCode='en-US')
+
+		INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
+			[PortalID],
+			[CultureCode],
+			[PortalName],
+			[LogoFile],
+			[FooterText],
+			[Description],
+			[KeyWords],
+			[BackgroundFile],
+			[HomeTabId],
+			[LoginTabId],
+			[UserTabId],
+			[AdminTabId],
+			[SplashTabId],
+			[SearchTabId],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
+		)
+		VALUES (
+			@PortalID,
+			@CultureCode,
+			@PortalName,
+			@LogoFile, 
+			@FooterText,
+			@Description,
+			@KeyWords,
+			@BackgroundFile,
+			@HomeTabId ,
+			@LoginTabId ,
+			@UserTabId,
+			@AdminTabid,
+			@SplashTabId  ,
+			@SearchTabId,
+			-1,
+			getdate(),
+			-1,
+			getdate()
+		)
+	END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -35,6 +35,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Entities.Portals;
@@ -507,10 +508,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 tblMessagePager.Visible = true;
                 strCurPage = Localization.GetString("Pages");
                 lblCurPage.Text = string.Format(strCurPage, (dgFileList.CurrentPageIndex + 1), (dgFileList.PageCount));
-                lnkMoveFirst.Text = "<img border=0 Alt='" + Localization.GetString("First") + "' src='" + ResolveUrl("~/images/FileManager/movefirst.gif") + "'>";
-                lnkMovePrevious.Text = "<img border=0 Alt='" + Localization.GetString("Previous") + "' src='" + ResolveUrl("~/images/FileManager/moveprevious.gif") + "'>";
-                lnkMoveNext.Text = "<img border=0 Alt='" + Localization.GetString("Next") + "' src='" + ResolveUrl("~/images/FileManager/movenext.gif") + "'>";
-                lnkMoveLast.Text = "<img border=0 Alt='" + Localization.GetString("Last") + "' src='" + ResolveUrl("~/images/FileManager/movelast.gif") + "'>";
+                lnkMoveFirst.Text = "<img border=0 Alt='" + Localization.GetString("First") + "' src='" + IconController.IconURL("MoveFirst") + "'>";
+                lnkMovePrevious.Text = "<img border=0 Alt='" + Localization.GetString("Previous") + "' src='" + IconController.IconURL("MovePrevious") + "'>";
+                lnkMoveNext.Text = "<img border=0 Alt='" + Localization.GetString("Next") + "' src='" + IconController.IconURL("MoveNext") + "'>";
+                lnkMoveLast.Text = "<img border=0 Alt='" + Localization.GetString("Last") + "' src='" + IconController.IconURL("Movelast") + "'>";
             }
             else
             {
@@ -841,10 +842,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             PreloadFolderImages();
 
-            DNNTree.ImageList.Add(ResolveUrl("~/images/file.gif"));
+            DNNTree.ImageList.Add(IconController.IconURL("File"));
             DNNTree.IndentWidth = 10;
-            DNNTree.CollapsedNodeImage = ResolveUrl("~/images/max.gif");
-            DNNTree.ExpandedNodeImage = ResolveUrl("~/images/min.gif");
+            DNNTree.CollapsedNodeImage = IconController.IconURL("Max","12X12");
+            DNNTree.ExpandedNodeImage = IconController.IconURL("Min", "12X12");
             DNNTree.PopulateNodesFromClient = true;
             DNNTree.JSFunction = "nodeSelected();";
         }
@@ -869,29 +870,29 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 wrapperControl.Attributes.Add("style", "cursor: pointer");
                 wrapperControl.Attributes.Add("onclick", js);
-                imageControl.ImageUrl = "~/images/FileManager/ToolBar" + imageRootName + "Enabled.gif";
+                imageControl.ImageUrl = IconController.IconURL(imageRootName);
             }
             else
             {
                 wrapperControl.Attributes.Remove("style");
-                wrapperControl.Attributes.Remove("onclick");
-                imageControl.ImageUrl = "~/images/FileManager/ToolBar" + imageRootName + "Disabled.gif";
+                wrapperControl.Attributes.Remove("onclick");                
+                imageControl.ImageUrl = IconController.IconURL(imageRootName + "Disabled");
             }
         }
 
         private void ManageSecurity()
         {
             ManageToolbarButton(addFolder, lnkAddFolderIMG, "return canAddFolder();", "AddFolder", HasPermission("ADD"));
-            ManageToolbarButton(deleteFolder, lnkDelFolderIMG, "return deleteFolder();", "DelFolder", HasPermission("DELETE"));
+            ManageToolbarButton(deleteFolder, lnkDelFolderIMG, "return deleteFolder();", "DeleteFolder", HasPermission("DELETE"));
             ManageToolbarButton(syncFolder, lnkSyncFolderIMG, "__doPostBack(m_sUCPrefixName + 'lnkSyncFolder', '');", "Synchronize", HasPermission("MANAGE"));
             chkRecursive.Enabled = HasPermission("MANAGE");
 
             ManageToolbarButton(refresh, lnkRefreshIMG, "__doPostBack(m_sUCPrefixName + 'lnkRefresh', '');", "Refresh", true);
-            ManageToolbarButton(copy, lnkCopy, "copyCheckedFiles();", "Copy", HasPermission("COPY"));
-            ManageToolbarButton(move, lnkMove, "moveFiles();", "Move", HasPermission("COPY"));
-            ManageToolbarButton(upload, lnkUploadIMG, "__doPostBack(m_sUCPrefixName + 'lnkUpload', '');", "Upload", HasPermission("ADD"));
+            ManageToolbarButton(copy, lnkCopy, "copyCheckedFiles();", "CopyFile", HasPermission("COPY"));
+            ManageToolbarButton(move, lnkMove, "moveFiles();", "MoveFile", HasPermission("COPY"));
+            ManageToolbarButton(upload, lnkUploadIMG, "__doPostBack(m_sUCPrefixName + 'lnkUpload', '');", "UploadFile", HasPermission("ADD"));
             ManageToolbarButton(delete, lnkDelete, "deleteCheckedFiles();", "Delete", HasPermission("DELETE"));
-            ManageToolbarButton(filter, lnkFilterIMG, "__doPostBack(m_sUCPrefixName + 'lnkFilter', '');", "Filter", true);
+            ManageToolbarButton(filter, lnkFilterIMG, "__doPostBack(m_sUCPrefixName + 'lnkFilter', '');", "Search", true);
 
             lnkCopy.Enabled = IsEditable;
             lnkMove.Enabled = IsEditable;
@@ -1018,13 +1019,13 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         if ((lnkDeleteFile) != null)
                         {
                             lnkDeleteFile.Enabled = false;
-                            lnkDeleteFile.ImageUrl = "~/images/FileManager/DNNExplorer_trash_disabled.gif";
+                            lnkDeleteFile.ImageUrl = IconController.IconURL("TrashDisabled");
                             lnkDeleteFile.AlternateText = "";
                         }
                         if ((lnkEditFile) != null)
                         {
                             lnkEditFile.Enabled = false;
-                            lnkEditFile.ImageUrl = "~/images/FileManager/DNNExplorer_Edit_disabled.gif";
+                            lnkEditFile.ImageUrl = IconController.IconURL("EditDisabled");
                             lnkEditFile.AlternateText = "";
                         }
                         chkFile2 = null;
@@ -2282,8 +2283,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
             bool isRecursive = chkRecursive.Checked;
             string relPath = syncFolderPath.Replace(RootFolderPath, "").Replace("\\", "/");
             FolderManager.Instance.Synchronize(FolderPortalID, relPath, isRecursive, true);
-            BindFolderTree();
-            BindFileList();
+            
+			//reload page to make treeview update.
+			Response.Redirect(Globals.NavigateURL(), true);
         }
 
         /// -----------------------------------------------------------------------------
@@ -2308,8 +2310,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 FolderManager.Instance.Synchronize(PortalId, "", true, false);
             }
-            BindFolderTree();
-            BindFileList();
+            
+			//reload page to make treeview update.
+			Response.Redirect(Globals.NavigateURL(), true);
         }
 
         /// -----------------------------------------------------------------------------

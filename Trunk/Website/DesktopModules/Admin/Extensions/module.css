@@ -16,6 +16,9 @@
 	#dnnExtensions .dnnGrid td{padding:14px 10px;}
 .dnnEditDefinition .dnnFormRadioButtons{min-width:35%;}
 .dnnInstallLogs{height:350px; overflow:auto;}
+
+.dnnEditExtension .dnnForm .dnnFormItem>span{width:60%; display:inline-block;}
+
 /* ===========   Extensions Module Styling   =========== */
 
 /* ===========   More Extensions Module Styling   =========== */

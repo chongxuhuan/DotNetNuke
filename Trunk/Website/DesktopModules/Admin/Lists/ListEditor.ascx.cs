@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -203,11 +204,11 @@ namespace DotNetNuke.Common.Lists
                 if (!Page.IsPostBack)
                 {
 					//configure tree
-                    DNNtree.ImageList.Add(ResolveUrl("~/images/folder.gif"));
-                    DNNtree.ImageList.Add(ResolveUrl("~/images/file.gif"));
+                    DNNtree.ImageList.Add(IconController.IconURL("Folder"));
+                    DNNtree.ImageList.Add(IconController.IconURL("File"));
                     DNNtree.IndentWidth = 10;
-                    DNNtree.CollapsedNodeImage = ResolveUrl("~/images/max.gif");
-                    DNNtree.ExpandedNodeImage = ResolveUrl("~/images/min.gif");
+                    DNNtree.CollapsedNodeImage = IconController.IconURL("Max","12X12");
+                    DNNtree.ExpandedNodeImage = IconController.IconURL("Min", "12X12");
 
                     if (Request.QueryString["Key"] != null)
                     {

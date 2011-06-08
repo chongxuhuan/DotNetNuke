@@ -10,13 +10,13 @@
 	</ul>
     <div class="usProviderSettings" id="usProviderSettings">
         <fieldset>
-            <div class="dnnFormItem"><asp:label id="lblprovider" runat="server" resourcekey="ProviderSettingsHelp" /></div>
+            <div class="dnnFormMessage dnnFormInfo"><asp:label id="lblprovider" runat="server" resourcekey="ProviderSettingsHelp" /></div>
             <dnn:propertyeditorcontrol id="ProviderSettings" runat="Server" valuedatafield="PropertyValue" namedatafield="Name" helpstyle-cssclass="dnnFormHelpContent dnnClear" SortMode="SortOrderAttribute" />
         </fieldset>
     </div>
     <div class="usPasswordSettings" id="usPasswordSettings">
         <fieldset>
-            <div class="dnnFormItem"><asp:label id="lblPassword" runat="server" resourcekey="PasswordSettingsHelp" /></div>
+            <div class="dnnFormMessage dnnFormInfo"><asp:label id="lblPassword" runat="server" resourcekey="PasswordSettingsHelp" /></div>
             <dnn:propertyeditorcontrol id="PasswordSettings" runat="Server" valuedatafield="PropertyValue" namedatafield="Name" helpstyle-cssclass="dnnFormHelpContent dnnClear" sortmode="SortOrderAttribute" />
         </fieldset>
     </div>

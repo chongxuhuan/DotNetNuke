@@ -226,7 +226,7 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>dnn_HTML</DNNFileName>
-    <PackageName>HTML_Community</PackageName>
+    <PackageName>DNNCE_HTML</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
     <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>

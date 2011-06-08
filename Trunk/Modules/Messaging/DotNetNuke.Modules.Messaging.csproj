@@ -206,7 +206,7 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>Messaging</DNNFileName>
-    <PackageName>Messaging</PackageName>
+    <PackageName>DNNCE_Messaging</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
     <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>

@@ -29,6 +29,7 @@ using System.Collections.Specialized;
 using System.Web.UI;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
@@ -298,7 +299,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     writer.RenderBeginTag(HtmlTextWriterTag.A);
 
                     //Render Image
-                    writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl("~/images/delete.gif"));
+                    writer.AddAttribute(HtmlTextWriterAttribute.Src, IconController.IconURL("Delete"));
                     writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
                     writer.RenderBeginTag(HtmlTextWriterTag.Img);
 
@@ -330,7 +331,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 writer.RenderBeginTag(HtmlTextWriterTag.A);
 
                 //Render Image
-                writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl("~/images/add.gif"));
+                writer.AddAttribute(HtmlTextWriterAttribute.Src, IconController.IconURL("Add"));
                 writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");
                 writer.RenderBeginTag(HtmlTextWriterTag.Img);
 

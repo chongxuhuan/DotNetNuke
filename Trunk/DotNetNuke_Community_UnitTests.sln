@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 11.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6E370A5-ECF3-4AAD-AF79-3D392D963861}"
 	ProjectSection(FolderStartupServices) = postProject
@@ -428,9 +429,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks", "BuildScripts\DotNetNuke.MSBuild.Tasks\DotNetNuke.MSBuild.Tasks.csproj", "{D9E0719E-A293-491A-B686-11D18E37097D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.CloudFolderProviders", "Professional\Providers\FolderProviders\CloudFolderProviders\DotNetNuke.Professional.CloudFolderProviders.csproj", "{2A1157E2-27F8-4D72-86CC-10FE142E98D9}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 63
+		SccNumberOfProjects = 64
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -678,6 +681,10 @@ Global
 		SccProjectTopLevelParentUniqueName62 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName62 = BuildScripts/DotNetNuke.MSBuild.Tasks
 		SccLocalPath62 = BuildScripts\\DotNetNuke.MSBuild.Tasks
+		SccProjectUniqueName63 = Professional\\Providers\\FolderProviders\\CloudFolderProviders\\DotNetNuke.Professional.CloudFolderProviders.csproj
+		SccProjectTopLevelParentUniqueName63 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName63 = Professional/Providers/FolderProviders/CloudFolderProviders
+		SccLocalPath63 = Professional\\Providers\\FolderProviders\\CloudFolderProviders
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1446,6 +1453,18 @@ Global
 		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|.NET.ActiveCfg = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1506,6 +1525,7 @@ Global
 		{ECA4AF57-433D-42FE-A694-E46283513C3F} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
+		{2A1157E2-27F8-4D72-86CC-10FE142E98D9} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
