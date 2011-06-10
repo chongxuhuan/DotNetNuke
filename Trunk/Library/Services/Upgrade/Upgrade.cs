@@ -3600,7 +3600,7 @@ namespace DotNetNuke.Services.Upgrade
                 //Add Styles Skin Object
 
                 AddSkinControl("STYLES", "DotNetNuke.StylesSkinObject", "Admin/Skins/Styles.ascx");
-            }
+           }
             catch (Exception ex)
             {
                 DnnLog.Error(ex);

@@ -60,6 +60,7 @@ namespace DotNetNuke.Services.Search
     public class SearchDataStore : SearchDataStoreProvider
     {
 		#region "Private Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// AddIndexWords adds the Index Words to the Data Store

@@ -55,7 +55,7 @@ using DotNetNuke.UI.Utilities;
 using DataCache = DotNetNuke.UI.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
 
-#endregion  
+#endregion
 
 namespace DotNetNuke.Framework
 {
@@ -75,7 +75,7 @@ namespace DotNetNuke.Framework
     /// -----------------------------------------------------------------------------
     public partial class DefaultPage : CDefault, IClientAPICallbackEventHandler
     {
-		#region "Properties"
+        #region "Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -135,8 +135,8 @@ namespace DotNetNuke.Framework
                 return "";
             }
         }
-		
-		#endregion
+
+        #endregion
 
         #region IClientAPICallbackEventHandler Members
 
@@ -149,7 +149,7 @@ namespace DotNetNuke.Framework
                 {
                     throw new Exception(string.Format("This personalization key has not been enabled ({0}:{1}).  Make sure you enable it with DNNClientAPI.EnableClientPersonalization", dict["namingcontainer"], dict["key"]));
                 }
-                switch ((DNNClientAPI.PageCallBackType) Enum.Parse(typeof (DNNClientAPI.PageCallBackType), dict["type"]))
+                switch ((DNNClientAPI.PageCallBackType)Enum.Parse(typeof(DNNClientAPI.PageCallBackType), dict["type"]))
                 {
                     case DNNClientAPI.PageCallBackType.GetPersonalization:
                         return Personalization.GetProfile(dict["namingcontainer"], dict["key"]).ToString();
@@ -165,7 +165,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-		#region "Private Methods"
+        #region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -193,7 +193,7 @@ namespace DotNetNuke.Framework
             if (!String.IsNullOrEmpty(Request.QueryString["tabname"]))
             {
                 objTab = objTabs.GetTabByName(Request.QueryString["TabName"],
-                                              ((PortalSettings) HttpContext.Current.Items["PortalSettings"]).PortalId);
+                                              ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).PortalId);
                 if (objTab != null)
                 {
                     var parameters = new List<string>(); //maximum number of elements
@@ -214,7 +214,7 @@ namespace DotNetNuke.Framework
                 }
                 else
                 {
-					//404 Error - Redirect to ErrorPage
+                    //404 Error - Redirect to ErrorPage
                     throw new HttpException(404, "Not Found");
                 }
             }
@@ -242,7 +242,7 @@ namespace DotNetNuke.Framework
                         break;
                 }
             }
-			
+
             //page comment
             if (Host.DisplayCopyright)
             {
@@ -264,23 +264,23 @@ namespace DotNetNuke.Framework
             {
                 Page.Header.Controls.Add(new LiteralControl(PortalSettings.ActiveTab.PageHeadText));
             }
-			
+
             //set page title
             string strTitle = PortalSettings.PortalName;
-            
+
             foreach (TabInfo tab in PortalSettings.ActiveTab.BreadCrumbs)
             {
                 strTitle += string.Concat(" > ", tab.TabName);
             }
-			
+
             //tab title override
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Title))
             {
                 strTitle = PortalSettings.ActiveTab.Title;
             }
             Title = strTitle;
-			
-			//set the background image if there is one selected
+
+            //set the background image if there is one selected
             if (FindControl("Body") != null)
             {
                 if (!string.IsNullOrEmpty(PortalSettings.BackgroundFile))
@@ -291,7 +291,7 @@ namespace DotNetNuke.Framework
                     ((HtmlGenericControl)FindControl("Body")).Attributes["style"] = string.Concat("background-image:url(", url, ");");
                 }
             }
-			
+
             //META Refresh
             if (PortalSettings.ActiveTab.RefreshInterval > 0 && Request.QueryString["ctl"] == null)
             {
@@ -301,7 +301,7 @@ namespace DotNetNuke.Framework
             {
                 MetaRefresh.Visible = false;
             }
-			
+
             //META description
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Description))
             {
@@ -311,7 +311,7 @@ namespace DotNetNuke.Framework
             {
                 Description = PortalSettings.Description;
             }
-			
+
             //META keywords
             if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.KeyWords))
             {
@@ -325,7 +325,7 @@ namespace DotNetNuke.Framework
             {
                 KeyWords += ",DotNetNuke,DNN";
             }
-			
+
             //META copyright
             if (!string.IsNullOrEmpty(PortalSettings.FooterText))
             {
@@ -335,7 +335,7 @@ namespace DotNetNuke.Framework
             {
                 Copyright = string.Concat("Copyright (c) ", DateTime.Now.Year, " by ", PortalSettings.PortalName);
             }
-			
+
             //META generator
             if (Host.DisplayCopyright)
             {
@@ -345,7 +345,7 @@ namespace DotNetNuke.Framework
             {
                 Generator = "";
             }
-			
+
             //META Robots
             if (Request.QueryString["ctl"] != null &&
                 (Request.QueryString["ctl"] == "Login" || Request.QueryString["ctl"] == "Register"))
@@ -356,7 +356,7 @@ namespace DotNetNuke.Framework
             {
                 MetaRobots.Content = "INDEX, FOLLOW";
             }
-			
+
             //NonProduction Label Injection
             if (NonProductionVersion() && Host.DisplayBetaNotice)
             {
@@ -364,7 +364,7 @@ namespace DotNetNuke.Framework
                                                      DotNetNukeContext.Current.Application.Version);
                 Title += versionString;
             }
-			
+
             //register DNN SkinWidgets Inititialization scripts
             if (PortalSettings.EnableSkinWidgets)
             {
@@ -395,24 +395,24 @@ namespace DotNetNuke.Framework
             string strDocType = PortalSettings.ActiveTab.SkinDoctype;
             if (strDocType.Contains("XHTML 1.0"))
             {
-				//XHTML 1.0
+                //XHTML 1.0
                 HtmlAttributes.Add("xml:lang", strLang);
                 HtmlAttributes.Add("lang", strLang);
                 HtmlAttributes.Add("xmlns", "http://www.w3.org/1999/xhtml");
             }
             else if (strDocType.Contains("XHTML 1.1"))
             {
-				//XHTML 1.1
+                //XHTML 1.1
                 HtmlAttributes.Add("xml:lang", strLang);
                 HtmlAttributes.Add("xmlns", "http://www.w3.org/1999/xhtml");
             }
             else
             {
-				//other
+                //other
                 HtmlAttributes.Add("lang", strLang);
             }
             //Find the placeholder control and render the doctype
-			skinDocType.Text = PortalSettings.ActiveTab.SkinDoctype;
+            skinDocType.Text = PortalSettings.ActiveTab.SkinDoctype;
         }
 
         /// -----------------------------------------------------------------------------
@@ -449,13 +449,13 @@ namespace DotNetNuke.Framework
                     }
                 }
             }
-			
+
             //site logging
             if (PortalSettings.SiteLogHistory != 0)
             {
-				//get User ID
-				
-				//URL Referrer
+                //get User ID
+
+                //URL Referrer
                 string urlReferrer = "";
                 try
                 {
@@ -489,7 +489,7 @@ namespace DotNetNuke.Framework
 
             if (!String.IsNullOrEmpty(headerLink))
             {
-                Page.Header.Controls.Add(new Literal{Text = headerLink});
+                Page.Header.Controls.Add(new Literal { Text = headerLink });
             }
         }
 
@@ -498,13 +498,13 @@ namespace DotNetNuke.Framework
         //functionality and this should be changed to utilize it for its plumbing.
         private Dictionary<string, string> ParsePageCallBackArgs(string strArg)
         {
-            string[] aryVals = strArg.Split(new[] {ClientAPI.COLUMN_DELIMITER}, StringSplitOptions.None);
+            string[] aryVals = strArg.Split(new[] { ClientAPI.COLUMN_DELIMITER }, StringSplitOptions.None);
             var objDict = new Dictionary<string, string>();
             if (aryVals.Length > 0)
             {
                 objDict.Add("type", aryVals[0]);
                 switch (
-                    (DNNClientAPI.PageCallBackType) Enum.Parse(typeof (DNNClientAPI.PageCallBackType), objDict["type"]))
+                    (DNNClientAPI.PageCallBackType)Enum.Parse(typeof(DNNClientAPI.PageCallBackType), objDict["type"]))
                 {
                     case DNNClientAPI.PageCallBackType.GetPersonalization:
                         objDict.Add("namingcontainer", aryVals[1]);
@@ -547,18 +547,18 @@ namespace DotNetNuke.Framework
             return warningMessage;
         }
 
-		#endregion
+        #endregion
 
-		#region "Protected Methods"
+        #region "Protected Methods"
 
         protected bool NonProductionVersion()
         {
             return DotNetNukeContext.Current.Application.Status != ReleaseMode.Stable;
         }
-		
-		#endregion
 
-		#region "Event Handlers"
+        #endregion
+
+        #region "Event Handlers"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -581,12 +581,23 @@ namespace DotNetNuke.Framework
         {
             base.OnInit(e);
 
-
             //set global page settings
             InitializePage();
 
-            //load skin control
-            UI.Skins.Skin ctlSkin = UI.Skins.Skin.GetSkin(this);
+            //load skin control and register UI js
+            UI.Skins.Skin ctlSkin;
+            if (PortalSettings.EnablePopUps)
+            {
+                ctlSkin = HttpContext.Current.Request.Url.ToString().Contains("popUp=true") ? UI.Skins.Skin.GetPopUpSkin(this) : UI.Skins.Skin.GetSkin(this);
+
+                //register popup js
+                jQuery.RegisterJQueryUI(Page);
+                ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/dnn.modalpopup.js"));
+            }
+            else
+            {
+                ctlSkin = UI.Skins.Skin.GetSkin(this);
+            }
 
             //check for and read skin package level doctype
             SetSkinDoctype();
@@ -596,8 +607,8 @@ namespace DotNetNuke.Framework
             {
                 if (TabPermissionController.CanAdminPage())
                 {
-                    string heading = Localization.GetString("PageDisabled.Header");
-                    string message = Localization.GetString("PageDisabled.Text");
+                    var heading = Localization.GetString("PageDisabled.Header");
+                    var message = Localization.GetString("PageDisabled.Text");
                     UI.Skins.Skin.AddPageMessage(ctlSkin, heading, message,
                                                  ModuleMessage.ModuleMessageType.YellowWarning);
                 }
@@ -609,22 +620,18 @@ namespace DotNetNuke.Framework
                     }
                     else
                     {
-                        Response.Redirect(
-                            Globals.GetPortalDomainName(PortalSettings.PortalAlias.HTTPAlias, Request, true), true);
+                        Response.Redirect(Globals.GetPortalDomainName(PortalSettings.PortalAlias.HTTPAlias, Request, true), true);
                     }
                 }
             }
             //Manage canonical urls
-            if (PortalSettings.PortalAliasMappingMode == PortalSettings.PortalAliasMapping.CanonicalUrl &&
-                PortalSettings.PortalAlias.HTTPAlias != PortalSettings.DefaultPortalAlias)
+            if (PortalSettings.PortalAliasMappingMode == PortalSettings.PortalAliasMapping.CanonicalUrl && PortalSettings.PortalAlias.HTTPAlias != PortalSettings.DefaultPortalAlias)
             {
-                string originalurl = Context.Items["UrlRewrite:OriginalUrl"].ToString();
+                var originalurl = Context.Items["UrlRewrite:OriginalUrl"].ToString();
 
                 //Add Canonical <link>
                 var canonicalLink = new HtmlLink();
-                canonicalLink.Href = originalurl.Replace(PortalSettings.PortalAlias.HTTPAlias,
-                                                         PortalSettings.DefaultPortalAlias);
-
+                canonicalLink.Href = originalurl.Replace(PortalSettings.PortalAlias.HTTPAlias, PortalSettings.DefaultPortalAlias);
                 canonicalLink.Attributes.Add("rel", "canonical");
 
                 // Add the HtmlLink to the Head section of the page.
@@ -632,7 +639,7 @@ namespace DotNetNuke.Framework
             }
 
             //check if running with known account defaults
-            string messageText = "";
+            var messageText = "";
             if (Request.IsAuthenticated && string.IsNullOrEmpty(Request.QueryString["runningDefault"]) == false)
             {
                 var userInfo = HttpContext.Current.Items["UserInfo"] as UserInfo;
@@ -640,15 +647,13 @@ namespace DotNetNuke.Framework
                 if ((userInfo.Username.ToLower() == "admin") || (userInfo.Username.ToLower() == "host"))
                 {
                     messageText = RenderDefaultsWarning();
-                    string messageTitle = Localization.GetString("InsecureDefaults.Title",
-                                                                 Localization.GlobalResourceFile);
-                    UI.Skins.Skin.AddPageMessage(ctlSkin, messageTitle, messageText,
-                                                 ModuleMessage.ModuleMessageType.RedError);
+                    var messageTitle = Localization.GetString("InsecureDefaults.Title", Localization.GlobalResourceFile);
+                    UI.Skins.Skin.AddPageMessage(ctlSkin, messageTitle, messageText, ModuleMessage.ModuleMessageType.RedError);
                 }
             }
 
             //add CSS links
-			RegisterStyleSheet(this, Globals.HostPath + "default.css");
+            RegisterStyleSheet(this, Globals.HostPath + "default.css");
             RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css");
             RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"));
 
@@ -656,7 +661,7 @@ namespace DotNetNuke.Framework
             SkinPlaceHolder.Controls.Add(ctlSkin);
 
             RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css");
- 
+
             //add Favicon
             ManageFavicon();
 
@@ -667,12 +672,6 @@ namespace DotNetNuke.Framework
             if (User.Identity.IsAuthenticated)
             {
                 ViewStateUserKey = User.Identity.Name;
-            }
-
-            if (PortalSettings.EnablePopUps)
-            {                
-                jQuery.RegisterJQueryUI(Page);
-                ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/dnn.modalpopup.js"));
             }
         }
 
@@ -708,9 +707,9 @@ namespace DotNetNuke.Framework
             {
                 ManageRequest();
             }
-            
-			//Set the Head tags
-			Page.Header.Title = Title;
+
+            //Set the Head tags
+            Page.Header.Title = Title;
             MetaGenerator.Content = Generator;
             MetaGenerator.Visible = (!String.IsNullOrEmpty(Generator));
             MetaAuthor.Content = PortalSettings.PortalName;
@@ -721,7 +720,7 @@ namespace DotNetNuke.Framework
             MetaDescription.Content = Description;
             MetaDescription.Visible = (!String.IsNullOrEmpty(Description));
         }
-		
-		#endregion
+
+        #endregion
     }
 }

@@ -394,21 +394,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                     fileManager.UnzipFile(file, folder);
                                 }
                             }
-                            catch (SecurityException exc)
+                            catch (PermissionsNotMetException exc)
                             {
-                                DnnLog.Error(exc);
-
+                                DnnLog.Warn(exc);
                                 strMessage += "<br />" + string.Format(Localization.GetString("InsufficientFolderPermission"), ddlFolders.SelectedValue);
                             }
                             catch (NoSpaceAvailableException exc)
                             {
-                                DnnLog.Error(exc);
-
+                                DnnLog.Warn(exc);
                                 strMessage += "<br />" + string.Format(Localization.GetString("DiskSpaceExceeded"), strFileName);
                             }
                             catch (InvalidFileExtensionException exc)
                             {
-                                DnnLog.Error(exc);
+                                DnnLog.Warn(exc);
                                 strMessage += "<br />" + string.Format(Localization.GetString("RestrictedFileType"), strFileName, Host.AllowedExtensionWhitelist.ToDisplayString());
                             }
                             catch (Exception exc)

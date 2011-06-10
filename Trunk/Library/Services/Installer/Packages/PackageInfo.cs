@@ -235,6 +235,7 @@ namespace DotNetNuke.Services.Installer.Packages
                 return InstallerInfo.InstallMode;
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and Sets whether this package is a "system" Package

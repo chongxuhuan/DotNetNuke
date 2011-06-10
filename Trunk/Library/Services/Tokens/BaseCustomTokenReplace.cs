@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Users;
 namespace DotNetNuke.Services.Tokens
 {
 	#region " Type Definitions "
+
     /// <summary>
     /// Scope informs the property access classes about the planned usage of the token
     /// </summary>

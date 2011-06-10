@@ -158,7 +158,7 @@
     <Content Include="App_LocalResources\Settings.ascx.resx" />
     <Content Include="App_LocalResources\SharedResources.resx" />
     <Content Include="EditHtml.ascx" />
-    <Content Include="html.gif" />
+    <Content Include="Images\html.gif" />
     <Content Include="HtmlModule.ascx" />
     <Content Include="license.txt" />
     <Content Include="module.css" />
@@ -244,7 +244,10 @@
       <ResourceFiles Include="App_LocalResources\*.resx" />
     </ItemGroup>
     <ItemGroup>
-      <Resources Include="@(ResourceFiles);@(Views);@(TextFiles)" />
+      <Images Include="Images/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Resources Include="@(ResourceFiles);@(Views);@(Images);@(TextFiles)" />
     </ItemGroup>
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -252,6 +255,7 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="@(Views)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
+    <Copy SourceFiles="@(Images)" DestinationFolder="..\..\Website\DesktopModules\HTML\Images" />
     <Copy SourceFiles="@(TextFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
     <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML\App_LocalResources" />
   </Target>

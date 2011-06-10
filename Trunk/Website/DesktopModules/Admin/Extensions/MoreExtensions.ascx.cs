@@ -60,15 +60,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
             };
             if (!cs.IsClientScriptIncludeRegistered("gallery"))
             {
-                if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.IsDebuggingEnabled)
-                {
-                    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery.js"));
-                }
-                else
-                {
-                    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery-compiled.js"));
-                }
+                //if (IsDebugEnabled())
+                //{
+                cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery.js"));
+                //}
+                //else
+                //{
+                //    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery-compiled.js"));
+                //}
             }
+        }
+
+        protected bool IsDebugEnabled()
+        {
+            return (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.IsDebuggingEnabled);
         }
 
     }

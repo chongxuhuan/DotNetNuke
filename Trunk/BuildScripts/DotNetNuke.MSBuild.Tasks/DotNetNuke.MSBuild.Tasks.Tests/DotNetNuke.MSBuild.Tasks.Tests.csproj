@@ -96,12 +96,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNetNuke.MSBuild.Tasks.csproj">
-      <Project>{D9E0719E-A293-491A-B686-11D18E37097D}</Project>
-      <Name>DotNetNuke.MSBuild.Tasks</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="CodePlexSync.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

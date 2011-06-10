@@ -138,12 +138,12 @@ namespace DotNetNuke.Common.Utilities
                         case "tabid":
                         case "ctl":
                         case "language":
-							//skip parameter
+                            //skip parameter
                             break;
                         default:
                             if ((keys[i].ToLower() == "portalid") && Globals.GetPortalSettings().ActiveTab.IsSuperTab)
                             {
-								//skip parameter
+                                //skip parameter
                                 //navigateURL adds portalid to querystring if tab is superTab
 
                             }
@@ -172,68 +172,35 @@ namespace DotNetNuke.Common.Utilities
             page.ClientScript.RegisterStartupScript(type, "DotNetNuke.NewWindow", string.Format("<script>window.open('{0}','new')</script>", url));
         }
 
-        public static string GetPopupSkinSrc(Control control, PortalSettings portalSettings)
-        {
-            var popUpSkin = string.Empty;
-            const string containerSrc = "[G]Containers/_default/popUpContainer";
-            var skinSrc = string.Empty;
-
-            UI.Skins.Skin skin = null;
-            if (control != null)
-            {
-                skin = ControlUtilities.FindParentControl<UI.Skins.Skin>(control);
-            }
-            
-            if (skin != null)
-            {
-                skinSrc = skin.SkinPath.Replace(Globals.HostPath, "[G]").Replace(portalSettings.HomeDirectory, "[L]");
-                skinSrc += "popUpSkin";
-            }
-            if (!File.Exists(HttpContext.Current.Server.MapPath(SkinController.FormatSkinSrc(skinSrc + ".ascx", portalSettings))))
-            {
-                skinSrc = "[G]Skins/_default/popUpSkin";
-            }
-            popUpSkin = "SkinSrc=" + skinSrc + "&ContainerSrc=" + containerSrc;
-
-            return popUpSkin;
-        }
-
         public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect)
         {
             return PopUpUrl(url, control, portalSettings, onClickEvent, responseRedirect, 550, 950);
-        }
+        }       
 
         public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect, int windowHeight, int windowWidth)
         {
-            string popUpSkinSrc;
             string delimiter;
             var popUpScriptFormat = String.Empty;
             var popUpUrl = url;
 
+            //create a the querystring for use on a Response.Redirect
             if (responseRedirect)
             {
-                popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
-                if (!String.IsNullOrEmpty(popUpSkinSrc))
-                {
-                    popUpScriptFormat += "{0}{1}popUp=true&" + popUpSkinSrc;
-                    delimiter = popUpUrl.Contains("?") ? "&" : "?";
-                    popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
-                }
+                popUpScriptFormat += "{0}{1}popUp=true";
+                delimiter = popUpUrl.Contains("?") ? "&" : "?";
+                popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
             }
             else
             {
                 if (!popUpUrl.Contains("dnnModal.show"))
                 {
-                    popUpSkinSrc = GetPopupSkinSrc(control, portalSettings);
-                    if (!String.IsNullOrEmpty(popUpSkinSrc))
-                    {
-                        popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true&" + popUpSkinSrc + "',/*showReturn*/{2},{3},{4})";
-                        delimiter = popUpUrl.Contains("?") ? "&" : "?";
-                        popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
-                    }
+                    popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true',/*showReturn*/{2},{3},{4})";
+                    delimiter = popUpUrl.Contains("?") ? "&" : "?";
+                    popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
                 }
                 else
                 {
+                    //Determines if the resulting JS call should return or not.
                     if (popUpUrl.Contains("/*showReturn*/false"))
                     {
                         popUpUrl = popUpUrl.Replace("/*showReturn*/false", "/*showReturn*/" + onClickEvent.ToString().ToLower());

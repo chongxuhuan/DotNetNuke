@@ -1336,18 +1336,6 @@ IF (NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Packages WHERE Name
 
 GO
 
-/* Add new AppGalleryDownload host ModuleControl */
-/********************************************************/
-
-IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE ModuleDefID IS NULL AND ControlKey = 'AppGalleryDownload') = 0
-	BEGIN
-		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-			( ControlKey, ControlTitle, ControlSrc, ControlType )
-			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
-	END
-GO
-
-
 /* Replace incorrect SiteMap module icon */
 /*****************************************/
 UPDATE {databaseOwner}{objectQualifier}ModuleControls 
@@ -2364,6 +2352,17 @@ ELSE
 			-1,
 			getdate()
 		)
+	END
+GO
+
+/* Add new AppGalleryDownload host ModuleControl */
+/********************************************************/
+
+IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE ModuleDefID IS NULL AND ControlKey = 'AppGalleryDownload') = 0
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
+			( ControlKey, ControlTitle, ControlSrc, ControlType )
+			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
 	END
 GO
 

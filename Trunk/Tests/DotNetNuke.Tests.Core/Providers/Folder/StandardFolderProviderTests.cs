@@ -473,15 +473,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetImageUrl
 
         [Test]
-        [Ignore]
-        public void GetImageUrl_Calls_GlobalsWrapper_ResolveUrl()
+        public void GetImageUrl_Calls_IconControllerWrapper_IconURL()
         {
-            var globalsWrapper = new Mock<IGlobals>();
-            GlobalsWrapper.RegisterInstance(globalsWrapper.Object);
+            var iconControllerWrapper = new Mock<IIconController>();
+            IconControllerWrapper.RegisterInstance(iconControllerWrapper.Object);
 
             _sfp.GetImageUrl();
 
-            globalsWrapper.Verify(gw => gw.ResolveUrl(It.IsAny<string>()), Times.Once());
+            iconControllerWrapper.Verify(icw => icw.IconURL("Folder"), Times.Once());
         }
 
         #endregion

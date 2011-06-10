@@ -153,7 +153,7 @@
                                         <%# Localization.GetString("Content.Header", this.LocalResourceFile)%></caption>
                                     <tr>
                                         <td style="width: 50px;">
-                                            <dnn:DnnImage ID="pagesImage" runat="server" IconKey="Language"
+                                            <dnn:DnnImage ID="pagesImage" runat="server" IconKey="Languages"
                                                 resourcekey="LocalizePages" />
                                         </td>
                                         <td style="width: 50px;">
@@ -183,7 +183,7 @@
                                                 <br />
                                                 <span style="font-size: 0.8em">
                                                     <%# GetLocalizedStatus(Eval("Code").ToString()) %></span> </asp:PlaceHolder>
-                                            <dnn:DnnImageButton ID="localizeButton" runat="server" ImageAlign="Middle" IconKey="Language"
+                                            <dnn:DnnImageButton ID="localizeButton" runat="server" ImageAlign="Middle" IconKey="Languages"
                                                 CommandArgument='<%# Eval("Code") %>' Visible='<%# !IsLocalized(Eval("Code").ToString()) && CanLocalize(Eval("Code").ToString()) %>'
                                                 ResourceKey="CreateLocalizedPages" OnCommand="localizePages" />
                                         </td>

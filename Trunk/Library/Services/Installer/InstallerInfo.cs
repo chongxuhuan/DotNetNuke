@@ -170,6 +170,7 @@ namespace DotNetNuke.Services.Installer
 		#endregion
 
 		#region "Public Properties"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets a list of allowable file extensions (in addition to the Host's List)

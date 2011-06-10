@@ -217,6 +217,7 @@ namespace DotNetNuke.Entities.Modules
 
         [XmlElement("versionGuid")]
         public Guid VersionGuid { get; set; }
+
 		/// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the ID of the Associated Desktop Module

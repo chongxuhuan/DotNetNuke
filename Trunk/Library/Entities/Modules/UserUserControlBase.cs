@@ -71,6 +71,7 @@ namespace DotNetNuke.Entities.Modules
         #endregion
 
         #region "Event Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserCreateCompleted Event
@@ -86,6 +87,7 @@ namespace DotNetNuke.Entities.Modules
                 UserCreateCompleted(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserCreated Event
@@ -101,6 +103,7 @@ namespace DotNetNuke.Entities.Modules
                 UserCreated(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserDeleted Event
@@ -116,6 +119,7 @@ namespace DotNetNuke.Entities.Modules
                 UserDeleted(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserDeleteError Event
@@ -131,6 +135,7 @@ namespace DotNetNuke.Entities.Modules
                 UserDeleteError(this, e);
             }
         }
+
         public void OnUserRestored(UserRestoredEventArgs e)
         {
             if (UserRestored != null)
@@ -138,6 +143,7 @@ namespace DotNetNuke.Entities.Modules
                 UserRestored(this, e);
             }
         }
+
         public void OnUserRestoreError(UserUpdateErrorArgs e)
         {
             if (UserRestoreError != null)
@@ -145,6 +151,7 @@ namespace DotNetNuke.Entities.Modules
                 UserRestoreError(this, e);
             }
         }
+
         public void OnUserRemoved(UserRemovedEventArgs e)
         {
             if (UserRemoved != null)
@@ -152,6 +159,7 @@ namespace DotNetNuke.Entities.Modules
                 UserRemoved(this, e);
             }
         }
+
         public void OnUserRemoveError(UserUpdateErrorArgs e)
         {
             if (UserRemoveError != null)
@@ -159,6 +167,7 @@ namespace DotNetNuke.Entities.Modules
                 UserRemoveError(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserUpdated Event
@@ -174,6 +183,7 @@ namespace DotNetNuke.Entities.Modules
                 UserUpdated(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserUpdated Event
@@ -189,6 +199,7 @@ namespace DotNetNuke.Entities.Modules
                 UserUpdateCompleted(this, e);
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Raises the UserUpdateError Event
@@ -204,6 +215,7 @@ namespace DotNetNuke.Entities.Modules
                 UserUpdateError(this, e);
             }
         }
+
         #endregion
 
         #region Nested type: BaseUserEventArgs

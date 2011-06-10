@@ -16,7 +16,9 @@
                                 <asp:Image ID="imgIcon" runat="server" Width="32px" Height="32px" ImageUrl='<%# GetPackageIcon(Container.DataItem) %>' ToolTip='<%# GetPackageDescription(Container.DataItem) %>' />
                             </ItemTemplate>
                         </asp:TemplateColumn>
-                        <dnn:textcolumn headerStyle-width="150px" DataField="FriendlyName" HeaderText="Name" />
+                        <dnn:textcolumn headerStyle-width="150px" DataField="FriendlyName" HeaderText="Name">
+                            <itemstyle Font-Bold="true" />
+                        </dnn:textcolumn>
                         <dnn:textcolumn headerStyle-width="275px" ItemStyle-HorizontalAlign="Left" DataField="Description" HeaderText="Description" />
                         <asp:TemplateColumn HeaderText="Version" >
                             <HeaderStyle HorizontalAlign="Left" Wrap="False" Width="75px"/>

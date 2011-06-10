@@ -81,6 +81,7 @@ namespace DotNetNuke.Security.Membership
         }
 
 		#region "Role Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// CreateRole persists a Role to the Data Store

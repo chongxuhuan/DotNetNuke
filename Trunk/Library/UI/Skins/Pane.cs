@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -61,15 +62,15 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class Pane
     {
-		#region "Private Members"
+        #region "Private Members"
 
         private const string CPaneOutline = "paneOutline";
         private HtmlGenericControl _containerWrapperControl;
         private Dictionary<string, Containers.Container> _containers;
 
-		#endregion
+        #endregion
 
-		#region "Constructors"
+        #region "Constructors"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -101,10 +102,10 @@ namespace DotNetNuke.UI.Skins
             PaneControl = pane;
             Name = name;
         }
-		
-		#endregion
 
-		#region "Protected Properties"
+        #endregion
+
+        #region "Protected Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -160,7 +161,7 @@ namespace DotNetNuke.UI.Skins
 
         private bool CanCollapsePane()
         {
-			//This section sets the width to "0" on panes that have no modules.
+            //This section sets the width to "0" on panes that have no modules.
             //This preserves the integrity of the HTML syntax so we don't have to set
             //the visiblity of a pane to false. Setting the visibility of a pane to
             //false where there are colspans and rowspans can render the skin incorrectly.
@@ -171,12 +172,12 @@ namespace DotNetNuke.UI.Skins
             }
             else if (PaneControl.Controls.Count == 1)
             {
-				//Pane contains 1 control
+                //Pane contains 1 control
                 canCollapsePane = false;
                 var literal = PaneControl.Controls[0] as LiteralControl;
                 if (literal != null)
                 {
-					//Check  if the literal control is just whitespace - if so we can collapse panes
+                    //Check  if the literal control is just whitespace - if so we can collapse panes
                     if (String.IsNullOrEmpty(HtmlUtils.StripWhiteSpace(literal.Text, false)))
                     {
                         canCollapsePane = true;
@@ -185,15 +186,15 @@ namespace DotNetNuke.UI.Skins
             }
             else if (PaneControl.Controls.Count > 1)
             {
-				//Pane contains more than 1 control
+                //Pane contains more than 1 control
                 canCollapsePane = false;
             }
             return canCollapsePane;
         }
-		
-		#endregion
 
-		#region "Private Methods"
+        #endregion
+
+        #region "Private Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -229,11 +230,11 @@ namespace DotNetNuke.UI.Skins
             }
             catch (Exception exc)
             {
-				//could not load user control
+                //could not load user control
                 var lex = new ModuleLoadException(Skin.MODULELOAD_ERROR, exc);
                 if (TabPermissionController.CanAdminPage())
                 {
-					//only display the error to administrators
+                    //only display the error to administrators
                     _containerWrapperControl.Controls.Add(new ErrorContainer(PortalSettings, string.Format(Skin.CONTAINERLOAD_ERROR, containerPath), lex).Container);
                 }
                 Exceptions.LogException(lex);
@@ -245,7 +246,7 @@ namespace DotNetNuke.UI.Skins
         /// <summary>
         /// LoadModuleContainer gets the Container for cookie
         /// </summary>
-		/// <param name="request">Current Http Request.</param>
+        /// <param name="request">Current Http Request.</param>
         /// <returns>A Container</returns>
         /// <history>
         /// 	[cnurse]	12/05/2007	Created
@@ -303,8 +304,8 @@ namespace DotNetNuke.UI.Skins
             {
                 Int32.TryParse(request.QueryString["ModuleId"], out previewModuleId);
             }
-			
-			//load user container ( based on cookie )
+
+            //load user container ( based on cookie )
             if ((request.QueryString["ContainerSrc"] != null) && (module.ModuleID == previewModuleId || previewModuleId == -1))
             {
                 string containerSrc = SkinController.FormatSkinSrc(Globals.QueryStringDecode(request.QueryString["ContainerSrc"]) + ".ascx", PortalSettings);
@@ -336,46 +337,68 @@ namespace DotNetNuke.UI.Skins
             }
             return container;
         }
-
+        
         private Containers.Container LoadModuleContainer(ModuleInfo module)
         {
-            string containerSrc = Null.NullString;
-            HttpRequest request = PaneControl.Page.Request;
+            var containerSrc = Null.NullString;
+            var request = PaneControl.Page.Request;
+            Containers.Container container = null;
 
-            Containers.Container container = (LoadContainerFromQueryString(module, request) ?? LoadContainerFromCookie(request)) ?? LoadNoContainer(module);
-
-			if (container == null)
+            if (PortalSettings.EnablePopUps && request.Url.ToString().Contains("popUp=true"))
             {
-				//Check Skin for Container
+                containerSrc = module.ContainerPath + "popUpContainer.ascx";
+                //Check Skin for a popup Container
                 if (module.ContainerSrc == PortalSettings.ActiveTab.ContainerSrc)
                 {
-					//look for a container specification in the skin pane
-                    if (PaneControl != null)
+                    if (File.Exists(HttpContext.Current.Server.MapPath(containerSrc)))
                     {
-                        if ((PaneControl.Attributes["ContainerSrc"] != null))
-                        {
-                            container = LoadContainerFromPane();
-                        }
+                        container = LoadContainerByPath(containerSrc);
                     }
                 }
-            }
-			
-			//else load assigned container
-            if (container == null)
-            {
-                containerSrc = module.ContainerSrc;
-                if (!String.IsNullOrEmpty(containerSrc))
+
+                //error loading container - load default popup container
+                if (container == null)
                 {
-                    containerSrc = SkinController.FormatSkinSrc(containerSrc, PortalSettings);
+                    containerSrc = Globals.HostPath + "Containers/_default/popUpContainer.ascx";
                     container = LoadContainerByPath(containerSrc);
                 }
             }
-
-            //error loading container - load default
-			if (container == null)
+            else
             {
-                containerSrc = SkinController.FormatSkinSrc(SkinController.GetDefaultPortalContainer(), PortalSettings);
-                container = LoadContainerByPath(containerSrc);
+                container = (LoadContainerFromQueryString(module, request) ?? LoadContainerFromCookie(request)) ?? LoadNoContainer(module);
+                if (container == null)
+                {
+                    //Check Skin for Container
+                    if (module.ContainerSrc == PortalSettings.ActiveTab.ContainerSrc)
+                    {
+                        //look for a container specification in the skin pane
+                        if (PaneControl != null)
+                        {
+                            if ((PaneControl.Attributes["ContainerSrc"] != null))
+                            {
+                                container = LoadContainerFromPane();
+                            }
+                        }
+                    }
+                }
+
+                //else load assigned container
+                if (container == null)
+                {
+                    containerSrc = module.ContainerSrc;
+                    if (!String.IsNullOrEmpty(containerSrc))
+                    {
+                        containerSrc = SkinController.FormatSkinSrc(containerSrc, PortalSettings);
+                        container = LoadContainerByPath(containerSrc);
+                    }
+                }
+
+                //error loading container - load default
+                if (container == null)
+                {
+                    containerSrc = SkinController.FormatSkinSrc(SkinController.GetDefaultPortalContainer(), PortalSettings);
+                    container = LoadContainerByPath(containerSrc);
+                }
             }
 
             //Set container path
@@ -402,7 +425,7 @@ namespace DotNetNuke.UI.Skins
         /// -----------------------------------------------------------------------------
         private void ModuleMoveToPanePostBack(ClientAPIPostBackEventArgs args)
         {
-            var portalSettings = (PortalSettings) HttpContext.Current.Items["PortalSettings"];
+            var portalSettings = (PortalSettings)HttpContext.Current.Items["PortalSettings"];
             if (TabPermissionController.CanAdminPage())
             {
                 var moduleId = Convert.ToInt32(args.EventArguments["moduleid"]);
@@ -417,16 +440,16 @@ namespace DotNetNuke.UI.Skins
                 PaneControl.Page.Response.Redirect(PaneControl.Page.Request.RawUrl, true);
             }
         }
-		
-		#endregion
 
-		#region "Public Methods"
+        #endregion
+
+        #region "Public Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// InjectModule injects a Module (and its container) into the Pane
         /// </summary>
-		/// <param name="module">The Module</param>
+        /// <param name="module">The Module</param>
         /// <history>
         /// 	[cnurse]	12/05/2007	Created
         /// </history>
@@ -468,7 +491,7 @@ namespace DotNetNuke.UI.Skins
 
                 if (Globals.IsLayoutMode() && Globals.IsAdminControl() == false)
                 {
-					//provide Drag-N-Drop capabilities
+                    //provide Drag-N-Drop capabilities
                     var dragDropContainer = new Panel();
                     Control title = container.FindControl("dnnTitle");
                     //Assume that the title control is named dnnTitle.  If this becomes an issue we could loop through the controls looking for the title type of skin object
@@ -487,7 +510,7 @@ namespace DotNetNuke.UI.Skins
                     }
 
                     //enable drag and drop
-					if (title != null)
+                    if (title != null)
                     {
                         //The title ID is actually the first child so we need to make sure at least one child exists
                         DNNClientAPI.EnableContainerDragAndDrop(title, dragDropContainer, module.ModuleID);
@@ -513,7 +536,7 @@ namespace DotNetNuke.UI.Skins
                 var lex = new ModuleLoadException(string.Format(Skin.MODULEADD_ERROR, PaneControl.ID), exc);
                 if (TabPermissionController.CanAdminPage())
                 {
-					//only display the error to administrators
+                    //only display the error to administrators
                     _containerWrapperControl.Controls.Add(new ErrorContainer(PortalSettings, Skin.MODULELOAD_ERROR, lex).Container);
                 }
                 Exceptions.LogException(exc);
@@ -533,7 +556,7 @@ namespace DotNetNuke.UI.Skins
         {
             if (PaneControl != null)
             {
-				//remove excess skin non-validating attributes
+                //remove excess skin non-validating attributes
                 PaneControl.Attributes.Remove("ContainerType");
                 PaneControl.Attributes.Remove("ContainerName");
                 PaneControl.Attributes.Remove("ContainerSrc");
@@ -553,7 +576,7 @@ namespace DotNetNuke.UI.Skins
                         PaneControl.Attributes["class"] = cssclass.Replace(CPaneOutline, "").Trim().Replace("  ", " ") + " " + CPaneOutline;
                     }
                     //display pane name
-					var ctlLabel = new Label {Text = "<center>" + Name + "</center><br>", CssClass = "SubHead"};
+                    var ctlLabel = new Label { Text = "<center>" + Name + "</center><br>", CssClass = "SubHead" };
                     PaneControl.Controls.AddAt(0, ctlLabel);
                 }
                 else
@@ -565,7 +588,7 @@ namespace DotNetNuke.UI.Skins
 
                     if (CanCollapsePane())
                     {
-						//This pane has no controls so set the width to 0
+                        //This pane has no controls so set the width to 0
                         if (PaneControl.Attributes["style"] != null)
                         {
                             PaneControl.Attributes.Remove("style");
@@ -582,7 +605,7 @@ namespace DotNetNuke.UI.Skins
                 }
             }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

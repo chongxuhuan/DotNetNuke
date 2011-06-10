@@ -13,8 +13,10 @@ function Gallery(params) {
         rowId: 0
         , index: 1
         , pageSize: 10
-        , sortBy: "extensionName"
-        , sortDir: "asc"
+        , orderBy: "extensionName"
+        , orderDir: "asc"
+        , thenBy: ""
+        , thenDir: "asc"
         , animationSpeed: "slow"
         , pageIdx: 1
         , pageSze: 10
@@ -31,6 +33,7 @@ function Gallery(params) {
         , protocol: ('https:' == location.protocol ? 'https://' : 'http://')
         , host: "appgallery.dotnetnuke.com"
         , ServiceRoot: "/AppGalleryService.svc"
+        , DataBaseVersion: "06.00.00"
         , ExtensionServiceName: "/Extensions"
         , TagsServiceName: "/Tags"
         , TagCloudServiceName: "/GetTagCloudData"
@@ -40,7 +43,7 @@ function Gallery(params) {
         , loading: $("#loading")
         , NameTextASC: "Name: A-Z"
         , NameTextDESC: "Name: Z-A"
-        , PriceextASC: "Price: High to Low"
+        , PriceTextASC: "Price: High to Low"
         , PriceTextDESC: "Price: Low to High"
         , TagCount: 50
         , CacheTimeoutMinutes: 1440
@@ -53,7 +56,6 @@ function Gallery(params) {
         , orderLabel: "Order:"
         , errorLabel: "Error..."
         , loadingLabel: "Loading..."
-        , badCharacters: /[^a-zA-Z 0-9]+/g
         , searchText: ""
     };
     //extend defaults with ctor params
@@ -105,11 +107,12 @@ function Gallery(params) {
         _gallery.tagFilter = '';
         _gallery.tagFilterName = '';
         _gallery.ownerFilter = '';
-        _gallery.sortBy = 'extensionName';
-        _gallery.sortDir = 'asc';
+        _gallery.orderBy = 'ExtensionName';
+        _gallery.orderDir = 'asc';
         _gallery.extensionFilter = 'module';
         $("#typeDDL").val('module');
         _gallery.SearchGallery('');
+        _gallery.getTags();
         return false;
     });
 
@@ -142,60 +145,17 @@ function Gallery(params) {
 
     $("#NameSorter").click(function (e) {
         e = e || window.event;
-        _gallery.SortExtensions('extensionName');
+        _gallery.SortExtensions('ExtensionName');
         return false;
     });
 
     $("#PriceSorter").click(function (e) {
-        e = e || window.event;
-        _gallery.SortExtensions('price');
+         e = e || window.event;
+        _gallery.SortExtensions('Price');
         return false;
     });
 }
 
-Gallery.tagSort = function (a, b) {
-    return (0.5 - Math.random());
-}
-Gallery.validTag = function (tag) {
-    return (tag && tag.tagName && (tag.tagName.indexOf("DotNetNuke") < 0) && (tag.TagCount > 0));
-}
-Gallery.prototype.resolveTags = function (msg) {
-    var fixed = new Array();
-    var max = msg.d.length - 1;
-    var biggest = 0;
-    var maxFont = 250;
-    var minFont = 75;
-    var x = 0;
-    var item;
-
-    //first pass to get biggest
-    for (x = max; x >= 0; x--) {
-        item = msg.d[x];
-        if (Gallery.validTag(item)) {
-            if (item.TagCount > biggest) biggest = item.TagCount;
-            fixed.push(item);
-        }
-    }
-
-    //second pass to set sizes
-    max = fixed.length;
-    for (x in fixed) {
-        item = fixed[x];
-        item.fontSize = ((item.TagCount / biggest) * maxFont).toFixed(2);
-        if (item.fontSize < minFont) item.fontSize = minFont;
-    }
-
-
-    this.loadTags = false;
-    this.tags = fixed.sort(Gallery.tagSort);
-    this.Cache.setItem("tags_" + this.extensionFilter, _gallery.tags);
-    this.showTags();
-    this.hideLoading();
-
-}
-Gallery.gotTags = function (msg) {
-    _gallery.resolveTags(msg);
-}
 Gallery.prototype.resolveImage = function (img) {
     return this.imgRoot + img;
 }
@@ -206,9 +166,11 @@ Gallery.prototype.showLoading = function (a) {
     this.loading.text(this.loadingLabel);
     this.loading.show();
 }
+
 Gallery.prototype.hideLoading = function (a) {
     this.loading.hide();
 }
+
 Gallery.prototype.errorLoading = function (a) {
     this.loading.css("background-color", "red");
     this.loading.text(this.errorText);
@@ -228,20 +190,20 @@ Gallery.prototype.SortExtensions = function (fld, order) {
     if (!order)
         this.ToggleSort(fld);
     else {
-        this.sortBy = fld;
-        this.sortDir = order;
+        this.orderBy = fld;
+        this.orderDir = order;
     }
 
-    if (this.sortBy && this.sortDir) {
+    if (this.orderBy && this.orderDir) {
         var NameSorter = $("#NameSorter");
         var PriceSorter = $("#PriceSorter");
-        if (this.sortBy == "extensionName") {
-            if (this.sortDir == "asc")
+        if (this.orderBy == "ExtensionName") {
+            if (this.orderDir == "asc")
                 NameSorter.text(this.NameTextDESC);
             else
                 NameSorter.text(this.NameTextASC);
-        } else if (this.sortBy == "price") {
-            if (this.sortDir == "asc")
+        } else if (this.orderBy == "Price") {
+            if (this.orderDir == "asc")
                 PriceSorter.text(this.PriceTextDESC);
             else
                 PriceSorter.text(this.PriceTextASC);
@@ -249,6 +211,22 @@ Gallery.prototype.SortExtensions = function (fld, order) {
     }
     return this.Search();
 }
+
+Gallery.prototype.ToggleSort = function (field) {
+    if (this.orderBy !== field) {
+        this.thenBy = this.orderBy;
+        this.thenDir = this.orderDir
+        this.orderBy = field;
+        this.orderDir = "";
+    }
+
+    if (!this.orderDir || this.orderDir === "" || this.orderDir == "desc") {
+        this.orderDir = "asc";
+    } else {
+        this.orderDir = "desc";
+    }
+}
+
 Gallery.prototype.SearchGallery = function (search) {
     this.action = "search";
     if (search) {
@@ -301,17 +279,6 @@ Gallery.prototype.Search = function () {
     return this;
 }
 
-
-Gallery.prototype.ToggleSort = function (field) {
-    this.sortBy = field;
-
-    if (!this.sortDir || this.sortDir === "" || this.sortDir == "desc") {
-        this.sortDir = 'asc';
-    } else {
-        this.sortDir = 'desc';
-    }
-}
-
 Gallery.prototype.getServiceUrl = function (ServiceName) {
     return this.protocol + this.host + this.ServiceRoot + ServiceName;
 }
@@ -323,11 +290,6 @@ Gallery.prototype.getExtensions = function (callback) {
     var prefix = "";
     var skip = (this.index - 1) * this.pageSize;
     var hasCriteria = (skip > 0);
-
-    //basic sanitization    
-    this.searchText = this.searchText.replace(this.badCharacters, "");
-    this.ownerFilter = this.ownerFilter.replace(this.badCharacters, "");
-
 
     if (this.tagFilter && this.tagFilter !== "") {
         url = this.TagsUrl + "(" + this.tagFilter + ")/ExtensionTags/?$expand=Extension";
@@ -344,14 +306,12 @@ Gallery.prototype.getExtensions = function (callback) {
 	    	    			"&$top=" + this.pageSize;
 
     if (this.searchText && this.searchText !== "") {
-        url = url + "&$filter=" + encodeURIComponent("(substringof('" + this.searchText + "', " + prefix + "extensionName) eq true or substringof('" + this.searchText + "', " + prefix + "Description) eq true or substringof('" + this.searchText + "', " + prefix + "Title) eq true)");
+        url = url + "&$filter=" + encodeURIComponent("(substringof('" + this.searchText + "', " + prefix + "ExtensionName) eq true or substringof('" + this.searchText + "', " + prefix + "Description) eq true or substringof('" + this.searchText + "', " + prefix + "Title) eq true)");
         filterDesc = filterDesc + this.searchText;
         hasCriteria = true;
     } else {
         filterDesc = filterDesc + this.noneLabel;
     }
-
-
 
     filterDesc = filterDesc + ", " + this.typeLabel + " ";
 
@@ -367,7 +327,7 @@ Gallery.prototype.getExtensions = function (callback) {
         else
             url = url + "and ";
 
-        url = url + "" + prefix + "extensionType eq '" + this.extensionFilter + "'";
+        url = url + "" + prefix + "ExtensionType eq '" + this.extensionFilter + "'";
     } else {
         hasCriteria = true;
         filterDesc = filterDesc + "All";
@@ -382,7 +342,7 @@ Gallery.prototype.getExtensions = function (callback) {
         else
             url = url + "and ";
 
-        url = url + encodeURIComponent("" + prefix + "ownerName eq '" + this.ownerFilter + "'");
+        url = url + encodeURIComponent("" + prefix + "OwnerName eq '" + this.ownerFilter + "'");
         hasCriteria = true;
     } else {
         filterDesc = filterDesc + this.noneLabel;
@@ -399,16 +359,14 @@ Gallery.prototype.getExtensions = function (callback) {
         filterDesc = filterDesc + this.noneLabel;
     }
 
-
     filterDesc = filterDesc + ", " + this.orderLabel + " ";
 
+    if (this.orderBy !== "") {
 
-    if (this.sortBy !== "") {
+        url = url + "&$orderby=" + encodeURIComponent(prefix + "" + this.orderBy + " " + this.orderDir);
 
-        url = url + "&$orderby=" + encodeURIComponent(prefix + "" + this.sortBy + " " + this.sortDir);
-
-        if (this.sortBy == "extensionName") {
-            if (this.sortDir == "asc") {
+        if (this.orderBy == "ExtensionName") {
+            if (this.orderDir == "asc") {
                 filterDesc = filterDesc + this.NameTextASC;
             } else {
                 hasCriteria = true;
@@ -416,8 +374,8 @@ Gallery.prototype.getExtensions = function (callback) {
             }
         } else {
             hasCriteria = true;
-            if (this.sortDir == "asc") {
-                filterDesc = filterDesc + this.PriceextASC;
+            if (this.orderDir == "asc") {
+                filterDesc = filterDesc + this.PriceTextASC;
             } else {
                 filterDesc = filterDesc + this.PriceTextDESC;
             }
@@ -426,6 +384,26 @@ Gallery.prototype.getExtensions = function (callback) {
         filterDesc = filterDesc + this.noneLabel;
     }
 
+    if (this.thenBy !== "") {
+
+        url = url + "," + encodeURIComponent(prefix + "" + this.thenBy + " " + this.thenDir);
+
+        if (this.thenBy == "ExtensionName") {
+            if (this.thenDir == "asc") {
+                filterDesc = filterDesc + ", " + this.NameTextASC;
+            } else {
+                hasCriteria = true;
+                filterDesc = filterDesc + ", " + this.NameTextDESC;
+            }
+        } else {
+            hasCriteria = true;
+            if (this.thenDir == "asc") {
+                filterDesc = filterDesc + ", " + this.PriceTextASC;
+            } else {
+                filterDesc = filterDesc + ", " + this.PriceTextDESC;
+            }
+        }
+    }
 
     this.searchFilters.text(filterDesc);
     url = url + "&$callback=Gallery.gotExtensions&$format=json";
@@ -451,26 +429,18 @@ Gallery.prototype.getExtensions = function (callback) {
     });
     this.eXHR.url = url;
 }
-Gallery.prototype.getCatalog = function (id) {
-    for (var i in this.cats.d) {
-        if (this.cats.d[i].catalogID == id) return this.cats.d[i];
-    }
-    return null;
-}
+
 Gallery.gotExtensions = function () {
 
     var msg = arguments[0];
     var g = _gallery;
-
-    ////TODO: MOCK DATA  --- REMOVED FOR PROD    
+    
     if (msg && msg.d && msg.d.results) {
         for (var i in msg.d.results) {
             var item = msg.d.results[i];
-            item.catalog = g.getCatalog(item.catalogID);
+            item.Catalog = g.getCatalog(item.catalogID);
         }
     }
-
-
 
     if (!_gallery.Cache.hasItem("__FIRSTLOAD")) _gallery.Cache.setItem("__FIRSTLOAD", msg);
 
@@ -493,6 +463,79 @@ Gallery.gotExtensions = function () {
     });
     _gallery.hideLoading();
 }
+
+Gallery.prototype.showExtensions = function (callback) {
+    this.pageCount = Math.ceil(this.extensions.d.__count / this.pageSize);
+
+    if (!this.smoothScrolling) {
+        this.extensionList.empty();
+    }
+    if (this.action == "search" || this.action == "filter" || this.action == "sort") this.extensionList.empty();
+
+
+    if (this.pagedExtensions.length > 0) {
+        $("#eTmpl").tmpl(this.pagedExtensions).find("div").appendTo(this.extensionList).fadeIn(this.animationSpeed);
+    }
+    this.pagedExtensions = [];
+    if (callback) callback(this);
+}
+
+Gallery.prototype.getExtensionById = function (extensionID) {
+    if (!this.extensions || !this.extensions.d) return;
+    var list = this.extensions.d.results;
+    for (var x = list.length; x--; x >= 0) {
+        if (list[x].extensionID == extensionID) return list[x];
+    }
+    return;
+}
+
+Gallery.prototype.FormatCurrency = function (num) {
+    num = num.toString().replace(/\$|\,/g, '');
+    if (isNaN(num))
+        num = "0";
+    sign = (num == (num = Math.abs(num)));
+    num = Math.floor(num * 100 + 0.50000000001);
+    cents = num % 100;
+    num = Math.floor(num / 100).toString();
+    if (cents < 10)
+        cents = "0" + cents;
+    for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
+        num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
+    return (((sign) ? '' : '-') + '$' + num + '.' + cents);
+}
+
+Gallery.prototype.DefaultDialogOptions = {
+    modal: true,
+    autoOpen: false,
+    width: 800,
+    height: 600,
+    resizable: true,
+    closeOnEscape: true
+}
+
+Gallery.prototype.ShowDetails = function (extensionID) {
+
+    var ext = this.getExtensionById(extensionID);
+    if (ext) {
+        var extensionDetailInner = $("#extensionDetailInner");
+        extensionDetailInner.empty();
+        $("#extDetailTmpl").tmpl(ext).appendTo(extensionDetailInner);
+
+        $("#extensionDetail-tabs").tabs();
+
+        this.extensionDetailDialog.dialog({ title: ext.extensionName });
+        this.extensionDetailDialog.dialog('open');
+    }
+    return false;
+}
+
+Gallery.prototype.getCatalog = function (id) {
+    for (var i in this.cats.d) {
+        if (this.cats.d[i].catalogID == id) return this.cats.d[i];
+    }
+    return null;
+}
+
 Gallery.gotCatalogs = function (msg) {
     var msg = arguments[0];
     var g = _gallery;
@@ -500,6 +543,7 @@ Gallery.gotCatalogs = function (msg) {
 
     if (!_gallery.Cache.hasItem("catalogs")) _gallery.Cache.setItem("catalogs", msg);
 }
+
 Gallery.prototype.getCatalogs = function () {
     var url = this.CatalogsUrl;
     url = url + "?$callback=Gallery.gotCatalogs&$format=json";
@@ -528,12 +572,9 @@ Gallery.prototype.getCatalogs = function () {
 Gallery.prototype.getTags = function (callback) {
 
     var max = (this.TagCount ? this.TagCount : 15);
-    var url = this.TagCloudUrl + "?tagcount=" + max;
-    url = url + "&extensionType='" + this.extensionFilter + "'";
-    url = url + "&minDnnVersion='0'";
-    //&extensionType='Module'&minDnnVersion='0'
-
-    //url=url + "&$filter=Extension/extensionType eq '" + this.extensionFilter + "'";
+    var url = this.TagCloudUrl + "?Tagcount=" + max;
+    url = url + "&ExtensionType='" + this.extensionFilter + "'";
+    url = url + "&MinDnnVersion=''";
     url = url + "&$callback=Gallery.gotTags&$format=json";
 
     var tags = this.Cache.getItem("tags_" + this.extensionFilter);
@@ -543,6 +584,7 @@ Gallery.prototype.getTags = function (callback) {
         _gallery.showTags();
         return;
     }
+
     this.showLoading();
 
     dnn.log(url);
@@ -559,6 +601,52 @@ Gallery.prototype.getTags = function (callback) {
     });
 }
 
+Gallery.gotTags = function (msg) {
+    _gallery.resolveTags(msg);
+}
+
+Gallery.prototype.resolveTags = function (msg) {
+    var fixed = new Array();
+    var max = msg.d.length - 1;
+    var biggest = 0;
+    var maxFont = 250;
+    var minFont = 75;
+    var x = 0;
+    var item;
+
+    //first pass to get biggest
+    for (x = max; x >= 0; x--) {
+        item = msg.d[x];
+        if (Gallery.validTag(item)) {
+            if (item.TagCount > biggest) biggest = item.TagCount;
+            fixed.push(item);
+        }
+    }
+
+    //second pass to set sizes
+    max = fixed.length;
+    for (x in fixed) {
+        item = fixed[x];
+        item.fontSize = ((item.TagCount / biggest) * maxFont).toFixed(2);
+        if (item.fontSize < minFont) item.fontSize = minFont;
+    }
+
+    this.loadTags = false;
+    this.tags = fixed.sort(Gallery.tagSort);
+    this.Cache.setItem("tags_" + this.extensionFilter, _gallery.tags);
+    this.showTags();
+    this.hideLoading();
+
+}
+
+Gallery.tagSort = function (a, b) {
+    var nameA = a.tagName.toLowerCase(), nameB = b.tagName.toLowerCase()
+    if (nameA < nameB) //sort string ascending
+        return -1
+    if (nameA > nameB)
+        return 1
+    return 0 //default return value (no sorting)
+}
 
 Gallery.prototype.showTags = function (callback) {
     // show tags in template
@@ -576,76 +664,9 @@ Gallery.prototype.showTags = function (callback) {
     if (callback) callback(this);
 }
 
-
-Gallery.prototype.showExtensions = function (callback) {
-    this.pageCount = Math.ceil(this.extensions.d.__count / this.pageSize);
-
-    if (!this.smoothScrolling) {
-        this.extensionList.empty();
-    }
-    if (this.action == "search" || this.action == "filter" || this.action == "sort") this.extensionList.empty();
-
-
-    if (this.pagedExtensions.length > 0) {
-        $("#eTmpl").tmpl(this.pagedExtensions).find("div").appendTo(this.extensionList).fadeIn(this.animationSpeed);
-    }
-    this.pagedExtensions = [];
-    if (callback) callback(this);
+Gallery.validTag = function (tag) {
+    return (tag && tag.tagName && (tag.tagName.indexOf("DotNetNuke") < 0) && (tag.TagCount > 0));
 }
-
-Gallery.prototype.getExtensionById = function (extensionID) {
-    if (!this.extensions || !this.extensions.d) return;
-    var list = this.extensions.d.results;
-    for (var x = list.length; x--; x >= 0) {
-        if (list[x].extensionID == extensionID) return list[x];
-    }
-    return;
-}
-Gallery.prototype.FormatCurrency = function (num) {
-    num = num.toString().replace(/\$|\,/g, '');
-    if (isNaN(num))
-        num = "0";
-    sign = (num == (num = Math.abs(num)));
-    num = Math.floor(num * 100 + 0.50000000001);
-    cents = num % 100;
-    num = Math.floor(num / 100).toString();
-    if (cents < 10)
-        cents = "0" + cents;
-    for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
-        num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
-    return (((sign) ? '' : '-') + '$' + num + '.' + cents);
-}
-
-
-
-Gallery.prototype.DefaultDialogOptions = {
-    modal: true,
-    autoOpen: false,
-    width: 800,
-    height: 600,
-    resizable: true,
-    closeOnEscape: true
-}
-
-
-Gallery.prototype.ShowDetails = function (extensionID) {
-
-    var ext = this.getExtensionById(extensionID);
-    if (ext) {
-        var extensionDetailInner = $("#extensionDetailInner");
-        extensionDetailInner.empty();
-        $("#extDetailTmpl").tmpl(ext).appendTo(extensionDetailInner);
-
-        $("#extensionDetail-tabs").tabs();
-
-        this.extensionDetailDialog.dialog({ title: ext.extensionName });
-        this.extensionDetailDialog.dialog('open');
-
-
-    }
-    return false;
-}
-
 
 Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {
     this.StorageType = (StorageType || "localStorage");
@@ -662,7 +683,9 @@ Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {
     }
     return this;
 }
+
 Cache.isEnabled = false;
+
 Cache.prototype.loadStore = function () {
     switch (this.StorageType) {
         case "globalStorage":
@@ -689,7 +712,12 @@ Cache.prototype.loadStore = function () {
     }
     return this;
 }
+
 Cache.ClearInterval = function (source) {
+    if (typeof source === 'undefined') {
+        source = _gallery.Cache;
+    }
+
     if (typeof source.TimeoutInMinutes != 'undefined') {
         if (source.hasItem(source.Scope + "_expire")) {
             var exp = source.getItem(source.Scope + "_expire");
@@ -704,6 +732,7 @@ Cache.ClearInterval = function (source) {
     }
     return this;
 }
+
 Cache.prototype.EmptyCache = function () {
 
     var max, i, X;
@@ -730,6 +759,7 @@ Cache.prototype.EmptyCache = function () {
     }
     return this;
 }
+
 Cache.prototype.hasItem = function (key) {
     var d;
     if (Cache.isEnabled) {
@@ -738,6 +768,7 @@ Cache.prototype.hasItem = function (key) {
     }
     return false;
 }
+
 Cache.prototype.getItem = function (key) {
     var d, x;
     if (Cache.isEnabled) {
@@ -757,8 +788,6 @@ Cache.prototype.setItem = function (key, value) {
     }
     return this;
 }
-
-
 
 Scroller = function (maxPage, loadScroll, scrollcallback) {
     this.page = 1;
@@ -796,9 +825,11 @@ Scroller.prototype.watch = function () {
         }
     });
 }
+
 Scroller.prototype.unwatch = function () {
     $(document).unbind("scroll");
 }
+
 Math.random.range = function (min, max, inclusive) {
     if (typeof inclusive !== 'undefined' || !inclusive) min = min - 1; max = max + 1;
     return Math.floor(max + (1 + min - max) * Math.random());

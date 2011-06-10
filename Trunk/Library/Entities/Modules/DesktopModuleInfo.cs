@@ -304,6 +304,7 @@ namespace DotNetNuke.Entities.Modules
                 return _moduleDefinitions;
             }
         }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the  Name of the Desktop Module
@@ -313,7 +314,6 @@ namespace DotNetNuke.Entities.Modules
         /// 	[cnurse]	01/11/2008   Documented
         /// </history>
         /// -----------------------------------------------------------------------------
-
         public string ModuleName { get; set; }
 
         /// -----------------------------------------------------------------------------

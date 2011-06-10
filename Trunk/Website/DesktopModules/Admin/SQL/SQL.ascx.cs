@@ -35,24 +35,24 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    /// The SQL PortalModuleBase is used run SQL Scripts on the Database
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    /// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
-    ///                       and localisation
-    /// </history>
-    /// -----------------------------------------------------------------------------
 using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
 namespace DotNetNuke.Modules.Admin.SQL
 {
-    public partial class SQL : PortalModuleBase
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	/// The SQL PortalModuleBase is used run SQL Scripts on the Database
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	/// 	[cnurse]	9/28/2004	Updated to reflect design changes for Help, 508 support
+	///                       and localisation
+	/// </history>
+	/// -----------------------------------------------------------------------------
+	public partial class SQL : PortalModuleBase
     {
 
         #region Members

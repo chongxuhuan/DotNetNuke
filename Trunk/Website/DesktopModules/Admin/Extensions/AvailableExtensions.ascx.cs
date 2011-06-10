@@ -117,90 +117,97 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     try
                     {
                         ZipEntry entry = unzip.GetNextEntry();
-                        while (entry != null && !entry.IsDirectory)
+                        while (entry != null)
                         {
-                            var fileName = entry.Name;
-                            string extension = System.IO.Path.GetExtension(fileName);
-                            if (extension.ToLower() == ".dnn" || extension.ToLower() == ".dnn5")
+                            if (!entry.IsDirectory)
                             {
-                                //Manifest
-                                var manifestReader = new StreamReader(unzip);
-                                var manifest = manifestReader.ReadToEnd();
-
-                                var package = new PackageInfo();
-                                package.Manifest = manifest;
-                                if (!string.IsNullOrEmpty(manifest))
+                                var fileName = entry.Name;
+                                string extension = System.IO.Path.GetExtension(fileName);
+                                if (extension.ToLower() == ".dnn" || extension.ToLower() == ".dnn5")
                                 {
-                                    var doc = new XPathDocument(new StringReader(manifest));
-                                    XPathNavigator rootNav = doc.CreateNavigator().SelectSingleNode("dotnetnuke");
-                                    string packageType = String.Empty;
-                                    if (rootNav.Name == "dotnetnuke")
-                                    {
-                                        packageType = XmlUtils.GetAttributeValue(rootNav, "type");
-                                    }
-                                    else if (rootNav.Name.ToLower() == "languagepack")
-                                    {
-                                        packageType = "LanguagePack";
-                                    }
-                                    XPathNavigator nav = null;
-                                    switch (packageType.ToLower())
-                                    {
-                                        case "package":
-                                            nav = rootNav.SelectSingleNode("packages/package");
-                                            break;
-                                        case "module":
-                                        case "languagepack":
-                                        case "skinobject":
-                                            nav = Installer.ConvertLegacyNavigator(rootNav, new InstallerInfo()).SelectSingleNode("packages/package");
-                                            break;
-                                    }
+                                    //Manifest
+                                    var manifestReader = new StreamReader(unzip);
+                                    var manifest = manifestReader.ReadToEnd();
 
-                                    if (nav != null)
+                                    var package = new PackageInfo();
+                                    package.Manifest = manifest;
+                                    if (!string.IsNullOrEmpty(manifest))
                                     {
-                                        package.Name = XmlUtils.GetAttributeValue(nav, "name");
-                                        package.PackageType = XmlUtils.GetAttributeValue(nav, "type");
-                                        package.IsSystemPackage = XmlUtils.GetAttributeValueAsBoolean(nav, "isSystem", false);
-                                        package.Version = new Version(XmlUtils.GetAttributeValue(nav, "version"));
-                                        package.FriendlyName = XmlUtils.GetNodeValue(nav, "friendlyName");
-                                        package.Description = XmlUtils.GetNodeValue(nav, "description");
-                                        package.FileName = file.Replace(installPath + "\\", "");
-
-                                        XPathNavigator foldernameNav = null;
-                                        switch (package.PackageType)
+                                        var doc = new XPathDocument(new StringReader(manifest));
+                                        XPathNavigator rootNav = doc.CreateNavigator().SelectSingleNode("dotnetnuke");
+                                        string packageType = String.Empty;
+                                        if (rootNav.Name == "dotnetnuke")
                                         {
-                                            case "Module":
-                                            case "Auth_System":
-                                                foldernameNav = nav.SelectSingleNode("components/component/files");
-                                                if (foldernameNav != null) package.FolderName = Util.ReadElement(foldernameNav, "basePath").Replace('\\', '/');
+                                            packageType = XmlUtils.GetAttributeValue(rootNav, "type");
+                                        }
+                                        else if (rootNav.Name.ToLower() == "languagepack")
+                                        {
+                                            packageType = "LanguagePack";
+                                        }
+                                        XPathNavigator nav = null;
+                                        switch (packageType.ToLower())
+                                        {
+                                            case "package":
+                                                nav = rootNav.SelectSingleNode("packages/package");
                                                 break;
-                                            case "Container":
-                                                foldernameNav = nav.SelectSingleNode("components/component/containerFiles");
-                                                if (foldernameNav != null) package.FolderName = Globals.glbContainersPath + Util.ReadElement(foldernameNav, "containerName").Replace('\\', '/');
-                                                break;
-                                            case "Skin":
-                                                foldernameNav = nav.SelectSingleNode("components/component/skinFiles");
-                                                if (foldernameNav != null) package.FolderName = Globals.glbSkinsPath + Util.ReadElement(foldernameNav, "skinName").Replace('\\', '/');
-                                                break;
-                                            default:
+                                            case "module":
+                                            case "languagepack":
+                                            case "skinobject":
+                                                nav = Installer.ConvertLegacyNavigator(rootNav, new InstallerInfo()).SelectSingleNode("packages/package");
                                                 break;
                                         }
 
-                                        XPathNavigator iconFileNav = nav.SelectSingleNode("iconFile");
-                                        if (package.FolderName != string.Empty && iconFileNav != null)
+                                        if (nav != null)
                                         {
-
-                                            if ((iconFileNav.Value != string.Empty) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
+                                            package.Name = XmlUtils.GetAttributeValue(nav, "name");
+                                            package.PackageType = XmlUtils.GetAttributeValue(nav, "type");
+                                            package.IsSystemPackage = XmlUtils.GetAttributeValueAsBoolean(nav, "isSystem", false);
+                                            package.Version = new Version(XmlUtils.GetAttributeValue(nav, "version"));
+                                            package.FriendlyName = XmlUtils.GetNodeValue(nav, "friendlyName");
+                                            if (String.IsNullOrEmpty(package.FriendlyName))
                                             {
-                                                package.IconFile = package.FolderName + "/" + iconFileNav.Value;
-                                                package.IconFile = (!package.IconFile.StartsWith("~/")) ? "~/" + package.IconFile : package.IconFile;
+                                                package.FriendlyName = package.Name;
                                             }
+                                            package.Description = XmlUtils.GetNodeValue(nav, "description");
+                                            package.FileName = file.Replace(installPath + "\\", "");
+
+                                            XPathNavigator foldernameNav = null;
+                                            switch (package.PackageType)
+                                            {
+                                                case "Module":
+                                                case "Auth_System":
+                                                    foldernameNav = nav.SelectSingleNode("components/component/files");
+                                                    if (foldernameNav != null) package.FolderName = Util.ReadElement(foldernameNav, "basePath").Replace('\\', '/');
+                                                    break;
+                                                case "Container":
+                                                    foldernameNav = nav.SelectSingleNode("components/component/containerFiles");
+                                                    if (foldernameNav != null) package.FolderName = Globals.glbContainersPath + Util.ReadElement(foldernameNav, "containerName").Replace('\\', '/');
+                                                    break;
+                                                case "Skin":
+                                                    foldernameNav = nav.SelectSingleNode("components/component/skinFiles");
+                                                    if (foldernameNav != null) package.FolderName = Globals.glbSkinsPath + Util.ReadElement(foldernameNav, "skinName").Replace('\\', '/');
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+
+                                            XPathNavigator iconFileNav = nav.SelectSingleNode("iconFile");
+                                            if (package.FolderName != string.Empty && iconFileNav != null)
+                                            {
+
+                                                if ((iconFileNav.Value != string.Empty) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
+                                                {
+                                                    package.IconFile = package.FolderName + "/" + iconFileNav.Value;
+                                                    package.IconFile = (!package.IconFile.StartsWith("~/")) ? "~/" + package.IconFile : package.IconFile;
+                                                }
+                                            }
+
+                                            packages.Add(package);
                                         }
-
-                                        packages.Add(package);
                                     }
-                                }
 
-                                break;
+                                    break;
+                                }
                             }
                             entry = unzip.GetNextEntry();
                         }

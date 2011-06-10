@@ -78,236 +78,64 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HtmlEditor Providers", "Htm
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Library", "Library\DotNetNuke.Library.csproj", "{D391550C-7107-49B2-A6AC-8627C8B06ADC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Caching.FileBasedCachingProvider", "Library\Providers\CachingProviders\FileBasedCachingProvider\Provider.Caching.FileBasedCachingProvider.csproj", "{D206D80A-DE26-4441-A8CD-0C70D2EB0C38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.DNNDropDownNavigationProvider", "Library\Providers\NavigationProviders\DNNDropDownNavigationProvider\Provider.DNNDropDownNavigationProvider.csproj", "{982CB668-91F8-43BB-AC80-D4E178E6D2B4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.DNNMenuNavigationProvider", "Library\Providers\NavigationProviders\DNNMenuNavigationProvider\Provider.DNNMenuNavigationProvider.csproj", "{78BC5861-5023-4370-A30A-EC7629E93ED1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.DNNTreeNavigationProvider", "Library\Providers\NavigationProviders\DNNTreeNavigationProvider\Provider.DNNTreeNavigationProvider.csproj", "{4F30AA90-BE74-4354-B3E1-DE0004F5E395}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.SolpartMenuNavigationProvider", "Library\Providers\NavigationProviders\SolpartMenuNavigationProvider\Provider.SolpartMenuNavigationProvider.csproj", "{1A19AB44-33A4-4222-A420-7B213E91C647}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.DNNScheduler", "Library\Providers\SchedulingProviders\DNNScheduler\Provider.DNNScheduler.csproj", "{6F610B3E-218D-4209-8028-E8978A76CFB9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Search.Index", "Library\Providers\SearchProviders\ModuleIndexer\Provider.Search.Index.csproj", "{FD8FCDFF-64FC-4EAE-BECC-A9546E1DCB44}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Search.DataStore", "Library\Providers\SearchProviders\SearchDataStore\Provider.Search.DataStore.csproj", "{A45415E3-625B-4C90-9345-8E8C7DD9D28D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryListBox", "Library\Controls\CountryListBox\CountryListBox.csproj", "{89093FD0-076F-48CD-9232-B665226CDBF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Membership.AspNetProvider", "Library\Providers\MembershipProviders\AspNetMembershipProvider\Provider.Membership.AspNetProvider.csproj", "{6A2C6160-2905-407B-9575-16210528F4C8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.ASP2MenuNavigationProvider", "Library\Providers\NavigationProviders\ASP2MenuNavigationProvider\Provider.ASP2MenuNavigationProvider.csproj", "{1012996F-79CF-4175-81D7-B3B131A81489}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Membership.DNNProvider", "Library\Providers\MembershipProviders\DNNMembershipProvider\Provider.Membership.DNNProvider.csproj", "{DE2B348A-1DAD-4630-9F55-788F8CCBAD02}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Membership.DataProvider", "Library\Providers\MembershipProviders\DataProvider\Provider.Membership.DataProvider.csproj", "{B15A45FA-02F8-4F09-A04B-13B7920CABCE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Syndication", "Library\Components\Syndication\DotNetNuke.Syndication.csproj", "{86AF9531-D270-4C18-A8B9-C67A8782AF69}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.HttpModules", "Library\HttpModules\DotNetNuke.HttpModules.csproj", "{6F0A5B23-E09F-431A-879A-993CB77E23D8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.SqlDataProvider", "Library\Providers\DataProviders\SqlDataProvider\Provider.SqlDataProvider.csproj", "{F8623BD1-92F0-40D8-A32C-364D26B228FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional", "Professional\DotNetNuke.Professional.csproj", "{A1C93CEC-DFFF-40C3-A1CE-E22C43AC41A0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.DBLoggingProvider", "Library\Providers\LoggingProviders\DatabaseLoggingProvider\Provider.DBLoggingProvider.csproj", "{A566C3FB-176F-4EF7-A2EB-CB22F2741082}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.CorePermissionProvider", "Library\Providers\PermissionProviders\CorePermissionProvider\Provider.CorePermissionProvider.csproj", "{F54DCA33-F35C-4F57-893E-FF4AE823E598}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.ModuleCaching.FileProvider", "Library\Providers\ModuleCachingProviders\Provider.ModuleCaching.FileProvider\Provider.ModuleCaching.FileProvider.csproj", "{CADB2B3B-46DD-417D-BBF9-E935D25C4A92}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.ModuleCaching.MemoryProvider", "Library\Providers\ModuleCachingProviders\Provider.ModuleCaching.MemoryProvider\Provider.ModuleCaching.MemoryProvider.csproj", "{AF064E35-1BEF-4337-A462-C708F441AD1B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.FileIntegrity", "Modules\IntegrityChecker\Components\Integrity Library\DotNetNuke.Professional.FileIntegrity.csproj", "{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.IntegrityChecker", "Modules\IntegrityChecker\DotNetNuke.Professional.IntegrityChecker.csproj", "{70F87819-574B-4673-9A92-F49C3065425E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.HealthMonitoring", "Modules\HealthMonitoring\DotNetNuke.Professional.HealthMonitoring.csproj", "{A515C7AB-F923-458B-9F25-C041456108C7}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.LicenseActivation", "Modules\LicenseActivation\DotNetNuke.Professional.LicenseActivation.csproj", "{7F0E6C67-A10B-4371-AFD0-6950EB5727C4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.WebServerManager", "Modules\WebServerManager\DotNetNuke.Professional.WebServerManager.csproj", "{D363543B-BDB1-4A13-A21E-3431F61A35B8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.SecurityCenter", "Modules\SecurityCenter\DotNetNuke.Professional.SecurityCenter.csproj", "{572FC021-10B9-49DC-A42E-12CFEC9202BD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.UserSwitcher", "Modules\UserSwitcher\DotNetNuke.Professional.UserSwitcher.csproj", "{1890CFD8-1A90-4815-A152-4E1EED61022E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Web", "DotNetNuke.Web\DotNetNuke.Web.csproj", "{8DA31B98-5E8E-4243-8967-D4CF7DC622CB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Modules.Taxonomy", "Modules\Taxonomy\DotNetNuke.Modules.Taxonomy.csproj", "{93532801-CD42-40D1-B765-77676362F98C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Enterprise.ContentStaging", "Modules\ContentStaging\DotNetNuke.Enterprise.ContentStaging.csproj", "{8B3EB8F6-C7C0-4C28-B4D9-17C322F26439}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enterprise Projects", "Enterprise Projects", "{215419E1-FD80-4607-86B3-E6AE2CBF3555}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.GoogleAnalyticsPro", "Modules\GoogleAnalyticsPro\DotNetNuke.Professional.GoogleAnalyticsPro.csproj", "{254A168C-0386-49A7-A90A-BE502E9EA1C9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.DocumentLibrary", "Modules\DocumentLibrary\DotNetNuke.Professional.DocumentLibrary.csproj", "{343ECF82-E89A-4A7F-885A-8C5D56E79B45}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.SearchCrawler.Input", "Modules\SearchInput\DotNetNuke.Professional.SearchCrawler.Input.csproj", "{4128CDC0-296E-4ED5-912D-120912385AF8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.SearchCrawler.Results", "Modules\SearchResults\DotNetNuke.Professional.SearchCrawler.Results.csproj", "{8451E8CA-3A1E-4A40-AA96-46B26942B42B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.SearchCrawler", "Modules\SearchSpider\DotNetNuke.Professional.SearchCrawler.csproj", "{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sitemap Providers", "Sitemap Providers", "{92CD4708-95B8-425B-B2BD-B0F77EB93170}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.CoreSitemapProvider", "Library\Providers\SitemapProviders\Provider.CoreSitemapProvider\Provider.CoreSitemapProvider.csproj", "{9108D6A3-B570-4778-87C6-7B9424A7EA67}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.BigSitemapProvider", "Library\Providers\SitemapProviders\Provider.BigSitemapProvider\Provider.BigSitemapProvider.csproj", "{1CA23A12-DA34-49B4-833A-76F3CA8D554C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.MyModules", "Modules\MyModules\DotNetNuke.Professional.MyModules.csproj", "{3B430004-D4D4-4FEF-B5DC-1F03F9591390}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.HtmlPro", "Modules\HTMLPro\DotNetNuke.Professional.HtmlPro.csproj", "{F4F6C221-96D8-4A30-8C40-AAA633A2A410}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Web.Razor", "DotNetNuke.Web.Razor\DotNetNuke.Web.Razor.csproj", "{58FD62C7-3F26-4945-B810-428481E6300A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Modules.RazorHost", "Modules\RazorHost\DotNetNuke.Modules.RazorHost.csproj", "{8FD86561-AE12-435E-998E-B1B12842400E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Modules.Messaging", "Modules\Messaging\DotNetNuke.Modules.Messaging.csproj", "{81C952E8-9836-4966-B09C-8493ED398D9C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Modules.Html", "Modules\HTML\DotNetNuke.Modules.Html.csproj", "{40EDB581-6D12-42C0-A610-736AE97A0321}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Enterprise.SharePoint.Contracts", "Modules\SharePoint\Components\Contracts\DotNetNuke.Enterprise.SharePoint.Contracts.csproj", "{86DB3CDF-F91A-4F6E-AE80-B6721B4649B4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Enterprise.SharePoint", "Modules\SharePoint\DotNetNuke.Enterprise.SharePoint.csproj", "{70A03015-F810-4F91-8520-9D60D47CA184}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Instrumentation", "DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj", "{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{C82EAC40-C9BA-49B7-9D65-BB562F704A8C}"
 EndProject
@@ -360,7 +188,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 		{6F610B3E-218D-4209-8028-E8978A76CFB9} = {6F610B3E-218D-4209-8028-E8978A76CFB9}
 		{1A19AB44-33A4-4222-A420-7B213E91C647} = {1A19AB44-33A4-4222-A420-7B213E91C647}
 		{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C} = {8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C}
-		{ECA4AF57-433D-42FE-A694-E46283513C3F} = {ECA4AF57-433D-42FE-A694-E46283513C3F}
 		{6A2C6160-2905-407B-9575-16210528F4C8} = {6A2C6160-2905-407B-9575-16210528F4C8}
 		{78BC5861-5023-4370-A30A-EC7629E93ED1} = {78BC5861-5023-4370-A30A-EC7629E93ED1}
 		{8FD86561-AE12-435E-998E-B1B12842400E} = {8FD86561-AE12-435E-998E-B1B12842400E}
@@ -373,7 +200,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 		{254A168C-0386-49A7-A90A-BE502E9EA1C9} = {254A168C-0386-49A7-A90A-BE502E9EA1C9}
 		{4F30AA90-BE74-4354-B3E1-DE0004F5E395} = {4F30AA90-BE74-4354-B3E1-DE0004F5E395}
 		{8DA31B98-5E8E-4243-8967-D4CF7DC622CB} = {8DA31B98-5E8E-4243-8967-D4CF7DC622CB}
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {9108D6A3-B570-4778-87C6-7B9424A7EA67}
 		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6} = {B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58} = {31106CA4-52E9-4C43-9B47-EB23EEE9AB58}
@@ -386,7 +212,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC} = {B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}
 		{1890CFD8-1A90-4815-A152-4E1EED61022E} = {1890CFD8-1A90-4815-A152-4E1EED61022E}
 		{86DB3CDF-F91A-4F6E-AE80-B6721B4649B4} = {86DB3CDF-F91A-4F6E-AE80-B6721B4649B4}
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465} = {628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}
 		{A45415E3-625B-4C90-9345-8E8C7DD9D28D} = {A45415E3-625B-4C90-9345-8E8C7DD9D28D}
 		{81C952E8-9836-4966-B09C-8493ED398D9C} = {81C952E8-9836-4966-B09C-8493ED398D9C}
 		{A1C93CEC-DFFF-40C3-A1CE-E22C43AC41A0} = {A1C93CEC-DFFF-40C3-A1CE-E22C43AC41A0}
@@ -396,30 +221,15 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 		{FD8FCDFF-64FC-4EAE-BECC-A9546E1DCB44} = {FD8FCDFF-64FC-4EAE-BECC-A9546E1DCB44}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.AmazonS3FolderProvider", "Professional\Providers\FolderProviders\AmazonS3FolderProvider\DotNetNuke.Professional.AmazonS3FolderProvider.csproj", "{ECA4AF57-433D-42FE-A694-E46283513C3F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.AzureFolderProvider", "Professional\Providers\FolderProviders\AzureFolderProvider\DotNetNuke.Professional.AzureFolderProvider.csproj", "{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Commerce", "Modules\Commerce\DotNetNuke.Professional.Commerce.csproj", "{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {D9E0719E-A293-491A-B686-11D18E37097D}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks", "BuildScripts\DotNetNuke.MSBuild.Tasks\DotNetNuke.MSBuild.Tasks.csproj", "{D9E0719E-A293-491A-B686-11D18E37097D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.CloudFolderProviders", "Professional\Providers\FolderProviders\CloudFolderProviders\DotNetNuke.Professional.CloudFolderProviders.csproj", "{2A1157E2-27F8-4D72-86CC-10FE142E98D9}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 64
+		SccNumberOfProjects = 61
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -643,34 +453,22 @@ Global
 		SccProjectUniqueName56 = DotNetNuke.Instrumentation\\DotNetNuke.Instrumentation.csproj
 		SccProjectName56 = DotNetNuke.Instrumentation
 		SccLocalPath56 = DotNetNuke.Instrumentation
-		SccProjectUniqueName57 = Professional\\Providers\\FolderProviders\\AmazonS3FolderProvider\\DotNetNuke.Professional.AmazonS3FolderProvider.csproj
-		SccProjectTopLevelParentUniqueName57 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName57 = Professional/Providers/FolderProviders/AmazonS3FolderProvider
-		SccLocalPath57 = Professional\\Providers\\FolderProviders\\AmazonS3FolderProvider
-		SccProjectUniqueName58 = Professional\\Providers\\FolderProviders\\AzureFolderProvider\\DotNetNuke.Professional.AzureFolderProvider.csproj
+		SccProjectUniqueName57 = Externally\u0020Sourced\\Externally.Sourced.csproj
+		SccProjectName57 = Externally\u0020Sourced
+		SccLocalPath57 = Externally\u0020Sourced
+		SccProjectUniqueName58 = Modules\\Commerce\\DotNetNuke.Professional.Commerce.csproj
 		SccProjectTopLevelParentUniqueName58 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName58 = Professional/Providers/FolderProviders/AzureFolderProvider
-		SccLocalPath58 = Professional\\Providers\\FolderProviders\\AzureFolderProvider
-		SccProjectUniqueName59 = Externally\u0020Sourced\\Externally.Sourced.csproj
-		SccProjectName59 = Externally\u0020Sourced
-		SccLocalPath59 = Externally\u0020Sourced
+		SccProjectName58 = Modules/Commerce
+		SccLocalPath58 = Modules\\Commerce
+		SccProjectUniqueName59 = Professional\\Providers\\FolderProviders\\CloudFolderProviders\\DotNetNuke.Professional.CloudFolderProviders.csproj
+		SccProjectTopLevelParentUniqueName59 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName59 = Professional/Providers/FolderProviders/CloudFolderProviders
+		SccLocalPath59 = Professional\\Providers\\FolderProviders\\CloudFolderProviders
 		SccWebProject60 = true
 		SccProjectUniqueName60 = http://localhost/DotNetNuke_Community
 		SccProjectName60 = Website
-		SccLocalPath60 = Website
+		SccLocalPath60 = http://localhost/DotNetNuke_Community/
 		SccProjectEnlistmentChoice60 = 2
-		SccProjectUniqueName61 = Modules\\Commerce\\DotNetNuke.Professional.Commerce.csproj
-		SccProjectTopLevelParentUniqueName61 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName61 = Modules/Commerce
-		SccLocalPath61 = Modules\\Commerce
-		SccProjectUniqueName62 = BuildScripts\\DotNetNuke.MSBuild.Tasks\\DotNetNuke.MSBuild.Tasks.csproj
-		SccProjectTopLevelParentUniqueName62 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName62 = BuildScripts/DotNetNuke.MSBuild.Tasks
-		SccLocalPath62 = BuildScripts\\DotNetNuke.MSBuild.Tasks
-		SccProjectUniqueName63 = Professional\\Providers\\FolderProviders\\CloudFolderProviders\\DotNetNuke.Professional.CloudFolderProviders.csproj
-		SccProjectTopLevelParentUniqueName63 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName63 = Professional/Providers/FolderProviders/CloudFolderProviders
-		SccLocalPath63 = Professional\\Providers\\FolderProviders\\CloudFolderProviders
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1379,30 +1177,6 @@ Global
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|x86.ActiveCfg = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|.NET.ActiveCfg = Release|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{ECA4AF57-433D-42FE-A694-E46283513C3F}.Release|x86.ActiveCfg = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|.NET.ActiveCfg = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|Any CPU.Build.0 = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465}.Release|x86.ActiveCfg = Release|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -1427,18 +1201,6 @@ Global
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}.Release|x86.ActiveCfg = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|.NET.ActiveCfg = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{D9E0719E-A293-491A-B686-11D18E37097D}.Release|x86.ActiveCfg = Release|Any CPU
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -1492,36 +1254,14 @@ Global
 		{6F0A5B23-E09F-431A-879A-993CB77E23D8} = {8F128F7A-C68D-49E4-B37F-56EBB70A5A67}
 		{89093FD0-076F-48CD-9232-B665226CDBF0} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
 		{86AF9531-D270-4C18-A8B9-C67A8782AF69} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
-		{D9E0719E-A293-491A-B686-11D18E37097D} = {FA391B49-D5FB-42EE-A9C1-4E0509E13D15}
-		{A1C93CEC-DFFF-40C3-A1CE-E22C43AC41A0} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{70F87819-574B-4673-9A92-F49C3065425E} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{A515C7AB-F923-458B-9F25-C041456108C7} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{7F0E6C67-A10B-4371-AFD0-6950EB5727C4} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{D363543B-BDB1-4A13-A21E-3431F61A35B8} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{572FC021-10B9-49DC-A42E-12CFEC9202BD} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{1890CFD8-1A90-4815-A152-4E1EED61022E} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{254A168C-0386-49A7-A90A-BE502E9EA1C9} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{343ECF82-E89A-4A7F-885A-8C5D56E79B45} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{4128CDC0-296E-4ED5-912D-120912385AF8} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{8451E8CA-3A1E-4A40-AA96-46B26942B42B} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{3B430004-D4D4-4FEF-B5DC-1F03F9591390} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{F4F6C221-96D8-4A30-8C40-AAA633A2A410} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{ECA4AF57-433D-42FE-A694-E46283513C3F} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{628EB6E1-0581-4AB8-9E5D-72C7EFC7F465} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{93532801-CD42-40D1-B765-77676362F98C} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
-		{8FD86561-AE12-435E-998E-B1B12842400E} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
 		{81C952E8-9836-4966-B09C-8493ED398D9C} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
 		{40EDB581-6D12-42C0-A610-736AE97A0321} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
-		{8B3EB8F6-C7C0-4C28-B4D9-17C322F26439} = {215419E1-FD80-4607-86B3-E6AE2CBF3555}
-		{86DB3CDF-F91A-4F6E-AE80-B6721B4649B4} = {215419E1-FD80-4607-86B3-E6AE2CBF3555}
-		{70A03015-F810-4F91-8520-9D60D47CA184} = {215419E1-FD80-4607-86B3-E6AE2CBF3555}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}

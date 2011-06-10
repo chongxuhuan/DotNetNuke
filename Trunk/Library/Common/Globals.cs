@@ -196,91 +196,109 @@ namespace DotNetNuke.Common
 		/// </summary>
 		/// <value>-1</value>
         public const string glbRoleAllUsers = "-1";
+
 		/// <summary>
 		/// Global role id for super user
 		/// </summary>
 		/// <value>-2</value>
         public const string glbRoleSuperUser = "-2";
+
 		/// <summary>
 		/// Global role id for unauthenticated users
 		/// </summary>
 		/// <value>-3</value>
         public const string glbRoleUnauthUser = "-3";
+
 		/// <summary>
 		/// Global role id by default
 		/// </summary>
 		/// <value>-4</value>
         public const string glbRoleNothing = "-4";
+
 		/// <summary>
 		/// Global role name for all users
 		/// </summary>
 		/// <value>All Users</value>
         public const string glbRoleAllUsersName = "All Users";
+
 		/// <summary>
 		/// Global ro name for super user
 		/// </summary>
 		/// <value>Superuser</value>
         public const string glbRoleSuperUserName = "Superuser";
+
 		/// <summary>
 		/// Global role name for unauthenticated users
 		/// </summary>
 		/// <value>Unauthenticated Users</value>
         public const string glbRoleUnauthUserName = "Unauthenticated Users";
+
 		/// <summary>
 		/// Default page name
 		/// </summary>
 		/// <value>Default.aspx</value>
         public const string glbDefaultPage = "Default.aspx";
+
 		/// <summary>
 		/// Default host skin folder
 		/// </summary>
 		/// <value>_default</value>
         public const string glbHostSkinFolder = "_default";
+
 		/// <summary>
 		/// Default control panel
 		/// </summary>
 		/// <value>Admin/ControlPanel/IconBar.ascx</value>
         public const string glbDefaultControlPanel = "Admin/ControlPanel/IconBar.ascx";
+
 		/// <summary>
 		/// Default pane name
 		/// </summary>
 		/// <value>ContentPane</value>
         public const string glbDefaultPane = "ContentPane";
+
 		/// <summary>
 		/// Image file types
 		/// </summary>
 		/// <value>jpg,jpeg,jpe,gif,bmp,png,swf</value>
         public const string glbImageFileTypes = "jpg,jpeg,jpe,gif,bmp,png,swf";
+
 		/// <summary>
 		/// Config files folder
 		/// </summary>
 		/// <value>\Config\</value>
         public const string glbConfigFolder = "\\Config\\";
+
 		/// <summary>
 		/// About page name
 		/// </summary>
 		/// <value>about.htm</value>
         public const string glbAboutPage = "about.htm";
+
 		/// <summary>
 		/// DotNetNuke config file
 		/// </summary>
 		/// <value>DotNetNuke.config</value>
         public const string glbDotNetNukeConfig = "DotNetNuke.config";
+
 		/// <summary>
 		/// Default portal id for super user
 		/// </summary>
 		/// <value>-1</value>
         public const int glbSuperUserAppName = -1;
+
 		/// <summary>
 		/// extension of protected files
 		/// </summary>
 		/// <value>.resources</value>
         public const string glbProtectedExtension = ".resources";
+
 		/// <summary>
 		/// Default container folder
 		/// </summary>
 		/// <value>Portals/_default/Containers/</value>
         public const string glbContainersPath = "Portals/_default/Containers/";
+
 		/// <summary>
 		/// Default skin folder
 		/// </summary>

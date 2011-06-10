@@ -3,7 +3,7 @@
 		<package name="Admin.Messaging" type="Module" version="06.00.00" isSystem="true">
 			<friendlyName>Messaging</friendlyName>
 			<description>The Messaging module allows users to send and receive private messages.</description>
-	  <iconFile>messaging.gif</iconFile>
+	  <iconFile>DesktopModules/Admin/Messaging/Images/messaging.gif</iconFile>
 			<owner>
 				<name>DotNetNuke Corporation</name>
 				<organization>DotNetNuke Corporation</organization>

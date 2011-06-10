@@ -305,8 +305,8 @@ namespace DotNetNuke.Entities.Tabs
         {
             get
             {
-                var key = string.Format("{0}_{1}", Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias), 
-											Localization.GetPageLocale(PortalSettings.Current));
+                var key = string.Format("{0}_{1}", Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias),
+											Thread.CurrentThread.CurrentCulture);
 
                 string fullUrl;
                 using (_fullUrlDictionary.GetReadLock())

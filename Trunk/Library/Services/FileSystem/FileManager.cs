@@ -746,9 +746,21 @@ namespace DotNetNuke.Services.FileSystem
                             {
                                 AddFile(parentFolder, fileName, zipInputStream, true);
                             }
-                            catch (Exception ex)
+                            catch (PermissionsNotMetException exc)
                             {
-                                DnnLog.Error(ex);
+                                DnnLog.Warn(exc);
+                            }
+                            catch (NoSpaceAvailableException exc)
+                            {
+                                DnnLog.Warn(exc);
+                            }
+                            catch (InvalidFileExtensionException exc)
+                            {
+                                DnnLog.Warn(exc);
+                            }
+                            catch (Exception exc)
+                            {
+                                DnnLog.Error(exc);
                             }
                         }
 

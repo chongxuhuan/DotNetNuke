@@ -60,6 +60,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
         public int VendorID = -1;
 
         #region Private Methods
+
         /// <summary>
         /// Return url redirects to the previous page, with or without filter info
         /// </summary>

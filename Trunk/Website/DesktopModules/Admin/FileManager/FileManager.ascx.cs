@@ -1709,22 +1709,22 @@ namespace DotNetNuke.Modules.Admin.FileManager
             txtNewFolder.Text = "";
         }
 
-        private void lnkDeleteFolder_Command(object sender, CommandEventArgs e)
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// The lnkDeleteFolder_Command server event handler on this user control runs when the
+		/// Add Folder ibutton is clicked
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[DYNST]	2/1/2004	Created
+		///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private void lnkDeleteFolder_Command(object sender, CommandEventArgs e)
         {
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// The lnkDeleteFolder_Command server event handler on this user control runs when the
-        /// Add Folder ibutton is clicked
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[DYNST]	2/1/2004	Created
-        ///     [Jon Henning]	11/1/2004	Updated to use ClientAPI/DNNTree
-        /// </history>
-        /// -----------------------------------------------------------------------------
             string strSourcePath;
             var ctrlError = new LiteralControl();
 

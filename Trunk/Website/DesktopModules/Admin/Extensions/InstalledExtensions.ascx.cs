@@ -339,7 +339,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             var kvp = (KeyValuePair<string, PackageType>) dataItem;
 
-            return Localization.GetString(kvp.Key + ".Type", LocalResourceFile);
+            var localizeName = Localization.GetString(kvp.Key + ".Type", LocalResourceFile);
+
+			//catch empty resource key because some module will add itself package type.
+			if(string.IsNullOrEmpty(localizeName))
+			{
+				localizeName = kvp.Key;
+			}
+
+        	return localizeName;
         }
 
         protected override void OnLoad(EventArgs e)

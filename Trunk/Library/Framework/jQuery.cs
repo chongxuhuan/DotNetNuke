@@ -48,14 +48,15 @@ namespace DotNetNuke.Framework
         private const string jQueryMinFile = "~/Resources/Shared/Scripts/jquery/jquery.min.js";
         private const string jQueryVersionKey = "jQueryVersionKey";
         private const string jQueryVersionMatch = "(?<=jquery:\\s\")(.*)(?=\")";
- /// <summary>
- /// Returns the default URL for a hosted version of the jQuery script
- /// </summary>
- /// <remarks>
- /// Google hosts versions of many popular javascript libraries on their CDN.
- /// Using the hosted version increases the likelihood that the file is already
- /// cached in the users browser.
- /// </remarks>
+
+		/// <summary>
+		/// Returns the default URL for a hosted version of the jQuery script
+		/// </summary>
+		/// <remarks>
+		/// Google hosts versions of many popular javascript libraries on their CDN.
+		/// Using the hosted version increases the likelihood that the file is already
+		/// cached in the users browser.
+		/// </remarks>
         public const string DefaultHostedUrl = "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
 
         private const string jQueryUIDebugFile = "~/Resources/Shared/Scripts/jquery/jquery-ui.js";

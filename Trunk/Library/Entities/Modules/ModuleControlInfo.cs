@@ -69,6 +69,7 @@ namespace DotNetNuke.Entities.Modules
         /// </history>
         /// -----------------------------------------------------------------------------
         public string ControlTitle { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Control Type
@@ -90,6 +91,7 @@ namespace DotNetNuke.Entities.Modules
         /// </history>
         /// -----------------------------------------------------------------------------
         public string HelpURL { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Icon  Source
@@ -101,7 +103,7 @@ namespace DotNetNuke.Entities.Modules
         /// -----------------------------------------------------------------------------
         public string IconFile { get; set; }
 		
-		        /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Module Control ID
         /// </summary>
@@ -112,7 +114,7 @@ namespace DotNetNuke.Entities.Modules
         /// -----------------------------------------------------------------------------
         public int ModuleControlID { get; set; }
 		
-		        /// -----------------------------------------------------------------------------
+		/// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Module Definition ID
         /// </summary>
@@ -122,6 +124,7 @@ namespace DotNetNuke.Entities.Modules
         /// </history>
         /// -----------------------------------------------------------------------------
         public int ModuleDefID { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets whether to support popup.
@@ -129,6 +132,7 @@ namespace DotNetNuke.Entities.Modules
         /// <returns>A Boolean value</returns>
         /// -----------------------------------------------------------------------------
         public bool SupportsPopUps { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the View Order

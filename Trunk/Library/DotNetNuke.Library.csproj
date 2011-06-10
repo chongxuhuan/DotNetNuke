@@ -486,6 +486,8 @@
     <Compile Include="Services\Cache\PurgeCache.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\FileSystem\Wrappers\IconControllerWrapper.cs" />
+    <Compile Include="Services\FileSystem\Wrappers\IIconController.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />
     <Compile Include="Services\EventQueue\Config\EventQueueConfiguration.cs" />
     <Compile Include="Services\EventQueue\Config\PublishedEvent.cs" />

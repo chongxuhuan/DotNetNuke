@@ -23,7 +23,7 @@
     	<li><asp:LinkButton id="cancelButton" runat="server" CssClass="dnnSecondaryAction" ResourceKey="Cancel" /></li>
     </ul>
 </div>
-<div style="text-align:center">
+<div class="enableLocalizationProgress" style="text-align:center">
     <dnn:DnnProgressManager id="progressManager" runat="server" />
     <dnn:DnnProgressArea id="pageCreationProgressArea" runat="server" TimeElapsed="true"  />
 </div>

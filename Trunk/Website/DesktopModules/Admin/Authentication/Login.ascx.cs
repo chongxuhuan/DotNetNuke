@@ -834,7 +834,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 
 			var returnUrl = Globals.NavigateURL();
-			var popUpSkinSrc = UrlUtils.GetPopupSkinSrc(this, PortalSettings);
 			string delimiter;
 			string url;
 			string popUpUrl;
@@ -850,7 +849,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
 				if (PortalSettings.EnablePopUps && HttpContext.Current.Request.Url.ToString().Contains("popUp"))
 				{
-					popUpUrl = String.Format("{0}{1}popUp=true&" + popUpSkinSrc, url, delimiter);
+					popUpUrl = String.Format("{0}{1}popUp=true", url, delimiter);
 					registerLink.NavigateUrl = popUpUrl;
 				}
 				else
@@ -868,7 +867,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
 			if (PortalSettings.EnablePopUps && HttpContext.Current.Request.Url.ToString().Contains("popUp"))
 			{
-				popUpUrl = String.Format("{0}{1}popUp=true&" + popUpSkinSrc, url, delimiter);
+				popUpUrl = String.Format("{0}{1}popUp=true" , url, delimiter);
 				passwordLink.NavigateUrl = popUpUrl;
 			}
 			else

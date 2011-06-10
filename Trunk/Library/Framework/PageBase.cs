@@ -93,6 +93,7 @@ namespace DotNetNuke.Framework
 
 
         #region "Protected Properties"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// PageStatePersister returns an instance of the class that will be used to persist the Page State
@@ -577,6 +578,7 @@ namespace DotNetNuke.Framework
                     image.ImageUrl = Page.ResolveUrl(image.ImageUrl);
                 }
 
+                //Check for IconKey
                 if (string.IsNullOrEmpty(image.ImageUrl))
                 {
                     string iconKey = GetControlAttribute(control, affectedControls, IconController.IconKeyName);
@@ -594,7 +596,16 @@ namespace DotNetNuke.Framework
                 if (htmlImage.Src.IndexOf("~") != -1)
                 {
                     htmlImage.Src = Page.ResolveUrl(htmlImage.Src);
-                }                
+                }
+
+                //Check for IconKey
+                if (string.IsNullOrEmpty(htmlImage.Src))
+                {
+                    string iconKey = GetControlAttribute(control, affectedControls, IconController.IconKeyName);
+                    string iconSize = GetControlAttribute(control, affectedControls, IconController.IconSizeName);
+                    string iconStyle = GetControlAttribute(control, affectedControls, IconController.IconStyleName);
+                    htmlImage.Src = IconController.IconURL(iconKey, iconSize, iconStyle);
+                }
             }
 
             //UrlRewriting Issue - ResolveClientUrl gets called instead of ResolveUrl
@@ -610,6 +621,15 @@ namespace DotNetNuke.Framework
                 if ((ctrl.ImageUrl.IndexOf("~") != -1))
                 {
                     ctrl.ImageUrl = Page.ResolveUrl(ctrl.ImageUrl);
+                }
+
+                //Check for IconKey
+                if (string.IsNullOrEmpty(ctrl.ImageUrl))
+                {
+                    string iconKey = GetControlAttribute(control, affectedControls, IconController.IconKeyName);
+                    string iconSize = GetControlAttribute(control, affectedControls, IconController.IconSizeName);
+                    string iconStyle = GetControlAttribute(control, affectedControls, IconController.IconStyleName);
+                    ctrl.ImageUrl = IconController.IconURL(iconKey, iconSize, iconStyle);
                 }
             }
 

@@ -1377,6 +1377,7 @@ namespace DotNetNuke.Services.Localization
         #endregion
 
         #region "GetStringUrl"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// GetStringUrl gets the localized string corresponding to the resourcekey
@@ -1402,6 +1403,7 @@ namespace DotNetNuke.Services.Localization
         #endregion
 
         #region "Get System Message"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets a SystemMessage.

@@ -203,7 +203,7 @@ namespace DotNetNuke.Services.FileSystem
 
         public override string GetImageUrl()
         {
-            return IconController.IconURL("SecurityRoles");
+            return IconControllerWrapper.Instance.IconURL("SecurityRoles");
         }
 
         public override DateTime GetLastModificationTime(IFileInfo file)

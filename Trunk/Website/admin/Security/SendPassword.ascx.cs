@@ -209,10 +209,9 @@ namespace DotNetNuke.Modules.Admin.Security
             }
             returnUrl = HttpUtility.UrlEncode(returnUrl);
 
-            var popUpSkinSrc = UrlUtils.GetPopupSkinSrc(this, PortalSettings);
             var url = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
             var delimiter = url.Contains("?") ? "&" : "?";
-            var popUpUrl = String.Format("{0}{1}popUp=true&" + popUpSkinSrc, url, delimiter);
+            var popUpUrl = String.Format("{0}{1}popUp=true", url, delimiter);
             hlLogin.NavigateUrl = PortalSettings.EnablePopUps ? popUpUrl : url;
         }
 
@@ -227,7 +226,7 @@ namespace DotNetNuke.Modules.Admin.Security
         protected void OnSendPasswordClick(Object sender, EventArgs e)
         {
             //pretty much alwasy display the same message to avoid hinting on the existance of a user name
-            var message = Null.NullString;
+            var message = Localization.GetString("PasswordSent", LocalResourceFile);
             var moduleMessageType = ModuleMessage.ModuleMessageType.GreenSuccess;
             var canSend = true;
 

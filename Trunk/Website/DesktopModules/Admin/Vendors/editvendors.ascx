@@ -3,7 +3,6 @@
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="Portal" TagName="URL" Src="~/controls/URLControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Reference Control="~/DesktopModules/Admin/Vendors/Affiliates.ascx" %>
 <%@ Reference Control="~/DesktopModules/Admin/Vendors/Banners.ascx" %>
 <div class="dnnForm dnnEditVendor dnnClear" id="dnnEditVendor">
@@ -52,7 +51,7 @@
             </div>
             <div id="rowVendor1" runat="server" class="dnnFormItem">
                 <dnn:label id="plLogo" runat="server" controlname="ctlLogo" />
-                <portal:url id="ctlLogo" runat="server" width="200" showurls="False" showtabs="False" showlog="False" showtrack="False" required="False" />
+                <div class="dnnLeft"><portal:url id="ctlLogo" runat="server" width="200" showurls="False" showtabs="False" showlog="False" showtrack="False" required="False" /></div>
             </div>
             <div id="rowVendor2" runat="server" class="dnnFormItem">
                 <dnn:label id="plAuthorized" runat="server" controlname="chkAuthorized" />
@@ -65,7 +64,7 @@
         <fieldset>
             <div class="dnnFormItem">
                 <dnn:label id="plKeyWords" runat="server" controlname="txtKeyWords" />
-                <asp:textbox id="txtKeyWords" runat="server" rows="10" textmode="MultiLine"  Width="300" />
+                <asp:textbox id="txtKeyWords" runat="server" rows="10" textmode="MultiLine" />
             </div>
         </fieldset>
     </asp:panel>

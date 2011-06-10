@@ -119,7 +119,7 @@
     </Content>
     <Content Include="App_LocalResources\ViewMessage.ascx.resx" />
     <Content Include="license.txt" />
-    <Content Include="messaging.gif" />
+    <Content Include="Images\messaging.gif" />
     <Content Include="module.css" />
     <Content Include="releaseNotes.txt" />
     <Content Include="EditMessage.ascx" />
@@ -215,21 +215,20 @@
   </Target>
   <Target Name="GetFiles">
     <ItemGroup>
-      <Views Include="*.ascx" />
-    </ItemGroup>
-    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+      <SourceFiles Include="*.ascx; *.asmx;*.js;*.css" />
       <ResourceFiles Include="App_LocalResources\*.resx" />
-    </ItemGroup>
-    <ItemGroup>
-      <Resources Include="@(ResourceFiles);@(Views)" />
+      <JsFiles Include="js/*.*" />
+      <ConfigFiles Include="*.config" />
+      <Images Include="Images/*.*" />
+      <Resources Include="@(ResourceFiles);@(SourceFiles);@(Images);@(ConfigFiles);@(TextFiles);@(JsFiles)" />
     </ItemGroup>
   </Target>
   <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
-    <Copy SourceFiles="@(Views)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging" />
-    <Copy SourceFiles="@(Controls)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging" />
+    <Copy SourceFiles="@(SourceFiles)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging" />
     <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\Website\DesktopModules\Admin\Messaging\App_LocalResources" />
   </Target>
 </Project>

@@ -29,17 +29,23 @@ small{font-size:8px;}
 big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}
 
-/* Module Title Menu */
-.ModuleTitle_MenuContainer{border:blue 0px solid;}
-.ModuleTitle_MenuBar{cursor:pointer;height:16px;background-color:transparent;}
-.ModuleTitle_MenuItem{cursor:pointer;color:black;font-size:9px;font-weight:bold;font-style:normal;border:none;background-color:transparent;}
-.ModuleTitle_MenuIcon{cursor:pointer;background-color:#eee;border:#eee 1px solid;border-right:none;text-align:center;width:15px;height:21px;}
-.ModuleTitle_SubMenu{z-index:1000;cursor:pointer;background-color:#fff;border:none;}
-.ModuleTitle_MenuBreak{border:#eee 1px solid;border-left:none;border-right:none;background-color:#eee;height:1px;}
-.ModuleTitle_MenuItemSel{cursor:pointer;color:black;font-size:9px;font-weight:bold;font-style:normal;background-color:#C1D2EE;}
-.ModuleTitle_MenuArrow{font-family:webdings;font-size:10px;cursor:pointer;border-right:#fff 1px solid;border-bottom:#fff 1px solid;border-top:none;}
-.ModuleTitle_RootMenuArrow{font-family:webdings;font-size:10px;cursor:pointer;}
+/* Module actions */
+div.DnnModule{z-index:5000;position:relative;}
+div.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px#888;box-shadow: 0 0 5px #888;z-index:4999;background:#f1f1f1;}
 
+div.dnnActionMenu {display:none;margin:0;padding:0;position:absolute;z-index:9999;}
+ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
+ul.dnnActionMenuBody li.first.last {position:relative;}
+	ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;z-index:99999;position:absolute;left:0;top:10;width:380px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
+	ul.dnnActionMenu li.first.last span{background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );display:block;padding:5px 10px;border:1px #999 solid;border-radius:3px;-moz-border-radius:3px;line-height:16px;height:16px;font-weight:bold;font-size:11px;width:65px;cursor:default}
+		ul.dnnActionMenu li.first.last span img{display:block;float:left;padding-right:3px;}
+	ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
+		ul.dnnActionMenuBody li span{border:none;border-bottom:1px #ccc solid;display:block;background:none;padding:0 0 4px 0;margin-bottom:6px;width:auto}
+	ul.dnnActionMenuBody li ul{overflow:hidden;padding-bottom:25px;}
+	ul.dnnActionMenuBody li ul li{float:left;display:block;width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;}
+	ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left}
+	ul.dnnActionMenuBody li ul li a img{padding-right:3px;}
+		
 /* Main Menu */
 .MainMenu_MenuContainer{background-color:transparent;}
 .MainMenu_MenuBar{cursor:pointer;height:16px;background-color:transparent;}
@@ -98,7 +104,6 @@ div.SearchIcon img{margin-top:3px;}
 .dashboardGrid{margin:10px;}
 
 .paneOutline{border:1px #ccc dotted;}
-.containerAdminBorder .NormalRed.DNNAligncenter{background:#8E2F29;color:#fff;text-shadow:1px 1px 0 #000;padding:0.8em 0;}
 
 #UserProfile{border:1px #ccc solid;padding:10px;margin-bottom:10px;}
 	#UserProfile .ProfileName {font-weight:bold;color:#cb2027;margin-bottom:5px;}
@@ -156,7 +161,7 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnForm.dnnShortForm .dnnFormItem input, .dnnForm.dnnShortForm .dnnFormItem select, .dnnForm.dnnShortForm .dnnFormItem textarea{float:none;text-align:left;}
 	.dnnForm.dnnShortForm .dnnFormItem a.dnnFormHelp{background-position:left;padding-left:22px;}
 	
-	.dnnForm .dnnFormItem a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
+	a.dnnFormHelp, .dnnForm .dnnFormItem a.dnnFormHelp, .dnnTooltip label a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
 		.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 		.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
 
@@ -229,34 +234,19 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnGrid td input.dnnFormInput{width:42%;}
 		
 /*======== Legacy CSS Selectors that will be removed ============*/
-
-a.SkinObject:link, a.SkinObject:visited, a.SkinObject:hover, a.SkinObject:active{text-decoration:none;color:#036;}
 hr{color:#696969;height:1px;text-align:left;}
-
-.ControlPanel, .PagingTable{width:100%;background:#fff;border:#036 1px solid;}
-
+.PagingTable{width:100%;border-top:1px #ccc solid}
 /* text style used for help text rendered by modules */
 .Help{border:#000 1px solid;padding:2px;font-weight:normal;color:#000;background-color:#ff9;}
-
-/* hyperlink style for buttons and link buttons used in the portal admin pages */
-a.CommandButton:link, a.CommandButton:visited, a.CommandButton:active{text-decoration:underline;color:#036;}
-a.CommandButton:hover{text-decoration:underline;color:#f00;}
-
 /* text style used for rendered text which should appear disabled */
 .NormalDisabled, .NormalDeleted{color:#ccc;}
-
 /* text style used for rendered text which should appear deleted */
 .NormalDeleted{text-decoration:line-through;}
-
 /* text style used for rendered text which requires emphasis */
 .NormalBold{font-weight:bold;}
-
 /* text style used for error messages */
 .NormalRed{font-weight:bold;color:#f00;}
-
-/* text style used for textareas in the admin and edit pages, for Nav compatibility 
-textarea.NormalTextBox{width:300px;height:60px;}*/
-
+/* text style used for textareas in the admin and edit pages, for Nav compatibility textarea.NormalTextBox{width:300px;height:60px;}*/
 /* style to apply if the content should be hidden */
 .Hidden{display:none;}
 
@@ -396,13 +386,3 @@ a.TreeMenu_Node:active, a.TreeMenu_NodeSelected:active{text-decoration:none;colo
 	width: 200px; /*must have*/
 	height: 200px; /*must have*/
 }
-
-		
-/* DDR Template*/
-    ul.dnnActionMenu li {list-style-type:none;}
-    ul.dnnActionMenu li.first.last {position:relative;}
-        ul.dnnActionMenu ul.first.last {display:none;background:#fff;border:8px solid #ccc;padding:10px;border-radius:3px;-moz-border-radius:3px;z-index:9999;position:absolute;left:0;top:0;width:360px;}
-        ul.dnnActionMenu ul.first.last li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
-        ul.dnnActionMenu ul.first.last li ul{overflow:hidden;padding-bottom:25px;}
-        ul.dnnActionMenu ul.first.last li ul li{float:left;display:block;width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;}
-        ul.dnnActionMenu ul.first.last li ul li a{display:block;line-height:16px;min-height:16px;}

@@ -54,30 +54,30 @@ namespace DotNetNuke.UI.UserControls
 
 		#region Private Members
 		
-		private string MyFileName = "Address.ascx";
-		private string _Cell;
-		private string _City;
-		private string _ControlColumnWidth = "";
-		private string _Country;
-		private string _CountryData = "Text";
-		private string _Fax;
-		private string _LabelColumnWidth = "";
-		private int _ModuleId;
-		private string _Postal;
-		private string _Region;
-		private string _RegionData = "Text";
-		private bool _ShowCell = true;
-		private bool _ShowCity = true;
-		private bool _ShowCountry = true;
-		private bool _ShowFax = true;
-		private bool _ShowPostal = true;
-		private bool _ShowRegion = true;
-		private bool _ShowStreet = true;
-		private bool _ShowTelephone = true;
-		private bool _ShowUnit = true;
-		private string _Street;
-		private string _Telephone;
-		private string _Unit;
+		private const string MyFileName = "Address.ascx";
+		private string _cell;
+		private string _city;
+		private string _controlColumnWidth = "";
+		private string _country;
+		private string _countryData = "Text";
+		private string _fax;
+		private string _labelColumnWidth = "";
+		private int _moduleId;
+		private string _postal;
+		private string _region;
+		private string _regionData = "Text";
+		private bool _showCell = true;
+		private bool _showCity = true;
+		private bool _showCountry = true;
+		private bool _showFax = true;
+		private bool _showPostal = true;
+		private bool _showRegion = true;
+		private bool _showStreet = true;
+		private bool _showTelephone = true;
+		private bool _showUnit = true;
+		private string _street;
+		private string _telephone;
+		private string _unit;
 		protected CountryListBox cboCountry;
 		protected DropDownList cboRegion;
 		protected CheckBox chkCell;
@@ -88,15 +88,6 @@ namespace DotNetNuke.UI.UserControls
 		protected CheckBox chkRegion;
 		protected CheckBox chkStreet;
 		protected CheckBox chkTelephone;
-		protected Label lblCellRequired;
-		protected Label lblCityRequired;
-		protected Label lblCountryRequired;
-		protected Label lblFaxRequired;
-		protected Label lblPostalRequired;
-		protected Label lblRegion;
-		protected Label lblRegionRequired;
-		protected Label lblStreetRequired;
-		protected Label lblTelephoneRequired;
 		protected LabelControl plCell;
 		protected LabelControl plCity;
 		protected LabelControl plCountry;
@@ -135,16 +126,16 @@ namespace DotNetNuke.UI.UserControls
 		
 		#endregion
 
-		#region "Constructors"
+		#region Constructors
 
-		public Address()
+		protected Address()
 		{
 			StartTabIndex = 1;
 		}
 		
 		#endregion
 
-		#region "Properties"
+		#region Properties
 
 		public int ModuleId
 		{
@@ -154,7 +145,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_ModuleId = value;
+				_moduleId = value;
 			}
 		}
 
@@ -166,7 +157,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_LabelColumnWidth = value;
+				_labelColumnWidth = value;
 			}
 		}
 
@@ -178,7 +169,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_ControlColumnWidth = value;
+				_controlColumnWidth = value;
 			}
 		}
 
@@ -192,7 +183,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Street = value;
+				_street = value;
 			}
 		}
 
@@ -204,7 +195,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Unit = value;
+				_unit = value;
 			}
 		}
 
@@ -216,7 +207,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_City = value;
+				_city = value;
 			}
 		}
 
@@ -224,20 +215,13 @@ namespace DotNetNuke.UI.UserControls
 		{
 			get
 			{
-				string retValue = "";
+				var retValue = "";
 				if (cboCountry.SelectedItem != null)
 				{
-					switch (_CountryData.ToLower())
+					switch (_countryData.ToLower())
 					{
 						case "text":
-							if (cboCountry.SelectedIndex == 0) //Return blank if 'Not_Specified' selected 
-							{
-								retValue = "";
-							}
-							else
-							{
-								retValue = cboCountry.SelectedItem.Text;
-							}
+							retValue = cboCountry.SelectedIndex == 0 ? "" : cboCountry.SelectedItem.Text;
 							break;
 						case "value":
 							retValue = cboCountry.SelectedItem.Value;
@@ -248,7 +232,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Country = value;
+				_country = value;
 			}
 		}
 
@@ -256,12 +240,12 @@ namespace DotNetNuke.UI.UserControls
 		{
 			get
 			{
-				string retValue = "";
+				var retValue = "";
 				if (cboRegion.Visible)
 				{
 					if (cboRegion.SelectedItem != null)
 					{
-						switch (_RegionData.ToLower())
+						switch (_regionData.ToLower())
 						{
 							case "text":
 								if (cboRegion.SelectedIndex > 0)
@@ -283,7 +267,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Region = value;
+				_region = value;
 			}
 		}
 
@@ -295,7 +279,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Postal = value;
+				_postal = value;
 			}
 		}
 
@@ -307,7 +291,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Telephone = value;
+				_telephone = value;
 			}
 		}
 
@@ -319,7 +303,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Cell = value;
+				_cell = value;
 			}
 		}
 
@@ -331,7 +315,7 @@ namespace DotNetNuke.UI.UserControls
 			}
 			set
 			{
-				_Fax = value;
+				_fax = value;
 			}
 		}
 
@@ -339,7 +323,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowStreet = value;
+				_showStreet = value;
 			}
 		}
 
@@ -347,7 +331,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowUnit = value;
+				_showUnit = value;
 			}
 		}
 
@@ -355,7 +339,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowCity = value;
+				_showCity = value;
 			}
 		}
 
@@ -363,7 +347,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowCountry = value;
+				_showCountry = value;
 			}
 		}
 
@@ -371,7 +355,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowRegion = value;
+				_showRegion = value;
 			}
 		}
 
@@ -379,7 +363,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowPostal = value;
+				_showPostal = value;
 			}
 		}
 
@@ -387,7 +371,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowTelephone = value;
+				_showTelephone = value;
 			}
 		}
 
@@ -395,7 +379,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowCell = value;
+				_showCell = value;
 			}
 		}
 
@@ -403,7 +387,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_ShowFax = value;
+				_showFax = value;
 			}
 		}
 
@@ -411,7 +395,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_CountryData = value;
+				_countryData = value;
 			}
 		}
 
@@ -419,7 +403,7 @@ namespace DotNetNuke.UI.UserControls
 		{
 			set
 			{
-				_RegionData = value;
+				_regionData = value;
 			}
 		}
 
@@ -496,7 +480,9 @@ namespace DotNetNuke.UI.UserControls
 				plPostal.Text = Localization.GetString("plPostal", Localization.GetResourceFile(this, MyFileName));
 				plPostal.HelpText = Localization.GetString("plPostal.Help", Localization.GetResourceFile(this, MyFileName));
 			}
-			if (String.IsNullOrEmpty(lblRegionRequired.Text))
+
+			var reqRegion = PortalController.GetPortalSettingAsBoolean("addressregion", PortalSettings.PortalId, true);
+			if (reqRegion)
 			{
 				valRegion1.Enabled = false;
 				valRegion2.Enabled = false;
@@ -514,27 +500,34 @@ namespace DotNetNuke.UI.UserControls
 		/// </history>
 		private void ShowRequiredFields()
 		{
-			Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(PortalSettings.PortalId);
-
-			lblStreetRequired.Text = PortalController.GetPortalSettingAsBoolean("addressstreet", PortalSettings.PortalId, true) ? "*" : "";
-			lblCityRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscity", PortalSettings.PortalId, true) ? "*" : "";
-			lblCountryRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscountry", PortalSettings.PortalId, true) ? "*" : "";
-			lblRegionRequired.Text = PortalController.GetPortalSettingAsBoolean("addressregion", PortalSettings.PortalId, true) ? "*" : "";
-			lblPostalRequired.Text = PortalController.GetPortalSettingAsBoolean("addresspostal", PortalSettings.PortalId, true) ? "*" : "";
-			lblTelephoneRequired.Text = PortalController.GetPortalSettingAsBoolean("addresstelephone", PortalSettings.PortalId, true) ? "*" : "";
-			lblCellRequired.Text = PortalController.GetPortalSettingAsBoolean("addresscell", PortalSettings.PortalId, true) ? "*" : "";
-			lblFaxRequired.Text = PortalController.GetPortalSettingAsBoolean("addressfax", PortalSettings.PortalId, true) ? "*" : "";
+			var reqStreet = PortalController.GetPortalSettingAsBoolean("addressstreet", PortalSettings.PortalId, true);
+			var reqCity = PortalController.GetPortalSettingAsBoolean("addresscity", PortalSettings.PortalId, true);
+			var reqCountry = PortalController.GetPortalSettingAsBoolean("addresscountry", PortalSettings.PortalId, true);
+			var reqRegion = PortalController.GetPortalSettingAsBoolean("addressregion", PortalSettings.PortalId, true);
+			var reqPostal = PortalController.GetPortalSettingAsBoolean("addresspostal", PortalSettings.PortalId, true);
+			var reqTelephone = PortalController.GetPortalSettingAsBoolean("addresstelephone", PortalSettings.PortalId, true);
+			var reqCell = PortalController.GetPortalSettingAsBoolean("addresscell", PortalSettings.PortalId, true);
+			var reqFax = PortalController.GetPortalSettingAsBoolean("addressfax", PortalSettings.PortalId, true);
 
 			if (TabPermissionController.CanAdminPage())
 			{
-				if (lblCountryRequired.Text == "*")
+				if (reqCountry)
 				{
 					chkCountry.Checked = true;
 					valCountry.Enabled = true;
+					cboCountry.CssClass = "dnnFormRequired";
 				}
-				if (lblRegionRequired.Text == "*")
+				else
+				{
+				    valCountry.Enabled = false;
+					cboCountry.CssClass = "";
+				}
+				if (reqRegion)
 				{
 					chkRegion.Checked = true;
+					txtRegion.CssClass = "dnnFormRequired";
+					cboRegion.CssClass = "dnnFormRequired";
+
 					if (cboRegion.Visible)
 					{
 						valRegion1.Enabled = true;
@@ -546,69 +539,79 @@ namespace DotNetNuke.UI.UserControls
 						valRegion2.Enabled = true;
 					}
 				}
-				if (lblCityRequired.Text == "*")
+				else
+				{
+				    valRegion1.Enabled = false;
+				    valRegion2.Enabled = false;
+					txtRegion.CssClass = "";
+					cboRegion.CssClass = "";
+				}
+				if (reqCity)
 				{
 					chkCity.Checked = true;
 					valCity.Enabled = true;
+					txtCity.CssClass = "dnnFormRequired";
 				}
-				if (lblStreetRequired.Text == "*")
+				else
+				{
+				    valCity.Enabled = false;
+					txtCity.CssClass = "";
+				}
+				if (reqStreet)
 				{
 					chkStreet.Checked = true;
 					valStreet.Enabled = true;
+					txtStreet.CssClass = "dnnFormRequired";
 				}
-				if (lblPostalRequired.Text == "*")
+				else
+				{
+				    valStreet.Enabled = false;
+					txtStreet.CssClass = "";
+				}
+				if (reqPostal)
 				{
 					chkPostal.Checked = true;
 					valPostal.Enabled = true;
+					txtPostal.CssClass = "dnnFormRequired";
 				}
-				if (lblTelephoneRequired.Text == "*")
+				else
+				{
+				    valPostal.Enabled = false;
+					txtPostal.CssClass = "";
+				}
+				if (reqTelephone)
 				{
 					chkTelephone.Checked = true;
 					valTelephone.Enabled = true;
+					txtTelephone.CssClass = "dnnFormRequired";
 				}
-				if (lblCellRequired.Text == "*")
+				else
+				{
+				    valTelephone.Enabled = false;
+					txtTelephone.CssClass = "";
+				}
+				if (reqCell)
 				{
 					chkCell.Checked = true;
 					valCell.Enabled = true;
+					txtCell.CssClass = "dnnFormRequired";
 				}
-				if (lblFaxRequired.Text == "*")
+				else
+				{
+				    valCell.Enabled = false;
+					txtCell.CssClass = "";
+				}
+				if (reqFax)
 				{
 					chkFax.Checked = true;
 					valFax.Enabled = true;
+					txtFax.CssClass = "dnnFormRequired";
 				}
-			}
-			if (String.IsNullOrEmpty(lblCountryRequired.Text))
-			{
-				valCountry.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblRegionRequired.Text))
-			{
-				valRegion1.Enabled = false;
-				valRegion2.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblCityRequired.Text))
-			{
-				valCity.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblStreetRequired.Text))
-			{
-				valStreet.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblPostalRequired.Text))
-			{
-				valPostal.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblTelephoneRequired.Text))
-			{
-				valTelephone.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblCellRequired.Text))
-			{
-				valCell.Enabled = false;
-			}
-			if (String.IsNullOrEmpty(lblFaxRequired.Text))
-			{
-				valFax.Enabled = false;
+				else
+				{
+				    valFax.Enabled = false;
+					txtFax.CssClass = "";
+				}
 			}
 		}
 
@@ -635,8 +638,13 @@ namespace DotNetNuke.UI.UserControls
 			PortalController.UpdatePortalSetting(PortalSettings.PortalId, "addresstelephone", chkTelephone.Checked ? "" : "N");
 			PortalController.UpdatePortalSetting(PortalSettings.PortalId, "addresscell", chkCell.Checked ? "" : "N");
 			PortalController.UpdatePortalSetting(PortalSettings.PortalId, "addressfax", chkFax.Checked ? "" : "N");
+
 			ShowRequiredFields();
 		}
+
+		#endregion
+
+		#region Event Handlers
 
 		/// <summary>
 		/// Page_Load runs when the control is loaded
@@ -651,15 +659,15 @@ namespace DotNetNuke.UI.UserControls
 		{
 			base.OnLoad(e);
 
-			cboCountry.SelectedIndexChanged += cboCountry_SelectedIndexChanged;
-			chkCell.CheckedChanged += chkCell_CheckedChanged;
-			chkCity.CheckedChanged += chkCity_CheckedChanged;
-			chkCountry.CheckedChanged += chkCountry_CheckedChanged;
-			chkFax.CheckedChanged += chkFax_CheckedChanged;
-			chkPostal.CheckedChanged += chkPostal_CheckedChanged;
-			chkRegion.CheckedChanged += chkRegion_CheckedChanged;
-			chkStreet.CheckedChanged += chkStreet_CheckedChanged;
-			chkTelephone.CheckedChanged += chkTelephone_CheckedChanged;
+			cboCountry.SelectedIndexChanged += OnCountryIndexChanged;
+			chkCell.CheckedChanged += OnCellCheckChanged;
+			chkCity.CheckedChanged += OnCityCheckChanged;
+			chkCountry.CheckedChanged += OnCountryCheckChanged;
+			chkFax.CheckedChanged += OnFaxCheckChanged;
+			chkPostal.CheckedChanged += OnPostalCheckChanged;
+			chkRegion.CheckedChanged += OnRegionCheckChanged;
+			chkStreet.CheckedChanged += OnStreetCheckChanged;
+			chkTelephone.CheckedChanged += OnTelephoneCheckChanged;
 
 			try
 			{
@@ -670,33 +678,9 @@ namespace DotNetNuke.UI.UserControls
 				valTelephone.ErrorMessage = Localization.GetString("TelephoneRequired", Localization.GetResourceFile(this, MyFileName));
 				valCell.ErrorMessage = Localization.GetString("CellRequired", Localization.GetResourceFile(this, MyFileName));
 				valFax.ErrorMessage = Localization.GetString("FaxRequired", Localization.GetResourceFile(this, MyFileName));
+
 				if (!Page.IsPostBack)
 				{
-					if (!String.IsNullOrEmpty(_LabelColumnWidth))
-					{
-						plCountry.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plRegion.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plCity.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plStreet.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plUnit.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plPostal.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plTelephone.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plCell.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-						plFax.Width = System.Web.UI.WebControls.Unit.Parse(_LabelColumnWidth);
-					}
-					if (!String.IsNullOrEmpty(_ControlColumnWidth))
-					{
-						cboCountry.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						cboRegion.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtRegion.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtCity.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtStreet.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtUnit.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtPostal.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtTelephone.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtCell.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-						txtFax.Width = System.Web.UI.WebControls.Unit.Parse(_ControlColumnWidth);
-					}
 					txtStreet.TabIndex = Convert.ToInt16(StartTabIndex);
 					txtUnit.TabIndex = Convert.ToInt16(StartTabIndex + 1);
 					txtCity.TabIndex = Convert.ToInt16(StartTabIndex + 2);
@@ -720,27 +704,27 @@ namespace DotNetNuke.UI.UserControls
 					cboCountry.DataBind();
 					cboCountry.Items.Insert(0, new ListItem("<" + Localization.GetString("Not_Specified", Localization.SharedResourceFile) + ">", ""));
 
-					switch (_CountryData.ToLower())
+					switch (_countryData.ToLower())
 					{
 						case "text":
-							if (String.IsNullOrEmpty(_Country))
+							if (String.IsNullOrEmpty(_country))
 							{
 								cboCountry.SelectedIndex = 0;
 							}
 							else
 							{
-								if (cboCountry.Items.FindByText(_Country) != null)
+								if (cboCountry.Items.FindByText(_country) != null)
 								{
 									cboCountry.ClearSelection();
-									cboCountry.Items.FindByText(_Country).Selected = true;
+									cboCountry.Items.FindByText(_country).Selected = true;
 								}
 							}
 							break;
 						case "value":
-							if (cboCountry.Items.FindByValue(_Country) != null)
+							if (cboCountry.Items.FindByValue(_country) != null)
 							{
 								cboCountry.ClearSelection();
-								cboCountry.Items.FindByValue(_Country).Selected = true;
+								cboCountry.Items.FindByValue(_country).Selected = true;
 							}
 							break;
 					}
@@ -748,50 +732,50 @@ namespace DotNetNuke.UI.UserControls
 
 					if (cboRegion.Visible)
 					{
-						switch (_RegionData.ToLower())
+						switch (_regionData.ToLower())
 						{
 							case "text":
-								if (String.IsNullOrEmpty(_Region))
+								if (String.IsNullOrEmpty(_region))
 								{
 									cboRegion.SelectedIndex = 0;
 								}
 								else
 								{
-									if (cboRegion.Items.FindByText(_Region) != null)
+									if (cboRegion.Items.FindByText(_region) != null)
 									{
-										cboRegion.Items.FindByText(_Region).Selected = true;
+										cboRegion.Items.FindByText(_region).Selected = true;
 									}
 								}
 								break;
 							case "value":
-								if (cboRegion.Items.FindByValue(_Region) != null)
+								if (cboRegion.Items.FindByValue(_region) != null)
 								{
-									cboRegion.Items.FindByValue(_Region).Selected = true;
+									cboRegion.Items.FindByValue(_region).Selected = true;
 								}
 								break;
 						}
 					}
 					else
 					{
-						txtRegion.Text = _Region;
+						txtRegion.Text = _region;
 					}
-					txtStreet.Text = _Street;
-					txtUnit.Text = _Unit;
-					txtCity.Text = _City;
-					txtPostal.Text = _Postal;
-					txtTelephone.Text = _Telephone;
-					txtCell.Text = _Cell;
-					txtFax.Text = _Fax;
+					txtStreet.Text = _street;
+					txtUnit.Text = _unit;
+					txtCity.Text = _city;
+					txtPostal.Text = _postal;
+					txtTelephone.Text = _telephone;
+					txtCell.Text = _cell;
+					txtFax.Text = _fax;
 
-					divStreet.Visible = _ShowStreet;
-					divUnit.Visible = _ShowUnit;
-					divCity.Visible = _ShowCity;
-					divCountry.Visible = _ShowCountry;
-					divRegion.Visible = _ShowRegion;
-					divPostal.Visible = _ShowPostal;
-					divTelephone.Visible = _ShowTelephone;
-					divCell.Visible = _ShowCell;
-					divFax.Visible = _ShowFax;
+					divStreet.Visible = _showStreet;
+					divUnit.Visible = _showUnit;
+					divCity.Visible = _showCity;
+					divCountry.Visible = _showCountry;
+					divRegion.Visible = _showRegion;
+					divPostal.Visible = _showPostal;
+					divTelephone.Visible = _showTelephone;
+					divCell.Visible = _showCell;
+					divFax.Visible = _showFax;
 
 					if (TabPermissionController.CanAdminPage())
 					{
@@ -804,32 +788,32 @@ namespace DotNetNuke.UI.UserControls
 						chkCell.Visible = true;
 						chkFax.Visible = true;
 					}
-					ViewState["ModuleId"] = Convert.ToString(_ModuleId);
-					ViewState["LabelColumnWidth"] = _LabelColumnWidth;
-					ViewState["ControlColumnWidth"] = _ControlColumnWidth;
+					ViewState["ModuleId"] = Convert.ToString(_moduleId);
+					ViewState["LabelColumnWidth"] = _labelColumnWidth;
+					ViewState["ControlColumnWidth"] = _controlColumnWidth;
 
 					ShowRequiredFields();
 				}
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc) 
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void cboCountry_SelectedIndexChanged(object sender, EventArgs e)
+		protected void OnCountryIndexChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				Localize();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkCity_CheckedChanged(object sender, EventArgs e)
+		protected void OnCityCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
@@ -841,85 +825,85 @@ namespace DotNetNuke.UI.UserControls
 			}
 		}
 
-		protected void chkCountry_CheckedChanged(object sender, EventArgs e)
+		protected void OnCountryCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc) 
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkPostal_CheckedChanged(object sender, EventArgs e)
+		protected void OnPostalCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc) 
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkRegion_CheckedChanged(object sender, EventArgs e)
+		protected void OnRegionCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkStreet_CheckedChanged(object sender, EventArgs e)
+		protected void OnStreetCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkTelephone_CheckedChanged(object sender, EventArgs e)
+		protected void OnTelephoneCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkCell_CheckedChanged(object sender, EventArgs e)
+		protected void OnCellCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void chkFax_CheckedChanged(object sender, EventArgs e)
+		protected void OnFaxCheckChanged(object sender, EventArgs e)
 		{
 			try
 			{
 				UpdateRequiredFields();
 			}
-			catch (Exception exc) //Module failed to load
+			catch (Exception exc)
 			{
 				Exceptions.ProcessModuleLoadException(this, exc);
 			}

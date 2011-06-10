@@ -176,7 +176,7 @@ namespace DotNetNuke.Services.FileSystem
 
         public override string GetImageUrl()
         {
-            return IconController.IconURL("Folder");
+            return IconControllerWrapper.Instance.IconURL("Folder");
         }
 
         public override DateTime GetLastModificationTime(IFileInfo file)

@@ -465,15 +465,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetImageUrl
 
         [Test]
-        [Ignore("ash broke it")]
-        public void GetImageUrl_Call_GlobalsWrapper_ResolveUrl()
+        public void GetImageUrl_Calls_IconControllerWrapper_IconURL()
         {
-            var globalsWrapper = new Mock<IGlobals>();
-            GlobalsWrapper.RegisterInstance(globalsWrapper.Object);
+            var iconControllerWrapper = new Mock<IIconController>();
+            IconControllerWrapper.RegisterInstance(iconControllerWrapper.Object);
 
             _dfp.GetImageUrl();
 
-            globalsWrapper.Verify(gw => gw.ResolveUrl(It.IsAny<string>()), Times.Once());
+            iconControllerWrapper.Verify(icw => icw.IconURL("Sql"), Times.Once());
         }
 
         #endregion

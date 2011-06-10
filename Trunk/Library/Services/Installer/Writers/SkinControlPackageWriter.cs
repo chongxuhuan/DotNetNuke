@@ -85,6 +85,7 @@ namespace DotNetNuke.Services.Installer.Writers
 		#endregion
 
 		#region "Public Properties"
+
 		/// -----------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the associated SkinControl

@@ -364,6 +364,7 @@ namespace DotNetNuke.UI.WebControls
 		#endregion
 
 		#region " Private Methods "
+
 		/// <summary>
 		/// retrieve the cultures, currently supported by the portal
 		/// </summary>
