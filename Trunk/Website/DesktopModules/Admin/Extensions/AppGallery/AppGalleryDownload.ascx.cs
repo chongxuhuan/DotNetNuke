@@ -56,7 +56,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             //}
             if (!Page.IsPostBack)
             {
-            string extensionId = Request.QueryString["extensionID"];
+            string extensionId = Request.QueryString["ExtensionID"];
             string extensionRequest = "http://appgallery.dotnetnuke.com" +
                                       "/AppGalleryService.svc/Extensions(" + extensionId.ToString() + ")";
             
@@ -90,21 +90,21 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                     string propertyName = property.LocalName;
                     switch (propertyName)
                     {
-                        case "extensionName":
+                        case "ExtensionName":
                             extName = property.InnerText;
                             break;
-                        case "extensionType":
+                        case "ExtensionType":
                             extType = property.InnerText;
                             ViewState["extType"] = extType;
                             break;
                         case "Description":
                             extDesc = property.InnerText;
                             break;
-                        case "downloadURL":
+                        case "DownloadURL":
                             extURL = property.InnerText;
                             ViewState["extURL"] = extURL;
                             break;
-                        case "catalogID":
+                        case "CatalogID":
                             extCatalogID = property.InnerText;
                             break;
                         default:
@@ -410,17 +410,17 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                 case "Library":
                     extensionFolder = "Module";
                     break;
-                case "module":
+                case "Module":
                     extensionFolder = "Module";
                     break;
                 case "Provider":
                     extensionFolder = "Provider";
                     break;
-                case "skin":
-                    extensionFolder = "skin";
+                case "Skin":
+                    extensionFolder = "Skin";
                     break;
                 case "Skin Object":
-                    extensionFolder = "skin";
+                    extensionFolder = "Skin";
                     break;
                 case "Widget":
                     extensionFolder = "Module";

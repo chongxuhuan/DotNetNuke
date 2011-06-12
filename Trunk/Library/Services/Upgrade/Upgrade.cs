@@ -1487,9 +1487,6 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void UpgradeToVersion510()
         {
-            //Upgrade to .NET 3.5
-            TryUpgradeNETFramework();
-
             var portalController = new PortalController();
             var tabController = new TabController();
             var moduleController = new ModuleController();
@@ -3600,7 +3597,10 @@ namespace DotNetNuke.Services.Upgrade
                 //Add Styles Skin Object
 
                 AddSkinControl("STYLES", "DotNetNuke.StylesSkinObject", "Admin/Skins/Styles.ascx");
-           }
+
+                //Upgrade to .NET 3.5/4.0
+                TryUpgradeNETFramework();
+            }
             catch (Exception ex)
             {
                 DnnLog.Error(ex);

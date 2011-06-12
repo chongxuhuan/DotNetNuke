@@ -2360,9 +2360,12 @@ GO
 
 IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE ModuleDefID IS NULL AND ControlKey = 'AppGalleryDownload') = 0
 	BEGIN
+		DECLARE @ModuleDefID int
+		SET @ModuleDefID = (SELECT ModuleDefID FROM {databaseOwner}{objectQualifier}ModuleDefinitions WHERE FriendlyName = 'Extensions')
+
 		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-			( ControlKey, ControlTitle, ControlSrc, ControlType )
-			VALUES ( 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
+			( ModuleDefID, ControlKey, ControlTitle, ControlSrc, ControlType )
+			VALUES ( @ModuleDefID, 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
 	END
 GO
 

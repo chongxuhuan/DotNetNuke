@@ -30,15 +30,14 @@ big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}
 
 /* Module actions */
-div.DnnModule{z-index:5000;position:relative;}
-div.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px#888;box-shadow: 0 0 5px #888;z-index:4999;background:#f1f1f1;}
-
-div.dnnActionMenu {display:none;margin:0;padding:0;position:absolute;z-index:9999;}
+.DnnModule{z-index:5000;position:relative;}
+.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px#888;box-shadow: 0 0 5px #888;z-index:4999;background:#f1f1f1;}
+.dnnActionMenu {display:none;margin:0;padding:0;position:    absolute;z-index:9999;}
 ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
 ul.dnnActionMenuBody li.first.last {position:relative;}
 	ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;z-index:99999;position:absolute;left:0;top:10;width:380px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
-	ul.dnnActionMenu li.first.last span{background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );display:block;padding:5px 10px;border:1px #999 solid;border-radius:3px;-moz-border-radius:3px;line-height:16px;height:16px;font-weight:bold;font-size:11px;width:65px;cursor:default}
-		ul.dnnActionMenu li.first.last span img{display:block;float:left;padding-right:3px;}
+	.dnnActionMenuTag {background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );display:block;padding:5px 10px;border:1px #999 solid;border-radius:3px;-moz-border-radius:3px;line-height:16px;height:16px;font-weight:bold;font-size:11px;width:65px;cursor:default}
+		.dnnActionMenuTag img{display:block;float:left;padding-right:3px;}
 	ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
 		ul.dnnActionMenuBody li span{border:none;border-bottom:1px #ccc solid;display:block;background:none;padding:0 0 4px 0;margin-bottom:6px;width:auto}
 	ul.dnnActionMenuBody li ul{overflow:hidden;padding-bottom:25px;}

@@ -336,8 +336,8 @@
   <data name="TagCloud.Text" xml:space="preserve">
     <value>Tag Cloud</value>
   </data>
-  <data name="VersionNotSpecified.Text" xml:space="preserve">
-    <value>Version Required Not Specified</value>
+  <data name="NotSpecified.Text" xml:space="preserve">
+    <value>Not Specified</value>
   </data>
   <data name="MoreInformation.Text" xml:space="preserve">
     <value>More Information</value>
@@ -389,5 +389,17 @@
   </data>
   <data name="installExtension.Text" xml:space="preserve">
     <value>Install</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>Minimum Version Required:</value>
+  </data>
+  <data name="DescriptionLabel.Text" xml:space="preserve">
+    <value>Product Description</value>
+  </data>
+  <data name="ExtensionDetail.Text" xml:space="preserve">
+    <value>View more detail for this extension</value>
+  </data>
+  <data name="License.Text" xml:space="preserve">
+    <value>License:</value>
   </data>
 </root>

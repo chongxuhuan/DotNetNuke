@@ -13,7 +13,7 @@ function Gallery(params) {
         rowId: 0
         , index: 1
         , pageSize: 10
-        , orderBy: "extensionName"
+        , orderBy: "ExtensionName"
         , orderDir: "asc"
         , thenBy: ""
         , thenDir: "asc"
@@ -56,6 +56,7 @@ function Gallery(params) {
         , orderLabel: "Order:"
         , errorLabel: "Error..."
         , loadingLabel: "Loading..."
+        , BaseDownLoadUrl: ""
         , searchText: ""
     };
     //extend defaults with ctor params
@@ -434,11 +435,15 @@ Gallery.gotExtensions = function () {
 
     var msg = arguments[0];
     var g = _gallery;
-    
     if (msg && msg.d && msg.d.results) {
         for (var i in msg.d.results) {
             var item = msg.d.results[i];
-            item.Catalog = g.getCatalog(item.catalogID);
+            if (typeof item.Extension != 'undefined') {
+                item.Extension.Catalog = g.getCatalog(item.Extension.CatalogID);
+            }
+            else {
+                item.Catalog = g.getCatalog(item.CatalogID);
+            }
         }
     }
 
@@ -474,7 +479,7 @@ Gallery.prototype.showExtensions = function (callback) {
 
 
     if (this.pagedExtensions.length > 0) {
-        $("#eTmpl").tmpl(this.pagedExtensions).find("div").appendTo(this.extensionList).fadeIn(this.animationSpeed);
+        $("#eTmpl").tmpl(this.pagedExtensions).appendTo(this.extensionList).fadeIn(this.animationSpeed);
     }
     this.pagedExtensions = [];
     if (callback) callback(this);
@@ -484,7 +489,7 @@ Gallery.prototype.getExtensionById = function (extensionID) {
     if (!this.extensions || !this.extensions.d) return;
     var list = this.extensions.d.results;
     for (var x = list.length; x--; x >= 0) {
-        if (list[x].extensionID == extensionID) return list[x];
+        if (list[x].ExtensionID == extensionID) return list[x];
     }
     return;
 }
@@ -513,8 +518,11 @@ Gallery.prototype.DefaultDialogOptions = {
     closeOnEscape: true
 }
 
-Gallery.prototype.ShowDetails = function (extensionID) {
+Gallery.prototype.getDownloadUrl = function (extensionID) {
+    return this.BaseDownLoadUrl.replace("{{ExtensionID}}", extensionID);
+}
 
+Gallery.prototype.ShowDetails = function (extensionID) {
     var ext = this.getExtensionById(extensionID);
     if (ext) {
         var extensionDetailInner = $("#extensionDetailInner");
@@ -523,7 +531,7 @@ Gallery.prototype.ShowDetails = function (extensionID) {
 
         $("#extensionDetail-tabs").tabs();
 
-        this.extensionDetailDialog.dialog({ title: ext.extensionName });
+        this.extensionDetailDialog.dialog({ title: ext.ExtensionName });
         this.extensionDetailDialog.dialog('open');
     }
     return false;
@@ -531,7 +539,7 @@ Gallery.prototype.ShowDetails = function (extensionID) {
 
 Gallery.prototype.getCatalog = function (id) {
     for (var i in this.cats.d) {
-        if (this.cats.d[i].catalogID == id) return this.cats.d[i];
+        if (this.cats.d[i].CatalogID == id) return this.cats.d[i];
     }
     return null;
 }

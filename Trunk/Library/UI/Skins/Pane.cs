@@ -483,10 +483,17 @@ namespace DotNetNuke.UI.Skins
                 //Add Container to Dictionary
                 Containers.Add(container.ID, container);
 
-                // Remove any action control from container, as we are always injecting the new action menu now.
-                foreach (ActionBase control in container.Controls.OfType<ActionBase>())
+                // hide anything of type ActionBase that isn't an ActionButton - as we're injecting our own menu now.
+                foreach (var control in container.Controls.OfType<ActionBase>())
                 {
-                    control.Visible = false;
+                    var baseType = control.GetType().BaseType;
+                    if (baseType != null)
+                    {
+                        if (baseType.ToString() != "DotNetNuke.UI.Containers.ActionButton")
+                        {
+                            control.Visible = false;
+                        }
+                    }
                 }
 
                 if (Globals.IsLayoutMode() && Globals.IsAdminControl() == false)

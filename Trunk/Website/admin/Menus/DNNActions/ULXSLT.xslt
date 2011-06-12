@@ -11,6 +11,7 @@
     
     <xsl:template match="node" mode="root">
         <div class="dnnActionMenu">
+          <div class="dnnActionMenuTag">
             <xsl:choose>
                 <xsl:when test="@enabled = 1">
                     <a href="{@url}">
@@ -29,7 +30,7 @@
                   </span>
                 </xsl:otherwise>
             </xsl:choose>
-        
+          </div>
         <xsl:if test="node">
             <ul class="dnnActionMenuBody">
                 <xsl:apply-templates select="node" />

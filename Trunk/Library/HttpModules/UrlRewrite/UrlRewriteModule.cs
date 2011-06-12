@@ -560,9 +560,6 @@ namespace DotNetNuke.HttpModules
                     }
                 }
 				
-                //parse the Request URL into a Domain Name token 
-                domainName = Globals.GetDomainName(request, true);
-                
 				//PortalId identifies a portal when set
                 if (portalAlias == null)
                 {
