@@ -390,8 +390,9 @@ namespace DotNetNuke.Common.Utilities
             {
 				//Remove Node
                 xmlSubDirectories.RemoveChild(xmlSubDirectory);
+
+                Save(xmlConfig);
             }
-            Save(xmlConfig);
         }
 
         public static string Save(XmlDocument xmlDoc)

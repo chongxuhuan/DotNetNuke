@@ -109,15 +109,20 @@ namespace DotNetNuke.Framework
             {
                 //Set ViewState Persister to default (as defined in Base Class)
                 PageStatePersister persister = base.PageStatePersister;
-                switch (Host.PageStatePersister)
+                
+                if (Globals.Status == Globals.UpgradeStatus.None)
                 {
-                    case "M":
-                        persister = new CachePageStatePersister(this);
-                        break;
-                    case "D":
-                        persister = new DiskPageStatePersister(this);
-                        break;
+                    switch (Host.PageStatePersister)
+                    {
+                        case "M":
+                            persister = new CachePageStatePersister(this);
+                            break;
+                        case "D":
+                            persister = new DiskPageStatePersister(this);
+                            break;
+                    }
                 }
+
                 return persister;
             }
         }

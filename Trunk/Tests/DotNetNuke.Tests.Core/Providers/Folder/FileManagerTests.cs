@@ -142,6 +142,8 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
 
+            _mockData.Setup(c => c.GetProviderPath()).Returns(String.Empty);
+
             var fileContent = new MemoryStream();
 
             _portalController.Setup(pc => pc.HasSpaceAvailable(Constants.CONTENT_ValidPortalId, fileContent.Length)).Returns(false);
@@ -637,7 +639,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
             _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
-            var folderMapping = new FolderMappingInfo {FolderProviderType = Constants.FOLDER_ValidFolderProviderType};
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 

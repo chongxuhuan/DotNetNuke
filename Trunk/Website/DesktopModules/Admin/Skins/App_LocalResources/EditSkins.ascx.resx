@@ -213,4 +213,7 @@
   <data name="lblApply.Help" xml:space="preserve">
     <value />
   </data>
+  <data name="ParseOptions.Help" xml:space="preserve">
+    <value>Portable requires relative graphical references this makes the skin more portable but require additional resources at runtime.</value>
+  </data>
 </root>

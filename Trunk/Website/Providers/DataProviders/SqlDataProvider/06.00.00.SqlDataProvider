@@ -2369,6 +2369,23 @@ IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE Mo
 	END
 GO
 
+/* DNNPRO-16575 - Pages module called as Tabs at few places */
+/************************************************************/
+
+UPDATE {databaseOwner}{objectQualifier}Packages
+	SET 
+		FriendlyName = N'Pages',
+		Description = N'Administrators can manage the Pages within the portal. This module allows you to create a new page, modify an existing page, delete pages, change the page order, and change the hierarchical page level.'
+	WHERE Name = N'DotNetNuke.Tabs'
+
+UPDATE {databaseOwner}{objectQualifier}DesktopModules
+	SET 
+		FriendlyName = N'Pages',
+		Description = N'Administrators can manage the Pages within the portal. This module allows you to create a new page, modify an existing page, delete pages, change the page order, and change the hierarchical page level.'
+	WHERE ModuleName = N'Tabs'
+
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

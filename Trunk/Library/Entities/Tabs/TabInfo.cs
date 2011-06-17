@@ -318,27 +318,30 @@ namespace DotNetNuke.Entities.Tabs
                 {
                     using (_fullUrlDictionary.GetWriteLock())
                     {
-                        switch (TabType)
+                        if (!_fullUrlDictionary.ContainsKey(key))
                         {
-                            case TabType.Normal:
-                                //normal tab
-                                fullUrl = Globals.NavigateURL(TabID, IsSuperTab);
-                                break;
-                            case TabType.Tab:
-                                //alternate tab url
-                                fullUrl = Globals.NavigateURL(Convert.ToInt32(Url));
-                                break;
-                            case TabType.File:
-                                //file url
-                                fullUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
-                                break;
-                            case TabType.Url:
-                                //external url
-                                fullUrl = Url;
-                                break;
-                        }
+                            switch (TabType)
+                            {
+                                case TabType.Normal:
+                                    //normal tab
+                                    fullUrl = Globals.NavigateURL(TabID, IsSuperTab);
+                                    break;
+                                case TabType.Tab:
+                                    //alternate tab url
+                                    fullUrl = Globals.NavigateURL(Convert.ToInt32(Url));
+                                    break;
+                                case TabType.File:
+                                    //file url
+                                    fullUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
+                                    break;
+                                case TabType.Url:
+                                    //external url
+                                    fullUrl = Url;
+                                    break;
+                            }
 
-                        _fullUrlDictionary.Add(key, fullUrl);
+                            _fullUrlDictionary.Add(key, fullUrl);
+                        }
                     }
                 }
 

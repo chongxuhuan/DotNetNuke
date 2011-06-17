@@ -8,11 +8,14 @@
         <asp:Label ID="fromLabel" runat="server" />
     </div>
     <div class="dnnFormItem">
-        <dnn:DnnFieldLabel ID="subjectFieldLabel" runat="server" Text="Subject.Text" />
-        <asp:Label ID="subjectLabel" runat="server" />
+        <dnn:DnnFieldLabel ID="subjectFieldLabel" runat="server" Text="Subject.Text" />        
+        <asp:Label ID="subjectLabel" runat="server" />        
     </div>
     <div class="dnnFormItem">
-        <asp:Label ID="messageLabel" runat="server" resourcekey="Message" CssClass="dnnFormLabel" />
+        <dnn:DnnFieldLabel ID="MessageFieldLabel" runat="server" resourcekey="Message"/>
+        <div class="right" style="width:665px;">
+            <asp:Label ID="messageLabel" runat="server"/>
+        </div>
     </div>
     <ul class="dnnActions dnnClear">
         <li><asp:HyperLink ID="hlReplyMessage" runat="server" resourceKey="ReplyMessage" CausesValidation="false" CssClass="dnnPrimaryAction" /></li>

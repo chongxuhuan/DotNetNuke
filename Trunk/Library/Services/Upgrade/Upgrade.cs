@@ -795,9 +795,8 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void AddModuleCategories()
         {
-            DesktopModuleController.AddModuleCategory("Host");
             DesktopModuleController.AddModuleCategory("Admin");
-            DesktopModuleController.AddModuleCategory("Uncategorised");
+            DesktopModuleController.AddModuleCategory("Common");
 
             foreach (var desktopModuleInfo in DesktopModuleController.GetDesktopModules(Null.NullInteger))
             {
@@ -814,8 +813,6 @@ namespace DotNetNuke.Services.Upgrade
                     case "Dashboard":
                     case "Marketplace":
                     case "ConfigurationManager":
-                        desktopModuleInfo.Value.Category = "Host";
-                        break;
                     case "Security":
                     case "Tabs":
                     case "Vendors":
@@ -835,7 +832,6 @@ namespace DotNetNuke.Services.Upgrade
                         desktopModuleInfo.Value.Category = "Admin";
                         break;
                     default:
-                        desktopModuleInfo.Value.Category = "Uncategorised";
                         break;
                 }
                 DesktopModuleController.SaveDesktopModule(desktopModuleInfo.Value, false, false);
@@ -2041,6 +2037,203 @@ namespace DotNetNuke.Services.Upgrade
             ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count*2 + 2, UserVisibilityMode.AllUsers, dataTypes);
 
             HostController.Instance.Update("AutoAddPortalAlias", Globals.Status == Globals.UpgradeStatus.Install ? "Y" : "N");
+
+            // remove the system message module from the admin tab
+            // System Messages are now managed through Localization
+            if (CoreModuleExists("System Messages"))
+            {
+                RemoveCoreModule("System Messages", "Admin", "Site Settings", false);
+            }
+
+            // remove portal alias module
+            if (CoreModuleExists("PortalAliases"))
+            {
+                RemoveCoreModule("PortalAliases", "Admin", "Site Settings", false);
+            }
+
+            // add the log viewer module to the admin tab
+            int moduleDefId;
+            if (CoreModuleExists("LogViewer") == false)
+            {
+                moduleDefId = AddModuleDefinition("LogViewer", "Allows you to view log entries for portal events.", "Log Viewer");
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/LogViewer/LogViewer.ascx", "", SecurityAccessLevel.Admin, 0);
+                AddModuleControl(moduleDefId, "Edit", "Edit Log Settings", "DesktopModules/Admin/LogViewer/EditLogTypes.ascx", "", SecurityAccessLevel.Host, 0);
+
+                //Add the Module/Page to all configured portals
+                AddAdminPages("Log Viewer", "View a historical log of database events such as event schedules, exceptions, account logins, module and page changes, user account activities, security role activities, etc.", "icon_viewstats_16px.gif", "icon_viewstats_32px.gif", true, moduleDefId, "Log Viewer", "icon_viewstats_16px.gif");
+            }
+
+            // add the schedule module to the host tab
+            TabInfo newPage;
+            if (CoreModuleExists("Scheduler") == false)
+            {
+                moduleDefId = AddModuleDefinition("Scheduler", "Allows you to schedule tasks to be run at specified intervals.", "Scheduler");
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Scheduler/ViewSchedule.ascx", "", SecurityAccessLevel.Admin, 0);
+                AddModuleControl(moduleDefId, "Edit", "Edit Schedule", "DesktopModules/Admin/Scheduler/EditSchedule.ascx", "", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "History", "Schedule History", "DesktopModules/Admin/Scheduler/ViewScheduleHistory.ascx", "", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "Status", "Schedule Status", "DesktopModules/Admin/Scheduler/ViewScheduleStatus.ascx", "", SecurityAccessLevel.Host, 0);
+
+                //Create New Host Page (or get existing one)
+                newPage = AddHostPage("Schedule", "Add, modify and delete scheduled tasks to be run at specified intervals.", "icon_scheduler_16px.gif", "icon_scheduler_32px.gif", true);
+
+                //Add Module To Page
+                AddModuleToPage(newPage, moduleDefId, "Schedule", "icon_scheduler_16px.gif");
+            }
+
+            // add the Search Admin module to the host tab
+            if (CoreModuleExists("SearchAdmin") == false)
+            {
+                moduleDefId = AddModuleDefinition("SearchAdmin", "The Search Admininstrator provides the ability to manage search settings.", "Search Admin");
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchAdmin/SearchAdmin.ascx", "", SecurityAccessLevel.Host, 0);
+
+                //Create New Host Page (or get existing one)
+                newPage = AddHostPage("Search Admin", "Manage search settings associated with DotNetNuke's search capability.", "icon_search_16px.gif", "icon_search_32px.gif", true);
+
+                //Add Module To Page
+                AddModuleToPage(newPage, moduleDefId, "Search Admin", "icon_search_16px.gif");
+            }
+
+            // add the Search Input module
+            if (CoreModuleExists("SearchInput") == false)
+            {
+                moduleDefId = AddModuleDefinition("SearchInput", "The Search Input module provides the ability to submit a search to a given search results module.", "Search Input", false, false);
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchInput/SearchInput.ascx", "", SecurityAccessLevel.Anonymous, 0);
+                AddModuleControl(moduleDefId, "Settings", "Search Input Settings", "DesktopModules/Admin/SearchInput/Settings.ascx", "", SecurityAccessLevel.Edit, 0);
+            }
+
+            // add the Search Results module
+            if (CoreModuleExists("SearchResults") == false)
+            {
+                moduleDefId = AddModuleDefinition("SearchResults", "The Search Reasults module provides the ability to display search results.", "Search Results", false, false);
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchResults/SearchResults.ascx", "", SecurityAccessLevel.Anonymous, 0);
+                AddModuleControl(moduleDefId, "Settings", "Search Results Settings", "DesktopModules/Admin/SearchResults/Settings.ascx", "", SecurityAccessLevel.Edit, 0);
+
+                //Add the Search Module/Page to all configured portals
+                AddSearchResults(moduleDefId);
+            }
+
+            // add the site wizard module to the admin tab
+            if (CoreModuleExists("SiteWizard") == false)
+            {
+                moduleDefId = AddModuleDefinition("SiteWizard", "The Administrator can use this user-friendly wizard to set up the common Extensions of the Portal/Site.", "Site Wizard");
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SiteWizard/Sitewizard.ascx", "", SecurityAccessLevel.Admin, 0);
+                AddAdminPages("Site Wizard", "Configure portal settings, page design and apply a site template using a step-by-step wizard.", "icon_wizard_16px.gif", "icon_wizard_32px.gif", true, moduleDefId, "Site Wizard", "icon_wizard_16px.gif");
+            }
+
+            //add Lists module and tab
+            if (HostTabExists("Lists") == false)
+            {
+                moduleDefId = AddModuleDefinition("Lists", "Allows you to edit common lists.", "Lists");
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Lists/ListEditor.ascx", "", SecurityAccessLevel.Host, 0);
+
+                //Create New Host Page (or get existing one)
+                newPage = AddHostPage("Lists", "Manage common lists.", "icon_lists_16px.gif", "icon_lists_32px.gif", true);
+
+                //Add Module To Page
+                AddModuleToPage(newPage, moduleDefId, "Lists", "icon_lists_16px.gif");
+            }
+
+            if (HostTabExists("Superuser Accounts") == false)
+            {
+                //add SuperUser Accounts module and tab
+                DesktopModuleInfo objDesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName("Security", Null.NullInteger);
+                moduleDefId = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("User Accounts", objDesktopModuleInfo.DesktopModuleID).ModuleDefID;
+
+                //Create New Host Page (or get existing one)
+                newPage = AddHostPage("Superuser Accounts", "Manage host user accounts.", "icon_users_16px.gif", "icon_users_32px.gif", true);
+
+                //Add Module To Page
+                AddModuleToPage(newPage, moduleDefId, "Superuser Accounts", "icon_users_32px.gif");
+            }
+
+            //Add Edit Role Groups
+            moduleDefId = GetModuleDefinition("Security", "Security Roles");
+            AddModuleControl(moduleDefId, "EditGroup", "Edit Role Groups", "DesktopModules/Admin/Security/EditGroups.ascx", "icon_securityroles_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
+            AddModuleControl(moduleDefId, "UserSettings", "Manage User Settings", "DesktopModules/Admin/Security/UserSettings.ascx", "~/images/settings.gif", SecurityAccessLevel.Edit, Null.NullInteger);
+
+            //Add User Accounts Controls
+            moduleDefId = GetModuleDefinition("Security", "User Accounts");
+            AddModuleControl(moduleDefId, "ManageProfile", "Manage Profile Definition", "DesktopModules/Admin/Security/ProfileDefinitions.ascx", "icon_users_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
+            AddModuleControl(moduleDefId, "EditProfileProperty", "Edit Profile Property Definition", "DesktopModules/Admin/Security/EditProfileDefinition.ascx", "icon_users_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
+            AddModuleControl(moduleDefId, "UserSettings", "Manage User Settings", "DesktopModules/Admin/Security/UserSettings.ascx", "~/images/settings.gif", SecurityAccessLevel.Edit, Null.NullInteger);
+            AddModuleControl(Null.NullInteger, "Profile", "Profile", "DesktopModules/Admin/Security/ManageUsers.ascx", "icon_users_32px.gif", SecurityAccessLevel.Anonymous, Null.NullInteger);
+            AddModuleControl(Null.NullInteger, "SendPassword", "Send Password", "DesktopModules/Admin/Security/SendPassword.ascx", "", SecurityAccessLevel.Anonymous, Null.NullInteger);
+            AddModuleControl(Null.NullInteger, "ViewProfile", "View Profile", "DesktopModules/Admin/Security/ViewProfile.ascx", "icon_users_32px.gif", SecurityAccessLevel.Anonymous, Null.NullInteger);
+
+            //Update Child Portal subHost.aspx
+            var portalAliasController = new PortalAliasController();
+            ArrayList aliases = portalAliasController.GetPortalAliasArrayByPortalID(Null.NullInteger);
+            string childPath;
+
+            foreach (PortalAliasInfo aliasInfo in aliases)
+            {
+                //For the alias to be for a child it must be of the form ...../child
+                int intChild = aliasInfo.HTTPAlias.IndexOf("/");
+                if (intChild != -1 && intChild != (aliasInfo.HTTPAlias.Length - 1))
+                {
+                    childPath = Globals.ApplicationMapPath + "\\" + aliasInfo.HTTPAlias.Substring(intChild + 1);
+                    if (!string.IsNullOrEmpty(Globals.ApplicationPath))
+                    {
+                        childPath = childPath.Replace("\\", "/");
+                        childPath = childPath.Replace(Globals.ApplicationPath, "");
+                    }
+                    childPath = childPath.Replace("/", "\\");
+                    // check if File exists and make sure it's not the site's main default.aspx page
+                    string childDefaultPage = childPath + "\\" + Globals.glbDefaultPage;
+                    if (childPath != Globals.ApplicationMapPath && File.Exists(childDefaultPage))
+                    {
+                        var objDefault = new System.IO.FileInfo(childDefaultPage);
+                        var objSubHost = new System.IO.FileInfo(Globals.HostMapPath + "subhost.aspx");
+                        // check if upgrade is necessary
+                        if (objDefault.Length != objSubHost.Length)
+                        {
+                            //check file is readonly
+                            bool wasReadonly = false;
+                            FileAttributes attributes = File.GetAttributes(childDefaultPage);
+                            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                            {
+                                wasReadonly = true;
+                                //remove readonly attribute
+                                File.SetAttributes(childDefaultPage, FileAttributes.Normal);
+                            }
+
+                            //Rename existing file                                
+                            File.Copy(childDefaultPage, childPath + "\\old_" + Globals.glbDefaultPage, true);
+
+                            //copy file
+                            File.Copy(Globals.HostMapPath + "subhost.aspx", childDefaultPage, true);
+
+                            //set back the readonly attribute
+                            if (wasReadonly)
+                            {
+                                File.SetAttributes(childDefaultPage, FileAttributes.ReadOnly);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // add the solutions explorer module to the admin tab
+            if (CoreModuleExists("Solutions") == false)
+            {
+                moduleDefId = AddModuleDefinition("Solutions", "Browse additional solutions for your application.", "Solutions", false, false);
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Solutions/Solutions.ascx", "", SecurityAccessLevel.Admin, 0);
+                AddAdminPages("Solutions", "DotNetNuke Solutions Explorer page provides easy access to locate free and commercial DotNetNuke modules, skin and more.", "icon_solutions_16px.gif", "icon_solutions_32px.gif", true, moduleDefId, "Solutions Explorer", "icon_solutions_32px.gif");
+            }
+
+
+            //Add Search Skin Object
+            AddSkinControl("SEARCH", "DotNetNuke.SearchSkinObject", "Admin/Skins/Search.ascx");
+
+            //Add TreeView Skin Object
+            AddSkinControl("TREEVIEW", "DotNetNuke.TreeViewSkinObject", "Admin/Skins/TreeViewMenu.ascx");
+
+            //Add Text Skin Object
+            AddSkinControl("TEXT", "DotNetNuke.TextSkinObject", "Admin/Skins/Text.ascx");
+
+            //Add Styles Skin Object
+
+            AddSkinControl("STYLES", "DotNetNuke.StylesSkinObject", "Admin/Skins/Styles.ascx");
         }
 
         private static void UpgradeToVersion600()
@@ -2097,8 +2290,6 @@ namespace DotNetNuke.Services.Upgrade
             AddProfessionalPreviewPages();
 
             AddDefaultModuleIcons();
-
-            AddModuleCategories();
 
             AddIconToAllowedFiles();
 
@@ -3401,202 +3592,7 @@ namespace DotNetNuke.Services.Upgrade
         {
             try
             {
-                // remove the system message module from the admin tab
-                // System Messages are now managed through Localization
-                if (CoreModuleExists("System Messages"))
-                {
-                    RemoveCoreModule("System Messages", "Admin", "Site Settings", false);
-                }
-
-                // remove portal alias module
-                if (CoreModuleExists("PortalAliases"))
-                {
-                    RemoveCoreModule("PortalAliases", "Admin", "Site Settings", false);
-                }
-
-                // add the log viewer module to the admin tab
-                int moduleDefId;
-                if (CoreModuleExists("LogViewer") == false)
-                {
-                    moduleDefId = AddModuleDefinition("LogViewer", "Allows you to view log entries for portal events.", "Log Viewer");
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/LogViewer/LogViewer.ascx", "", SecurityAccessLevel.Admin, 0);
-                    AddModuleControl(moduleDefId, "Edit", "Edit Log Settings", "DesktopModules/Admin/LogViewer/EditLogTypes.ascx", "", SecurityAccessLevel.Host, 0);
-
-                    //Add the Module/Page to all configured portals
-                    AddAdminPages("Log Viewer", "View a historical log of database events such as event schedules, exceptions, account logins, module and page changes, user account activities, security role activities, etc.", "icon_viewstats_16px.gif", "icon_viewstats_32px.gif", true, moduleDefId, "Log Viewer", "icon_viewstats_16px.gif");
-                }
-
-                // add the schedule module to the host tab
-                TabInfo newPage;
-                if (CoreModuleExists("Scheduler") == false)
-                {
-                    moduleDefId = AddModuleDefinition("Scheduler", "Allows you to schedule tasks to be run at specified intervals.", "Scheduler");
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Scheduler/ViewSchedule.ascx", "", SecurityAccessLevel.Admin, 0);
-                    AddModuleControl(moduleDefId, "Edit", "Edit Schedule", "DesktopModules/Admin/Scheduler/EditSchedule.ascx", "", SecurityAccessLevel.Host, 0);
-                    AddModuleControl(moduleDefId, "History", "Schedule History", "DesktopModules/Admin/Scheduler/ViewScheduleHistory.ascx", "", SecurityAccessLevel.Host, 0);
-                    AddModuleControl(moduleDefId, "Status", "Schedule Status", "DesktopModules/Admin/Scheduler/ViewScheduleStatus.ascx", "", SecurityAccessLevel.Host, 0);
-
-                    //Create New Host Page (or get existing one)
-                    newPage = AddHostPage("Schedule", "Add, modify and delete scheduled tasks to be run at specified intervals.", "icon_scheduler_16px.gif", "icon_scheduler_32px.gif", true);
-
-                    //Add Module To Page
-                    AddModuleToPage(newPage, moduleDefId, "Schedule", "icon_scheduler_16px.gif");
-                }
-
-                // add the Search Admin module to the host tab
-                if (CoreModuleExists("SearchAdmin") == false)
-                {
-                    moduleDefId = AddModuleDefinition("SearchAdmin", "The Search Admininstrator provides the ability to manage search settings.", "Search Admin");
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchAdmin/SearchAdmin.ascx", "", SecurityAccessLevel.Host, 0);
-
-                    //Create New Host Page (or get existing one)
-                    newPage = AddHostPage("Search Admin", "Manage search settings associated with DotNetNuke's search capability.", "icon_search_16px.gif", "icon_search_32px.gif", true);
-
-                    //Add Module To Page
-                    AddModuleToPage(newPage, moduleDefId, "Search Admin", "icon_search_16px.gif");
-                }
-
-                // add the Search Input module
-                if (CoreModuleExists("SearchInput") == false)
-                {
-                    moduleDefId = AddModuleDefinition("SearchInput", "The Search Input module provides the ability to submit a search to a given search results module.", "Search Input", false, false);
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchInput/SearchInput.ascx", "", SecurityAccessLevel.Anonymous, 0);
-                    AddModuleControl(moduleDefId, "Settings", "Search Input Settings", "DesktopModules/Admin/SearchInput/Settings.ascx", "", SecurityAccessLevel.Edit, 0);
-                }
-
-                // add the Search Results module
-                if (CoreModuleExists("SearchResults") == false)
-                {
-                    moduleDefId = AddModuleDefinition("SearchResults", "The Search Reasults module provides the ability to display search results.", "Search Results", false, false);
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SearchResults/SearchResults.ascx", "", SecurityAccessLevel.Anonymous, 0);
-                    AddModuleControl(moduleDefId, "Settings", "Search Results Settings", "DesktopModules/Admin/SearchResults/Settings.ascx", "", SecurityAccessLevel.Edit, 0);
-
-                    //Add the Search Module/Page to all configured portals
-                    AddSearchResults(moduleDefId);
-                }
-
-                // add the site wizard module to the admin tab
-                if (CoreModuleExists("SiteWizard") == false)
-                {
-                    moduleDefId = AddModuleDefinition("SiteWizard", "The Administrator can use this user-friendly wizard to set up the common Extensions of the Portal/Site.", "Site Wizard");
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/SiteWizard/Sitewizard.ascx", "", SecurityAccessLevel.Admin, 0);
-                    AddAdminPages("Site Wizard", "Configure portal settings, page design and apply a site template using a step-by-step wizard.", "icon_wizard_16px.gif", "icon_wizard_32px.gif", true, moduleDefId, "Site Wizard", "icon_wizard_16px.gif");
-                }
-
-                //add Lists module and tab
-                if (HostTabExists("Lists") == false)
-                {
-                    moduleDefId = AddModuleDefinition("Lists", "Allows you to edit common lists.", "Lists");
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Lists/ListEditor.ascx", "", SecurityAccessLevel.Host, 0);
-
-                    //Create New Host Page (or get existing one)
-                    newPage = AddHostPage("Lists", "Manage common lists.", "icon_lists_16px.gif", "icon_lists_32px.gif", true);
-
-                    //Add Module To Page
-                    AddModuleToPage(newPage, moduleDefId, "Lists", "icon_lists_16px.gif");
-                }
-
-                if (HostTabExists("Superuser Accounts") == false)
-                {
-                    //add SuperUser Accounts module and tab
-                    DesktopModuleInfo objDesktopModuleInfo = DesktopModuleController.GetDesktopModuleByModuleName("Security", Null.NullInteger);
-                    moduleDefId = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("User Accounts", objDesktopModuleInfo.DesktopModuleID).ModuleDefID;
-
-                    //Create New Host Page (or get existing one)
-                    newPage = AddHostPage("Superuser Accounts", "Manage host user accounts.", "icon_users_16px.gif", "icon_users_32px.gif", true);
-
-                    //Add Module To Page
-                    AddModuleToPage(newPage, moduleDefId, "Superuser Accounts", "icon_users_32px.gif");
-                }
-
-                //Add Edit Role Groups
-                moduleDefId = GetModuleDefinition("Security", "Security Roles");
-                AddModuleControl(moduleDefId, "EditGroup", "Edit Role Groups", "DesktopModules/Admin/Security/EditGroups.ascx", "icon_securityroles_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
-                AddModuleControl(moduleDefId, "UserSettings", "Manage User Settings", "DesktopModules/Admin/Security/UserSettings.ascx", "~/images/settings.gif", SecurityAccessLevel.Edit, Null.NullInteger);
-
-                //Add User Accounts Controls
-                moduleDefId = GetModuleDefinition("Security", "User Accounts");
-                AddModuleControl(moduleDefId, "ManageProfile", "Manage Profile Definition", "DesktopModules/Admin/Security/ProfileDefinitions.ascx", "icon_users_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
-                AddModuleControl(moduleDefId, "EditProfileProperty", "Edit Profile Property Definition", "DesktopModules/Admin/Security/EditProfileDefinition.ascx", "icon_users_32px.gif", SecurityAccessLevel.Edit, Null.NullInteger);
-                AddModuleControl(moduleDefId, "UserSettings", "Manage User Settings", "DesktopModules/Admin/Security/UserSettings.ascx", "~/images/settings.gif", SecurityAccessLevel.Edit, Null.NullInteger);
-                AddModuleControl(Null.NullInteger, "Profile", "Profile", "DesktopModules/Admin/Security/ManageUsers.ascx", "icon_users_32px.gif", SecurityAccessLevel.Anonymous, Null.NullInteger);
-                AddModuleControl(Null.NullInteger, "SendPassword", "Send Password", "DesktopModules/Admin/Security/SendPassword.ascx", "", SecurityAccessLevel.Anonymous, Null.NullInteger);
-                AddModuleControl(Null.NullInteger, "ViewProfile", "View Profile", "DesktopModules/Admin/Security/ViewProfile.ascx", "icon_users_32px.gif", SecurityAccessLevel.Anonymous, Null.NullInteger);
-
-                //Update Child Portal subHost.aspx
-                var portalAliasController = new PortalAliasController();
-                ArrayList aliases = portalAliasController.GetPortalAliasArrayByPortalID(Null.NullInteger);
-                string childPath;
-
-                foreach (PortalAliasInfo aliasInfo in aliases)
-                {
-                    //For the alias to be for a child it must be of the form ...../child
-                    int intChild = aliasInfo.HTTPAlias.IndexOf("/");
-                    if (intChild != -1 && intChild != (aliasInfo.HTTPAlias.Length - 1))
-                    {
-                        childPath = Globals.ApplicationMapPath + "\\" + aliasInfo.HTTPAlias.Substring(intChild + 1);
-                        if (!string.IsNullOrEmpty(Globals.ApplicationPath))
-                        {
-                            childPath = childPath.Replace("\\", "/");
-                            childPath = childPath.Replace(Globals.ApplicationPath, "");
-                        }
-                        childPath = childPath.Replace("/", "\\");
-                        // check if File exists and make sure it's not the site's main default.aspx page
-                        string childDefaultPage = childPath + "\\" + Globals.glbDefaultPage;
-                        if (childPath != Globals.ApplicationMapPath && File.Exists(childDefaultPage))
-                        {                            
-                            var objDefault = new System.IO.FileInfo(childDefaultPage);
-                            var objSubHost = new System.IO.FileInfo(Globals.HostMapPath + "subhost.aspx");
-                            // check if upgrade is necessary
-                            if (objDefault.Length != objSubHost.Length)
-                            {
-                                //check file is readonly
-                                bool wasReadonly = false;
-                                FileAttributes attributes = File.GetAttributes(childDefaultPage);                                
-                                if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                                {
-                                    wasReadonly = true;
-                                    //remove readonly attribute
-                                    File.SetAttributes(childDefaultPage, FileAttributes.Normal);
-                                }
-
-                                //Rename existing file                                
-                                File.Copy(childDefaultPage, childPath + "\\old_" + Globals.glbDefaultPage, true);
-
-                                //copy file
-                                File.Copy(Globals.HostMapPath + "subhost.aspx", childDefaultPage, true);
-
-                                //set back the readonly attribute
-                                if (wasReadonly)
-                                {
-                                    File.SetAttributes(childDefaultPage, FileAttributes.ReadOnly);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // add the solutions explorer module to the admin tab
-                if (CoreModuleExists("Solutions") == false)
-                {
-                    moduleDefId = AddModuleDefinition("Solutions", "Browse additional solutions for your application.", "Solutions", false, false);
-                    AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Solutions/Solutions.ascx", "", SecurityAccessLevel.Admin, 0);
-                    AddAdminPages("Solutions", "DotNetNuke Solutions Explorer page provides easy access to locate free and commercial DotNetNuke modules, skin and more.", "icon_solutions_16px.gif", "icon_solutions_32px.gif", true, moduleDefId, "Solutions Explorer", "icon_solutions_32px.gif"); 
-                }
-
-
-                //Add Search Skin Object
-                AddSkinControl("SEARCH", "DotNetNuke.SearchSkinObject", "Admin/Skins/Search.ascx");
-
-                //Add TreeView Skin Object
-                AddSkinControl("TREEVIEW", "DotNetNuke.TreeViewSkinObject", "Admin/Skins/TreeViewMenu.ascx");
-
-                //Add Text Skin Object
-                AddSkinControl("TEXT", "DotNetNuke.TextSkinObject", "Admin/Skins/Text.ascx");
-
-                //Add Styles Skin Object
-
-                AddSkinControl("STYLES", "DotNetNuke.StylesSkinObject", "Admin/Skins/Styles.ascx");
+                AddModuleCategories();
 
                 //Upgrade to .NET 3.5/4.0
                 TryUpgradeNETFramework();

@@ -6,7 +6,7 @@
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
     function setUpDnnLogViewer() {
-        $('.dnnLogItemHeader').click(function () {
+        $('.dnnLogItemHeader').unbind("click").click(function () {
             $(this).next('.dnnLogItemDetail').slideToggle();
         });
         $('.dnnLogItemHeader input').click(function (e) {

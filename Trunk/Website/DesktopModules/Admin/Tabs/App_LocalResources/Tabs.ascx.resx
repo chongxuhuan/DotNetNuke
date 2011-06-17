@@ -136,7 +136,7 @@
     <value>Delete Page</value>
   </data>
   <data name="EditPage.Text" xml:space="preserve">
-    <value>Edit Page</value>
+    <value>Page Settings</value>
   </data>
   <data name="Expand.Text" xml:space="preserve">
     <value>Expand all Nodes</value>

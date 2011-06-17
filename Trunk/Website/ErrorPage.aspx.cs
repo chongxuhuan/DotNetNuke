@@ -31,6 +31,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security;
+using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -121,12 +122,24 @@ namespace DotNetNuke.Services.Exceptions
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            StyleSheet.Attributes["href"] = ResolveUrl("~/Install/Install.css");
+            DefaultStylesheet.Attributes["href"] = ResolveUrl("~/Portals/_default/default.css");
+            InstallStylesheet.Attributes["href"] = ResolveUrl("~/Install/install.css");
         }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+			PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
+			if (portalSettings != null && !String.IsNullOrEmpty(portalSettings.LogoFile))
+			{
+				var fileInfo = FileManager.Instance.GetFile(portalSettings.PortalId, portalSettings.LogoFile);
+				headerImage.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+			}
+			else
+			{
+				headerImage.Visible = false;
+			}
+
             string strLocalizedMessage = Null.NullString;
             var objSecurity = new PortalSecurity();
             string status = objSecurity.InputFilter(Request.QueryString["status"],
@@ -144,7 +157,7 @@ namespace DotNetNuke.Services.Exceptions
                         ErrorPlaceHolder.Controls.Add(new LiteralControl(HttpUtility.HtmlEncode(exc.ToString())));
                     else
                     {
-                        PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                        
 
                         var lex = new PageLoadException(exc.Message, exc);
                         //process this error using the Exception Management Application Block
@@ -154,7 +167,7 @@ namespace DotNetNuke.Services.Exceptions
                                                                                   Localization.Localization.
                                                                                       GlobalResourceFile);
                         ErrorPlaceHolder.Controls.Add(
-                            new ErrorContainer(_portalSettings, strLocalizedMessage, lex).Container);
+                            new ErrorContainer(portalSettings, strLocalizedMessage, lex).Container);
                     }
                 } catch
                 {
@@ -168,6 +181,7 @@ namespace DotNetNuke.Services.Exceptions
             }
             strLocalizedMessage = Localization.Localization.GetString("Return.Text",
                                                                       Localization.Localization.GlobalResourceFile);
+
             hypReturn.Text = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " +
                              strLocalizedMessage;
         }

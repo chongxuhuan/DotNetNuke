@@ -39,13 +39,13 @@ namespace DotNetNuke.Services.Scheduling
     public class ScheduleItem : BaseEntityInfo, IHydratable
     {
         #region "Private Members"
-		
-		private DateTime _NextStart;
+
+        private DateTime _NextStart;
         private Hashtable _ScheduleItemSettings;
-		
-		#endregion
-		
-		#region "Constructors"
+
+        #endregion
+
+        #region "Constructors"
 
         public ScheduleItem()
         {
@@ -65,13 +65,13 @@ namespace DotNetNuke.Services.Scheduling
             ProcessGroup = Null.NullInteger;
             Servers = Null.NullString;
         }
-		
-		#endregion
+
+        #endregion
 
 
         #region "Persisted Properties"
-		
-		public string AttachToEvent { get; set; }
+
+        public string AttachToEvent { get; set; }
 
         public bool CatchUpEnabled { get; set; }
 
@@ -118,8 +118,8 @@ namespace DotNetNuke.Services.Scheduling
         public ScheduleSource ScheduleSource { get; set; }
 
         public int ThreadID { get; set; }
-		
-		#endregion
+
+        #endregion
 
         #region IHydratable Members
 
@@ -165,8 +165,8 @@ namespace DotNetNuke.Services.Scheduling
         }
 
         #region "Public Methods"
-		
-		public void AddSetting(string Key, string Value)
+
+        public void AddSetting(string Key, string Value)
         {
             _ScheduleItemSettings.Add(Key, Value);
         }
@@ -212,16 +212,15 @@ namespace DotNetNuke.Services.Scheduling
             {
                 NextStart = Null.SetNullDateTime(dr["NextStart"]);
             }
-            catch (Exception exc)
+            catch (IndexOutOfRangeException)
             {
-                Instrumentation.DnnLog.Error(exc);
-
+                //Ignore 
             }
-			
-			//Fill BaseEntityInfo
+
+            //Fill BaseEntityInfo
             base.FillInternal(dr);
         }
-		
-		#endregion
+
+        #endregion
     }
 }

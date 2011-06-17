@@ -323,7 +323,7 @@
 	</div>
 	<ul class="dnnActions dnnClear">
 		<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
-		<li><asp:LinkButton id="cmdDelete" runat="server" CssClass="dnnSecondaryAction dnnDeleteSite" resourcekey="cmdDelete" Causesvalidation="False" /></li>
+		<li><asp:LinkButton id="cmdDelete" runat="server" CssClass="dnnSecondaryAction dnnDeleteSite" resourcekey="cmdDelete" Causesvalidation="False"/></li>
 		<li><asp:Hyperlink id="cancelHyperLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 		<li><asp:Hyperlink ID="uploadSkinLink" CssClass="dnnSecondaryAction" ResourceKey="SkinUpload" runat="server" /></li>
 	</ul>

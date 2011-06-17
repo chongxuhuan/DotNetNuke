@@ -53,7 +53,6 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockCache = MockComponentProvider.CreateDataCacheProvider();
             MockComponentProvider.CreateEventLogController();
 
-            DataCache.ClearCache();
 
 
             _hostSettingsTable = new DataTable("HostSettings");
@@ -77,6 +76,10 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             _mockData = MockComponentProvider.CreateDataProvider();
             _mockData.Setup(c => c.GetHostSettings()).Returns(_hostSettingsTable.CreateDataReader());
+            _mockData.Setup(c => c.GetProviderPath()).Returns(String.Empty);
+
+
+            DataCache.ClearCache();
         }
 
         [TearDown]

@@ -49,14 +49,14 @@ namespace DotNetNuke.Framework
         private const string jQueryVersionKey = "jQueryVersionKey";
         private const string jQueryVersionMatch = "(?<=jquery:\\s\")(.*)(?=\")";
 
-		/// <summary>
-		/// Returns the default URL for a hosted version of the jQuery script
-		/// </summary>
-		/// <remarks>
-		/// Google hosts versions of many popular javascript libraries on their CDN.
-		/// Using the hosted version increases the likelihood that the file is already
-		/// cached in the users browser.
-		/// </remarks>
+        /// <summary>
+        /// Returns the default URL for a hosted version of the jQuery script
+        /// </summary>
+        /// <remarks>
+        /// Google hosts versions of many popular javascript libraries on their CDN.
+        /// Using the hosted version increases the likelihood that the file is already
+        /// cached in the users browser.
+        /// </remarks>
         public const string DefaultHostedUrl = "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
 
         private const string jQueryUIDebugFile = "~/Resources/Shared/Scripts/jquery/jquery-ui.js";
@@ -77,6 +77,11 @@ namespace DotNetNuke.Framework
         {
             get
             {
+                if (Globals.Status != Globals.UpgradeStatus.None)
+                {
+                    return String.Empty;
+                }
+
                 return Host.jQueryUrl;
             }
         }
@@ -91,6 +96,11 @@ namespace DotNetNuke.Framework
         {
             get
             {
+                if (Globals.Status != Globals.UpgradeStatus.None)
+                {
+                    return String.Empty;
+                }
+
                 return Host.jQueryUIUrl;
             }
         }
@@ -112,7 +122,7 @@ namespace DotNetNuke.Framework
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Checks whether the jQuery UI core script file exists locally.
         /// </summary>
         /// <remarks>
@@ -162,6 +172,11 @@ namespace DotNetNuke.Framework
         {
             get
             {
+                if (Globals.Status != Globals.UpgradeStatus.None)
+                {
+                    return false;
+                }
+
                 return Host.jQueryDebug;
             }
         }
@@ -176,11 +191,16 @@ namespace DotNetNuke.Framework
         {
             get
             {
+                if (Globals.Status != Globals.UpgradeStatus.None)
+                {
+                    return false;
+                }
+
                 return Host.jQueryHosted;
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Gets the version string for the local jQuery script
         /// </summary>
         /// <value></value>
@@ -220,7 +240,7 @@ namespace DotNetNuke.Framework
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Gets the version string for the local jQuery UI script
         /// </summary>
         /// <value></value>
@@ -293,7 +313,7 @@ namespace DotNetNuke.Framework
                 HttpContext.Current.Items[key] = true;
                 var headscript = new Literal { Text = script };
                 PlaceHolder placeHolder;
-                if (key=="jQuery")
+                if (key == "jQuery")
                 {
                     //load in Head
                     placeHolder = page.Header.FindControl("SCRIPTS") as PlaceHolder;

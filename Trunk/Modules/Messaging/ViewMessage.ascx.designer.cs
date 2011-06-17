@@ -49,6 +49,15 @@ namespace DotNetNuke.Modules.Messaging.Views {
         protected global::System.Web.UI.WebControls.Label subjectLabel;
         
         /// <summary>
+        /// MessageFieldLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Web.UI.WebControls.DnnFieldLabel MessageFieldLabel;
+        
+        /// <summary>
         /// messageLabel control.
         /// </summary>
         /// <remarks>

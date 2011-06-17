@@ -563,11 +563,16 @@ namespace DotNetNuke.UI.Modules
                             maxActionId = action.ID;
                         }
                         _moduleSpecificActions.Actions.Add(action);
+
+                        if (!UIUtilities.IsLegacyUI(ModuleId, action.ControlKey, PortalId) && action.Url.Contains("ctl"))
+                        {
+                            action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings, true, false);
+                        }                       
                     }
                 }
                 if (_moduleSpecificActions.Actions.Count > 0)
                 {
-                    _actions.Add(_moduleSpecificActions);
+                    _actions.Add(_moduleSpecificActions);                    
                 }
             }
 			
@@ -697,6 +702,7 @@ namespace DotNetNuke.UI.Modules
                     _actions.Add(_moduleGenericActions);
                 }
 
+         
                 if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "MANAGE", Configuration))
                 {
                     //module movement

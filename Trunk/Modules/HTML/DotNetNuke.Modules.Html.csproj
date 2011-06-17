@@ -231,7 +231,7 @@
     <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
   <Import Project="$(BuildScriptsPath)\Package.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="GetFiles;DebugProject;Package">
+  <Target Name="AfterBuild" DependsOnTargets="CopyBin;GetFiles;DebugProject;Package">
   </Target>
   <Target Name="GetFiles">
     <ItemGroup>
@@ -250,10 +250,12 @@
       <Resources Include="@(ResourceFiles);@(Views);@(Images);@(TextFiles)" />
     </ItemGroup>
   </Target>
-  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <Target Name="CopyBin">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
+  </Target>
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Copy SourceFiles="@(Views)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
     <Copy SourceFiles="@(Images)" DestinationFolder="..\..\Website\DesktopModules\HTML\Images" />
     <Copy SourceFiles="@(TextFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML" />

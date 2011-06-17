@@ -23,27 +23,28 @@ table, tfoot, thead, span, li, th, td{font-size:inherit}
 tfoot, thead{color:#036;}
 th{vertical-align:baseline;font-size:12px;font-weight:bold;color:#036;}
 img{border:none;}
-a, a:link, a:visited, a:active{text-decoration:none;color:#036;outline:0;border:0;}
-	a:hover{text-decoration:underline;color:#f00;}
+a, a:link, a:visited, a:active{text-decoration:none;color:#328DDE;outline:0;border:0;}
+	a:hover{text-decoration:underline;color:#1B4D79;}
 small{font-size:8px;}
 big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}
 
 /* Module actions */
-.DnnModule{z-index:5000;position:relative;}
-.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px#888;box-shadow: 0 0 5px #888;z-index:4999;background:#f1f1f1;}
-.dnnActionMenu {display:none;margin:0;padding:0;position:    absolute;z-index:9999;}
-ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
-ul.dnnActionMenuBody li.first.last {position:relative;}
-	ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;z-index:99999;position:absolute;left:0;top:10;width:380px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
-	.dnnActionMenuTag {background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );display:block;padding:5px 10px;border:1px #999 solid;border-radius:3px;-moz-border-radius:3px;line-height:16px;height:16px;font-weight:bold;font-size:11px;width:65px;cursor:default}
-		.dnnActionMenuTag img{display:block;float:left;padding-right:3px;}
-	ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
-		ul.dnnActionMenuBody li span{border:none;border-bottom:1px #ccc solid;display:block;background:none;padding:0 0 4px 0;margin-bottom:6px;width:auto}
-	ul.dnnActionMenuBody li ul{overflow:hidden;padding-bottom:25px;}
-	ul.dnnActionMenuBody li ul li{float:left;display:block;width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;}
-	ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left}
-	ul.dnnActionMenuBody li ul li a img{padding-right:3px;}
+.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px #888;box-shadow: 0 0 5px #888;z-index:900;background:transparent;position:absolute;margin-left:-8px;margin-top:-8px;}
+.DnnModule{z-index:902;position:relative;}
+	.dnnActionMenu{display:none;margin:0;padding:0;position:absolute;z-index:906;color:#000;left:10px;top:10px;}
+	ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;position:absolute;left:0;top:10;min-width:400px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
+		ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
+		ul.dnnActionMenuBody li.first.last {position:relative;}
+		.dnnActionMenuTag {background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );display:block;padding:5px 10px;border:1px #999 solid;border-radius:3px;-moz-border-radius:3px;line-height:16px;height:16px;font-weight:bold;font-size:11px;min-width:65px;cursor:default;}
+			.dnnActionMenuTag img{display:block;float:left;padding-right:3px;}
+		ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
+			ul.dnnActionMenuBody li span{border:none;display:block;background:none;padding:0;margin:6px 0;width:auto}
+		ul.dnnActionMenuBody li ul{overflow:hidden;padding:10px 0;margin:0;width:96%;border-top:1px #ccc solid;}
+		ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
+		ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left;color:#328DDE;}
+			ul.dnnActionMenuBody li ul li a:hover{color:#1B4D79;}
+		ul.dnnActionMenuBody li ul li a img{padding-right:3px;}	
 		
 /* Main Menu */
 .MainMenu_MenuContainer{background-color:transparent;}
@@ -193,7 +194,7 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnModuleAuditControl{width:95%;margin:0 auto}
 	
     ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
-        ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
+        .dnnForm ul.dnnActions, ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
         ul.dnnActions li{overflow:hidden;display:block;float:left;}
         ul.dnnActions li a{display:block;float:left;}
         ul.dnnActions li a, a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited, a.dnnSecondaryAction, a.dnnSecondaryAction:link, a.dnnSecondaryAction:visited{padding:0 1.2em;line-height:2.5;}

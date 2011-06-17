@@ -45,29 +45,12 @@ namespace DotNetNuke.Services.Exceptions
     [Serializable]
     public class BasePortalException : Exception
     {
-        private string m_AbsoluteURL;
-        private string m_AbsoluteURLReferrer;
-        private int m_ActiveTabID;
-        private string m_ActiveTabName;
-        private string m_AssemblyVersion;
-        private string m_DefaultDataProvider;
-        private string m_ExceptionGUID;
-        private int m_FileColumnNumber;
-        private int m_FileLineNumber;
-        private string m_FileName;
-        private string m_InnerExceptionString;
+	    private string m_InnerExceptionString;
         private string m_Message;
-        private string m_Method;
-        private int m_PortalID;
-        private string m_PortalName;
-        private string m_RawURL;
-        private string m_Source;
+	    private string m_Source;
         private string m_StackTrace;
-        private string m_UserAgent;
-        private int m_UserID;
-        private string m_UserName;
 
-        //default constructor
+	    //default constructor
 		public BasePortalException()
         {
         }
@@ -87,166 +70,64 @@ namespace DotNetNuke.Services.Exceptions
         protected BasePortalException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             InitializePrivateVariables();
-            m_AssemblyVersion = info.GetString("m_AssemblyVersion");
-            m_PortalID = info.GetInt32("m_PortalID");
-            m_PortalName = info.GetString("m_PortalName");
-            m_UserID = info.GetInt32("m_UserID");
-            m_UserName = info.GetString("m_Username");
-            m_ActiveTabID = info.GetInt32("m_ActiveTabID");
-            m_ActiveTabName = info.GetString("m_ActiveTabName");
-            m_RawURL = info.GetString("m_RawURL");
-            m_AbsoluteURL = info.GetString("m_AbsoluteURL");
-            m_AbsoluteURLReferrer = info.GetString("m_AbsoluteURLReferrer");
-            m_UserAgent = info.GetString("m_UserAgent");
-            m_DefaultDataProvider = info.GetString("m_DefaultDataProvider");
-            m_ExceptionGUID = info.GetString("m_ExceptionGUID");
+            AssemblyVersion = info.GetString("m_AssemblyVersion");
+            PortalID = info.GetInt32("m_PortalID");
+            PortalName = info.GetString("m_PortalName");
+            UserID = info.GetInt32("m_UserID");
+            UserName = info.GetString("m_Username");
+            ActiveTabID = info.GetInt32("m_ActiveTabID");
+            ActiveTabName = info.GetString("m_ActiveTabName");
+            RawURL = info.GetString("m_RawURL");
+            AbsoluteURL = info.GetString("m_AbsoluteURL");
+            AbsoluteURLReferrer = info.GetString("m_AbsoluteURLReferrer");
+            UserAgent = info.GetString("m_UserAgent");
+            DefaultDataProvider = info.GetString("m_DefaultDataProvider");
+            ExceptionGUID = info.GetString("m_ExceptionGUID");
             m_InnerExceptionString = info.GetString("m_InnerExceptionString");
-            m_FileName = info.GetString("m_FileName");
-            m_FileLineNumber = info.GetInt32("m_FileLineNumber");
-            m_FileColumnNumber = info.GetInt32("m_FileColumnNumber");
-            m_Method = info.GetString("m_Method");
+            FileName = info.GetString("m_FileName");
+            FileLineNumber = info.GetInt32("m_FileLineNumber");
+            FileColumnNumber = info.GetInt32("m_FileColumnNumber");
+            Method = info.GetString("m_Method");
             m_StackTrace = info.GetString("m_StackTrace");
             m_Message = info.GetString("m_Message");
             m_Source = info.GetString("m_Source");
         }
 
-        public string AssemblyVersion
-        {
-            get
-            {
-                return m_AssemblyVersion;
-            }
-        }
+	    public string AssemblyVersion { get; private set; }
 
-        public int PortalID
-        {
-            get
-            {
-                return m_PortalID;
-            }
-        }
+	    public int PortalID { get; private set; }
 
-        public string PortalName
-        {
-            get
-            {
-                return m_PortalName;
-            }
-        }
+	    public string PortalName { get; private set; }
 
-        public int UserID
-        {
-            get
-            {
-                return m_UserID;
-            }
-        }
+	    public int UserID { get; private set; }
 
-        public string UserName
-        {
-            get
-            {
-                return m_UserName;
-            }
-        }
+	    public string UserName { get; private set; }
 
-        public int ActiveTabID
-        {
-            get
-            {
-                return m_ActiveTabID;
-            }
-        }
+	    public int ActiveTabID { get; private set; }
 
-        public string ActiveTabName
-        {
-            get
-            {
-                return m_ActiveTabName;
-            }
-        }
+	    public string ActiveTabName { get; private set; }
 
-        public string RawURL
-        {
-            get
-            {
-                return m_RawURL;
-            }
-        }
+	    public string RawURL { get; private set; }
 
-        public string AbsoluteURL
-        {
-            get
-            {
-                return m_AbsoluteURL;
-            }
-        }
+	    public string AbsoluteURL { get; private set; }
 
-        public string AbsoluteURLReferrer
-        {
-            get
-            {
-                return m_AbsoluteURLReferrer;
-            }
-        }
+	    public string AbsoluteURLReferrer { get; private set; }
 
-        public string UserAgent
-        {
-            get
-            {
-                return m_UserAgent;
-            }
-        }
+	    public string UserAgent { get; private set; }
 
-        public string DefaultDataProvider
-        {
-            get
-            {
-                return m_DefaultDataProvider;
-            }
-        }
+	    public string DefaultDataProvider { get; private set; }
 
-        public string ExceptionGUID
-        {
-            get
-            {
-                return m_ExceptionGUID;
-            }
-        }
+	    public string ExceptionGUID { get; private set; }
 
-        public string FileName
-        {
-            get
-            {
-                return m_FileName;
-            }
-        }
+	    public string FileName { get; private set; }
 
-        public int FileLineNumber
-        {
-            get
-            {
-                return m_FileLineNumber;
-            }
-        }
+	    public int FileLineNumber { get; private set; }
 
-        public int FileColumnNumber
-        {
-            get
-            {
-                return m_FileColumnNumber;
-            }
-        }
+	    public int FileColumnNumber { get; private set; }
 
-        public string Method
-        {
-            get
-            {
-                return m_Method;
-            }
-        }
+	    public string Method { get; private set; }
 
-        [XmlIgnore]
+	    [XmlIgnore]
         public new MethodBase TargetSite
         {
             get
@@ -270,81 +151,81 @@ namespace DotNetNuke.Services.Exceptions
                 }
                 var exceptionInfo = Exceptions.GetExceptionInfo(innerException);
 
-                m_AssemblyVersion = DotNetNukeContext.Current.Application.Version.ToString(3);
+                AssemblyVersion = DotNetNukeContext.Current.Application.Version.ToString(3);
                 if (portalSettings != null)
                 {
-                    m_PortalID = portalSettings.PortalId;
-                    m_PortalName = portalSettings.PortalName;
-                    m_ActiveTabID = portalSettings.ActiveTab.TabID;
-                    m_ActiveTabName = portalSettings.ActiveTab.TabName;
+                    PortalID = portalSettings.PortalId;
+                    PortalName = portalSettings.PortalName;
+                    ActiveTabID = portalSettings.ActiveTab.TabID;
+                    ActiveTabName = portalSettings.ActiveTab.TabName;
                 }
                 else
                 {
-                    m_PortalID = -1;
-                    m_PortalName = "";
-                    m_ActiveTabID = -1;
-                    m_ActiveTabName = "";
+                    PortalID = -1;
+                    PortalName = "";
+                    ActiveTabID = -1;
+                    ActiveTabName = "";
                 }
 
                 var currentUserInfo = UserController.GetCurrentUserInfo();
-                m_UserID = (currentUserInfo != null) ? currentUserInfo.UserID : -1;
+                UserID = (currentUserInfo != null) ? currentUserInfo.UserID : -1;
 
-                if (m_UserID != -1)
+                if (UserID != -1)
                 {
-                    currentUserInfo = UserController.GetUserById(m_PortalID, m_UserID);
-                    m_UserName = currentUserInfo != null ? currentUserInfo.Username : "";
+                    currentUserInfo = UserController.GetUserById(PortalID, UserID);
+                    UserName = currentUserInfo != null ? currentUserInfo.Username : "";
                 }
                 else
                 {
-                    m_UserName = "";
+                    UserName = "";
                 }
 
                 if (context != null)
                 {
-                    m_RawURL = context.Request.RawUrl;
-                    m_AbsoluteURL = context.Request.Url.AbsolutePath;
+                    RawURL = context.Request.RawUrl;
+                    AbsoluteURL = context.Request.Url.AbsolutePath;
                     if (context.Request.UrlReferrer != null)
                     {
-                        m_AbsoluteURLReferrer = context.Request.UrlReferrer.AbsoluteUri;
+                        AbsoluteURLReferrer = context.Request.UrlReferrer.AbsoluteUri;
                     }
-                    m_UserAgent = context.Request.UserAgent;
+                    UserAgent = context.Request.UserAgent;
                 }
                 else
                 {
-                    m_RawURL = "";
-                    m_AbsoluteURL = "";
-                    m_AbsoluteURLReferrer = "";
-                    m_UserAgent = "";
+                    RawURL = "";
+                    AbsoluteURL = "";
+                    AbsoluteURLReferrer = "";
+                    UserAgent = "";
                 }
                 try
                 {
                     ProviderConfiguration objProviderConfiguration = ProviderConfiguration.GetProviderConfiguration("data");
                     string strTypeName = ((Provider)objProviderConfiguration.Providers[objProviderConfiguration.DefaultProvider]).Type;
-                    m_DefaultDataProvider = strTypeName;
+                    DefaultDataProvider = strTypeName;
                     
                 }
                 catch (Exception exc)
                 {
                     Instrumentation.DnnLog.Error(exc);
 
-                    m_DefaultDataProvider = "";
+                    DefaultDataProvider = "";
                 }
 
-                m_ExceptionGUID = Guid.NewGuid().ToString();
+                ExceptionGUID = Guid.NewGuid().ToString();
 
                 if (exceptionInfo != null)
                 {
-                    m_FileName = exceptionInfo.FileName;
-                    m_FileLineNumber = exceptionInfo.FileLineNumber;
-                    m_FileColumnNumber = exceptionInfo.FileColumnNumber;
-                    m_Method = exceptionInfo.Method;
+                    FileName = exceptionInfo.FileName;
+                    FileLineNumber = exceptionInfo.FileLineNumber;
+                    FileColumnNumber = exceptionInfo.FileColumnNumber;
+                    Method = exceptionInfo.Method;
                 }
                 else
                 {
-                    m_FileName = "";
-                    m_FileLineNumber = -1;
-                    m_FileColumnNumber = -1;
-                    m_Method = "";
+                    FileName = "";
+                    FileLineNumber = -1;
+                    FileColumnNumber = -1;
+                    Method = "";
                 }
 
                 try
@@ -380,21 +261,21 @@ namespace DotNetNuke.Services.Exceptions
             }
             catch (Exception exc)
             {
-                m_PortalID = -1;
-                m_UserID = -1;
-                m_AssemblyVersion = "-1";
-                m_ActiveTabID = -1;
-                m_ActiveTabName = "";
-                m_RawURL = "";
-                m_AbsoluteURL = "";
-                m_AbsoluteURLReferrer = "";
-                m_UserAgent = "";
-                m_DefaultDataProvider = "";
-                m_ExceptionGUID = "";
-                m_FileName = "";
-                m_FileLineNumber = -1;
-                m_FileColumnNumber = -1;
-                m_Method = "";
+                PortalID = -1;
+                UserID = -1;
+                AssemblyVersion = "-1";
+                ActiveTabID = -1;
+                ActiveTabName = "";
+                RawURL = "";
+                AbsoluteURL = "";
+                AbsoluteURLReferrer = "";
+                UserAgent = "";
+                DefaultDataProvider = "";
+                ExceptionGUID = "";
+                FileName = "";
+                FileLineNumber = -1;
+                FileColumnNumber = -1;
+                Method = "";
                 m_StackTrace = "";
                 m_Message = "";
                 m_Source = "";
@@ -407,23 +288,23 @@ namespace DotNetNuke.Services.Exceptions
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
 			//Serialize this class' state and then call the base class GetObjectData
-            info.AddValue("m_AssemblyVersion", m_AssemblyVersion, typeof (string));
-            info.AddValue("m_PortalID", m_PortalID, typeof (Int32));
-            info.AddValue("m_PortalName", m_PortalName, typeof (string));
-            info.AddValue("m_UserID", m_UserID, typeof (Int32));
-            info.AddValue("m_UserName", m_UserName, typeof (string));
-            info.AddValue("m_ActiveTabID", m_ActiveTabID, typeof (Int32));
-            info.AddValue("m_ActiveTabName", m_ActiveTabName, typeof (string));
-            info.AddValue("m_RawURL", m_RawURL, typeof (string));
-            info.AddValue("m_AbsoluteURL", m_AbsoluteURL, typeof (string));
-            info.AddValue("m_AbsoluteURLReferrer", m_AbsoluteURLReferrer, typeof (string));
-            info.AddValue("m_UserAgent", m_UserAgent, typeof (string));
-            info.AddValue("m_DefaultDataProvider", m_DefaultDataProvider, typeof (string));
-            info.AddValue("m_ExceptionGUID", m_ExceptionGUID, typeof (string));
-            info.AddValue("m_FileName", m_FileName, typeof (string));
-            info.AddValue("m_FileLineNumber", m_FileLineNumber, typeof (Int32));
-            info.AddValue("m_FileColumnNumber", m_FileColumnNumber, typeof (Int32));
-            info.AddValue("m_Method", m_Method, typeof (string));
+            info.AddValue("m_AssemblyVersion", AssemblyVersion, typeof (string));
+            info.AddValue("m_PortalID", PortalID, typeof (Int32));
+            info.AddValue("m_PortalName", PortalName, typeof (string));
+            info.AddValue("m_UserID", UserID, typeof (Int32));
+            info.AddValue("m_UserName", UserName, typeof (string));
+            info.AddValue("m_ActiveTabID", ActiveTabID, typeof (Int32));
+            info.AddValue("m_ActiveTabName", ActiveTabName, typeof (string));
+            info.AddValue("m_RawURL", RawURL, typeof (string));
+            info.AddValue("m_AbsoluteURL", AbsoluteURL, typeof (string));
+            info.AddValue("m_AbsoluteURLReferrer", AbsoluteURLReferrer, typeof (string));
+            info.AddValue("m_UserAgent", UserAgent, typeof (string));
+            info.AddValue("m_DefaultDataProvider", DefaultDataProvider, typeof (string));
+            info.AddValue("m_ExceptionGUID", ExceptionGUID, typeof (string));
+            info.AddValue("m_FileName", FileName, typeof (string));
+            info.AddValue("m_FileLineNumber", FileLineNumber, typeof (Int32));
+            info.AddValue("m_FileColumnNumber", FileColumnNumber, typeof (Int32));
+            info.AddValue("m_Method", Method, typeof (string));
             info.AddValue("m_StackTrace", m_StackTrace, typeof (string));
             info.AddValue("m_Message", m_Message, typeof (string));
             info.AddValue("m_Source", m_Source, typeof (string));

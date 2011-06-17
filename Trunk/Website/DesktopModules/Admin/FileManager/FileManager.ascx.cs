@@ -1972,6 +1972,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                     BindFolderTree();
                                     break;
                             }
+
+							//reload page to make treeview update.
+							Response.Redirect(Globals.NavigateURL(), true);
                         }
                         catch (Exception ex)
                         {

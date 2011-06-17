@@ -974,8 +974,14 @@ namespace DotNetNuke.Modules.Admin.Pages
         private void BindTreeAndShowTab(int tabId)
         {
             BindTree();
-            ctlPages.FindNodeByValue(SelectedNode).Selected = true;
-            ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
+            var node = ctlPages.FindNodeByValue(SelectedNode);
+            //rare cases it is null (e.g. when a page is created when page local is not default locale)
+            if (node != null)
+            {
+                node.Selected = true;
+                node.ExpandParentNodes();
+            }
+
             pnlDetails.Visible = true;
             BindTab(tabId);
         }
@@ -1402,7 +1408,8 @@ namespace DotNetNuke.Modules.Admin.Pages
                 IsDeleted = false,
                 Url = "",
                 SkinSrc = "",
-                ContainerSrc = ""
+                ContainerSrc = "",
+                CultureCode = Null.NullString
             };
 
             if (objRoot != null)
@@ -1411,11 +1418,12 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tab.DisableLink = objRoot.DisableLink;
                 tab.SkinSrc = objRoot.SkinSrc;
                 tab.ContainerSrc = objRoot.ContainerSrc;
-                tab.CultureCode = objRoot.CultureCode;
             }
-            else
+
+            var portalSettings = PortalController.GetCurrentPortalSettings();
+            if(portalSettings.ContentLocalizationEnabled)
             {
-                tab.CultureCode = PortalSettings.Current.DefaultLanguage;
+                tab.CultureCode = LocaleController.Instance.GetDefaultLocale(tab.PortalID).Code;
             }
 
             var controller = new TabController();
@@ -1451,17 +1459,33 @@ namespace DotNetNuke.Modules.Admin.Pages
                 return Null.NullInteger;
             }
 
-            //Inherit from Parent
+            //Inherit permissions from parent
+            tab.TabPermissions.Clear();
+            if (tab.PortalID != Null.NullInteger && objRoot != null)
+            {
+                tab.TabPermissions.AddRange(objRoot.TabPermissions);
+            }
+            else if (tab.PortalID != Null.NullInteger)
+            {
+                //Give admin full permission
+                ArrayList permissions = PermissionController.GetPermissionsByTab();
+
+                foreach (PermissionInfo permission in permissions)
+                {
+                    TabPermissionInfo newTabPermission = new TabPermissionInfo();
+                    newTabPermission.PermissionID = permission.PermissionID;
+                    newTabPermission.PermissionKey = permission.PermissionKey;
+                    newTabPermission.PermissionName = permission.PermissionName;
+                    newTabPermission.AllowAccess = true;
+                    newTabPermission.RoleID = PortalSettings.Current.AdministratorRoleId;
+                    tab.TabPermissions.Add(newTabPermission);
+                }
+            }
+
+            //Inherit other information from Parent
             if (objRoot != null)
             {
-                tab.TabPermissions.Clear();
-                if (tab.PortalID != Null.NullInteger)
-                {
-                    tab.TabPermissions.AddRange(objRoot.TabPermissions);
-                }
-
                 tab.Terms.Clear();
-                tab.CultureCode = objRoot.CultureCode;
                 tab.StartDate = objRoot.StartDate;
                 tab.EndDate = objRoot.EndDate;
                 tab.RefreshInterval = objRoot.RefreshInterval;
@@ -1470,14 +1494,17 @@ namespace DotNetNuke.Modules.Admin.Pages
                 tab.IsSecure = objRoot.IsSecure;
                 tab.PermanentRedirect = objRoot.PermanentRedirect;
             }
-            else
-            {
-                tab.CultureCode = PortalSettings.Current.DefaultLanguage;
-            }
 
             var ctrl = new TabController();
             tab.TabID = ctrl.AddTab(tab);
-            ApplyDefaultTabTemplate(tab);
+            ApplyDefaultTabTemplate(tab);       
+     
+            //create localized tabs if content localization is enabled
+            if (portalSettings.ContentLocalizationEnabled)
+            {
+                ctrl.CreateLocalizedCopies(tab);
+            }
+
             ShowSuccessMessage(string.Format(Localization.GetString("TabCreated", LocalResourceFile), tab.TabName));
             return tab.TabID;
         }

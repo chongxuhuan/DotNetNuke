@@ -56,6 +56,7 @@ namespace DotNetNuke.Tests.Content.Presenters
         {
             //Register MockCachingProvider
             mockCache = MockComponentProvider.CreateNew<CachingProvider>();
+            MockComponentProvider.CreateDataProvider().Setup(c => c.GetProviderPath()).Returns(String.Empty);
         }
 
         [TearDown]

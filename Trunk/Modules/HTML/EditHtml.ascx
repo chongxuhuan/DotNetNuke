@@ -5,15 +5,10 @@
 <%@ Register TagPrefix="dnnweb" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnEditHtml dnnClear" id="dnnEditHtml">
 	<ul class="dnnAdminTabNav dnnClear">
-		<li id="liMaster" runat="server"><a href="#ehMaster"><%=LocalizeString("dshMaster")%></a></li>
 		<li id="liCurrent" runat="server"><a href="#ehCurrentContent"><%=LocalizeString("dshCurrentContent")%></a></li>
+		<li id="liMaster" runat="server"><a href="#ehMaster"><%=LocalizeString("dshMaster")%></a></li>
 		<li id="liVersions" runat="server"><a href="#ehVersions"><%=LocalizeString("dshVersions")%></a></li>
 	</ul>
-	<div class="ehMaster dnnClear" id="ehMaster">
-		<div class="ehmContent dnnClear" id="ehmContent" runat="server">
-			<div class="html_preview"><asp:placeholder id="placeMasterContent" runat="server" /></div>
-		</div>
-	</div>
 	<div class="ehCurrentContent dnnClear" id="ehCurrentContent">
 		<div class="ehccContent dnnClear">
 			<fieldset>
@@ -79,6 +74,11 @@
 			</fieldset>
 		</div>
 	</div>
+	<div class="ehMaster dnnClear" id="ehMaster">
+		<div class="ehmContent dnnClear" id="ehmContent" runat="server">
+			<div class="html_preview"><asp:placeholder id="placeMasterContent" runat="server" /></div>
+		</div>
+	</div>
 	<div class="ehVersions dnnClear" id="ehVersions">
 		<div class="ehvContent">
 			<div class="dnnFormItem">
@@ -127,7 +127,7 @@
 </div>
 <script language="javascript" type="text/javascript">
 	function setupDnnEditHtml() {
-		$('#dnnEditHtml').dnnTabs().dnnPanels();
+		$('#dnnEditHtml').dnnTabs({selected:0}).dnnPanels();
 	}
 	$(document).ready(function () {
 		setupDnnEditHtml();

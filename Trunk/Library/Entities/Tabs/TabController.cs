@@ -2558,17 +2558,21 @@ namespace DotNetNuke.Entities.Tabs
             localizedCopy.TabPermissions.AddRange(originalTab.TabPermissions.Where(p => p.RoleID == portal.AdministratorRoleId));
 
             //Get the original Tabs Parent
-            TabInfo originalParent = GetTab(originalTab.ParentId, originalTab.PortalID, false);
+			//check the original whether have parent.
+			if (!Null.IsNull(originalTab.ParentId))
+			{
+				TabInfo originalParent = GetTab(originalTab.ParentId, originalTab.PortalID, false);
 
-            if (originalParent != null)
-            {
-                //Get the localized parent
-                TabInfo localizedParent = GetTabByCulture(originalParent.TabID, originalParent.PortalID, locale);
+				if (originalParent != null)
+				{
+					//Get the localized parent
+					TabInfo localizedParent = GetTabByCulture(originalParent.TabID, originalParent.PortalID, locale);
 
-                localizedCopy.ParentId = localizedParent.TabID;
-            }
+					localizedCopy.ParentId = localizedParent.TabID;
+				}
+			}
 
-            //Save Tab
+        	//Save Tab
             int localizedTabId = AddTabInternal(localizedCopy, true);
 
             //Update TabOrder for this tab

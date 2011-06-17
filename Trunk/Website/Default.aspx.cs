@@ -43,6 +43,7 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.SiteLog;
@@ -136,6 +137,13 @@ namespace DotNetNuke.Framework
             }
         }
 
+        private bool IsPopUp
+        {
+            get
+            {
+                return HttpContext.Current.Request.Url.ToString().Contains("popUp=true");
+            }
+        }
         #endregion
 
         #region IClientAPICallbackEventHandler Members
@@ -215,7 +223,7 @@ namespace DotNetNuke.Framework
                 else
                 {
                     //404 Error - Redirect to ErrorPage
-                    throw new HttpException(404, "Not Found");
+                    Exceptions.ProcessHttpException(Request);
                 }
             }
             if (Request.IsAuthenticated)
@@ -281,7 +289,7 @@ namespace DotNetNuke.Framework
             Title = strTitle;
 
             //set the background image if there is one selected
-            if (FindControl("Body") != null)
+            if (!IsPopUp && FindControl("Body") != null)
             {
                 if (!string.IsNullOrEmpty(PortalSettings.BackgroundFile))
                 {
@@ -588,7 +596,7 @@ namespace DotNetNuke.Framework
             UI.Skins.Skin ctlSkin;
             if (PortalSettings.EnablePopUps)
             {
-                ctlSkin = HttpContext.Current.Request.Url.ToString().Contains("popUp=true") ? UI.Skins.Skin.GetPopUpSkin(this) : UI.Skins.Skin.GetSkin(this);
+                ctlSkin = IsPopUp ? UI.Skins.Skin.GetPopUpSkin(this) : UI.Skins.Skin.GetSkin(this);
 
                 //register popup js
                 jQuery.RegisterJQueryUI(Page);

@@ -213,7 +213,7 @@
 
             // page validation integration - expand collapsed panels that contain tripped validators
             $this.find(opts.validationTriggerSelector).click(function(e){
-                if ($.isFunction(Page_ClientValidate)) {
+                if (typeof Page_ClientValidate != "undefined" && $.isFunction(Page_ClientValidate)) {
                     if (!Page_ClientValidate(opts.validationGroup)) {
                         $this.find(opts.invalidItemSelector).each(function(){
                             var $parent = $(this).closest(opts.regionToToggleSelector);

@@ -325,6 +325,7 @@ namespace DotNetNuke.Services.FileSystem
             DnnLog.MethodEntry();
 
             Requires.NotNullOrEmpty("fileName", fileName);
+            Requires.NotNull("folder", folder);
 
             return CBOWrapper.Instance.FillObject<FileInfo>(DataProvider.Instance().GetFile(fileName, folder.FolderID));
         }
@@ -351,10 +352,15 @@ namespace DotNetNuke.Services.FileSystem
             }
             
             var folderInfo = FolderManager.Instance.GetFolder(portalId, folderPath);
-
-            var fileName = relativePath.Substring(folderPath.Length);
-            
-            return GetFile(folderInfo, fileName);
+            if (folderInfo == null)
+            {
+                return null;
+            }
+            else
+            {
+                var fileName = relativePath.Substring(folderPath.Length);
+                return GetFile(folderInfo, fileName);                
+            }            
         }
 
         /// <summary>

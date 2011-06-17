@@ -46,6 +46,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Web.UI.WebControls;
 using DotNetNuke.Entities.Content.Common;
+using DotNetNuke.Web.UI.WebControls.Extensions;
 
 #endregion
 
@@ -315,7 +316,11 @@ namespace DotNetNuke.UI.ControlPanel
             ITermController termController = Util.GetTermController();
 			CategoryList.DataSource = termController.GetTermsByVocabulary("Module_Categories").OrderBy(t => t.Weight).ToList();
             CategoryList.DataBind();
-
+            CategoryList.Items.Add(new ListItem(Localization.GetString("AllCategories", LocalResourceFile), "All"));
+            if(!IsPostBack)
+            {
+                CategoryList.Select("Common", false);
+            }
         }
 
         private void LoadPageList()
@@ -359,11 +364,9 @@ namespace DotNetNuke.UI.ControlPanel
             }
             else
             {
-                ModuleLst.Filter = CategoryList.SelectedValue == "Uncategorised"
-                                       ? (Func<KeyValuePair<string, PortalDesktopModuleInfo>, bool>)
-                                         (kvp => kvp.Value.DesktopModule.Category == CategoryList.SelectedValue || 
-                                                        String.IsNullOrEmpty(kvp.Value.DesktopModule.Category))
-                                       : (kvp => kvp.Value.DesktopModule.Category == CategoryList.SelectedValue);
+                ModuleLst.Filter = CategoryList.SelectedValue == "All"
+                                        ? (Func<KeyValuePair<string, PortalDesktopModuleInfo>, bool>)(kvp => true)
+                                         : (Func<KeyValuePair<string, PortalDesktopModuleInfo>, bool>)(kvp => kvp.Value.DesktopModule.Category == CategoryList.SelectedValue);
                 ModuleLst.BindAllPortalDesktopModules();
             }
 

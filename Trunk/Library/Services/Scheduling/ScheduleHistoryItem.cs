@@ -142,7 +142,7 @@ namespace DotNetNuke.Services.Scheduling
                 {
                     if (NextStart <= DateTime.Now && EndDate == Null.NullDate)
                     {
-                        return  Math.Round(DateTime.Now.Subtract(NextStart).TotalSeconds);
+                        return Math.Round(DateTime.Now.Subtract(NextStart).TotalSeconds);
                     }
                     else
                     {
@@ -226,10 +226,10 @@ namespace DotNetNuke.Services.Scheduling
             }
         }
 
-        public void AddLogNote(string Notes)
+        public void AddLogNote(string notes)
         {
-            _LogNotes.Append(Notes);
-            Instrumentation.DnnLog.Info(Notes);
+            _LogNotes.Append(notes);
+            Instrumentation.DnnLog.Info(notes.Replace(@"<br/>", String.Empty));
         }
 
         public override void Fill(IDataReader dr)

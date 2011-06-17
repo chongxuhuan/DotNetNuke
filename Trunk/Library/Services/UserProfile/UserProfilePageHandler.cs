@@ -66,7 +66,8 @@ namespace DotNetNuke.Services.UserProfile
                     if (UserController.GetUserById(PortalId, UserId) == null)
                     {
                         //The user cannot be found (potential DOS)
-                        throw new HttpException(404, "Not Found");
+                        Exceptions.Exceptions.ProcessHttpException(context.Request);
+
                     }
                 }
 
@@ -95,7 +96,8 @@ namespace DotNetNuke.Services.UserProfile
                             if (UserController.GetUserById(PortalId, UserId) == null)
                             {
                                 //The user cannot be found (potential DOS)
-                                throw new HttpException(404, "Not Found");
+                                Exceptions.Exceptions.ProcessHttpException(context.Request);
+
                             }
                         }
                     }
@@ -104,14 +106,14 @@ namespace DotNetNuke.Services.UserProfile
                 if (UserId == Null.NullInteger)
                 {
                     //The user cannot be found (potential DOS)
-                    throw new HttpException(404, "Not Found");
+                    Exceptions.Exceptions.ProcessHttpException(context.Request);
                 }
             }
             catch (Exception exc)
             {
                 Instrumentation.DnnLog.Debug(exc);
                 //The user cannot be found (potential DOS)
-                throw new HttpException(404, "Not Found");
+                Exceptions.Exceptions.ProcessHttpException(context.Request);
             }
 
             //Redirect to Userprofile Page
@@ -139,7 +141,7 @@ namespace DotNetNuke.Services.UserProfile
             else
             {
                 //The user cannot be found (potential DOS)
-                throw new HttpException(404, "Not Found");
+                Exceptions.Exceptions.ProcessHttpException();
             }
             return _UserId;
         }

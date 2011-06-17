@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Exceptions;
 
 #endregion
 
@@ -78,8 +79,7 @@ namespace DotNetNuke.Services.FileSystem
             catch (Exception e)
             {
 				//The TabId or ModuleId are incorrectly formatted (potential DOS)
-                DnnLog.Error(e);
-                throw new HttpException(404, "Not Found");
+                Exceptions.Exceptions.ProcessHttpException(context.Request);
             }
 			
             //get Language
@@ -189,7 +189,7 @@ namespace DotNetNuke.Services.FileSystem
 
                             if (!download)
                             {
-                                throw new HttpException(404, "Not Found:" + URL);
+                                Exceptions.Exceptions.ProcessHttpException(URL);
                             }
                             break;
                         case TabType.Url:
@@ -211,13 +211,12 @@ namespace DotNetNuke.Services.FileSystem
                 }
                 catch (Exception exc)
                 {
-                    DnnLog.Error(exc);
-                    throw new HttpException(404, "Not Found:" + URL);
+                    Exceptions.Exceptions.ProcessHttpException(URL);
                 }
             }
             else
             {
-                throw new HttpException(404, "Not Found:" + URL);
+                Exceptions.Exceptions.ProcessHttpException(URL);
             }
         }
 

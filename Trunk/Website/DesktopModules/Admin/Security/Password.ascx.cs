@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Threading;
 using System.Web.Security;
 
 using DotNetNuke.Entities.Modules;
@@ -344,6 +345,10 @@ namespace DotNetNuke.Modules.Admin.Users
 
                 OnPasswordUpdated(new PasswordUpdatedEventArgs(PasswordUpdateStatus.InvalidPasswordAnswer));
             }
+			catch(ThreadAbortException)
+			{
+				//Do nothing we are not logging ThreadAbortxceptions caused by redirects    
+			}
             catch (Exception exc)
             {
 				//Fail

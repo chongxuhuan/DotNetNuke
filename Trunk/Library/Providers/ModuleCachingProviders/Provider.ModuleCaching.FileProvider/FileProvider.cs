@@ -73,6 +73,11 @@ namespace DotNetNuke.Services.ModuleCache
             return string.Concat(GetCacheFolder(), cacheKey, DataFileExtension);
         }
 
+        /// <summary>
+        /// [jmarino]  2011-06-16 Check for ContainsKey for a write added
+        /// </summary>
+        /// <param name="portalId"></param>
+        /// <returns></returns>
         private static string GetCacheFolder(int portalId)
         {
             string cacheFolder;
@@ -102,8 +107,8 @@ namespace DotNetNuke.Services.ModuleCache
 
             using (var writerLock = CacheFolderPath.GetWriteLock())
             {
-                CacheFolderPath.Add(portalId, cacheFolder);
-
+                if (!CacheFolderPath.ContainsKey(portalId))
+                    CacheFolderPath.Add(portalId, cacheFolder);
             }
 
             return cacheFolder;
@@ -289,7 +294,14 @@ namespace DotNetNuke.Services.ModuleCache
         {
             var controller = new ModuleController();
             ModuleInfo tabModule = controller.GetTabModule(tabModuleId);
-            string cacheFolder = GetCacheFolder(tabModule.PortalID);
+			
+        	int portalId = tabModule.PortalID;
+			if(portalId == Null.NullInteger)
+			{
+				portalId = PortalSettings.Current.PortalId;
+			}
+
+			string cacheFolder = GetCacheFolder(portalId);
             var filesNotDeleted = new StringBuilder();
             int i = 0;
             foreach (string File in Directory.GetFiles(cacheFolder, tabModuleId + "_*.*"))

@@ -151,12 +151,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			divCaptcha2.Visible = UseCaptcha;
 		}
 
-		protected override void OnPreRender(EventArgs e)
-		{
-			base.OnPreRender(e);
-
-			txtPassword.Attributes.Add("value", txtPassword.Text);
-		}
 
 		/// <summary>
 		/// cmdLogin_Click runs when the login button is clicked

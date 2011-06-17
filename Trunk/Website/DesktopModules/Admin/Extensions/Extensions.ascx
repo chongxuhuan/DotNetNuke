@@ -5,7 +5,31 @@
 <%@ Register TagPrefix="dnn" TagName="InstalledExtensions" Src="~/DesktopModules/Admin/Extensions/InstalledExtensions.ascx" %>                
 <%@ Register TagPrefix="dnn" TagName="AvailableExtensions" Src="~/DesktopModules/Admin/Extensions/AvailableExtensions.ascx" %>                
 <%@ Register TagPrefix="dnn" TagName="PurchasedExtensions" Src="~/DesktopModules/Admin/Extensions/PurchasedExtensions.ascx" %>    
-<%@ Register TagPrefix="dnn" TagName="MoreExtensions" Src="~/DesktopModules/Admin/Extensions/MoreExtensions.ascx" %>    
+<%@ Register TagPrefix="dnn" TagName="MoreExtensions" Src="~/DesktopModules/Admin/Extensions/MoreExtensions.ascx" %> 
+<script type="text/javascript">
+	/*globals jQuery, window, Sys */
+	(function ($, Sys) {
+		function setUpDnnExtensions() {
+			$('#dnnExtensions').dnnTabs().tabs('select', window.location.hash).dnnPanels();
+			$('#availableExtensions .dnnFormExpandContent a').dnnExpandAll({
+				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+				targetArea: '#availableExtensions'
+			});
+			$('#installedExtensions .dnnFormExpandContent a').dnnExpandAll({
+				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
+				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+				targetArea: '#installedExtensions'
+			});
+		}
+		$(document).ready(function () {
+			setUpDnnExtensions();
+			Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+				setUpDnnExtensions();
+			});
+		});
+	} (jQuery, window.Sys));
+</script>   
 <div class="dnnForm dnnExtensions dnnClear" id="dnnExtensions">
 	<ul class="dnnAdminTabNav dnnClear">
 		<li id="installedExtensionsTab" runat="server" visible="false"><a href="#installedExtensions"><%=LocalizeString("InstalledExtensions")%></a></li>
@@ -34,27 +58,3 @@
 		</div>
 	</div>
 </div>
-<script language="javascript" type="text/javascript">
-/*globals jQuery, window, Sys */
-(function ($, Sys) {
-	function setUpDnnExtensions() {
-		$('#dnnExtensions').dnnTabs().tabs('select', window.location.hash).dnnPanels();
-		$('#availableExtensions .dnnFormExpandContent a').dnnExpandAll({
-			expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-			collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
-			targetArea: '#availableExtensions'
-		});
-		$('#installedExtensions .dnnFormExpandContent a').dnnExpandAll({
-			expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-			collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
-			targetArea: '#installedExtensions'
-		});
-	}
-	$(document).ready(function () {
-		setUpDnnExtensions();
-		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-			setUpDnnExtensions();
-		});
-	});
-} (jQuery, window.Sys));
-</script>

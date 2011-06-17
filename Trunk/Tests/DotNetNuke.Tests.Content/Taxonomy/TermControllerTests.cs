@@ -54,7 +54,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         public void SetUp()
         {
             Mock<IVocabularyController> vocabularyController = MockHelper.CreateMockVocabularyController();
-
+            MockComponentProvider.CreateDataProvider().Setup(c => c.GetProviderPath()).Returns(String.Empty);
             //Register MockCachingProvider
             mockCache = MockComponentProvider.CreateNew<CachingProvider>();
         }
@@ -477,6 +477,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
+            MockComponentProvider.CreateDataProvider().Setup(c=>c.GetProviderPath()).Returns(String.Empty);
             var termController = new TermController(mockDataService.Object);
 
             //Act, Arrange
@@ -491,6 +492,8 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             mockDataService.Setup(ds => ds.GetTermsByVocabulary(Constants.TERM_ValidVocabulary1)).Returns(MockHelper.CreateValidTermsReader(Constants.TERM_ValidCountForVocabulary1,
                                                                                                                                             v => Constants.TERM_ValidVocabulary1,
                                                                                                                                             c => Constants.TERM_ValidContent1));
+            MockComponentProvider.CreateDataProvider().Setup(c => c.GetProviderPath()).Returns(String.Empty);
+
             var termController = new TermController(mockDataService.Object);
 
             //Act

@@ -36,6 +36,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.UI.Modules;
 
@@ -133,6 +134,55 @@ namespace DotNetNuke.Services.Exceptions
             {
                 return false;
             }
+        }
+
+        public static void ProcessHttpException()
+        {
+            var notFoundErrorString = Localization.Localization.GetString("ResourceNotFound", Localization.Localization.SharedResourceFile);
+            var exc = new HttpException(404, notFoundErrorString);
+            ProcessHttpException(exc, HttpContext.Current.Request.RawUrl);
+        }
+
+        public static void ProcessHttpException(string URL)
+        {
+            var notFoundErrorString = Localization.Localization.GetString("ResourceNotFound", Localization.Localization.SharedResourceFile);
+            var exc = new HttpException(404, notFoundErrorString);
+            ProcessHttpException(exc, URL);
+        }
+
+        public static void ProcessHttpException(HttpException exc)
+        {
+            ProcessHttpException(exc, HttpContext.Current.Request.RawUrl);
+        }
+
+        public static void ProcessHttpException(HttpRequest request)
+        {
+            var notFoundErrorString = Localization.Localization.GetString("ResourceNotFound", Localization.Localization.SharedResourceFile);
+            var exc = new HttpException(404, notFoundErrorString);
+            ProcessHttpException(exc, request.RawUrl);
+        }
+
+	    private static void ProcessHttpException(HttpException exc, string URL)
+        {
+            var notFoundErrorString = Localization.Localization.GetString("ResourceNotFound", Localization.Localization.SharedResourceFile);
+            Instrumentation.DnnLog.Error(notFoundErrorString + ": - " + URL, exc);
+
+            var eventLogInfo = new LogInfo
+            {
+                BypassBuffering = true,
+                LogTypeKey = EventLogController.EventLogType.HOST_ALERT.ToString()
+            };
+            eventLogInfo.LogProperties.Add(new LogDetailInfo(notFoundErrorString, "URL"));
+            var context = HttpContext.Current;
+            if (context != null)
+            {
+                eventLogInfo.LogProperties.Add(new LogDetailInfo("URL:", URL));
+            }
+            var eventLogController = new EventLogController();
+            eventLogController.AddLog(eventLogInfo);
+
+
+            throw exc;
         }
 
 		/// <summary>

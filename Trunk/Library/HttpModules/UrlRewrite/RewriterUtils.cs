@@ -26,6 +26,8 @@
 using System;
 using System.Linq;
 using System.Web;
+
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Controllers;
 
 #endregion
@@ -111,8 +113,13 @@ namespace DotNetNuke.HttpModules
 
         static internal bool OmitFromRewriteProcessing(string localPath)
         {
-	        var omitSettings = HostController.Instance.GetString("OmitFromRewriteProcessing");
-	        if (string.IsNullOrEmpty(omitSettings)) {
+            var omitSettings = String.Empty;
+            if (Globals.Status == Globals.UpgradeStatus.None)
+            {
+                omitSettings = HostController.Instance.GetString("OmitFromRewriteProcessing");
+            }
+
+            if (string.IsNullOrEmpty(omitSettings)) {
 		        omitSettings = "scriptresource.axd|webresource.axd|gif|ico|jpg|jpeg|png|css|js";
 	        }
 	        omitSettings = omitSettings.ToLower();

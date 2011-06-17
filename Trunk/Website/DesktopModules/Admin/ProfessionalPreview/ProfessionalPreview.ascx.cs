@@ -25,6 +25,7 @@
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
@@ -35,7 +36,8 @@ namespace DotNetNuke.Modules.Admin.ProfessionalPreview
         protected override void OnLoad(System.EventArgs e)
         {
             base.OnLoad(e);
-            previewText.Text = Localization.GetString(this.ModuleConfiguration.ModuleTitle, LocalResourceFile);
+            previewText.Text = Localization.GetString(ModuleConfiguration.ModuleTitle, LocalResourceFile);
+            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("FeatureNotAvailable", LocalResourceFile), ModuleMessage.ModuleMessageType.BlueInfo);
         }
     }
 }

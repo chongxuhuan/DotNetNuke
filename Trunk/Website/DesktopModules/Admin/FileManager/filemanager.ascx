@@ -591,7 +591,7 @@ function gridCheckAll(sender) {
 									<ItemStyle HorizontalAlign="center" width="30px"></ItemStyle>
 									<HeaderTemplate>
 									    <asp:panel ID="pnlCheckAll" runat="server" Visible = "<%# IsEditable %>">
-    										<input onclick='return gridCheckAll(this);' type="image" src='<%# Page.ResolveUrl("~/images/FileManager/unchecked.gif") %>' alt='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'>
+    										<input onclick='return gridCheckAll(this);' type="image" src='<%# Page.ResolveUrl("~/images/FileManager/unchecked.gif") %>' alt='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'  title='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'>
 									    </asp:panel>
 									</HeaderTemplate>
 									<ItemTemplate>

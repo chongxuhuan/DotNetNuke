@@ -199,7 +199,7 @@
     <value>폴더 삭제</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Custom&lt;/b&gt; - "커스텀" 설치방법은 완전히 커스터마이징 할 수 있게 합니다. 설치진행을 원하시면 선택하세요.</value>
+    <value>&lt;b&gt;커스텀&lt;/b&gt; - "커스텀" 설치방법은 완전히 커스터마이징 할 수 있게 합니다. 설치진행을 원하시면 선택하세요.</value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>홈페이지</value>

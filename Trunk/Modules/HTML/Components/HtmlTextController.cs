@@ -853,9 +853,14 @@ namespace DotNetNuke.Modules.Html
                     arrPaths[0] = "App_Code\\HTML\\";
                     FileSystemUtils.DeleteFiles(arrPaths);
                     break;
-            }
+                case "06.00.00":
+                    DesktopModuleInfo desktopModule = DesktopModuleController.GetDesktopModuleByModuleName("DNN_HTML", Null.NullInteger);
+                    desktopModule.Category = "Common";
+                    DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
+                    break;
+           }
 
-            return string.Empty;
+           return string.Empty;
         }
 
         #endregion

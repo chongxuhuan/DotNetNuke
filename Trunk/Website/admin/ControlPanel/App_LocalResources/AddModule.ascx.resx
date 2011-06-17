@@ -162,4 +162,7 @@
   <data name="Visibility.Text" xml:space="preserve">
     <value>Visibility</value>
   </data>
+  <data name="AllCategories.Text" xml:space="preserve">
+    <value>All Categories</value>
+  </data>
 </root>

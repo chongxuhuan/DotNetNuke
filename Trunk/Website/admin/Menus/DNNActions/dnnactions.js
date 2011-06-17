@@ -10,24 +10,19 @@
 
             if ($module.find(opts.menuSelector).size() > 0) {
                 function hoverOver($m, opacity) {
-                    var $border = $m.prev('.' + opts.borderClassName);
+                    var $border = $m.children('.' + opts.borderClassName);
                     if (!$border.size() > 0) {
                         $border = $('<div class="' + opts.borderClassName + '"></div>')
-                        .css('height', $m.height() + 10)
-                        .css('width', $m.width() + 10)
-                        .css('position', 'absolute')
-                        .position({ my: 'left top', at: 'left top', of: $m, offset: '-5' })
-                        .insertBefore($m);
+                        .prependTo($m);
                     }
-                    $m.find(opts.menuActionSelector)
-                        .css('position', 'absolute')
-                        .position({ my: 'left top', at: 'left top', of: $m, offset: '10' })
-                        .fadeTo(opts.fadeSpeed, opacity);
-                    $m.prev('.' + opts.borderClassName).fadeTo(opts.fadeSpeed, opacity);
+                    $m.attr('style', 'z-index:904;');
+                    $m.find(opts.menuActionSelector).fadeTo(opts.fadeSpeed, opacity);
+                    $m.children('.' + opts.borderClassName).fadeTo(opts.fadeSpeed, opacity);
                 };
 
                 function hoverOut($m, opacity) {
-                    $m.prev('.' + opts.borderClassName).stop().fadeTo(opts.fadeSpeed, opacity);
+                    $m.removeAttr('style');
+                    $m.children('.' + opts.borderClassName).stop().fadeTo(opts.fadeSpeed, opacity);
                     $m.find(opts.menuActionSelector).stop().fadeTo(opts.fadeSpeed, opacity);
                 }
 
@@ -73,7 +68,19 @@
                         if (opts.debug) {
                             console.log('module action menu hover intent over');
                         }
-                        $(this).find(opts.menuSelector).show().fadeTo(opts.fadeSpeed, 1);
+                        var $menuActionTag = $(this),
+                            $menuBody = $menuActionTag.find(opts.menuSelector).show(),
+                            availableRoom = ($(window).height() - (($menuActionTag.offset().top - $(window).scrollTop()) + $menuActionTag.height()));
+
+                        if ($menuBody.height() > availableRoom) {
+                            $menuBody.position({ my: 'left bottom', at: 'left top', of: $menuActionTag });
+                        }
+                        else {
+                            $menuBody.position({ my: 'left top', at: 'left bottom', of: $menuActionTag });
+                        }
+
+                        $menuBody.fadeTo(opts.fadeSpeed, 1);
+
                     },
                     out: function () {
                         if (opts.debug) {
@@ -82,6 +89,9 @@
                         $(this).find(opts.menuSelector).stop().fadeTo(opts.fadeSpeed, 0).hide();
                     }
                 });
+
+                $module.find(opts.menuActionSelector).draggable({ containment: "parent" });
+
             }
 
         });

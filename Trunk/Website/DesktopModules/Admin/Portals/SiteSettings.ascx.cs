@@ -147,11 +147,14 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void BindDetails(PortalInfo portal)
         {
-            txtPortalName.Text = portal.PortalName;
-            txtDescription.Text = portal.Description;
-            txtKeyWords.Text = portal.KeyWords;
-            lblGUID.Text = portal.GUID.ToString().ToUpper();
-            txtFooterText.Text = portal.FooterText;
+            if (portal!=null)
+            {
+                txtPortalName.Text = portal.PortalName;
+                txtDescription.Text = portal.Description;
+                txtKeyWords.Text = portal.KeyWords;
+                lblGUID.Text = portal.GUID.ToString().ToUpper();
+                txtFooterText.Text = portal.FooterText; 
+            }
         }
 
         private void BindHostSettings(PortalInfo portal)
@@ -624,6 +627,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         /// <history>
         /// 	[cnurse]	9/9/2004	Modified
         ///     [VMasanas]  9/12/2004   Move skin deassignment to DeletePortalInfo.
+        ///     [jmarino]  16/06/2011   Modify redirection after deletion of portal 
         /// </history>
         /// -----------------------------------------------------------------------------
         protected void DeletePortal(object sender, EventArgs e)
@@ -635,7 +639,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 if (objPortalInfo != null)
                 {
                     string strMessage = PortalController.DeletePortal(objPortalInfo, Globals.GetAbsoluteServerPath(Request));
-
+                    
                     if (string.IsNullOrEmpty(strMessage))
                     {
                         var objEventLog = new EventLogController();
@@ -655,7 +659,14 @@ namespace DotNetNuke.Modules.Admin.Portals
                         }
                         else
                         {
-                            Response.Redirect(Convert.ToString(ViewState["UrlReferrer"]), true);
+                            if (ViewState["UrlReferrer"] != null)
+                            {                            
+                                Response.Redirect(Convert.ToString(ViewState["UrlReferrer"]), true);
+                            }
+                            else
+                            {
+                                Response.Redirect(Globals.NavigateURL(), true);
+                            }
                         }
                     }
                     else

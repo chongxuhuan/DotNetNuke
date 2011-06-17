@@ -32,7 +32,7 @@
 /* ===========   End Page Settings Module Styling   =========== */
 /* ===========   Pages Module Styling   =========== */
 .dnnTabsModule{width:100%;}
-.tmTabContainer{float:left;width: 640px;margin: 20px 0 0 40px;}
+.tmTabContainer{float:left;width:65%;margin: 20px 0 0 40px;}
 .dnnTabContent{padding: 20px;}
 .dnnTreeArea{float:left;margin-left: 5px;width: 250px;padding-bottom:20px;}
 .dnnTreePages{border-right: 1px solid #ccc; margin-bottom:20px;margin-top:10px}

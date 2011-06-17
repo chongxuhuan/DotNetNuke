@@ -58,7 +58,7 @@ namespace DotNetNuke.UI.ControlPanels
             Control ctrl = AdminPanel.FindControl("SiteNewPage");
             if (((ctrl != null) && ctrl is DnnRibbonBarTool))
             {
-                var toolCtrl = (DnnRibbonBarTool) ctrl;
+                var toolCtrl = (DnnRibbonBarTool)ctrl;
                 toolCtrl.Text = Localization.GetString("SiteNewPage", LocalResourceFile);
                 toolCtrl.ToolTip = Localization.GetString("SiteNewPage.ToolTip", LocalResourceFile);
             }
@@ -131,7 +131,7 @@ namespace DotNetNuke.UI.ControlPanels
 
         protected void DetermineNodesToInclude(object sender, EventArgs e)
         {
-            var skinObject = (Web.DDRMenu.SkinObject) sender;
+            var skinObject = (Web.DDRMenu.SkinObject)sender;
             string admin = StripLocalizationPrefix(Localization.GetString("//Admin.String", Localization.GlobalResourceFile));
             string host = StripLocalizationPrefix(Localization.GetString("//Host.String", Localization.GlobalResourceFile));
 
@@ -142,7 +142,7 @@ namespace DotNetNuke.UI.ControlPanels
         {
             const string prefix = "[L]";
 
-            if(s.StartsWith(prefix))
+            if (s.StartsWith(prefix))
             {
                 return s.Substring(prefix.Length);
             }
@@ -269,39 +269,24 @@ namespace DotNetNuke.UI.ControlPanels
         {
             base.OnPreRender(e);
 
-          PageBase.RegisterStyleSheet(Page, "~/admin/ControlPanel/module.css");
-
-          if (IsDockable)
-          {
+            PageBase.RegisterStyleSheet(Page, "~/admin/ControlPanel/module.css");
             ClientScriptManager cs = Page.ClientScript;
             if (!cs.IsClientScriptIncludeRegistered("hoverintent"))
             {
-              cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+                cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
             }
 
             if (!cs.IsClientScriptIncludeRegistered("controlpanel"))
             {
-              cs.RegisterClientScriptInclude("controlpanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+                cs.RegisterClientScriptInclude("controlpanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
             }
             cmdVisibility.Visible = false;
-          }
-          
-
-          //Set initial value
-          //DNNClientAPI.EnableMinMax(imgVisibility,
-          //                          BodyPanel,
-          //                          PortalSettings.DefaultControlPanelVisibility,
-          //                          Globals.ApplicationPath + "/images/collapse.gif",
-          //                          Globals.ApplicationPath + "/images/expand.gif",
-          //                          DNNClientAPI.MinMaxPersistanceType.Personalization,
-          //                          "Usability",
-          //                          "ControlPanelVisible" + PortalSettings.PortalId);
         }
 
         protected void CmdVisibilityClick(object sender, EventArgs e)
         {
-          SetVisibility(true);
-          Response.Redirect(Request.RawUrl, true);
+            SetVisibility(true);
+            Response.Redirect(Request.RawUrl, true);
         }
 
         protected void DdlModeSelectedIndexChanged(object sender, EventArgs e)

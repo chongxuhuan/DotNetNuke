@@ -57,15 +57,21 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     imgLogo.BorderWidth = Unit.Parse(BorderWidth);
                 }
+                bool logoVisible = false;
                 if (!String.IsNullOrEmpty(PortalSettings.LogoFile))
                 {
                     var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.LogoFile);
-                    imgLogo.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+                    if (fileInfo != null)
+                    {
+                        string imageUrl = FileManager.Instance.GetUrl(fileInfo);
+                        if (!String.IsNullOrEmpty(imageUrl))
+                        {
+                            imgLogo.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+                            logoVisible = true;
+                        }
+                    }
                 }
-                else
-                {
-                    imgLogo.Visible = false;
-                }
+                imgLogo.Visible = logoVisible;
                 imgLogo.AlternateText = PortalSettings.PortalName;
                 hypLogo.ToolTip = PortalSettings.PortalName;
                 if (PortalSettings.HomeTabId != -1)

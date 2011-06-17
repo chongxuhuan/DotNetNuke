@@ -40,6 +40,12 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class TermsSelector : DnnComboBox
     {
+        public TermsSelector()
+        {
+            IncludeSystemVocabularies = false;
+            IncludeTags = true;
+        }
+
         #region "Public Properties"
 
         public int PortalId
@@ -52,6 +58,32 @@ namespace DotNetNuke.Web.UI.WebControls
             {
                 ViewState["PortalId"] = value;
             }
+        }
+
+        public bool IncludeSystemVocabularies
+        {
+            get
+            {
+                return Convert.ToBoolean(ViewState["IncludeSystemVocabularies"]);
+            }
+            set
+            {
+                ViewState["IncludeSystemVocabularies"] = value;
+            }
+            
+        }
+
+        public bool IncludeTags
+        {
+            get
+            {
+                return Convert.ToBoolean(ViewState["IncludeTags"]);
+            }
+            set
+            {
+                ViewState["IncludeTags"] = value;
+            }
+
         }
 
         public List<Term> Terms
@@ -90,53 +122,25 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public class TreeViewTemplate : ITemplate
         {
-            private RadComboBoxItem _Container;
-            private List<Term> _Terms;
-            private TermsSelector _TermsSelector;
+            private RadComboBoxItem _container;
+            private List<Term> _terms;
+            private TermsSelector _termsSelector;
 
-            private DnnTreeView _Tree;
+            private DnnTreeView _tree;
 
-            private List<Term> SelectedTerms
+            private bool IncludeSystemVocabularies
             {
                 get
                 {
-                    return _TermsSelector.Terms;
+                    return _termsSelector.IncludeSystemVocabularies;
                 }
             }
 
-            private List<Term> Terms
+            private bool IncludeTags
             {
                 get
                 {
-                    if (_Terms == null)
-                    {
-                        ITermController termRep = Util.GetTermController();
-                        IVocabularyController vocabRep = Util.GetVocabularyController();
-                        _Terms = new List<Term>();
-                        var vocabularies = from v in vocabRep.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v;
-
-                        foreach (Vocabulary v in vocabularies)
-                        {
-                            //Add a dummy parent term if simple vocabulary
-                            if (v.Type == VocabularyType.Simple)
-                            {
-                                Term dummyTerm = new Term(v.VocabularyId);
-                                dummyTerm.ParentTermId = null;
-                                dummyTerm.Name = v.Name;
-                                dummyTerm.TermId = -v.VocabularyId;
-                                _Terms.Add(dummyTerm);
-                            }
-                            foreach (Term t in termRep.GetTermsByVocabulary(v.VocabularyId))
-                            {
-                                if (v.Type == VocabularyType.Simple)
-                                {
-                                    t.ParentTermId = -v.VocabularyId;
-                                }
-                                _Terms.Add(t);
-                            }
-                        }
-                    }
-                    return _Terms;
+                    return _termsSelector.IncludeTags;
                 }
             }
 
@@ -144,39 +148,99 @@ namespace DotNetNuke.Web.UI.WebControls
             {
                 get
                 {
-                    return _TermsSelector.PortalId;
+                    return _termsSelector.PortalId;
                 }
             }
 
+            private List<Term> SelectedTerms
+            {
+                get
+                {
+                    return _termsSelector.Terms;
+                }
+            }
+
+            private List<Term> Terms
+            {
+                get
+                {
+                    if (_terms == null)
+                    {
+                         IVocabularyController vocabRep = Util.GetVocabularyController();
+                        _terms = new List<Term>();
+                        var vocabularies = from v in vocabRep.GetVocabularies() where v.ScopeType.ScopeType == "Application" || (v.ScopeType.ScopeType == "Portal" && v.ScopeId == PortalId) select v;
+
+                        foreach (Vocabulary v in vocabularies)
+                        {
+                            if(v.IsSystem)
+                            {
+                                if (IncludeSystemVocabularies || (IncludeTags && v.Name == "Tags"))
+                                {
+                                    AddTerms(v);
+                                }
+                            }
+                            else
+                            {
+                                AddTerms(v);
+                            }
+                        }
+                    }
+                    return _terms;
+                }
+            }
+
+            private void AddTerms(Vocabulary v)
+            {
+                ITermController termRep = Util.GetTermController();
+                
+                //Add a dummy parent term if simple vocabulary
+                if (v.Type == VocabularyType.Simple)
+                {
+                    Term dummyTerm = new Term(v.VocabularyId);
+                    dummyTerm.ParentTermId = null;
+                    dummyTerm.Name = v.Name;
+                    dummyTerm.TermId = -v.VocabularyId;
+                    _terms.Add(dummyTerm);
+                }
+                foreach (Term t in termRep.GetTermsByVocabulary(v.VocabularyId))
+                {
+                    if (v.Type == VocabularyType.Simple)
+                    {
+                        t.ParentTermId = -v.VocabularyId;
+                    }
+                    _terms.Add(t);
+                }
+                
+            }
             #region ITemplate Members
 
             public void InstantiateIn(Control container)
             {
-                _Container = (RadComboBoxItem) container;
-                _TermsSelector = (TermsSelector) container.Parent;
+                _container = (RadComboBoxItem) container;
+                _termsSelector = (TermsSelector) container.Parent;
 
-                _Tree = new DnnTreeView();
-                _Tree.DataTextField = "Name";
-                _Tree.DataValueField = "TermId";
-                _Tree.DataFieldID = "TermId";
-                _Tree.DataFieldParentID = "ParentTermId";
-                _Tree.CheckBoxes = true;
-                _Tree.ExpandAllNodes();
+                _tree = new DnnTreeView();
+                _tree.DataTextField = "Name";
+                _tree.DataValueField = "TermId";
+                _tree.DataFieldID = "TermId";
+                _tree.DataFieldParentID = "ParentTermId";
+                _tree.CheckBoxes = true;
+                _tree.ExpandAllNodes();
 
-                _Tree.DataSource = Terms;
+                _tree.DataSource = Terms;
 
-                _Tree.NodeDataBound += TreeNodeDataBound;
-                _Tree.NodeCheck += TreeNodeChecked;
-                _Tree.DataBound += TreeDataBound;
+                _tree.NodeDataBound += TreeNodeDataBound;
+                _tree.NodeCheck += TreeNodeChecked;
+                _tree.DataBound += TreeDataBound;
 
-                _Container.Controls.Add(_Tree);
+                _container.Controls.Add(_tree);
             }
 
             #endregion
 
             private void TreeDataBound(object sender, EventArgs e)
             {
-                _Tree.ExpandAllNodes();
+                _tree.ExpandAllNodes();
             }
 
             private void TreeNodeChecked(object sender, RadTreeNodeEventArgs e)
@@ -210,9 +274,8 @@ namespace DotNetNuke.Web.UI.WebControls
                 }
 
                 //Rebind
-                _Tree.DataBind();
+                _tree.DataBind();
             }
-
 
             private void TreeNodeDataBound(object sender, RadTreeNodeEventArgs e)
             {

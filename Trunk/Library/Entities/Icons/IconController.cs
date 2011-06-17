@@ -67,6 +67,7 @@ namespace DotNetNuke.Entities.Icons
         #region Constants
 
         public const string DefaultIconSize = "16X16";
+        public const string DefaultLargeIconSize = "32X32";
         public const string DefaultIconStyle = "Standard";
         public const string DefaultIconLocation = "icons/sigma";
         public const string IconKeyName = "IconKey";
@@ -135,10 +136,13 @@ namespace DotNetNuke.Entities.Icons
 
             using (_iconsStatusOnDisk.GetWriteLock())
             {
-                _iconsStatusOnDisk.Add(path, true);
-                string iconPhysicalPath = Path.Combine(Globals.ApplicationMapPath, path.Replace('/','\\'));
-                if (!File.Exists(iconPhysicalPath))
-                    DnnLog.Warn(string.Format("Icon Not Present on Disk {0}", iconPhysicalPath));
+                if (!_iconsStatusOnDisk.ContainsKey(path))
+                {
+                    _iconsStatusOnDisk.Add(path, true);
+                    string iconPhysicalPath = Path.Combine(Globals.ApplicationMapPath, path.Replace('/', '\\'));
+                    if (!File.Exists(iconPhysicalPath)) 
+						DnnLog.Warn(string.Format("Icon Not Present on Disk {0}", iconPhysicalPath));
+                }
             }            
         }
     }

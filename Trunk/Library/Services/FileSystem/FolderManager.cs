@@ -1505,6 +1505,10 @@ namespace DotNetNuke.Services.FileSystem
                             }
                         }
                     }
+                    catch (InvalidFileExtensionException ex)
+                    {
+                        DnnLog.Info(ex.Message);
+                    }
                     catch (Exception ex)
                     {
                         DnnLog.Error(ex);

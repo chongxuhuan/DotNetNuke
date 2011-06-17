@@ -452,6 +452,8 @@ namespace DotNetNuke.Security
         {
 			//Log User Off from Cookie Authentication System
             FormsAuthentication.SignOut();
+			//Remove current userinfo from context items
+			HttpContext.Current.Items.Remove("UserInfo");
 
             //remove language cookie
             HttpContext.Current.Response.Cookies["language"].Value = "";

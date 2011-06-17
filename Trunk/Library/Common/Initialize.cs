@@ -47,9 +47,9 @@ using DotNetNuke.Services.Upgrade;
 
 namespace DotNetNuke.Common
 {
-	/// <summary>
-	/// The Object to initialize application.
-	/// </summary>
+    /// <summary>
+    /// The Object to initialize application.
+    /// </summary>
     public class Initialize
     {
         private static bool InitializedAlready;
@@ -78,7 +78,7 @@ namespace DotNetNuke.Common
                 var objPortalInfo = (PortalInfo)arrPortals[i];
                 objFolderController.SetMappedDirectory(objPortalInfo, HttpContext.Current);
             }
- #pragma warning restore 612,618
+#pragma warning restore 612,618
         }
 
         /// -----------------------------------------------------------------------------
@@ -155,7 +155,7 @@ namespace DotNetNuke.Common
 
         private static void CreateUnderConstructionPage(HttpServerUtility server)
         {
-			//create an UnderConstruction page if it does not exist already
+            //create an UnderConstruction page if it does not exist already
             if (!File.Exists(server.MapPath("~/Install/UnderConstruction.htm")))
             {
                 if (File.Exists(server.MapPath("~/Install/UnderConstruction.template.htm")))
@@ -170,9 +170,7 @@ namespace DotNetNuke.Common
             HttpServerUtility Server = app.Server;
             HttpRequest Request = app.Request;
             string redirect = Null.NullString;
-            
-            //Call the Global GetStatus function to determine the current status
-            Globals.GetStatus();
+
             //Don't process some of the AppStart methods if we are installing
             if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
             {
@@ -180,7 +178,7 @@ namespace DotNetNuke.Common
                 redirect = CheckVersion(app);
                 if (string.IsNullOrEmpty(redirect))
                 {
-					//Cache Mapped Directory(s)
+                    //Cache Mapped Directory(s)
                     CacheMappedDirectory();
                     //Set globals
                     Globals.IISAppName = Request.ServerVariables["APPL_MD_PATH"];
@@ -206,7 +204,7 @@ namespace DotNetNuke.Common
             }
             else
             {
-				//NET Framework version is neeed by Upgrade
+                //NET Framework version is neeed by Upgrade
                 Globals.NETFrameworkVersion = GetNETFrameworkVersion();
             }
             return redirect;
@@ -217,7 +215,7 @@ namespace DotNetNuke.Common
             string version = Environment.Version.ToString(2);
             if (version == "2.0")
             {
-				//Try and load a 3.0 Assembly
+                //Try and load a 3.0 Assembly
                 try
                 {
                     AppDomain.CurrentDomain.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089");
@@ -246,10 +244,10 @@ namespace DotNetNuke.Common
             return DataProvider.Instance().GetDatabaseEngineVersion();
         }
 
-		/// <summary>
-		/// Inits the app.
-		/// </summary>
-		/// <param name="app">The app.</param>
+        /// <summary>
+        /// Inits the app.
+        /// </summary>
+        /// <param name="app">The app.</param>
         public static void Init(HttpApplication app)
         {
             HttpResponse Response = app.Response;
@@ -261,7 +259,7 @@ namespace DotNetNuke.Common
             }
             lock (InitializeLock)
             {
-				//Double-Check if app was initialised by another request
+                //Double-Check if app was initialised by another request
                 if ((InitializedAlready && Globals.Status == Globals.UpgradeStatus.None))
                 {
                     return;
@@ -308,7 +306,7 @@ namespace DotNetNuke.Common
         /// -----------------------------------------------------------------------------
         public static void StartScheduler()
         {
-			//instantiate APPLICATION_START scheduled jobs
+            //instantiate APPLICATION_START scheduled jobs
             if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
             {
                 SchedulingProvider scheduler = SchedulingProvider.Instance();
@@ -389,6 +387,8 @@ namespace DotNetNuke.Common
                 objEventLogInfo.LogTypeKey = EventLogController.EventLogType.APPLICATION_SHUTTING_DOWN.ToString();
                 objEventLogInfo.AddProperty("Shutdown Details", shutdownDetail);
                 objEv.AddLog(objEventLogInfo);
+
+                DnnLog.Info("Application shutting down. Reason: {0}", shutdownDetail);
             }
             catch (Exception exc)
             {
@@ -396,14 +396,14 @@ namespace DotNetNuke.Common
             }
             if (Globals.Status != Globals.UpgradeStatus.Install)
             {
-            	//purge log buffer
+                //purge log buffer
                 LoggingProvider.Instance().PurgeLogBuffer();
             }
         }
 
         public static void RunSchedule(HttpRequest request)
         {
-			//First check if we are upgrading/installing
+            //First check if we are upgrading/installing
             if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
                 return;
@@ -438,7 +438,7 @@ namespace DotNetNuke.Common
         /// -----------------------------------------------------------------------------
         public static void StopScheduler()
         {
-			//stop scheduled jobs
+            //stop scheduled jobs
             SchedulingProvider.Instance().Halt("Stopped by Application_End");
         }
     }

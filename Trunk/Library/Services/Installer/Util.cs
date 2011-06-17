@@ -23,13 +23,15 @@
 
 #region Usings
 
+using System;
 using System.IO;
+using System.Threading;
 using System.Xml.XPath;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
-using DotNetNuke.Entities.Portals;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Installer.Log;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.UI.Modules;
@@ -54,6 +56,7 @@ namespace DotNetNuke.Services.Installer
     {
         #region Constants
 
+// ReSharper disable InconsistentNaming
         public const string DEFAULT_MANIFESTEXT = ".manifest";
         public static string ASSEMBLY_Added = GetLocalizedString("ASSEMBLY_Added");
         public static string ASSEMBLY_InUse = GetLocalizedString("ASSEMBLY_InUse");
@@ -171,6 +174,7 @@ namespace DotNetNuke.Services.Installer
         public static string WRITER_SavedFile = GetLocalizedString("WRITER_SavedFile");
         public static string WRITER_SaveFileError = GetLocalizedString("WRITER_SaveFileError");
         public static string REGEX_Version = "\\d{2}.\\d{2}.\\d{2}";
+// ReSharper restore InconsistentNaming
         #endregion
 
 		#region "Private Shared Methods"
@@ -179,25 +183,25 @@ namespace DotNetNuke.Services.Installer
         /// <summary>
         /// The StreamToStream method reads a source stream and wrtites it to a destination stream
         /// </summary>
-        /// <param name="SourceStream">The Source Stream</param>
-        /// <param name="DestStream">The Destination Stream</param>
+        /// <param name="sourceStream">The Source Stream</param>
+        /// <param name="destStream">The Destination Stream</param>
         /// <history>
         /// 	[cnurse]	08/03/2007  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private static void StreamToStream(Stream SourceStream, Stream DestStream)
+        private static void StreamToStream(Stream sourceStream, Stream destStream)
         {
             var buf = new byte[1024];
-            int count = 0;
+            int count;
             do
             {
 				//Read the chunk from the source
-                count = SourceStream.Read(buf, 0, 1024);
+                count = sourceStream.Read(buf, 0, 1024);
 
                 //Write the chunk to the destination
-                DestStream.Write(buf, 0, count);
+                destStream.Write(buf, 0, count);
             } while (count > 0);
-            DestStream.Flush();
+            destStream.Flush();
         }
 
         private static void TryDeleteFolder(DirectoryInfo folder, Logger log)
@@ -227,8 +231,36 @@ namespace DotNetNuke.Services.Installer
             }
             return propValue;
         }
-		
-		#endregion
+
+        private static void RetryAction(Action action, string logMessage)
+        {
+            Requires.NotNull("action", action);
+
+            int retrysRemaining = 30;
+
+            do
+            {
+                try
+                {
+                    action();
+                    return;
+                }
+                catch
+                {
+                    if (retrysRemaining <= 0)
+                    {
+                        DnnLog.Warn("All retries failed - " + logMessage);
+                        throw;
+                    }
+
+                    DnnLog.Info(string.Format("Retrying operation {0} - {1}", retrysRemaining, logMessage));
+                    Thread.Sleep(1000);
+                }
+                retrysRemaining--;
+            } while (true);
+        }
+
+        #endregion
 
 		#region Public Shared Methods
 		
@@ -255,7 +287,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file to backup location
-            FileSystemUtils.CopyFile(fullFileName, backupFileName);
+            RetryAction(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName);
             log.AddInfo(string.Format(FILE_CreateBackup, installFile.FullName));
         }
 
@@ -283,7 +315,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file from temp location
-            FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName);
+            RetryAction(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName);
 
             log.AddInfo(string.Format(FILE_Created, installFile.FullName));
         }
@@ -320,13 +352,17 @@ namespace DotNetNuke.Services.Installer
             string fullFileName = Path.Combine(basePath, fileName);
             if (File.Exists(fullFileName))
             {
-                FileSystemUtils.DeleteFile(fullFileName);
+                RetryAction(() => FileSystemUtils.DeleteFile(fullFileName), "Delete file " + fullFileName);
                 log.AddInfo(string.Format(FILE_Deleted, fileName));
                 string folderName = Path.GetDirectoryName(fullFileName);
-                var folder = new DirectoryInfo(folderName);
-                TryDeleteFolder(folder, log);
+                if (folderName != null)
+                {
+                    var folder = new DirectoryInfo(folderName);
+                    TryDeleteFolder(folder, log);
+                }
             }
         }
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -561,25 +597,25 @@ namespace DotNetNuke.Services.Installer
         /// <summary>
         /// The WriteStream reads a source stream and writes it to a destination file
         /// </summary>
-        /// <param name="SourceStream">The Source Stream</param>
-        /// <param name="DestFileName">The Destination file</param>
+        /// <param name="sourceStream">The Source Stream</param>
+        /// <param name="destFileName">The Destination file</param>
         /// <history>
         /// 	[cnurse]	08/03/2007  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void WriteStream(Stream SourceStream, string DestFileName)
+        public static void WriteStream(Stream sourceStream, string destFileName)
         {
 			//Delete the file
-            FileSystemUtils.DeleteFile(DestFileName);
+            FileSystemUtils.DeleteFile(destFileName);
 
-            var file = new FileInfo(DestFileName);
+            var file = new FileInfo(destFileName);
             if (!file.Directory.Exists)
             {
                 file.Directory.Create();
             }
             Stream fileStrm = file.Create();
 
-            StreamToStream(SourceStream, fileStrm);
+            StreamToStream(sourceStream, fileStrm);
 
             //Close the stream
             fileStrm.Close();
