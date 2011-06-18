@@ -270,4 +270,13 @@
   <data name="lblNoRecords.Text" xml:space="preserve">
     <value>There is no history for this content. </value>
   </data>
+  <data name="VersionsPreview.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="VersionsRemove.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="VersionsRollback.Text" xml:space="preserve">
+    <value>Rollback</value>
+  </data>
 </root>

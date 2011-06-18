@@ -837,6 +837,11 @@ namespace DotNetNuke.Services.Install
                     objSuperUserInfo.Email = usrHost.Email;
                     UserController.CreateUser(ref objSuperUserInfo);
 
+                    //Log superuser in to site
+                    UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
+                    UserController.UserLogin(-1, usrHost.UserName, usrHost.Password, "", "", "", ref loginStatus, false);
+ 
+
                     Upgrade.Upgrade.InstallFiles(InstallTemplate, false);
 
                     if (!string.IsNullOrEmpty(txtSMTPServer.Text))

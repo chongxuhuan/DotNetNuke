@@ -35,7 +35,6 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Exceptions;
 
 #endregion
 
@@ -76,7 +75,7 @@ namespace DotNetNuke.Services.FileSystem
                     Int32.TryParse(context.Request.QueryString["mid"], out ModuleId);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 				//The TabId or ModuleId are incorrectly formatted (potential DOS)
                 Exceptions.Exceptions.ProcessHttpException(context.Request);
@@ -209,7 +208,7 @@ namespace DotNetNuke.Services.FileSystem
                 {
                     DnnLog.Error(exc);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     Exceptions.Exceptions.ProcessHttpException(URL);
                 }

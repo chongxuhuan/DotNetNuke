@@ -13,15 +13,6 @@ namespace DotNetNuke.Modules.Html {
     public partial class EditHtml {
         
         /// <summary>
-        /// liMaster control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liMaster;
-        
-        /// <summary>
         /// liCurrent control.
         /// </summary>
         /// <remarks>
@@ -29,6 +20,15 @@ namespace DotNetNuke.Modules.Html {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl liCurrent;
+        
+        /// <summary>
+        /// liMaster control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liMaster;
         
         /// <summary>
         /// liVersions control.
@@ -40,31 +40,13 @@ namespace DotNetNuke.Modules.Html {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl liVersions;
         
         /// <summary>
-        /// ehmContent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ehmContent;
-        
-        /// <summary>
-        /// placeMasterContent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder placeMasterContent;
-        
-        /// <summary>
         /// txtContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.TextEditor txtContent;
+		protected global::DotNetNuke.UI.UserControls.TextEditor txtContent;
         
         /// <summary>
         /// divSubmittedContent control.
@@ -335,6 +317,24 @@ namespace DotNetNuke.Modules.Html {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DotNetNuke.Web.UI.WebControls.DnnGrid dgHistory;
+        
+        /// <summary>
+        /// ehmContent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ehmContent;
+        
+        /// <summary>
+        /// placeMasterContent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder placeMasterContent;
         
         /// <summary>
         /// plMaxVersions control.
