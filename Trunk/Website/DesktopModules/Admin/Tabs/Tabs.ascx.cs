@@ -309,7 +309,8 @@ namespace DotNetNuke.Modules.Admin.Pages
             SelectedNode = e.Node.Value;
 
             var objTabController = new TabController();
-            var objTab = objTabController.GetTab(int.Parse(e.Node.Value), PortalId, false);
+			var portalId = rblMode.SelectedValue == "H" ? Null.NullInteger : PortalId;
+			var objTab = objTabController.GetTab(int.Parse(e.Node.Value), portalId, false);
 
             switch (e.MenuItem.Value.ToLower())
             {

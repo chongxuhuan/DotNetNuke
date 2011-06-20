@@ -12,7 +12,7 @@
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
     function toggleSmtpCredentials(animation){
-        var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
+        var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); /*0,1,2*/
         if (smtpVal == "1") {
             animation ? $('#SMTPUserNameRow,#SMTPPasswordRow').slideDown() : $('#SMTPUserNameRow,#SMTPPasswordRow').show();
         }
