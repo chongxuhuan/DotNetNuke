@@ -45,7 +45,7 @@ blockquote, pre{font-family:Lucida Console, monospace;}
 		ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left;color:#328DDE;}
 			ul.dnnActionMenuBody li ul li a:hover{color:#1B4D79;}
 		ul.dnnActionMenuBody li ul li a img{padding-right:3px;}	
-		
+
 /* Main Menu */
 .MainMenu_MenuContainer{background-color:transparent;}
 .MainMenu_MenuBar{cursor:pointer;height:16px;background-color:transparent;}
@@ -148,7 +148,7 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnFormItem label, .dnnFormItem .dnnFormLabel{display:block;width:24%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
 		.dnnForm .dnnFormSecondItem label{float:none;}
 	.dnnFormItem input, .dnnFormItem .dnnFormInput, .dnnFormItem textarea{float:left;-moz-border-radius:3px;border-radius:3px;padding:5px;background:#fffff5;-moz-box-shadow:inset 0 0 3px 3px #fffbe1;-webkit-box-shadow:inset 0 0 3px 3px #fffbe1;box-shadow:inset 0 0 3px 3px #fffbe1;border-color:#bcb691;border-width:1px;margin:0;width:auto;}
-		.dnnFormItem input[type=checkbox], .dnnFormItem input[type=radio], .dnnFormItem input[type=file], .dnnFormItem input[type=button]{width:auto;border:none;-moz-border-radius:0;border-radius:0;background:none;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
+		.dnnFormItem input[type=checkbox], .dnnFormItem input[type=radio], .dnnFormItem input[type=file], .dnnFormItem input[type=button], .dnnFormItem input.rcbInput{width:auto;border:none;-moz-border-radius:0;border-radius:0;background:none;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
 		.dnnFormItem select{width:auto;padding:0;}
 		.dnnFormItem input[type="text"], .dnnFormItem textarea{min-width:35%;}
 		.dnnFormItem textarea{min-height:80px;}
@@ -165,6 +165,9 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 		.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
 
+	.dnnTooltip a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left bottom;display:block;text-indent:-9991.2em;height:16px;width:16px;float:right;margin-top:1em;}
+		.dnnTooltip.dnnTooltipPinned a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left top;}
+
 	.dnnFormItem input.aspNetDisabled, .dnnFormItem textarea.aspNetDisabled{background:#ebebeb;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;border-color:#a7a7a7;border-width:1px;}
 	.aspNetDisabled, a.aspNetDisabled, .dnnDisabled, a.dnnDisabled{color:#ccc;cursor:not-allowed;text-decoration:none;}
 				
@@ -176,7 +179,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:50%;top:0;z-index:9999;}
 			.dnnFormSuccess{background:#ecffeb url(../../images/success-icn.png) no-repeat 10px center;border:2px #64b657 solid;color:#358927}
 			.dnnFormInfo{background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;}
-		.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #fff;font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
+		.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px 10px;-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #fff;font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
 		.dnnFormItem .dnnFormHelpContent{left:15em;max-width:30em;position:absolute;z-index:3;}
 		.dnnFormHelpContent.ui-draggable{cursor:move;}
 			.dnnFormHelpContent.dnnClear, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent.dnnClear, .dnnFormItem label .dnnFormHelpContent.dnnClear{line-height:1.4;text-align:left;}

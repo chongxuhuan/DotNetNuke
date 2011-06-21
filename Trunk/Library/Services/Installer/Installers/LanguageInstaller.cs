@@ -198,7 +198,10 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 string packageName = Util.ReadElement(nav, "package");
                 PackageInfo package = PackageController.GetPackageByName(packageName);
-                LanguagePack.DependentPackageID = package.PackageID;
+                if (package != null)
+                {
+                    LanguagePack.DependentPackageID = package.PackageID;
+                }
             }
 			
             //Call base class
@@ -232,54 +235,57 @@ namespace DotNetNuke.Services.Installer.Installers
         /// -----------------------------------------------------------------------------
         public override void Install()
         {
-            try
+            if (LanguagePackType == LanguagePackType.Core || LanguagePack.DependentPackageID > 0)
             {
-				//Attempt to get the LanguagePack
-                InstalledLanguagePack = LanguagePackController.GetLanguagePackByPackage(Package.PackageID);
-                if (InstalledLanguagePack != null)
+                try
                 {
-                    LanguagePack.LanguagePackID = InstalledLanguagePack.LanguagePackID;
-                }
-				
-                //Attempt to get the Locale
-                TempLanguage = LocaleController.Instance.GetLocale(Language.Code);
-                if (TempLanguage != null)
-                {
-                    Language.LanguageId = TempLanguage.LanguageId;
-                }
-                if (LanguagePack.PackageType == LanguagePackType.Core)
-                {
-					//Update language
-                    Localization.Localization.SaveLanguage(Language);
-                }
-                PortalSettings _settings = PortalController.GetCurrentPortalSettings();
-                if (_settings != null)
-                {
-                    Locale enabledLanguage = null;
-                    if (!LocaleController.Instance.GetLocales(_settings.PortalId).TryGetValue(Language.Code, out enabledLanguage))
+                    //Attempt to get the LanguagePack
+                    InstalledLanguagePack = LanguagePackController.GetLanguagePackByPackage(Package.PackageID);
+                    if (InstalledLanguagePack != null)
                     {
-                        //Add language to portal
-                        Localization.Localization.AddLanguageToPortal(_settings.PortalId, Language.LanguageId, true);
+                        LanguagePack.LanguagePackID = InstalledLanguagePack.LanguagePackID;
                     }
+
+                    //Attempt to get the Locale
+                    TempLanguage = LocaleController.Instance.GetLocale(Language.Code);
+                    if (TempLanguage != null)
+                    {
+                        Language.LanguageId = TempLanguage.LanguageId;
+                    }
+                    if (LanguagePack.PackageType == LanguagePackType.Core)
+                    {
+                        //Update language
+                        Localization.Localization.SaveLanguage(Language);
+                    }
+                    PortalSettings _settings = PortalController.GetCurrentPortalSettings();
+                    if (_settings != null)
+                    {
+                        Locale enabledLanguage = null;
+                        if (!LocaleController.Instance.GetLocales(_settings.PortalId).TryGetValue(Language.Code, out enabledLanguage))
+                        {
+                            //Add language to portal
+                            Localization.Localization.AddLanguageToPortal(_settings.PortalId, Language.LanguageId, true);
+                        }
+                    }
+
+                    //Set properties for Language Pack
+                    LanguagePack.PackageID = Package.PackageID;
+                    LanguagePack.LanguageID = Language.LanguageId;
+
+                    //Update LanguagePack
+                    LanguagePackController.SaveLanguagePack(LanguagePack);
+
+                    Log.AddInfo(string.Format(Util.LANGUAGE_Registered, Language.Text));
+
+                    //install (copy the files) by calling the base class
+                    base.Install();
+
+                    Completed = true;
                 }
-
-                //Set properties for Language Pack
-                LanguagePack.PackageID = Package.PackageID;
-                LanguagePack.LanguageID = Language.LanguageId;
-
-                //Update LanguagePack
-                LanguagePackController.SaveLanguagePack(LanguagePack);
-
-                Log.AddInfo(string.Format(Util.LANGUAGE_Registered, Language.Text));
-
-                //install (copy the files) by calling the base class
-                base.Install();
-
-                Completed = true;
-            }
-            catch (Exception ex)
-            {
-                Log.AddFailure(ex);
+                catch (Exception ex)
+                {
+                    Log.AddFailure(ex);
+                }
             }
         }
 

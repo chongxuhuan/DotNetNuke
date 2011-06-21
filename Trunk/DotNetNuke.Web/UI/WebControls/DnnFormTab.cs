@@ -41,6 +41,10 @@ namespace DotNetNuke.Web.UI.WebControls
             Items = new List<DnnFormItemBase>();
         }
 
+        public bool IncludeExpandAll { get; set; }
+
+        internal string ExpandAllScript { get; set; }
+
         [Category("Behavior"), PersistenceMode(PersistenceMode.InnerProperty), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<DnnFormItemBase> Items { get; private set; }
 

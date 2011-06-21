@@ -11,21 +11,62 @@
 			.find('.dnnFormExpandContent a').dnnExpandAll({
 				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
 				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
-				targetArea: '#dnnTabsModule' 
+				targetArea: '#dnnTabsModule'
 			});
 	}
 
+
 	$(document).ready(function () {
 		setUpTabsModule();
+
+		var msgQueue = [];
+		if (location.hash != "") {
+			$.each(location.hash.toUpperCase().replace("#", "").split("&"), function (index, value) {
+				if (value == "P" || value == "H") {
+					$("input[type=radio][name$=rblMode][value=" + value + "]").trigger("click");
+				}
+				else if (/^\d+$/.test(value)) {
+					/*try to find node in tree, 
+					if can't find then push it into message queue to wait tree re-load and check again.*/
+					setTimeout(function () {
+						var selectNode = function () {
+							var tree = $find("<%=ctlPages.ClientID %>");
+							var node = tree.findNodeByValue(value);
+							if (node == null) {
+								return false;
+							}
+							else {
+								node.get_parent().expand();
+								node.select();
+								return true;
+							}
+						};
+
+						if (!selectNode()) {
+							msgQueue.push(selectNode);
+						}
+					}, 0);
+				}
+			});
+		}
+
+		var processMsgQueue = function () {
+			while (msgQueue.length > 0) {
+				setTimeout(msgQueue[0], 0);
+				msgQueue.splice(0, 1);
+			}
+		}
+
 		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
 			setUpTabsModule();
+			processMsgQueue();
 		});
 	});
 
 	function toggleSection(id, isToggled) {
-		$("div[id$='"+ id + "']").toggle(isToggled);
+		$("div[id$='" + id + "']").toggle(isToggled);
 	}
-}(jQuery, window.Sys));
+} (jQuery, window.Sys));
 </script>
 <dnnweb:DnnScriptBlock ID="RadScriptBlock1" runat="server">
 	<script type="text/javascript">
@@ -39,6 +80,9 @@
 					eventArgs.set_cancel(true);
 				}
 			}
+			/*get current node to set hash*/
+			var nodeValue = eventArgs.get_node().get_value();
+			location.hash = "#" + $("input[type=radio][name$=rblMode]:checked").val() + "&" + nodeValue;
 		}
 		function onContextShowing(sender, eventArgs) {
 			var node = eventArgs.get_node();
@@ -59,6 +103,10 @@
 				menu.findItemByValue('makehome').set_visible(a.getAttribute("CanMakeHome") == 'True');
 			}
 		}
+		function OnClientNodeClicked(sender, eventArgs) {
+			var nodeValue = eventArgs.get_node().get_value();
+			location.hash = "#" + $("input[type=radio][name$=rblMode]:checked").val() + "&" + nodeValue;
+		}
 	</script>
 </dnnweb:DnnScriptBlock>
 <div class="dnnForm dnnTabsModule dnnClear" id="dnnTabsModule">
@@ -75,7 +123,9 @@
 		<div class="dnnTreeExpand">
 			<asp:LinkButton ID="cmdExpandTree" runat="server" CommandName="Expand" />
 		</div>
-		<dnnweb:DnnTreeView ID="ctlPages" cssclass="dnnTreePages" runat="server" AllowNodeEditing="true" EnableDragAndDrop="true" OnClientContextMenuShowing="onContextShowing" OnClientContextMenuItemClicking="onContextClicking" EnableDragAndDropBetweenNodes="true">
+		<dnnweb:DnnTreeView ID="ctlPages" cssclass="dnnTreePages" runat="server" AllowNodeEditing="true" EnableDragAndDrop="true"
+		 OnClientContextMenuShowing="onContextShowing" OnClientContextMenuItemClicking="onContextClicking"
+		  OnClientNodeClicked="OnClientNodeClicked" EnableDragAndDropBetweenNodes="true">
 			<ContextMenus>                
 				<dnnweb:DnnTreeViewContextMenu ID="ctlContext" runat="server">
 					<Items>                                            

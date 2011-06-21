@@ -51,10 +51,10 @@ namespace DotNetNuke.Modules.Admin.Languages
     {
 		#region "Private Members"
 		
-        private string highlight;
-        private string locale;
-        private string mode;
-        private string resfile;
+        private string _highlight;
+        private string _locale;
+        private string _mode;
+        private string _resfile;
 
 		#endregion
 
@@ -64,7 +64,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         {
             get
             {
-                return ModuleContext.NavigateUrl(TabId, "", true, "ctl=Editor", "mid=" + ModuleId, "Locale=" + locale, "ResourceFile=" + Globals.QueryStringEncode(resfile), "Mode=" + mode, "Highlight=" + highlight);
+                return ModuleContext.NavigateUrl(TabId, "", true, "ctl=Editor", "mid=" + ModuleId, "Locale=" + _locale, "ResourceFile=" + Globals.QueryStringEncode(_resfile), "Mode=" + _mode, "Highlight=" + _highlight);
             }
         }
 
@@ -97,14 +97,14 @@ namespace DotNetNuke.Modules.Admin.Languages
         /// -----------------------------------------------------------------------------
         private string LoadFile(string mode, string type)
         {
-            string file = "";
+            string file;
             string t = "";
             string temp;
             switch (type)
             {
                 case "Edit":
                     //Only load resources from the file being edited
-                    file = ResourceFile(locale, mode);
+                    file = ResourceFile(_locale, mode);
                     temp = LoadResource(file);
                     if (temp != null)
                     {
@@ -118,10 +118,10 @@ namespace DotNetNuke.Modules.Admin.Languages
                     switch (mode)
                     {
                         case "Host":
-                            if (locale != Localization.SystemLocale)
+                            if (_locale != Localization.SystemLocale)
                             {
 								//Load base file for selected locale
-                                file = ResourceFile(locale, "System");
+                                file = ResourceFile(_locale, "System");
                                 temp = LoadResource(file);
                                 if (temp != null)
                                 {
@@ -137,10 +137,10 @@ namespace DotNetNuke.Modules.Admin.Languages
                             {
                                 t = temp;
                             }
-                            if (locale != Localization.SystemLocale)
+                            if (_locale != Localization.SystemLocale)
                             {
 								//Load base file for locale
-                                file = ResourceFile(locale, "System");
+                                file = ResourceFile(_locale, "System");
                                 temp = LoadResource(file);
                                 if (temp != null)
                                 {
@@ -148,7 +148,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                                 }
 								
 								//Load host override for selected locale
-                                file = ResourceFile(locale, "Host");
+                                file = ResourceFile(_locale, "Host");
                                 temp = LoadResource(file);
                                 if (temp != null)
                                 {
@@ -177,7 +177,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         private string LoadResource(string filepath)
         {
             var d = new XmlDocument();
-            bool xmlLoaded = false;
+            bool xmlLoaded;
             string ret = null;
             try
             {
@@ -190,8 +190,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             }
             if (xmlLoaded)
             {
-                XmlNode node;
-                node = d.SelectSingleNode("//root/data[@name='" + lblName.Text + "']/value");
+                var node = d.SelectSingleNode("//root/data[@name='" + lblName.Text + "']/value");
                 if (node != null)
                 {
                     ret = node.InnerXml;
@@ -204,6 +203,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         /// <summary>
         /// Returns the resource file name for a given resource and language
         /// </summary>
+        /// <param name="language"></param>
         /// <param name="mode">Identifies the resource being searched (System, Host, Portal)</param>
         /// <returns>Localized File Name</returns>
         /// <remarks>
@@ -215,7 +215,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         /// -----------------------------------------------------------------------------
         private string ResourceFile(string language, string mode)
         {
-            return Localization.GetResourceFileName(Server.MapPath("~\\" + resfile), language, mode, PortalId);
+            return Localization.GetResourceFileName(Server.MapPath("~\\" + _resfile), language, mode, PortalId);
         }
 
 		#endregion
@@ -226,7 +226,6 @@ namespace DotNetNuke.Modules.Admin.Languages
         /// <summary>
         /// Loads resource file and default data
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <remarks>
         /// </remarks>
@@ -241,22 +240,18 @@ namespace DotNetNuke.Modules.Admin.Languages
             cmdCancel.Click += cmdCancel_Click;
             cmdUpdate.Click += cmdUpdate_Click;
 
-            var resDoc = new XmlDocument();
-            var defDoc = new XmlDocument();
             try
             {
-                string defaultValue;
-                string editValue;
-                resfile = Globals.QueryStringDecode(Request.QueryString["resourcefile"]);
-                locale = Request.QueryString["locale"];
-                mode = Request.QueryString["mode"];
-                highlight = Request.QueryString["highlight"];
+                _resfile = Globals.QueryStringDecode(Request.QueryString["resourcefile"]);
+                _locale = Request.QueryString["locale"];
+                _mode = Request.QueryString["mode"];
+                _highlight = Request.QueryString["highlight"];
                 lblName.Text = Request.QueryString["name"];
-                lblFile.Text = ResourceFile(locale, mode).Replace(Globals.ApplicationMapPath, "").Replace("\\", "/");
+                lblFile.Text = ResourceFile(_locale, _mode).Replace(Globals.ApplicationMapPath, "").Replace("\\", "/");
                 if (!Page.IsPostBack)
                 {
-                    defaultValue = LoadFile(mode, "Default");
-                    editValue = LoadFile(mode, "Edit");
+                    var defaultValue = LoadFile(_mode, "Default");
+                    var editValue = LoadFile(_mode, "Edit");
                     if (string.IsNullOrEmpty(editValue))
                     {
                         editValue = defaultValue;
@@ -323,7 +318,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("RequiredField.ErrorMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
                     return;
                 }
-                filename = ResourceFile(locale, mode);
+                filename = ResourceFile(_locale, _mode);
                 if (!File.Exists(filename))
                 {
 					//load system default
@@ -334,7 +329,7 @@ namespace DotNetNuke.Modules.Admin.Languages
                 {
                     resDoc.Load(filename);
                 }
-                switch (mode)
+                switch (_mode)
                 {
                     case "System":
                         node = resDoc.SelectSingleNode("//root/data[@name='" + lblName.Text + "']/value");

@@ -1,4 +1,4 @@
-#dnnCPWrap{width:940px;position:fixed;top:0;z-index:950;margin:0 auto;padding:6px 0;background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );border:1px #999 solid;-webkit-border-bottom-right-radius: 5px;-webkit-border-bottom-left-radius: 5px;-moz-border-radius-bottomright: 5px;-moz-border-radius-bottomleft: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;}
+#dnnCPWrap{width:940px;position:relative;top:0;z-index:950;margin:0 auto;padding:6px 0;background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#CFCFCF',GradientType=0 );border:1px #999 solid;-webkit-border-bottom-right-radius: 5px;-webkit-border-bottom-left-radius: 5px;-moz-border-radius-bottomright: 5px;-moz-border-radius-bottomleft: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;}
 	#dnnCPWrap .dnnCPContent {display:none;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border-radius:3px;-webkit-border-radius:3px;-moz-border-radius:3px;}
 	.dnnControlPanel{margin:0 auto;font-size:11px;}
 		a.dnnCPHMessagednnLeft, a.dnnCPHMessagednnLeft img{display:block !important;}
@@ -15,7 +15,6 @@
 				a.cpCopyPermissions.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
 			a.cpCopyDesign{background:url(images/iconbar_copytab_16.gif) no-repeat left;}
 				a.cpCopyDesign.dnnDisabled{background:url(images/iconbar_copytab_bw_16.gif) no-repeat left;color:#ccc;cursor:not-allowed;text-decoration:none;border-collapse:collapse;}
-	 
 		.dnnadminmega .megaborder .cpcbCurrentPage label, .dnnadminmega .megaborder .cpcbCurrentPage a, #dnnOtherTools .cpcbAdmin a{font-weight:normal}
 		#dnnCPWrap a{font-size:11px;}
 	#dnnCurrentPage .megaborder{width:540px;}
@@ -65,8 +64,4 @@
 					.dnnadminmega .megaborder h5 {border-bottom:1px solid #eee;margin:0 0 3px 0;text-align:left;padding:0 0 3px 0;font-size:12px;}
 					.dnnadminmega .megaborder select {line-height: 20px}
 					.dnnadminmega .megaborder label {margin-top:0;width:auto;}
-					
-a.dnnCPHMessage{padding-left:150px;}
-
-
-	
+		a.dnnCPHMessage{padding-left:150px;}

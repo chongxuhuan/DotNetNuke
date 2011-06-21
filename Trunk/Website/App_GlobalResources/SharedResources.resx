@@ -1023,17 +1023,11 @@
   <data name="Captcha.Text" xml:space="preserve">
     <value>Security Code</value>
   </data>
-  <data name="Password.Help" xml:space="preserve">
-    <value>Enter your Password below</value>
-  </data>
   <data name="Password.Text" xml:space="preserve">
     <value>Password:</value>
   </data>
-  <data name="Username.Help" xml:space="preserve">
-    <value>Enter your User Name below</value>
-  </data>
   <data name="Username.Text" xml:space="preserve">
-    <value>User Name:</value>
+    <value>Username:</value>
   </data>
   <data name="CaptchaText.Text" xml:space="preserve">
     <value>Enter the code shown above in the box below</value>

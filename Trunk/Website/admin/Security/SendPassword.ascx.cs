@@ -29,6 +29,7 @@ using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
@@ -55,15 +56,15 @@ namespace DotNetNuke.Modules.Admin.Security
     public partial class SendPassword : UserModuleBase
     {
 
-		#region Private Members
+        #region Private Members
 
         private UserInfo _user;
         private int _userCount = Null.NullInteger;
         private string _ipAddress;
 
-		#endregion
+        #endregion
 
-		#region Protected Properties
+        #region Protected Properties
 
         /// <summary>
         /// Gets the Redirect URL (after successful sending of password)
@@ -79,7 +80,7 @@ namespace DotNetNuke.Modules.Admin.Security
 
                 if (Request.QueryString["returnurl"] != null)
                 {
-					//return to the url passed
+                    //return to the url passed
                     redirectURL = HttpUtility.UrlDecode(Request.QueryString["returnurl"]);
                     //redirect url should never contain a protocol ( if it does, it is likely a cross-site request forgery attempt )
                     if (redirectURL.Contains("://"))
@@ -96,7 +97,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 }
                 if (String.IsNullOrEmpty(redirectURL))
                 {
-					//redirect to current page 
+                    //redirect to current page 
                     redirectURL = Globals.NavigateURL();
                 }
                 return redirectURL;
@@ -118,10 +119,10 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
-		#endregion
+        #endregion
 
-		#region Private Methods
-		
+        #region Private Methods
+
         private void GetUser()
         {
             ArrayList arrUsers;
@@ -130,7 +131,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 arrUsers = UserController.GetUsersByEmail(PortalSettings.PortalId, txtEmail.Text, 0, Int32.MaxValue, ref _userCount);
                 if (arrUsers != null && arrUsers.Count == 1)
                 {
-                    _user = (UserInfo) arrUsers[0];
+                    _user = (UserInfo)arrUsers[0];
                 }
             }
             else
@@ -139,9 +140,9 @@ namespace DotNetNuke.Modules.Admin.Security
             }
         }
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {
@@ -245,12 +246,12 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (String.IsNullOrEmpty(txtUsername.Text.Trim()))
                 {
-					//No UserName provided
+                    //No UserName provided
                     if (MembershipProviderConfig.RequiresUniqueEmail)
                     {
                         if (String.IsNullOrEmpty(txtEmail.Text.Trim()))
                         {
-							//No email address either (cannot retrieve password)
+                            //No email address either (cannot retrieve password)
                             canSend = false;
                             message = Localization.GetString("EnterUsernameEmail", LocalResourceFile);
                             moduleMessageType = ModuleMessage.ModuleMessageType.RedError;
@@ -258,16 +259,27 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                     else
                     {
-						//Cannot retrieve password
+                        //Cannot retrieve password
                         canSend = false;
                         message = Localization.GetString("EnterUsername", LocalResourceFile);
                         moduleMessageType = ModuleMessage.ModuleMessageType.RedError;
                     }
                 }
 
+                if (string.IsNullOrEmpty(Host.SMTPServer))
+                {
+                    //SMTP Server is not configured
+                    canSend = false;
+                    message = Localization.GetString("OptionUnavailable", LocalResourceFile);
+                    moduleMessageType = ModuleMessage.ModuleMessageType.YellowWarning;
+
+                    var logMessage = Localization.GetString("SMTPNotConfigured", LocalResourceFile);
+
+                    LogResult(logMessage);
+                }
+
                 if (canSend)
                 {
-                    var portalSecurity = new PortalSecurity();
                     GetUser();
                     if (_user != null)
                     {
@@ -322,37 +334,18 @@ namespace DotNetNuke.Modules.Admin.Security
 
                         canSend = false;
                     }
+
                     if (canSend)
                     {
-                        var objEventLog = new EventLogController();
-                        var objEventLogInfo = new LogInfo();
-                        objEventLogInfo.AddProperty("IP", _ipAddress);
-                        objEventLogInfo.LogPortalID = PortalSettings.PortalId;
-                        objEventLogInfo.LogPortalName = PortalSettings.PortalName;
-                        objEventLogInfo.LogUserID = UserId;
-                        objEventLogInfo.LogUserName = portalSecurity.InputFilter(txtUsername.Text,
-                                                                              PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
-                        objEventLogInfo.LogTypeKey = "PASSWORD_SENT_SUCCESS";
-                        objEventLog.AddLog(objEventLogInfo);
-
-                        UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
+                        LogSuccess();
                     }
                     else
                     {
-                        var objEventLog = new EventLogController();
-                        var objEventLogInfo = new LogInfo();
-                        objEventLogInfo.AddProperty("IP", _ipAddress);
-                        objEventLogInfo.LogPortalID = PortalSettings.PortalId;
-                        objEventLogInfo.LogPortalName = PortalSettings.PortalName;
-                        objEventLogInfo.LogUserID = UserId;
-                        objEventLogInfo.LogUserName = portalSecurity.InputFilter(txtUsername.Text,
-                                                                              PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
-                        objEventLogInfo.LogTypeKey = "PASSWORD_SENT_FAILURE";
-                        objEventLogInfo.LogProperties.Add(new LogDetailInfo("Cause", message));
-                        objEventLog.AddLog(objEventLogInfo);
-
-                        UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
+                        LogFailure(message);
                     }
+
+                    UI.Skins.Skin.AddModuleMessage(this, message, moduleMessageType);
+
                     liLogin.Visible = true;
                 }
                 else
@@ -361,8 +354,44 @@ namespace DotNetNuke.Modules.Admin.Security
                 }
             }
         }
-		
-		#endregion
+
+        private void LogSuccess()
+        {
+            LogResult(string.Empty);
+        }
+
+        private void LogFailure(string reason)
+        {
+            LogResult(reason);
+        }
+
+        private void LogResult(string message)
+        {
+            var portalSecurity = new PortalSecurity();
+
+            var objEventLog = new EventLogController();
+            var objEventLogInfo = new LogInfo();
+            
+            objEventLogInfo.AddProperty("IP", _ipAddress);
+            objEventLogInfo.LogPortalID = PortalSettings.PortalId;
+            objEventLogInfo.LogPortalName = PortalSettings.PortalName;
+            objEventLogInfo.LogUserID = UserId;
+            objEventLogInfo.LogUserName = portalSecurity.InputFilter(txtUsername.Text,
+                                                                     PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
+            if (string.IsNullOrEmpty(message))
+            {
+                objEventLogInfo.LogTypeKey = "PASSWORD_SENT_SUCCESS";
+            }
+            else
+            {
+                objEventLogInfo.LogTypeKey = "PASSWORD_SENT_FAILURE";
+                objEventLogInfo.LogProperties.Add(new LogDetailInfo("Cause", message));
+            }
+            
+            objEventLog.AddLog(objEventLogInfo);
+        }
+
+        #endregion
 
     }
 }

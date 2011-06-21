@@ -24,16 +24,14 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
-
-using Telerik.Web.UI;
 
 #endregion
 
@@ -47,23 +45,11 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public DnnFormEditor()
         {
-            FieldStyle = new Style();
-            FooterStyle = new Style();
-            GroupStyle = new Style();
-            HeaderStyle = new Style();
-            ItemStyleLong = new Style();
-            ItemStyleShort = new Style();
-            LabelStyle = new Style();
-            SectionStyle = new Style();
-            TabStyle = new Style();
-            ToolTipStyle = new Style();
-
             Items = new List<DnnFormItemBase>();
             Sections = new List<DnnFormSection>();
             Tabs = new List<DnnFormTab>();
 
             FormMode = DnnFormMode.Long;
-            SectionExpandMode = PanelBarExpandMode.MultipleExpandedItems;
         }
 
         protected string LocalResourceFile
@@ -100,8 +86,6 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public DnnFormMode FormMode { get; set; }
 
-        public Unit FixedSectionHeight { get; set; }
-
         public bool IsValid
         {
             get
@@ -123,69 +107,11 @@ namespace DotNetNuke.Web.UI.WebControls
         [Category("Behavior"), PersistenceMode(PersistenceMode.InnerProperty), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<DnnFormItemBase> Items { get; private set; }
 
-        public PanelBarExpandMode SectionExpandMode { get; set; }
-
         [Category("Behavior"), PersistenceMode(PersistenceMode.InnerProperty), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<DnnFormSection> Sections { get; private set; }
 
         [Category("Behavior"), PersistenceMode(PersistenceMode.InnerProperty), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<DnnFormTab> Tabs { get; private set; }
-
-        #region Styles
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Fields.")]
-        public Style FieldStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Footer.")]
-        public Style FooterStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Groups.")]
-        public Style GroupStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Header.")]
-        public Style HeaderStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Items in the long form.")]
-        public Style ItemStyleLong { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Items in the short form.")]
-        public Style ItemStyleShort { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Labels.")]
-        public Style LabelStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Sections.")]
-        public Style SectionStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the Tabs.")]
-        public Style TabStyle { get; private set; }
-
-        [Browsable(true), Category("Styles"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content), TypeConverter(typeof (ExpandableObjectConverter)),
-         PersistenceMode(PersistenceMode.InnerProperty), Description("Set the Style for the ToolTips.")]
-        public Style ToolTipStyle { get; private set; }
-
-        #endregion
-
-        #region Templates
-
-        [Browsable(false), DefaultValue(null), Description("The Footer Template."), TemplateInstance(TemplateInstance.Single), PersistenceMode(PersistenceMode.InnerProperty),
-         TemplateContainer(typeof (DnnFormEmptyTemplate))]
-        public ITemplate FooterTemplate { get; set; }
-
-        [Browsable(false), DefaultValue(null), Description("The Header Template."), TemplateInstance(TemplateInstance.Single), PersistenceMode(PersistenceMode.InnerProperty),
-         TemplateContainer(typeof (DnnFormEmptyTemplate))]
-        public ITemplate HeaderTemplate { get; set; }
-
-        #endregion
 
         private List<DnnFormItemBase> GetAllItems()
         {
@@ -215,73 +141,30 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #region Private Methods
 
-        private void SetUpFooter()
-        {
-            if (FooterTemplate != null)
-            {
-                var template = new DnnFormEmptyTemplate();
-                FooterTemplate.InstantiateIn(template);
-                template.ApplyStyle(FooterStyle);
-                template.CssClass = "dnnformFooter";
-                Controls.Add(template);
-            }
-        }
+        //private static Panel SetUpGroup(string group, WebControl parentControl, string localResourceFile)
+        //{
+        //    var groupPanel = new Panel();
+        //    var resourceKey = group;
+        //    groupPanel.GroupingText = Localization.GetString(resourceKey, localResourceFile);
+        //    groupPanel.CssClass = "dnnformGroup";
 
-        private void SetUpHeader()
-        {
-            if (HeaderTemplate != null)
-            {
-                var template = new DnnFormEmptyTemplate();
-                HeaderTemplate.InstantiateIn(template);
-                template.ApplyStyle(HeaderStyle);
-                template.CssClass = "dnnformHeader";
-                Controls.Add(template);
-            }
-        }
+        //    //Add Group Header
+        //    var helpText = Localization.GetString(resourceKey + ".Help", localResourceFile);
+        //    if (!String.IsNullOrEmpty(helpText))
+        //    {
+        //        groupPanel.Controls.Add(new LiteralControl(Localization.GetString(resourceKey + ".Help", localResourceFile)));
+        //    }
 
-        private static Panel SetUpGroup(string group, WebControl parentControl, string localResourceFile)
-        {
-            var groupPanel = new Panel();
-            var resourceKey = group;
-            groupPanel.GroupingText = Localization.GetString(resourceKey, localResourceFile);
-            groupPanel.CssClass = "dnnformGroup";
+        //    parentControl.Controls.Add(groupPanel);
 
-            //Add Group Header
-            var helpText = Localization.GetString(resourceKey + ".Help", localResourceFile);
-            if (!String.IsNullOrEmpty(helpText))
-            {
-                groupPanel.Controls.Add(new LiteralControl(Localization.GetString(resourceKey + ".Help", localResourceFile)));
-            }
-
-            parentControl.Controls.Add(groupPanel);
-
-            return groupPanel;
-        }
+        //    return groupPanel;
+        //}
 
         internal static void SetUpItems(IEnumerable<DnnFormItemBase> items, WebControl parentControl, string localResourceFile)
         {
-            string previousGroup = "";
-            Panel groupPanel = null;
             foreach (DnnFormItemBase item in items)
             {
-                if (String.IsNullOrEmpty(item.Group))
-                {
-                    //Add directly to form
-                    parentControl.Controls.Add(item);
-                }
-                else
-                {
-                    if (previousGroup != item.Group)
-                    {
-                        //new Group
-                        groupPanel = SetUpGroup(item.Group, parentControl, localResourceFile);
-                    }
-                    if (groupPanel != null)
-                    {
-                        groupPanel.Controls.Add(item);
-                    }
-                    previousGroup = item.Group;
-                }
+                parentControl.Controls.Add(item);
             }
         }
 
@@ -289,33 +172,20 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             if (sections.Count > 0)
             {
-                var panelBar = new DnnPanelBar
-                                   {
-                                       ExpandMode = SectionExpandMode, 
-                                       ID = parentControl.ID + "_Sections", 
-                                       CssClass = "dnnformSections"
-                                   };
-                if (SectionExpandMode == PanelBarExpandMode.FullExpandedItem)
-                {
-                    panelBar.Height = FixedSectionHeight;
- 
-                }
-                parentControl.Controls.Add(panelBar);
-
                 foreach (DnnFormSection section in sections)
                 {
+                    var panel = new DnnFormPanel {CssClass = "dnnFormSectionHead"};
+                    parentControl.Controls.Add(panel);
+
                     var resourceKey = section.ResourceKey;
                     if (String.IsNullOrEmpty(resourceKey))
                     {
                         resourceKey = section.ID;
                     }
-                    var panel = new DnnPanelItem {Text = Localization.GetString(resourceKey, LocalResourceFile), Expanded = section.Expanded};
-                    panel.ControlStyle.MergeWith(SectionStyle);
-                    var template = new DnnFormSectionTemplate();
-                    template.Items.AddRange(section.Items);
-                    template.LocalResourceFile = LocalResourceFile;
-                    panel.ContentTemplate = template;
-                    panelBar.Items.Add(panel);
+                    panel.Text = Localization.GetString(resourceKey, LocalResourceFile);
+                    panel.Expanded = section.Expanded;
+
+                    SetUpItems(section.Items, panel, LocalResourceFile);
                 }
             }
         }
@@ -324,19 +194,9 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             if (Tabs.Count > 0)
             {
-                var multiPage = new DnnMultiPage {ID = "Pages", CssClass = "dnnformPageContainer"};
-                if (SectionExpandMode == PanelBarExpandMode.FullExpandedItem)
-                {
-                    multiPage.Height = FixedSectionHeight;
-                }
-                var tabStrip = new DnnTabStrip {ID = "Tabs", MultiPageID = multiPage.ID, CausesValidation = false, CssClass = "dnnformTabStrip"};
-                tabStrip.ControlStyle.MergeWith(TabStyle);
-
+                var tabStrip = new DnnFormTabStrip {CssClass = "dnnAdminTabNav dnnClear"};
                 Controls.Add(tabStrip);
-                Controls.Add(multiPage);
-
-                multiPage.PageViews.Clear();
-                tabStrip.Tabs.Clear();
+                tabStrip.Items.Clear();
 
                 foreach (DnnFormTab formTab in Tabs)
                 {
@@ -345,30 +205,36 @@ namespace DotNetNuke.Web.UI.WebControls
                     {
                         resourceKey = formTab.ID;
                     }
-                    var tab = new RadTab { Text = Localization.GetString(resourceKey, LocalResourceFile), CssClass = "dnnformTab"};
-                    tabStrip.Tabs.Add(tab);
 
-                    var pageView = new RadPageView { ID = formTab.ID, CssClass = "dnnformPage" };
-                    if (SectionExpandMode == PanelBarExpandMode.FullExpandedItem)
+                    var tab = new Panel {CssClass = formTab.ID + " dnnClear", ID = "tab_" + formTab.ID};
+                    Controls.Add(tab);
+
+                    if (formTab.IncludeExpandAll)
                     {
-                        pageView.Height = FixedSectionHeight;
+                        var expandAll = new Panel {CssClass = "dnnFormExpandContent"};
+                        string expandAllText = Localization.GetString("ExpandAll", Localization.SharedResourceFile);
+                        expandAll.Controls.Add(new LiteralControl("<a href=\"\">" + expandAllText + "</a>"));
+                        tab.Controls.Add(expandAll);
+
+                        formTab.ExpandAllScript = "$('#" + tab.ClientID + " .dnnFormExpandContent a').dnnExpandAll({\r\n";
+                        formTab.ExpandAllScript += " expandText: '" + Localization.GetString("ExpandAll", Localization.SharedResourceFile) + "',\r\n";
+                        formTab.ExpandAllScript += " collapseText: '" + Localization.GetString("CollapseAll", Localization.SharedResourceFile) + "',\r\n";
+                        formTab.ExpandAllScript += " targetArea: '#" + tab.ClientID + "' });\r\n";
                     }
-                    multiPage.PageViews.Add(pageView);
+
+                    tabStrip.Items.Add(new ListItem(Localization.GetString(resourceKey, LocalResourceFile), "#" + tab.ClientID));
 
                     if (formTab.Sections.Count > 0)
                     {
-                        SetUpSections(formTab.Sections, pageView);
+                        SetUpSections(formTab.Sections, tab);
                     }
                     else
                     {
-                        pageView.CssClass += " dnnformNoSections";
+                        tab.CssClass += " dnnFormNoSections";
                     }
 
-                    SetUpItems(formTab.Items, pageView, LocalResourceFile);
+                    SetUpItems(formTab.Items, tab, LocalResourceFile);
                 }
-
-                tabStrip.SelectedIndex = 0;
-                multiPage.SelectedIndex = 0;
             }
         }
 
@@ -406,14 +272,7 @@ namespace DotNetNuke.Web.UI.WebControls
                 if (DataSource != null)
                 {
                     item.DataSource = DataSource;
-                    if(useDataSource)
-                    {
-                        item.DataBindItem(true);
-                    }
-                    else
-                    {
-                        item.DataBindItem(false);
-                    }
+                    item.DataBindItem(useDataSource);
                 }
             }
             _itemCount = GetAllItems().Count;
@@ -422,24 +281,12 @@ namespace DotNetNuke.Web.UI.WebControls
         protected virtual void CreateControlHierarchy(bool useDataSource)
         {
             CssClass = "dnnForm";
-            if (FixedSectionHeight.IsEmpty && SectionExpandMode == PanelBarExpandMode.FullExpandedItem)
-            {
-                FixedSectionHeight = new Unit(450);
-            }
-            if (SectionExpandMode != PanelBarExpandMode.FullExpandedItem)
-            {
-                FixedSectionHeight = Unit.Empty;
-            }
-
-            SetUpHeader();
 
             SetUpTabs();
 
             SetUpSections(Sections, this);
 
             SetUpItems(Items, this, LocalResourceFile);
-
-            SetUpFooter();
 
             DataBindItems(useDataSource);
         }
@@ -469,7 +316,45 @@ namespace DotNetNuke.Web.UI.WebControls
         protected override void OnInit(EventArgs e)
         {
             Page.RegisterRequiresControlState(this);
+            jQuery.RequestDnnPluginsRegistration();
             base.OnInit(e);
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            const string scriptName = "FormEditorjQuery";
+            ClientScriptManager cs = Page.ClientScript;
+
+
+            if (!cs.IsClientScriptBlockRegistered(GetType(), scriptName))
+            {
+                //Render Script
+                var scriptBuilder = new StringBuilder();
+                scriptBuilder.Append("<script language=\"javascript\" type=\"text/javascript\">\r\n");
+                scriptBuilder.Append("(function ($, Sys) {\r\n");
+                scriptBuilder.Append("function setupFormEditor() {\r\n");
+                scriptBuilder.Append("$('#" + ClientID + "').dnnTabs().dnnPanels();\r\n");
+                foreach (DnnFormTab formTab in Tabs)
+                {
+                    if (formTab.IncludeExpandAll)
+                    {
+                        scriptBuilder.Append(formTab.ExpandAllScript);
+                    }
+                }
+                scriptBuilder.Append("}\r\n");
+                scriptBuilder.Append("$(document).ready(function () {\r\n");
+                scriptBuilder.Append("setupFormEditor();\r\n");
+                scriptBuilder.Append("Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {\r\n");
+                scriptBuilder.Append("setupFormEditor();\r\n");
+                scriptBuilder.Append("});\r\n");
+                scriptBuilder.Append("});\r\n");
+                scriptBuilder.Append(" } (jQuery, window.Sys));\r\n");
+
+                scriptBuilder.Append("</script>\r\n");
+                cs.RegisterClientScriptBlock(GetType(), scriptName, scriptBuilder.ToString());
+            }
         }
 
         protected override object SaveControlState()

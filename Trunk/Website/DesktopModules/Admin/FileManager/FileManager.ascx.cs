@@ -1306,18 +1306,18 @@ namespace DotNetNuke.Modules.Admin.FileManager
             try
             {
                 if (type == "folder")
-                {
-                    url = imageDirectory + "ClosedFolder.gif";
+                {                    
+                    url = IconController.IconURL("ExtClosedFolder");
                 }
                 else
                 {
-                    if (!String.IsNullOrEmpty(type) && File.Exists(Server.MapPath(imageDirectory + type + ".gif")))
+                    if (!String.IsNullOrEmpty(type) && File.Exists(Server.MapPath(IconController.IconURL("Ext" + type))))
                     {
-                        url = imageDirectory + type + ".gif";
+                        url = IconController.IconURL("Ext" + type);
                     }
                     else
-                    {
-                        url = imageDirectory + "File.gif";
+                    {                        
+                        url = IconController.IconURL("ExtFile");
                     }
                 }
             }

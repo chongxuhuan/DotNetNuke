@@ -296,6 +296,12 @@
         var opts = $.extend({}, $.fn.dnnExpandAll.defaultOptions, options),
         $elem = this;
 
+        if (($(opts.targetArea).find(opts.targetSelector + ':visible').length ===
+            $(opts.targetArea).find(opts.targetSelector + opts.targetExpandedSelector + ':visible').length)
+            && !$(this).hasClass('expanded')){
+        	$(this).addClass('expanded').text(opts.collapseText);
+        }
+
         $elem.click(function(e){
             e.preventDefault();
             var $this = $(this);    

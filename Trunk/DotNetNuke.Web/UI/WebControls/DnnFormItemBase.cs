@@ -86,16 +86,6 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public DnnFormMode FormMode { get; set; }
 
-        public string Group { get; set; }
-
-        public bool IsInGroup
-        {
-            get
-            {
-                return !String.IsNullOrEmpty(Group);
-            }
-        }
-
         public bool IsValid { get; private set; }
 
         public string OnClientClicked { get; set; }

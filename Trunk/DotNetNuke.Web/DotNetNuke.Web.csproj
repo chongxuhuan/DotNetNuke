@@ -102,6 +102,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\WebControls\DnnFormPanel.cs" />
+    <Compile Include="UI\WebControls\DnnFormTabStrip.cs" />
     <Compile Include="UI\WebControls\DnnImageButton.cs" />
     <Compile Include="UI\WebControls\DnnImage.cs" />
     <Compile Include="UI\WebControls\DnnTreeNode.cs" />
