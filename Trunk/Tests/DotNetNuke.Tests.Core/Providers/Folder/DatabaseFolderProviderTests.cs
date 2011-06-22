@@ -125,20 +125,20 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region ExistsFile
+        #region FileExists
 
         [Test]
         [ExpectedArgumentException]
         public void ExistsFile_Throws_On_Null_Folder()
         {
-            _dfp.ExistsFile(null, Constants.FOLDER_ValidFileName);
+            _dfp.FileExists(null, Constants.FOLDER_ValidFileName);
         }
 
         [Test]
         [ExpectedArgumentException]
         public void ExistsFile_Throws_On_Null_FileName()
         {
-            _dfp.ExistsFile(_folderInfo.Object, null);
+            _dfp.FileExists(_folderInfo.Object, null);
         }
 
         [Test]
@@ -149,7 +149,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId).Read()).Returns(true);
 
-            _dfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            _dfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             _mockData.Verify(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId), Times.Once());
         }
@@ -162,7 +162,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId).Read()).Returns(true);
 
-            var result = _dfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            var result = _dfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             Assert.IsTrue(result);
         }
@@ -175,7 +175,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFile(Constants.FOLDER_ValidFileName, Constants.FOLDER_ValidFolderId).Read()).Returns(false);
 
-            var result = _dfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            var result = _dfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             Assert.IsFalse(result);
         }
@@ -188,7 +188,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [ExpectedArgumentException]
         public void ExistsFolder_Throws_On_Null_FolderMapping()
         {
-            _dfp.ExistsFolder(Constants.FOLDER_ValidFolderPath, null);
+            _dfp.FolderExists(Constants.FOLDER_ValidFolderPath, null);
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo();
 
-            _dfp.ExistsFolder(null, folderMapping);
+            _dfp.FolderExists(null, folderMapping);
         }
 
         [Test]
@@ -208,7 +208,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath).Read()).Returns(true);
 
-            _dfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            _dfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             _mockData.Verify(md => md.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath), Times.Once());
         }
@@ -221,7 +221,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath).Read()).Returns(true);
 
-            var result = _dfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            var result = _dfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             Assert.IsTrue(result);
         }
@@ -234,7 +234,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockData.Setup(md => md.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath).Read()).Returns(false);
 
-            var result = _dfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            var result = _dfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             Assert.IsFalse(result);
         }

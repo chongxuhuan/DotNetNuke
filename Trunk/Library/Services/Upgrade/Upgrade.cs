@@ -3596,6 +3596,10 @@ namespace DotNetNuke.Services.Upgrade
 
                 //Upgrade to .NET 3.5/4.0
                 TryUpgradeNETFramework();
+
+                //update languages module
+                int moduleDefId = GetModuleDefinition("Languages", "Languages");
+                AddModuleControl(moduleDefId, "LocalizePages", "Localize Pages", "DesktopModules/Admin/Languages/LocalizePages.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0, Null.NullString, true);
             }
             catch (Exception ex)
             {

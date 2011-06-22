@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-    <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css" />
+    <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
     <link rel="stylesheet" type="text/css" href="Install.css" />
     <asp:placeholder id="SCRIPTS" runat="server" />
 </head>

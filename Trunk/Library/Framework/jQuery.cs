@@ -373,7 +373,7 @@ namespace DotNetNuke.Framework
             string scriptsrc = HostedUrl;
             if (!UseHostedScript)
             {
-                scriptsrc = JQueryFile(!UseDebugScript);
+                scriptsrc = string.Format("{0}?{1}", JQueryFile(!UseDebugScript), Version);
             }
             return string.Format(Globals.glbScriptFormat, scriptsrc);
         }
@@ -383,7 +383,7 @@ namespace DotNetNuke.Framework
             string scriptsrc = HostedUIUrl;
             if (!UseHostedScript)
             {
-                scriptsrc = JQueryUIFile(!UseDebugScript);
+                scriptsrc = string.Format("{0}?{1}", JQueryUIFile(!UseDebugScript), UIVersion);
             }
             return string.Format(Globals.glbScriptFormat, scriptsrc);
         }

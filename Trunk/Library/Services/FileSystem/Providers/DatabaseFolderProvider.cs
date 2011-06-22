@@ -82,7 +82,7 @@ namespace DotNetNuke.Services.FileSystem
         {
         }
 
-        public override bool ExistsFile(IFolderInfo folder, string fileName)
+        public override bool FileExists(IFolderInfo folder, string fileName)
         {
             Requires.NotNull("folder", folder);
             Requires.NotNull("fileName", fileName);
@@ -90,7 +90,7 @@ namespace DotNetNuke.Services.FileSystem
             return DataProvider.Instance().GetFile(fileName, folder.FolderID).Read();
         }
 
-        public override bool ExistsFolder(string folderPath, FolderMappingInfo folderMapping)
+        public override bool FolderExists(string folderPath, FolderMappingInfo folderMapping)
         {
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);

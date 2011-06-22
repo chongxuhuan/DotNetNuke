@@ -178,21 +178,18 @@
                                     <tr>
                                         <td style="width: 50px; border-width: 0px">
                                             <asp:PlaceHolder ID="localizationStatus" runat="server" Visible='<%# IsLocalized(Eval("Code").ToString()) %>'>
-                                                <span>
-                                                    <%# GetLocalizedPages(Eval("Code").ToString())%></span>
+                                                <span><%# GetLocalizedPages(Eval("Code").ToString())%></span>
                                                 <br />
-                                                <span style="font-size: 0.8em">
-                                                    <%# GetLocalizedStatus(Eval("Code").ToString()) %></span> </asp:PlaceHolder>
-                                            <dnn:DnnImageButton ID="localizeButton" runat="server" ImageAlign="Middle" IconKey="Languages"
-                                                CommandArgument='<%# Eval("Code") %>' Visible='<%# !IsLocalized(Eval("Code").ToString()) && CanLocalize(Eval("Code").ToString()) %>'
-                                                ResourceKey="CreateLocalizedPages" OnCommand="localizePages" />
+                                                <span style="font-size: 0.8em"><%# GetLocalizedStatus(Eval("Code").ToString()) %></span> 
+                                            </asp:PlaceHolder>
+                                            <asp:HyperLink ID="localizeLink" runat="server" Visible='<%# !IsLocalized(Eval("Code").ToString()) && CanLocalize(Eval("Code").ToString()) %>'>
+                                                <asp:Image ID="localizeImage" runat="server" ImageAlign="Middle" IconKey="Languages" ResourceKey="CreateLocalizedPages" />
+                                            </asp:HyperLink>
                                         </td>
                                         <td style="width: 50px;">
-                                            <span>
-                                                <%# GetTranslatedPages(Eval("Code").ToString())%></span>
+                                            <span><%# GetTranslatedPages(Eval("Code").ToString())%></span>
                                             <br />
-                                            <span style="font-size: 0.8em">
-                                                <%# GetTranslatedStatus(Eval("Code").ToString())%></span>
+                                            <span style="font-size: 0.8em"><%# GetTranslatedStatus(Eval("Code").ToString())%></span>
                                         </td>
                                         <td style="width: 75px;">
                                             <dnn:DnnCheckBox ID="publishedCheckbox" runat="server" AutoPostBack="True" CommandArgument='<%# Eval("LanguageId") %>'

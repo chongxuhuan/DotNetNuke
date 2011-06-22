@@ -99,8 +99,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     switch (Request.QueryString["ftype"].ToLower())
                     {
                         case "file":
-                        case "container":
-                        case "skin":
                             _FileType = (UploadType) Enum.Parse(typeof (UploadType), Request.QueryString["ftype"]);
                             break;
                     }
@@ -413,32 +411,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
                             {
                                 DnnLog.Error(exc);
                                 strMessage += "<br />" + string.Format(Localization.GetString("SaveFileError"), strFileName);
-                            }
-                            break;
-                        case UploadType.Skin: //skin package
-                            if (strExtension.ToLower() == ".zip")
-                            {
-                                var objLbl = new Label();
-                                objLbl.CssClass = "Normal";
-                                objLbl.Text = SkinController.UploadLegacySkin(RootFolder, SkinController.RootSkin, Path.GetFileNameWithoutExtension(postedFile.FileName), postedFile.InputStream);
-                                phPaLogs.Controls.Add(objLbl);
-                            }
-                            else
-                            {
-                                strMessage += strInvalid + " " + FileTypeName + " " + strFileName;
-                            }
-                            break;
-                        case UploadType.Container: //container package
-                            if (strExtension.ToLower() == ".zip")
-                            {
-                                var objLbl = new Label();
-                                objLbl.CssClass = "Normal";
-                                objLbl.Text = SkinController.UploadLegacySkin(RootFolder, SkinController.RootContainer, Path.GetFileNameWithoutExtension(postedFile.FileName), postedFile.InputStream);
-                                phPaLogs.Controls.Add(objLbl);
-                            }
-                            else
-                            {
-                                strMessage += strInvalid + " " + FileTypeName + " " + strFileName;
                             }
                             break;
                     }

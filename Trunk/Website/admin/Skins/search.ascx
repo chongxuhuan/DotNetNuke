@@ -9,7 +9,7 @@
 
 <div id="DropDownSearch" runat="server" class="SearchContainer" visible="false">
   <div class="SearchBorder">
-  <div id="SearchIcon" class="SearchIcon" onclick="document.getElementById('SearchChoices').style.display='block'" >
+  <div id="SearchIcon" class="SearchIcon">
     <dnn:DnnImage ID="downArrow" runat="server" IconKey="Action" />
   </div>
   <asp:TextBox ID="txtSearchNew" runat="server" CssClass="SearchTextBox" MaxLength="255" EnableViewState="False"></asp:TextBox>&nbsp;

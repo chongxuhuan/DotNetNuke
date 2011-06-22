@@ -248,6 +248,7 @@ namespace DotNetNuke.UI.ControlPanels
                     ControlPanel.Visible = true;
                     cmdVisibility.Visible = false;
                     BodyPanel.Visible = false;
+                    adminMenus.Visible = false;
                     if (!Page.IsPostBack)
                     {
                         SetMode(false);

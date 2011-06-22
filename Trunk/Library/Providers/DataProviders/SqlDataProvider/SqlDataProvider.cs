@@ -1448,6 +1448,11 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabModuleTranslationStatus", TabModuleId, LocalizedVersionGuid, LastModifiedByUserID);
         }
 
+        public override void UpdateModuleLastContentModifiedOnDate(int moduleId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateModuleLastContentModifiedOnDate", moduleId);
+        }
+
         public override void UpdateTabModuleVersion(int TabModuleId, Guid VersionGuid)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabModuleVersion", TabModuleId, VersionGuid);

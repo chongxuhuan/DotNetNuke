@@ -184,7 +184,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(false);
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(false);
             _mockFolder.Setup(mf => mf.AddFile(_folderInfo.Object, Constants.FOLDER_ValidFileName, fileContent)).Verifiable();
 
             _mockFileManager.Setup(mfm => mfm.IsAllowedExtension(Constants.FOLDER_ValidFileName)).Returns(true);
@@ -230,7 +230,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true);
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true);
             _mockFolder.Setup(mf => mf.AddFile(_folderInfo.Object, Constants.FOLDER_ValidFileName, fileContent));
 
             _mockFileManager.Setup(mfm => mfm.IsAllowedExtension(Constants.FOLDER_ValidFileName)).Returns(true);
@@ -474,7 +474,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true).Verifiable();
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true).Verifiable();
 
             _mockFileManager.Object.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
@@ -494,7 +494,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true);
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(true);
 
             var result = _mockFileManager.Object.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
@@ -514,7 +514,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(false);
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(false);
 
             var result = _mockFileManager.Object.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
@@ -535,7 +535,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
 
-            _mockFolder.Setup(mf => mf.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Throws<Exception>();
+            _mockFolder.Setup(mf => mf.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Throws<Exception>();
 
             _mockFileManager.Object.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
         }

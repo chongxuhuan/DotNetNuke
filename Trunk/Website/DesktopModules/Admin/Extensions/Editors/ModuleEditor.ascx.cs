@@ -163,6 +163,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                     pnlDefinition.Visible = true;
                     pnlControls.Visible = true;
+
+                    cmdAddControl.NavigateUrl = ModuleContext.EditUrl("ModuleControlID", "-1", "EditControl", "packageId=" + PackageID, "moduledefid=" + ModuleDefinition.ModuleDefID);
                 }
                 else
                 {
@@ -311,7 +313,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnInit(e);
 
-            cmdAddControl.Click += cmdAddControl_Click;
             cmdAddDefinition.Click += cmdAddDefinition_Click;
             cmdDeleteDefinition.Click += cmdDeleteDefinition_Click;
             cmdUpdate.Click += cmdUpdate_Click;
@@ -419,10 +420,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
-        protected void cmdAddControl_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(ModuleContext.EditUrl("ModuleControlID", "-1", "EditControl", "packageId=" + PackageID, "moduledefid=" + ModuleDefinition.ModuleDefID), true);
-        }
+        //protected void cmdAddControl_Click(object sender, EventArgs e)
+        //{
+        //    Response.Redirect(ModuleContext.EditUrl("ModuleControlID", "-1", "EditControl", "packageId=" + PackageID, "moduledefid=" + ModuleDefinition.ModuleDefID), true);
+        //}
 
         protected void cmdAddDefinition_Click(object sender, EventArgs e)
         {

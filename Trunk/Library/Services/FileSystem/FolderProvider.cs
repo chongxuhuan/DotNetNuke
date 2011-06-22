@@ -145,12 +145,12 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>
         ///   Checks the existence of the specified file in the underlying system.
         /// </summary>
-        public abstract bool ExistsFile(IFolderInfo folder, string fileName);
+        public abstract bool FileExists(IFolderInfo folder, string fileName);
 
         /// <summary>
         ///   Checks the existence of the specified folder in the underlying system.
         /// </summary>
-        public abstract bool ExistsFolder(string folderPath, FolderMappingInfo folderMapping);
+        public abstract bool FolderExists(string folderPath, FolderMappingInfo folderMapping);
 
         /// <summary>
         ///   Gets the content of the specified file.

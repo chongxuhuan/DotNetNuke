@@ -147,20 +147,20 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region ExistsFile
+        #region FileExists
 
         [Test]
         [ExpectedArgumentException]
         public void ExistsFile_Throws_On_Null_Folder()
         {
-            _sfp.ExistsFile(null, Constants.FOLDER_ValidFileName);
+            _sfp.FileExists(null, Constants.FOLDER_ValidFileName);
         }
 
         [Test]
         [ExpectedArgumentException]
         public void ExistsFile_Throws_On_Null_FileName()
         {
-            _sfp.ExistsFile(_folderInfo.Object, null);
+            _sfp.FileExists(_folderInfo.Object, null);
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             _folderInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFolderPath);
 
-            _sfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            _sfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             _fileWrapper.Verify(fw => fw.Exists(Constants.FOLDER_ValidSecureFilePath), Times.Once());
         }
@@ -180,7 +180,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _fileWrapper.Setup(fw => fw.Exists(Constants.FOLDER_ValidSecureFilePath)).Returns(true);
 
-            var result = _sfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            var result = _sfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             Assert.IsTrue(result);
         }
@@ -192,7 +192,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _fileWrapper.Setup(fw => fw.Exists(Constants.FOLDER_ValidSecureFilePath)).Returns(false);
 
-            var result = _sfp.ExistsFile(_folderInfo.Object, Constants.FOLDER_ValidFileName);
+            var result = _sfp.FileExists(_folderInfo.Object, Constants.FOLDER_ValidFileName);
 
             Assert.IsFalse(result);
         }
@@ -205,7 +205,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         [ExpectedArgumentException]
         public void ExistsFolder_Throws_On_Null_FolderMapping()
         {
-            _sfp.ExistsFolder(Constants.FOLDER_ValidFolderPath, null);
+            _sfp.FolderExists(Constants.FOLDER_ValidFolderPath, null);
         }
 
         [Test]
@@ -214,7 +214,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo();
 
-            _sfp.ExistsFolder(null, folderMapping);
+            _sfp.FolderExists(null, folderMapping);
         }
 
         [Test]
@@ -224,7 +224,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _pathUtils.Setup(pu => pu.GetPhysicalPath(folderMapping.PortalID, Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderPath);
 
-            _sfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            _sfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             _directoryWrapper.Verify(dw => dw.Exists(Constants.FOLDER_ValidFolderPath), Times.Once());
         }
@@ -238,7 +238,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _directoryWrapper.Setup(dw => dw.Exists(Constants.FOLDER_ValidFolderPath)).Returns(true);
 
-            var result = _sfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            var result = _sfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             Assert.IsTrue(result);
         }
@@ -252,7 +252,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _directoryWrapper.Setup(dw => dw.Exists(Constants.FOLDER_ValidFolderPath)).Returns(false);
 
-            var result = _sfp.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
+            var result = _sfp.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping);
 
             Assert.IsFalse(result);
         }

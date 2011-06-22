@@ -199,21 +199,28 @@ namespace DotNetNuke.Modules.Admin.Newsletters
 
         private void SendMailAsyncronously(SendTokenizedBulkEmail email, out string message, out ModuleMessage.ModuleMessageType messageType)
         {
-            string sendMailResult = Mail.SendMail(Host.HostEmail,
-                                              Host.HostEmail,
-                                              "",
-                                              "",
-                                              MailPriority.Normal,
-                                              Localization.GetSystemMessage(PortalSettings, "EMAIL_SMTP_TEST_SUBJECT"),
-                                              MailFormat.Text,
-                                              Encoding.UTF8,
-                                              "",
-                                              "",
-                                              Host.SMTPServer,
-                                              Host.SMTPAuthentication,
-                                              Host.SMTPUsername,
-                                              Host.SMTPPassword,
-                                              Host.EnableSMTPSSL);
+            //First send off a test message
+            var strStartSubj = Localization.GetString("EMAIL_BulkMailStart_Subject.Text", Localization.GlobalResourceFile);
+            if (!string.IsNullOrEmpty(strStartSubj)) strStartSubj = string.Format(strStartSubj, txtSubject.Text);
+            
+            var strStartBody = Localization.GetString("EMAIL_BulkMailStart_Body.Text", Localization.GlobalResourceFile);
+            if (!string.IsNullOrEmpty(strStartBody)) strStartBody = string.Format(strStartBody, txtSubject.Text, UserInfo.DisplayName, email.Recipients().Count);
+
+            var sendMailResult = Mail.SendMail(txtFrom.Text,
+                txtFrom.Text,
+                "",
+                "",
+                MailPriority.Normal,
+                strStartSubj,
+                MailFormat.Text,
+                Encoding.UTF8,
+                strStartBody,
+                "",
+                Host.SMTPServer,
+                Host.SMTPAuthentication,
+                Host.SMTPUsername,
+                Host.SMTPPassword,
+                Host.EnableSMTPSSL);
 
             if (string.IsNullOrEmpty(sendMailResult))
             {

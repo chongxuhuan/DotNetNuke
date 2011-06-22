@@ -1035,7 +1035,7 @@ namespace DotNetNuke.Services.FileSystem
             var folderMappingFolders = new SortedList<string, MergedTreeItem>();
             var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
 
-            if (folderProvider.ExistsFolder(relativePath, folderMapping))
+            if (folderProvider.FolderExists(relativePath, folderMapping))
             {
                 if (!isRecursive)
                 {
@@ -1379,7 +1379,7 @@ namespace DotNetNuke.Services.FileSystem
                 {
                     try
                     {
-                        if (!folderProvider.ExistsFile(folder, file.FileName))
+                        if (!folderProvider.FileExists(folder, file.FileName))
                         {
                             FileManager.Instance.DeleteFile(file);
                         }
@@ -1494,14 +1494,20 @@ namespace DotNetNuke.Services.FileSystem
                         {
                             using (var fileContent = folderProvider.GetFileStream(folder, fileName))
                             {
-                                fileManager.AddFile(folder, fileName, fileContent, false);
+                                if (fileContent != null)
+                                {
+                                    fileManager.AddFile(folder, fileName, fileContent, false);
+                                }
                             }
                         }
                         else if (!folderProvider.IsInSync(file))
                         {
                             using (var fileContent = fileManager.GetFileContent(file))
                             {
-                                fileManager.UpdateFile(file, fileContent);
+                                if(fileContent != null)
+                                {
+                                    fileManager.UpdateFile(file, fileContent);
+                                }
                             }
                         }
                     }

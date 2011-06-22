@@ -2602,7 +2602,10 @@ namespace DotNetNuke.Entities.Tabs
         /// <returns></returns>
         public List<TabInfo> GetDefaultCultureTabList(int portalid)
         {
-            return (from kvp in GetTabsByPortal(portalid) where !kvp.Value.TabPath.StartsWith("//Admin") && !kvp.Value.IsDeleted select kvp.Value).ToList();
+            return (from kvp in GetTabsByPortal(portalid)
+                    where !kvp.Value.TabPath.StartsWith("//Admin")
+                        && !kvp.Value.IsDeleted
+                    select kvp.Value).ToList();
         }
 
         /// <summary>
@@ -2613,7 +2616,9 @@ namespace DotNetNuke.Entities.Tabs
         public List<TabInfo> GetCultureTabList(int portalid)
         {
             return (from kvp in GetTabsByPortal(portalid)
-                    where !kvp.Value.TabPath.StartsWith("//Admin") && kvp.Value.CultureCode == PortalController.GetCurrentPortalSettings().DefaultLanguage && !kvp.Value.IsDeleted
+                    where !kvp.Value.TabPath.StartsWith("//Admin")
+                        && kvp.Value.CultureCode == PortalController.GetCurrentPortalSettings().DefaultLanguage
+                        && !kvp.Value.IsDeleted
                     select kvp.Value).ToList();
         }
 

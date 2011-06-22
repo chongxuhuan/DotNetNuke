@@ -37,6 +37,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
+using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -297,9 +298,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             else
             {
                 var tabid = Convert.ToInt32(e.Node.Value);
-                BindTab(tabid);
-                pnlDetails.Visible = true;
-                pnlBulk.Visible = false;
+                BindTab(tabid);                                
                 grdModules.Rebind();
             }
         }
@@ -540,8 +539,6 @@ namespace DotNetNuke.Modules.Admin.Pages
             if (tabId != Null.NullInteger)
             {
                 BindTab(tabId);
-                pnlDetails.Visible = true;
-                pnlBulk.Visible = false;
                 grdModules.Rebind();
             }
             else
@@ -645,11 +642,22 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         private void BindTab(int tabId)
         {
+            pnlBulk.Visible = false;
+
             var tabController = new TabController();
             var tab = tabController.GetTab(tabId, PortalId, true);
-
+            
             if (tab != null)
             {
+                //check for manage permissions
+                if (!TabPermissionController.CanManagePage(tab))
+                {
+                    pnlDetails.Visible = false;
+                    return;
+                }
+
+                pnlDetails.Visible = true;
+
                 SelectedNode = tabId.ToString();
 
                 //Bind TabPermissionsGrid to TabId 
@@ -823,6 +831,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
             if (node.Attributes["isPortalRoot"] != null && Boolean.Parse(node.Attributes["isPortalRoot"]))
             {
+                canAdd = PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName);
                 canView = false;
                 canEdit = false;
                 canDelete = false;
@@ -846,6 +855,11 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
             else
             {
+                canAdd = TabPermissionController.CanAddPage(tab);
+                canDelete = TabPermissionController.CanDeletePage(tab);
+                canMakeVisible = canHide = canDisable = canEnable = canEdit = TabPermissionController.CanManagePage(tab);
+                canMakeHome = PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName);
+
                 if (TabController.IsSpecialTab(tab.TabID, PortalSettings) || rblMode.SelectedValue == "H")
                 {
                     canDelete = false;
@@ -923,26 +937,31 @@ namespace DotNetNuke.Modules.Admin.Pages
 
             foreach (var tab in Tabs)
             {
-                if (strParent != "-1")
+                if (TabPermissionController.CanViewPage(tab))
                 {
-                    if (tab.ParentId == Convert.ToInt32(strParent))
+                    if (strParent != "-1")
                     {
-                        var node = new RadTreeNode { Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab) };
-                        AddAttributes(ref node, tab);
+                        if (tab.ParentId == Convert.ToInt32(strParent))
+                        {
+                            var node = new RadTreeNode
+                                           {Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab)};
+                            AddAttributes(ref node, tab);
 
-                        AddChildnodes(node);
-                        rootNode.Nodes.Add(node);
+                            AddChildnodes(node);
+                            rootNode.Nodes.Add(node);
+                        }
                     }
-                }
-                else
-                {
-                    if (tab.Level == 0)
+                    else
                     {
-                        var node = new RadTreeNode { Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab) };
-                        AddAttributes(ref node, tab);
+                        if (tab.Level == 0)
+                        {
+                            var node = new RadTreeNode
+                                           {Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab)};
+                            AddAttributes(ref node, tab);
 
-                        AddChildnodes(node);
-                        rootNode.Nodes.Add(node);
+                            AddChildnodes(node);
+                            rootNode.Nodes.Add(node);
+                        }
                     }
                 }
             }
@@ -959,8 +978,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                         ctlPages.FindNodeByValue(SelectedNode).Selected = true;
                         ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
                         var tabid = Convert.ToInt32(SelectedNode);
-                        BindTab(tabid);
-                        pnlDetails.Visible = true;
+                        BindTab(tabid);                        
                         pnlBulk.Visible = false;
                         grdModules.Rebind();
                     }
@@ -982,8 +1000,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 node.Selected = true;
                 node.ExpandParentNodes();
             }
-
-            pnlDetails.Visible = true;
+            
             BindTab(tabId);
         }
 

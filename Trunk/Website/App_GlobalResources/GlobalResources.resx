@@ -1255,4 +1255,16 @@ Sincerely,
   <data name="//UserProfile.String" xml:space="preserve">
     <value>User Profile</value>
   </data>
+  <data name="EMAIL_BulkMailStart_Body.Text" xml:space="preserve">
+    <value>User {1} submitted Bulkmail '{0}' to {2} recipients. Please review the sendout report for failed transmissions and the senders inbox for returns.</value>
+  </data>
+  <data name="EMAIL_BulkMailStart_Subject.Text" xml:space="preserve">
+    <value>Bulkmail '{0}' submitted</value>
+  </data>
+  <data name="//NewsPromotions.String" xml:space="preserve">
+    <value>News &amp; Promotions</value>
+  </data>
+  <data name="//OurServices.String" xml:space="preserve">
+    <value>Our Services</value>
+  </data>
 </root>

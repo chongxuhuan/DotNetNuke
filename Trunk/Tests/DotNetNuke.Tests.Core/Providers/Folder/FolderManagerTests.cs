@@ -993,7 +993,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(false);
+            _mockFolder.Setup(mf => mf.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(false);
 
             var result = _mockFolderManager.Object.GetFolderMappingFolders(folderMapping, Constants.FOLDER_ValidFolderRelativePath, false);
 
@@ -1005,7 +1005,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
+            _mockFolder.Setup(mf => mf.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
 
             var result = _mockFolderManager.Object.GetFolderMappingFolders(folderMapping, Constants.FOLDER_ValidFolderRelativePath, false);
 
@@ -1018,7 +1018,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var folderMapping = new FolderMappingInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID, FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
 
-            _mockFolder.Setup(mf => mf.ExistsFolder(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
+            _mockFolder.Setup(mf => mf.FolderExists(Constants.FOLDER_ValidFolderRelativePath, folderMapping)).Returns(true);
 
             _mockFolderManager.Setup(mfm => mfm.GetFolderMappingFoldersRecursive(folderMapping, Constants.FOLDER_ValidFolderRelativePath))
                 .Returns(It.IsAny<SortedList<string, FolderManager.MergedTreeItem>>()).Verifiable();

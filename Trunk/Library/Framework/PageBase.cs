@@ -181,10 +181,42 @@ namespace DotNetNuke.Framework
 
         #region "Private Methpds"
 
+        protected static void AddStyleSheetInternal(Page page, string id, string styleSheet, bool isFirst)
+        {
+            Control objCSS = page.FindControl("CSS");
+            if (objCSS != null)
+            {
+                Control objCtrl = page.Header.FindControl(id);
+                if (objCtrl == null)
+                {
+                    var objLink = new HtmlLink { ID = id };
+                    objLink.Attributes["rel"] = "stylesheet";
+                    objLink.Attributes["type"] = "text/css";
+                    objLink.Href = styleSheet;
+                    if (isFirst)
+                    {
+                        int iLink;
+                        for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
+                        {
+                            if (objCSS.Controls[iLink] is HtmlLink)
+                            {
+                                break;
+                            }
+                        }
+                        objCSS.Controls.AddAt(iLink, objLink);
+                    }
+                    else
+                    {
+                        objCSS.Controls.Add(objLink);
+                    }
+                }
+            }
+        }
+
         private static void AddStyleSheetInternal(Page page, string key, bool isFirst)
         {
             var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                                new CacheItemArgs("CSS", 200, CacheItemPriority.NotRemovable),
+                                                new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
                                                 cacheItemArgs => new SharedDictionary<string, string>()
                                             );
 
@@ -195,34 +227,7 @@ namespace DotNetNuke.Framework
                     string styleSheet = styleSheetDictionary[key];
                     string id = Globals.CreateValidID(key);
 
-                    Control objCSS = page.FindControl("CSS");
-                    if (objCSS != null)
-                    {
-                        Control objCtrl = page.Header.FindControl(id);
-                        if (objCtrl == null)
-                        {
-                            var objLink = new HtmlLink { ID = id };
-                            objLink.Attributes["rel"] = "stylesheet";
-                            objLink.Attributes["type"] = "text/css";
-                            objLink.Href = styleSheet;
-                            if (isFirst)
-                            {
-                                int iLink;
-                                for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
-                                {
-                                    if (objCSS.Controls[iLink] is HtmlLink)
-                                    {
-                                        break;
-                                    }
-                                }
-                                objCSS.Controls.AddAt(iLink, objLink);
-                            }
-                            else
-                            {
-                                objCSS.Controls.Add(objLink);
-                            }
-                        }
-                    }
+                    AddStyleSheetInternal(page, id, styleSheet, isFirst);
                 }
             }
         }
@@ -230,7 +235,7 @@ namespace DotNetNuke.Framework
         private static bool IsStyleSheetRegistered(string key)
         {
             var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                            new CacheItemArgs("CSS", 200, CacheItemPriority.NotRemovable),
+                                            new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
                                                 (CacheItemArgs cacheItemArgs) => new SharedDictionary<string, string>());
 
             bool idFound = Null.NullBoolean;
@@ -263,17 +268,32 @@ namespace DotNetNuke.Framework
         private static void RegisterStyleSheet(Page page, string key, string styleSheet)
         {
             var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                                new CacheItemArgs("CSS", 200, CacheItemPriority.NotRemovable),
+                                                new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
                                                 cacheItemArgs => new SharedDictionary<string, string>()
                                             );
 
-            using (ISharedCollectionLock writeLock = styleSheetDictionary.GetWriteLock())
+            using (styleSheetDictionary.GetWriteLock())
             {
                 if (!styleSheetDictionary.ContainsKey(key))
                 {
-                    if (File.Exists(page.Server.MapPath(styleSheet)))
+                	var filePath = page.Server.MapPath(styleSheet);
+					if (File.Exists(filePath))
                     {
-                        styleSheetDictionary[key] = styleSheet;
+						//add version number to stylesheet link
+                    	try
+                    	{
+							var lastWriteTime = File.GetLastWriteTime(filePath);
+                    		var beginTime = new DateTime(2003, 3, 24);
+                    		var version = (int)lastWriteTime.Subtract(beginTime).TotalMinutes;
+
+                    		styleSheet = string.Format("{0}?{1}", styleSheet, version);
+                    	}
+                    	catch (Exception ex)
+                    	{
+                    		DnnLog.Error(ex);
+                    	}
+
+						styleSheetDictionary[key] = styleSheet;
                     }
                     else
                     {

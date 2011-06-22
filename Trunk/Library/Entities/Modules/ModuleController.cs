@@ -816,7 +816,9 @@ namespace DotNetNuke.Entities.Modules
 
                 //Synchronize module is called when a module needs to indicate that the content
                 //has changed and the cache's should be refreshed.  So we can update the Version
+                //and also the LastContentModificationDate
                 UpdateTabModuleVersion(module.TabModuleID);
+                dataProvider.UpdateModuleLastContentModifiedOnDate(module.ModuleID);
 
                 //We should also indicate that the Transalation Status has changed
                 if (PortalController.GetPortalSettingAsBoolean("ContentLocalizationEnabled", module.PortalID, false))

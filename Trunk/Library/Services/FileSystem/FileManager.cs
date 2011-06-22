@@ -167,7 +167,7 @@ namespace DotNetNuke.Services.FileSystem
             {
                 var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
 
-                if (overwrite || !folderProvider.ExistsFile(folder, fileName))
+                if (overwrite || !folderProvider.FileExists(folder, fileName))
                 {
                     folderProvider.AddFile(folder, fileName, fileContent);
                 }
@@ -279,7 +279,7 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                existsFile = existsFile && FolderProvider.Instance(folderMapping.FolderProviderType).ExistsFile(folder, fileName);
+                existsFile = existsFile && FolderProvider.Instance(folderMapping.FolderProviderType).FileExists(folder, fileName);
             }
             catch (Exception ex)
             {

@@ -23,9 +23,16 @@
 .dnnLanguagePackWriter .lpwCheckBoxes label{font-weight:normal;margin-top:0;}
 .dnnLanguageTextEditor .dnnLTextEditor{margin-left:31%;}
 	.dnnLanguageTextEditor .dnnLTextEditor label{width:auto;font-weight:normal;margin-top:0;margin-left:5px;text-align:left;}
-.enableLocalizationProgress .RadUploadProgressArea{width: auto;}
-	.enableLocalizationProgress .RadUploadProgressArea .ruShadow{margin:0 20px; border-bottom:none;}
-	.enableLocalizationProgress .RadUploadProgressArea .ruShadow > div{margin:0 3px;}
+	
+.enableLocalizationProgress .RadUploadProgressArea{width: 900px;}
+	.enableLocalizationProgress .RadUploadProgressArea .ruShadow{margin:0px; padding:0px; border-bottom:none;}
+	.enableLocalizationProgress .RadUploadProgressArea .ruShadow > div{margin:10px; background-image:none; padding-left:20px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li{margin-bottom:14px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li.ruCurrentFile{margin-top:10px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li.ruTimeSpeed{margin-bottom:10px;}
+	
+	.enableLocalizationProgress .RadUploadProgressArea_Simple .ruProgress {background-image:none; padding-left:20px;}
+	.enableLocalizationProgress .RadUploadProgressArea_Simple .ruProgress .ruBar div {background-image:none; background:#ccc; border-right: 1px solid #333 }
+	.enableLocalizationProgress .RadUploadProgressArea > .ruShadow {background-image:none;}
+	
+	.enableLocalizationProgress .RadUploadProgressArea li.ruProgressHeader{margin:0px;}

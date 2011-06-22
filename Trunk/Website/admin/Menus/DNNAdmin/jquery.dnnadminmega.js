@@ -24,7 +24,7 @@
         sensitivity: 2, // number = sensitivity threshold (must be 1 or higher)
         interval: 200, // number = milliseconds for onMouseOver polling interval
         over: megaHoverOver, // function = onMouseOver callback (REQUIRED)
-        timeout: 1000, // number = milliseconds delay before onMouseOut
+        timeout: 100, // number = milliseconds delay before onMouseOut
         out: function () { return null; } // function = onMouseOut callback (REQUIRED)
     };
 
@@ -43,13 +43,22 @@
 
     $(".dnnadminmega > li").mouseenter(EnableHide); //Hovering over CP will re-enable hiding.
 
+    //hide menu if user double clicks while they are outside of the
+    //control panel
     $(document).dblclick(function () {
         if (!canHide)
             hideAll();
     })
 
+    //Hide menu if Esc key is pressed
+    $(document).keyup(function (e) {
+        if (e.keyCode == 27) {
+            hideAll();
+        }
+    });
+
     $(".dnnadminmega > li > a").hoverIntent(config); //Trigger Hover intent with custom configurations
-    $(".megaborder").hoverIntent(hideConfig);
+    $(".dnnadminmega > li").hoverIntent(hideConfig);
 
     //Hovering over a the dropdown will re-enable autohide
     $(".megaborder").hover(function () {
@@ -58,7 +67,7 @@
 
     //Hovering over a telerik dropdown will disable autohide
     //need this to disable hide when the drop down expands beyond the menu body
-    $('.rcbSlide li').mouseover(function () {
+    $('.rcbSlide li').live('mouseover', function () {
         canHide = false;
     });
 });

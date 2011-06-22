@@ -73,7 +73,7 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
         {
             get
             {
-                return EditUrl("PackageID", PackageID.ToString(), "Edit", "ModuleDefinitionID=" + ModuleDefId);
+                return EditUrl(TabId, "Edit", true, "PackageID=" + PackageID, "mid=" + ModuleId);
             }
         }
 

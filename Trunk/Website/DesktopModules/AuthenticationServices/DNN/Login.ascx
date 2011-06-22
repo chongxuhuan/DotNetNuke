@@ -3,21 +3,21 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <div class="dnnForm dnnLoginService dnnClear">
     <div class="dnnFormItem">
-        <dnn:label id="plUsername" controlname="txtUsername" runat="server" resourcekey="Username" />
+        <asp:label id="plUsername" AssociatedControlID="txtUsername" runat="server" resourcekey="Username" CssClass="dnnFormLabel" />
         <asp:textbox id="txtUsername" runat="server" />
     </div>
     <div class="dnnFormItem">
-        <dnn:label id="plPassword" controlname="txtPassword" runat="server" resourcekey="Password" />
+        <asp:label id="plPassword" AssociatedControlID="txtPassword" runat="server" resourcekey="Password" CssClass="dnnFormLabel" />
         <asp:textbox id="txtPassword" textmode="Password" runat="server" />
     </div>
     <div class="dnnFormItem" id="divVerify1" runat="server" visible="false">
-        <dnn:label id="plVerification" controlname="txtVerification" runat="server"/>
+        <asp:label id="plVerification" AssociatedControlID="txtVerification" runat="server" CssClass="dnnFormLabel"/>
     </div>
     <div class="dnnFormItem" id="divVerify2" runat="server" visible="false">
         <asp:textbox id="txtVerification" runat="server" />
     </div>
     <div class="dnnFormItem" id="divCaptcha1" runat="server" visible="false">
-        <dnn:label id="plCaptcha" controlname="ctlCaptcha" runat="server" resourcekey="Captcha" />
+        <asp:label id="plCaptcha" AssociatedControlID="ctlCaptcha" runat="server" resourcekey="Captcha" CssClass="dnnFormLabel" />
     </div>
     <div class="dnnFormItem" id="divCaptcha2" runat="server" visible="false">
         <dnn:captchacontrol id="ctlCaptcha" captchawidth="130" captchaheight="40" runat="server" errorstyle-cssclass="dnnFormMessage dnnFormError" />

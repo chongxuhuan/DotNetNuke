@@ -51,7 +51,7 @@ namespace DotNetNuke.Framework
         {
             if (GetScriptManager(objPage) == null)
             {
-                using (var objScriptManager = new ScriptManager {ID = "ScriptManager", EnableScriptGlobalization = true, ScriptMode = ScriptMode.Release})
+                using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true, ScriptMode = ScriptMode.Release })
                 {
                     if (objPage.Form != null)
                     {
@@ -66,6 +66,20 @@ namespace DotNetNuke.Framework
                         if (HttpContext.Current.Items["System.Web.UI.ScriptManager"] == null)
                         {
                             HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", true);
+                        }
+                    }
+                }
+                using (var objStylesheetManager = new Telerik.Web.UI.RadStyleSheetManager { ID = "StylesheetManager", })
+                {
+                    if (objPage.Form != null)
+                    {
+                        try
+                        {
+                            objPage.Form.Controls.AddAt(0, objStylesheetManager);
+                        }
+                        catch
+                        {
+                            //suppress error adding script manager to support edge-case of module developers custom aspx pages that inherit from basepage and use code blocks
                         }
                     }
                 }

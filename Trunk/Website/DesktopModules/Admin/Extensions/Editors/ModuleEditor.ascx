@@ -65,7 +65,7 @@
                         <dnn:textcolumn  DataField="ControlSrc" HeaderText="Source" />
                     </Columns>
                 </asp:datagrid>
-                <asp:LinkButton id="cmdAddControl" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdAddControl" />
+                <asp:Hyperlink id="cmdAddControl" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdAddControl" />
             </asp:Panel>
             <div class="dnnFormItem"><asp:Label ID="lblDefinitionError" runat="server" CssClass="dnnFormMessage dnnFormError" Visible="false" ResourceKey="DuplicateName" /> </div>
             <ul class="dnnActions dnnClear">

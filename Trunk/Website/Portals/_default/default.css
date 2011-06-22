@@ -30,9 +30,9 @@ big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}
 
 /* Module actions */
-.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px #888;box-shadow: 0 0 5px #888;z-index:900;background:transparent;position:absolute;margin-left:-8px;margin-top:-8px;}
+.dnnActionMenuBorder{-moz-box-shadow: 0 0 5px #888;-webkit-box-shadow: 0 0 5px #888;box-shadow: 0 0 5px #888;z-index:-1;background:transparent;position:absolute;margin:-8px 0 0 -8px;padding: 0 16px 16px 0;width:100%;height:100%;}
 .DnnModule{z-index:902;position:relative;}
-	.dnnActionMenu{display:none;margin:0;padding:0;position:absolute;z-index:906;color:#000;left:10px;top:10px;}
+	.dnnActionMenu{margin:0;padding:0;position:absolute;z-index:906;color:#000;left:10px;top:10px;}
 	ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;position:absolute;left:0;top:10;min-width:400px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
 		ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
 		ul.dnnActionMenuBody li.first.last {position:relative;}

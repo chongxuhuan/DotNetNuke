@@ -196,6 +196,9 @@ namespace DotNetNuke.Entities.Modules
         public int WebSliceTTL { get; set; }
 
         [XmlIgnore]
+        public DateTime LastContentModifiedOnDate { get; set; }
+
+        [XmlIgnore]
         public bool HideAdminBorder
         {
             get
@@ -564,6 +567,7 @@ namespace DotNetNuke.Entities.Modules
             Footer = Null.SetNullString(dr["Footer"]);
             StartDate = Null.SetNullDateTime(dr["StartDate"]);
             EndDate = Null.SetNullDateTime(dr["EndDate"]);
+            LastContentModifiedOnDate = Null.SetNullDateTime(dr["LastContentModifiedOnDate"]);
             try
             {
                 TabModuleID = Null.SetNullInteger(dr["TabModuleID"]);

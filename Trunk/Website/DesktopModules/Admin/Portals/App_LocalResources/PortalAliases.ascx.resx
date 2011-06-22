@@ -144,4 +144,7 @@
   <data name="createChild.Text" xml:space="preserve">
     <value>Create child folder in website root?</value>
   </data>
+  <data name="Delete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

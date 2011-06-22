@@ -2386,6 +2386,174 @@ UPDATE {databaseOwner}{objectQualifier}DesktopModules
 
 GO
 
+/* DNN-16275 - LastContentModifiedDate */
+/*****************************************************/
+
+GO
+PRINT N'Creating {databaseOwner}[{objectQualifier}LastContentModifiedOnDate]'
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Modules' AND COLUMN_NAME='LastContentModifiedOnDate')
+	BEGIN
+		-- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}Modules
+			ADD LastContentModifiedOnDate datetime NOT NULL CONSTRAINT [DF_{objectQualifier}Modules_LastContentModifiedOnDate]  DEFAULT (getdate())
+	END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateModuleLastContentModifiedOnDate]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateModuleLastContentModifiedOnDate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateModuleLastContentModifiedOnDate]
+    @ModuleID	int
+AS
+    UPDATE {databaseOwner}{objectQualifier}Modules
+        SET    LastContentModifiedOnDate = GETDATE()
+    WHERE  ModuleID = @ModuleID
+
+GO
+	
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_TabModules]') and OBJECTPROPERTY(id, N'IsView') = 1)
+    DROP VIEW {databaseOwner}[{objectQualifier}vw_TabModules]
+GO
+
+CREATE VIEW {databaseOwner}{objectQualifier}vw_TabModules
+AS
+    SELECT     
+        M.PortalID, 
+        TM.TabID, 
+        TM.TabModuleID, 
+        M.ModuleID, 
+        M.ModuleDefID, 
+        TM.ModuleOrder, 
+        TM.PaneName, 
+        TM.ModuleTitle, 
+        TM.CacheTime, 
+        TM.CacheMethod, 
+        TM.Alignment, 
+        TM.Color, 
+        TM.Border, 
+        CASE WHEN LEFT(LOWER(TM.IconFile), 6) = 'fileid' THEN (SELECT Folder + FileName FROM {databaseOwner}{objectQualifier}Files WHERE 'fileid=' + CONVERT(varchar, {databaseOwner}{objectQualifier}Files.FileID) = TM.IconFile) ELSE TM.IconFile END AS IconFile, 
+        M.AllTabs, 
+        TM.Visibility, 
+        TM.IsDeleted, 
+        TM.Header, 
+        TM.Footer, 
+        M.StartDate, 
+        M.EndDate, 
+        TM.ContainerSrc, 
+        TM.DisplayTitle, 
+        TM.DisplayPrint, 
+        TM.DisplaySyndicate, 
+        TM.IsWebSlice, 
+        TM.WebSliceTitle, 
+        TM.WebSliceExpiryDate, 
+        TM.WebSliceTTL, 
+        M.InheritViewPermissions, 
+        MD.DesktopModuleID, 
+        MD.DefaultCacheTime, 
+        MC.ModuleControlID, 
+        DM.BusinessControllerClass, 
+        DM.IsAdmin, 
+        DM.SupportedFeatures,
+        CI.ContentItemID,
+        CI.Content,
+        CI.ContentTypeID,
+        CI.ContentKey,
+        CI.Indexed,
+        TM.CreatedByUserID, 
+        TM.CreatedOnDate, 
+        TM.LastModifiedByUserID, 
+        TM.LastModifiedOnDate,
+        M.LastContentModifiedOnDate,
+        TM.UniqueId, 
+        TM.VersionGuid, 
+        TM.DefaultLanguageGuid, 
+        TM.LocalizedVersionGuid,
+        TM.CultureCode
+    FROM {databaseOwner}{objectQualifier}ModuleDefinitions AS MD 
+        INNER JOIN {databaseOwner}{objectQualifier}Modules AS M ON MD.ModuleDefID = M.ModuleDefID 
+        INNER JOIN {databaseOwner}{objectQualifier}ModuleControls AS MC ON MD.ModuleDefID = MC.ModuleDefID 
+        INNER JOIN {databaseOwner}{objectQualifier}DesktopModules AS DM ON MD.DesktopModuleID = DM.DesktopModuleID 
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI ON M.ContentItemID = CI.ContentItemID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}TabModules AS TM ON M.ModuleID = TM.ModuleID
+    WHERE (MC.ControlKey IS NULL)
+
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_Modules]') and OBJECTPROPERTY(id, N'IsView') = 1)
+    DROP VIEW {databaseOwner}[{objectQualifier}vw_Modules]
+GO
+
+CREATE VIEW {databaseOwner}{objectQualifier}vw_Modules
+AS
+    SELECT     
+        M.PortalID, 
+        TM.TabID, 
+        TM.TabModuleID, 
+        M.ModuleID, 
+        M.ModuleDefID, 
+        TM.ModuleOrder, 
+        TM.PaneName, 
+        TM.ModuleTitle, 
+        TM.CacheTime, 
+        TM.CacheMethod, 
+        TM.Alignment, 
+        TM.Color, 
+        TM.Border, 
+        CASE WHEN LEFT(LOWER(TM.IconFile), 6) = 'fileid' THEN (SELECT Folder + FileName FROM {databaseOwner}{objectQualifier}Files WHERE 'fileid=' + CONVERT(varchar, {databaseOwner}{objectQualifier}Files.FileID) = TM.IconFile) ELSE TM.IconFile END AS IconFile, 
+        M.AllTabs, 
+        TM.Visibility, 
+        TM.IsDeleted, 
+        TM.Header, 
+        TM.Footer, 
+        M.StartDate, 
+        M.EndDate, 
+        TM.ContainerSrc, 
+        TM.DisplayTitle, 
+        TM.DisplayPrint, 
+        TM.DisplaySyndicate, 
+        TM.IsWebSlice, 
+        TM.WebSliceTitle, 
+        TM.WebSliceExpiryDate, 
+        TM.WebSliceTTL, 
+        M.InheritViewPermissions, 
+        MD.DesktopModuleID, 
+        MD.DefaultCacheTime, 
+        MC.ModuleControlID, 
+        DM.BusinessControllerClass, 
+        DM.IsAdmin, 
+        DM.SupportedFeatures,
+        CI.ContentItemID,
+        CI.Content,
+        CI.ContentTypeID,
+        CI.ContentKey,
+        CI.Indexed,
+        M.CreatedByUserID, 
+        M.CreatedOnDate, 
+        M.LastModifiedByUserID, 
+        M.LastModifiedOnDate,
+        M.LastContentModifiedOnDate,
+        TM.UniqueId, 
+        TM.VersionGuid, 
+        TM.DefaultLanguageGuid, 
+        TM.LocalizedVersionGuid,
+        TM.CultureCode
+    FROM {databaseOwner}{objectQualifier}ModuleDefinitions AS MD 
+        INNER JOIN {databaseOwner}{objectQualifier}Modules AS M ON MD.ModuleDefID = M.ModuleDefID 
+        INNER JOIN {databaseOwner}{objectQualifier}ModuleControls AS MC ON MD.ModuleDefID = MC.ModuleDefID 
+        INNER JOIN {databaseOwner}{objectQualifier}DesktopModules AS DM ON MD.DesktopModuleID = DM.DesktopModuleID 
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI ON M.ContentItemID = CI.ContentItemID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}TabModules AS TM ON M.ModuleID = TM.ModuleID
+    WHERE (MC.ControlKey IS NULL)
+
+GO
+
+
+
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

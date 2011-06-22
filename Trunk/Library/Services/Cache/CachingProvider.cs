@@ -182,6 +182,7 @@ namespace DotNetNuke.Services.Cache
             RemoveCacheKey(DataCache.SecureHostSettingsCacheKey, clearRuntime);
             RemoveCacheKey(DataCache.PortalAliasCacheKey, clearRuntime);
             RemoveCacheKey("CSS", clearRuntime);
+            RemoveCacheKey("StyleSheets", clearRuntime);
             RemoveCacheKey(DataCache.DesktopModulePermissionCacheKey, clearRuntime);
             RemoveCacheKey("GetRoles", clearRuntime);
             RemoveCacheKey("CompressionConfig", clearRuntime);

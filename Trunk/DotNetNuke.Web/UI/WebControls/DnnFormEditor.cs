@@ -141,25 +141,6 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #region Private Methods
 
-        //private static Panel SetUpGroup(string group, WebControl parentControl, string localResourceFile)
-        //{
-        //    var groupPanel = new Panel();
-        //    var resourceKey = group;
-        //    groupPanel.GroupingText = Localization.GetString(resourceKey, localResourceFile);
-        //    groupPanel.CssClass = "dnnformGroup";
-
-        //    //Add Group Header
-        //    var helpText = Localization.GetString(resourceKey + ".Help", localResourceFile);
-        //    if (!String.IsNullOrEmpty(helpText))
-        //    {
-        //        groupPanel.Controls.Add(new LiteralControl(Localization.GetString(resourceKey + ".Help", localResourceFile)));
-        //    }
-
-        //    parentControl.Controls.Add(groupPanel);
-
-        //    return groupPanel;
-        //}
-
         internal static void SetUpItems(IEnumerable<DnnFormItemBase> items, WebControl parentControl, string localResourceFile)
         {
             foreach (DnnFormItemBase item in items)
@@ -216,10 +197,10 @@ namespace DotNetNuke.Web.UI.WebControls
                         expandAll.Controls.Add(new LiteralControl("<a href=\"\">" + expandAllText + "</a>"));
                         tab.Controls.Add(expandAll);
 
-                        formTab.ExpandAllScript = "$('#" + tab.ClientID + " .dnnFormExpandContent a').dnnExpandAll({\r\n";
-                        formTab.ExpandAllScript += " expandText: '" + Localization.GetString("ExpandAll", Localization.SharedResourceFile) + "',\r\n";
-                        formTab.ExpandAllScript += " collapseText: '" + Localization.GetString("CollapseAll", Localization.SharedResourceFile) + "',\r\n";
-                        formTab.ExpandAllScript += " targetArea: '#" + tab.ClientID + "' });\r\n";
+                        formTab.ExpandAllScript = "\t\t\t$('#" + tab.ClientID + " .dnnFormExpandContent a').dnnExpandAll({\r\n";
+                        formTab.ExpandAllScript += "\t\t\t\texpandText: '" + Localization.GetString("ExpandAll", Localization.SharedResourceFile) + "',\r\n";
+                        formTab.ExpandAllScript += "\t\t\t\tcollapseText: '" + Localization.GetString("CollapseAll", Localization.SharedResourceFile) + "',\r\n";
+                        formTab.ExpandAllScript += "\t\t\t\ttargetArea: '#" + tab.ClientID + "' });\r\n";
                     }
 
                     tabStrip.Items.Add(new ListItem(Localization.GetString(resourceKey, LocalResourceFile), "#" + tab.ClientID));
@@ -333,9 +314,9 @@ namespace DotNetNuke.Web.UI.WebControls
                 //Render Script
                 var scriptBuilder = new StringBuilder();
                 scriptBuilder.Append("<script language=\"javascript\" type=\"text/javascript\">\r\n");
-                scriptBuilder.Append("(function ($, Sys) {\r\n");
-                scriptBuilder.Append("function setupFormEditor() {\r\n");
-                scriptBuilder.Append("$('#" + ClientID + "').dnnTabs().dnnPanels();\r\n");
+                scriptBuilder.Append("\t(function ($, Sys) {\r\n");
+                scriptBuilder.Append("\t\tfunction setupFormEditor() {\r\n");
+                scriptBuilder.Append("\t\t\t$('#" + ClientID + "').dnnTabs().dnnPanels();\r\n");
                 foreach (DnnFormTab formTab in Tabs)
                 {
                     if (formTab.IncludeExpandAll)
@@ -343,14 +324,16 @@ namespace DotNetNuke.Web.UI.WebControls
                         scriptBuilder.Append(formTab.ExpandAllScript);
                     }
                 }
-                scriptBuilder.Append("}\r\n");
-                scriptBuilder.Append("$(document).ready(function () {\r\n");
-                scriptBuilder.Append("setupFormEditor();\r\n");
-                scriptBuilder.Append("Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {\r\n");
-                scriptBuilder.Append("setupFormEditor();\r\n");
-                scriptBuilder.Append("});\r\n");
-                scriptBuilder.Append("});\r\n");
-                scriptBuilder.Append(" } (jQuery, window.Sys));\r\n");
+                scriptBuilder.Append("\t\t}\r\n");
+                scriptBuilder.Append("\t\t$(document).ready(function () {\r\n");
+                scriptBuilder.Append("\t\t\tsetupFormEditor();\r\n");
+                scriptBuilder.Append("\t\t\tif (typeof Sys != 'undefined') {\r\n");
+                scriptBuilder.Append("\t\t\t\tSys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {\r\n");
+                scriptBuilder.Append("\t\t\t\t\tsetupFormEditor();\r\n");
+                scriptBuilder.Append("\t\t\t\t});\r\n");
+                scriptBuilder.Append("\t\t\t}\r\n"); 
+                scriptBuilder.Append("\t\t});\r\n");
+                scriptBuilder.Append("\t} (jQuery, window.Sys));\r\n");
 
                 scriptBuilder.Append("</script>\r\n");
                 cs.RegisterClientScriptBlock(GetType(), scriptName, scriptBuilder.ToString());

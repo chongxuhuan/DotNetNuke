@@ -708,18 +708,7 @@ namespace DotNetNuke.Security.Membership
                         ProfileController.UpdateUserProfile(user);
                     }
                 }
-                if (createStatus == UserCreateStatus.UserAlreadyRegistered)
-                {
-					//If soft-deleted then undelete
-                    if (objVerifyUser.IsDeleted)
-                    {
-                        objVerifyUser.IsDeleted = false;
-                        objVerifyUser.Membership.Approved = user.Membership.Approved;
-                        UpdateUser(objVerifyUser);
-                        createStatus = UserCreateStatus.Success;
-                        user.UserID = objVerifyUser.UserID;
-                    }
-                }
+                
             }
             catch (Exception exc) //an unexpected error occurred
             {

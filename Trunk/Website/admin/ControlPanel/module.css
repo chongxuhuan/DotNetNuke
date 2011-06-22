@@ -32,6 +32,7 @@
 			#dnnCurrentPage a.dnnPrimaryAction{margin-left:70px;}
 			#dnnCPWrapRight a.dnnPrimaryAction{padding:4px 10px;line-height:1.4;}
 			#dnnCurrentPage .cbcpPageCopy, #dnnCurrentPage .cbcpPageActions, .cpcbAdmin .dnnClear{padding-bottom:10px;}
+			.cpanel_right #dnnCPWrapRight, .cpanel_right #dnnCPWrapLeft, .cpanel_right .dnnControlPanel {background-image: none;}
 					
 		span.cpNewUser a{background:url(images/iconbar_add_users_16.gif) no-repeat left;}
 		span.cpNewRole a{background:url(images/icon_securityroles_16px.gif) no-repeat left;}

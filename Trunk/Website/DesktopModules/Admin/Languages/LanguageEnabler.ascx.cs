@@ -331,19 +331,6 @@ namespace DotNetNuke.Modules.Admin.Languages
                             {
                                 //Add language to portal
                                 Localization.AddLanguageToPortal(PortalId, languageId, true);
-
-                                if (PortalSettings.ContentLocalizationEnabled && GetLocalizedPages(locale.Code, false).Count != GetLocalizedPages(defaultLocale.Code, false).Count)
-                                {
-                                    //Create Missing Localized Pages
-                                    foreach (TabInfo tab in _TabController.GetCultureTabList(PortalId))
-                                    {
-                                        //if tabpath does not already exists...create it.
-                                        if (_TabController.GetTabsByPortal(PortalId).WithCulture(locale.Code, false).Where(tb => tb.Value.DefaultLanguageGuid == tab.UniqueId).Count() < 1)
-                                        {
-                                            _TabController.CreateLocalizedCopy(tab, locale);
-                                        }
-                                    }
-                                }
                             }
                         }
                         else
@@ -376,8 +363,8 @@ namespace DotNetNuke.Modules.Admin.Languages
                 var languge = gridItem.DataItem as Locale;
                 if (languge != null)
                 {
-                    var localizeButton = gridItem.FindControl("localizeButton") as ImageButton;
-                    if (localizeButton != null)
+                    var localizeLink = gridItem.FindControl("localizeLink") as HyperLink;
+                    if (localizeLink != null)
                     {
                         Locale defaultLocale = LocaleController.Instance.GetLocale(PortalDefault);
                         CultureDropDownTypes DisplayType = default(CultureDropDownTypes);
@@ -395,10 +382,11 @@ namespace DotNetNuke.Modules.Admin.Languages
                                 break;
                         }
 
-                        string msg = string.Format(Localization.GetString("Localize.Confirm", LocalResourceFile),
-                                                   Localization.GetLocaleName(languge.Code, DisplayType),
-                                                   Localization.GetLocaleName(defaultLocale.Code, DisplayType));
-                        localizeButton.OnClientClick = Utilities.GetOnClientClickConfirm(localizeButton, msg);
+                        localizeLink.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, 
+                                                                            "LocalizePages", 
+                                                                            false, 
+                                                                            "mid=" + ModuleContext.ModuleId,
+                                                                            "locale=" + languge.Code);
 
                         var publishButton = gridItem.FindControl("publishButton") as ImageButton;
                         if (publishButton != null)
@@ -422,24 +410,6 @@ namespace DotNetNuke.Modules.Admin.Languages
                 }
             }
             languagesGrid.Rebind();
-        }
-
-        protected void localizePages(object sender, CommandEventArgs e)
-        {
-            var cultureCode = (string) e.CommandArgument;
-
-            if (PortalSettings.ContentLocalizationEnabled && GetLocalizedPages(cultureCode, false).Count == 0)
-            {
-                //Create Localized Pages
-                Locale locale = LocaleController.Instance.GetLocale(cultureCode);
-                foreach (TabInfo t in _TabController.GetCultureTabList(PortalId))
-                {
-                    _TabController.CreateLocalizedCopy(t, locale);
-                }
-            }
-
-            //Redirect to refresh page (and skinobjects)
-            Response.Redirect(Globals.NavigateURL(), true);
         }
 
         protected void publishedCheckbox_CheckChanged(object sender, EventArgs e)
