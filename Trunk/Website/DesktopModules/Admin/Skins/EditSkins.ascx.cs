@@ -616,8 +616,7 @@ namespace DotNetNuke.Modules.Admin.Skins
 
                     if (Request.QueryString["Name"] != null)
                     {
-                        strURL =
-                            Request.MapPath(GetSkinPath(Convert.ToString(Request.QueryString["Type"]), Convert.ToString(Request.QueryString["Root"]), Convert.ToString(Request.QueryString["Name"])));
+                        strURL = Request.MapPath(GetSkinPath(Convert.ToString(Request.QueryString["Type"]), Convert.ToString(Request.QueryString["Root"]), Convert.ToString(Request.QueryString["Name"])));
                         strSkin = strURL.Replace(Globals.ApplicationMapPath, "").ToLowerInvariant();
                     }
                     else

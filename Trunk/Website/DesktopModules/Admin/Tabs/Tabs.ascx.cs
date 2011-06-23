@@ -221,8 +221,18 @@ namespace DotNetNuke.Modules.Admin.Pages
             rblMode.SelectedIndexChanged += RblModeSelectedIndexChanged;
             ctlPages.NodeClick += CtlPagesNodeClick;
             ctlPages.ContextMenuItemClick += CtlPagesContextMenuItemClick;
-            ctlPages.NodeDrop += CtlPagesNodeDrop;
             ctlPages.NodeEdit += CtlPagesNodeEdit;
+            if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+            {                
+                ctlPages.EnableDragAndDrop = true;
+                ctlPages.EnableDragAndDropBetweenNodes = true;
+                ctlPages.NodeDrop += CtlPagesNodeDrop;                
+            }
+            else
+            {             
+                ctlPages.EnableDragAndDrop = false;
+                ctlPages.EnableDragAndDropBetweenNodes = false;
+            }
             cmdExpandTree.Click += OnExpandTreeClick;
             grdModules.NeedDataSource += GrdModulesNeedDataSource;
             ctlPages.NodeExpand += CtlPagesNodeExpand;
@@ -314,136 +324,170 @@ namespace DotNetNuke.Modules.Admin.Pages
             switch (e.MenuItem.Value.ToLower())
             {
                 case "makehome":
-                    PortalSettings.HomeTabId = objTab.TabID;
-                    PortalController.UpdatePortalSetting(PortalId, "HomeTabId", objTab.TabID.ToString());
-                    DataCache.ClearPortalCache(PortalId, false);
-                    BindTreeAndShowTab(objTab.TabID);
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabMadeHome", LocalResourceFile), objTab.TabName));
+                    if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+                    {
+                        PortalSettings.HomeTabId = objTab.TabID;
+                        PortalController.UpdatePortalSetting(PortalId, "HomeTabId", objTab.TabID.ToString());
+                        DataCache.ClearPortalCache(PortalId, false);
+                        BindTreeAndShowTab(objTab.TabID);
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabMadeHome", LocalResourceFile), objTab.TabName));
+                    }
                     break;
                 case "view":
                     Response.Redirect(objTab.FullUrl);
                     break;
                 case "edit":
-                    //Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);
-                    var editUrl = Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId);
-                    if (PortalSettings.EnablePopUps)
+                    if (TabPermissionController.CanManagePage(objTab))
                     {
-                        editUrl = UrlUtils.PopUpUrl(editUrl, this, PortalSettings, true, false);
-                        var script = string.Format("<script type=\"text/javascript\">{0}</script>", editUrl);
-                        ClientAPI.RegisterStartUpScript(this.Page, "EditInPopup", script);
+                        //Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);
+                        var editUrl = Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId);
+                        if (PortalSettings.EnablePopUps)
+                        {
+                            editUrl = UrlUtils.PopUpUrl(editUrl, this, PortalSettings, true, false);
+                            var script = string.Format("<script type=\"text/javascript\">{0}</script>", editUrl);
+                            ClientAPI.RegisterStartUpScript(this.Page, "EditInPopup", script);
+                        }
+                        else
+                        {
+                            Response.Redirect(editUrl, true);
+                        }
                     }
-                    else
-                    {
-                        Response.Redirect(editUrl, true);
-                    }
-
                     break;
                 case "delete":
-                    TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);
-                    BindTree();
-                    //keep the parent tab selected
-                    if (objTab.ParentId != Null.NullInteger)
+                    if (TabPermissionController.CanDeletePage(objTab))
                     {
-                        SelectedNode = objTab.ParentId.ToString();
-                        ctlPages.FindNodeByValue(SelectedNode).Selected = true;
-                        ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
-                        BindTab(objTab.ParentId);
+                        TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);
+                        BindTree();
+                        //keep the parent tab selected
+                        if (objTab.ParentId != Null.NullInteger)
+                        {
+                            SelectedNode = objTab.ParentId.ToString();
+                            ctlPages.FindNodeByValue(SelectedNode).Selected = true;
+                            ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
+                            BindTab(objTab.ParentId);
+                        }
+                        else
+                        {
+                            pnlDetails.Visible = false;
+                        }
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabDeleted", LocalResourceFile), objTab.TabName));
                     }
-                    else
-                    {
-                        pnlDetails.Visible = false;
-                    }
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabDeleted", LocalResourceFile), objTab.TabName));
                     break;
                 case "moveup":
-                    objTabController.MoveTab(objTab, TabMoveType.Up);
-                    BindTree();
+                    if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+                    {
+                        objTabController.MoveTab(objTab, TabMoveType.Up);
+                        BindTree();
+                    }
                     break;
                 case "movedown":
-                    objTabController.MoveTab(objTab, TabMoveType.Down);
-                    BindTree();
+                    if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+                    {
+                        objTabController.MoveTab(objTab, TabMoveType.Down);
+                        BindTree();
+                    }
                     break;
                 case "add":
-                    pnlBulk.Visible = true;
-                    btnBulkCreate.CommandArgument = e.Node.Value;
-                    ctlPages.FindNodeByValue(e.Node.Value).Selected = true;
-                    txtBulk.Focus();
-                    pnlDetails.Visible = false;
-                    //Response.Redirect(NavigateURL(objTab.TabID, "Tab", "action=add", "returntabid=" & TabId.ToString), True)
+                    if (TabPermissionController.CanAddPage(objTab))
+                    {
+                        pnlBulk.Visible = true;
+                        btnBulkCreate.CommandArgument = e.Node.Value;
+                        ctlPages.FindNodeByValue(e.Node.Value).Selected = true;
+                        txtBulk.Focus();
+                        pnlDetails.Visible = false;
+                        //Response.Redirect(NavigateURL(objTab.TabID, "Tab", "action=add", "returntabid=" & TabId.ToString), True)
+                    }
                     break;
                 case "hide":
-                    objTab.IsVisible = false;
-                    objTabController.UpdateTab(objTab);
-                    BindTreeAndShowTab(objTab.TabID);
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabHidden", LocalResourceFile), objTab.TabName));
+                    if (TabPermissionController.CanManagePage(objTab))
+                    {
+                        objTab.IsVisible = false;
+                        objTabController.UpdateTab(objTab);
+                        BindTreeAndShowTab(objTab.TabID);
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabHidden", LocalResourceFile), objTab.TabName));
+                    }
                     break;
                 case "show":
-                    objTab.IsVisible = true;
-                    objTabController.UpdateTab(objTab);
-                    BindTreeAndShowTab(objTab.TabID);
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabShown", LocalResourceFile), objTab.TabName));
+                    if (TabPermissionController.CanManagePage(objTab))
+                    {
+                        objTab.IsVisible = true;
+                        objTabController.UpdateTab(objTab);
+                        BindTreeAndShowTab(objTab.TabID);
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabShown", LocalResourceFile), objTab.TabName));
+                    }
                     break;
                 case "disable":
-                    objTab.DisableLink = true;
-                    objTabController.UpdateTab(objTab);
-                    BindTreeAndShowTab(objTab.TabID);
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabDisabled", LocalResourceFile), objTab.TabName));
+                    if (TabPermissionController.CanManagePage(objTab))
+                    {
+                        objTab.DisableLink = true;
+                        objTabController.UpdateTab(objTab);
+                        BindTreeAndShowTab(objTab.TabID);
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabDisabled", LocalResourceFile), objTab.TabName));
+                    }
                     break;
                 case "enable":
-                    objTab.DisableLink = false;
-                    objTabController.UpdateTab(objTab);
-                    BindTreeAndShowTab(objTab.TabID);
-                    ShowSuccessMessage(string.Format(Localization.GetString("TabEnabled", LocalResourceFile), objTab.TabName));
+                    if (TabPermissionController.CanManagePage(objTab))
+                    {
+                        objTab.DisableLink = false;
+                        objTabController.UpdateTab(objTab);
+                        BindTreeAndShowTab(objTab.TabID);
+                        ShowSuccessMessage(string.Format(Localization.GetString("TabEnabled", LocalResourceFile), objTab.TabName));
+                    }
                     break;
             }
         }
 
         protected void CtlPagesNodeDrop(object sender, RadTreeNodeDragDropEventArgs e)
         {
-            var sourceNode = e.SourceDragNode;
-            var destNode = e.DestDragNode;
-            var dropPosition = e.DropPosition;
-            if (destNode != null)
+            if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
             {
-                if (sourceNode.TreeView.SelectedNodes.Count <= 1)
+                var sourceNode = e.SourceDragNode;
+                var destNode = e.DestDragNode;
+                var dropPosition = e.DropPosition;
+                if (destNode != null)
                 {
-                    PerformDragAndDrop(dropPosition, sourceNode, destNode);
-                }
-                else if (sourceNode.TreeView.SelectedNodes.Count > 1)
-                {
-                    foreach (var node in sourceNode.TreeView.SelectedNodes)
+                    if (sourceNode.TreeView.SelectedNodes.Count <= 1)
                     {
-                        PerformDragAndDrop(dropPosition, node, destNode);
+                        PerformDragAndDrop(dropPosition, sourceNode, destNode);
                     }
-                }
+                    else if (sourceNode.TreeView.SelectedNodes.Count > 1)
+                    {
+                        foreach (var node in sourceNode.TreeView.SelectedNodes)
+                        {
+                            PerformDragAndDrop(dropPosition, node, destNode);
+                        }
+                    }
 
-                destNode.Expanded = true;
+                    destNode.Expanded = true;
 
-                foreach (var node in ctlPages.GetAllNodes())
-                {
-                    node.Selected = node.Value == e.SourceDragNode.Value;
+                    foreach (var node in ctlPages.GetAllNodes())
+                    {
+                        node.Selected = node.Value == e.SourceDragNode.Value;
+                    }
                 }
             }
         }
 
         protected void CtlPagesNodeEdit(object sender, RadTreeNodeEditEventArgs e)
-        {
+        {            
             var objTabController = new TabController();
             var objTab = objTabController.GetTab(int.Parse(e.Node.Value), PortalId, false);
-
-            //Check for invalid 
-            if (!IsValidTabName(e.Text) || !IsValidTabPath(objTab,Globals.GenerateTabPath(objTab.ParentId, e.Text)))
+            if (objTab != null && TabPermissionController.CanManagePage(objTab))
             {
-                e.Node.Text = objTab.TabName;
-                e.Text = objTab.TabName;
-            }
-            else
-            {
-                objTab.TabName = e.Text;
-                objTabController.UpdateTab(objTab);
-            }
+                //Check for invalid 
+                if (!IsValidTabName(e.Text) || !IsValidTabPath(objTab, Globals.GenerateTabPath(objTab.ParentId, e.Text)))
+                {
+                    e.Node.Text = objTab.TabName;
+                    e.Text = objTab.TabName;
+                }
+                else
+                {
+                    objTab.TabName = e.Text;
+                    objTabController.UpdateTab(objTab);
+                }
 
-            BindTreeAndShowTab(objTab.TabID);
+                BindTreeAndShowTab(objTab.TabID);
+            }
         }
 
         protected void OnExpandTreeClick(object sender, EventArgs e)
@@ -487,6 +531,9 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         protected void OnCreatePagesClick(object sender, EventArgs e)
         {
+            if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)) 
+                return;
+
             var strValue = txtBulk.Text;
             strValue = strValue.Replace("\r", "\n");
             strValue = strValue.Replace(Environment.NewLine, "\n");
@@ -571,7 +618,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             var intTab = Convert.ToInt32(ctlPages.SelectedNode.Value);
             var tabcontroller = new TabController();
             var tab = tabcontroller.GetTab(intTab, PortalId, true);
-            if (tab != null)
+            if (tab != null && TabPermissionController.CanManagePage(tab))
             {
                 tab.TabName = txtName.Text;
                 tab.Title = txtTitle.Text;
@@ -894,6 +941,8 @@ namespace DotNetNuke.Modules.Admin.Pages
             node.Attributes.Add("CanEnable", canEnable.ToString());
             node.Attributes.Add("CanDisable", canDisable.ToString());
             node.Attributes.Add("CanMakeHome", canMakeHome.ToString());
+
+            node.AllowEdit = canEdit;
         }
 
         private void BindTree()

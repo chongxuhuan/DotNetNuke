@@ -407,6 +407,7 @@ namespace DotNetNuke.Services.Installer.Installers
             Package.Description = Util.ReadElement(manifestNav, "description");
 
             XPathNavigator foldernameNav = null;
+            Package.FolderName = String.Empty;
             switch (Package.PackageType)
             {
                 case "Module":
@@ -428,9 +429,8 @@ namespace DotNetNuke.Services.Installer.Installers
 
             //Get Icon
             XPathNavigator iconFileNav= manifestNav.SelectSingleNode("iconFile");
-            if (Package.FolderName != string.Empty && iconFileNav != null)
+            if (iconFileNav != null)
             {
-                
                 if ((iconFileNav.Value != string.Empty) && (Package.PackageType == "Module" || Package.PackageType == "Auth_System" || Package.PackageType == "Container" || Package.PackageType == "Skin"))
                 {
                     Package.IconFile = Package.FolderName + "/" + iconFileNav.Value;

@@ -392,30 +392,32 @@
     <script type="text/javascript">
     /*globals jQuery, window, Sys */
     (function ($, Sys) {
-        function toggleSmtpCredentials() {
-            var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
-            if (smtpVal == "1") {
-                $('#SMTPUserNameRow,#SMTPPasswordRow').slideDown();
-            }
-            else {
-                $('#SMTPUserNameRow,#SMTPPasswordRow').slideUp();
-            }
-        }
+    	function toggleSmtpCredentials() {
+    		var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
+    		if (smtpVal == "1") {
+    			$('#SMTPUserNameRow,#SMTPPasswordRow').slideDown();
+    		}
+    		else {
+    			$('#SMTPUserNameRow,#SMTPPasswordRow').slideUp();
+    		}
+    	}
 
-        function setUp() {
-            installScripts();
-            toggleSmtpCredentials();
-            $('#<%= optSMTPAuthentication.ClientID %>').click(function () {
-                toggleSmtpCredentials();
-            });
-        }
+    	function setUp() {
+    		if (pageNo === 4) {
+    			toggleSmtpCredentials();
+    			$('#<%= optSMTPAuthentication.ClientID %>').click(function () {
+    				toggleSmtpCredentials();
+    			});
+    		}
+    	}
 
-        $(document).ready(function () {
-            setUp();
-            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-                setUp();
-            });
-        });
+    	$(document).ready(function () {
+    		installScripts();
+    		setUp();
+    		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+    			setUp();
+    		});
+    	});
     } (jQuery, window.Sys));
     </script>
 </body>

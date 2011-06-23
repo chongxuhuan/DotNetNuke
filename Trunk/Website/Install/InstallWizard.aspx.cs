@@ -1326,6 +1326,7 @@ namespace DotNetNuke.Services.Install
             else
             {
                 bool isSQLFile = (rblDatabases.SelectedValue == "SQLFile");
+                bool isOracle = (rblDatabases.SelectedValue == "Oracle");
                 DbConnectionStringBuilder builder = _dataProvider.GetConnectionStringBuilder();
                 if (!string.IsNullOrEmpty(txtServer.Text))
                 {
@@ -1335,10 +1336,10 @@ namespace DotNetNuke.Services.Install
                 {
                     builder["Initial Catalog"] = txtDatabase.Text;
                 }
-                if (String.IsNullOrEmpty(txtDatabase.Text) && !isSQLFile)
+                if (string.IsNullOrEmpty(txtDatabase.Text) && !isSQLFile)
                 {
                     lblDataBaseError.Text = LocalizeString("DbNameError");
-                    return false;
+                    if (!isOracle) return false;
                 }
                 if (!string.IsNullOrEmpty(txtFile.Text) && isSQLFile)
                 {
@@ -1563,6 +1564,8 @@ namespace DotNetNuke.Services.Install
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+			//Register jquery reference.
+			jQuery.RequestRegistration();
 
             //register variable ActionCallback with script necessary to perform callback
             //[ACTIONTOKEN] will be replaced on the client side with real action

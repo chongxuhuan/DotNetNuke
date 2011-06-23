@@ -1,6 +1,6 @@
 ﻿/* ===========   Page Settings Module Styling   =========== */
 .dnnTabsModule{width:100%;margin:2em auto;}
-	.dnnTabsModule div.dnnPageDetails, .dnnTabsModule div.dnnPermissions, .dnnTabsModule div.dnnLocalization, .dnnTabsModule div.dnnAdvancedSettings {padding:0;margin-top:0.5em;}
+	.dnnTabsModule div.dnnPageDetails, .dnnTabsModule div.dnnCopyPage, .dnnTabsModule div.dnnPermissions, .dnnTabsModule div.dnnLocalization, .dnnTabsModule div.dnnAdvancedSettings {padding:0;margin-top:0.5em;}
 		.dnnTabsModule textarea{min-height:100px;}
 		.dnnTabsModule .dnnFormItem input, .dnnTabsModule .dnnFormItem .dnnFormInput, .dnnTabsModule .dnnFormItem textarea{width:45%;}
 			.dnnTabsModule .dnnFormItem input[type=checkbox], .dnnTabsModule .dnnFormItem input[type=radio]{width:auto;}

@@ -160,19 +160,13 @@ namespace DotNetNuke.Services.Installer.Packages
                     string strFolderPath = string.Empty;
                     string strRootSkin = package.PackageType == "Skin" ? SkinController.RootSkin : SkinController.RootContainer;
                     SkinPackageInfo _SkinPackageInfo = SkinController.GetSkinByPackageID(package.PackageID);
-                    foreach (KeyValuePair<int, string> kvp in _SkinPackageInfo.Skins)
+                    if (_SkinPackageInfo.PortalID == Null.NullInteger)
                     {
-                        if (kvp.Value.Contains(Globals.HostMapPath))
-                        {
-                            strFolderPath = Path.Combine(Path.Combine(Globals.HostMapPath, strRootSkin), _SkinPackageInfo.SkinName);
-                        }
-                        else
-                        {
-                            strFolderPath = Path.Combine(Path.Combine(portalSettings.HomeDirectoryMapPath, strRootSkin), _SkinPackageInfo.SkinName);
-                        }
-						
-						//Only needed to look at the path of one skin/container, so exit loop
-                        break;
+                        strFolderPath = Path.Combine(Path.Combine(Globals.HostMapPath, strRootSkin), _SkinPackageInfo.SkinName);
+                    }
+                    else
+                    {
+                        strFolderPath = Path.Combine(Path.Combine(portalSettings.HomeDirectoryMapPath, strRootSkin), _SkinPackageInfo.SkinName);
                     }
 
                     bCanDelete = SkinController.CanDeleteSkin(strFolderPath, portalSettings.HomeDirectoryMapPath);

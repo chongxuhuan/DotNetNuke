@@ -30,6 +30,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins;
 
@@ -118,6 +119,25 @@ namespace DotNetNuke.UI
             slaveModule.DisplayTitle = true;
             slaveModule.DisplayPrint = false;
             slaveModule.DisplaySyndicate = false;
+
+            return slaveModule;
+        }
+
+        public static ModuleInfo GetSlaveModule(int tabId)
+        {
+            var key = GetControlKey();
+            var moduleId = GetModuleId(key);
+            
+            ModuleInfo slaveModule =  GetSlaveModule(moduleId, key, tabId);
+            if (slaveModule != null)
+            {
+                var moduleControl = ModuleControlController.GetModuleControlByControlKey(key, slaveModule.ModuleDefID) ??
+                                    ModuleControlController.GetModuleControlByControlKey(key, Null.NullInteger);
+                if (moduleControl != null)
+                {
+                    slaveModule.ModuleControlId = moduleControl.ModuleControlID;
+                }
+            }
 
             return slaveModule;
         }

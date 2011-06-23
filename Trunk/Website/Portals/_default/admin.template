@@ -126,8 +126,8 @@
       <KeyID>44</KeyID>
       <name>Site Settings</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_sitesettings_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_sitesettings_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/SiteSettings_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/SiteSettings_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Site Settings</title>
       <description>Manage configuration settings for the portal.</description>
@@ -178,7 +178,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_sitesettings_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/SiteSettings_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -215,8 +215,8 @@
       <KeyID>45</KeyID>
       <name>Pages</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_tabs_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_tabs_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Tabs_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Tabs_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Pages</title>
       <description>Manage pages within the portal.</description>
@@ -267,7 +267,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_tabs_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Tabs_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -482,8 +482,8 @@
       <KeyID>48</KeyID>
       <name>Skins</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_skins_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_skins_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Skins_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Skins_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Skins</title>
       <description>Manage Skin Resources.</description>
@@ -534,7 +534,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_skins_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Skins_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -577,7 +577,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_skins_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Skins_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -614,8 +614,8 @@
       <KeyID>49</KeyID>
       <name>Security Roles</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_securityroles_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_securityroles_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/SecurityRoles_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/SecurityRoles_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Security Roles</title>
       <description>Manage security roles for the portal.</description>
@@ -666,7 +666,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_securityroles_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/SecurityRoles_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -703,8 +703,8 @@
       <KeyID>50</KeyID>
       <name>User Accounts</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_users_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_users_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Users_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Users_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>User Accounts</title>
       <description>Manage user accounts for the portal.</description>
@@ -755,7 +755,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_users_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Users_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -792,8 +792,8 @@
       <KeyID>51</KeyID>
       <name>Vendors</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_vendors_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_vendors_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Vendors_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Vendors_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Vendors</title>
       <description>Manage vendor accounts, banner advertising and affiliate referrals within the portal.</description>
@@ -844,7 +844,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_vendors_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Vendors_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -881,8 +881,8 @@
       <KeyID>52</KeyID>
       <name>Site Log</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_sitelog_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_sitelog_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/SiteLog_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Sitelog_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Site Log</title>
       <description>View statistical reports on site activity for the portal.</description>
@@ -933,7 +933,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_sitelog_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Sitelog_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -970,8 +970,8 @@
       <KeyID>53</KeyID>
       <name>Newsletters</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_bulkmail_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_bulkmail_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/BulkMail_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/BulkMail_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Newsletters</title>
       <description>Send email messages to users, security roles and specific email addresses.</description>
@@ -1022,7 +1022,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_bulkmail_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/BulkMail_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1059,8 +1059,8 @@
       <KeyID>54</KeyID>
       <name>File Manager</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_filemanager_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_filemanager_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Files_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Files_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>File Manager</title>
       <description>Manage files within the portal.</description>
@@ -1111,7 +1111,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_filemanager_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Files_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1148,8 +1148,8 @@
       <KeyID>55</KeyID>
       <name>Recycle Bin</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_recyclebin_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_recyclebin_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Trash_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Trash_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Recycle Bin</title>
       <description>View, restore or permanently recycle pages and modules that have been deleted from the portal.</description>
@@ -1200,7 +1200,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_recyclebin_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Trash_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1237,8 +1237,8 @@
       <KeyID>56</KeyID>
       <name>Log Viewer</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_viewstats_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_viewstats_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/ViewStats_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/ViewStats_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Log Viewer</title>
       <description>View a historical log of database events such as event schedules, exceptions, account logins, module and page changes, user account activities, security role activities, etc.</description>
@@ -1289,7 +1289,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_viewstats_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/ViewStats_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1326,8 +1326,8 @@
       <KeyID>57</KeyID>
       <name>Site Wizard</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_wizard_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_wizard_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Wizard_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Wizard_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Site Wizard</title>
       <description>Configure portal settings, page design and apply a site template using a step-by-step wizard.</description>
@@ -1378,7 +1378,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_wizard_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Wizard_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1504,8 +1504,8 @@
       <KeyID>59</KeyID>
       <name>Taxonomy</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_tag_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_tag_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Tag_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Tag_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Taxonomy</title>
       <description>Manage the Taxonomy for your Site.</description>
@@ -1556,7 +1556,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_tag_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Tag_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1593,8 +1593,8 @@
       <KeyID>60</KeyID>
       <name>Search Engine SiteMap</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_analytics_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_analytics_32px.gif</iconfilelarge>
+      <iconfile>~/images/icon_siteMap_16px.gif</iconfile>
+      <iconfilelarge>~/images/icon_siteMap_32px.gif</iconfilelarge>
       <disabled>false</disabled>
       <title>Site Settings</title>
       <description>Configure the sitemap for submission to common search engines.</description>
@@ -1645,7 +1645,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_analytics_32px.gif</iconfile>
+              <iconfile>~/images/icon_siteMap_32px.gif</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>

@@ -49,7 +49,9 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.SiteLog;
 using DotNetNuke.Services.Personalization;
 using DotNetNuke.Services.Vendors;
+using DotNetNuke.UI;
 using DotNetNuke.UI.Internals;
+using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 
@@ -275,19 +277,31 @@ namespace DotNetNuke.Framework
 
             //set page title
             string strTitle = PortalSettings.PortalName;
-
-            foreach (TabInfo tab in PortalSettings.ActiveTab.BreadCrumbs)
+            if (IsPopUp)
             {
-                strTitle += string.Concat(" > ", tab.TabName);
+                var slaveModule = UIUtilities.GetSlaveModule(PortalSettings.ActiveTab.TabID);
+                var control = ModuleControlFactory.CreateModuleControl(slaveModule) as IModuleControl;
+                var title = Localization.LocalizeControlTitle(control);
+ 
+                strTitle += string.Concat(" > ", PortalSettings.ActiveTab.TabName);
+                strTitle += string.Concat(" > ", title);
             }
-
-            //tab title override
-            if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Title))
+            else
             {
-                strTitle = PortalSettings.ActiveTab.Title;
+
+                foreach (TabInfo tab in PortalSettings.ActiveTab.BreadCrumbs)
+                {
+                    strTitle += string.Concat(" > ", tab.TabName);
+                }
+
+                //tab title override
+                if (!string.IsNullOrEmpty(PortalSettings.ActiveTab.Title))
+                {
+                    strTitle = PortalSettings.ActiveTab.Title;
+                }
             }
             Title = strTitle;
-
+ 
             //set the background image if there is one selected
             if (!IsPopUp && FindControl("Body") != null)
             {
@@ -366,7 +380,7 @@ namespace DotNetNuke.Framework
             }
 
             //NonProduction Label Injection
-            if (NonProductionVersion() && Host.DisplayBetaNotice)
+            if (NonProductionVersion() && Host.DisplayBetaNotice && !IsPopUp)
             {
                 string versionString = string.Format(" ({0} Version: {1})", DotNetNukeContext.Current.Application.Status,
                                                      DotNetNukeContext.Current.Application.Version);

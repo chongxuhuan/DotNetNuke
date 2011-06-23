@@ -439,7 +439,7 @@ namespace DotNetNuke.Entities.Tabs
                             localizedTabName = TabName;
                         }
 
-                        _localizedTabNameDictionary.Add(key, localizedTabName);
+                        _localizedTabNameDictionary.Add(key, localizedTabName.Trim());
                     }
                 }
 

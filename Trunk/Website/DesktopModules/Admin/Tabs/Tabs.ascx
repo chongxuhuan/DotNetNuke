@@ -123,7 +123,7 @@
 		<div class="dnnTreeExpand">
 			<asp:LinkButton ID="cmdExpandTree" runat="server" CommandName="Expand" />
 		</div>
-		<dnnweb:DnnTreeView ID="ctlPages" cssclass="dnnTreePages" runat="server" AllowNodeEditing="true" EnableDragAndDrop="true"
+		<dnnweb:DnnTreeView ID="ctlPages" cssclass="dnnTreePages" runat="server" AllowNodeEditing="true"
 		 OnClientContextMenuShowing="onContextShowing" OnClientContextMenuItemClicking="onContextClicking"
 		  OnClientNodeClicked="OnClientNodeClicked" EnableDragAndDropBetweenNodes="true">
 			<ContextMenus>                

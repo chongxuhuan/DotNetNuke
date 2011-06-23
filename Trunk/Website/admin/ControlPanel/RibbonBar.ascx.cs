@@ -132,10 +132,11 @@ namespace DotNetNuke.UI.ControlPanels
         protected void DetermineNodesToInclude(object sender, EventArgs e)
         {
             var skinObject = (Web.DDRMenu.SkinObject)sender;
-            string admin = StripLocalizationPrefix(Localization.GetString("//Admin.String", Localization.GlobalResourceFile));
-            string host = StripLocalizationPrefix(Localization.GetString("//Host.String", Localization.GlobalResourceFile));
+            string admin = StripLocalizationPrefix(Localization.GetString("//Admin.String", Localization.GlobalResourceFile)).Trim();
+            string host = StripLocalizationPrefix(Localization.GetString("//Host.String", Localization.GlobalResourceFile)).Trim();
 
             skinObject.IncludeNodes = admin + ", " + host;
+
         }
 
         private string StripLocalizationPrefix(string s)

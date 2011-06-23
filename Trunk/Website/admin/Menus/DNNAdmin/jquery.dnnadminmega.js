@@ -35,6 +35,7 @@
         over: function () { return; }, // function = onMouseOver callback (REQUIRED)
         timeout: 300, // number = milliseconds delay before onMouseOut
         out: function () {
+            console.log("hover out");
             if (canHide) hideAll();
         } // function = onMouseOut callback (REQUIRED)
     };
@@ -61,7 +62,7 @@
     $(".dnnadminmega > li").hoverIntent(hideConfig);
 
     //Hovering over a the dropdown will re-enable autohide
-    $(".megaborder").hover(function () {
+    $(".megaborder").focus(function () {
         canHide = true;
     });
 
@@ -70,4 +71,13 @@
     $('.rcbSlide li').live('mouseover', function () {
         canHide = false;
     });
+
+    $('input').live('focus', function () {
+        canHide = false;
+    });
+
+    $('select').live('focus', function () {
+        canHide = false;
+    });
+
 });

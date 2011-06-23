@@ -10,6 +10,7 @@
 <div class="dnnForm dnnPageSettings dnnClear" id="tabSettingsForm">
 	<ul class="dnnAdminTabNav dnnClear" id="">
 		<li><a href="#dnnPageDetails"><%=LocalizeString("PageDetails")%></a></li>
+        <li><a href="#dnnCopyPage"><%=LocalizeString("CopyPage")%></a></li>
 		<li><a href="#dnnPermissions"><%=LocalizeString("Permissions")%></a></li>
 		<li id="localizationTab" runat="server"><a href="#dnnLocalization"><%=LocalizeString("Localization")%></a></li>
 		<li><a href="#dnnAdvancedSettings"><%=LocalizeString("AdvancedSettings")%></a></li>
@@ -60,6 +61,12 @@
 					<dnn:Label ID="plMenu" runat="server" ResourceKey="Menu" Suffix="?" HelpKey="MenuHelp" ControlName="chkMenu" />
 					<asp:CheckBox ID="chkMenu" runat="server" />
 				</div>    
+			</fieldset>
+	   </div>   
+	</div>
+    <div id="dnnCopyPage" class="dnnCopyPage dnnClear">
+        <div class="pslContent dnnClear">
+            <fieldset>
 				<div id="copyPanel" runat="server">
 					<div class="dnnFormItem">
 						<dnn:Label ID="plCopyPage" runat="server" ResourceKey="CopyModules" Suffix=":" HelpKey="CopyModulesHelp" ControlName="cboCopyPage" />
@@ -67,7 +74,7 @@
 					</div>    	
 					<div id="modulesRow" runat="server" class="dnnFormItem">
 						<dnn:Label ID="plModules" runat="server" ResourceKey="CopyContent" Suffix=":" HelpKey="CopyContentHelp" ControlName="grdModules" />
-						<asp:DataGrid ID="grdModules" runat="server" DataKeyField="ModuleID" ShowHeader="False" Width="100%">
+                        <asp:DataGrid ID="grdModules" runat="server" DataKeyField="ModuleID" ShowHeader="False" Width="70%" AutoGenerateColumns="false">
 							<headerstyle cssclass="dnnGridHeader" verticalalign="Top" />
 							<itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 							<alternatingitemstyle cssclass="dnnGridAltItem" />
@@ -77,16 +84,17 @@
 							<pagerstyle cssclass="dnnGridPager" />
 							<Columns>
 								<asp:TemplateColumn>
-									<ItemTemplate><asp:CheckBox ID="chkModule" runat="server" Checked="True" /></ItemTemplate>
+                                    <ItemTemplate>
+                                        <asp:CheckBox ID="chkModule" runat="server" Checked="True" /></ItemTemplate>
 								</asp:TemplateColumn>
 								<asp:TemplateColumn>
 									<ItemTemplate>
-										<asp:TextBox ID="txtCopyTitle" width="200" runat="server" Text='<%# DataBinder.Eval(Container.DataItem,"ModuleTitle")%>'/>
+                                        <asp:TextBox ID="txtCopyTitle" Width="90%" runat="server" Text='<%# DataBinder.Eval(Container.DataItem,"ModuleTitle")%>' />
 									</ItemTemplate>
 									<ItemStyle Wrap="False"></ItemStyle>
 								</asp:TemplateColumn>
 								<asp:BoundColumn DataField="PaneName" />
-								<asp:TemplateColumn>
+                                <asp:TemplateColumn ItemStyle-Width="200px">
 									<ItemTemplate>
 										<asp:RadioButton ID="optNew" runat="server" CssClass="dnnFormRadioButtons" GroupName="Copy" resourcekey="ModuleNew" Checked="True" />
 										<asp:RadioButton ID="optCopy" runat="server" CssClass="dnnFormRadioButtons" GroupName="Copy" resourcekey="ModuleCopy" Enabled='<%# DataBinder.Eval(Container.DataItem, "IsPortable") %>' />
@@ -275,7 +283,7 @@
 		</div>
 	</div>
 	<ul class="dnnActions dnnClear">
-		<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
+		<li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction"  /></li>
 		<li><asp:LinkButton id="cmdDelete" runat="server" CssClass="dnnSecondaryAction dnnDeletePage" resourcekey="cmdDelete" Causesvalidation="False" /></li>
 		<li><asp:Hyperlink id="cancelHyperLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 	</ul>

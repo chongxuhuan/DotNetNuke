@@ -566,4 +566,13 @@ Page: &lt;a href='{1}'&gt;{0}&lt;/a&gt;</value>
   <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
     <value>Please select a skin and/or container to preview.</value>
   </data>
+  <data name="Add.Text" xml:space="preserve">
+    <value>Add Page</value>
+  </data>
+  <data name="Update.Text" xml:space="preserve">
+    <value>Update Page</value>
+  </data>
+  <data name="CopyPage.Text" xml:space="preserve">
+    <value>Copy Page</value>
+  </data>
 </root>
