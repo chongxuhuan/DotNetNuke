@@ -426,7 +426,7 @@ namespace DotNetNuke.Common.Utilities
                 var folderManager = FolderManager.Instance;
 
 				//get relative folder path.
-            	var folderPath = newFolder;
+                var folderPath = PathUtils.Instance.GetRelativePath(folderMapping.PortalID, parentFolder) + newFolder;
 
 				if (Path.IsPathRooted(folderPath))
 				{

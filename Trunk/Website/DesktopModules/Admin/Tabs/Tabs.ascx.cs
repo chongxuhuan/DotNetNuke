@@ -388,7 +388,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     }
                     break;
                 case "add":
-                    if (TabPermissionController.CanAddPage(objTab))
+                    if ((objTab!= null && TabPermissionController.CanAddPage(objTab)) || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
                     {
                         pnlBulk.Visible = true;
                         btnBulkCreate.CommandArgument = e.Node.Value;

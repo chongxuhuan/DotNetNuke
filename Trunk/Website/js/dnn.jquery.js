@@ -1,56 +1,75 @@
 ﻿(function ($) {
-    $.fn.dnnTabs = function (options) {
-        var opts = $.extend({}, $.fn.dnnTabs.defaultOptions, options),
+	$.fn.dnnTabs = function (options) {
+		var opts = $.extend({}, $.fn.dnnTabs.defaultOptions, options),
         $wrap = this;
 
-        // patch for period in selector - http://jsfiddle.net/9Mst9/2/
-        $.ui.tabs.prototype._sanitizeSelector = function (hash) {
-            return hash.replace(/:/g, "\\:").replace(/\./g, "\\\.");
-        };
+		// patch for period in selector - http://jsfiddle.net/9Mst9/2/
+		$.ui.tabs.prototype._sanitizeSelector = function (hash) {
+			return hash.replace(/:/g, "\\:").replace(/\./g, "\\\.");
+		};
 
-        $wrap.each(function () {
-            var showEvent = null,
+		$wrap.each(function () {
+			var showEvent = null,
                 cookieId;
 
-            if (this.id) {
-                cookieId = 'dnnTabs-' + this.id;
-                if (opts.selected === -1) {
-                    var cookieValue = dnn.dom.getCookie(cookieId);
-                    if (cookieValue) {
-                        opts.selected = cookieValue;
-                    }
-                    if (opts.selected === -1) {
-                        opts.selected = 0;
-                    }
-                }
-            }
+			if (this.id) {
+				cookieId = 'dnnTabs-' + this.id;
+				if (opts.selected === -1) {
+					var cookieValue = dnn.dom.getCookie(cookieId);
+					if (cookieValue) {
+						opts.selected = cookieValue;
+					}
+					if (opts.selected === -1) {
+						opts.selected = 0;
+					}
+				}
+			}
 
-            showEvent = (function (cookieId) {
-                return function (event, ui) {
-                    dnn.dom.setCookie(cookieId, ui.index, opts.cookieDays, '/', '', false, opts.cookieMilleseconds);
-                }
-            })(cookieId);
+			showEvent = (function (cookieId) {
+				return function (event, ui) {
+					dnn.dom.setCookie(cookieId, ui.index, opts.cookieDays, '/', '', false, opts.cookieMilleseconds);
+				}
+			})(cookieId);
 
-            $wrap.tabs({
-                show: showEvent,
-                selected: opts.selected,
-                fx: {
-                    opacity: opts.opacity,
-                    duration: opts.duration
-                }
-            });
-        });
+			$wrap.tabs({
+				show: showEvent,
+				selected: opts.selected,
+				fx: {
+					opacity: opts.opacity,
+					duration: opts.duration
+				}
+			});
 
-        return $wrap;
-    };
+			// page validation integration - select tab that contain tripped validators
+			if (typeof Page_ClientValidate != "undefined" && $.isFunction(Page_ClientValidate)) {
+				$wrap.find(opts.validationTriggerSelector).click(function (e) {
+					if (!Page_ClientValidate(opts.validationGroup)) {
+						var invalidControl = $wrap.find(opts.invalidItemSelector).eq(0);
 
-    $.fn.dnnTabs.defaultOptions = {
-        opacity: 'toggle',
-        duration: 'fast',
-        selected: -1,
-        cookieDays: 0,
-        cookieMilleseconds: 120000 // two minutes
-    };
+						var $parent = invalidControl.closest(".ui-tabs-panel");
+						if ($parent.length > 0) {
+							var tabId = $parent.attr("id");
+							$parent.parent().find("a[href='#" + tabId + "']").click();
+						}
+					}
+				});
+			};
+		});
+
+		return $wrap;
+	};
+
+	$.fn.dnnTabs.defaultOptions = {
+		opacity: 'toggle',
+		duration: 'fast',
+		validationTriggerSelector: '.dnnPrimaryAction',
+		validationGroup: '',
+		invalidItemSelector: '.dnnFormError[style*="inline"]',
+		regionToToggleSelector: 'fieldset',
+		selected: -1,
+		cookieDays: 0,
+		cookieMilleseconds: 120000 // two minutes
+	};
 
 })(jQuery);
 

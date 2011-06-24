@@ -271,18 +271,21 @@ namespace DotNetNuke.UI.ControlPanels
         {
             base.OnPreRender(e);
 
-            PageBase.RegisterStyleSheet(Page, "~/admin/ControlPanel/module.css");
-            ClientScriptManager cs = Page.ClientScript;
-            if (!cs.IsClientScriptIncludeRegistered("hoverintent"))
-            {
-                cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
-            }
+			if (ControlPanel.Visible)
+			{
+				PageBase.RegisterStyleSheet(Page, "~/admin/ControlPanel/module.css");
+				ClientScriptManager cs = Page.ClientScript;
+				if (!cs.IsClientScriptIncludeRegistered("hoverintent"))
+				{
+					cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+				}
 
-            if (!cs.IsClientScriptIncludeRegistered("controlpanel"))
-            {
-                cs.RegisterClientScriptInclude("controlpanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
-            }
-            cmdVisibility.Visible = false;
+				if (!cs.IsClientScriptIncludeRegistered("controlpanel"))
+				{
+					cs.RegisterClientScriptInclude("controlpanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+				}
+			}
+        	cmdVisibility.Visible = false;
         }
 
         protected void CmdVisibilityClick(object sender, EventArgs e)

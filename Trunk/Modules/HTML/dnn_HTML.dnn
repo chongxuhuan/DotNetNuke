@@ -148,7 +148,7 @@
             <attributes>
               <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>05.01.02</upgradeVersionsList>
+              <upgradeVersionsList>05.01.02,06.00.00</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>

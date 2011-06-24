@@ -304,8 +304,8 @@
       <KeyID>46</KeyID>
       <name>Extensions</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_extensions_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_extensions_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Extensions_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Extensions_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Extensions</title>
       <description>Install, add, modify and delete extensions, such as modules, skins and language packs.</description>
@@ -356,7 +356,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_extensions_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Extensions_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -393,8 +393,8 @@
       <KeyID>47</KeyID>
       <name>Languages</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_language_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_language_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Languages_16x16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Languages_32x32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Languages</title>
       <description>Manage Language Resources.</description>
@@ -445,7 +445,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_language_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Languages_32x32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1415,8 +1415,8 @@
       <KeyID>58</KeyID>
       <name>Google Analytics</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_analytics_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_analytics_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/GoogleAnalytics_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/GoogleAnalytics_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Google Analytics</title>
       <description>Configure portal Google Analytics settings.</description>
@@ -1467,7 +1467,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_analytics_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/GoogleAnalytics_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>
@@ -1593,8 +1593,8 @@
       <KeyID>60</KeyID>
       <name>Search Engine SiteMap</name>
       <visible>true</visible>
-      <iconfile>~/images/icon_siteMap_16px.gif</iconfile>
-      <iconfilelarge>~/images/icon_siteMap_32px.gif</iconfilelarge>
+      <iconfile>~/Icons/Sigma/Sitemap_16X16_Standard.png</iconfile>
+      <iconfilelarge>~/Icons/Sigma/Sitemap_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Site Settings</title>
       <description>Configure the sitemap for submission to common search engines.</description>
@@ -1645,7 +1645,7 @@
               <alignment />
               <color />
               <border />
-              <iconfile>~/images/icon_siteMap_32px.gif</iconfile>
+              <iconfile>~/Icons/Sigma/Sitemap_32X32_Standard.png</iconfile>
               <visibility>Maximized</visibility>
               <containersrc />
               <displaytitle>true</displaytitle>

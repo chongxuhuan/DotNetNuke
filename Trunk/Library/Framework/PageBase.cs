@@ -217,7 +217,8 @@ namespace DotNetNuke.Framework
         {
             var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
                                                 new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
-                                                cacheItemArgs => new SharedDictionary<string, string>()
+                                                cacheItemArgs => new SharedDictionary<string, string>(),
+                                                true
                                             );
 
             using (ISharedCollectionLock readLock = styleSheetDictionary.GetReadLock())
@@ -269,7 +270,8 @@ namespace DotNetNuke.Framework
         {
             var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
                                                 new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
-                                                cacheItemArgs => new SharedDictionary<string, string>()
+                                                cacheItemArgs => new SharedDictionary<string, string>(),
+                                                true
                                             );
 
             using (styleSheetDictionary.GetWriteLock())
@@ -283,7 +285,7 @@ namespace DotNetNuke.Framework
                     	try
                     	{
 							var lastWriteTime = File.GetLastWriteTime(filePath);
-                    		var beginTime = new DateTime(2003, 3, 24);
+                    		var beginTime = new DateTime(2002, 12, 24);
                     		var version = (int)lastWriteTime.Subtract(beginTime).TotalMinutes;
 
                     		styleSheet = string.Format("{0}?{1}", styleSheet, version);

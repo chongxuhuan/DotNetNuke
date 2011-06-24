@@ -2277,10 +2277,6 @@ namespace DotNetNuke.Services.Upgrade
                 }
             }
 
-            //Reverse Host Setting used for Users Online (for consistency)
-            var enableUsersOnLine = !HostController.Instance.GetBoolean("DisableUsersOnline", true);
-            HostController.Instance.Update("EnableUsersOnline", enableUsersOnLine.ToString());
-
             //Ensure that Display Beta Notice setting is present
             var displayBetaNotice = Host.DisplayBetaNotice;
             HostController.Instance.Update("DisplayBetaNotice", displayBetaNotice ? "Y": "N");

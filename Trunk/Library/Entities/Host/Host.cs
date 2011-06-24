@@ -461,7 +461,7 @@ namespace DotNetNuke.Entities.Host
         {
             get
             {
-                return HostController.Instance.GetBoolean("EnableUsersOnline", true);
+                return !HostController.Instance.GetBoolean("DisableUsersOnline", false);
             }
         }
 

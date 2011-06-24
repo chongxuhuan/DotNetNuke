@@ -80,32 +80,33 @@
             </div>            
         </asp:Panel>
     </div>
-</asp:Panel>
-<script type="text/javascript">
-    $(function () {
-//        $('#<%= BodyPanel.ClientID %>').dnnTabs();
-        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
 
-        // Client IDs for the following three have _CPCommandBtn appended as a rule
-        $('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= GetButtonConfirmMessage("DeletePage") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-        $('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-        $('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-            text: '<%= GetButtonConfirmMessage("CopyDesignToChildren") %>',
-            yesText: yesText,
-            noText: noText,
-            title: titleText
-        });
-	});
-</script>
+	<script type="text/javascript">
+		$(function () {
+			//        $('#<%= BodyPanel.ClientID %>').dnnTabs();
+			var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
+			var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
+			var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+
+			// Client IDs for the following three have _CPCommandBtn appended as a rule
+			$('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
+				text: '<%= GetButtonConfirmMessage("DeletePage") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+			$('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
+				text: '<%= GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+			$('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
+				text: '<%= GetButtonConfirmMessage("CopyDesignToChildren") %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+		});
+	</script>
+</asp:Panel>
