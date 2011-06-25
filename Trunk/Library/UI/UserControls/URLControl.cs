@@ -704,7 +704,7 @@ namespace DotNetNuke.UI.UserControls
                 else
                 {
                     imgStorageLocationType.Visible = true;
-                    imgStorageLocationType.ImageUrl = FolderProvider.Instance(folderMapping.FolderProviderType).GetImageUrl();
+                    imgStorageLocationType.ImageUrl = FolderProvider.Instance(folderMapping.FolderProviderType).GetFolderProviderIconPath();
                 }
             }
         }

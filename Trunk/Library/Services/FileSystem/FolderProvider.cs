@@ -153,11 +153,6 @@ namespace DotNetNuke.Services.FileSystem
         public abstract bool FolderExists(string folderPath, FolderMappingInfo folderMapping);
 
         /// <summary>
-        ///   Gets the content of the specified file.
-        /// </summary>
-        public abstract byte[] GetFile(IFileInfo file);
-
-        /// <summary>
         ///   Gets the file attributes of the specified file.
         /// </summary>
         /// <remarks>
@@ -166,14 +161,19 @@ namespace DotNetNuke.Services.FileSystem
         public abstract FileAttributes? GetFileAttributes(IFileInfo file);
 
         /// <summary>
-        /// Gets the file length.
-        /// </summary>
-        public abstract long GetFileLength(IFileInfo file);
-
-        /// <summary>
         ///   Gets the list of file names contained in the specified folder.
         /// </summary>
         public abstract string[] GetFiles(IFolderInfo folder);
+
+        /// <summary>
+        /// Gets the file length.
+        /// </summary>
+        public abstract long GetFileSize(IFileInfo file);
+
+        /// <summary>
+        ///   Gets a file Stream of the specified file.
+        /// </summary>
+        public abstract Stream GetFileStream(IFileInfo file);
 
         /// <summary>
         ///   Gets a file Stream of the specified file.
@@ -188,7 +188,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>
         ///   Gets the URL of the image to display in FileManager tree.
         /// </summary>
-        public abstract string GetImageUrl();
+        public abstract string GetFolderProviderIconPath();
 
         /// <summary>
         ///   Gets the time when the specified file was last modified.

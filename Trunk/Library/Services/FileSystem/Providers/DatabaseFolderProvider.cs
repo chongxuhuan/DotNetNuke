@@ -30,7 +30,6 @@ using System.Linq;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Icons;
 
 namespace DotNetNuke.Services.FileSystem
 {
@@ -98,44 +97,16 @@ namespace DotNetNuke.Services.FileSystem
             return DataProvider.Instance().GetFolder(folderMapping.PortalID, folderPath).Read();
         }
 
-        public override byte[] GetFile(IFileInfo file)
-        {
-            Requires.NotNull("file", file);
-
-            byte[] fileContent = null;
-            IDataReader dr = null;
-            try
-            {
-                dr = DataProvider.Instance().GetFileContent(file.FileId, file.PortalId);
-                if (dr.Read())
-                {
-                    fileContent = (byte[])dr["Content"];
-                }
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
-            return fileContent;
-        }
-
         public override FileAttributes? GetFileAttributes(IFileInfo file)
         {
             return null;
-        }
-
-        public override long GetFileLength(IFileInfo file)
-        {
-            Requires.NotNull("file", file);
-
-            return file.Size;
         }
 
         public override string[] GetFiles(IFolderInfo folder)
         {
             Requires.NotNull("folder", folder);
 
-            var files = FolderManager.Instance.GetFiles(folder);
+            var files = FolderManager.Instance.GetFiles(folder).ToList();
 
             var fileNames = new string[files.Count];
 
@@ -147,6 +118,22 @@ namespace DotNetNuke.Services.FileSystem
             return fileNames;
         }
 
+        public override long GetFileSize(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            return file.Size;
+        }
+
+        public override Stream GetFileStream(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            var folder = FolderManager.Instance.GetFolder(file.FolderId);
+
+            return GetFileStream(folder, file.FileName);
+        }
+
         public override Stream GetFileStream(IFolderInfo folder, string fileName)
         {
             Requires.NotNull("folder", folder);
@@ -156,7 +143,20 @@ namespace DotNetNuke.Services.FileSystem
             
             if (file != null)
             {
-                var bytes = GetFile(file);
+                byte[] bytes = null;
+                IDataReader dr = null;
+                try
+                {
+                    dr = DataProvider.Instance().GetFileContent(file.FileId, file.PortalId);
+                    if (dr.Read())
+                    {
+                        bytes = (byte[])dr["Content"];
+                    }
+                }
+                finally
+                {
+                    CBO.CloseDataReader(dr, true);
+                }
                 
                 if (bytes != null)
                 {
@@ -174,7 +174,7 @@ namespace DotNetNuke.Services.FileSystem
             return GlobalsWrapper.Instance.LinkClick(String.Format("fileid={0}", file.FileId), Null.NullInteger, Null.NullInteger);
         }
 
-        public override string GetImageUrl()
+        public override string GetFolderProviderIconPath()
         {
             return IconControllerWrapper.Instance.IconURL("Sql");
         }

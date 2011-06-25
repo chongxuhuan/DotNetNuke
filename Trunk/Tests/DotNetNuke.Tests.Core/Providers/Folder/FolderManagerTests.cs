@@ -346,7 +346,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _cbo.Setup(cbo => cbo.FillCollection<FileInfo>(dr)).Returns(filesList);
 
-            var result = _folderManager.GetFiles(_folderInfo.Object);
+            var result = _folderManager.GetFiles(_folderInfo.Object).ToList();
 
             Assert.AreEqual(1, result.Count);
         }
@@ -531,7 +531,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(new List<IFolderInfo>());
 
-            var result = _mockFolderManager.Object.GetFolders(_folderInfo.Object);
+            var result = _mockFolderManager.Object.GetFolders(_folderInfo.Object).ToList();
 
             Assert.AreEqual(0, result.Count);
         }
@@ -550,7 +550,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(foldersSorted);
 
-            var result = _mockFolderManager.Object.GetFolders(_folderInfo.Object);
+            var result = _mockFolderManager.Object.GetFolders(_folderInfo.Object).ToList();
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(Constants.FOLDER_ValidSubFolderRelativePath, result[0].FolderPath);

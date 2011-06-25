@@ -73,7 +73,7 @@ namespace DotNetNuke.Services.FileSystem
             {
                 if (string.IsNullOrEmpty(_imageUrl))
                 {
-                    _imageUrl = FolderProvider.Instance(FolderProviderType).GetImageUrl();
+                    _imageUrl = FolderProvider.Instance(FolderProviderType).GetFolderProviderIconPath();
                 }
                 
                 return _imageUrl;

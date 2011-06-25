@@ -172,7 +172,7 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="folder">The folder from which to retrieve the files.</param>
         /// <returns>The list of files contained in the specified folder.</returns>
-        public virtual IList<IFileInfo> GetFiles(IFolderInfo folder)
+        public virtual IEnumerable<IFileInfo> GetFiles(IFolderInfo folder)
         {
             DnnLog.MethodEntry();
 
@@ -185,7 +185,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="folder">The folder from which to retrieve the files.</param>
         /// <param name="recursive">Whether or not to include all the subfolders</param>
         /// <returns>The list of files contained in the specified folder.</returns>
-        public virtual IList<IFileInfo> GetFiles(IFolderInfo folder, bool recursive)
+        public virtual IEnumerable<IFileInfo> GetFiles(IFolderInfo folder, bool recursive)
         {
             DnnLog.MethodEntry();
 
@@ -213,7 +213,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="permissions">The permissions the folders have to met.</param>
         /// <returns>The list of Standard folders the specified user has the provided permissions.</returns>
         /// <remarks>This method is used to support legacy behaviours and situations where we know the file/folder is in the file system.</remarks>
-        public virtual IList<IFolderInfo> GetFileSystemFolders(UserInfo user, string permissions)
+        public virtual IEnumerable<IFolderInfo> GetFileSystemFolders(UserInfo user, string permissions)
         {
             DnnLog.MethodEntry();
 
@@ -302,7 +302,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="parentFolder">The folder to get the list of subfolders.</param>
         /// <returns>The list of subfolders for the specified folder.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when parentFolder is null.</exception>
-        public virtual IList<IFolderInfo> GetFolders(IFolderInfo parentFolder)
+        public virtual IEnumerable<IFolderInfo> GetFolders(IFolderInfo parentFolder)
         {
             DnnLog.MethodEntry();
 
@@ -342,7 +342,7 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="portalID">The portal identifier.</param>
         /// <returns>The sorted list of folders of the provided portal.</returns>
-        public virtual IList<IFolderInfo> GetFolders(int portalID)
+        public virtual IEnumerable<IFolderInfo> GetFolders(int portalID)
         {
             DnnLog.MethodEntry();
 
@@ -361,7 +361,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="permissions">The permissions to match.</param>
         /// <param name="userID">The user identifier to be used to check permissions.</param>
         /// <returns>The list of folders that match the provided permissions in the specified portal.</returns>
-        public virtual IList<IFolderInfo> GetFolders(int portalID, string permissions, int userID)
+        public virtual IEnumerable<IFolderInfo> GetFolders(int portalID, string permissions, int userID)
         {
             DnnLog.MethodEntry();
 
@@ -379,7 +379,7 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="user">The user info</param>
         /// <returns>The list of folders the specified user has read permissions.</returns>
-        public virtual IList<IFolderInfo> GetFolders(UserInfo user)
+        public virtual IEnumerable<IFolderInfo> GetFolders(UserInfo user)
         {
             DnnLog.MethodEntry();
 
@@ -392,7 +392,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="user">The user info</param>
         /// <param name="permissions">The permissions the folders have to met.</param>
         /// <returns>The list of folders the specified user has the provided permissions.</returns>
-        public virtual IList<IFolderInfo> GetFolders(UserInfo user, string permissions)
+        public virtual IEnumerable<IFolderInfo> GetFolders(UserInfo user, string permissions)
         {
             DnnLog.MethodEntry();
 
@@ -627,6 +627,33 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>
+        /// Sets folder permissions to the given folder by copying parent folder permissions.
+        /// </summary>
+        public virtual void CopyParentFolderPermissions(IFolderInfo folder)
+        {
+            Requires.NotNull("folder", folder);
+
+            if (String.IsNullOrEmpty(folder.FolderPath)) return;
+
+            var parentFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.Substring(0, folder.FolderPath.Length - 1).LastIndexOf("/") + 1);
+
+            foreach (FolderPermissionInfo objPermission in
+                FolderPermissionController.GetFolderPermissionsCollectionByFolder(folder.PortalID, parentFolderPath))
+            {
+                var folderPermission = new FolderPermissionInfo(objPermission)
+                {
+                    FolderID = folder.FolderID,
+                    RoleID = objPermission.RoleID,
+                    UserID = objPermission.UserID,
+                    AllowAccess = objPermission.AllowAccess
+                };
+                folder.FolderPermissions.Add(folderPermission, true);
+            }
+
+            FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
+        }
+
+        /// <summary>
         /// Sets specific folder permissions for the given role to the given folder.
         /// </summary>
         public virtual void SetFolderPermission(IFolderInfo folder, int permissionId, int roleId)
@@ -655,33 +682,6 @@ namespace DotNetNuke.Services.FileSystem
             };
 
             folder.FolderPermissions.Add(objFolderPermissionInfo, true);
-            FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
-        }
-
-        /// <summary>
-        /// Sets folder permissions to the given folder by copying parent folder permissions.
-        /// </summary>
-        public virtual void SetFolderPermissions(IFolderInfo folder)
-        {
-            Requires.NotNull("folder", folder);
-
-            if (String.IsNullOrEmpty(folder.FolderPath)) return;
-
-            var parentFolderPath = folder.FolderPath.Substring(0, folder.FolderPath.Substring(0, folder.FolderPath.Length - 1).LastIndexOf("/") + 1);
-
-            foreach (FolderPermissionInfo objPermission in
-                FolderPermissionController.GetFolderPermissionsCollectionByFolder(folder.PortalID, parentFolderPath))
-            {
-                var folderPermission = new FolderPermissionInfo(objPermission)
-                                           {
-                                               FolderID = folder.FolderID,
-                                               RoleID = objPermission.RoleID,
-                                               UserID = objPermission.UserID,
-                                               AllowAccess = objPermission.AllowAccess
-                                           };
-                folder.FolderPermissions.Add(folderPermission, true);
-            }
-
             FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
         }
 
@@ -867,7 +867,7 @@ namespace DotNetNuke.Services.FileSystem
             if (portalID != Null.NullInteger)
             {
                 //Set Folder Permissions to inherit from parent
-                SetFolderPermissions(folder);
+                CopyParentFolderPermissions(folder);
             }
 
             return folder.FolderID;
@@ -1210,7 +1210,7 @@ namespace DotNetNuke.Services.FileSystem
                             var folder = GetFolder(portalID, item.FolderPath);
 
                             if ((itemIndex < (mergedTree.Count - 1) && mergedTree.Values[itemIndex + 1].FolderPath.StartsWith(item.FolderPath)) ||
-                                (mergedTree.Count == 1 && GetFolders(folder).Count > 0))
+                                (mergedTree.Count == 1 && GetFolders(folder).ToList().Count > 0))
                             {
                                 UpdateFolderMappingID(portalID, item.FolderPath, FolderMappingController.Instance.GetDefaultFolderMapping(portalID).FolderMappingID);
                             }
@@ -1321,7 +1321,7 @@ namespace DotNetNuke.Services.FileSystem
                                 var newFolderMapping = folderMapping;
                                 var folder = GetFolder(portalID, item.FolderPath);
 
-                                if (GetFiles(folder).Count == 0)
+                                if (GetFiles(folder).ToList().Count == 0)
                                 {
                                     newFolderMapping = GetFolderMappingWithHighestPriority(item.ExistsInFolderMappings);
                                     UpdateFolderMappingID(portalID, item.FolderPath, newFolderMapping.FolderMappingID);

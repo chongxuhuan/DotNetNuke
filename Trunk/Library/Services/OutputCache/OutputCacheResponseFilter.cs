@@ -53,7 +53,7 @@ namespace DotNetNuke.Services.OutputCache
 
         public TimeSpan CacheDuration { get; set; }
 
-        public string CacheKey { get; set; }
+        public virtual string CacheKey { get; set; }
 
         public Stream CaptureStream
         {

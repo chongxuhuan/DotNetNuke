@@ -241,69 +241,6 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region GetFile
-
-        [Test]
-        [ExpectedArgumentException]
-        public void GetFile_Throws_On_Null_File()
-        {
-            _dfp.GetFile(null);
-        }
-
-        [Test]
-        public void GetFile_Calls_DataProvider_GetFileContent()
-        {
-            _fileInfo.Setup(fi => fi.FileId).Returns(Constants.FOLDER_ValidFileId);
-            _fileInfo.Setup(fi => fi.PortalId).Returns(Constants.CONTENT_ValidPortalId);
-
-            var _filesTable = new DataTable("Files");
-            _filesTable.Columns.Add("Content", typeof(byte[]));
-
-            _mockData.Setup(md => md.GetFileContent(Constants.FOLDER_ValidFileId, Constants.CONTENT_ValidPortalId)).Returns(_filesTable.CreateDataReader());
-
-            _dfp.GetFile(_fileInfo.Object);
-
-            _mockData.Verify(md => md.GetFileContent(Constants.FOLDER_ValidFileId, Constants.CONTENT_ValidPortalId), Times.Once());
-        }
-
-        [Test]
-        public void GetFile_Returns_The_Content_Of_The_File_When_File_Exists()
-        {
-            var validFileBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-            _fileInfo.Setup(fi => fi.FileId).Returns(Constants.FOLDER_ValidFileId);
-            _fileInfo.Setup(fi => fi.PortalId).Returns(Constants.CONTENT_ValidPortalId);
-
-            var _filesTable = new DataTable("Files");
-            _filesTable.Columns.Add("Content", typeof(byte[]));
-
-            _filesTable.Rows.Add(validFileBytes);
-
-            _mockData.Setup(md => md.GetFileContent(Constants.FOLDER_ValidFileId, Constants.CONTENT_ValidPortalId)).Returns(_filesTable.CreateDataReader());
-
-            var result = _dfp.GetFile(_fileInfo.Object);
-
-            Assert.AreEqual<byte[]>(validFileBytes, result);
-        }
-
-        [Test]
-        public void GetFile_Returns_Null_When_File_Does_Not_Exist()
-        {
-            _fileInfo.Setup(fi => fi.FileId).Returns(Constants.FOLDER_ValidFileId);
-            _fileInfo.Setup(fi => fi.PortalId).Returns(Constants.CONTENT_ValidPortalId);
-
-            var _filesTable = new DataTable("Files");
-            _filesTable.Columns.Add("Content", typeof(byte[]));
-
-            _mockData.Setup(md => md.GetFileContent(Constants.FOLDER_ValidFileId, Constants.CONTENT_ValidPortalId)).Returns(_filesTable.CreateDataReader());
-
-            var result = _dfp.GetFile(_fileInfo.Object);
-
-            Assert.IsNull(result);
-        }
-
-        #endregion
-
         #region GetFileAttributes
 
         [Test]
@@ -462,7 +399,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region GetImageUrl
+        #region GetFolderProviderIconPath
 
         [Test]
         public void GetImageUrl_Calls_IconControllerWrapper_IconURL()
@@ -470,7 +407,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var iconControllerWrapper = new Mock<IIconController>();
             IconControllerWrapper.RegisterInstance(iconControllerWrapper.Object);
 
-            _dfp.GetImageUrl();
+            _dfp.GetFolderProviderIconPath();
 
             iconControllerWrapper.Verify(icw => icw.IconURL("Sql"), Times.Once());
         }

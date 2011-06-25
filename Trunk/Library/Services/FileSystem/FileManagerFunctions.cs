@@ -21,10 +21,14 @@
 
 #endregion
 
+using System;
+
 namespace DotNetNuke.Services.FileSystem
 {
+    [Obsolete("Deprecated in DNN 6.0")]
     public class FileManagerFunctions
     {
+        [Obsolete("Deprecated in DNN 6.0")]
         public static string CReplace(string strExpression, string strSearch, string strReplace, int intMode)
         {
             string strReturn;

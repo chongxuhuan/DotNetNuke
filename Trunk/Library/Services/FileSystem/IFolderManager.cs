@@ -56,6 +56,11 @@ namespace DotNetNuke.Services.FileSystem
         IFolderInfo AddFolder(int portalID, string folderPath);
 
         /// <summary>
+        /// Sets folder permissions to the given folder by copying parent folder permissions.
+        /// </summary>
+        void CopyParentFolderPermissions(IFolderInfo folder);
+
+        /// <summary>
         /// Deletes the specified folder.
         /// </summary>
         /// <param name="folder">The folder to delete.</param>
@@ -80,7 +85,7 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="folder">The folder from which to retrieve the files.</param>
         /// <returns>The list of files contained in the specified folder.</returns>
-        IList<IFileInfo> GetFiles(IFolderInfo folder);
+        IEnumerable<IFileInfo> GetFiles(IFolderInfo folder);
 
         /// <summary>
         /// Gets the files contained in the specified folder.
@@ -88,7 +93,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="folder">The folder from which to retrieve the files.</param>
         /// <param name="recursive">Whether or not to include all the subfolders</param>
         /// <returns>The list of files contained in the specified folder.</returns>
-        IList<IFileInfo> GetFiles(IFolderInfo folder, bool recursive);
+        IEnumerable<IFileInfo> GetFiles(IFolderInfo folder, bool recursive);
 
         /// <summary>
         /// Gets the list of Standard folders the specified user has the provided permissions.
@@ -97,7 +102,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="permissions">The permissions the folders have to met.</param>
         /// <returns>The list of Standard folders the specified user has the provided permissions.</returns>
         /// <remarks>This method is used to support legacy behaviours and situations where we know the file/folder is in the file system.</remarks>
-        IList<IFolderInfo> GetFileSystemFolders(UserInfo user, string permissions);
+        IEnumerable<IFolderInfo> GetFileSystemFolders(UserInfo user, string permissions);
 
         /// <summary>
         /// Gets a folder entity by providing a portal identifier and folder identifier.
@@ -126,14 +131,14 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="parentFolder">The folder to get the list of subfolders.</param>
         /// <returns>The list of subfolders for the specified folder.</returns>
-        IList<IFolderInfo> GetFolders(IFolderInfo parentFolder);
+        IEnumerable<IFolderInfo> GetFolders(IFolderInfo parentFolder);
 
         /// <summary>
         /// Gets the sorted list of folders of the provided portal.
         /// </summary>
         /// <param name="portalID">The portal identifier.</param>
         /// <returns>The sorted list of folders of the provided portal.</returns>
-        IList<IFolderInfo> GetFolders(int portalID);
+        IEnumerable<IFolderInfo> GetFolders(int portalID);
 
         /// <summary>
         /// Gets the sorted list of folders that match the provided permissions in the specified portal.
@@ -142,14 +147,14 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="permissions">The permissions to match.</param>
         /// <param name="userID">The user identifier to be used to check permissions.</param>
         /// <returns>The list of folders that match the provided permissions in the specified portal.</returns>
-        IList<IFolderInfo> GetFolders(int portalID, string permissions, int userID);
+        IEnumerable<IFolderInfo> GetFolders(int portalID, string permissions, int userID);
 
         /// <summary>
         /// Gets the list of folders the specified user has read permissions
         /// </summary>
         /// <param name="user">The user info</param>
         /// <returns>The list of folders the specified user has read permissions.</returns>
-        IList<IFolderInfo> GetFolders(UserInfo user);
+        IEnumerable<IFolderInfo> GetFolders(UserInfo user);
 
         /// <summary>
         /// Gets the list of folders the specified user has the provided permissions
@@ -157,7 +162,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="user">The user info</param>
         /// <param name="permissions">The permissions the folders have to met.</param>
         /// <returns>The list of folders the specified user has the provided permissions.</returns>
-        IList<IFolderInfo> GetFolders(UserInfo user, string permissions);
+        IEnumerable<IFolderInfo> GetFolders(UserInfo user, string permissions);
 
         /// <summary>
         /// Renames the specified folder by setting the new provided folder name.
@@ -175,11 +180,6 @@ namespace DotNetNuke.Services.FileSystem
         /// Sets specific folder permissions for the given role/user to the given folder.
         /// </summary>
         void SetFolderPermission(IFolderInfo folder, int permissionId, int roleId, int userId);
-
-        /// <summary>
-        /// Sets folder permissions to the given folder by copying parent folder permissions.
-        /// </summary>
-        void SetFolderPermissions(IFolderInfo folder);
 
         /// <summary>
         /// Sets folder permissions for administrator role to the given folder.

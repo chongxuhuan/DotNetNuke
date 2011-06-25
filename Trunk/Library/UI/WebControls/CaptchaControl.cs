@@ -827,6 +827,15 @@ namespace DotNetNuke.UI.WebControls
 			base.OnPreRender(e);
 		}
 
+        protected virtual void OnUserValidated(ServerValidateEventArgs e)
+        {
+            ServerValidateEventHandler handler = UserValidated;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
 		/// <summary>
 		/// Render the  control
 		/// </summary>
@@ -946,7 +955,7 @@ namespace DotNetNuke.UI.WebControls
 			{
 				_IsValid = false;
 			}
-			UserValidated(this, new ServerValidateEventArgs(_CaptchaText, _IsValid));
+            OnUserValidated(new ServerValidateEventArgs(_CaptchaText, _IsValid));
 			return _IsValid;
 		}
 		

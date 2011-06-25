@@ -42,14 +42,14 @@ namespace DotNetNuke.Services.ModuleCache
 {
     public class FileProvider : ModuleCachingProvider
     {
-		#region "Private Members"
+        #region "Private Members"
         private const string DataFileExtension = ".data.resources";
         private const string AttribFileExtension = ".attrib.resources";
         private static readonly SharedDictionary<int, string> CacheFolderPath = new SharedDictionary<int, string>(LockingStrategy.ReaderWriter);
-		
-		#endregion
-		
-		#region "Private Methods"
+
+        #endregion
+
+        #region "Private Methods"
         private string GenerateCacheKeyHash(int tabModuleId, string cacheKey)
         {
             byte[] hash = Encoding.ASCII.GetBytes(cacheKey);
@@ -170,10 +170,10 @@ namespace DotNetNuke.Services.ModuleCache
         {
             return cacheFolder.Contains(Globals.ApplicationMapPath);
         }
-		
-		#endregion
-		
-		#region "Abstract Method Implementation"
+
+        #endregion
+
+        #region "Abstract Method Implementation"
 
         public override string GenerateCacheKey(int tabModuleId, SortedDictionary<string, string> varyBy)
         {
@@ -263,29 +263,23 @@ namespace DotNetNuke.Services.ModuleCache
 
         public override void SetModule(int tabModuleId, string cacheKey, TimeSpan duration, byte[] output)
         {
-            string attribFile = GetAttribFileName(tabModuleId, cacheKey);
-            string cachedOutputFile = GetCachedOutputFileName(tabModuleId, cacheKey);
             try
             {
+            
+                string cachedOutputFile = GetCachedOutputFileName(tabModuleId, cacheKey);
+                
                 if (File.Exists(cachedOutputFile))
                 {
                     FileSystemUtils.DeleteFileWithWait(cachedOutputFile, 100, 200);
                 }
-                var captureStream = new FileStream(cachedOutputFile, FileMode.CreateNew, FileAccess.Write);
-                captureStream.Write(output, 0, output.Length);
-                captureStream.Close();
-                StreamWriter oWrite;
-                oWrite = File.CreateText(attribFile);
-                oWrite.WriteLine(DateTime.UtcNow.Add(duration).ToString(CultureInfo.InvariantCulture));
-                oWrite.Close();
+
+                string attribFile = GetAttribFileName(tabModuleId, cacheKey);
+
+                File.WriteAllBytes(cachedOutputFile, output);
+                File.WriteAllLines(attribFile, new[] { DateTime.UtcNow.Add(duration).ToString(CultureInfo.InvariantCulture) });
             }
             catch (Exception ex)
             {
-                //TODO: Need to implement multi-threading.  
-                //The current code is not thread safe and threw error if two threads tried creating cache file
-                //A thread could create a file between the time another thread deleted it and tried to create new cache file.
-                //This would result in a system.IO.IOException.  Also, there was no error handling in place so the 
-                //Error would bubble up to the user and provide details on the file structure of the site.
                 Exceptions.Exceptions.LogException(ex);
             }
         }
@@ -294,14 +288,14 @@ namespace DotNetNuke.Services.ModuleCache
         {
             var controller = new ModuleController();
             ModuleInfo tabModule = controller.GetTabModule(tabModuleId);
-			
-        	int portalId = tabModule.PortalID;
-			if(portalId == Null.NullInteger)
-			{
-				portalId = PortalSettings.Current.PortalId;
-			}
 
-			string cacheFolder = GetCacheFolder(portalId);
+            int portalId = tabModule.PortalID;
+            if (portalId == Null.NullInteger)
+            {
+                portalId = PortalSettings.Current.PortalId;
+            }
+
+            string cacheFolder = GetCacheFolder(portalId);
             var filesNotDeleted = new StringBuilder();
             int i = 0;
             foreach (string File in Directory.GetFiles(cacheFolder, tabModuleId + "_*.*"))
@@ -320,7 +314,7 @@ namespace DotNetNuke.Services.ModuleCache
                 throw new IOException("Deleted " + i + " files, however, some files are locked.  Could not delete the following files: " + filesNotDeleted);
             }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

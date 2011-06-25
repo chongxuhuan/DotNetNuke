@@ -1465,6 +1465,7 @@ namespace DotNetNuke.Entities.Portals
             ListEntryInfoCollection colDataTypes = objListController.GetListEntryInfoCollection("DataType");
             int OrderCounter = -1;
             ProfilePropertyDefinition objProfileDefinition;
+            bool preferredTimeZoneFound = false;            
             foreach (XmlNode node in nodeProfileDefinitions.SelectNodes("//profiledefinition"))
             {
                 OrderCounter += 2;
@@ -1482,7 +1483,7 @@ namespace DotNetNuke.Entities.Portals
                 objProfileDefinition.Required = false;
                 objProfileDefinition.Visible = true;
                 objProfileDefinition.ViewOrder = OrderCounter;
-                objProfileDefinition.Length = XmlUtils.GetNodeValueInt(node, "length");
+                objProfileDefinition.Length = XmlUtils.GetNodeValueInt(node, "length");                
 
                 switch (XmlUtils.GetNodeValueInt(node, "defaultvisibility", 2))
                 {
@@ -1497,9 +1498,46 @@ namespace DotNetNuke.Entities.Portals
                         break;
                 }
 
+                if (objProfileDefinition.PropertyName == "PreferredTimeZone")
+                {
+                    preferredTimeZoneFound = true;
+                }
 
-                ProfileController.AddPropertyDefinition(objProfileDefinition);
+                ProfileController.AddPropertyDefinition(objProfileDefinition);  
             }
+
+            //6.0 requires the old TimeZone property to be marked as Deleted
+            ProfilePropertyDefinition pdf = ProfileController.GetPropertyDefinitionByName(PortalId, "TimeZone");
+            if (pdf != null)
+            {
+                ProfileController.DeletePropertyDefinition(pdf);
+            }
+
+            // 6.0 introduced a new property called as PreferredTimeZone. If this property is not present in template
+            // it should be added. Situation will mostly happen while using an older template file.
+            if (!preferredTimeZoneFound)
+            {
+                OrderCounter += 2;
+
+                ListEntryInfo typeInfo = colDataTypes["DataType:TimeZoneInfo"];
+                if (typeInfo == null)
+                {
+                    typeInfo = colDataTypes["DataType:Unknown"];
+                }
+                
+                objProfileDefinition = new ProfilePropertyDefinition(PortalId);
+                objProfileDefinition.DataType = typeInfo.EntryID;
+                objProfileDefinition.DefaultValue = "";
+                objProfileDefinition.ModuleDefId = Null.NullInteger;
+                objProfileDefinition.PropertyCategory = "Preferences";
+                objProfileDefinition.PropertyName = "PreferredTimeZone";
+                objProfileDefinition.Required = false;
+                objProfileDefinition.Visible = true;
+                objProfileDefinition.ViewOrder = OrderCounter;
+                objProfileDefinition.Length = 0;
+                objProfileDefinition.DefaultVisibility = UserVisibilityMode.AdminOnly;
+                ProfileController.AddPropertyDefinition(objProfileDefinition);
+            }            
         }
 
         /// -----------------------------------------------------------------------------

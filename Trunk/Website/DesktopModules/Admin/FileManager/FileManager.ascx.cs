@@ -473,7 +473,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             DNNTreeNode objNode;
             string strName = folder.FolderName;
             string strKey = MaskPath(RootFolderPath + folder.FolderPath);
-            var subFolders = FolderManager.Instance.GetFolders(folder);
+            var subFolders = FolderManager.Instance.GetFolders(folder).ToList();
 
             var imageIndex = FolderMappings.IndexOfKey(folder.FolderMappingID);
 
@@ -567,7 +567,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             objNode = AddNode(RootFolderName, MaskPath(RootFolderPath), FolderMappings.IndexOfValue("Standard"), DNNTree.TreeNodes);
 
-            var folders = FolderManager.Instance.GetFolders(FolderPortalID);
+            var folders = FolderManager.Instance.GetFolders(FolderPortalID).ToList();
             objNode.HasNodes = folders.Count > 1;
             if (DNNTree.PopulateNodesFromClient == false || DNNTree.IsDownLevel)
             {
@@ -927,7 +927,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
         /// -----------------------------------------------------------------------------
         private string MaskString(string strSource)
         {
-            return FileManagerFunctions.CReplace(strSource, PathUtils.Instance.RemoveTrailingSlash(RootFolderPath), Localization.GetString("PortalRoot", LocalResourceFile), 1);
+            var search = PathUtils.Instance.RemoveTrailingSlash(RootFolderPath).ToUpper();
+            var replace = Localization.GetString("PortalRoot", LocalResourceFile);
+            var result = "";
+            var temp = strSource.ToUpper();
+            var position = temp.IndexOf(search);
+            while (position >= 0)
+            {
+                result += strSource.Substring(0, position) + replace;
+                strSource = strSource.Substring(position + search.Length);
+                temp = temp.Substring(position + search.Length);
+                position = temp.IndexOf(search);
+            }
+            return result + strSource;
         }
 
         /// -----------------------------------------------------------------------------
@@ -2391,8 +2403,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 var Actions = new ModuleActionCollection();
 
-                var defaultProviders = FolderProvider.GetDefaultProviders();
-                if (FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)).Count() > 0)
+                if (FolderProvider.GetProviderList().Count > 3)
                 {
                     Actions.Add(GetNextActionID(),
                                 Localization.GetString("ManageFolderTypes.Action", LocalResourceFile),

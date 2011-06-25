@@ -107,18 +107,17 @@ namespace DotNetNuke.HttpModules.Compression
                 //Check for Output Caching - if output caching is used the cached content will already be compressed, 
                 //but we still need to add the headers
 
+                var isCached = app.Context.Items["DNNOutputCache"] as string;
+                if (!string.IsNullOrEmpty(isCached))
                 {
-                    var isCached = app.Context.Items["DNNOutputCache"] as string;
-                    if (!string.IsNullOrEmpty(isCached))
-                    {
-                        isOutputCached = bool.Parse(isCached);
-                    }
+                    isOutputCached = bool.Parse(isCached);
                 }
+
                 if (!isOutputCached)
                 {
                 	//Check if page is a content page
                     var page = app.Context.Handler as CDefault;
-                    if ((page == null))
+                    if (page == null)
                     {
                         return;
                     }
@@ -192,28 +191,31 @@ namespace DotNetNuke.HttpModules.Compression
                     //add the Headers regardless of whether compresion actually occurs in this request.
                     filter.WriteHeaders();
                 }
-                if (filter == null)
-                {
-                    if (_Settings.Whitespace)
-                    {
-                        app.Response.Filter = new WhitespaceFilter(app.Response.Filter, _Settings.Reg);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    if (_Settings.Whitespace)
-                    {
-                        app.Response.Filter = new WhitespaceFilter(filter, _Settings.Reg);
-                    }
-                    else
-                    {
-                        app.Response.Filter = filter;
-                    }
-                }
+				if (!isOutputCached)
+				{
+					if (filter == null)
+					{
+						if (_Settings.Whitespace)
+						{
+							app.Response.Filter = new WhitespaceFilter(app.Response.Filter, _Settings.Reg);
+						}
+						else
+						{
+							return;
+						}
+					}
+					else
+					{
+						if (_Settings.Whitespace)
+						{
+							app.Response.Filter = new WhitespaceFilter(filter, _Settings.Reg);
+						}
+						else
+						{
+							app.Response.Filter = filter;
+						}
+					}
+				}
             }
         }
 

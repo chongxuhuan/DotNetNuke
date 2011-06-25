@@ -386,6 +386,7 @@ namespace DotNetNuke.Entities.Users
             set
             {
                 SetProfileProperty(cPreferredTimeZone, value.Id);
+                LegacyTimeZone = Convert.ToInt32(value.BaseUtcOffset.TotalMinutes);
             }
         }
 

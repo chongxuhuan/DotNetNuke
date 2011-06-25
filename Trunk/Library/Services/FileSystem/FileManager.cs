@@ -697,7 +697,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
 
-            var newFileSize = FolderProvider.Instance(folderMapping.FolderProviderType).GetFileLength(file);
+            var newFileSize = FolderProvider.Instance(folderMapping.FolderProviderType).GetFileSize(file);
             if (newFileSize > 0)
             {
                 if (file.Size != newFileSize)

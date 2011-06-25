@@ -389,7 +389,15 @@ namespace DotNetNuke.Entities.Profile
             AddDefaultDefinition(PortalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes);
             AddDefaultDefinition(PortalId, "Preferences", "Biography", "RichText", 0, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(PortalId, "Preferences", "TimeZone", "TimeZone", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(PortalId, "Preferences", "PreferredTimeZone", "TimeZoneInfo", 0, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(PortalId, "Preferences", "PreferredLocale", "Locale", 0, UserVisibilityMode.AdminOnly, dataTypes);
+
+            //6.0 requires the old TimeZone property to be marked as Deleted
+            ProfilePropertyDefinition pdf = GetPropertyDefinitionByName(PortalId, "TimeZone");
+            if(pdf != null)
+            {
+                DeletePropertyDefinition(pdf);
+            }
         }
 
         /// -----------------------------------------------------------------------------

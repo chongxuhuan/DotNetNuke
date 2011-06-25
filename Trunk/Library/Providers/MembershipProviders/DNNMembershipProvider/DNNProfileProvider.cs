@@ -155,7 +155,7 @@ namespace DotNetNuke.Security.Profile
                                 oldTimeZone = profProperty.PropertyValue;
                                 oldTimeZoneDefinitionId = definitionId;
                             }
-                            if (profProperty.PropertyName == "TimeZoneInfo")
+                            if (profProperty.PropertyName == "PreferredTimeZone")
                             {
                                 newTimeZone = profProperty.PropertyValue;
                                 newTimeZoneDefinitionId = definitionId;

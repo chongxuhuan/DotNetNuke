@@ -29,6 +29,7 @@ using System.Configuration;
 using System.Web.Compilation;
 
 using DotNetNuke.Framework.Providers;
+using DotNetNuke.Services.Exceptions;
 
 #endregion
 
@@ -88,20 +89,23 @@ namespace DotNetNuke.ComponentModel
                 Type type = BuildManager.GetType(provider.Type, false, true);
                 if (type == null)
                 {
-                    throw new ConfigurationErrorsException(string.Format("Could not load provider {0}", provider.Type));
+                    Exceptions.LogException(new ConfigurationErrorsException(string.Format("Could not load provider {0}", provider.Type)));
                 }
-				//Register the component
-                container.RegisterComponent(provider.Name, _ProviderInterface, type, _ComponentLifeStyle);
-
-                //Load the settings into a dictionary
-                var settingsDict = new Dictionary<string, string>();
-                settingsDict.Add("providerName", provider.Name);
-                foreach (string key in provider.Attributes.Keys)
+                else
                 {
-                    settingsDict.Add(key, provider.Attributes.Get(key));
+                    //Register the component
+                    container.RegisterComponent(provider.Name, _ProviderInterface, type, _ComponentLifeStyle);
+
+                    //Load the settings into a dictionary
+                    var settingsDict = new Dictionary<string, string>();
+                    settingsDict.Add("providerName", provider.Name);
+                    foreach (string key in provider.Attributes.Keys)
+                    {
+                        settingsDict.Add(key, provider.Attributes.Get(key));
+                    }
+                    //Register the settings as dependencies
+                    container.RegisterComponentSettings(type.FullName, settingsDict);
                 }
-                //Register the settings as dependencies
-                container.RegisterComponentSettings(type.FullName, settingsDict);
             }
         }
     }

@@ -1237,12 +1237,12 @@ namespace DotNetNuke.Common.Utilities
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.SetFolderPermissions(IFolderInfo folder) ")]
+        [Obsolete("Deprecated in DNN 6.0.  It has been replaced by FolderManager.Instance.CopyParentFolderPermissions(IFolderInfo folder) ")]
         public static void SetFolderPermissions(int portalId, int folderId, string relativePath)
         {
             var folderManager = FolderManager.Instance;
             var folder = folderManager.GetFolder(folderId);
-            folderManager.SetFolderPermissions(folder);
+            folderManager.CopyParentFolderPermissions(folder);
         }
 
         /// -----------------------------------------------------------------------------

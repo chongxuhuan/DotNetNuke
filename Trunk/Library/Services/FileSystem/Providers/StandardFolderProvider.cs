@@ -28,7 +28,6 @@ using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
 
@@ -88,24 +87,6 @@ namespace DotNetNuke.Services.FileSystem
             return DirectoryWrapper.Instance.Exists(PathUtils.Instance.GetPhysicalPath(folderMapping.PortalID, folderPath));
         }
 
-        public override byte[] GetFile(IFileInfo file)
-        {
-            Requires.NotNull("file", file);
-
-            byte[] fileContent = null;
-
-            try
-            {
-                fileContent = FileWrapper.Instance.ReadAllBytes(file.PhysicalPath);
-            }
-            catch (Exception ex)
-            {
-                DnnLog.Error(ex);
-            }
-
-            return fileContent;
-        }
-
         public override FileAttributes? GetFileAttributes(IFileInfo file)
         {
             Requires.NotNull("file", file);
@@ -124,15 +105,6 @@ namespace DotNetNuke.Services.FileSystem
             return fileAttributes;
         }
 
-        public override long GetFileLength(IFileInfo file)
-        {
-            Requires.NotNull("file", file);
-
-            var physicalFile = new System.IO.FileInfo(file.PhysicalPath);
-
-            return physicalFile.Length;
-        }
-
         public override string[] GetFiles(IFolderInfo folder)
         {
             Requires.NotNull("folder", folder);
@@ -145,6 +117,24 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             return fileNames;
+        }
+
+        public override long GetFileSize(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            var physicalFile = new System.IO.FileInfo(file.PhysicalPath);
+
+            return physicalFile.Length;
+        }
+
+        public override Stream GetFileStream(IFileInfo file)
+        {
+            Requires.NotNull("file", file);
+
+            var folder = FolderManager.Instance.GetFolder(file.FolderId);
+
+            return GetFileStream(folder, file.FileName);
         }
 
         public override Stream GetFileStream(IFolderInfo folder, string fileName)
@@ -178,7 +168,7 @@ namespace DotNetNuke.Services.FileSystem
             return GlobalsWrapper.Instance.ResolveUrl(portalSettings.HomeDirectory + file.Folder + file.FileName);
         }
 
-        public override string GetImageUrl()
+        public override string GetFolderProviderIconPath()
         {
             return IconControllerWrapper.Instance.IconURL("Folder");
         }

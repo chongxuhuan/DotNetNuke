@@ -220,13 +220,13 @@
 				<div id="CacheStatusRow" runat="server" visible="false" class="dnnFormItem">
 					<dnn:Label ID="lblCacheStatus" runat="server" ResourceKey="CacheStatus" HelpKey="CacheStatus.Help"></dnn:Label>
 					<asp:Label ID="lblCachedItemCount" runat="server" />
-					<asp:LinkButton ID="cmdClearPageCache" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdClearPageCache" />&nbsp;|&nbsp;<asp:LinkButton ID="cmdClearAllPageCache" runat="server" CssClass="CommandButton" resourcekey="cmdClearAllPageCache"/>
+					<asp:LinkButton ID="cmdClearPageCache" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdClearPageCache" />&nbsp;|&nbsp;<asp:LinkButton ID="cmdClearAllPageCache" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdClearAllPageCache"/>
 				</div>        
 				<div id="CacheDurationRow" runat="server" visible="false" class="dnnFormItem">
 					<dnn:Label ID="lblCacheDuration" runat="server" ControlName="txtCacheDuration" ResourceKey="CacheDuration" HelpKey="CacheDuration.Help"></dnn:Label>
 					<asp:TextBox ID="txtCacheDuration" runat="server" />
 					<asp:CompareValidator ID="valCacheTime" ControlToValidate="txtCacheDuration" Operator="DataTypeCheck" Type="Integer" Runat="server" Display="Dynamic" resourcekey="valCacheTime.ErrorMessage" CssClass="dnnFormMessage dnnFormError" />
-					<div class="CacheDurationInfo dnnClear"><asp:Label ID="lblCacheDurationInfo" runat="server" ResourceKey="CacheDurationInfo.Text" CssClass="dnnFormMessage dnnFormWarning" /></div>
+					<div class="CacheDurationInfo dnnClear"><asp:Label ID="lblCacheDurationInfo" runat="server" ResourceKey="CacheDurationInfo.Text" CssClass="dnnFormMessage dnnFormWarning" Width="200px"/></div>
 				</div>        
 				<div id="CacheIncludeExcludeRow" runat="server" visible="false" class="dnnFormItem">
 					<dnn:Label ID="lblCacheIncludeExclude" runat="server" ControlName="rblCacheIncludeExclude" ResourceKey="CacheIncludeExclude" HelpKey="CacheIncludeExclude.Help"></dnn:Label>

@@ -259,53 +259,6 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region GetFile
-
-        [Test]
-        [ExpectedArgumentException]
-        public void GetFile_Throws_On_Null_File()
-        {
-            _sfp.GetFile(null);
-        }
-
-        [Test]
-        public void GetFile_Calls_FileWrapper_ReadAllBytes()
-        {
-            _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
-
-            _sfp.GetFile(_fileInfo.Object);
-
-            _fileWrapper.Verify(fw => fw.ReadAllBytes(Constants.FOLDER_ValidSecureFilePath), Times.Once());
-        }
-
-        [Test]
-        public void GetFile_Returns_The_Content_Of_The_File_When_File_Exists()
-        {
-            var validFileBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-            _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
-
-            _fileWrapper.Setup(fw => fw.ReadAllBytes(Constants.FOLDER_ValidSecureFilePath)).Returns(validFileBytes);
-
-            var result = _sfp.GetFile(_fileInfo.Object);
-
-            Assert.AreEqual<byte[]>(validFileBytes, result);
-        }
-
-        [Test]
-        public void GetFile_Returns_Null_When_File_Does_Not_Exist()
-        {
-            _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
-
-            _fileWrapper.Setup(fw => fw.ReadAllBytes(Constants.FOLDER_ValidSecureFilePath)).Throws<FileNotFoundException>();
-
-            var result = _sfp.GetFile(_fileInfo.Object);
-
-            Assert.IsNull(result);
-        }
-
-        #endregion
-
         #region GetFileAttributes
 
         [Test]
@@ -470,7 +423,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
         #endregion
 
-        #region GetImageUrl
+        #region GetFolderProviderIconPath
 
         [Test]
         public void GetImageUrl_Calls_IconControllerWrapper_IconURL()
@@ -478,7 +431,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var iconControllerWrapper = new Mock<IIconController>();
             IconControllerWrapper.RegisterInstance(iconControllerWrapper.Object);
 
-            _sfp.GetImageUrl();
+            _sfp.GetFolderProviderIconPath();
 
             iconControllerWrapper.Verify(icw => icw.IconURL("SecurityRoles"), Times.Once());
         }

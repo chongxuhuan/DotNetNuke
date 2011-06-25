@@ -170,7 +170,7 @@ namespace DotNetNuke.Services.FileSystem
                                 try
                                 {
                                     var directUrl = fileManager.GetUrl(file);
-                                    if(directUrl.Contains("LinkClick"))
+                                    if (directUrl.Contains("LinkClick") || blnForceDownload)
                                     {
                                         fileManager.WriteFileToResponse(file, contentDisposition);
                                         download = true;
