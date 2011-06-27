@@ -55,4 +55,9 @@ namespace DotNetNuke.Web.Razor
 
         #endregion
     }
+
+    public abstract class DotNetNukeWebPage<T>:DotNetNukeWebPage
+    {
+        public T Model { get; set; }
+    }
 }

@@ -1199,6 +1199,9 @@
     <Folder Include="Components\" />
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItems.sql" />
+  </ItemGroup>
   <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>
   <Target Name="DebugProject">

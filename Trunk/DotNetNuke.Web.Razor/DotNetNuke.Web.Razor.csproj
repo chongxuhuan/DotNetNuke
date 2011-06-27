@@ -80,6 +80,7 @@
     <Compile Include="Helpers\DnnHelper.cs" />
     <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Helpers\HtmlHelper.cs" />
+    <Compile Include="RazorEngine.cs" />
     <Compile Include="RazorHostControl.cs" />
     <Compile Include="RazorModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>

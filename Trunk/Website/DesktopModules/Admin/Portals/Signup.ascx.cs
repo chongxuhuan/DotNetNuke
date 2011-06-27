@@ -289,7 +289,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     //Validate Home Folder
                     if (!string.IsNullOrEmpty(homeDir))
                     {
-                        if (string.IsNullOrEmpty(String.Format("{0}\\{1}\\}", Globals.ApplicationMapPath, homeDir).Replace("/", "\\")))
+                        if (string.IsNullOrEmpty(String.Format("{0}\\{1}\\", Globals.ApplicationMapPath, homeDir).Replace("/", "\\")))
                         {
                             message = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
                         }

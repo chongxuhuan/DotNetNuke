@@ -204,8 +204,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
             CheckSecurity();
             try
             {
-                ClientAPI.AddButtonConfirm(cmdUninstall, Localization.GetString("DeleteItem"));
-
                 if (Package != null && string.IsNullOrEmpty(Package.Manifest))
                 {
                     deleteRow.Visible = false;

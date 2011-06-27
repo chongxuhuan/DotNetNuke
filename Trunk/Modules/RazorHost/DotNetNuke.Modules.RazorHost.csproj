@@ -117,6 +117,7 @@
       <DependentUpon>RazorHost.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="RazorHostSettingsExtensions.cs" />
     <Compile Include="Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
@@ -221,7 +222,7 @@
   <PropertyGroup>
     <Extension>resources</Extension>
     <DNNFileName>RazorHost</DNNFileName>
-    <PackageName>DNNCE_RazorHost</PackageName>
+    <PackageName>RazorHost</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />

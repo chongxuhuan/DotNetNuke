@@ -44,6 +44,8 @@ namespace DotNetNuke.Entities.Content.Data
 
         IDataReader GetContentItem(int contentItemId);
 
+	    IDataReader GetContentItems(int contentTypeId, int tabId, int moduleId);
+
         IDataReader GetContentItemsByTerm(string term);
 
         IDataReader GetUnIndexedContentItems();

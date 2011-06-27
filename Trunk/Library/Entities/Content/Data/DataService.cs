@@ -92,6 +92,20 @@ namespace DotNetNuke.Entities.Content.Data
             return _provider.ExecuteReader("GetContentItem", contentItemId);
         }
 
+        /// <summary>
+        /// Gets the content items.
+        /// </summary>
+        /// <param name="contentTypeId">The Id of the Content Type.</param>
+        /// <param name="tabId">The Id of the Tab.</param>
+        /// <param name="moduleId">The Id of the Module.</param>
+        /// <returns>data reader.</returns>
+        public IDataReader GetContentItems(int contentTypeId, int tabId, int moduleId)
+        {
+            return _provider.ExecuteReader("GetContentItems", _provider.GetNull(contentTypeId), 
+                                                            _provider.GetNull(tabId), 
+                                                            _provider.GetNull(moduleId));
+        }
+     
 		/// <summary>
 		/// Gets the content items by term.
 		/// </summary>

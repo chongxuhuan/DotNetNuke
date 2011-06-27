@@ -308,8 +308,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             else
             {
                 var tabid = Convert.ToInt32(e.Node.Value);
-                BindTab(tabid);                                
-                grdModules.Rebind();
+                BindTab(tabid);
             }
         }
 
@@ -583,12 +582,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
 
             var tabId = Convert.ToInt32(tabs[0].TabID);
-            if (tabId != Null.NullInteger)
-            {
-                BindTab(tabId);
-                grdModules.Rebind();
-            }
-            else
+            if (tabId == Null.NullInteger)
             {
                 tabId = parentId;
             }
@@ -766,6 +760,8 @@ namespace DotNetNuke.Modules.Admin.Pages
                 termsSelector.PortalId = tab.PortalID;
                 termsSelector.Terms = tab.Terms;
                 termsSelector.DataBind();
+
+				grdModules.Rebind();
             }
         }
 
@@ -1029,7 +1025,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                         var tabid = Convert.ToInt32(SelectedNode);
                         BindTab(tabid);                        
                         pnlBulk.Visible = false;
-                        grdModules.Rebind();
                     }
                     catch (Exception exc)
                     {
@@ -1042,7 +1037,7 @@ namespace DotNetNuke.Modules.Admin.Pages
         private void BindTreeAndShowTab(int tabId)
         {
             BindTree();
-            var node = ctlPages.FindNodeByValue(SelectedNode);
+			var node = ctlPages.FindNodeByValue(tabId.ToString());
             //rare cases it is null (e.g. when a page is created when page local is not default locale)
             if (node != null)
             {

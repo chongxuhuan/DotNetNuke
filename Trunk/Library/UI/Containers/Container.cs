@@ -323,7 +323,7 @@ namespace DotNetNuke.UI.Containers
             if (viewRoles == PortalSettings.AdministratorRoleName.ToLowerInvariant())
             {
                 adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text");
-                showMessage = !ModuleConfiguration.HideAdminBorder;
+                showMessage = !ModuleConfiguration.HideAdminBorder && !Globals.IsAdminControl();
             }
             if (ModuleConfiguration.StartDate >= DateTime.Now)
             {

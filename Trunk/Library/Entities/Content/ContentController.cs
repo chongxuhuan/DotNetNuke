@@ -116,6 +116,18 @@ namespace DotNetNuke.Entities.Content
             return CBO.FillObject<ContentItem>(_dataService.GetContentItem(contentItemId));
         }
 
+        /// <summary>
+        /// Gets the content item.
+        /// </summary>
+        /// <param name="contentTypeId">The Id of the Content Type.</param>
+        /// <param name="tabId">The Id of the Tab.</param>
+        /// <param name="moduleId">The Id of the Module.</param>
+        /// <returns>content item.</returns>
+        public IQueryable<ContentItem> GetContentItems(int contentTypeId, int tabId, int moduleId)
+        {
+            return CBO.FillQueryable<ContentItem>(_dataService.GetContentItems(contentTypeId, tabId, moduleId));
+        }
+
 		/// <summary>
 		/// Gets the content items by term name.
 		/// </summary>

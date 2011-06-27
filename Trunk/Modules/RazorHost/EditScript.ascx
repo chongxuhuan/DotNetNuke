@@ -14,7 +14,7 @@
 		<div class="dnnFormItem razorHostModSource"><asp:Label ID="lblSourceFile" runat="server" CssClass="dnnFormMessage dnnFormInfo" /></div>        
         <div class="dnnFormItem">
             <dnn:label id="plSource" controlname="txtSource" runat="server" />
-            <asp:TextBox ID="txtSource" runat="server" TextMode="MultiLine" Rows="25" />
+            <asp:TextBox ID="txtSource" runat="server" TextMode="MultiLine" Rows="18" />
         </div>
         <div class="dnnFormItem">
             <dnn:Label id="currentScriptLabel" runat="Server" controlname="isCurrentScript" />

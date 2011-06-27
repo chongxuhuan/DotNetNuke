@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System.Web;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
 
@@ -49,6 +50,11 @@ namespace DotNetNuke.Web.Razor.Helpers
         public object GetLocalizedString(string key, string culture)
         {
             return Localization.GetString(key, _resourceFile, culture);
+        }
+
+        public HtmlString Raw(string text)
+        {
+            return new HtmlString(text);
         }
     }
 }

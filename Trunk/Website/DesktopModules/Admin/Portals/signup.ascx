@@ -52,7 +52,7 @@
     </fieldset>
     <h2 class="dnnFormSectionHead"><%=LocalizeString("SecuritySettings")%></h2>
     <fieldset>
-        <legend><div class="dnnFormMessage dnnFormWarning"><asp:label id="lblNote" resourcekey="Note" runat="server" /></div></legend>
+        <div class="dnnFormMessage dnnFormWarning"><asp:label id="lblNote" resourcekey="Note" runat="server" /></div>
         <div class="dnnFormItem">
             <dnn:label id="plUsername" runat="server" controlname="txtUsername" />
             <asp:textbox id="txtUsername" CssClass="dnnFormRequired" runat="server" maxlength="100" />

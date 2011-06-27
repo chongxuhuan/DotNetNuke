@@ -30,3 +30,19 @@
 	<div class="dnnClear"><asp:PlaceHolder ID="phPaLogs" runat="server" /></div>
     <ul class="dnnActions dnnClear"><li><asp:HyperLink ID="cmdReturn2" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li></ul>
 </div>
+<dnn:DnnScriptBlock ID="scriptBlock1" runat="server">
+	<script type="text/javascript">
+		/*globals jQuery */
+		(function ($) {
+			var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
+			var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
+			var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+			$('#<%= cmdUninstall.ClientID %>').dnnConfirm({
+				text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+				yesText: yesText,
+				noText: noText,
+				title: titleText
+			});
+		} (jQuery));
+	</script>
+</dnn:DnnScriptBlock>

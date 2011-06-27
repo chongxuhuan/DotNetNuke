@@ -156,16 +156,19 @@ namespace DotNetNuke.Modules.Html
                 }
 
                 // localize toolbar
-                if (EditorEnabled)
+                if (!IsPostBack)
                 {
-                    foreach (DNNToolBarButton button in editorDnnToobar.Buttons)
+                    if (EditorEnabled)
                     {
-                        button.ToolTip = Localization.GetString(button.ToolTip + ".ToolTip", LocalResourceFile);
+                        foreach (DNNToolBarButton button in editorDnnToobar.Buttons)
+                        {
+                            button.ToolTip = Localization.GetString(button.ToolTip + ".ToolTip", LocalResourceFile);
+                        }
                     }
-                }
-                else
-                {
-                    editorDnnToobar.Visible = false;
+                    else
+                    {
+                        editorDnnToobar.Visible = false;
+                    }
                 }
 
                 lblContent.EditEnabled = EditorEnabled;
