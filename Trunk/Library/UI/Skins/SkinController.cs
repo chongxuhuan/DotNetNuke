@@ -84,14 +84,15 @@ namespace DotNetNuke.UI.Skins
 
 		#region "Public Shared Methods"
 
-        private static void AddSkinFiles(List<KeyValuePair<string, string>> skins, string skinRoot, string skinFolder)
+        private static void AddSkinFiles(List<KeyValuePair<string, string>> skins, string skinRoot, string skinFolder, bool isPortal)
         {
             foreach (string skinFile in Directory.GetFiles(skinFolder, "*.ascx"))
             {
                 string folder = skinFolder.Substring(skinFolder.LastIndexOf("\\") + 1);
 
                 string key = FormatSkinName(folder, Path.GetFileNameWithoutExtension(skinFile));
-                string value = "[G]" + skinRoot + "/" + folder + "/" + Path.GetFileName(skinFile);
+                string prefix = (isPortal) ? "[L]" : "[G]";
+                string value = prefix + skinRoot + "/" + folder + "/" + Path.GetFileName(skinFile);
                 skins.Add(new KeyValuePair<string, string>(key, value)); 
             }
         }
@@ -107,7 +108,7 @@ namespace DotNetNuke.UI.Skins
                 {
                     if (!skinFolder.EndsWith(Globals.glbHostSkinFolder))
                     {
-                        AddSkinFiles(skins, skinRoot, skinFolder);
+                        AddSkinFiles(skins, skinRoot, skinFolder, false);
                     }
                 }
             }
@@ -125,7 +126,7 @@ namespace DotNetNuke.UI.Skins
                 {
                     foreach (string skinFolder in Directory.GetDirectories(rootFolder))
                     {
-                        AddSkinFiles(skins, skinRoot, skinFolder);
+                        AddSkinFiles(skins, skinRoot, skinFolder, true);
                     }
                 }
             }

@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
@@ -59,6 +60,7 @@ namespace DotNetNuke.UI.Skins.Controls
         protected Panel dnnSkinMessage;
         protected Label lblHeading;
         protected Label lblMessage;
+    	protected Control scrollScript;
 		
 		#endregion
 		
@@ -72,10 +74,21 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public string IconImage { get; set; }
 
+		/// <summary>
+		/// Check this message is shown as page message or module message.
+		/// </summary>
+    	public bool IsModuleMessage
+    	{
+    		get
+    		{
+    			return this.Parent.ID == "MessagePlaceHolder";
+    		}
+    	}
+
         #endregion
-		
+
 		#region "Protected Methods"
-		
+
 		/// <summary>
 		/// The Page_Load server event handler on this page is used
 		/// to populate the role information for the page
@@ -130,6 +143,14 @@ namespace DotNetNuke.UI.Skins.Controls
                 Exceptions.ProcessModuleLoadException(this, exc, false);
             }
         }
+
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
+
+			//set the scroll js only shown for module message and in postback mode.
+			scrollScript.Visible = IsPostBack && IsModuleMessage;
+		}
 		
 		#endregion
     }

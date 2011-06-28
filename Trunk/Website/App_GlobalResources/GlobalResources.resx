@@ -588,7 +588,7 @@ access to the [Portal:PortalName] Web Site and the related services or
 any portion thereof at any time, without notice. GENERAL To the maximum extent 
 permitted by law, this agreement is governed by the laws of the State of 
 Washington, U.S.A. and you hereby consent to the exclusive jurisdiction and 
-venue of courts in King County, Washington, U.S.A. in all disputes arising out 
+venue of courts in San Mateo County, California, U.S.A. in all disputes arising out 
 of or relating to the use of the [Portal:PortalName] Web Site. Use of the 
 [Portal:PortalName] Web Site is unauthorized in any jurisdiction that does not 
 give effect to all provisions of these terms and conditions, including without 
@@ -1267,4 +1267,13 @@ Sincerely,
   <data name="//OurServices.String" xml:space="preserve">
     <value>Our Services</value>
   </data>
+  <data name="//Modules.Text" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="//Pages.Text" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="//Tools.Text" xml:space="preserve">
+    <value>Tools</value>
+  </data>  
 </root>

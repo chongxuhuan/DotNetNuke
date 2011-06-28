@@ -117,6 +117,7 @@
                     <iconFile />
                     <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
                     <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>MyWork</controlKey>
@@ -127,6 +128,7 @@
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>Settings</controlKey>

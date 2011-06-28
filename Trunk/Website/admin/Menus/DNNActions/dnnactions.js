@@ -14,7 +14,7 @@
 					var $border = $m.children('.' + opts.borderClassName);
 					if (!$border.size() > 0) {
 						$border = $('<div class="' + opts.borderClassName + '"></div>')
-                        .prependTo($m).css({opacity: 0});
+                        .prependTo($m).css({ opacity: 0 });
 					}
 					$m.attr('style', 'z-index:904;');
 					if (effectMenu) $m.find(opts.menuActionSelector).fadeTo(opts.fadeSpeed, opacity);
@@ -62,6 +62,18 @@
                 	}
                 });
 
+				function setMenuPosition(menuContainer) {
+					var $menuBody = menuContainer.find(opts.menuSelector).show(),
+                        availableRoom = ($(window).height() - ((menuContainer.offset().top - $(window).scrollTop()) + menuContainer.height()));
+
+					if ($menuBody.height() > availableRoom) {
+						$menuBody.position({ my: 'left bottom', at: 'left top', of: menuContainer });
+					}
+					else {
+						$menuBody.position({ my: 'left top', at: 'left bottom', of: menuContainer });
+					}
+				}
+
 				$module.find(opts.menuActionSelector).css({ opacity: opts.defaultOpacity }).hoverIntent({
 					sensitivity: opts.hoverSensitivity,
 					timeout: opts.hoverTimeout,
@@ -70,18 +82,10 @@
 						if (opts.debug) {
 							console.log('module action menu hover intent over');
 						}
-						var $menuActionTag = $(this),
-                            $menuBody = $menuActionTag.find(opts.menuSelector).show(),
-                            availableRoom = ($(window).height() - (($menuActionTag.offset().top - $(window).scrollTop()) + $menuActionTag.height()));
 
-						if ($menuBody.height() > availableRoom) {
-							$menuBody.position({ my: 'left bottom', at: 'left top', of: $menuActionTag });
-						}
-						else {
-							$menuBody.position({ my: 'left top', at: 'left bottom', of: $menuActionTag });
-						}
+						setMenuPosition($(this));
 
-						$menuBody.fadeTo(opts.fadeSpeed, 1);
+						$(this).find(opts.menuSelector).fadeTo(opts.fadeSpeed, 1);
 
 					},
 					out: function () {
@@ -92,7 +96,16 @@
 					}
 				});
 
-				$module.find(opts.menuActionSelector).draggable({ containment: "parent" });
+				$module.find(opts.menuActionSelector).draggable({
+					containment: $module.children().eq(1)
+					, start: function (event, ui) {
+						$(this).find(opts.menuSelector).hide();
+					}
+					, stop: function (event, ui) {
+						setMenuPosition($(this));
+						$(this).find(opts.menuSelector).show();
+					}
+				});
 
 			}
 

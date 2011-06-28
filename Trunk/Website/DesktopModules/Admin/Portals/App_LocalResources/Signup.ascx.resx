@@ -277,7 +277,7 @@
     <value>Auto Generate</value>
   </data>
   <data name="ControlTitle_signup.Text" xml:space="preserve">
-    <value>Signup</value>
+    <value>Add Portal</value>
   </data>
   <data name="SendMail.Error" xml:space="preserve">
     <value>There was an error sending confirmation emails - {0}.  However, the website was created. &lt;a href='{1}'&gt;Click Here To Access the new site&lt;/a&gt;</value>

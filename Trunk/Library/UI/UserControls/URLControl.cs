@@ -739,13 +739,18 @@ namespace DotNetNuke.UI.UserControls
                     {
                         //to handle legacy scenarios before the introduction of the FileServerHandler
                         var fileName = Path.GetFileName(_Url);
-
                         var folderPath = _Url.Substring(0, _Url.LastIndexOf(fileName));
                         var folder = FolderManager.Instance.GetFolder(_objPortal.PortalID, folderPath);
-
-                        var file = FileManager.Instance.GetFile(folder, fileName);
-
-                        TrackingUrl = "FileID=" + file.FileId;
+                        var fileId = -1;
+                        if (folder != null)
+                        {
+                            var file = FileManager.Instance.GetFile(folder, fileName);
+                            if (file != null)
+                            {
+                                fileId = file.FileId;
+                            }
+                        }
+                        TrackingUrl = "FileID=" + fileId.ToString();
                     }
                 }
                 if (_Urltype == "M")

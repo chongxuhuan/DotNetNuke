@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-      <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\BuildScripts</MSBuildCommunityTasksPath>      
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\BuildScripts\MSBuild.Community.Tasks.Targets" />
   <Target Name="DDRMenu">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\DDRMenu_01.99.04_Install.zip" DestinationFolder="../Website/Install/Module" />
-    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DDRMenu_01.99.04_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\DDRMenu_01.99.05_Install.zip" DestinationFolder="../Website/Install/Module" />
+    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DDRMenu_01.99.05_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
     <Unzip ZipFileName="$(MSBuildProjectDirectory)\unzip\resources.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip\resources" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\DotNetNuke.Web.DDRMenu.dll" DestinationFolder="../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\bin\providers\DotNetNuke.Web.DDRMenu.NET40.dll" DestinationFolder="../Website/bin/providers" />
@@ -18,14 +18,14 @@
   </Target>
   <Target Name="RadEditor">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\RadEditorProvider_06.00.00_Install.zip" DestinationFolder="../Website/Install/Provider" />
-   <Unzip ZipFileName="$(MSBuildProjectDirectory)\RadEditorProvider_06.00.00_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
+    <Unzip ZipFileName="$(MSBuildProjectDirectory)\RadEditorProvider_06.00.00_Install.zip" TargetDirectory="$(MSBuildProjectDirectory)\unzip" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\unzip\DotNetNuke.RadEditorProvider.dll" DestinationFolder="../Website/bin" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\unzip" />
   </Target>
-    <Target Name="PortalTemplate">
-        <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template" DestinationFolder="../Website/Portals/_default" />
-        <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template.resources" DestinationFolder="../Website/Portals/_default" />
-    </Target>
+  <Target Name="PortalTemplate">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template.resources" DestinationFolder="../Website/Portals/_default" />
+  </Target>
   <Target Name="PackageProvider" DependsOnTargets="DDRMenu;RadEditor;PortalTemplate" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </Target>
 </Project>

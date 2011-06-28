@@ -4,7 +4,7 @@
   <!ENTITY cr "<xsl:text>
 </xsl:text>">
 ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ddr="urn:ddrmenu">
 	<xsl:output method="html"/>
 	<xsl:param name="ControlID" />
 	<xsl:param name="Options" />
@@ -20,15 +20,21 @@
           <xsl:with-param name="nodeType">root</xsl:with-param>
         </xsl:apply-templates>
         <li id="dnnCommonTasks" class="root">
-          <a href="#">Modules</a>
+          <a href="#">
+            <xsl:value-of select ="ddr:GetString('//Modules','~/App_GlobalResources/GlobalResources.resx')"/>
+          </a>
           <div class="megaborder"></div>
         </li>
         <li id="dnnCurrentPage" class="root">
-          <a href="#">Pages</a>
+          <a href="#">
+            <xsl:value-of select ="ddr:GetString('//Pages','~/App_GlobalResources/GlobalResources.resx')"/>
+          </a>
           <div class="megaborder"></div>
         </li>
         <li id="dnnOtherTools" class="root">
-          <a href="#">Tools</a>
+          <a href="#">
+            <xsl:value-of select ="ddr:GetString('//Tools','~/App_GlobalResources/GlobalResources.resx')"/>
+          </a>
           <div class="megaborder"></div>
         </li>			
 			</ul>

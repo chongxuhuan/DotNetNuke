@@ -5,6 +5,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 
@@ -12,11 +13,13 @@ using Telerik.Web.UI;
 
 namespace DotNetNuke.Web.UI.WebControls
 {
-    public class DnnFormLabel : Label
+    public class DnnFormLabel : Panel
     {
         public DnnFormLabel()
         {
         }
+
+        public string AssociatedControlID { get; set; }
 
         public string LocalResourceFile { get; set; }
 
@@ -27,25 +30,38 @@ namespace DotNetNuke.Web.UI.WebControls
         protected override void CreateChildControls()
         {
             string toolTipText = LocalizeString(ToolTipKey);
+
+            var outerLabel = new Label();
+            outerLabel.AssociatedControlID = AssociatedControlID;
+            Controls.Add(outerLabel);
+
+            var link = new LinkButton { ID = "Link", CssClass = "dnnFormHelp", TabIndex = -1 };
+            outerLabel.Controls.Add(link);
+
+            var label = new Label { ID = "Label", Text = LocalizeString(ResourceKey) };
+            link.Controls.Add(label);
+            
             if (!String.IsNullOrEmpty(toolTipText))
             {
-                var link = new LinkButton { ID = "Link", CssClass = "dnnFormHelp", TabIndex = -1};
-                Controls.Add(link);
-
-                var label = new Label { ID = "Label", Text = LocalizeString(ResourceKey) };
-                link.Controls.Add(label);
+                CssClass += "dnnTooltip";
 
                 var panel = new Panel { ID = "Help", CssClass = "dnnFormHelpContent dnnClear" };
                 Controls.Add(panel);
                 
-                var helpLabel = new Label { ID = "Text", Text = LocalizeString(ToolTipKey) };
+                var helpLabel = new Label { ID = "Text", CssClass="dnnHelpText", Text = LocalizeString(ToolTipKey) };
                 panel.Controls.Add(helpLabel);
 
+                var pinLink = new HyperLink();
+                pinLink.CssClass = "pinHelp";
+                pinLink.Attributes.Add("href", "#");
+                panel.Controls.Add(pinLink);
+
+                ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
+                this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+                jQuery.RequestDnnPluginsRegistration();
+                this.Page.ClientScript.RegisterClientScriptBlock(typeof(DnnFormLabel), "dnnTooltip", "$(document).ready(function(){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+	
                 DNNClientAPI.EnableMinMax(link, panel, true, DNNClientAPI.MinMaxPersistanceType.None);
-            }
-            else
-            {
-                Text = LocalizeString(ResourceKey);                
             }
         }
 

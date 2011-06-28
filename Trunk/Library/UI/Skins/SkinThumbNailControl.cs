@@ -282,14 +282,14 @@ namespace DotNetNuke.UI.Skins
                     if (objImage.Height > objImage.Width)
                     {
 						//The height was larger, so scale the width 
-                        dblScale = intSize/objImage.Height;
+                        dblScale = (double)intSize / objImage.Height;
                         intHeight = intSize;
                         intWidth = Convert.ToInt32(objImage.Width*dblScale);
                     }
                     else
                     {
 						//The width was larger, so scale the height 
-                        dblScale = intSize/objImage.Width;
+                        dblScale = (double)intSize / objImage.Width;
                         intWidth = intSize;
                         intHeight = Convert.ToInt32(objImage.Height*dblScale);
                     }

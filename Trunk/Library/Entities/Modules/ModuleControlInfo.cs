@@ -56,7 +56,7 @@ namespace DotNetNuke.Entities.Modules
             ModuleControlID = Null.NullInteger;
             ModuleDefID = Null.NullInteger;
             ControlType = SecurityAccessLevel.Anonymous;
-            SupportsPopUps = true;
+            SupportsPopUps = false;
         }
 
         /// -----------------------------------------------------------------------------
@@ -252,6 +252,12 @@ namespace DotNetNuke.Entities.Modules
                         if (!string.IsNullOrEmpty(elementvalue))
                         {
                             ViewOrder = int.Parse(elementvalue);
+                        }
+                        break;
+                    default:
+                        if(reader.NodeType == XmlNodeType.Element && !String.IsNullOrEmpty(reader.Name))
+                        {
+                            reader.ReadElementContentAsString();
                         }
                         break;
                 }

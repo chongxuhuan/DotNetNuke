@@ -14,7 +14,7 @@ this.generateMenuHTML();if(this.enablePostbackState)
 {this._onsubmitDelegate=Function.createDelegate(this,this._onsubmit);dnn.controls.submitComp.add_handler(this._onsubmitDelegate);}
 this._hideMenusDelegate=dnn.createDelegate(this,this.hideMenus);this._expandNodeDelegate=dnn.createDelegate(this,this.__expandNode);},generateMenuHTML:function()
 {this.container.className=this.mbcss;dnn.dom.disableTextSelect(this.container);
-if(this.rootNode!==null){for(var i=0;i<this.rootNode.childNodeCount();i++){this.renderNode(this.rootNode.childNodes(i),this.container);this.addHandlers(document.body,{"click":this._bodyClick},this);}}dnn.setVar(this.ns + '_json', '');},renderNode:function(node,ctr)
+if(this.rootNode!==null){for(var i=0;i<this.rootNode.childNodeCount();i++)this.renderNode(this.rootNode.childNodes(i),this.container);this.addHandlers(document.body,{"click":this._bodyClick},this);}dnn.setVar(this.ns + '_json', '');},renderNode:function(node,ctr)
 {var mNode=new dnn.controls.DNNMenuNode(node);if(mNode.selected)
 this.selMNode=mNode;var menuBuilder=this._getMenuBuilder(mNode,ctr);if(menuBuilder.alreadyRendered==false)
 {if(this.isNodeVertical(mNode))

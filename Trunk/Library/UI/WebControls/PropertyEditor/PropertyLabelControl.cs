@@ -29,6 +29,8 @@ using System.Data;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+
+using DotNetNuke.Framework;
 using DotNetNuke.UI.Utilities;
 
 #endregion
@@ -255,6 +257,8 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		protected override void CreateChildControls()
 		{
+		    CssClass += "dnnTooltip";
+
 			label = new HtmlGenericControl {TagName = "label"};
 
 		    if (!DesignMode)
@@ -274,15 +278,14 @@ namespace DotNetNuke.UI.WebControls
 
 			var aHelpPin = new HyperLink();
 			aHelpPin.CssClass = "pinHelp";
-			// TODO: (CP) - the line below will be replaced w/ an image before 6.0 release!!! (copy dnn label control)
-			aHelpPin.Text = "Pin";
+            aHelpPin.Attributes.Add("href", "#"); 
 			pnlHelp.Controls.Add(aHelpPin);
 
 			Controls.Add(label);
 			Controls.Add(pnlHelp);
 		}
 
-		/// <summary>
+        /// <summary>
 		/// OnDataBinding runs when the Control is being Data Bound (It is triggered by
 		/// a call to Control.DataBind()
 		/// </summary>
@@ -310,6 +313,16 @@ namespace DotNetNuke.UI.WebControls
 				}
 			}
 		}
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
+            this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+            jQuery.RequestDnnPluginsRegistration();
+            this.Page.ClientScript.RegisterClientScriptBlock(typeof(PropertyLabelControl), "dnnTooltip", "$(document).ready(function(){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+        }
 
 		/// <summary>
 		/// OnLoad runs just before the Control is rendered, and makes sure that any

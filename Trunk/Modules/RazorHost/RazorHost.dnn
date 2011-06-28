@@ -46,6 +46,7 @@
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>Add</controlKey>
@@ -56,6 +57,7 @@
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
                   </moduleControl>                 
                   <moduleControl>
                     <controlKey>CreateModule</controlKey>
@@ -66,6 +68,7 @@
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>Settings</controlKey>

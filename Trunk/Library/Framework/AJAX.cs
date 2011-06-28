@@ -51,7 +51,7 @@ namespace DotNetNuke.Framework
         {
             if (GetScriptManager(objPage) == null)
             {
-                using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true, ScriptMode = ScriptMode.Release })
+                using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true })
                 {
                     if (objPage.Form != null)
                     {

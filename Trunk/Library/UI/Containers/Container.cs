@@ -453,11 +453,11 @@ namespace DotNetNuke.UI.Containers
                 string controlSrc = ModuleConfiguration.ModuleControl.ControlSrc;
                 string folderName = ModuleConfiguration.DesktopModule.FolderName;
 
-                PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css");
+                PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", true);
 
                 if (controlSrc.LastIndexOf("/") > 0)
                 {
-                    PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css");
+                    PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css", true);
                 }
             }
         }

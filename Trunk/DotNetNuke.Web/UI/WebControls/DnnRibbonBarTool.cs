@@ -308,7 +308,18 @@ namespace DotNetNuke.Web.UI.WebControls
                         //create popup event 
                         else if (ToolInfo.ShowAsPopUp && PortalSettings.EnablePopUps)
                         {
-                            DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true, false));
+                            // Prevent PageSettings in a popup if SSL is enabled and enforced, which causes redirection/javascript broswer security issues.
+                            if (ToolInfo.ToolName == "PageSettings" || ToolInfo.ToolName == "CopyPage" || ToolInfo.ToolName == "NewPage")
+                            {
+                                if (!(PortalSettings.SSLEnabled && PortalSettings.SSLEnforced))
+                                {
+                                    DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true, false));
+                                }
+                            }
+                            else
+                            {
+                                DnnLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(DnnLink.NavigateUrl, this, PortalSettings, true, false));
+                            }
                         }
                     }
 

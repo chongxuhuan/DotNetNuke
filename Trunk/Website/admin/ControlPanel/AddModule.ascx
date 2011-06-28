@@ -15,14 +15,14 @@
                 <asp:Label ID="CategoryListLbl" runat="server" ResourceKey="Category" AssociatedControlID="CategoryList" />
                 <asp:DropDownList ID="CategoryList" runat="server" MaxHeight="300px" AutoPostBack="true" DataTextField="Name" DataValueField="Name" />
             </asp:Panel>
-            <div class="dnnClear">
-                <asp:Label ID="ModuleLstLbl" runat="server" ResourceKey="Module" AssociatedControlID="ModuleLst" />
-                <dnn:DnnModuleComboBox ID="ModuleLst" runat="server" />
-            </div>
             <asp:Panel ID="PageListPanel" runat="server" Visible="false" CssClass="dnnClear">
                 <asp:Label ID="PageListLbl" runat="server" ResourceKey="Page" AssociatedControlID="PageLst" />
                 <asp:DropDownList ID="PageLst" runat="server" MaxHeight="300px" AutoPostBack="true" />
             </asp:Panel>
+            <div class="dnnClear">
+                <asp:Label ID="ModuleLstLbl" runat="server" ResourceKey="Module" AssociatedControlID="ModuleLst" />
+                <dnn:DnnModuleComboBox ID="ModuleLst" runat="server" />
+            </div>
             <asp:Panel ID="TitlePanel" runat="server" Visible="true" CssClass="dnnClear">
                 <asp:Label ID="TitleLbl" runat="server" ResourceKey="Title" AssociatedControlID="Title" />
                 <asp:TextBox ID="Title" runat="server" />

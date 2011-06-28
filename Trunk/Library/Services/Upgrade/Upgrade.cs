@@ -857,6 +857,63 @@ namespace DotNetNuke.Services.Upgrade
             return ((desktopModule != null));
         }
 
+        private static void EnableModalPopUps()
+        {
+            foreach (var desktopModuleInfo in DesktopModuleController.GetDesktopModules(Null.NullInteger))
+            {
+                switch (desktopModuleInfo.Value.ModuleName)
+                {
+                    case "Portals":
+                    case "SQL":
+                    case "HostSettings":
+                    case "Scheduler":
+                    case "SearchAdmin":
+                    case "Lists":
+                    case "Extensions":
+                    case "WhatsNew":
+                    case "Dashboard":
+                    case "Marketplace":
+                    case "ConfigurationManager":
+                    case "Security":
+                    case "Tabs":
+                    case "Vendors":
+                    case "Banners":
+                    case "FileManager":
+                    case "SiteLog":
+                    case "Newsletters":
+                    case "RecycleBin":
+                    case "LogViewer":
+                    case "SiteWizard":
+                    case "Languages":
+                    case "Skins":
+                    case "SkinDesigner":
+                    case "GoogleAnalytics":
+                    case "Sitemap":
+                    case "DotNetNuke.Taxonomy":
+                        foreach(ModuleDefinitionInfo definition in desktopModuleInfo.Value.ModuleDefinitions.Values)
+                        {
+                            foreach(ModuleControlInfo control in definition.ModuleControls.Values)
+                            {
+                                if (!String.IsNullOrEmpty(control.ControlKey))
+                                {
+                                    control.SupportsPopUps = true;
+                                    ModuleControlController.SaveModuleControl(control, false);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }          
+
+            foreach(ModuleControlInfo control in ModuleControlController.GetModuleControlsByModuleDefinitionID(Null.NullInteger).Values)
+            {
+                control.SupportsPopUps = true;
+                ModuleControlController.SaveModuleControl(control, false);
+            }
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// ExecuteScript executes a SQl script file
@@ -3596,6 +3653,8 @@ namespace DotNetNuke.Services.Upgrade
                 //update languages module
                 int moduleDefId = GetModuleDefinition("Languages", "Languages");
                 AddModuleControl(moduleDefId, "LocalizePages", "Localize Pages", "DesktopModules/Admin/Languages/LocalizePages.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0, Null.NullString, true);
+
+                EnableModalPopUps();
             }
             catch (Exception ex)
             {

@@ -95,6 +95,9 @@
                     e.preventDefault();
                     
                     $dnnDialog.dialog({
+                        open: function(e) {
+                            $('.ui-dialog-buttonpane').find('button:contains("' + opts.noText + '")').addClass('dnnConfirmCancel');
+                        },
                         buttons: [
                         {
                             text: opts.yesText,

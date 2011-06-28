@@ -36,3 +36,5 @@
 	.enableLocalizationProgress .RadUploadProgressArea > .ruShadow {background-image:none;}
 	
 	.enableLocalizationProgress .RadUploadProgressArea li.ruProgressHeader{margin:0px;}
+	
+.dnnLangEditorContent .dnnGrid .Pending {border-style: solid; border-color: Red;}

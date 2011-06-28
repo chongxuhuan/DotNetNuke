@@ -48,7 +48,8 @@
 										<iconFile />
 										<helpUrl />
 										<viewOrder>0</viewOrder>
-									</moduleControl>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
 									<moduleControl>
 										<controlKey>ViewMessage</controlKey>
 										<controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
@@ -58,7 +59,8 @@
 										<iconFile />
 										<helpUrl />
 										<viewOrder>0</viewOrder>
-									</moduleControl>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
 								</moduleControls>
 							</moduleDefinition>
 						</moduleDefinitions>

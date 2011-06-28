@@ -488,7 +488,7 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objec
 	BEGIN
 		-- Add new Column
 		ALTER TABLE {databaseOwner}{objectQualifier}ModuleControls
-			ADD SupportsPopUps bit NOT NULL CONSTRAINT DF_{objectQualifier}ModuleControls_SupportsPopUps DEFAULT ((1))
+			ADD SupportsPopUps bit NOT NULL CONSTRAINT DF_{objectQualifier}ModuleControls_SupportsPopUps DEFAULT ((0))
 	END
 GO
 

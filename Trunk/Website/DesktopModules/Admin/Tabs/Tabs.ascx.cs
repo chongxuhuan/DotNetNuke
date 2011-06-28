@@ -338,9 +338,9 @@ namespace DotNetNuke.Modules.Admin.Pages
                 case "edit":
                     if (TabPermissionController.CanManagePage(objTab))
                     {
-                        //Response.Redirect(Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId), true);
                         var editUrl = Globals.NavigateURL(objTab.TabID, "Tab", "action=edit", "returntabid=" + TabId);
-                        if (PortalSettings.EnablePopUps)
+                        // Prevent PageSettings of the current page in a popup if SSL is enabled and enforced, which causes redirection/javascript broswer security issues.                        
+                        if (PortalSettings.EnablePopUps && !(objTab.TabID == TabId && (PortalSettings.SSLEnabled && PortalSettings.SSLEnforced)))
                         {
                             editUrl = UrlUtils.PopUpUrl(editUrl, this, PortalSettings, true, false);
                             var script = string.Format("<script type=\"text/javascript\">{0}</script>", editUrl);
