@@ -2,7 +2,6 @@
 <manifest>
 	<template>DNNAdmin.xslt</template>
 	<scripts>
-    <script>jquery.hoverIntent.min.js</script>
     <script>jquery.dnnadminmega.js</script>
   </scripts>
   <defaultClientOptions>

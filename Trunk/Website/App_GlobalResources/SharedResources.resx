@@ -733,19 +733,13 @@
     <value>Congratulations:</value>
   </data>
   <data name="Wizard.Success.SuccessDetail" xml:space="preserve">
-    <value>&lt;p&gt;
-					Congratulations.  The Wizard completed successfully.
-				&lt;/p&gt;</value>
+    <value>&lt;p&gt;Congratulations.  The Wizard completed successfully.&lt;/p&gt;</value>
   </data>
   <data name="Wizard.Success.FailureTitle" xml:space="preserve">
     <value>Wizard Failed:</value>
   </data>
   <data name="Wizard.Success.FailureDetail" xml:space="preserve">
-    <value>				&lt;p&gt;
-					Unfortunately there was an error with this Wizard.  Please
-					review the message below, and check with your Provider.
-				&lt;/p&gt;
-</value>
+    <value>&lt;p&gt;Unfortunately there was an error with this Wizard.  Please review the message below, and check with your Provider.&lt;/p&gt;</value>
   </data>
   <data name="LOG.PAWriter.CreateManifest" xml:space="preserve">
     <value>Create manifest file. {0}</value>
@@ -1003,10 +997,10 @@
     <value>Insecure account details</value>
   </data>
   <data name="PrivateMembership.Text" xml:space="preserve">
-    <value>&lt;b&gt;*Note:&lt;/b&gt; Membership to this portal is Private. Once your account information has been submitted, the portal Administrator will be notified and your application will be subjected to a screening procedure. If your application is authorized, you will receive notification of your access to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Private. Once your account information has been submitted, the portal Administrator will be notified and your application will be subjected to a screening procedure. If your application is authorized, you will receive notification of your access to the portal environment.</value>
   </data>
   <data name="PublicMembership.Text" xml:space="preserve">
-    <value>&lt;b&gt;*Note:&lt;/b&gt; Membership to this portal is Public. Once your account information has been submitted, you will be immediately granted access to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Public. Once your account information has been submitted, you will be immediately granted access to the portal environment.</value>
   </data>
   <data name="Register.Text" xml:space="preserve">
     <value>User Registration</value>
@@ -1015,7 +1009,7 @@
     <value> All fields marked with a red arrow are required.</value>
   </data>
   <data name="VerifiedMembership.Text" xml:space="preserve">
-    <value>&lt;b&gt;*Note:&lt;/b&gt; Membership to this portal is Verified. Once your account information has been submitted, you will receive an email containing your unique Verification Code. The Verification Code will be required the first time you attempt to sign in to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Verified. Once your account information has been submitted, you will receive an email containing your unique Verification Code. The Verification Code will be required the first time you attempt to sign in to the portal environment.</value>
   </data>
   <data name="Captcha.Help" xml:space="preserve">
     <value>Enter the security code</value>
@@ -1039,10 +1033,10 @@
     <value>CAPTCHA image</value>
   </data>
   <data name="PrivateConfirmationMessage.Text" xml:space="preserve">
-    <value>&lt;b&gt;An e-mail with your details has been sent to the portal administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/b&gt;</value>
+    <value>&lt;strong&gt;An e-mail with your details has been sent to the portal administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/strong&gt;</value>
   </data>
   <data name="VerifiedConfirmationMessage.Text" xml:space="preserve">
-    <value>&lt;b&gt;An e-mail with your verification code has been sent to your e-mail address: {0}&lt;br&gt;Please access your in-box and get the verification code, which is required to log-in first time.&lt;/b&gt;</value>
+    <value>&lt;strong&gt;An e-mail with your verification code has been sent to your e-mail address: {0}&lt;br&gt;Please access your in-box and get the verification code, which is required to log-in first time.&lt;/strong&gt;</value>
   </data>
   <data name="DNN_ReadingComponent.Text" xml:space="preserve">
     <value>Reading Component Manifest</value>

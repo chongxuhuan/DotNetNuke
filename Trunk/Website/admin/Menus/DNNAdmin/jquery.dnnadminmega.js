@@ -35,12 +35,12 @@
         over: function () { return; }, // function = onMouseOver callback (REQUIRED)
         timeout: 300, // number = milliseconds delay before onMouseOut
         out: function () {
-            console.log("hover out");
             if (canHide) hideAll();
         } // function = onMouseOut callback (REQUIRED)
     };
 
     $(".dnnadminmega > .megaborder").css({ 'opacity': '0' }); //Fade sub nav to 0 opacity on default
+    $(".megaborder").find(".dnnPrimaryAction").css({ opacity: 1 });//Compact IE7
 
     $(".dnnadminmega > li").mouseenter(EnableHide); //Hovering over CP will re-enable hiding.
 

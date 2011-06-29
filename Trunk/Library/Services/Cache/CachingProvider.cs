@@ -160,6 +160,7 @@ namespace DotNetNuke.Services.Cache
             RemoveFormattedCacheKey(DataCache.ProfileDefinitionsCacheKey, clearRuntime, portalId);
             RemoveFormattedCacheKey(DataCache.ListsCacheKey, clearRuntime, portalId);
             RemoveFormattedCacheKey(DataCache.SkinsCacheKey, clearRuntime, portalId);
+            RemoveFormattedCacheKey(DataCache.PortalUserCountCacheKey, clearRuntime, portalId);
         }
 
         private void ClearDesktopModuleCacheInternal(int portalId, bool clearRuntime)

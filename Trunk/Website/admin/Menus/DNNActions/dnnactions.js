@@ -17,7 +17,8 @@
                         .prependTo($m).css({ opacity: 0 });
 					}
 					$m.attr('style', 'z-index:904;');
-					if (effectMenu) $m.find(opts.menuActionSelector).fadeTo(opts.fadeSpeed, opacity);
+					if (effectMenu)
+						$m.find(opts.menuActionSelector).fadeTo(opts.fadeSpeed, opacity);
 					$m.children('.' + opts.borderClassName).fadeTo(opts.fadeSpeed, opacity);
 				};
 
@@ -25,7 +26,8 @@
 				function hoverOut($m, opacity, effectMenu) {
 					$m.removeAttr('style');
 					$m.children('.' + opts.borderClassName).stop().fadeTo(opts.fadeSpeed, 0);
-					if (effectMenu) $m.find(opts.menuActionSelector).stop().fadeTo(opts.fadeSpeed, opacity);
+					if (effectMenu)
+						$m.find(opts.menuActionSelector).stop().fadeTo(opts.fadeSpeed, opacity);
 				}
 
 				$module.hoverIntent({
@@ -34,13 +36,13 @@
 					interval: opts.hoverInterval,
 					over: function () {
 						hoverOver($(this).data('intentExpressed', true), 1, true);
-						if (opts.debug) {
+						if (opts.debug && console) {
 							console.log('module hover intent over');
 						}
 					},
 					out: function () {
 						hoverOut($(this).data('intentExpressed', false), opts.defaultOpacity, true);
-						if (opts.debug) {
+						if (opts.debug && console) {
 							console.log('module hover intent out');
 						}
 					}
@@ -48,12 +50,12 @@
 
 				$module.hover(function () {
 					hoverOver($(this), opts.defaultOpacity, false);
-					if (opts.debug) {
+					if (opts.debug && console) {
 						console.log('module hover over');
 					}
 				},
                 function () {
-                	if (opts.debug) {
+                	if (opts.debug && console) {
                 		console.log('module hover out');
                 	}
                 	var $this = $(this);
@@ -79,7 +81,7 @@
 					timeout: opts.hoverTimeout,
 					interval: opts.hoverInterval,
 					over: function () {
-						if (opts.debug) {
+						if (opts.debug && console) {
 							console.log('module action menu hover intent over');
 						}
 
@@ -89,12 +91,14 @@
 
 					},
 					out: function () {
-						if (opts.debug) {
+						if (opts.debug && console) {
 							console.log('module action menu hover intent out');
 						}
 						$(this).find(opts.menuSelector).stop().fadeTo(opts.fadeSpeed, 0).hide();
 					}
 				});
+
+				$module.find(opts.menuActionSelector).children().css({ opacity: 1 });//Compact IE7
 
 				$module.find(opts.menuActionSelector).draggable({
 					containment: $module.children().eq(1)

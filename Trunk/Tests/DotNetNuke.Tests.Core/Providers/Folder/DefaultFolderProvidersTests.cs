@@ -23,14 +23,14 @@
 
 using System.Collections.Generic;
 
-using DotNetNuke.Services.FileSystem;
+using DotNetNuke.Services.FileSystem.Internal;
 
 using MbUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Folder
 {
     [TestFixture]
-    public class FolderProviderTests
+    public class DefaultFolderProvidersTests
     {
         #region GetDefaultProviders Tests
 
@@ -39,7 +39,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             var expectedValues = new List<string> { "StandardFolderProvider", "SecureFolderProvider", "DatabaseFolderProvider" };
 
-            var defaultProviders = FolderProvider.GetDefaultProviders();
+            var defaultProviders = DefaultFolderProviders.GetDefaultProviders();
 
             Assert.AreElementsEqual(expectedValues, defaultProviders);
         }

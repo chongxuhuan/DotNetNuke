@@ -579,11 +579,15 @@ namespace DotNetNuke.Services.Installer
                             }
                             else
                             {
-                                if (ManifestFile.Extension == "dnn" && file.Extension == "dnn5")
+                                if (file.Extension == "dnn6" && (ManifestFile.Extension == "dnn" || ManifestFile.Extension == "dnn5"))
+                                {
+                                   _ManifestFile = file; 
+                                }
+                                else if (file.Extension == "dnn5" && ManifestFile.Extension == "dnn")
                                 {
                                     _ManifestFile = file;
                                 }
-                                else
+                                else if (file.Extension == ManifestFile.Extension)
                                 {
                                     Log.AddFailure((Util.EXCEPTION_MultipleDnn + ManifestFile.Name + " and " + file.Name));
                                 }

@@ -252,7 +252,7 @@ Gallery.prototype.OwnerFilterGallery = function (owner) {
 Gallery.prototype.TagFilterGallery = function (e, caller) {
     e = e || window.event;
     var target = $((e.srcElement || e.target));
-    var filter = target.attr('value');
+    var filter = target.attr('tagId');
     this.action = "filter";
     if (filter) {
         this.tagFilter = filter;
@@ -423,8 +423,10 @@ Gallery.prototype.getExtensions = function (callback) {
         crossDomain: true,
         jsonp: false,
         url: url,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
+        dataType: "json",
+        dataFilter: function (data) {
+            return eval('(' + data + ')');
+        } 
     }).error(function () {
         _gallery.errorLoading(arguments);
     });
@@ -570,8 +572,10 @@ Gallery.prototype.getCatalogs = function () {
         crossDomain: true,
         jsonp: false,
         url: url,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
+        dataType: "json",
+        dataFilter: function (data) {
+            return eval('(' + data + ')');
+        } 
     }).error(function () {
         _gallery.errorLoading(arguments);
     });
@@ -602,8 +606,10 @@ Gallery.prototype.getTags = function (callback) {
         crossDomain: true,
         jsonp: false,
         url: url,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
+        dataType: "json",
+        dataFilter: function (data) {
+            return eval('(' + data + ')');
+        }
     }).error(function () {
         _gallery.errorLoading(arguments);
     });

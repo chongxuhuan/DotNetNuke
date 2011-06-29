@@ -126,7 +126,7 @@
 				<legend></legend>
 				<div id="cultureTypeRow" runat="server" visible="false" class="dnnFormItem">
 					<dnn:Label ID="cultureTypeLabel" runat="server" ControlName="cultureTypeList"></dnn:Label>
-					<asp:RadioButtonList ID="cultureTypeList" runat="server" CssClass="dnnFormRadioButtons" RepeatLayout="Flow">
+					<asp:RadioButtonList ID="cultureTypeList" runat="server" CssClass="dnnFormRadioButtons" RepeatDirection="Vertical">
 						<asp:ListItem Value="Neutral" resourcekey="Neutral" Selected="True" />
 						<asp:ListItem Value="Culture" resourcekey="Culture" />
 						<asp:ListItem Value="Localized" resourcekey="Localized" />

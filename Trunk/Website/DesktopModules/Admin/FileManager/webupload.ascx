@@ -10,7 +10,7 @@
         <div class="dnnFormItem">
             <dnn:Label ID="plBrowse" runat="server" ControlName="cmdBrowse" />
             <input id="cmdBrowse" type="file" size="50" name="cmdBrowse" runat="server" />
-            <asp:LinkButton ID="cmdAdd" runat="server" CssClass="dnnSecondaryAction"  />
+            <asp:LinkButton ID="cmdAdd" runat="server" CssClass="dnnPrimaryAction"  />
         </div>
         <div id="foldersRow" runat="server" visible="false" class="dnnFormItem">
             <dnn:Label ID="plFolder" runat="server" ControlName="ddlFolders" />
@@ -28,7 +28,7 @@
         <asp:Label id="maxSizeWarningLabel" runat="server" />
     </div>
     <ul class="dnnActions dnnClear">
-    	<li><asp:LinkButton id="cmdReturn1" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li>
+    	<li><asp:LinkButton id="cmdReturn1" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReturn" /></li>
     </ul>
 </div>
 <div id="tblLogs" runat="server" visible="False">
@@ -37,6 +37,6 @@
         <asp:PlaceHolder ID="phPaLogs" runat="server" />
     </div>
     <ul class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdReturn2" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdReturn" /></li>
+        <li><asp:LinkButton id="cmdReturn2" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdReturn" /></li>
     </ul>
 </div>

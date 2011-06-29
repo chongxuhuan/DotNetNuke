@@ -38,6 +38,7 @@ using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
+using DotNetNuke.UI.Skins.Controls;
 
 using ICSharpCode.SharpZipLib.Zip;
 using System.Net;
@@ -54,11 +55,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnLoad(e);
 
-            //cmdInstall.Click += cmdInstall_Click;
-            btnSnow.Click += BtnSnowClick;
+            fetchExtensions.Click += fetchExtensions_Click;
         }
 
-        protected void BtnSnowClick(object sender, EventArgs e)
+        protected void fetchExtensions_Click(object sender, EventArgs e)
         {
             if (CheckCanCallSnowcovered())
             {
@@ -69,8 +69,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         private void GetSnowcoveredFiles()
         {
-            string fileCheck = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-             HttpWebRequest oRequest;
+            string fileCheck = Localization.GetString("SnowCoveredFile", LocalResourceFile);
+            HttpWebRequest oRequest;
             WebResponse oResponse;
 
             //temp code for snowcovered feed issue
@@ -86,7 +86,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             catch (Exception)
             {
-                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                error.Visible = true;
                 throw;
             }
             //temp code to workaround snowcovered feed issue
@@ -106,12 +106,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         private bool CheckCanCallSnowcovered()
         {
-            //if (SecurityPolicy.HasWebPermission()==false)
-            //{
-            //    lblMessage.Text = Localization.GetString("WebservicePermission", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-            //    return false;
-            //}
-            string cookieCheck=Localization.GetString("SnowcoveredCookie", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+            string cookieCheck = Localization.GetString("SnowcoveredCookie", LocalResourceFile);
             
 
             //code added until snowcovered feed is changed
@@ -129,7 +124,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             string returnText = sReader.ReadToEnd();
             if (returnText.Contains(failCookie))
             {
-                lblMessage.Text = Localization.GetString("SnowcoveredLogin", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                loginWarning.Visible = true;
                 return false;
             }
             
@@ -165,10 +160,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
             catch (Exception)
             {
 
-                lblMessage.Text = Localization.GetString("WebserviceFailure", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
+                error.Visible = true;
                 return null;
             }
             
+        }
+
+        protected string GetLocalizedString(string key)
+        {
+            return Localization.GetString(key, LocalResourceFile);
         }
        
     }

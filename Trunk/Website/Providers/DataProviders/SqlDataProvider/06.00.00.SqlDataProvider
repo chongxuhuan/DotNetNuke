@@ -1072,10 +1072,11 @@ DECLARE @ViewOrder int
 DECLARE @DataType int
 
 --find DataType
-SELECT @DataType = EntryID FROM {databaseOwner}[{objectQualifier}Lists] WHERE ListName = N'DataType' and Value = N'PreferredTimeZone'
+SELECT @DataType = EntryID FROM {databaseOwner}[{objectQualifier}Lists] WHERE ListName = N'DataType' and Value = N'TimeZoneInfo'
 IF @DataType IS NULL
 BEGIN
-	SET @DataType = 363
+	INSERT INTO {databaseOwner}[{objectQualifier}Lists] ([ListName], [Value], [Text], [ParentID], [Level], [SortOrder], [DefinitionID], [Description], [PortalID], [SystemList], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]) VALUES (N'DataType', N'TimeZoneInfo', N'DotNetNuke.Web.UI.WebControls.DnnTimeZoneEditControl, DotNetNuke.Web', 0, 0, 0, -1, NULL, -1, 1, NULL, NULL, NULL, NULL)
+	SET @DataType = SCOPE_IDENTITY()
 END
 
 --Create new entry for Host
@@ -2364,8 +2365,8 @@ IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE Mo
 		SET @ModuleDefID = (SELECT ModuleDefID FROM {databaseOwner}{objectQualifier}ModuleDefinitions WHERE FriendlyName = 'Extensions')
 
 		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-			( ModuleDefID, ControlKey, ControlTitle, ControlSrc, ControlType )
-			VALUES ( @ModuleDefID, 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3 )
+			( ModuleDefID, ControlKey, ControlTitle, ControlSrc, ControlType, SupportsPartialRendering )
+			VALUES ( @ModuleDefID, 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3, 1 )
 	END
 GO
 
@@ -2570,7 +2571,20 @@ AS
 		AND (ModuleId = @ModuleId OR @ModuleId IS NULL)
 GO
 
+/* DNN-16695 - Breaking Change - TimeZone Profile Property Name */
+/****************************************************************/
 
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetPropertyDefinitionsByPortal]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetPropertyDefinitionsByPortal
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPropertyDefinitionsByPortal] 
+	@PortalID	int
+AS
+	SELECT	{databaseOwner}{objectQualifier}ProfilePropertyDefinition.*
+	FROM	{databaseOwner}{objectQualifier}ProfilePropertyDefinition
+	WHERE  (PortalId = @PortalID OR (PortalId IS NULL AND @PortalID IS NULL))		
+	ORDER BY ViewOrder
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

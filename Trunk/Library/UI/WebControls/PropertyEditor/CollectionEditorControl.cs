@@ -75,11 +75,7 @@ namespace DotNetNuke.UI.WebControls
         {
             get
             {
-                if (_UnderlyingDataSource == null)
-                {
-                    _UnderlyingDataSource = (IEnumerable) DataSource;
-                }
-                return _UnderlyingDataSource;
+                return (IEnumerable)DataSource;
             }
         }
 

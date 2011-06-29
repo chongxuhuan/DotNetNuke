@@ -104,7 +104,13 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 if (_profileProperties == null)
                 {
-                    _profileProperties = ProfileController.GetPropertyDefinitionsByPortal(UsersPortalId, false);
+                    _profileProperties = new ProfilePropertyDefinitionCollection();
+                    ProfilePropertyDefinitionCollection properties = ProfileController.GetPropertyDefinitionsByPortal(UsersPortalId, false);
+                    foreach (ProfilePropertyDefinition profProperty in properties)
+                    {
+                        if (!profProperty.Deleted)
+                            _profileProperties.Add(profProperty);
+                    }                    
                 }
                 return _profileProperties;
             }

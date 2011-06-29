@@ -129,6 +129,9 @@
   <data name="AddFileUnderlyingSystemError.Text" xml:space="preserve">
     <value>The underlying system threw an exception. The file has not been added.</value>
   </data>
+  <data name="AddFolderAlreadyExists.Text" xml:space="preserve">
+    <value>The provided folder path already exists. The folder has not been added.</value>
+  </data>
   <data name="AddFolderParentCannotBeFound.Text" xml:space="preserve">
     <value>Parent folder cannot be found.</value>
   </data>

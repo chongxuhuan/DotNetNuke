@@ -56,7 +56,7 @@
     </div>
     <script id="tag-tmpl" type="text/html">
 {{if tagName}}
-    <a href="javascript:void(0);" style="font-size:${fontSize}%" class="tag" alt="${tagName} (${TagCount})" title="${tagName} (${TagCount})" value="${tagID}">${tagName}</a>&nbsp;
+    <a href="javascript:void(0);" style="font-size:${fontSize}%" class="tag" alt="${tagName} (${TagCount})" title="${tagName} (${TagCount})" tagId="${tagID}">${tagName}</a>&nbsp;
 {{/if}}
     </script>
     <script id="eTmpl" type="text/x-jquery-tmpl">
@@ -70,25 +70,17 @@
                         {{else}}
                             <img  alt='${ExtensionName}' src='<%=ResolveUrl("~/images/System-Box-Empty-icon.png")%>' />
                         {{/if}}
+                        <div class='dnnProductPrice'>${_gallery.FormatCurrency(Price)}</div>
                     </div>
                     <div class="dnnProductDetails">
-                        <span class="dnnProductTitle">
-                            ${ExtensionName}
-                        </span>
-
-                        <span class="dnnProductOwner">
+                        <h3 class="dnnProductTitle">${ExtensionName}</h3>
+                        <p class="dnnProductOwner">
                             {{if OwnerName}}
                                     <%=LocalizeString("By") %> <a href="javascript:void(0)" onclick="_gallery.OwnerFilterGallery('${OwnerName}')">${OwnerName}</a>
                             {{/if}}
-                        </span>
-                    
-                        <span class="dnnProductDescriptionLabel">
-                            <%=LocalizeString("DescriptionLabel") %>
-                        </span>
-
-		                <span class='dnnProductDescription'>{{html Description}}</span>
-
-                        <span class="dnnProductLicense">    
+                        </p>
+		                <div class='dnnProductDescription'>{{html Description}}</div>
+                        <div class="dnnProductLicense">    
                             <span class="dnnProductLicenseLabel">
                                 <%=LocalizeString("License") %>
                             </span>
@@ -97,8 +89,8 @@
                             {{else}}
                                 <%=LocalizeString("NotSpecified") %>
                             {{/if}}
-                        </span>
-                        <span class="dnnProductVersion">    
+                        </div>
+                        <div class="dnnProductVersion">    
                             <span class="dnnProductVersionLabel">
                                 <%=LocalizeString("Version") %>
                             </span>
@@ -107,8 +99,7 @@
                             {{else}}
                                 <%=LocalizeString("NotSpecified") %>
                             {{/if}}
-                        </span>
-                        <span class='dnnProductPrice'>${_gallery.FormatCurrency(Price)}</span>
+                        </div>
                     </div>
                     <div class="dnnProductFooter  ${Catalog.CatalogCSS}">
             

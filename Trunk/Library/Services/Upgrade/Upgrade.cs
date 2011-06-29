@@ -2314,6 +2314,13 @@ namespace DotNetNuke.Services.Upgrade
             int moduleDefId = GetModuleDefinition("Languages", "Languages");
             RemoveModuleControl(moduleDefId, "TimeZone");
 
+            //6.0 requires the old TimeZone property to be marked as Deleted - Delete for Host
+            ProfilePropertyDefinition ppdHostTimeZone = ProfileController.GetPropertyDefinitionByName(Null.NullInteger, "TimeZone");
+            if (ppdHostTimeZone != null)
+            {
+                ProfileController.DeletePropertyDefinition(ppdHostTimeZone);
+            }
+
             var portalController = new PortalController();
             foreach (PortalInfo portal in portalController.GetPortals())
             {
@@ -2322,6 +2329,13 @@ namespace DotNetNuke.Services.Upgrade
                 TimeZoneInfo timeZoneInfo = Localization.Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(portal.TimeZoneOffset);                
 #pragma warning restore 612,618
                 PortalController.UpdatePortalSetting(portal.PortalID, "TimeZone", timeZoneInfo.Id, false);
+
+                //6.0 requires the old TimeZone property to be marked as Deleted - Delete for Portals
+                ProfilePropertyDefinition ppdTimeZone = ProfileController.GetPropertyDefinitionByName(portal.PortalID, "TimeZone");
+                if (ppdTimeZone != null)
+                {
+                    ProfileController.DeletePropertyDefinition(ppdTimeZone);
+                }
 
                 var adminTab = tabController.GetTab(portal.AdminTabId, portal.PortalID, false);
 

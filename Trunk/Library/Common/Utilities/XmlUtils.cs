@@ -174,7 +174,7 @@ namespace DotNetNuke.Common.Utilities
 
                 //Use the Deserialize method to restore the object's state, and store it
                 //in the Hashtable
-                objDictionary.Add(key, (TValue) xser.Deserialize(reader));
+                objDictionary.Add(key, (TValue)xser.Deserialize(reader));
             }
             return objDictionary;
         }
@@ -217,7 +217,7 @@ namespace DotNetNuke.Common.Utilities
         /// Gets the value of an attribute
         /// </summary>
         /// <param name="nav">Parent XPathNavigator</param>
-		/// <param name="attributeName">Thename of the Attribute</param>
+        /// <param name="attributeName">Thename of the Attribute</param>
         /// <returns></returns>
         /// <history>
         /// 	[cnurse]	05/14/2008	created
@@ -238,7 +238,7 @@ namespace DotNetNuke.Common.Utilities
             }
             return boolValue;
         }
-        
+
         public static int GetAttributeValueAsInteger(XPathNavigator navigator, string attributeName, int defaultValue)
         {
             int intValue = defaultValue;
@@ -267,7 +267,7 @@ namespace DotNetNuke.Common.Utilities
         /// <summary>
         /// Gets the value of a node
         /// </summary>
-		/// <param name="navigator">Parent XPathNavigator</param>
+        /// <param name="navigator">Parent XPathNavigator</param>
         /// <param name="path">The Xpath expression to the value</param>
         /// <returns></returns>
         /// <history>
@@ -285,12 +285,28 @@ namespace DotNetNuke.Common.Utilities
             return strValue;
         }
 
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets the value of node
         /// </summary>
         /// <param name="objNode">Parent node</param>
-		/// <param name="nodeName">Child node to look for</param>
+        /// <param name="nodeName">Child node to look for</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If the node does not exist or it causes any error the default value will be returned.
+        /// </remarks>
+        public static string GetNodeValue(XmlNode objNode, string nodeName)
+        {
+            return GetNodeValue(objNode, nodeName, String.Empty);
+        }
+        
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the value of node
+        /// </summary>
+        /// <param name="objNode">Parent node</param>
+        /// <param name="nodeName">Child node to look for</param>
         /// <param name="defaultValue">Default value to return</param>
         /// <returns></returns>
         /// <remarks>
@@ -320,7 +336,7 @@ namespace DotNetNuke.Common.Utilities
         /// Gets the value of node
         /// </summary>
         /// <param name="objNode">Parent node</param>
-		/// <param name="nodeName">Child node to look for</param>
+        /// <param name="nodeName">Child node to look for</param>
         /// <returns></returns>
         /// <remarks>
         /// If the node does not exist or it causes any error the default value (False) will be returned.
@@ -370,7 +386,7 @@ namespace DotNetNuke.Common.Utilities
         /// Gets the value of node
         /// </summary>
         /// <param name="objNode">Parent node</param>
-		/// <param name="nodeName">Child node to look for</param>
+        /// <param name="nodeName">Child node to look for</param>
         /// <param name="defaultValue">Default value to return</param>
         /// <returns></returns>
         /// <remarks>
@@ -403,8 +419,8 @@ namespace DotNetNuke.Common.Utilities
         /// <summary>
         /// Gets the value of node
         /// </summary>
-		/// <param name="node">Parent node</param>
-		/// <param name="nodeName">Child node to look for</param>
+        /// <param name="node">Parent node</param>
+        /// <param name="nodeName">Child node to look for</param>
         /// <returns></returns>
         /// <remarks>
         /// If the node does not exist or it causes any error the default value (0) will be returned.
@@ -453,7 +469,7 @@ namespace DotNetNuke.Common.Utilities
         /// <summary>
         /// Gets the value of node
         /// </summary>
-		/// <param name="node">Parent node</param>
+        /// <param name="node">Parent node</param>
         /// <param name="nodeName">Child node to look for</param>
         /// <returns></returns>
         /// <remarks>
@@ -532,7 +548,7 @@ namespace DotNetNuke.Common.Utilities
 
                 foreach (var key in source.Keys)
                 {
-					//Create the item Node
+                    //Create the item Node
                     XmlElement xmlItem = xmlDoc.CreateElement("item");
 
                     //Save the key name and the object type

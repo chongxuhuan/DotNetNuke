@@ -105,7 +105,7 @@ namespace DotNetNuke.UI.WebControls
         /// -----------------------------------------------------------------------------
         protected virtual IEnumerable UnderlyingDataSource
         {
-            get { return _underlyingDataSource ?? (_underlyingDataSource = GetProperties()); }
+            get { return GetProperties(); }
         }
 		
 		#endregion

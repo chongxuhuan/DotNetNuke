@@ -359,11 +359,6 @@ namespace DotNetNuke.Entities.Users
                 {
                     _TimeZone = TimeZoneInfo.FindSystemTimeZoneById(_TimeZoneId);
                 }
-                //Check if old offset setting is still around.
-                else if (LegacyTimeZone != Null.NullInteger)
-                {
-                    _TimeZone = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(LegacyTimeZone);
-                }
                 //Next check if there is a Portal Setting
                 else
                 {
@@ -385,8 +380,7 @@ namespace DotNetNuke.Entities.Users
             }
             set
             {
-                SetProfileProperty(cPreferredTimeZone, value.Id);
-                LegacyTimeZone = Convert.ToInt32(value.BaseUtcOffset.TotalMinutes);
+                SetProfileProperty(cPreferredTimeZone, value.Id);                
             }
         }
 
@@ -637,21 +631,8 @@ namespace DotNetNuke.Entities.Users
         #region "Obsolete"
 
         [Obsolete("Deprecated in DNN 6.0. Replaced by PreferredTimeZone.")]
-        [Browsable(false)]
+        [Browsable(false)]    
         public int TimeZone
-        {
-            get
-            {
-                return Convert.ToInt32(PreferredTimeZone.BaseUtcOffset.TotalMinutes);
-            }
-            set
-            {
-                PreferredTimeZone = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(value);
-            }
-        }
-
-        //this private property is created to simply remove obsolete warnings and clarity of code
-        private int LegacyTimeZone
         {
             get
             {

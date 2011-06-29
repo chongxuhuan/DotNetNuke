@@ -72,11 +72,7 @@ namespace DotNetNuke.UI.WebControls
         {
             get
             {
-                if (_UnderlyingDataSource == null)
-                {
-                    _UnderlyingDataSource = GetSettings();
-                }
-                return _UnderlyingDataSource;
+                return GetSettings();
             }
         }
 

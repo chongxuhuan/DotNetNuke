@@ -222,7 +222,7 @@
   <PropertyGroup>
     <Extension>resources</Extension>
     <DNNFileName>RazorHost</DNNFileName>
-    <PackageName>RazorHost</PackageName>
+    <PackageName>DNNCE_RazorHost_(Requires_Net_4)</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
   </PropertyGroup>
   <Import Project="..\..\BuildScripts\ModulePackage.Targets" />

@@ -149,9 +149,8 @@
             stopAnimation();
         }
     </script>
-
     <form id="form1" runat="server">
-        <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">
+    <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">
             <asp:Wizard ID="wizInstall" runat="server" 
                 ActiveStepIndex="0"
                 Font-Names="Verdana" CellPadding="5" CellSpacing="5"
@@ -160,265 +159,274 @@
                 StartNextButtonType="Link" 
                 StepNextButtonType="Link"
                 StepPreviousButtonType="Link" 
-                DisplaySideBar="false">
-                <StepStyle VerticalAlign="Top" />
-                <StartNavigationTemplate>
-                    <ul class="dnnActions dnnClear">
+            DisplaySideBar="false">
+            <StepStyle VerticalAlign="Top" />
+            <StartNavigationTemplate>
+                <ul class="dnnActions dnnClear">
     	                <li><asp:LinkButton id="StartNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" /></li>
-                    </ul>
-                </StartNavigationTemplate>
-                <StepNavigationTemplate>
-                    <ul class="dnnActions dnnClear">
+                </ul>
+            </StartNavigationTemplate>
+            <StepNavigationTemplate>
+                <ul class="dnnActions dnnClear">
     	                <li><asp:LinkButton id="StepNextButton" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" /></li>
                         <li><asp:LinkButton id="StepPreviousButton" runat="server" CssClass="dnnSecondaryAction" CommandName="MovePrevious" /></li>
                         <li><asp:LinkButton id="CustomButton" runat="server" CssClass="dnnSecondaryAction" Visible="false" /></li>
-                    </ul>
-                </StepNavigationTemplate>
-                <HeaderTemplate>
-                    <img src="../images/branding/logo.gif" border="0" alt="DotNetNuke">
-                </HeaderTemplate>
-                <WizardSteps>
-                    <asp:WizardStep ID="Step0" runat="Server" Title="Welcome">
+                </ul>
+            </StepNavigationTemplate>
+            <HeaderTemplate>
+                <img src="../images/branding/logo.gif" border="0" alt="DotNetNuke">
+            </HeaderTemplate>
+            <WizardSteps>
+                <asp:WizardStep ID="Step0" runat="Server" Title="Welcome">
                         <h2><asp:Label ID="lblStep0Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep0Detail" runat="Server" />
-                        <hr />
-                        <div id="languagePanel" runat="server" class="dnnForm">
-                            <div class="dnnFormItem">
+                    <asp:Label ID="lblStep0Detail" runat="Server" />
+                    <hr />
+                    <div id="languagePanel" runat="server" class="dnnForm">
+                        <div class="dnnFormItem">
                                 <label for="<%=installTypeRadioButton.ClientID%>"><%=LocalizeString("ChooseInstall")%></label>
                                 <asp:RadioButtonList ID="installTypeRadioButton" runat="Server" RepeatDirection="Vertical" CssClass="installRadioButtons" />
-                            </div>                   
-                            <div class="dnnFormItem">
+                        </div>
+                        <div class="dnnFormItem">
                                 <label for="<%=cboLanguages.ClientID%>"><%=LocalizeString("ChooseLanguage")%></label>
                                 <asp:DropDownList ID="cboLanguages" AutoPostBack="true" runat="Server" DataTextField="Text" DataValueField="Code" />
-                            </div>
-                        </div>                   
-                        <asp:Label ID="lblDataBaseWarning" runat="server" CssClass="NormalRed" ResourceKey="DatabaseWarning" />
-                        <asp:Label ID="lblHostWarning" runat="server" CssClass="NormalRed" ResourceKey="HostWarning" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step1" runat="server" Title="FilePermissions">
+                        </div>
+                    </div>
+                    <asp:Label ID="lblDataBaseWarning" runat="server" CssClass="NormalRed" ResourceKey="DatabaseWarning" />
+                    <asp:Label ID="lblHostWarning" runat="server" CssClass="NormalRed" ResourceKey="HostWarning" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step1" runat="server" Title="FilePermissions">
                         <h2><asp:Label ID="lblStep1Title" runat="server"  resourceKey="PermissionsTitle" /></h2>
-                        <asp:Label ID="lblStep1Detail" runat="Server"  resourceKey= "PermissionsDetail"/>
-                        <hr />
-                        <div class="dnnForm">
-                            <div class="dnnFormItem">
+                    <asp:Label ID="lblStep1Detail" runat="Server" resourceKey="PermissionsDetail" />
+                    <hr />
+                    <div class="dnnForm">
+                        <div class="dnnFormItem">
                                 <label for="<%=lstPermissions.ClientID%>"><%=LocalizeString("Permissions")%></label>
-                            </div>
-                            <div class="dnnFormItem">
-                                <asp:CheckBoxList ID="lstPermissions" runat="server" CssClass="permissionsCheckBoxes" DataTextField="Name" DataValueField="Permission" TextAlign="Left" />
-                            </div>
                         </div>
-                        <asp:Label ID="lblPermissionsError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step2" runat="server" Title="ConnectionString" AllowReturn="false">
+                        <div class="dnnFormItem">
+                                <asp:CheckBoxList ID="lstPermissions" runat="server" CssClass="permissionsCheckBoxes" DataTextField="Name" DataValueField="Permission" TextAlign="Left" />
+                        </div>
+                    </div>
+                    <asp:Label ID="lblPermissionsError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step2" runat="server" Title="ConnectionString" AllowReturn="false">
                         <h2><asp:Label ID="lblStep2Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep2Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep2Detail" runat="Server" />
+                    <hr />
+                    <div class="dnnForm">
+                        <div class="dnnFormItem">
+                                <label for="<%=rblDatabases.ClientID%>"><%=LocalizeString("ChooseDatabase")%></label>
+                            <asp:RadioButtonList ID="rblDatabases" runat="Server" CssClass="databaseRadioButtons"
+                                AutoPostBack="true" RepeatDirection="Vertical" RepeatColumns="1" />
+                        </div>
+                    </div>
+                    <div id="databasePanel" runat="Server" visible="False" class="dnnForm">
+                        <div class="dnnFormItem">
+                            <dnn:Label runat="server" ResourceKey="Server" HelpKey="ServerHelp" ControlName="txtServer" />
+                            <asp:TextBox ID="txtServer" runat="Server" />
+                        </div>
+                        <div id="fileRow" runat="server" class="dnnFormItem">
+                            <dnn:Label ResourceKey="DatabaseFile" HelpKey="DatabaseFileHelp" runat="server" ControlName="txtFile" />
+                            <asp:TextBox ID="txtFile" runat="Server" />
+                        </div>
+                        <div id="databaseRow" runat="server" class="dnnFormItem">
+                            <dnn:Label ResourceKey="Database" HelpKey="DatabaseHelp" runat="server" ControlName="txtDatabase" />
+                            <asp:TextBox ID="txtDatabase" runat="Server" />
+                        </div>
+                        <div id="integratedRow" runat="server" class="dnnFormItem">
+                            <dnn:Label runat="server" ResourceKey="Integrated" HelpKey="IntegratedHelp" ControlName="chkIntegrated" />
+                            <asp:CheckBox ID="chkIntegrated" runat="Server" AutoPostBack="True" />
+                        </div>
+                        <div id="userRow" runat="server" class="dnnFormItem">
+                            <dnn:Label runat="server" ControlName="txtUserId" ResourceKey="UserId" HelpKey="UserHelp" />
+                            <asp:TextBox ID="txtUserId" runat="Server" />
+                        </div>
+                        <div id="passwordRow" runat="server" class="dnnFormItem">
+                            <dnn:Label runat="server" ControlName="txtPassword" ResourceKey="Password" HelpKey="PasswordHelp" />
+                            <asp:TextBox ID="txtPassword" runat="Server" TextMode="Password" />
+                        </div>
+                        <div class="dnnFormItem">
+                            <dnn:Label runat="server" ControlName="chkOwner" ResourceKey="Owner" HelpKey="OwnerHelp" />
+                            <asp:CheckBox ID="chkOwner" runat="Server" />
+                        </div>
+                        <div class="dnnFormItem">
+                            <dnn:Label runat="server" ControlName="txtqualifier" ResourceKey="Qualifier" HelpKey="QualifierHelp" />
+                            <asp:TextBox ID="txtqualifier" runat="Server" />
+                        </div>
+                    </div>
+                    <br />
+                    <asp:Label ID="lblDataBaseError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step3" runat="server" Title="Database" AllowReturn="false">
+                        <h2><asp:Label ID="lblStep3Title" runat="server" /></h2>
+                    <asp:Label ID="lblStep3Detail" runat="Server" />
+                    <br />
+                        <div id="Progress"><asp:Label ID="Label5" runat="server" resourceKey="Installing" /></div>
+                    <br />
+                    <textarea id="txtFeedback" class="FeedBack" cols="80" rows="15"></textarea>
+                    <asp:Label ID="lblInstallError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step4" runat="server" Title="HostSettings" AllowReturn="false">
+                        <h2><asp:Label ID="lblStep4Title" runat="server" /></h2>
+                    <asp:Label ID="lblStep4Detail" runat="Server" />
+                    <hr />
+                    <dnn:WizardUser ID="usrHost" runat="server" />
+                    <hr />
+                    <asp:Panel ID="SMTPSettingsPanel" runat="server" Visible="false">
+                            <h3><asp:Label ID="lblSMTPSettings" runat="server" /></h3>
+                        <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
                         <div class="dnnForm">
                             <div class="dnnFormItem">
-                                <label for="<%=rblDatabases.ClientID%>"><%=LocalizeString("ChooseDatabase")%></label>
-                                <asp:RadioButtonList ID="rblDatabases" runat="Server" CssClass="databaseRadioButtons" 
-                                        AutoPostBack="true" RepeatDirection="Vertical" RepeatColumns="1" />
-                            </div>
-                        </div>
-                        <div id="databasePanel" runat="Server" visible="False" class="dnnForm">
-                            <div class="dnnFormItem">
-                                <dnn:Label runat="server"  ResourceKey="Server" HelpKey="ServerHelp" ControlName="txtServer" />
-                                <asp:TextBox ID="txtServer" runat="Server" />
-                            </div>
-                            <div id="fileRow" runat="server" class="dnnFormItem">
-                                <dnn:Label  ResourceKey="DatabaseFile" HelpKey="DatabaseFileHelp" runat="server" ControlName="txtFile" />
-                                <asp:TextBox ID="txtFile" runat="Server" />
-                            </div>
-                            <div id="databaseRow" runat="server" class="dnnFormItem">
-                                <dnn:Label ResourceKey="Database" HelpKey="DatabaseHelp" runat="server" ControlName="txtDatabase" />
-                                <asp:TextBox ID="txtDatabase" runat="Server" />
-                            </div>
-                            <div id="integratedRow" runat="server" class="dnnFormItem">
-                                <dnn:Label runat="server" ResourceKey="Integrated" HelpKey="IntegratedHelp" ControlName="chkIntegrated" />
-                                <asp:CheckBox ID="chkIntegrated" runat="Server" AutoPostBack="True" />
-                            </div>
-                            <div id="userRow" runat="server" class="dnnFormItem">
-                                <dnn:Label runat="server" ControlName="txtUserId" ResourceKey="UserId" HelpKey="UserHelp" />
-                                <asp:TextBox ID="txtUserId" runat="Server" />
-                            </div>
-                            <div id="passwordRow" runat="server" class="dnnFormItem">
-                                <dnn:Label runat="server" ControlName="txtPassword" ResourceKey="Password" HelpKey="PasswordHelp"  />
-                                <asp:TextBox ID="txtPassword" runat="Server" TextMode="Password" />
-                            </div>
-                            <div class="dnnFormItem">
-                                <dnn:Label runat="server" ControlName="chkOwner" ResourceKey="Owner" HelpKey="OwnerHelp" />
-                                <asp:CheckBox ID="chkOwner" runat="Server" />
-                            </div>
-                            <div class="dnnFormItem">
-                                <dnn:Label runat="server" ControlName="txtqualifier" ResourceKey="Qualifier" HelpKey="QualifierHelp"  />
-                                <asp:TextBox ID="txtqualifier" runat="Server" />
-                            </div>
-                        </div>
-                        <br />
-                        <asp:Label ID="lblDataBaseError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step3" runat="server" Title="Database" AllowReturn="false">
-                        <h2><asp:Label ID="lblStep3Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep3Detail" runat="Server" />
-                        <br />
-                        <div id="Progress"><asp:Label ID="Label5" runat="server" resourceKey="Installing" /></div>
-                        <br />
-                        <textarea id="txtFeedback" class="FeedBack" cols="80" rows="15"></textarea>
-                        <asp:Label ID="lblInstallError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step4" runat="server" Title="HostSettings" AllowReturn="false">
-                        <h2><asp:Label ID="lblStep4Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep4Detail" runat="Server" />
-                        <hr />
-                        <dnn:WizardUser ID="usrHost" runat="server" />
-                        <hr />
-                        <asp:Panel ID="SMTPSettingsPanel" runat="server" Visible="false">
-                            <h3><asp:Label ID="lblSMTPSettings" runat="server" /></h3>
-                            <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
-                            <div class="dnnForm">
-                                <div class="dnnFormItem">
 									<label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
-                                    <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256"  />
-                                </div>                   
-                                <div class="dnnFormItem">
+                                <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256" />
+                            </div>
+                            <div class="dnnFormItem">
 									<label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
-                                    <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
-                                        <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
-                                        <asp:ListItem Value="1" resourcekey="SMTPBasic" />
-                                        <asp:ListItem Value="2" resourcekey="SMTPNTLM" />
-                                    </asp:RadioButtonList>
-                                </div>
-                                <div class="dnnFormItem">
+                                <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
+                                    <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
+                                    <asp:ListItem Value="1" resourcekey="SMTPBasic" />
+                                    <asp:ListItem Value="2" resourcekey="SMTPNTLM" />
+                                </asp:RadioButtonList>
+                            </div>
+                            <div class="dnnFormItem">
 									<label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
                                     <asp:Checkbox ID="chkSMTPEnableSSL" runat="server" />
-                                </div>                           
-                                <div id="SMTPUserNameRow" class="dnnFormItem">
+                            </div>
+                            <div id="SMTPUserNameRow" class="dnnFormItem">
 									<label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
-                                    <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256"  />
-                                </div>                   
-                                <div id="SMTPPasswordRow" class="dnnFormItem">
+                                <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256" />
+                            </div>
+                            <div id="SMTPPasswordRow" class="dnnFormItem">
 									<label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
-                                    <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password"  />
-                                </div>                   
+                                <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password" />
                             </div>
-                        </asp:Panel>
-                        <asp:Label ID="lblHostUserError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step5" runat="server" Title="Modules" AllowReturn="false">
+                        </div>
+                    </asp:Panel>
+                    <asp:Label ID="lblHostUserError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step5" runat="server" Title="Modules" AllowReturn="false">
                         <h2><asp:Label ID="lblStep5Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep5Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep5Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblModules" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstModules" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoModules" runat="server" />
-                        <hr />
-                        <asp:Label ID="lblModulesError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step6" runat="server" Title="Skins" AllowReturn="false">
+                    <asp:CheckBoxList ID="lstModules" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoModules" runat="server" />
+                    <hr />
+                    <asp:Label ID="lblModulesError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step6" runat="server" Title="Skins" AllowReturn="false">
                         <h2><asp:Label ID="lblStep6Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep6Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep6Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblSkins" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstSkins" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoSkins" runat="server" />
-                        <br />
+                    <asp:CheckBoxList ID="lstSkins" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoSkins" runat="server" />
+                    <br />
                         <h3><asp:Label ID="lblContainers" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstContainers" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoContainers" runat="server" />
-                        <hr />
-                        <asp:Label ID="lblSkinsError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step7" runat="server" Title="Languages" AllowReturn="false">
+                    <asp:CheckBoxList ID="lstContainers" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoContainers" runat="server" />
+                    <hr />
+                    <asp:Label ID="lblSkinsError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step7" runat="server" Title="Languages" AllowReturn="false">
                         <h2><asp:Label ID="lblStep7Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep7Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep7Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblLanguages" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstLanguages" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoLanguages" runat="server" />
-                        <hr />
-                        <asp:Label ID="lblLanguagesError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step8" runat="server" Title="AuthSystems" AllowReturn="false">
+                    <asp:CheckBoxList ID="lstLanguages" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoLanguages" runat="server" />
+                    <hr />
+                    <asp:Label ID="lblLanguagesError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step8" runat="server" Title="AuthSystems" AllowReturn="false">
                         <h2><asp:Label ID="lblStep8Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep8Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep8Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblAuthSystems" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstAuthSystems" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoAuthSystems" runat="server" />
-                        <hr />
-                        <asp:Label ID="lblAuthSystemsError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step9" runat="server" Title="Providers" AllowReturn="false">
+                    <asp:CheckBoxList ID="lstAuthSystems" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoAuthSystems" runat="server" />
+                    <hr />
+                    <asp:Label ID="lblAuthSystemsError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step9" runat="server" Title="Providers" AllowReturn="false">
                         <h2><asp:Label ID="lblStep9Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep9Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep9Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblProviders" runat="server" /></h3>
-                        <asp:CheckBoxList ID="lstProviders" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
-                        <asp:Label ID="lblNoProviders" runat="server" />
-                        <hr />
-                        <asp:Label ID="lblProvidersError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Step10" runat="server" Title="Portal" AllowReturn="false">
+                    <asp:CheckBoxList ID="lstProviders" runat="server" RepeatColumns="3" RepeatDirection="Horizontal" />
+                    <asp:Label ID="lblNoProviders" runat="server" />
+                    <hr />
+                    <asp:Label ID="lblProvidersError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Step10" runat="server" Title="Portal" AllowReturn="false">
                         <h2><asp:Label ID="lblStep10Title" runat="server" /></h2>
-                        <asp:Label ID="lblStep10Detail" runat="Server" />
-                        <hr />
+                    <asp:Label ID="lblStep10Detail" runat="Server" />
+                    <hr />
                         <h3><asp:Label ID="lblAdminUser" runat="server" /></h3>
-                        <dnn:WizardUser ID="usrAdmin" runat="server" />
-                        <hr />
+                    <dnn:WizardUser ID="usrAdmin" runat="server" />
+                    <hr />
                         <h3><asp:Label ID="lblPortal" runat="server" /></h3>
-                        <div class="dnnForm">
-                            <div class="dnnFormItem">
+                    <div class="dnnForm">
+                        <div class="dnnFormItem">
                                 <label for="<%=txtPortalTitle.ClientID%>"><%=LocalizeString("PortalTitle")%></label>
-                                <asp:TextBox ID="txtPortalTitle" runat="server" MaxLength="128"  />
-                            </div>
-                            <div class="dnnFormItem">
+                            <asp:TextBox ID="txtPortalTitle" runat="server" MaxLength="128" />
+                        </div>
+                        <div class="dnnFormItem">
                                 <label for="<%=cboPortalTemplate.ClientID%>"><%=LocalizeString("PortalTemplate")%></label>
-                                <asp:DropDownList ID="cboPortalTemplate" runat="server"  />
-                            </div>
-                        </div>                   
-                        <asp:Label ID="lblPortalError" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="Complete" runat="server" StepType="Finish" Title="Installation Complete">
+                            <asp:DropDownList ID="cboPortalTemplate" runat="server" />
+                        </div>
+                    </div>
+                    <asp:Label ID="lblPortalError" runat="server" />
+                </asp:WizardStep>
+                <asp:WizardStep ID="Complete" runat="server" StepType="Finish" Title="Installation Complete">
                         <h2><asp:Label ID="lblCompleteTitle" runat="server" /></h2>
-                        <asp:Label ID="lblCompleteDetail" runat="server" />
-                    </asp:WizardStep>
-                </WizardSteps>
-            </asp:Wizard>
-        </div>
-        <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />
-        <input type="hidden" id="__dnnVariable" runat="server" />
-        <asp:Label ID="txtErrorMessage" runat="server" />
+                    <asp:Label ID="lblCompleteDetail" runat="server" />
+                </asp:WizardStep>
+            </WizardSteps>
+        </asp:Wizard>
+    </div>
+    <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />
+    <input type="hidden" id="__dnnVariable" runat="server" />
+    <asp:Label ID="txtErrorMessage" runat="server" />
     </form>
     <script type="text/javascript">
-    /*globals jQuery, window, Sys */
-    (function ($, Sys) {
-    	function toggleSmtpCredentials() {
-    		var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
-    		if (smtpVal == "1") {
-    			$('#SMTPUserNameRow,#SMTPPasswordRow').slideDown();
-    		}
-    		else {
-    			$('#SMTPUserNameRow,#SMTPPasswordRow').slideUp();
-    		}
-    	}
 
-    	function setUp() {
-    		if (pageNo === 4) {
-    			toggleSmtpCredentials();
-    			$('#<%= optSMTPAuthentication.ClientID %>').click(function () {
-    				toggleSmtpCredentials();
-    			});
-    		}
-    	}
+        //This code is to force a refresh of browser cache
+        //in case an old version of dnn.js is loaded
+        //It should be removed as soon as .js versioning is added
+        jQuery(document).ready(function () {
+            if (jQuery != $)
+                window.location.reload(true);
+        });
 
-    	$(document).ready(function () {
-    		installScripts();
-    		setUp();
-    		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-    			setUp();
-    		});
-    	});
-    } (jQuery, window.Sys));
+        /*globals jQuery, window, Sys */
+        (function ($, Sys) {
+            function toggleSmtpCredentials() {
+                var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); //0,1,2
+                if (smtpVal == "1") {
+                    $('#SMTPUserNameRow,#SMTPPasswordRow').slideDown();
+                }
+                else {
+                    $('#SMTPUserNameRow,#SMTPPasswordRow').slideUp();
+                }
+            }
+
+            function setUp() {
+                if (pageNo === 4) {
+                    toggleSmtpCredentials();
+                    $('#<%= optSMTPAuthentication.ClientID %>').click(function () {
+                        toggleSmtpCredentials();
+                    });
+                }
+            }
+
+            $(document).ready(function () {
+                installScripts();
+                setUp();
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                    setUp();
+                });
+            });
+        } (jQuery, window.Sys));
     </script>
 </body>
 </html>

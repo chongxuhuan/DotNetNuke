@@ -165,4 +165,7 @@
   <data name="AllCategories.Text" xml:space="preserve">
     <value>All Categories</value>
   </data>
+  <data name="hlMoreExtensions.Text" xml:space="preserve">
+    <value>Find More Extensions</value>
+  </data>
 </root>

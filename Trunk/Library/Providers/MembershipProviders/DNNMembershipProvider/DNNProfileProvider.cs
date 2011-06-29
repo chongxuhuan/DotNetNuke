@@ -113,10 +113,6 @@ namespace DotNetNuke.Security.Profile
         {
             int portalId;
             int definitionId;
-            string oldTimeZone = string.Empty;
-            string newTimeZone = string.Empty;
-            int oldTimeZoneDefinitionId = Null.NullInteger;
-            int newTimeZoneDefinitionId = Null.NullInteger;
 
             ProfilePropertyDefinition profProperty;
             ProfilePropertyDefinitionCollection properties;
@@ -149,32 +145,6 @@ namespace DotNetNuke.Security.Profile
                         {
                             profProperty.PropertyValue = Convert.ToString(dr["PropertyValue"]);
                             profProperty.Visibility = (UserVisibilityMode) dr["Visibility"];
-
-                            if(profProperty.PropertyName == "TimeZone")
-                            {
-                                oldTimeZone = profProperty.PropertyValue;
-                                oldTimeZoneDefinitionId = definitionId;
-                            }
-                            if (profProperty.PropertyName == "PreferredTimeZone")
-                            {
-                                newTimeZone = profProperty.PropertyValue;
-                                newTimeZoneDefinitionId = definitionId;
-                            }
-                        }
-                    }
-                    //lazy load time zone info...this is an anti-pattern
-                    //old timezone is present but new is not...we will set that up.
-                    if(!string.IsNullOrEmpty(oldTimeZone) && string.IsNullOrEmpty(newTimeZone))
-                    {
-                        ProfilePropertyDefinition oldTimeZoneProfProperty = properties.GetById(oldTimeZoneDefinitionId);
-                        ProfilePropertyDefinition newTimeZoneProfProperty = properties.GetById(newTimeZoneDefinitionId);
-                        if (oldTimeZoneProfProperty != null && newTimeZoneProfProperty != null) //redundant check
-                        {
-                            int oldOffset;
-                            int.TryParse(oldTimeZoneProfProperty.PropertyValue, out oldOffset);
-                            TimeZoneInfo timeZoneInfo = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(oldOffset);
-                            newTimeZoneProfProperty.PropertyValue = timeZoneInfo.Id;
-                            UpdateUserProfile(user);
                         }
                     }
                 }
@@ -183,7 +153,7 @@ namespace DotNetNuke.Security.Profile
                     CBO.CloseDataReader(dr, true);
                 }
             }
-			
+                      
             //Clear the profile
             user.Profile.ProfileProperties.Clear();
             
@@ -197,9 +167,34 @@ namespace DotNetNuke.Security.Profile
                 }
                 user.Profile.ProfileProperties.Add(profProperty);
             }
-			
+
             //Clear IsDirty Flag
             user.Profile.ClearIsDirty();
+
+            //Ensure old and new TimeZone properties are in synch
+            ProfilePropertyDefinition newTimeZone = properties["PreferredTimeZone"];
+            ProfilePropertyDefinition oldTimeZone = properties["TimeZone"];
+            if (newTimeZone != null && oldTimeZone != null)
+            {
+                //Old timezone is present but new is not...we will set that up.
+                if (!string.IsNullOrEmpty(oldTimeZone.PropertyValue) && string.IsNullOrEmpty(newTimeZone.PropertyValue))
+                {
+                    int oldOffset;
+                    int.TryParse(oldTimeZone.PropertyValue, out oldOffset);
+                    TimeZoneInfo timeZoneInfo = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(oldOffset);
+                    newTimeZone.PropertyValue = timeZoneInfo.Id;
+                    UpdateUserProfile(user);
+                }
+                //It's also possible that the new value is set but not the old value. We need to make them backwards compatible
+                else if (!string.IsNullOrEmpty(newTimeZone.PropertyValue) && string.IsNullOrEmpty(oldTimeZone.PropertyValue))
+                {
+                    TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
+                    if (timeZoneInfo != null)
+                    {
+                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();                        
+                    }
+                }
+            }			
         }
 
         /// -----------------------------------------------------------------------------
@@ -216,6 +211,27 @@ namespace DotNetNuke.Security.Profile
         public override void UpdateUserProfile(UserInfo user)
         {
             ProfilePropertyDefinitionCollection properties = user.Profile.ProfileProperties;
+
+            //Ensure old and new TimeZone properties are in synch
+            ProfilePropertyDefinition newTimeZone = properties["PreferredTimeZone"];
+            ProfilePropertyDefinition oldTimeZone = properties["TimeZone"];
+            if (oldTimeZone != null && newTimeZone != null)
+            {   //preference given to new property, if new is changed then old should be updated as well.
+                if (newTimeZone.IsDirty && !string.IsNullOrEmpty(newTimeZone.PropertyValue))
+                {
+                    TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
+                    if (timeZoneInfo != null)
+                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();
+                }
+                //however if old is changed, we need to update new as well
+                else if (oldTimeZone.IsDirty)
+                {
+                    int oldOffset;
+                    int.TryParse(oldTimeZone.PropertyValue, out oldOffset);
+                    newTimeZone.PropertyValue = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(oldOffset).Id;                    
+                }
+            }
+            
             foreach (ProfilePropertyDefinition profProperty in properties)
             {
                 if ((profProperty.PropertyValue != null) && (profProperty.IsDirty))

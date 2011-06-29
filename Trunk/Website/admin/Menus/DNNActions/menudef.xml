@@ -2,7 +2,6 @@
 <manifest>
   <template>ULXSLT.xslt</template>
   <scripts>
-    <script>jquery.hoverIntent.min.js</script>
     <script>dnnactions.js</script>
   </scripts>
 </manifest>

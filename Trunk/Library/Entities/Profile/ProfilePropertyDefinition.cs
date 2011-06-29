@@ -71,6 +71,7 @@ namespace DotNetNuke.Entities.Profile
         private int _ViewOrder;
         private UserVisibilityMode _Visibility = UserVisibilityMode.AdminOnly;
         private bool _Visible;
+        private bool _Deleted;
 
         public ProfilePropertyDefinition()
         {
@@ -203,6 +204,24 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Deleted
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        [Browsable(false)]
+        [XmlIgnore]
+        public bool Deleted
+        {
+            get
+            {
+                return _Deleted;
+            }
+            set
+            {
+                _Deleted = value;
+            }
+        }
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the PortalId
@@ -512,6 +531,7 @@ namespace DotNetNuke.Entities.Profile
             objClone.DefaultVisibility = DefaultVisibility;
             objClone.Visibility = Visibility;
             objClone.Visible = Visible;
+            objClone.Deleted = Deleted;
             objClone.ClearIsDirty();
             return objClone;
         }

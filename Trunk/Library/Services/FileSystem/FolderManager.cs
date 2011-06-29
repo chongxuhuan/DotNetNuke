@@ -69,6 +69,11 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
+            if (FolderExists(folderMapping.PortalID, folderPath))
+            {
+                throw new FolderAlreadyExistsException(Localization.Localization.GetExceptionMessage("AddFolderAlreadyExists", "The provided folder path already exists. The folder has not been added."));
+            }
+
             try
             {
                 FolderProvider.Instance(folderMapping.FolderProviderType).AddFolder(folderPath, folderMapping);
@@ -524,7 +529,6 @@ namespace DotNetNuke.Services.FileSystem
                 SetScriptTimeout(int.MaxValue);
             }
 
-
             var collisionNotifications = new List<string>();
             var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
 
@@ -551,7 +555,7 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             // Restore original time-out
-            if (HttpContext.Current != null)
+            if (HttpContext.Current != null && scriptTimeOut != null)
             {
                 SetScriptTimeout(scriptTimeOut.Value);
             }
@@ -909,7 +913,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetDatabaseFolders(int portalID, string relativePath, bool isRecursive)
         {
-            var databaseFolders = new SortedList<string, MergedTreeItem>();
+            var databaseFolders = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
 
             var folder = GetFolder(portalID, relativePath);
 
@@ -938,7 +942,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetDatabaseFoldersRecursive(IFolderInfo folder)
         {
-            var result = new SortedList<string, MergedTreeItem>();
+            var result = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
             var stack = new Stack<IFolderInfo>();
 
             stack.Push(folder);
@@ -968,7 +972,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetFileSystemFolders(int portalID, string relativePath, bool isRecursive)
         {
-            var fileSystemFolders = new SortedList<string, MergedTreeItem>();
+            var fileSystemFolders = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
 
             var physicalPath = PathUtils.Instance.GetPhysicalPath(portalID, relativePath);
 
@@ -996,7 +1000,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetFileSystemFoldersRecursive(int portalID, string physicalPath)
         {
-            var result = new SortedList<string, MergedTreeItem>();
+            var result = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
             var stack = new Stack<string>();
 
             stack.Push(physicalPath);
@@ -1032,7 +1036,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetFolderMappingFolders(FolderMappingInfo folderMapping, string relativePath, bool isRecursive)
         {
-            var folderMappingFolders = new SortedList<string, MergedTreeItem>();
+            var folderMappingFolders = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
             var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
 
             if (folderProvider.FolderExists(relativePath, folderMapping))
@@ -1057,7 +1061,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual SortedList<string, MergedTreeItem> GetFolderMappingFoldersRecursive(FolderMappingInfo folderMapping, string relativePath)
         {
-            var result = new SortedList<string, MergedTreeItem>();
+            var result = new SortedList<string, MergedTreeItem>(new IgnoreCaseStringComparer());
             var stack = new Stack<string>();
             var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
 
@@ -1569,6 +1573,17 @@ namespace DotNetNuke.Services.FileSystem
             public MergedTreeItem()
             {
                 ExistsInFolderMappings = new List<int>();
+            }
+        }
+
+        /// <summary>
+        /// This class and its members are reserved for internal use and are not intended to be used in your code.
+        /// </summary>
+        internal class IgnoreCaseStringComparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                return x.ToLowerInvariant().CompareTo(y.ToLowerInvariant());
             }
         }
 

@@ -99,7 +99,7 @@
     <Compile Include="Providers\Folder\DatabaseFolderProviderTests.cs" />
     <Compile Include="Providers\Folder\FileManagerTests.cs" />
     <Compile Include="Providers\Folder\FolderManagerTests.cs" />
-    <Compile Include="Providers\Folder\FolderProviderTests.cs" />
+    <Compile Include="Providers\Folder\DefaultFolderProvidersTests.cs" />
     <Compile Include="Providers\Folder\SecureFolderProviderTests.cs" />
     <Compile Include="Providers\Folder\StandardFolderProviderTests.cs" />
     <Compile Include="EscapedStringTest.cs" />

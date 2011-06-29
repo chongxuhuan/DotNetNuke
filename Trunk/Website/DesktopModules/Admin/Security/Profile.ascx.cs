@@ -178,17 +178,20 @@ namespace DotNetNuke.Modules.Admin.Users
             }
 			
             //Before we bind the Profile to the editor we need to "update" the visible data
-            ProfilePropertyDefinitionCollection properties = UserProfile.ProfileProperties;
+            ProfilePropertyDefinitionCollection properties = new ProfilePropertyDefinitionCollection();
 
-            foreach (ProfilePropertyDefinition profProperty in properties)
+            foreach (ProfilePropertyDefinition profProperty in UserProfile.ProfileProperties)
             {
                 if (IsAdmin && !IsProfile)
                 {
                     profProperty.Visible = true;
                 }
+
+                if (!profProperty.Deleted) 
+                    properties.Add(profProperty);
             }
             ProfileProperties.ShowVisibility = ShowVisibility;
-            ProfileProperties.DataSource = UserProfile.ProfileProperties;
+            ProfileProperties.DataSource = properties;
             ProfileProperties.DataBind();
         }
 

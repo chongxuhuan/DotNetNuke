@@ -22,6 +22,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Web.UI.WebControls;
 
@@ -29,6 +30,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
+using DotNetNuke.Services.FileSystem.Internal;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
 
@@ -215,7 +217,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         private void BindFolderProviders()
         {
-            var defaultProviders = FolderProvider.GetDefaultProviders();
+            var defaultProviders = DefaultFolderProviders.GetDefaultProviders();
 
             foreach (var provider in FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)))
             {
@@ -250,15 +252,15 @@ namespace DotNetNuke.Modules.Admin.FileManager
             }
 
             if (string.IsNullOrEmpty(folderProviderType)) return;
-
-            var settingsControlVirtualPath = FolderProvider.GetSettingsControlVirtualPath(folderProviderType);
+            
+            var settingsControlVirtualPath = FolderProvider.Instance(folderProviderType).GetSettingsControlVirtualPath();
             if (String.IsNullOrEmpty(settingsControlVirtualPath)) return;
 
             var settingsControl = LoadControl(settingsControlVirtualPath);
             if (settingsControl == null || !(settingsControl is FolderMappingSettingsControlBase)) return;
 
             // This is important to allow settings control to be localizable
-            settingsControl.ID = FolderProvider.SettingsControlID;
+            settingsControl.ID = Path.GetFileName(settingsControlVirtualPath);
 
             phProviderSettings.Controls.Clear();
             phProviderSettings.Controls.Add(settingsControl);

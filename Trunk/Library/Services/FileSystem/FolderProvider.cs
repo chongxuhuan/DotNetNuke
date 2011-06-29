@@ -27,7 +27,6 @@ using System.IO;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
-using DotNetNuke.Common;
 
 namespace DotNetNuke.Services.FileSystem
 {
@@ -38,7 +37,13 @@ namespace DotNetNuke.Services.FileSystem
     {
         #region Constants
 
-        public const string SettingsControlID = "Settings.ascx";
+        private const string SettingsControlID = "Settings.ascx";
+
+        #endregion
+
+        #region Private Variables
+
+        private string _providerName;
 
         #endregion
 
@@ -49,7 +54,14 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         public static Dictionary<string, FolderProvider> GetProviderList()
         {
-            return ComponentFactory.GetComponents<FolderProvider>();
+            var providerList = ComponentFactory.GetComponents<FolderProvider>();
+            
+            foreach (var key in providerList.Keys)
+            {
+                providerList[key]._providerName = key;
+            }
+            
+            return providerList;
         }
 
         /// <summary>
@@ -57,19 +69,19 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         public static FolderProvider Instance(string friendlyName)
         {
-            return ComponentFactory.GetComponent<FolderProvider>(friendlyName);
+            var provider = ComponentFactory.GetComponent<FolderProvider>(friendlyName);
+            
+            provider._providerName = friendlyName;
+            
+            return provider;
         }
 
-        /// <summary>
-        ///   Gets the list of default folder providers.
-        /// </summary>
-        public static List<string> GetDefaultProviders()
-        {
-            return new List<string> { "StandardFolderProvider", "SecureFolderProvider", "DatabaseFolderProvider" };
-        }
+        #endregion
+
+        #region Virtual Methods
 
         /// <summary>
-        ///   Gets the virtual path of the control file used to display and update specific folder mapping settings. By convention, the control name must be Settings.ascx.
+        ///   Gets the virtual path of the control file used to display and update specific folder mapping settings. By default, the control name is Settings.ascx.
         /// </summary>
         /// <returns>
         ///   If the folder provider has special settings, this method returns the virtual path of the control that allows to display and set those settings.
@@ -77,12 +89,10 @@ namespace DotNetNuke.Services.FileSystem
         /// <remarks>
         ///   The returned control must inherit from FolderMappingSettingsControlBase.
         /// </remarks>
-        public static string GetSettingsControlVirtualPath(string friendlyName)
+        public virtual string GetSettingsControlVirtualPath()
         {
-            Requires.NotNullOrEmpty("friendlyName", friendlyName);
-
-            var provider = Config.GetProvider("folder", friendlyName);
-
+            var provider = Config.GetProvider("folder", _providerName);
+            
             if (provider != null)
             {
                 var virtualPath = provider.Attributes["providerPath"] + SettingsControlID;

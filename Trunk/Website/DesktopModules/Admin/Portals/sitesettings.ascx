@@ -57,7 +57,7 @@
 				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="plBanners" runat="server" ControlName="optBanners" />
-					<asp:RadioButtonList ID="optBanners" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatLayout="Flow">
+					<asp:RadioButtonList ID="optBanners" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
 						<asp:ListItem Value="0" resourcekey="None">None</asp:ListItem>
 						<asp:ListItem Value="1" resourcekey="Site">Site</asp:ListItem>
 						<asp:ListItem Value="2" resourcekey="Host">Host</asp:ListItem>

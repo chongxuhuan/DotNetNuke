@@ -408,6 +408,7 @@ namespace DotNetNuke.UI.Containers
                 if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
                 {
                     ContentPane.Controls.Add(LoadControl("~/admin/Menus/DNNActions/DDRActionsMenu.ascx"));
+                    this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
                 }
 
                 //Process Module Header

@@ -55,7 +55,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             base.OnInit(e);
 
             //Customise the Control Title
-			if (IsHostMenu)
+            if (IsHostMenu)
             {
                 ModuleConfiguration.ModuleTitle = Localization.GetString("AddPortal", LocalResourceFile);
             }
@@ -98,13 +98,19 @@ namespace DotNetNuke.Modules.Admin.Portals
                     string strFolder = Globals.HostMapPath;
                     if (Directory.Exists(strFolder))
                     {
-						//admin.template and a portal template are required at minimum
+                        //admin.template and a portal template are required at minimum
                         string[] fileEntries = Directory.GetFiles(strFolder, "*.template");
                         foreach (string strFileName in fileEntries)
                         {
-                            if (Path.GetFileNameWithoutExtension(strFileName) != "admin")
+                            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(strFileName);
+                            if (fileNameWithoutExtension != "admin")
                             {
-                                cboTemplate.Items.Add(Path.GetFileNameWithoutExtension(strFileName));
+                                cboTemplate.Items.Add(fileNameWithoutExtension);
+
+                                if (fileNameWithoutExtension == "Default Website")
+                                {
+                                    cboTemplate.SelectedIndex = cboTemplate.Items.Count;
+                                }
                             }
                         }
                         if (cboTemplate.Items.Count == 0)
@@ -113,7 +119,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             cmdUpdate.Enabled = false;
                         }
                         cboTemplate.Items.Insert(0, new ListItem(Localization.GetString("None_Specified"), "-1"));
-                        cboTemplate.SelectedIndex = 0;
+                        //cboTemplate.SelectedIndex = 0;
                     }
                     if (UserInfo.IsSuperUser)
                     {
@@ -161,7 +167,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             base.OnPreRender(e);
 
             //Make sure that the password is not cleared on pastback
-			txtPassword.Attributes["value"] = txtPassword.Text;
+            txtPassword.Attributes["value"] = txtPassword.Text;
             txtConfirm.Attributes["value"] = txtConfirm.Text;
         }
 
@@ -225,13 +231,13 @@ namespace DotNetNuke.Modules.Admin.Portals
                         lstResults.DataBind();
                         return;
                     }
-					
+
                     //Set Portal Name
                     txtPortalName.Text = txtPortalName.Text.ToLowerInvariant();
                     txtPortalName.Text = txtPortalName.Text.Replace("http://", "");
 
                     //Validate Portal Name
-					if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
+                    if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         blnChild = true;
                         strPortalAlias = txtPortalName.Text;
@@ -249,7 +255,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         message = Localization.GetString("InvalidName", LocalResourceFile);
                     }
-					
+
                     //Validate Password
                     if (txtPassword.Text != txtConfirm.Text)
                     {
@@ -257,8 +263,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                         message += Localization.GetString("InvalidPassword", LocalResourceFile);
                     }
                     string strServerPath = Globals.GetAbsoluteServerPath(Request);
-					
-					//Set Portal Alias for Child Portals
+
+                    //Set Portal Alias for Child Portals
                     if (String.IsNullOrEmpty(message))
                     {
                         if (blnChild)
@@ -271,7 +277,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             }
                             else
                             {
-								if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
+                                if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                                 {
                                     strPortalAlias = Globals.GetDomainName(Request, true) + "/" + strPortalAlias;
                                 }
@@ -282,7 +288,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             }
                         }
                     }
-					
+
                     //Get Home Directory
                     string homeDir = txtHomeDirectory.Text != @"Portals/[PortalID]" ? txtHomeDirectory.Text : "";
 
@@ -298,7 +304,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             message = Localization.GetString("InvalidHomeFolder", LocalResourceFile);
                         }
                     }
-					
+
                     //Validate Portal Alias
                     if (!string.IsNullOrEmpty(strPortalAlias))
                     {
@@ -308,8 +314,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                             message = Localization.GetString("DuplicatePortalAlias", LocalResourceFile);
                         }
                     }
-					
-					//Create Portal
+
+                    //Create Portal
                     if (String.IsNullOrEmpty(message))
                     {
                         string strTemplateFile = cboTemplate.SelectedItem.Text + ".template";
@@ -354,11 +360,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                         {
                             //Create a Portal Settings object for the new Portal
                             PortalInfo objPortal = objPortalController.GetPortal(intPortalId);
-                            var newSettings = new PortalSettings {PortalAlias = new PortalAliasInfo {HTTPAlias = strPortalAlias}, PortalId = intPortalId, DefaultLanguage = objPortal.DefaultLanguage};
+                            var newSettings = new PortalSettings { PortalAlias = new PortalAliasInfo { HTTPAlias = strPortalAlias }, PortalId = intPortalId, DefaultLanguage = objPortal.DefaultLanguage };
                             string webUrl = Globals.AddHTTP(strPortalAlias);
                             try
                             {
-								if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
+                                if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                                 {
                                     message = Mail.SendMail(PortalSettings.Email,
                                                                txtEmail.Text,

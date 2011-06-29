@@ -29,6 +29,8 @@
 	.dnnTabsModule .urlControlFileRow .dnnFormItem select{width:60%!important;}
 	.dnnTabsModule .CacheDurationInfo .dnnFormMessage{display:block;overflow:hidden;margin-top:0.5em;margin-left:34.5%;}
 		.dnnTabsModule .CacheDurationInfo{overflow:hidden;width:75%;}
+	
+	.dnnForm.dnnPageSettings .dnnFormItem span.dnnFormMessage.dnnFormError{left:65%;}
 /* ===========   End Page Settings Module Styling   =========== */
 /* ===========   Pages Module Styling   =========== */
 .dnnTabsModule{width:100%;}

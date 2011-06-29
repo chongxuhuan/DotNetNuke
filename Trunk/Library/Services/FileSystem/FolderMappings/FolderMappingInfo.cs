@@ -27,6 +27,7 @@ using System.Data;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Services.FileSystem.Internal;
 
 namespace DotNetNuke.Services.FileSystem
 {
@@ -84,7 +85,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             get
             {
-                return !FolderProvider.GetDefaultProviders().Contains(FolderProviderType);
+                return !DefaultFolderProviders.GetDefaultProviders().Contains(FolderProviderType);
             }
         }
 
