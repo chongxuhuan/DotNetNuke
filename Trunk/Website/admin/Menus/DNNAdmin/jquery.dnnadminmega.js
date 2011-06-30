@@ -1,5 +1,4 @@
-﻿$(function () {
-
+﻿jQuery(document).ready(function ($) {
     var canHide = false;
 
     function EnableHide() {
@@ -40,7 +39,7 @@
     };
 
     $(".dnnadminmega > .megaborder").css({ 'opacity': '0' }); //Fade sub nav to 0 opacity on default
-    $(".megaborder").find(".dnnPrimaryAction").css({ opacity: 1 });//Compact IE7
+    $(".megaborder").find(".dnnPrimaryAction").css({ opacity: 1 }); //Compact IE7
 
     $(".dnnadminmega > li").mouseenter(EnableHide); //Hovering over CP will re-enable hiding.
 
@@ -79,5 +78,4 @@
     $('select').live('focus', function () {
         canHide = false;
     });
-
 });

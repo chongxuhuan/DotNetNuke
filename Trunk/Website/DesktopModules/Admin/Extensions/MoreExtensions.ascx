@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Extensions.MoreExtensions" CodeFile="MoreExtensions.ascx.cs" %>
+<%@ Import Namespace="DotNetNuke.Entities.Icons" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>  
 <div id="dnnAppGallery" class="dnnForm dnnAppGallery dnnClear">
     <span id="loading" class="dnnAppGalleryLoading">Loading...</span>
@@ -62,7 +63,7 @@
     <script id="eTmpl" type="text/x-jquery-tmpl">
         {{if Catalog}}    
             {{if ExtensionName}}
-    	        <div class="dnnProduct ${Catalog.CatalogCSS} ext-${ExtensionID}">    
+    	        <div class="dnnProduct ${Catalog.CatalogCSS} dnnClear ext-${ExtensionID}">    
                     <a name="ext-${ExtensionID}"></a>
                     <div class="dnnProductImage">
                         {{if ImageURL}}
@@ -71,15 +72,24 @@
                             <img  alt='${ExtensionName}' src='<%=ResolveUrl("~/images/System-Box-Empty-icon.png")%>' />
                         {{/if}}
                         <div class='dnnProductPrice'>${_gallery.FormatCurrency(Price)}</div>
+                        <div class="${Catalog.CatalogCSS}">
+                            <img class='productTypeImage dnnIcon' alt='${ExtensionType}'  title='${ExtensionType}'  src='<%=IconController.IconURL("AppGallery${ExtensionType}")%>' />                            
+                            {{if License}}                                
+                                <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${ExtensionID})">                    
+                                    <img class='productTypeImage dnnIcon' alt='License for ${ExtensionName}' title='License Specified' src='<%=IconController.IconURL("AppGalleryLicense")%>' />
+                                </a>
+                            {{/if}}                            
+                            {{if Catalog.CatalogUrl}}                                            
+                                <a class="galleryLink inline" href="${Catalog.CatalogUrl}" target="_new"><img class='deploy galleryLink' alt='Browse ${Catalog.CatalogName}' Title='Browse ${Catalog.CatalogName}' src='${_gallery.resolveImage(Catalog.CatalogIcon)}' /></a>
+                            {{/if}}                
+                        </div>
                     </div>
                     <div class="dnnProductDetails">
                         <h3 class="dnnProductTitle">${ExtensionName}</h3>
                         <p class="dnnProductOwner">
-                            {{if OwnerName}}
-                                    <%=LocalizeString("By") %> <a href="javascript:void(0)" onclick="_gallery.OwnerFilterGallery('${OwnerName}')">${OwnerName}</a>
-                            {{/if}}
+                            {{if OwnerName}}<%=LocalizeString("By") %> <a href="javascript:void(0)" onclick="_gallery.OwnerFilterGallery('${OwnerName}')">${OwnerName}</a>{{/if}}
                         </p>
-		                <div class='dnnProductDescription'>{{html Description}}</div>
+		                <div class='dnnProductDescription dnnClear'>{{html Description}}&nbsp;{{if DetailURL}}<a href="${DetailURL}" target="_details"><%=LocalizeString("ExtensionDetail")%></a>{{/if}}</div>
                         <div class="dnnProductLicense">    
                             <span class="dnnProductLicenseLabel">
                                 <%=LocalizeString("License") %>
@@ -100,29 +110,11 @@
                                 <%=LocalizeString("NotSpecified") %>
                             {{/if}}
                         </div>
-                    </div>
-                    <div class="dnnProductFooter  ${Catalog.CatalogCSS}">
             
-                        <img class='productTypeImage dnnIcon' alt='${ExtensionType}'  title='${ExtensionType}'  src='<%=ResolveUrl("~/images/appGallery_${ExtensionType}.gif")%>'/>
 
-                        {{if license}}
-                            <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${ExtensionID})">                    
-                                <img class='productTypeImage dnnIcon' alt='License for ${ExtensionName}' title='License Specified' src='<%=ResolveUrl("~/images/appGallery_License.gif")%>' />
-                            </a>
-                        {{/if}}
+                        {{if CatalogID !== 1 && DownloadURL }}<a class="dnnPrimaryAction" href="${_gallery.getDownloadUrl(ExtensionID)}">Deploy ${ExtensionName}</a>{{/if}}
+                        {{if CatalogID === 1}}<a class="dnnPrimaryAction" href="${DetailURL}&PackageOptionID=0&action=Add" target="_cart">Buy ${ExtensionName}</a>{{/if}}
             
-                        {{if DetailURL}}                
-                            <a href="${DetailURL}" target="_details"><img class='productTypeImage dnnIcon' alt='<%=LocalizeString("ExtensionDetail")%>' title='<%=LocalizeString("ExtensionDetail")%>' src='<%=ResolveUrl("~/images/appGallery_details.gif")%>' /></a>
-                        {{/if}}
-                        {{if CatalogID === 1}}
-                            <a class="galleryLink inline" href="${DetailURL}&PackageOptionID=0&action=Add" target="_cart"><img class='dnnIcon shopping-cart galleryLink' alt='Buy ${ExtensionName}'  Title='Buy ${ExtensionName}' src='<%=ResolveUrl("~/images/appGallery_cart.gif")%>' /></a>                
-                        {{/if}}                                          
-                        {{if DownloadURL }}
-                            <a class="galleryLink inline" href="${_gallery.getDownloadUrl(ExtensionID)}"><img class='dnnIcon deploy galleryLink' alt='Deploy ${ExtensionName}' Title='Deploy ${ExtensionName}' src='<%=ResolveUrl("~/images/appGallery_deploy.gif")%>' /></a>
-                        {{/if}}                
-                        {{if Catalog.CatalogUrl}}                
-                            <a class="galleryLink inline" href="${Catalog.CatalogUrl}" target="_new"><img class='deploy galleryLink' alt='Browse ${Catalog.CatalogName}' Title='Browse ${Catalog.CatalogName}' src='${_gallery.resolveImage(Catalog.CatalogIcon)}' /></a>
-                        {{/if}}                
  
                         
                    </div>
@@ -151,7 +143,7 @@
                     , typeLabel: '<%=LocalizeString("TypeLabel") %>'
                     , errorLabel: '<%=LocalizeString("ErrorLabel") %>'
                     , loadingLabel: '<%=LocalizeString("LoadingLabel") %>'
-                    , imgRoot : '<%=ResolveUrl("~/images/")%>'
+                    , siteRoot : '<%=ResolveUrl("~/")%>'
                     , DataBaseVersion : "<%=DotNetNuke.Common.Globals.DataBaseVersion%>"
                     , CacheTimeoutMinutes : <%=(IsDebugEnabled() ? 0: 1440) %>
                     , BaseDownLoadUrl : "<%=ModuleContext.EditUrl("ExtensionID", "{{ExtensionID}}", "AppGalleryDownload") %>"

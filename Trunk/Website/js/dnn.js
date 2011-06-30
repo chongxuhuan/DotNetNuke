@@ -1,4 +1,6 @@
 ﻿/*add browser detect for chrome*/
+var dnnJscriptVersion = "6.0.0";
+
 if (typeof (Sys.Browser.Chrome) == "undefined") {
 	Sys.Browser.Chrome = {};
 	if (navigator.userAgent.indexOf(" Chrome/") > -1) {

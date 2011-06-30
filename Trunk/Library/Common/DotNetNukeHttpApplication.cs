@@ -59,16 +59,17 @@ namespace DotNetNuke.Common
             // Code that runs when an unhandled error occurs
 
             // Get the exception object.
-            DnnLog.Info("Dumping all Application Errors");
+            DnnLog.Trace("Dumping all Application Errors");
             if(HttpContext.Current!=null) {
                 foreach (Exception exc in HttpContext.Current.AllErrors) DnnLog.Fatal(exc);
             }
-            DnnLog.Info("End Dumping all Application Errors");
+            DnnLog.Trace("End Dumping all Application Errors");
         }
 
         private void Application_Start(object Sender, EventArgs E)
         {
             DnnLog.MethodEntry();
+            DnnLog.Info("Application Starting");
 
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
             {
@@ -101,20 +102,24 @@ namespace DotNetNuke.Common
             }
             ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof (HtmlEditorProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof (NavigationProvider), ComponentLifeStyleType.Transient));
+
+            DnnLog.Info("Application Started");
         }
 
         private void Application_End(object Sender, EventArgs E)
         {
             DnnLog.MethodEntry();
+            DnnLog.Info("Application Ending");
             Initialize.LogEnd();
             Initialize.StopScheduler();
  
-            DnnLog.Info("Dumping all Application Errors");
+            DnnLog.Trace("Dumping all Application Errors");
             if (HttpContext.Current != null)
             {
                 foreach (Exception exc in HttpContext.Current.AllErrors) DnnLog.Fatal(exc);
             }
-            DnnLog.Info("End Dumping all Application Errors");
+            DnnLog.Trace("End Dumping all Application Errors");
+            DnnLog.Info("Application Ended");
         }
         
         private void Application_BeginRequest(object sender, EventArgs e)

@@ -82,7 +82,7 @@
     </div>
 
 	<script type="text/javascript">
-		$(function () {
+	    (function ($) {
 			//        $('#<%= BodyPanel.ClientID %>').dnnTabs();
 			var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
 			var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
@@ -107,6 +107,6 @@
 				noText: noText,
 				title: titleText
 			});
-		});
+        })(jQuery);
 	</script>
 </asp:Panel>

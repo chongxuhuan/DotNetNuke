@@ -388,7 +388,7 @@ namespace DotNetNuke.Common
                 objEventLogInfo.AddProperty("Shutdown Details", shutdownDetail);
                 objEv.AddLog(objEventLogInfo);
 
-                DnnLog.Info("Application shutting down. Reason: {0}", shutdownDetail);
+                DnnLog.Trace("Application shutting down. Reason: {0}", shutdownDetail);
             }
             catch (Exception exc)
             {

@@ -2058,12 +2058,6 @@ AS
 
 GO
 
-/* DNNPRO-16048 - Conflict information in database table HostSettings */
-/**********************************************************************/
-
-DELETE FROM {databaseOwner}{objectQualifier}HostSettings
-	WHERE SettingName = 'DisableUsersOnline'
-GO
 
 /* Introduce RawUrl to allow banners to work with remote FolderProviders */
 /*************************************************************************/

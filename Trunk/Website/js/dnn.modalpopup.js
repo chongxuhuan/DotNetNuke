@@ -1,5 +1,5 @@
 ﻿var dnnModal = {
-	load: function () {
+	load: function ($) {
 		//This method prevents the popup from flashing before closing, also redirects the parent window.
 		//parent and parent.parent needs to be assign to a varaible for Opera compatibility issues.
 		var windowTop = parent;
@@ -23,7 +23,7 @@
 		}
 	},
 
-	show: function (url, showReturn, height, width) {
+	show: function ($, url, showReturn, height, width) {
 		var $modal = $("#iPopUp");
 		if ($modal.length == 0) {
 			$modal = $("<iframe id=\"iPopUp\" src=\"about:blank\" scrolling=\"auto\" frameborder=\"0\" ></iframe>");
@@ -71,8 +71,8 @@
 			}
 			else {
 				$modal.data('height', $modal.dialog("option", "minHeight"))
-                      .data('width', $modal.dialog("option", "minWidth"))
-                      .data('position', $modal.dialog("option", "position"));
+                        .data('width', $modal.dialog("option", "minWidth"))
+                        .data('position', $modal.dialog("option", "position"));
 
 				newHeight = $window.height() - 11;
 				newWidth = $window.width() - 11;
@@ -92,4 +92,4 @@
 	}
 };
 
-dnnModal.load();
+dnnModal.load(jQuery);

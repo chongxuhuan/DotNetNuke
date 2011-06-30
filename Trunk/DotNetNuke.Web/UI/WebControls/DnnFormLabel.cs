@@ -59,7 +59,7 @@ namespace DotNetNuke.Web.UI.WebControls
                 ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
                 this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
                 jQuery.RequestDnnPluginsRegistration();
-                this.Page.ClientScript.RegisterClientScriptBlock(typeof(DnnFormLabel), "dnnTooltip", "$(document).ready(function(){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+                this.Page.ClientScript.RegisterClientScriptBlock(typeof(DnnFormLabel), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
 	
                 DNNClientAPI.EnableMinMax(link, panel, true, DNNClientAPI.MinMaxPersistanceType.None);
             }

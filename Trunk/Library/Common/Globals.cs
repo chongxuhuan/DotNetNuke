@@ -554,7 +554,7 @@ namespace DotNetNuke.Common
                 {
                     var tempStatus = UpgradeStatus.Unknown;
 
-                    DnnLog.Info("Getting application status");
+                    DnnLog.Trace("Getting application status");
                     tempStatus = UpgradeStatus.None;
                     //first call GetProviderPath - this insures that the Database is Initialised correctly
                     //and also generates the appropriate error message if it cannot be initialised correctly
@@ -612,7 +612,7 @@ namespace DotNetNuke.Common
 
                     _status = tempStatus;
 
-                    DnnLog.Info("Application status is " + _status);
+                    DnnLog.Trace("Application status is " + _status);
                 }
                 return _status;
             }

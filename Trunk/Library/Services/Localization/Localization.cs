@@ -1340,16 +1340,16 @@ namespace DotNetNuke.Services.Localization
         /// </summary>
         /// <param name="key">The resourcekey to find</param>
         /// <param name="resourceFileRoot">The Local Resource root</param>
-        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <param name="portalSettings">The current portals Portal Settings</param>
         /// <param name="strLanguage">A specific language to lookup the string</param>
         /// <returns>The localized Text</returns>
         /// <history>
         /// 	[cnurse]	10/06/2004	Documented
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static string GetString(string key, string resourceFileRoot, PortalSettings objPortalSettings, string strLanguage)
+        public static string GetString(string key, string resourceFileRoot, PortalSettings portalSettings, string language)
         {
-            return GetString(key, resourceFileRoot, objPortalSettings, strLanguage, false);
+            return GetString(key, resourceFileRoot, portalSettings, language, false);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1359,7 +1359,7 @@ namespace DotNetNuke.Services.Localization
         /// </summary>
         /// <param name="key">The resourcekey to find</param>
         /// <param name="resourceFileRoot">The Local Resource root</param>
-        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <param name="portalSettings">The current portals Portal Settings</param>
         /// <param name="userLanguage">A specific language to lookup the string</param>
         /// <param name="disableShowMissingKeys">Disables the show missing keys flag</param>
         /// <returns>The localized Text</returns>
@@ -1369,9 +1369,9 @@ namespace DotNetNuke.Services.Localization
         ///                             customisations and language versions separately
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static string GetString(string key, string resourceFileRoot, PortalSettings objPortalSettings, string userLanguage, bool disableShowMissingKeys)
+        public static string GetString(string key, string resourceFileRoot, PortalSettings portalSettings, string userLanguage, bool disableShowMissingKeys)
         {
-            return GetStringInternal(key, userLanguage, resourceFileRoot, objPortalSettings, disableShowMissingKeys);
+            return GetStringInternal(key, userLanguage, resourceFileRoot, portalSettings, disableShowMissingKeys);
         }
 
         #endregion

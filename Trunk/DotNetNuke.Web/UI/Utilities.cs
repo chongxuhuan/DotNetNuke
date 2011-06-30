@@ -233,7 +233,7 @@ namespace DotNetNuke.Web.UI
 
         public static string GetClientAlert(Control ctrl, MessageWindowParameters message)
         {
-            return "$(document).ready(function(){$.dnnAlert({ okText: '" + GetLocalizedString("Ok.Text") + "', text: '" + message.Message + "', title: '" + message.Title + "'});});";
+            return "jQuery(document).ready(function($){$.dnnAlert({ okText: '" + GetLocalizedString("Ok.Text") + "', text: '" + message.Message + "', title: '" + message.Title + "'});});";
         }
 
         public static string GetLocalizedString(string key)

@@ -166,6 +166,49 @@ namespace DotNetNuke.Instrumentation
             }
         }
 
+        #region Trace
+
+        public static void Trace(string message)
+        {
+            EnsureConfig();
+
+            var log = DnnLogger.GetClassLogger(CallingType);
+            if (log.Logger.IsEnabledFor(DnnLogger.LevelTrace))
+            {
+
+                SetupThreadContext();
+                log.TraceFormat(message);
+            }
+        }
+
+        public static void Trace(string format, params object[] args)
+        {
+            EnsureConfig();
+
+            var log = DnnLogger.GetClassLogger(CallingType);
+            if (log.Logger.IsEnabledFor(DnnLogger.LevelTrace))
+            {
+
+                SetupThreadContext();
+                log.TraceFormat(format, args);
+            }
+        }
+
+        public static void Trace(IFormatProvider provider, string format, params object[] args)
+        {
+            EnsureConfig();
+
+            var log = DnnLogger.GetClassLogger(CallingType);
+            if (log.Logger.IsEnabledFor(DnnLogger.LevelTrace))
+            {
+
+                SetupThreadContext();
+                log.TraceFormat(provider, format, args);
+            }
+        }
+
+        #endregion
+
         #region Debug
 
         public static void Debug(object message)
@@ -229,7 +272,6 @@ namespace DotNetNuke.Instrumentation
                 log.InfoFormat(provider, format, args);
             }
         }
-
 
         public static void Info(string format, params object[] args)
         {

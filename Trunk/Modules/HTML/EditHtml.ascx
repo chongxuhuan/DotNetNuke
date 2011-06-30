@@ -126,6 +126,8 @@
 	</ul>
 </div>
 <script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
 	function setupDnnEditHtml() {
 		$('#dnnEditHtml').dnnTabs({selected:0}).dnnPanels();
 	}
@@ -135,4 +137,5 @@
 			setupDnnEditHtml();
 		});
 	});
+} (jQuery, window.Sys));
 </script>

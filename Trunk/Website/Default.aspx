@@ -40,7 +40,7 @@
         //in case an old version of dnn.js is loaded
         //It should be removed as soon as .js versioning is added
         jQuery(document).ready(function () {
-            if (jQuery != $)
+            if (dnnJscriptVersion !== "6.0.0")
                 window.location.reload(true);
         });
     </script>

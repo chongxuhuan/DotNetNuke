@@ -184,9 +184,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     case "Container":
                     case "Module":
                     case "Skin":
+                        iconFile.Enabled = true;
                         Package.IconFile = Util.ParsePackageIconFileName(Package);
                         break;
                     default:
+                        iconFile.Enabled = false;
                         Package.IconFile = "Not Available";
                         break;
                 }

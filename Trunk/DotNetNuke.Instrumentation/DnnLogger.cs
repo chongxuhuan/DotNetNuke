@@ -125,12 +125,6 @@ namespace DotNetNuke.Instrumentation
 
         #endregion
 
-        internal void TraceFormat(string format, params object[] args)
-        {
-            Logger.Log(_stackBoundary, LevelTrace, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
-        }
-
-
         /// <summary>
         ///   Logs a message object with the <c>DEBUG</c> level.
         /// </summary>
@@ -289,6 +283,17 @@ namespace DotNetNuke.Instrumentation
         {
             Logger.Log(_stackBoundary, LevelInfo, new SystemStringFormat(provider, format, args), null);
         }
+
+        internal void TraceFormat(string format, params object[] args)
+        {
+            Logger.Log(_stackBoundary, LevelTrace, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+        }
+
+        internal void TraceFormat(IFormatProvider provider, string format, params object[] args)
+        {
+            Logger.Log(_stackBoundary, LevelTrace, new SystemStringFormat(provider, format, args), null);
+        }
+
 
         /// <summary>
         ///   Logs a message object with the <c>WARN</c> level.

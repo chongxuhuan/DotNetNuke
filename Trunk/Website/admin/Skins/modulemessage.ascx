@@ -6,8 +6,8 @@
 </asp:Panel>
 <dnn:DnnScriptBlock ID="scrollScript" runat="server">
 	<script type="text/javascript">
-		$(document).ready(function () {
-			$body = window.opera ? (document.compatMode == "CSS1Compat" ? $('html') : $('body')) : $('html,body');
+		jQuery(document).ready(function ($) {
+			var $body = window.opera ? (document.compatMode == "CSS1Compat" ? $('html') : $('body')) : $('html,body');
 			$body.animate({ scrollTop: $('#<%=dnnSkinMessage.ClientID %>').offset().top }, 'fast');
 		});
 	</script>

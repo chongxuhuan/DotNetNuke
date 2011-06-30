@@ -158,8 +158,16 @@ function Gallery(params) {
 }
 
 Gallery.prototype.resolveImage = function (img) {
-    return this.imgRoot + img;
+    //set to the default/full url
+    var path = img;
+    //does it start with a tilde
+    if (img.indexOf("~") == 0) {
+        //trim out the ~ and prepend the image root
+        path = this.siteRoot + img.substr(2);
+    }
+    return path;
 }
+
 
 Gallery.prototype.showLoading = function (a) {
     this.reposition();
@@ -407,7 +415,7 @@ Gallery.prototype.getExtensions = function (callback) {
     }
 
     this.searchFilters.text(filterDesc);
-    url = url + "&$callback=Gallery.gotExtensions&$format=json";
+    url = url + "&$format=json";
 
     if (!_gallery.extensions.d || !hasCriteria) {
         var exts = this.Cache.getItem("__FIRSTLOAD");
@@ -418,23 +426,10 @@ Gallery.prototype.getExtensions = function (callback) {
     }
     dnn.log(url);
     this.showLoading();
-    this.eXHR = $.ajax({
-        type: "GET",
-        crossDomain: true,
-        jsonp: false,
-        url: url,
-        dataType: "json",
-        dataFilter: function (data) {
-            return eval('(' + data + ')');
-        } 
-    }).error(function () {
-        _gallery.errorLoading(arguments);
-    });
-    this.eXHR.url = url;
+    this.eXHR = this.getXHR(url, "gotExtensions");
 }
 
 Gallery.gotExtensions = function () {
-
     var msg = arguments[0];
     var g = _gallery;
     if (msg && msg.d && msg.d.results) {
@@ -540,9 +535,9 @@ Gallery.prototype.ShowDetails = function (extensionID) {
 }
 
 Gallery.prototype.getCatalog = function (id) {
-    for (var i in this.cats.d) {
-        if (this.cats.d[i].CatalogID == id) return this.cats.d[i];
-    }
+	for (var i in this.cats.d) {
+		if (this.cats.d[i].CatalogID == id) return this.cats.d[i];
+	}
     return null;
 }
 
@@ -556,7 +551,7 @@ Gallery.gotCatalogs = function (msg) {
 
 Gallery.prototype.getCatalogs = function () {
     var url = this.CatalogsUrl;
-    url = url + "?$callback=Gallery.gotCatalogs&$format=json";
+    url = url + "?$format=json";
 
     var cats = this.Cache.getItem("catalogs");
     if (cats) {
@@ -567,18 +562,7 @@ Gallery.prototype.getCatalogs = function () {
 
     dnn.log(url);
 
-    this.tagXHR = $.ajax({
-        type: "GET",
-        crossDomain: true,
-        jsonp: false,
-        url: url,
-        dataType: "json",
-        dataFilter: function (data) {
-            return eval('(' + data + ')');
-        } 
-    }).error(function () {
-        _gallery.errorLoading(arguments);
-    });
+    this.tagXHR = this.getXHR(url, "gotCatalogs");
 }
 
 Gallery.prototype.getTags = function (callback) {
@@ -587,7 +571,7 @@ Gallery.prototype.getTags = function (callback) {
     var url = this.TagCloudUrl + "?Tagcount=" + max;
     url = url + "&ExtensionType='" + this.extensionFilter + "'";
     url = url + "&MinDnnVersion=''";
-    url = url + "&$callback=Gallery.gotTags&$format=json";
+    url = url + "&$format=json";
 
     var tags = this.Cache.getItem("tags_" + this.extensionFilter);
     if (tags) {
@@ -601,18 +585,7 @@ Gallery.prototype.getTags = function (callback) {
 
     dnn.log(url);
 
-    this.tagXHR = $.ajax({
-        type: "GET",
-        crossDomain: true,
-        jsonp: false,
-        url: url,
-        dataType: "json",
-        dataFilter: function (data) {
-            return eval('(' + data + ')');
-        }
-    }).error(function () {
-        _gallery.errorLoading(arguments);
-    });
+    this.tagXHR = this.getXHR(url, "gotTags");
 }
 
 Gallery.gotTags = function (msg) {
@@ -680,6 +653,12 @@ Gallery.prototype.showTags = function (callback) {
 
 Gallery.validTag = function (tag) {
     return (tag && tag.tagName && (tag.tagName.indexOf("DotNetNuke") < 0) && (tag.TagCount > 0));
+}
+
+Gallery.prototype.getXHR = function (url, callback) {
+	return $.getJSON(url + "&$callback=?", Gallery[callback]).error(function(){
+		_gallery.errorLoading(arguments);
+	});
 }
 
 Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {

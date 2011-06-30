@@ -229,7 +229,7 @@ div.SearchIcon img{margin-top:3px;}
 	.DnnModule{z-index:902;position:relative;}
 		.dnnActionMenu{margin:0;padding:0;position:absolute;z-index:906;color:#000;left:10px;top:10px;}
 		ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;text-align:left;
-		position:absolute;left:0;top:10;min-width:400px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
+		position:absolute;left:0;top:10;min-width:425px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
 			ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
 			ul.dnnActionMenuBody li.first.last {position:relative;}
 			.dnnActionMenuTag {background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);
@@ -240,7 +240,7 @@ div.SearchIcon img{margin-top:3px;}
 			ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
 				ul.dnnActionMenuBody li span{border:none;display:block;background:none;padding:0;margin:6px 0;width:auto}
 			ul.dnnActionMenuBody li ul{overflow:hidden;padding:10px 0;margin:0;width:96%;border-top:1px #ccc solid;}
-			ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:100px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
+			ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:120px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
 			ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left;color:#328DDE;}
 				ul.dnnActionMenuBody li ul li a:hover{color:#1B4D79;}
 			ul.dnnActionMenuBody li ul li a img{padding-right:3px;}	

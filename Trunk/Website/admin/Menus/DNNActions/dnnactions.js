@@ -128,10 +128,10 @@
 		hoverTimeout: 200,
 		hoverInterval: 200,
 		debug: false
-	};
+    };
+
+    $(document).ready(function () {
+        $('.DnnModule').dnnActionMenu();
+    });
 
 })(jQuery);
-
-$(document).ready(function () {
-    $('.DnnModule').dnnActionMenu();
-});

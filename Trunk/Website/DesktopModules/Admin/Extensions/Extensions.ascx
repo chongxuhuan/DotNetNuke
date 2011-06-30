@@ -28,6 +28,10 @@
 			Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
 				setUpDnnExtensions();
 			});
+
+			if (location.hash) {
+				$("a[href=" + location.hash + "]").click();
+			}
 		});
 	} (jQuery, window.Sys));
 </script>   

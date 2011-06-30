@@ -289,7 +289,7 @@
     <value>Language Packs</value>
   </data>
   <data name="AppGallery.Text" xml:space="preserve">
-    <value>App Gallery</value>
+    <value>Extension Feed</value>
   </data>
   <data name="AppGalleryModule.Text" xml:space="preserve">
     <value>Module</value>
@@ -397,7 +397,7 @@
     <value>Product Description</value>
   </data>
   <data name="ExtensionDetail.Text" xml:space="preserve">
-    <value>View more detail for this extension</value>
+    <value>More detail</value>
   </data>
   <data name="License.Text" xml:space="preserve">
     <value>License:</value>

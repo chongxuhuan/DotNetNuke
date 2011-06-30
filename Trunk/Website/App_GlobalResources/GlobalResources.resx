@@ -1193,5 +1193,8 @@ Sincerely,
   </data>
   <data name="//Tools.Text" xml:space="preserve">
     <value>Tools</value>
-  </data>  
+  </data>
+  <data name="//Admin//GoogleAnalyticsPro.String" xml:space="preserve">
+    <value>Google Analytics</value>
+  </data>
 </root>

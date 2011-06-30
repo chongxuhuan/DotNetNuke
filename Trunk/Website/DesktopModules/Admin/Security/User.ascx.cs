@@ -227,10 +227,10 @@ namespace DotNetNuke.Modules.Admin.Users
                 //Set the Approved status from the value in the Authorized checkbox
                 User.Membership.Approved = chkAuthorize.Checked;
             }
-            UserInfo user = User;
-            UserCreateStatus createStatus = UserController.CreateUser(ref user);
+            var user = User;
+            var createStatus = UserController.CreateUser(ref user);
 
-            UserCreatedEventArgs args = (createStatus == UserCreateStatus.Success)
+            var args = (createStatus == UserCreateStatus.Success)
                                             ? new UserCreatedEventArgs(User) {Notify = chkNotify.Checked} 
                                             : new UserCreatedEventArgs(null);
             args.CreateStatus = createStatus;
@@ -444,6 +444,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 if (IsValid)
                 {
                     CreateUser();
+                    DataCache.ClearPortalCache(PortalId, true);
                 }
             }
             else
@@ -453,7 +454,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     if (User.UserID == PortalSettings.AdministratorId)
                     {
 						//Clear the Portal Cache
-                        DataCache.ClearPortalCache(UserPortalID, false);
+                        DataCache.ClearPortalCache(UserPortalID, true);
                     }
                     try
                     {

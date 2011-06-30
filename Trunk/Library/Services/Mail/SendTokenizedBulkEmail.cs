@@ -302,18 +302,17 @@ namespace DotNetNuke.Services.Mail
         /// <summary>check, if the user's language matches the current language filter</summary>
         /// <param name="userLanguage">Language of the user</param>
         /// <returns>userlanguage matches current languageFilter</returns>
-        /// <remarks>if userlanguage is empty or filter not set, true is returned</remarks>
+        /// <remarks>if filter not set, true is returned</remarks>
         private bool MatchLanguageFilter(string userLanguage)
         {
-            if (String.IsNullOrEmpty(userLanguage))
-            {
-                return true;
-            }
             if (LanguageFilter == null || LanguageFilter.Length == 0)
             {
                 return true;
             }
-            return LanguageFilter.Any(s => userLanguage.ToLowerInvariant().StartsWith(s.ToLowerInvariant() + "*"));
+
+            var languageToSearch = String.IsNullOrEmpty(userLanguage) ? _portalSettings.DefaultLanguage : userLanguage;
+
+            return LanguageFilter.Any(s => languageToSearch.ToLowerInvariant().StartsWith(s.ToLowerInvariant() + "*"));
         }
 
         /// <summary>add a user to the userlist, if it is not already in there</summary>

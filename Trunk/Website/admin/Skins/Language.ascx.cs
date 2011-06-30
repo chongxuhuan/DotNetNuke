@@ -69,7 +69,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_alternateTemplate))
                 {
-                    _alternateTemplate = Localization.GetString("AlternateTemplate.Default", LocalResourceFile);
+                    _alternateTemplate = Localization.GetString("AlternateTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _alternateTemplate;
             }
@@ -85,7 +85,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_commonFooterTemplate))
                 {
-                    _commonFooterTemplate = Localization.GetString("CommonFooterTemplate.Default", LocalResourceFile);
+                    _commonFooterTemplate = Localization.GetString("CommonFooterTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _commonFooterTemplate;
             }
@@ -101,7 +101,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_commonHeaderTemplate))
                 {
-                    _commonHeaderTemplate = Localization.GetString("CommonHeaderTemplate.Default", LocalResourceFile);
+                    _commonHeaderTemplate = Localization.GetString("CommonHeaderTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _commonHeaderTemplate;
             }
@@ -119,7 +119,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_footerTemplate))
                 {
-                    _footerTemplate = Localization.GetString("FooterTemplate.Default", LocalResourceFile);
+                    _footerTemplate = Localization.GetString("FooterTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _footerTemplate;
             }
@@ -135,7 +135,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_headerTemplate))
                 {
-                    _headerTemplate = Localization.GetString("HeaderTemplate.Default", LocalResourceFile);
+                    _headerTemplate = Localization.GetString("HeaderTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _headerTemplate;
             }
@@ -151,7 +151,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_itemTemplate))
                 {
-                    _itemTemplate = Localization.GetString("ItemTemplate.Default", LocalResourceFile);
+                    _itemTemplate = Localization.GetString("ItemTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _itemTemplate;
             }
@@ -167,7 +167,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_SelectedItemTemplate))
                 {
-                    _SelectedItemTemplate = Localization.GetString("SelectedItemTemplate.Default", LocalResourceFile);
+                    _SelectedItemTemplate = Localization.GetString("SelectedItemTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _SelectedItemTemplate;
             }
@@ -177,14 +177,13 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
-
         public string SeparatorTemplate
         {
             get
             {
                 if (string.IsNullOrEmpty(_separatorTemplate))
                 {
-                    _separatorTemplate = Localization.GetString("SeparatorTemplate.Default", LocalResourceFile);
+                    _separatorTemplate = Localization.GetString("SeparatorTemplate.Default", LocalResourceFile, TemplateCulture);
                 }
                 return _separatorTemplate;
             }
@@ -213,6 +212,8 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        public bool UseCurrentCultureForTemplate { get; set;  }
+
 		#endregion
 
 		#region "Protected Properties"
@@ -225,6 +226,15 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        protected string TemplateCulture
+        {
+            get
+            {
+                return (UseCurrentCultureForTemplate) ? CurrentCulture : "en-US";
+            }
+        }
+
+        
         protected string LocalResourceFile
         {
             get
