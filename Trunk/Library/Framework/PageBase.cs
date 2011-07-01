@@ -252,6 +252,11 @@ namespace DotNetNuke.Framework
             return idFound;
         }
 
+        private bool IsViewStateFailure(Exception e)
+        {
+            return !User.Identity.IsAuthenticated && e != null && e.InnerException is ViewStateException;
+        }
+
         /// <summary>
         /// <para>IterateControls performs the high level localization for each control on the page.</para>
         /// <param name="affectedControls"></param>
@@ -316,7 +321,7 @@ namespace DotNetNuke.Framework
             DnnLog.Fatal("An error has occurred while loading page.", exc);
 
             string strURL = Globals.ApplicationURL();
-            if ((exc != null) && (ReferenceEquals(exc.GetType(), typeof(HttpException))))
+            if (exc != null && exc is HttpException && !IsViewStateFailure(exc))
             {
                 HttpContext.Current.Response.Clear();
                 HttpContext.Current.Server.Transfer("~/ErrorPage.aspx");
@@ -345,7 +350,11 @@ namespace DotNetNuke.Framework
 
 
             AJAX.AddScriptManager(this);
+#if DEBUG
+            Page.ClientScript.RegisterClientScriptInclude("dnncore", ResolveUrl("~/js/Debug/dnncore.js"));
+#else
             Page.ClientScript.RegisterClientScriptInclude("dnncore", ResolveUrl("~/js/dnncore.js"));
+#endif
             base.OnInit(e);
         }
 

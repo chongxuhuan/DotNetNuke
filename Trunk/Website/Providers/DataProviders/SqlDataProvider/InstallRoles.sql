@@ -21,15 +21,11 @@ SET ANSI_NULLS ON         -- We don't want (NULL = NULL) == TRUE
 GO
 SET ANSI_PADDING ON
 GO
-
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
+SET ANSI_NULL_DFLT_ON ON
+GO
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Applications')
                   AND (type = 'U')))
 BEGIN
@@ -37,7 +33,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Users')
                   AND (type = 'U')))
 BEGIN
@@ -45,7 +41,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Applications_CreateApplication')
                AND (type = 'P')))
 BEGIN
@@ -53,7 +49,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_CreateUser')
                AND (type = 'P')))
 BEGIN
@@ -61,7 +57,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_DeleteUser')
                AND (type = 'P')))
 BEGIN
@@ -72,7 +68,7 @@ END
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Roles')
                   AND (type = 'U')))
 BEGIN
@@ -91,7 +87,7 @@ GO
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_UsersInRoles')
                   AND (type = 'U')))
 BEGIN
@@ -110,7 +106,7 @@ END
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_IsUserInRole')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_IsUserInRole
@@ -157,7 +153,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_GetRolesForUser')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_GetRolesForUser
@@ -194,7 +190,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Roles_CreateRole')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Roles_CreateRole
@@ -270,7 +266,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Roles_DeleteRole')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Roles_DeleteRole
@@ -361,7 +357,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Roles_RoleExists')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Roles_RoleExists
@@ -388,13 +384,13 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_AddUsersToRoles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_AddUsersToRoles
 GO
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_RemoveUsersFromRoles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_RemoveUsersFromRoles
@@ -840,7 +836,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_GetUsersInRoles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_GetUsersInRoles
@@ -878,7 +874,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_UsersInRoles_FindUsersInRole')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_UsersInRoles_FindUsersInRole
@@ -917,7 +913,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Roles_GetAllRoles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Roles_GetAllRoles
@@ -942,14 +938,14 @@ GO
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_Roles')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_Roles view...'
   EXEC(N'
   CREATE VIEW [dbo].[vw_aspnet_Roles]
-  AS SELECT [dbo].[aspnet_Roles].[ApplicationId], [dbo].[aspnet_Roles].[RoleId], [dbo].[aspnet_Roles].[RoleName], [dbo].[aspnet_Roles].[LoweredRoleName], [dbo].[aspnet_Roles].[Description]
+  AS SELECT [ApplicationId], [RoleId], [RoleName], [LoweredRoleName], [Description]
   FROM [dbo].[aspnet_Roles]
   ')
 END
@@ -959,14 +955,14 @@ GO
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_UsersInRoles')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_UsersInRoles view...'
   EXEC(N'
   CREATE VIEW [dbo].[vw_aspnet_UsersInRoles]
-  AS SELECT [dbo].[aspnet_UsersInRoles].[UserId], [dbo].[aspnet_UsersInRoles].[RoleId]
+  AS SELECT [UserId], [RoleId]
   FROM [dbo].[aspnet_UsersInRoles]
   ')
 END
@@ -995,22 +991,22 @@ GO
 --
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Roles_FullAccess'  ) )
-EXEC sp_addrole N'aspnet_Roles_FullAccess'
+CREATE ROLE aspnet_Roles_FullAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Roles_BasicAccess'  ) )
-EXEC sp_addrole N'aspnet_Roles_BasicAccess'
+CREATE ROLE aspnet_Roles_BasicAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Roles_ReportingAccess'  ) )
-EXEC sp_addrole N'aspnet_Roles_ReportingAccess'
+CREATE ROLE aspnet_Roles_ReportingAccess 
 GO
 
 EXEC sp_addrolemember N'aspnet_Roles_BasicAccess', N'aspnet_Roles_FullAccess'
@@ -1072,4 +1068,3 @@ GO
 PRINT '---------------------------------------'
 PRINT 'Completed execution of InstallRoles.SQL'
 PRINT '---------------------------------------'
-

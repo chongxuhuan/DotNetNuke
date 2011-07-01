@@ -220,7 +220,7 @@
     <value>&lt;p&gt;DotNetNuke ja està instal·lat en aquest ordinador.&lt;/p&gt;</value>
   </data>
   <data name="Installing.Text" xml:space="preserve">
-    <value>Instal·lant scripts de base de dades ...   </value>
+    <value>Instal·lant scripts de base de dades...   </value>
   </data>
   <data name="InstallModuleError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació de mòduls:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
@@ -382,7 +382,7 @@ Aquest usuari té accés a tota la funcionalitat del portal, per la qual cosa ca
     <value>La contrasenya no pot igual que el nom d'usuari.</value>
   </data>
   <data name="Permissions.Text" xml:space="preserve">
-    <value>Sumari de permisos de fitxer:</value>
+    <value>Resum de permisos de fitxer:</value>
   </data>
   <data name="PermissionsError.Text" xml:space="preserve">
     <value>&lt;img alt="Imatge que mostra que els paràmetres de seguretat per la carpeta arrel de la web han de ser: Lectura, escriptura i Modificació per l'usuari ASPNET o el NT AUTHORITY/NETWORK SERVICE." src="..\403-3.gif" align="right" hspace="10"&gt;
@@ -575,15 +575,27 @@ Amb l'Explorador de Windows obriu la carpeta arrel de la web (per defecte C:\Dot
     <value>Prova de configuració de SMTP</value>
   </data>
   <data name="UpdateDetail.Text">
-    <value>This software can routinely check for the latest important updates for your website.  These updates can include security updates, critical updates and patches. (No information is collected that can be used to identify you or contact you without your explicit consent.)</value>
+    <value>El sistema pot verificar periòdicament si hi actualitzacions importants. Aquí s'inclouen actualitzacions de seguretat, crítiques i menors. En cap cas es guardarà informació que es pugui utilitzar per identificar-vos o per contactar-vos sense el vostre consentiment explícit.</value>
   </data>
   <data name="UpdateEmail.Text">
-    <value>Do you want to receive notifications by email regarding updates to the software?</value>
+    <value>Voleu rebre notificacions per correu de les actualitzacions del producte?</value>
   </data>
   <data name="UpdateTitle.Text">
-    <value>Update Service - Help protect the Integrity of your Website</value>
+    <value>Servei d'actualitzacions - Ajuda a protegir la integritat del vostre web</value>
   </data>
   <data name="Yes.Text">
     <value>Sí</value>
+  </data>
+  <data name="DatabaseWarning.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;El mètode automàtic s'ha deactivat ja que no s'ha trobat cap connexió vàlida a SQL Server. Podeu continuar amb la instal·lació i seleccionar alguna de les altres opcions, podreu configurar la connexió a la base de dades en un pas posterior.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="DbNameError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Heu d'entrar el nom de la base de dades.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="InstallFailed.Text">
+    <value>Error d'instal·lació d'scripts de base de dades</value>
+  </data>
+  <data name="Page11.Title">
+    <value>Instal·lació finalitzada</value>
   </data>
 </root>

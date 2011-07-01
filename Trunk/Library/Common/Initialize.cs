@@ -178,6 +178,7 @@ namespace DotNetNuke.Common
                 redirect = CheckVersion(app);
                 if (string.IsNullOrEmpty(redirect))
                 {
+                    DnnLog.Info("Application Initializing");
                     //Cache Mapped Directory(s)
                     CacheMappedDirectory();
                     //Set globals
@@ -200,6 +201,7 @@ namespace DotNetNuke.Common
 
                     //Log Server information
                     ServerController.UpdateServerActivity(new ServerInfo());
+                    DnnLog.Info("Application Initialized");
                 }
             }
             else
@@ -388,7 +390,7 @@ namespace DotNetNuke.Common
                 objEventLogInfo.AddProperty("Shutdown Details", shutdownDetail);
                 objEv.AddLog(objEventLogInfo);
 
-                DnnLog.Trace("Application shutting down. Reason: {0}", shutdownDetail);
+                DnnLog.Info("Application shutting down. Reason: {0}", shutdownDetail);
             }
             catch (Exception exc)
             {

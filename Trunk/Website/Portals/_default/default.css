@@ -229,7 +229,7 @@ div.SearchIcon img{margin-top:3px;}
 	.DnnModule{z-index:902;position:relative;}
 		.dnnActionMenu{margin:0;padding:0;position:absolute;z-index:906;color:#000;left:10px;top:10px;}
 		ul.dnnActionMenuBody {display:none;background:#fff;border:5px solid #aaa;padding:10px;border-radius:3px;-moz-border-radius:3px;text-align:left;
-		position:absolute;left:0;top:10;min-width:425px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
+		position:absolute;left:0;top:10;min-width:480px;-moz-box-shadow:0 0 5px #888;-webkit-box-shadow:0 0 5px#888;box-shadow:0 0 5px #888;}
 			ul.dnnActionMenuBody li {list-style-type:none;padding:0;margin:0;}
 			ul.dnnActionMenuBody li.first.last {position:relative;}
 			.dnnActionMenuTag {background:#aaa;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);
@@ -240,7 +240,7 @@ div.SearchIcon img{margin-top:3px;}
 			ul.dnnActionMenuBody li{display:block;clear:both;float:none;font-weight:bold;font-size:14px;}
 				ul.dnnActionMenuBody li span{border:none;display:block;background:none;padding:0;margin:6px 0;width:auto}
 			ul.dnnActionMenuBody li ul{overflow:hidden;padding:10px 0;margin:0;width:96%;border-top:1px #ccc solid;}
-			ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:120px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
+			ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:135px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
 			ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left;color:#328DDE;}
 				ul.dnnActionMenuBody li ul li a:hover{color:#1B4D79;}
 			ul.dnnActionMenuBody li ul li a img{padding-right:3px;}	
@@ -297,7 +297,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormWarning{background:#feffce url(../../images/warning-icn.png) no-repeat 10px center;border:2px #cdb21f solid;color:#41370C;text-shadow:0px 1px 1px #fff;}
 				.dnnFormValidationSummary{background:#f7eaea url(../../images/error-icn.png) no-repeat 10px center;text-shadow:0px 1px 1px #fff;color:#900;border:2px #df4a40 solid;}
 				.dnnFormError{color:#fff !important;background:url(../../images/errorbg.gif) no-repeat left center;text-shadow:0px 1px 1px #000;padding:5px 20px;}
-					.dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:50%;top:0;z-index:9999;}
+					.dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:55%;top:0;z-index:9999;}
 				.dnnFormSuccess{background:#ecffeb url(../../images/success-icn.png) no-repeat 10px center;border:2px #64b657 solid;color:#358927}
 				.dnnFormInfo{background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;}
 			.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px 10px;
@@ -358,7 +358,7 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnFilePicker .dnnLeft .dnnFormItem span{display:block;float:left;width:80px;text-align:right;padding-right:10px;}
 	.dnnFilePicker .dnnLeft .dnnFormItem select{float:left;width:180px;}
 	.dnnFilePicker .dnnLeft a.dnnSecondaryAction{margin-left:80px;}
-	.dnnFilePicker .dnnLeft .dnnFormItem input[type=file]{margin-left:90px;}
+	.dnnFilePicker .dnnLeft .dnnFormItem input[type=file]{margin-left:90px;width:180px;}
 
 /*  === Grids === */
 	.dnnGrid{font-size:inherit;}

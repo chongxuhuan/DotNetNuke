@@ -2359,8 +2359,8 @@ IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}ModuleControls WHERE Mo
 		SET @ModuleDefID = (SELECT ModuleDefID FROM {databaseOwner}{objectQualifier}ModuleDefinitions WHERE FriendlyName = 'Extensions')
 
 		INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-			( ModuleDefID, ControlKey, ControlTitle, ControlSrc, ControlType, SupportsPartialRendering )
-			VALUES ( @ModuleDefID, 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3, 1 )
+			( ModuleDefID, ControlKey, ControlTitle, ControlSrc, ControlType )
+			VALUES ( @ModuleDefID, 'AppGalleryDownload', 'AppGallery Downloader', 'DesktopModules/Admin/Extensions/AppGallery/AppGalleryDownload.ascx', 3)
 	END
 GO
 

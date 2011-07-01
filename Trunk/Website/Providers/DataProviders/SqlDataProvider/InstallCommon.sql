@@ -19,67 +19,48 @@ SET ANSI_NULLS ON         -- We don't want (NULL = NULL) == TRUE
 GO
 SET ANSI_PADDING ON
 GO
-
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
--- Create the temporary permission tables and stored procedures
--- TO preserve the permissions of an object.
---
--- We use this method instead of using CREATE (if the object
--- doesn't exist) and ALTER (if the object exists) because the
--- latter one either requires the use of dynamic SQL (which we want to
--- avoid) or writing the body of the object (e.g. an SP or view) twice,
--- once use CREATE and again using ALTER.
-
-
-IF (OBJECT_ID('dbo.temp_aspnet_Permissions') IS NOT NULL)
-BEGIN
-    DROP TABLE dbo.temp_aspnet_Permissions
-END
+SET ANSI_NULL_DFLT_ON ON
 GO
 
-CREATE TABLE dbo.temp_aspnet_Permissions
-(
-    Owner     sysname,
-    Object    sysname,
-    Grantee   sysname,
-    Grantor   sysname,
-    ProtectType char(10),
-    [Action]    varchar(255),
-    [Column]    sysname
-)
-
-INSERT INTO dbo.temp_aspnet_Permissions
-EXEC sp_helprotect
+/*************************************************************/
+/*************************************************************/
+/*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
-             WHERE (name = N'aspnet_Setup_RestorePermissions')
+              FROM sys.objects
+             WHERE (name = N'aspnet_Setup_RemoveAllRoleMembers')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_Setup_RestorePermissions
+DROP PROCEDURE [dbo].aspnet_Setup_RemoveAllRoleMembers
 GO
 
-CREATE PROCEDURE [dbo].aspnet_Setup_RestorePermissions
+CREATE PROCEDURE [dbo].aspnet_Setup_RemoveAllRoleMembers
     @name   sysname
 AS
 BEGIN
-    DECLARE @object sysname
-    DECLARE @protectType char(10)
-    DECLARE @action varchar(255)
-    DECLARE @grantee sysname
+    CREATE TABLE #aspnet_RoleMembers
+    (
+        Group_name      sysname,
+        Group_id        smallint,
+        Users_in_group  sysname,
+        User_id         smallint
+    )
+
+    INSERT INTO #aspnet_RoleMembers
+    EXEC sp_helpuser @name
+
+    DECLARE @user_id smallint
     DECLARE @cmd nvarchar(500)
     DECLARE c1 cursor FORWARD_ONLY FOR
-        SELECT Object, ProtectType, [Action], Grantee FROM dbo.temp_aspnet_Permissions where Object = @name
+        SELECT User_id FROM #aspnet_RoleMembers
 
     OPEN c1
 
-    FETCH c1 INTO @object, @protectType, @action, @grantee
+    FETCH c1 INTO @user_id
     WHILE (@@fetch_status = 0)
     BEGIN
-        SET @cmd = @protectType + ' ' + @action + ' on ' + @object + ' TO [' + @grantee + ']'
+        SET @cmd = 'EXEC sp_droprolemember ' + '''' + @name + ''', ''' + USER_NAME(@user_id) + ''''
         EXEC (@cmd)
-        FETCH c1 INTO @object, @protectType, @action, @grantee
+        FETCH c1 INTO @user_id
     END
 
     CLOSE c1
@@ -89,17 +70,11 @@ GO
 
 /*************************************************************/
 /*************************************************************/
-
-
-
-
-/*************************************************************/
-/*************************************************************/
 /*************************************************************/
 -- Create the aspnet_Applications table.
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Applications')
                   AND (type = 'U')))
 BEGIN
@@ -118,7 +93,7 @@ GO
 /*************************************************************/
 -- Create the aspnet_Users table
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Users')
                   AND (type = 'U')))
 BEGIN
@@ -142,7 +117,7 @@ GO
 /*************************************************************/
 -- Create the aspnet_SchemaVersions table
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_SchemaVersions')
                   AND (type = 'U')))
 BEGIN
@@ -161,14 +136,14 @@ GO
 /*************************************************************/
 -- RegisterSchemaVersion SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
-             WHERE (name = N'aspnet_RegisterSchemaVersion')
-               AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_RegisterSchemaVersion
+IF (NOT EXISTS (SELECT name
+                FROM sys.objects
+                WHERE (name = N'aspnet_RegisterSchemaVersion')
+                AND (type = 'P')))
+    EXEC('CREATE PROCEDURE aspnet_RegisterSchemaVersion AS RAISERROR(''Empty aspnet_RegisterSchemaVersion Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
-CREATE PROCEDURE [dbo].aspnet_RegisterSchemaVersion
+ALTER PROCEDURE [dbo].aspnet_RegisterSchemaVersion
     @Feature                   nvarchar(128),
     @CompatibleSchemaVersion   nvarchar(128),
     @IsCurrentVersion          bit,
@@ -196,14 +171,8 @@ GO
 
 DECLARE @command nvarchar(4000)
 
-SET @command = 'GRANT EXECUTE ON [dbo].aspnet_Setup_RestorePermissions TO ' + QUOTENAME(user)
-EXEC (@command)
 SET @command = 'GRANT EXECUTE ON [dbo].aspnet_RegisterSchemaVersion TO ' + QUOTENAME(user)
 EXEC (@command)
-GO
-
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_RegisterSchemaVersion'
 GO
 
 -- Create common schema version
@@ -214,14 +183,14 @@ GO
 /*************************************************************/
 -- CheckSchemaVersion SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_CheckSchemaVersion')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_CheckSchemaVersion
+   EXEC('CREATE PROCEDURE [dbo].aspnet_CheckSchemaVersion AS RAISERROR(''Empty aspnet_CheckSchemaVersion Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
-CREATE PROCEDURE [dbo].aspnet_CheckSchemaVersion
+ALTER PROCEDURE [dbo].aspnet_CheckSchemaVersion
     @Feature                   nvarchar(128),
     @CompatibleSchemaVersion   nvarchar(128)
 AS
@@ -236,22 +205,18 @@ BEGIN
 END
 GO
 
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_CheckSchemaVersion'
-GO
-
 /*************************************************************/
 /*************************************************************/
 -- CreateApplication SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_Applications_CreateApplication')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_Applications_CreateApplication
+EXEC('CREATE PROCEDURE [dbo].aspnet_Applications_CreateApplication AS RAISERROR(''Empty aspnet_Applications_CreateApplication Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
-CREATE PROCEDURE [dbo].aspnet_Applications_CreateApplication
+ALTER PROCEDURE [dbo].aspnet_Applications_CreateApplication
     @ApplicationName      nvarchar(256),
     @ApplicationId        uniqueidentifier OUTPUT
 AS
@@ -300,22 +265,18 @@ BEGIN
 END
 GO
 
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_Applications_CreateApplication'
-GO
-
 /*************************************************************/
 /*************************************************************/
 -- UnRegisterSchemaVersion SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_UnRegisterSchemaVersion')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_UnRegisterSchemaVersion
+EXEC('CREATE PROCEDURE [dbo].aspnet_UnRegisterSchemaVersion AS RAISERROR(''Empty aspnet_UnRegisterSchemaVersion Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
-CREATE PROCEDURE [dbo].aspnet_UnRegisterSchemaVersion
+ALTER PROCEDURE [dbo].aspnet_UnRegisterSchemaVersion
     @Feature                   nvarchar(128),
     @CompatibleSchemaVersion   nvarchar(128)
 AS
@@ -325,22 +286,18 @@ BEGIN
 END
 GO
 
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_UnRegisterSchemaVersion'
-GO
-
 /*************************************************************/
 /*************************************************************/
 -- CreateUser SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_CreateUser')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_Users_CreateUser
+EXEC('CREATE PROCEDURE [dbo].aspnet_Users_CreateUser AS RAISERROR(''Empty aspnet_Users_CreateUser Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
-CREATE PROCEDURE [dbo].aspnet_Users_CreateUser
+ALTER PROCEDURE [dbo].aspnet_Users_CreateUser
     @ApplicationId    uniqueidentifier,
     @UserName         nvarchar(256),
     @IsUserAnonymous  bit,
@@ -364,21 +321,18 @@ BEGIN
 END
 GO
 
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_Users_CreateUser'
-GO
 
 /*************************************************************/
 /*************************************************************/
 --- DeleteUser SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_DeleteUser')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_Users_DeleteUser
+EXEC('CREATE PROCEDURE [dbo].aspnet_Users_DeleteUser AS RAISERROR(''Empty aspnet_Users_DeleteUser Procedure!!'', 16, 1) WITH SETERROR')
 GO
-CREATE PROCEDURE [dbo].aspnet_Users_DeleteUser
+ALTER PROCEDURE [dbo].aspnet_Users_DeleteUser
     @ApplicationName  nvarchar(256),
     @UserName         nvarchar(256),
     @TablesToDeleteFrom int,
@@ -419,7 +373,7 @@ BEGIN
 
     -- Delete from Membership table if (@TablesToDeleteFrom & 1) is set
     IF ((@TablesToDeleteFrom & 1) <> 0 AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_MembershipUsers') AND (type = 'V'))))
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_MembershipUsers') AND (type = 'V'))))
     BEGIN
         DELETE FROM dbo.aspnet_Membership WHERE @UserId = UserId
 
@@ -435,7 +389,7 @@ BEGIN
 
     -- Delete from aspnet_UsersInRoles table if (@TablesToDeleteFrom & 2) is set
     IF ((@TablesToDeleteFrom & 2) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_UsersInRoles') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_UsersInRoles') AND (type = 'V'))) )
     BEGIN
         DELETE FROM dbo.aspnet_UsersInRoles WHERE @UserId = UserId
 
@@ -451,7 +405,7 @@ BEGIN
 
     -- Delete from aspnet_Profile table if (@TablesToDeleteFrom & 4) is set
     IF ((@TablesToDeleteFrom & 4) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
     BEGIN
         DELETE FROM dbo.aspnet_Profile WHERE @UserId = UserId
 
@@ -467,7 +421,7 @@ BEGIN
 
     -- Delete from aspnet_PersonalizationPerUser table if (@TablesToDeleteFrom & 8) is set
     IF ((@TablesToDeleteFrom & 8) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
     BEGIN
         DELETE FROM dbo.aspnet_PersonalizationPerUser WHERE @UserId = UserId
 
@@ -524,30 +478,21 @@ GO
 
 /*************************************************************/
 /*************************************************************/
-/*************************************************************/
-/*************************************************************/
-
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_Users_DeleteUser'
-GO
-
-/*************************************************************/
-/*************************************************************/
 --- aspnet_AnyDataInTables SP
 
-IF (EXISTS (SELECT name
-              FROM sysobjects
+IF (NOT EXISTS (SELECT name
+              FROM sys.objects
              WHERE (name = N'aspnet_AnyDataInTables')
                AND (type = 'P')))
-DROP PROCEDURE [dbo].aspnet_AnyDataInTables
+EXEC('CREATE PROCEDURE [dbo].aspnet_AnyDataInTables AS RAISERROR(''Empty aspnet_AnyDataInTables Procedure!!'', 16, 1) WITH SETERROR')
 GO
-CREATE PROCEDURE [dbo].aspnet_AnyDataInTables
+ALTER PROCEDURE [dbo].aspnet_AnyDataInTables
     @TablesToCheck int
 AS
 BEGIN
     -- Check Membership table if (@TablesToCheck & 1) is set
     IF ((@TablesToCheck & 1) <> 0 AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_MembershipUsers') AND (type = 'V'))))
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_MembershipUsers') AND (type = 'V'))))
     BEGIN
         IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_Membership))
         BEGIN
@@ -558,7 +503,7 @@ BEGIN
 
     -- Check aspnet_Roles table if (@TablesToCheck & 2) is set
     IF ((@TablesToCheck & 2) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_Roles') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_Roles') AND (type = 'V'))) )
     BEGIN
         IF (EXISTS(SELECT TOP 1 RoleId FROM dbo.aspnet_Roles))
         BEGIN
@@ -569,7 +514,7 @@ BEGIN
 
     -- Check aspnet_Profile table if (@TablesToCheck & 4) is set
     IF ((@TablesToCheck & 4) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
     BEGIN
         IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_Profile))
         BEGIN
@@ -580,7 +525,7 @@ BEGIN
 
     -- Check aspnet_PersonalizationPerUser table if (@TablesToCheck & 8) is set
     IF ((@TablesToCheck & 8) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
     BEGIN
         IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_PersonalizationPerUser))
         BEGIN
@@ -591,7 +536,7 @@ BEGIN
 
     -- Check aspnet_PersonalizationPerUser table if (@TablesToCheck & 16) is set
     IF ((@TablesToCheck & 16) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'aspnet_WebEvent_LogEvent') AND (type = 'P'))) )
+        (EXISTS (SELECT name FROM sys.objects WHERE (name = N'aspnet_WebEvent_LogEvent') AND (type = 'P'))) )
     BEGIN
         IF (EXISTS(SELECT TOP 1 * FROM dbo.aspnet_WebEvent_Events))
         BEGIN
@@ -625,65 +570,47 @@ BEGIN
 END
 GO
 
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
 DECLARE @command nvarchar(400)
 SET @command = 'GRANT EXECUTE ON [dbo].aspnet_AnyDataInTables TO ' + QUOTENAME(user)
 EXEC (@command)
-GO
-
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'aspnet_AnyDataInTables'
 GO
 
 /*************************************************************/
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_Applications')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_Applications view...'
   EXEC('
   CREATE VIEW [dbo].[vw_aspnet_Applications]
-  AS SELECT [dbo].[aspnet_Applications].[ApplicationName], [dbo].[aspnet_Applications].[LoweredApplicationName], [dbo].[aspnet_Applications].[ApplicationId], [dbo].[aspnet_Applications].[Description]
+  AS SELECT [ApplicationName], [LoweredApplicationName], [ApplicationId], [Description]
   FROM [dbo].[aspnet_Applications]
   ')
 END
-
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'vw_aspnet_Applications'
-GO
 
 /*************************************************************/
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_Users')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_Users view...'
   EXEC('
   CREATE VIEW [dbo].[vw_aspnet_Users]
-  AS SELECT [dbo].[aspnet_Users].[ApplicationId], [dbo].[aspnet_Users].[UserId], [dbo].[aspnet_Users].[UserName], [dbo].[aspnet_Users].[LoweredUserName], [dbo].[aspnet_Users].[MobileAlias], [dbo].[aspnet_Users].[IsAnonymous], [dbo].[aspnet_Users].[LastActivityDate]
+  AS SELECT [ApplicationId], [UserId], [UserName], [LoweredUserName], [MobileAlias], [IsAnonymous], [LastActivityDate]
   FROM [dbo].[aspnet_Users]
   ')
 END
-
--- Restore the permissions
-EXEC [dbo].aspnet_Setup_RestorePermissions N'vw_aspnet_Users'
-GO
 
 /*************************************************************/
 /*************************************************************/
 DECLARE @command nvarchar(4000)
 
-SET @command = 'REVOKE EXECUTE ON [dbo].aspnet_Setup_RestorePermissions from ' + QUOTENAME(user)
-EXEC (@command)
 SET @command = 'REVOKE EXECUTE ON [dbo].aspnet_RegisterSchemaVersion from ' + QUOTENAME(user)
 EXEC (@command)
 GO
@@ -691,6 +618,3 @@ GO
 PRINT '----------------------------------------'
 PRINT 'Completed execution of InstallCommon.SQL'
 PRINT '----------------------------------------'
-
-Drop TABLE dbo.temp_aspnet_Permissions
-GO

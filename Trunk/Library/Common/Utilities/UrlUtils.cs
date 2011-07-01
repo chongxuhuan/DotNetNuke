@@ -194,7 +194,7 @@ namespace DotNetNuke.Common.Utilities
             {
                 if (!popUpUrl.Contains("dnnModal.show"))
                 {
-                    popUpScriptFormat += "dnnModal.show(jQuery, '{0}{1}popUp=true',/*showReturn*/{2},{3},{4})";
+                    popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true',/*showReturn*/{2},{3},{4})";
                     delimiter = popUpUrl.Contains("?") ? "&" : "?";
                     popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
                 }

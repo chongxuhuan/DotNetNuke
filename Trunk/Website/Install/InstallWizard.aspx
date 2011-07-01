@@ -8,7 +8,7 @@
 <head runat="server">
     <title></title>
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
-    <link rel="stylesheet" type="text/css" href="Install.css" />
+    <link rel="stylesheet" type="text/css" href="Install.css?refresh" />
     <asp:placeholder id="SCRIPTS" runat="server" />
 </head>
 <body>

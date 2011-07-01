@@ -617,7 +617,12 @@ namespace DotNetNuke.Framework
 
                 //register popup js
                 jQuery.RegisterJQueryUI(Page);
+
+#if DEBUG
+                ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/Debug/dnn.modalpopup.js"));
+#else
                 ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/dnn.modalpopup.js"));
+#endif
             }
             else
             {

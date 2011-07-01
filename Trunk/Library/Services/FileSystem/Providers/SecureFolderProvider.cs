@@ -265,6 +265,60 @@ namespace DotNetNuke.Services.FileSystem
             return true;
         }
 
+        public override void UpdateFile(IFileInfo file, Stream content)
+        {
+            Requires.NotNull("file", file);
+            Requires.NotNull("content", content);
+
+            var arrData = new byte[2048];
+            var filePath = file.PhysicalPath + ProtectedExtension;
+            Stream outStream = null;
+
+            try
+            {
+                if (FileWrapper.Instance.Exists(filePath))
+                {
+                    FileWrapper.Instance.Delete(filePath);
+                }
+
+                outStream = FileWrapper.Instance.Create(filePath);
+            }
+            catch (Exception)
+            {
+                if (outStream != null)
+                {
+                    outStream.Close();
+                    outStream.Dispose();
+                }
+
+                throw;
+            }
+
+            var originalPosition = content.Position;
+            content.Position = 0;
+
+            try
+            {
+                var intLength = content.Read(arrData, 0, arrData.Length);
+
+                while (intLength > 0)
+                {
+                    outStream.Write(arrData, 0, intLength);
+                    intLength = content.Read(arrData, 0, arrData.Length);
+                }
+            }
+            finally
+            {
+                content.Position = originalPosition;
+
+                if (outStream != null)
+                {
+                    outStream.Close();
+                    outStream.Dispose();
+                }
+            }
+        }
+
         public override void UpdateFile(IFolderInfo folder, string fileName, Stream content)
         {
             Requires.NotNull("folder", folder);

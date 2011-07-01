@@ -24,6 +24,7 @@
 #region Usings
 
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
 
@@ -37,6 +38,7 @@ namespace DotNetNuke.Modules.Admin.ProfessionalPreview
         {
             base.OnLoad(e);
             previewText.Text = Localization.GetString(ModuleConfiguration.ModuleTitle, LocalResourceFile);
+            previewFrame.Attributes["src"] = "http://www.dotnetnuke.com/Products/CompareDotNetNukeEditions/tabid/2175/Default.aspx#" + ModuleConfiguration.ModuleTitle.Replace(" ", string.Empty);
             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("FeatureNotAvailable", LocalResourceFile), ModuleMessage.ModuleMessageType.BlueInfo);
         }
     }

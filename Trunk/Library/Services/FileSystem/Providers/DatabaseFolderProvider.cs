@@ -241,6 +241,37 @@ namespace DotNetNuke.Services.FileSystem
             return false;
         }
 
+        public override void UpdateFile(IFileInfo file, Stream content)
+        {
+            Requires.NotNull("file", file);
+
+            byte[] fileContent = null;
+
+            if (content != null)
+            {
+                var originalPosition = content.Position;
+                content.Position = 0;
+
+                var buffer = new byte[16 * 1024];
+
+                using (var ms = new MemoryStream())
+                {
+                    int read;
+
+                    while ((read = content.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, read);
+                    }
+
+                    fileContent = ms.ToArray();
+                }
+
+                content.Position = originalPosition;
+            }
+
+            DataProvider.Instance().UpdateFileContent(file.FileId, fileContent);
+        }
+
         public override void UpdateFile(IFolderInfo folder, string fileName, Stream content)
         {
             Requires.NotNull("folder", folder);
@@ -248,34 +279,33 @@ namespace DotNetNuke.Services.FileSystem
 
             var file = FileManager.Instance.GetFile(folder, fileName);
 
-            if (file != null)
+            if (file == null) return;
+            
+            byte[] fileContent = null;
+
+            if (content != null)
             {
-                byte[] fileContent = null;
+                var originalPosition = content.Position;
+                content.Position = 0;
 
-                if (content != null)
-                {
-                    var originalPosition = content.Position;
-                    content.Position = 0;
-
-                    var buffer = new byte[16 * 1024];
+                var buffer = new byte[16 * 1024];
                     
-                    using (var ms = new MemoryStream())
+                using (var ms = new MemoryStream())
+                {
+                    int read;
+                        
+                    while ((read = content.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        int read;
-                        
-                        while ((read = content.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            ms.Write(buffer, 0, read);
-                        }
-                        
-                        fileContent = ms.ToArray();
+                        ms.Write(buffer, 0, read);
                     }
-
-                    content.Position = originalPosition;
+                        
+                    fileContent = ms.ToArray();
                 }
 
-                DataProvider.Instance().UpdateFileContent(file.FileId, fileContent);
+                content.Position = originalPosition;
             }
+
+            DataProvider.Instance().UpdateFileContent(file.FileId, fileContent);
         }
 
         #endregion

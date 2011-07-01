@@ -21,15 +21,11 @@ SET ANSI_NULLS ON         -- We don't want (NULL = NULL) == TRUE
 GO
 SET ANSI_PADDING ON
 GO
-
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
+SET ANSI_NULL_DFLT_ON ON
+GO
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Applications')
                   AND (type = 'U')))
 BEGIN
@@ -37,7 +33,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Users')
                   AND (type = 'U')))
 BEGIN
@@ -45,7 +41,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Applications_CreateApplication')
                AND (type = 'P')))
 BEGIN
@@ -53,7 +49,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_CreateUser')
                AND (type = 'P')))
 BEGIN
@@ -61,7 +57,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_DeleteUser')
                AND (type = 'P')))
 BEGIN
@@ -71,7 +67,7 @@ END
 /*************************************************************/
 /*************************************************************/
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Membership')
                   AND (type = 'U')))
 BEGIN
@@ -128,14 +124,14 @@ END
 
 /*************************************************************/
 
-IF (@ver >= 8)
-    EXEC sp_tableoption N'aspnet_Membership', 'text in row', 3000
+--IF (@ver >= 8)
+--    EXEC sp_tableoption N'aspnet_Membership', 'text in row', 3000
 
 /*************************************************************/
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_CreateUser')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_CreateUser
@@ -341,7 +337,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetUserByName')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetUserByName
@@ -357,9 +353,8 @@ BEGIN
 
     IF (@UpdateLastActivity = 1)
     BEGIN
-        SELECT TOP 1 m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
-                m.CreateDate, m.LastLoginDate, @CurrentTimeUtc, m.LastPasswordChangedDate,
-                u.UserId, m.IsLockedOut,m.LastLockoutDate
+        -- select user ID from aspnet_users table
+        SELECT TOP 1 @UserId = u.UserId
         FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
         WHERE    LOWER(@ApplicationName) = a.LoweredApplicationName AND
                 u.ApplicationId = a.ApplicationId    AND
@@ -371,6 +366,12 @@ BEGIN
         UPDATE   dbo.aspnet_Users
         SET      LastActivityDate = @CurrentTimeUtc
         WHERE    @UserId = UserId
+
+        SELECT m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
+                m.CreateDate, m.LastLoginDate, u.LastActivityDate, m.LastPasswordChangedDate,
+                u.UserId, m.IsLockedOut, m.LastLockoutDate
+        FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+        WHERE  @UserId = u.UserId AND u.UserId = m.UserId 
     END
     ELSE
     BEGIN
@@ -394,7 +395,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetUserByUserId')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetUserByUserId
@@ -434,7 +435,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetUserByEmail')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetUserByEmail
@@ -469,7 +470,7 @@ GO
 /*************************************************************/
 
 IF ( EXISTS( SELECT name
-             FROM sysobjects
+             FROM sys.objects
              WHERE ( name = N'aspnet_Membership_GetPasswordWithFormat' )
                    AND ( type = 'P' ) ) )
 DROP PROCEDURE dbo.aspnet_Membership_GetPasswordWithFormat
@@ -532,7 +533,7 @@ GO
 /*************************************************************/
 
 IF ( EXISTS( SELECT name
-             FROM sysobjects
+             FROM sys.objects
              WHERE ( name = N'aspnet_Membership_UpdateUserInfo' )
                    AND ( type = 'P' ) ) )
 DROP PROCEDURE dbo.aspnet_Membership_UpdateUserInfo
@@ -693,7 +694,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetPassword')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetPassword
@@ -837,7 +838,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_SetPassword')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_SetPassword
@@ -875,7 +876,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_ResetPassword')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_ResetPassword
@@ -1026,7 +1027,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_UnlockUser')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_UnlockUser
@@ -1065,7 +1066,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_UpdateUser')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_UpdateUser
@@ -1162,7 +1163,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_ChangePasswordQuestionAndAnswer')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_ChangePasswordQuestionAndAnswer
@@ -1197,7 +1198,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetAllUsers')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetAllUsers
@@ -1256,7 +1257,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_GetNumberOfUsersOnline')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_GetNumberOfUsersOnline
@@ -1272,9 +1273,9 @@ BEGIN
 
     DECLARE @NumOnline int
     SELECT  @NumOnline = COUNT(*)
-    FROM    dbo.aspnet_Users u WITH (NOLOCK),
-            dbo.aspnet_Applications a WITH (NOLOCK),
-            dbo.aspnet_Membership m WITH (NOLOCK)
+    FROM    dbo.aspnet_Users u WITH(NOLOCK),
+            dbo.aspnet_Applications a WITH(NOLOCK),
+            dbo.aspnet_Membership m WITH(NOLOCK)
     WHERE   u.ApplicationId = a.ApplicationId                  AND
             LastActivityDate > @DateActive                     AND
             a.LoweredApplicationName = LOWER(@ApplicationName) AND
@@ -1287,7 +1288,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_FindUsersByName')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_FindUsersByName
@@ -1347,7 +1348,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Membership_FindUsersByEmail')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Membership_FindUsersByEmail
@@ -1415,38 +1416,38 @@ GO
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_MembershipUsers')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_MembershipUsers view...'
   EXEC('
   CREATE VIEW [dbo].[vw_aspnet_MembershipUsers]
-  AS SELECT [dbo].[aspnet_Membership].[UserId],
-            [dbo].[aspnet_Membership].[PasswordFormat],
-            [dbo].[aspnet_Membership].[MobilePIN],
-            [dbo].[aspnet_Membership].[Email],
-            [dbo].[aspnet_Membership].[LoweredEmail],
-            [dbo].[aspnet_Membership].[PasswordQuestion],
-            [dbo].[aspnet_Membership].[PasswordAnswer],
-            [dbo].[aspnet_Membership].[IsApproved],
-            [dbo].[aspnet_Membership].[IsLockedOut],
-            [dbo].[aspnet_Membership].[CreateDate],
-            [dbo].[aspnet_Membership].[LastLoginDate],
-            [dbo].[aspnet_Membership].[LastPasswordChangedDate],
-            [dbo].[aspnet_Membership].[LastLockoutDate],
-            [dbo].[aspnet_Membership].[FailedPasswordAttemptCount],
-            [dbo].[aspnet_Membership].[FailedPasswordAttemptWindowStart],
-            [dbo].[aspnet_Membership].[FailedPasswordAnswerAttemptCount],
-            [dbo].[aspnet_Membership].[FailedPasswordAnswerAttemptWindowStart],
-            [dbo].[aspnet_Membership].[Comment],
-            [dbo].[aspnet_Users].[ApplicationId],
-            [dbo].[aspnet_Users].[UserName],
-            [dbo].[aspnet_Users].[MobileAlias],
-            [dbo].[aspnet_Users].[IsAnonymous],
-            [dbo].[aspnet_Users].[LastActivityDate]
-  FROM [dbo].[aspnet_Membership] INNER JOIN [dbo].[aspnet_Users]
-      ON [dbo].[aspnet_Membership].[UserId] = [dbo].[aspnet_Users].[UserId]
+  AS SELECT members.[UserId],
+            members.[PasswordFormat],
+            members.[MobilePIN],
+            members.[Email],
+            members.[LoweredEmail],
+            members.[PasswordQuestion],
+            members.[PasswordAnswer],
+            members.[IsApproved],
+            members.[IsLockedOut],
+            members.[CreateDate],
+            members.[LastLoginDate],
+            members.[LastPasswordChangedDate],
+            members.[LastLockoutDate],
+            members.[FailedPasswordAttemptCount],
+            members.[FailedPasswordAttemptWindowStart],
+            members.[FailedPasswordAnswerAttemptCount],
+            members.[FailedPasswordAnswerAttemptWindowStart],
+            members.[Comment],
+            users.[ApplicationId],
+            users.[UserName],
+            users.[MobileAlias],
+            users.[IsAnonymous],
+            users.[LastActivityDate]
+  FROM [dbo].[aspnet_Membership] members INNER JOIN [dbo].[aspnet_Users] users
+      ON members.[UserId] = users.[UserId]
   ')
 END
 GO
@@ -1473,22 +1474,22 @@ GO
 --
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Membership_FullAccess'  ) )
-EXEC sp_addrole N'aspnet_Membership_FullAccess'
+CREATE ROLE aspnet_Membership_FullAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Membership_BasicAccess'  ) )
-EXEC sp_addrole N'aspnet_Membership_BasicAccess'
+CREATE ROLE aspnet_Membership_BasicAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Membership_ReportingAccess'  ) )
-EXEC sp_addrole N'aspnet_Membership_ReportingAccess'
+CREATE ROLE aspnet_Membership_ReportingAccess
 GO
 
 EXEC sp_addrolemember N'aspnet_Membership_BasicAccess', N'aspnet_Membership_FullAccess'

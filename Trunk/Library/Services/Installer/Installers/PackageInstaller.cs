@@ -433,11 +433,17 @@ namespace DotNetNuke.Services.Installer.Installers
             {
                 if ((iconFileNav.Value != string.Empty) && (Package.PackageType == "Module" || Package.PackageType == "Auth_System" || Package.PackageType == "Container" || Package.PackageType == "Skin"))
                 {
-                    Package.IconFile = Package.FolderName + "/" + iconFileNav.Value;
-                    Package.IconFile = (!Package.IconFile.StartsWith("~/")) ? "~/" + Package.IconFile : Package.IconFile;
+                    if (iconFileNav.Value.StartsWith("~/"))
+                    {
+                        Package.IconFile = iconFileNav.Value;
+                    }
+                    else
+                    {
+                        Package.IconFile = (String.IsNullOrEmpty(Package.FolderName) ? "" :  Package.FolderName + "/") + iconFileNav.Value;
+                        Package.IconFile = (!Package.IconFile.StartsWith("~/")) ? "~/" + Package.IconFile : Package.IconFile;
+                    }
                 }
             }
-
 			//Get Author
             XPathNavigator authorNav = manifestNav.SelectSingleNode("owner");
             if (authorNav != null)

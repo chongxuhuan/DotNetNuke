@@ -1,6 +1,19 @@
 ﻿/// <reference name="MicrosoftAjax.js" />
 /// <reference name="dnn.js" assembly="DotNetNuke.WebUtility" />
 
+/*add browser detect for chrome*/
+var dnnJscriptVersion = "6.0.0";
+
+if (typeof (Sys.Browser.Chrome) == "undefined") {
+    Sys.Browser.Chrome = {};
+    if (navigator.userAgent.indexOf(" Chrome/") > -1) {
+        Sys.Browser.agent = Sys.Browser.Chrome;
+        Sys.Browser.version = parseFloat(navigator.userAgent.match(/Chrome\/(\d+\.\d+)/)[1]);
+        Sys.Browser.name = "Chrome";
+        Sys.Browser.hasDebuggerStatement = true;
+    }
+}
+
 var DNN_HIGHLIGHT_COLOR = '#9999FF';
 var COL_DELIMITER = String.fromCharCode(18);
 var ROW_DELIMITER = String.fromCharCode(17);
@@ -13,13 +26,12 @@ var KEY_RETURN = 13;
 var KEY_ESCAPE = 27;
 
 Type.registerNamespace('dnn');
-dnn.extend = function(dest, src) 
-{
-	for (s in src)
-		dest[s] = src[s];
-	return dest;
+dnn.extend = function (dest, src) {
+    for (s in src)
+        dest[s] = src[s];
+    return dest;
 }
-	
+
 dnn.extend(dnn, {
     apiversion: new Number('04.02'),
     pns: '',
@@ -31,36 +43,33 @@ dnn.extend(dnn, {
     delay: [],
     _delayedSet: null,  //used to delay setting variable until page is loaded - perf
 
-	getVars: function()
-	{
+    getVars: function () {
         /// <summary>
         /// Gets array of name value pairs set on the server side by the RegisterClientVariable method.
         /// </summary>
         /// <value type="String" />
-		if (this.vars == null)
-		{
-			//this.vars = new Array();
-			var ctl = dnn.dom.getById('__dnnVariable');
-			if (ctl.value.indexOf('`') == 0)
-			    ctl.value = ctl.value.substring(1).replace(/`/g, '"');
-			
-			if (ctl.value.indexOf('__scdoff') != -1) //back compat
-			{
-				COL_DELIMITER = '~|~';
-				ROW_DELIMITER = '~`~';
-				QUOTE_REPLACEMENT = '~!~';
-			}
-			
-			if (ctl != null && ctl.value.length > 0)
-			    this.vars = Sys.Serialization.JavaScriptSerializer.deserialize(ctl.value);
-			else
-			    this.vars = [];
-		}
-		return this.vars;	
-	},
+        if (this.vars == null) {
+            //this.vars = new Array();
+            var ctl = dnn.dom.getById('__dnnVariable');
+            if (ctl.value.indexOf('`') == 0)
+                ctl.value = ctl.value.substring(1).replace(/`/g, '"');
 
-	getVar: function(key, def)
-	{
+            if (ctl.value.indexOf('__scdoff') != -1) //back compat
+            {
+                COL_DELIMITER = '~|~';
+                ROW_DELIMITER = '~`~';
+                QUOTE_REPLACEMENT = '~!~';
+            }
+
+            if (ctl != null && ctl.value.length > 0)
+                this.vars = Sys.Serialization.JavaScriptSerializer.deserialize(ctl.value);
+            else
+                this.vars = [];
+        }
+        return this.vars;
+    },
+
+    getVar: function (key, def) {
         /// <summary>
         /// Gets value for passed in variable name set on the server side by the RegisterClientVariable method.
         /// </summary>
@@ -71,16 +80,14 @@ dnn.extend(dnn, {
         /// Default value if key not present
         /// </param>
         /// <returns type="String" />
-		if (this.getVars()[key] != null)
-		{
-			var re = eval('/' + QUOTE_REPLACEMENT + '/g');
-			return this.getVars()[key].replace(re, '"');
-		}
+        if (this.getVars()[key] != null) {
+            var re = eval('/' + QUOTE_REPLACEMENT + '/g');
+            return this.getVars()[key].replace(re, '"');
+        }
         return def;
-	},
+    },
 
-	setVar: function(key, val)
-	{			
+    setVar: function (key, val) {
         /// <summary>
         /// Sets value for variable to be sent to the server
         /// </summary>
@@ -91,26 +98,24 @@ dnn.extend(dnn, {
         /// value
         /// </param>
         /// <returns type="Boolean" />
-		if (this.vars == null)
-			this.getVars();			
-		this.vars[key] = val;
-		var ctl = dnn.dom.getById('__dnnVariable');
-		if (ctl == null)
-		{
-			ctl = dnn.dom.createElement('INPUT');
-			ctl.type = 'hidden';
-			ctl.id = '__dnnVariable';
-			dnn.dom.appendChild(dnn.dom.getByTagName("body")[0], ctl);		
-		}
-		if (dnn.isLoaded)
-		    ctl.value = Sys.Serialization.JavaScriptSerializer.serialize(this.vars);
-		else
-		    dnn._delayedSet = {key: key, val: val}; //doesn't matter how many times this gets overwritten, we just want one value to set after load so serialize is called
-		return true;
-	},
+        if (this.vars == null)
+            this.getVars();
+        this.vars[key] = val;
+        var ctl = dnn.dom.getById('__dnnVariable');
+        if (ctl == null) {
+            ctl = dnn.dom.createElement('INPUT');
+            ctl.type = 'hidden';
+            ctl.id = '__dnnVariable';
+            dnn.dom.appendChild(dnn.dom.getByTagName("body")[0], ctl);
+        }
+        if (dnn.isLoaded)
+            ctl.value = Sys.Serialization.JavaScriptSerializer.serialize(this.vars);
+        else
+            dnn._delayedSet = { key: key, val: val }; //doesn't matter how many times this gets overwritten, we just want one value to set after load so serialize is called
+        return true;
+    },
 
-	callPostBack: function(action)
-	{
+    callPostBack: function (action) {
         /// <summary>
         /// Initiates a postback call for the passed in action. In order to work the action will need to be registered on the server side.
         /// </summary>
@@ -121,25 +126,22 @@ dnn.extend(dnn, {
         /// Pass in any number of parameters the postback requires. Parameters should be in the form of 'paramname=paramvalue', 'paramname=paramvalue', 'paramname=paramvalue'
         /// </param>
         /// <returns type="Boolean" />
-		var postBack = dnn.getVar('__dnn_postBack');
-		var data = '';
-		if (postBack.length > 0)
-		{
-			data += action;
-			for (var i=1; i<arguments.length; i++)
-			{
-				var aryParam = arguments[i].split('=');
-				data += COL_DELIMITER + aryParam[0] + COL_DELIMITER + aryParam[1];
-			}
-			eval(postBack.replace('[DATA]', data));
-			return true;
-		}
-		return false;
-	},
+        var postBack = dnn.getVar('__dnn_postBack');
+        var data = '';
+        if (postBack.length > 0) {
+            data += action;
+            for (var i = 1; i < arguments.length; i++) {
+                var aryParam = arguments[i].split('=');
+                data += COL_DELIMITER + aryParam[0] + COL_DELIMITER + aryParam[1];
+            }
+            eval(postBack.replace('[DATA]', data));
+            return true;
+        }
+        return false;
+    },
 
     //atlas
-    createDelegate: function(oThis, ptr) 
-    {
+    createDelegate: function (oThis, ptr) {
         /// <summary>
         /// Creates delegate (closure)
         /// </summary>
@@ -153,8 +155,7 @@ dnn.extend(dnn, {
         return Function.createDelegate(oThis, ptr);
     },
 
-	doDelay: function(key, time, ptr, ctx) 
-	{
+    doDelay: function (key, time, ptr, ctx) {
         /// <summary>
         /// Allows for a setTimeout to occur that will also pass a context object.
         /// </summary>
@@ -171,15 +172,13 @@ dnn.extend(dnn, {
         /// Context to be passed to the function
         /// </param>
         /// <returns />
-		if (this.delay[key] == null)
-		{
-			this.delay[key] = new dnn.delayObject(ptr, ctx, key);
-			this.delay[key].num = window.setTimeout(dnn.createDelegate(this.delay[key], this.delay[key].complete), time);
-		}
-	},
+        if (this.delay[key] == null) {
+            this.delay[key] = new dnn.delayObject(ptr, ctx, key);
+            this.delay[key].num = window.setTimeout(dnn.createDelegate(this.delay[key], this.delay[key].complete), time);
+        }
+    },
 
-	cancelDelay: function(key) 
-	{
+    cancelDelay: function (key) {
         /// <summary>
         /// Allows for delay to be canceled.
         /// </summary>
@@ -187,15 +186,13 @@ dnn.extend(dnn, {
         /// Key to identify the particular delay. 
         /// </param>
         /// <returns />
-		if (this.delay[key] != null)
-		{
-			window.clearTimeout(this.delay[key].num);
-			this.delay[key] = null;
-		}
-	},
+        if (this.delay[key] != null) {
+            window.clearTimeout(this.delay[key].num);
+            this.delay[key] = null;
+        }
+    },
 
-	decodeHTML: function(html)	
-	{
+    decodeHTML: function (html) {
         /// <summary>
         /// Unencodes html string
         /// </summary>
@@ -203,11 +200,10 @@ dnn.extend(dnn, {
         /// encoded html
         /// </param>
         /// <returns type="String" />
-		return html.toString().replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"');
-	},
+        return html.toString().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"');
+    },
 
-	encode: function(arg, doubleEncode)
-	{
+    encode: function (arg, doubleEncode) {
         /// <summary>
         /// Encodes string using either encodeURIComponent or escape
         /// </summary>
@@ -216,19 +212,18 @@ dnn.extend(dnn, {
         /// </param>
         /// <returns type="String" />
         var ret = arg;
-		if (encodeURIComponent)
-			ret = encodeURIComponent(ret);
-		else
-			ret = escape(ret);
+        if (encodeURIComponent)
+            ret = encodeURIComponent(ret);
+        else
+            ret = escape(ret);
 
-		if (doubleEncode == false)
-		    return ret;
-	    //handle double encoding for encoded value "+" encode-> "%2B" replace-> "%252B"
-	    return ret.replace(/%/g,"%25");
-	},
+        if (doubleEncode == false)
+            return ret;
+        //handle double encoding for encoded value "+" encode-> "%2B" replace-> "%252B"
+        return ret.replace(/%/g, "%25");
+    },
 
-	encodeHTML: function(html)	
-	{
+    encodeHTML: function (html) {
         /// <summary>
         /// Encodes html string
         /// </summary>
@@ -236,11 +231,10 @@ dnn.extend(dnn, {
         /// html to encode
         /// </param>
         /// <returns type="String" />
-		return html.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&apos;").replace(/\"/g, "&quot;");
-	},
+        return html.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&apos;").replace(/\"/g, "&quot;");
+    },
 
-    encodeJSON: function(json)
-    {
+    encodeJSON: function (json) {
         /// <summary>
         /// Encodes json string
         /// </summary>
@@ -254,8 +248,7 @@ dnn.extend(dnn, {
     },
 
     //atlas
-	evalJSON: function(data)
-	{
+    evalJSON: function (data) {
         /// <summary>
         /// dencodes data
         /// </summary>
@@ -263,11 +256,11 @@ dnn.extend(dnn, {
         /// json to dencode
         /// </param>
         /// <returns type="Object" />
-	    return Sys.Serialization.JavaScriptSerializer.deserialize(data);
-	},
+        return Sys.Serialization.JavaScriptSerializer.deserialize(data);
+    },
 
-	escapeForEval: function(s)	//needs work...
-	{
+    escapeForEval: function (s)	//needs work...
+    {
         /// <summary>
         /// Allows a string to be evaluated successfully without worry of inappropriate characters. For example ' will be replaced with \' so when evaluated it is equal to 
         /// </summary>
@@ -275,11 +268,10 @@ dnn.extend(dnn, {
         /// string to escape
         /// </param>
         /// <returns type="String" />
-		return s.replace(/\\/g, '\\\\').replace(/\'/g, "\\'").replace(/\r/g, '').replace(/\n/g, '\\n').replace(/\./, '\\.');
-	},
+        return s.replace(/\\/g, '\\\\').replace(/\'/g, "\\'").replace(/\r/g, '').replace(/\n/g, '\\n').replace(/\./, '\\.');
+    },
 
-    getEnumByValue: function(enumType, val)
-    {
+    getEnumByValue: function (enumType, val) {
         /// <summary>
         /// Obtains enum from value passed in
         /// </summary>
@@ -290,206 +282,186 @@ dnn.extend(dnn, {
         /// Value of enumerator
         /// </param>
         /// <returns type="Object" />
-        for (var prop in enumType)
-        {
-            if (typeof(enumType[prop]) == 'number' && enumType[prop] == val)
+        for (var prop in enumType) {
+            if (typeof (enumType[prop]) == 'number' && enumType[prop] == val)
                 return prop;
         }
     },
-    
-    _onload: function()
-    {
+
+    _onload: function () {
         dnn.isLoaded = true;
         if (dnn._delayedSet)
             dnn.setVar(dnn._delayedSet.key, dnn._delayedSet.val);
-    }	
-    
+    }
+
 });
 
 //delayObject
-dnn.delayObject = function(ptr, ctx, type)
-{
+dnn.delayObject = function (ptr, ctx, type) {
     /// <summary>
     /// Object used to hold context for the doDelay functionality
     /// </summary>
-	this.num = null;
-	this.pfunc = ptr;
-	this.context = ctx;
-	this.type = type;
+    this.num = null;
+    this.pfunc = ptr;
+    this.context = ctx;
+    this.type = type;
 }
 
 dnn.delayObject.prototype =
 {
-	complete: function()
-	{
+    complete: function () {
         /// <summary>
         /// This function is invoked internally by the setTimout of the doDelay. It in turn will invoke the function referenced by the pfunc property, passing the context
         /// </summary>
         /// <returns />
-		dnn.delay[this.type] = null;
-		this.pfunc(this.context);
-	}
+        dnn.delay[this.type] = null;
+        this.pfunc(this.context);
+    }
 }
 dnn.delayObject.registerClass('dnn.delayObject');
 
-dnn.ScriptRequest = function(src, text, fCallBack)
-{
+dnn.ScriptRequest = function (src, text, fCallBack) {
     /// <summary>
     /// The ScriptRequest object allows the loading of external script files from script
     /// </summary>
 
-	this.ctl = null;
-	this.xmlhttp = null;
-	this.src = null;
-	this.text = null;
-	if (src != null && src.length > 0)
-	{
-	    var file = dnn.dom.scriptFile(src);
-	    var embedSrc = dnn.getVar(file + '.resx', '');
-	    if (embedSrc.length > 0)
-	        this.src = embedSrc;
-	    else
-		    this.src = src;
+    this.ctl = null;
+    this.xmlhttp = null;
+    this.src = null;
+    this.text = null;
+    if (src != null && src.length > 0) {
+        var file = dnn.dom.scriptFile(src);
+        var embedSrc = dnn.getVar(file + '.resx', '');
+        if (embedSrc.length > 0)
+            this.src = embedSrc;
+        else
+            this.src = src;
     }
-	if (text != null && text.length > 0)
-		this.text = text;
-	this.callBack = fCallBack;
-	this.status = 'init';
-	this.timeOut = 5000;
-	this._xmlhttpStatusChangeDelegate = dnn.createDelegate(this, this.xmlhttpStatusChange);
-	this._statusChangeDelegate = dnn.createDelegate(this, this.statusChange);
-	this._completeDelegate = dnn.createDelegate(this, this.complete);
-	this._reloadDelegate = dnn.createDelegate(this, this.reload);
-	//this.alreadyLoaded = false;
+    if (text != null && text.length > 0)
+        this.text = text;
+    this.callBack = fCallBack;
+    this.status = 'init';
+    this.timeOut = 5000;
+    this._xmlhttpStatusChangeDelegate = dnn.createDelegate(this, this.xmlhttpStatusChange);
+    this._statusChangeDelegate = dnn.createDelegate(this, this.statusChange);
+    this._completeDelegate = dnn.createDelegate(this, this.complete);
+    this._reloadDelegate = dnn.createDelegate(this, this.reload);
+    //this.alreadyLoaded = false;
 }
-dnn.ScriptRequest.prototype = 
+dnn.ScriptRequest.prototype =
 {
-	load: function()
-	{
+    load: function () {
         /// <summary>
         /// Loads script
         /// </summary>
-		this.status = 'loading';
-		this.ctl = document.createElement('script');
-		this.ctl.type = 'text/javascript';
+        this.status = 'loading';
+        this.ctl = document.createElement('script');
+        this.ctl.type = 'text/javascript';
 
-		if (this.src != null)
-		{
-			if (dnn.dom.browser.isType(dnn.dom.browser.Safari))
-			{
-				this.xmlhttp=new XMLHttpRequest();
-				this.xmlhttp.open('GET',this.src,true);
-				this.xmlhttp.onreadystatechange=this._xmlhttpStatusChangeDelegate;
-				this.xmlhttp.send(null);
-				return;
-			}
-			else
-			{
-				if (dnn.dom.browser.isType(dnn.dom.browser.InternetExplorer))
-					this.ctl.onreadystatechange = this._statusChangeDelegate;
-				else if (dnn.dom.browser.isType(dnn.dom.browser.Opera) == false)	//opera loads synchronously
-					this.ctl.onload = this._completeDelegate;
-				
-				this.ctl.src = this.src;
-			}
-    	    dnn.dom.scriptElements[this.src] = this.ctl; //JON VERIFY THIS!!!			
-		}
-		else
-		{
-			if (dnn.dom.browser.isType(dnn.dom.browser.Safari))
-				this.ctl.innerHTML = dnn.encodeHTML(this.text);			
-			else
-				this.ctl.text = this.text;			
-		}
-					
-		var oHeads = dnn.dom.getByTagName('HEAD');
-		if (oHeads)
-		{
-			//opera will load script twice if inline and appended to page 
-			if (dnn.dom.browser.isType(dnn.dom.browser.Opera) == false || this.src != null)
-				oHeads[0].appendChild(this.ctl);
-		}
-		else
-			alert('Cannot load dynamic script, no HEAD tag present.');
-		
-		if (this.src == null || dnn.dom.browser.isType(dnn.dom.browser.Opera))	//opera loads script synchronously
-			this.complete();
-		else if (this.timeOut)
-			dnn.doDelay('loadScript_' + this.src, this.timeOut, this._reloadDelegate, null);
-	},
+        if (this.src != null) {
+            if (dnn.dom.browser.isType(dnn.dom.browser.Safari)) {
+                this.xmlhttp = new XMLHttpRequest();
+                this.xmlhttp.open('GET', this.src, true);
+                this.xmlhttp.onreadystatechange = this._xmlhttpStatusChangeDelegate;
+                this.xmlhttp.send(null);
+                return;
+            }
+            else {
+                if (dnn.dom.browser.isType(dnn.dom.browser.InternetExplorer))
+                    this.ctl.onreadystatechange = this._statusChangeDelegate;
+                else if (dnn.dom.browser.isType(dnn.dom.browser.Opera) == false)	//opera loads synchronously
+                    this.ctl.onload = this._completeDelegate;
 
-	xmlhttpStatusChange: function()
-	{
+                this.ctl.src = this.src;
+            }
+            dnn.dom.scriptElements[this.src] = this.ctl; //JON VERIFY THIS!!!			
+        }
+        else {
+            if (dnn.dom.browser.isType(dnn.dom.browser.Safari))
+                this.ctl.innerHTML = dnn.encodeHTML(this.text);
+            else
+                this.ctl.text = this.text;
+        }
+
+        var oHeads = dnn.dom.getByTagName('HEAD');
+        if (oHeads) {
+            //opera will load script twice if inline and appended to page 
+            if (dnn.dom.browser.isType(dnn.dom.browser.Opera) == false || this.src != null)
+                oHeads[0].appendChild(this.ctl);
+        }
+        else
+            alert('Cannot load dynamic script, no HEAD tag present.');
+
+        if (this.src == null || dnn.dom.browser.isType(dnn.dom.browser.Opera))	//opera loads script synchronously
+            this.complete();
+        else if (this.timeOut)
+            dnn.doDelay('loadScript_' + this.src, this.timeOut, this._reloadDelegate, null);
+    },
+
+    xmlhttpStatusChange: function () {
         /// <summary>
         /// Event fires when script request status changes
         /// </summary>
-		if(this.xmlhttp.readyState != 4)
-			return;
-		
-		this.src = null;
-		this.text = this.xmlhttp.responseText;
-		this.load();	//load as inline script
-	},
+        if (this.xmlhttp.readyState != 4)
+            return;
 
-	statusChange: function()
-	{
+        this.src = null;
+        this.text = this.xmlhttp.responseText;
+        this.load(); //load as inline script
+    },
+
+    statusChange: function () {
         /// <summary>
         /// Event fires when script request status changes
         /// </summary>
-		if ((this.ctl.readyState == 'loaded' || this.ctl.readyState == 'complete') && this.status != 'complete')
-			this.complete();
-	},
-	
-	reload: function()
-	{
+        if ((this.ctl.readyState == 'loaded' || this.ctl.readyState == 'complete') && this.status != 'complete')
+            this.complete();
+    },
+
+    reload: function () {
         /// <summary>
         /// Reloads a script reference
         /// </summary>
-		if (dnn.dom.scriptStatus(this.src) == 'complete')
-		{	
-			this.complete();
-		}
-		else
-		{
-			this.load();
-		}
-	},
-			
-	complete: function()
-	{
+        if (dnn.dom.scriptStatus(this.src) == 'complete') {
+            this.complete();
+        }
+        else {
+            this.load();
+        }
+    },
+
+    complete: function () {
         /// <summary>
         /// Event fires when script request loaded
         /// </summary>
-		dnn.cancelDelay('loadScript_' + this.src);
-		this.status = 'complete';
-		if (typeof(this.callBack) != 'undefined')
-			this.callBack(this);
-	    this.dispose();			
-	},
-	
-	dispose: function()
-	{
+        dnn.cancelDelay('loadScript_' + this.src);
+        this.status = 'complete';
+        if (typeof (this.callBack) != 'undefined')
+            this.callBack(this);
+        this.dispose();
+    },
+
+    dispose: function () {
         /// <summary>
         /// Cleans up memory
         /// </summary>
-		this.callBack = null;
-		if (this.ctl)
-		{
-			if (this.ctl.onreadystatechange)
-				this.ctl.onreadystatechange = new function() {};//stop IE memory leak.  Not sure why can't set to null;
-			else if (this.ctl.onload)
-				this.ctl.onload = null;
-			this.ctl = null;
-		}
-		this.xmlhttp = null;
-		this._xmlhttpStatusChangeDelegate = null;
-		this._statusChangeDelegate = null;
-		this._completeDelegate = null;
-		this._reloadDelegate = null;
-	}
+        this.callBack = null;
+        if (this.ctl) {
+            if (this.ctl.onreadystatechange)
+                this.ctl.onreadystatechange = new function () { }; //stop IE memory leak.  Not sure why can't set to null;
+            else if (this.ctl.onload)
+                this.ctl.onload = null;
+            this.ctl = null;
+        }
+        this.xmlhttp = null;
+        this._xmlhttpStatusChangeDelegate = null;
+        this._statusChangeDelegate = null;
+        this._completeDelegate = null;
+        this._reloadDelegate = null;
+    }
 }
 dnn.ScriptRequest.registerClass('dnn.ScriptRequest');
-    
+
 //--- dnn.dom
 Type.registerNamespace('dnn.dom');
 
@@ -503,8 +475,7 @@ dnn.extend(dnn.dom, {
     scriptElements: [],
     tweens: [],
 
-    attachEvent: function(ctl, type, fHandler)
-    {
+    attachEvent: function (ctl, type, fHandler) {
         /// <summary>
         /// Attatches an event to an element. - you are encouraged to use the $addHandler method instead - kept only for backwards compatibility
         /// </summary>
@@ -518,18 +489,16 @@ dnn.extend(dnn.dom, {
         /// Reference to the function that will react to event
         /// </param>
         /// <returns type="Boolean" />		
-        if (dnn.dom.browser.isType(dnn.dom.browser.InternetExplorer) == false)
-        {
+        if (dnn.dom.browser.isType(dnn.dom.browser.InternetExplorer) == false) {
             var name = type.substring(2);
-            ctl.addEventListener(name, function(evt) { dnn.dom.event = new dnn.dom.eventObject(evt, evt.target); return fHandler(); }, false);
+            ctl.addEventListener(name, function (evt) { dnn.dom.event = new dnn.dom.eventObject(evt, evt.target); return fHandler(); }, false);
         }
         else
-            ctl.attachEvent(type, function() { dnn.dom.event = new dnn.dom.eventObject(window.event, window.event.srcElement); return fHandler(); });
+            ctl.attachEvent(type, function () { dnn.dom.event = new dnn.dom.eventObject(window.event, window.event.srcElement); return fHandler(); });
         return true;
     },
 
-    cursorPos: function(ctl)
-    {
+    cursorPos: function (ctl) {
         /// <summary>
         /// Obtains the current cursor position within a textbox
         /// </summary>
@@ -556,20 +525,16 @@ dnn.extend(dnn.dom, {
             if (range == null || sel == null || ((sel.text != "") && range.inRange(sel) == false))
                 return -1;
 
-            if (sel.text == "")
-            {
+            if (sel.text == "") {
                 if (range.boundingLeft == sel.boundingLeft)
                     pos = 0;
-                else
-                {
+                else {
                     var tagName = ctl.tagName.toLowerCase();
                     // Handle inputs.
-                    if (tagName == "input")
-                    {
+                    if (tagName == "input") {
                         var text = range.text;
                         var i = 1;
-                        while (i < text.length)
-                        {
+                        while (i < text.length) {
                             range.findText(text.substring(i));
                             if (range.boundingLeft == sel.boundingLeft)
                                 break;
@@ -578,8 +543,7 @@ dnn.extend(dnn.dom, {
                         }
                     }
                     // Handle text areas.
-                    else if (tagName == "textarea")
-                    {
+                    else if (tagName == "textarea") {
                         var i = ctl.value.length + 1;
                         var oCaret = document.selection.createRange().duplicate();
                         while (oCaret.parentElement() == ctl && oCaret.move("character", 1) == 1)
@@ -597,8 +561,7 @@ dnn.extend(dnn.dom, {
         return pos;
     },
 
-    cancelCollapseElement: function(ctl)
-    {
+    cancelCollapseElement: function (ctl) {
         /// <summary>
         /// Allows animation for the collapsing of an element to be canceled
         /// </summary>
@@ -609,8 +572,7 @@ dnn.extend(dnn.dom, {
         ctl.style.display = 'none';
     },
 
-    collapseElement: function(ctl, num, pCallBack)
-    {
+    collapseElement: function (ctl, num, pCallBack) {
         /// <summary>
         /// Animates the collapsing of an element
         /// </summary>
@@ -634,27 +596,23 @@ dnn.extend(dnn.dom, {
         dnn.dom.__collapseElement(ctx);
     },
 
-    __collapseElement: function(ctx)
-    {
+    __collapseElement: function (ctx) {
         var num = ctx.num;
         var ctl = ctx.ctl;
 
         var step = ctl.origHeight / num;
-        if (ctl.offsetHeight - (step * 2) > 0)
-        {
+        if (ctl.offsetHeight - (step * 2) > 0) {
             ctl.style.height = (ctl.offsetHeight - step).toString() + 'px';
             dnn.doDelay(ctl.id + 'col', 10, dnn.dom.__collapseElement, ctx);
         }
-        else
-        {
+        else {
             ctl.style.display = 'none';
             if (ctx.pfunc != null)
                 ctx.pfunc();
         }
     },
 
-    cancelExpandElement: function(ctl)
-    {
+    cancelExpandElement: function (ctl) {
         /// <summary>
         /// Allows animation for the expanding of an element to be canceled
         /// </summary>
@@ -666,18 +624,16 @@ dnn.extend(dnn.dom, {
         ctl.style.height = '';
     },
 
-    disableTextSelect: function(ctl)
-    {
+    disableTextSelect: function (ctl) {
         if (typeof ctl.onselectstart != "undefined") //ie
-            ctl.onselectstart = function() { return false }
+            ctl.onselectstart = function () { return false }
         else if (typeof ctl.style.MozUserSelect != "undefined") //ff
             ctl.style.MozUserSelect = "none"
         else //others
-            ctl.onmousedown = function() { return false }
+            ctl.onmousedown = function () { return false }
     },
 
-    expandElement: function(ctl, num, pCallBack)
-    {
+    expandElement: function (ctl, num, pCallBack) {
         /// <summary>
         /// Animates the expanding of an element
         /// </summary>
@@ -693,8 +649,7 @@ dnn.extend(dnn.dom, {
         if (num == null)
             num = 10;
 
-        if (ctl.style.display == 'none' && ctl.origHeight == null)
-        {
+        if (ctl.style.display == 'none' && ctl.origHeight == null) {
             ctl.style.display = '';
             ctl.style.overflow = '';
             ctl.origHeight = ctl.offsetHeight;
@@ -710,18 +665,15 @@ dnn.extend(dnn.dom, {
         dnn.dom.__expandElement(ctx);
     },
 
-    __expandElement: function(ctx)
-    {
+    __expandElement: function (ctx) {
         var num = ctx.num;
         var ctl = ctx.ctl;
         var step = ctl.origHeight / num;
-        if (ctl.offsetHeight + step < ctl.origHeight)
-        {
+        if (ctl.offsetHeight + step < ctl.origHeight) {
             ctl.style.height = (ctl.offsetHeight + step).toString() + 'px';
             dnn.doDelay(ctl.id + 'exp', 10, dnn.dom.__expandElement, ctx);
         }
-        else
-        {
+        else {
             ctl.style.overflow = '';
             ctl.style.height = '';
             if (ctx.pfunc != null)
@@ -729,8 +681,7 @@ dnn.extend(dnn.dom, {
         }
     },
 
-    deleteCookie: function(name, path, domain)
-    {
+    deleteCookie: function (name, path, domain) {
         /// <summary>
         /// Deletes a cookie
         /// </summary>
@@ -744,16 +695,14 @@ dnn.extend(dnn.dom, {
         /// Domain for which the cookie is valid
         /// </param>
         /// <returns type="Boolean" />		
-        if (this.getCookie(name))
-        {
+        if (this.getCookie(name)) {
             this.setCookie(name, '', -1, path, domain);
             return true;
         }
         return false;
     },
 
-    getAttr: function(node, attr, def)
-    {
+    getAttr: function (node, attr, def) {
         /// <summary>
         /// Utility funcion used to retrieve the attribute value of an object. Allows for a default value to be returned if null.
         /// </summary>
@@ -778,8 +727,7 @@ dnn.extend(dnn.dom, {
     },
 
     //Atlas
-    getById: function(id, ctl)
-    {
+    getById: function (id, ctl) {
         /// <summary>
         /// Retrieves element on page based off of passed in id. - use $get instead - backwards compat only
         /// </summary>
@@ -793,8 +741,7 @@ dnn.extend(dnn.dom, {
         return $get(id, ctl);
     },
 
-    getByTagName: function(tag, ctl)
-    {
+    getByTagName: function (tag, ctl) {
         /// <summary>
         /// Retrieves element on page based off of passed in id. - use $get instead - backwards compat only
         /// </summary>
@@ -815,8 +762,7 @@ dnn.extend(dnn.dom, {
             return null;
     },
 
-    getParentByTagName: function(ctl, tag)
-    {
+    getParentByTagName: function (ctl, tag) {
         /// <summary>
         /// Retrieves parent element of a particular tag. This function walks up the control's parent references until it locates control of particular tag or parent no longer exists.
         /// </summary>
@@ -829,8 +775,7 @@ dnn.extend(dnn.dom, {
         /// <returns type="Object" />		
         var parent = ctl.parentNode;
         tag = tag.toLowerCase();
-        while (parent != null)
-        {
+        while (parent != null) {
             if (parent.tagName && parent.tagName.toLowerCase() == tag)
                 return parent;
             parent = parent.parentNode;
@@ -838,8 +783,7 @@ dnn.extend(dnn.dom, {
         return null;
     },
 
-    getCookie: function(name)
-    {
+    getCookie: function (name) {
         /// <summary>
         /// Retrieves a cookie
         /// </summary>
@@ -852,11 +796,9 @@ dnn.extend(dnn.dom, {
         var ret = null;
         var offset = 0;
         var end = 0;
-        if (cookie.length > 0)
-        {
+        if (cookie.length > 0) {
             offset = cookie.indexOf(search);
-            if (offset != -1)
-            {
+            if (offset != -1) {
                 offset += search.length;
                 end = cookie.indexOf(";", offset)
                 if (end == -1)
@@ -867,8 +809,7 @@ dnn.extend(dnn.dom, {
         return (ret);
     },
 
-    getNonTextNode: function(node)
-    {
+    getNonTextNode: function (node) {
         /// <summary>
         /// Retrieves first non-text node.  If passed in node is textnode, it looks at each sibling
         /// </summary>
@@ -879,15 +820,13 @@ dnn.extend(dnn.dom, {
         if (this.isNonTextNode(node))
             return node;
 
-        while (node != null && this.isNonTextNode(node))
-        {
+        while (node != null && this.isNonTextNode(node)) {
             node = this.getSibling(node, 1);
         }
         return node;
     },
 
-    addSafeHandler: function(ctl, evt, obj, method)
-    {
+    addSafeHandler: function (ctl, evt, obj, method) {
         /// <summary>
         /// Creates memory safe event handler (closure) over element - use createDelegate instead with dispose - kept for backwards compatibility
         /// </summary>
@@ -914,14 +853,12 @@ dnn.extend(dnn.dom, {
         }
     },
 
-    destroyHandlers: function()
-    {
+    destroyHandlers: function () {
         /// <summary>
         /// Automatically called (internal) - handles IE memory leaks with closures
         /// </summary>
         var iCount = dnn.dom.__leakEvts.length - 1;
-        for (var i = iCount; i >= 0; i--)
-        {
+        for (var i = iCount; i >= 0; i--) {
             var oEvt = dnn.dom.__leakEvts[i];
             oEvt.ctl.detachEvent(oEvt.name, oEvt.ptr);
             oEvt.ctl[oEvt.name] = null;
@@ -929,8 +866,7 @@ dnn.extend(dnn.dom, {
         }
     },
 
-    getObjMethRef: function(obj, methodName)
-    {
+    getObjMethRef: function (obj, methodName) {
         /// <summary>
         /// Creates event delegate (closure) - use createDelegate instead with dispose - kept for backwards compatibility
         /// adapted from http://jibbering.com/faq/faq_notes/closures.html (associateObjWithEvent)
@@ -941,11 +877,10 @@ dnn.extend(dnn.dom, {
         /// <param name="methodName" type="String">
         /// Method to invoke on object for event 
         /// </param>
-        return (function(e) { e = e || window.event; return obj[methodName](e, this); });
+        return (function (e) { e = e || window.event; return obj[methodName](e, this); });
     },
 
-    getSibling: function(ctl, offset)
-    {
+    getSibling: function (ctl, offset) {
         /// <summary>
         /// Starts at the passed in control and retrieves the sibling that is at the desired offset
         /// </summary>
@@ -956,12 +891,9 @@ dnn.extend(dnn.dom, {
         /// How many positions removed from the passed in control to look for the sibling. For example if you wanted your immediate sibling below you would pass in 1
         /// </param>
         /// <returns type="Object" />		
-        if (ctl != null && ctl.parentNode != null)
-        {
-            for (var i = 0; i < ctl.parentNode.childNodes.length; i++)
-            {
-                if (ctl.parentNode.childNodes[i].id == ctl.id)
-                {
+        if (ctl != null && ctl.parentNode != null) {
+            for (var i = 0; i < ctl.parentNode.childNodes.length; i++) {
+                if (ctl.parentNode.childNodes[i].id == ctl.id) {
                     if (ctl.parentNode.childNodes[i + offset] != null)
                         return ctl.parentNode.childNodes[i + offset];
                 }
@@ -970,8 +902,7 @@ dnn.extend(dnn.dom, {
         return null;
     },
 
-    isNonTextNode: function(node)
-    {
+    isNonTextNode: function (node) {
         /// <summary>
         /// Determines if passed in control is a text node (i.e. nodeType = 3 or 8)
         /// </summary>
@@ -982,32 +913,28 @@ dnn.extend(dnn.dom, {
         return (node.nodeType != 3 && node.nodeType != 8); //exclude nodeType of Text (Netscape/Mozilla) issue!
     },
 
-    getScript: function(src)
-    {
+    getScript: function (src) {
         if (this.scriptElements[src]) //perf
             return this.scriptElements[src];
 
         var oScripts = dnn.dom.getByTagName('SCRIPT'); //safari has document.scripts
         for (var s = 0; s < oScripts.length; s++) //safari
         {
-            if (oScripts[s].src != null && oScripts[s].src.indexOf(src) > -1)
-            {
+            if (oScripts[s].src != null && oScripts[s].src.indexOf(src) > -1) {
                 this.scriptElements[src] = oScripts[s]; //cache for perf
                 return oScripts[s];
             }
         }
     },
 
-    getScriptSrc: function(src)
-    {
+    getScriptSrc: function (src) {
         var resx = dnn.getVar(src + '.resx', '');
         if (resx.length > 0)
             return resx;
         return src;
     },
 
-    getScriptPath: function()
-    {
+    getScriptPath: function () {
         var oThisScript = dnn.dom.getScript('dnn.js');
         if (oThisScript)
             return oThisScript.src.replace('dnn.js', '');
@@ -1018,17 +945,15 @@ dnn.extend(dnn.dom, {
 
     },
 
-    scriptFile: function(src)	//trims off path
+    scriptFile: function (src)	//trims off path
     {
         var ary = src.split('/');
         return ary[ary.length - 1];
     },
 
-    loadScript: function(src, text, callBack)
-    {
+    loadScript: function (src, text, callBack) {
         var sFile;
-        if (src != null && src.length > 0)
-        {
+        if (src != null && src.length > 0) {
             sFile = this.scriptFile(src);
             if (this.scripts[sFile] != null)	//already loaded
                 return;
@@ -1040,12 +965,10 @@ dnn.extend(dnn.dom, {
         return oSR;
     },
 
-    loadScripts: function(aSrc, aText, callBack)
-    {
-        if (dnn.scripts == null)
-        {
-            var oRef = function(aSrc, aText, callBack) //closure to invoke self with same params when done
-            { return (function() { dnn.dom.loadScripts(aSrc, aText, callBack); }); };
+    loadScripts: function (aSrc, aText, callBack) {
+        if (dnn.scripts == null) {
+            var oRef = function (aSrc, aText, callBack) //closure to invoke self with same params when done
+            { return (function () { dnn.dom.loadScripts(aSrc, aText, callBack); }); };
             dnn.dom.loadScript(dnn.dom.getScriptPath() + 'dnn.scripts.js', null, oRef(aSrc, aText, callBack));
             //dnn.dom.loadScript(dnn.dom.getScriptPath() + 'dnn.scripts.js', null);
             return;
@@ -1054,8 +977,7 @@ dnn.extend(dnn.dom, {
         oBatch.load();
     },
 
-    scriptStatus: function(src)
-    {
+    scriptStatus: function (src) {
         var sFile = this.scriptFile(src);
         if (this.scripts[sFile])
             return this.scripts[sFile].status; //dynamic load
@@ -1067,24 +989,21 @@ dnn.extend(dnn.dom, {
             return '';
     },
 
-    setScriptLoaded: function(src)	//called by pages js that is dynamically loaded.  Needed since Safari doesn't support onload for script elements
+    setScriptLoaded: function (src)	//called by pages js that is dynamically loaded.  Needed since Safari doesn't support onload for script elements
     {
         var sFile = this.scriptFile(src);
         if (this.scripts[sFile] && dnn.dom.scripts[sFile].status != 'complete')
             dnn.dom.scripts[sFile].complete();
     },
 
-    navigate: function(sURL, sTarget)
-    {
-        if (sTarget != null && sTarget.length > 0)
-        {
+    navigate: function (sURL, sTarget) {
+        if (sTarget != null && sTarget.length > 0) {
             if (sTarget == '_blank')	//todo: handle more
                 window.open(sURL);
             else
                 document.frames[sTarget].location.href = sURL;
         }
-        else
-        {
+        else {
             if (Sys.Browser.agent === Sys.Browser.InternetExplorer)
                 window.navigate(sURL);  //include referrer (WCT-8821)
             else
@@ -1093,8 +1012,7 @@ dnn.extend(dnn.dom, {
         return false;
     },
 
-    setCookie: function(name, val, days, path, domain, isSecure)
-    {
+    setCookie: function (name, val, days, path, domain, isSecure) {
         /// <summary>
         /// Sets a cookie
         /// </summary>
@@ -1118,8 +1036,7 @@ dnn.extend(dnn.dom, {
         /// </param>
         /// <returns type="Boolean" />		
         var sExpires;
-        if (days)
-        {
+        if (days) {
             sExpires = new Date();
             sExpires.setTime(sExpires.getTime() + (days * 24 * 60 * 60 * 1000));
         }
@@ -1131,26 +1048,22 @@ dnn.extend(dnn.dom, {
     },
 
     //Atlas
-    getCurrentStyle: function(node, prop)
-    {
+    getCurrentStyle: function (node, prop) {
         var style = Sys.UI.DomElement._getCurrentStyle(node);
         if (style)
             return style[prop];
         return '';
     },
 
-    getFormPostString: function(ctl)
-    {
+    getFormPostString: function (ctl) {
         var sRet = '';
-        if (ctl != null)
-        {
+        if (ctl != null) {
             if (ctl.tagName && ctl.tagName.toLowerCase() == 'form')	//if form, faster to loop elements collection
             {
                 for (var i = 0; i < ctl.elements.length; i++)
                     sRet += this.getElementPostString(ctl.elements[i]);
             }
-            else
-            {
+            else {
                 sRet = this.getElementPostString(ctl);
                 for (var i = 0; i < ctl.childNodes.length; i++)
                     sRet += this.getFormPostString(ctl.childNodes[i]); //1.3 fix (calling self recursive insead of elementpoststring)
@@ -1159,22 +1072,18 @@ dnn.extend(dnn.dom, {
         return sRet;
     },
 
-    getElementPostString: function(ctl)
-    {
+    getElementPostString: function (ctl) {
         var tagName;
         if (ctl.tagName)
             tagName = ctl.tagName.toLowerCase();
 
-        if (tagName == 'input')
-        {
+        if (tagName == 'input') {
             var type = ctl.type.toLowerCase();
             if (type == 'text' || type == 'password' || type == 'hidden' || ((type == 'checkbox' || type == 'radio') && ctl.checked))
                 return ctl.name + '=' + dnn.encode(ctl.value, false) + '&';
         }
-        else if (tagName == 'select')
-        {
-            for (var i = 0; i < ctl.options.length; i++)
-            {
+        else if (tagName == 'select') {
+            for (var i = 0; i < ctl.options.length; i++) {
                 if (ctl.options[i].selected)
                     return ctl.name + '=' + dnn.encode(ctl.options[i].value, false) + '&';
             }
@@ -1187,116 +1096,104 @@ dnn.extend(dnn.dom, {
     //OBSOLETE METHODS
     //devreplace
     //this method is obsolete, call nodeElement.appendChild directly
-    appendChild: function(oParent, oChild)
-    {
+    appendChild: function (oParent, oChild) {
         return oParent.appendChild(oChild);
     },
 
     //this method is obsolete, call nodeElement.parentNode.removeChild directly
-    removeChild: function(oChild)
-    {
+    removeChild: function (oChild) {
         return oChild.parentNode.removeChild(oChild);
     },
 
     //devreplace
     //this method is obsolete, call document.createElement directly
-    createElement: function(tagName)
-    {
+    createElement: function (tagName) {
         return document.createElement(tagName.toLowerCase());
     }
 
 });   //dnn.dom end
 
-		dnn.dom.leakEvt = function(name, ctl, oPtr)
-		{
-			this.name = name;
-			this.ctl = ctl;
-			this.ptr = oPtr;
-		}
-        dnn.dom.leakEvt.registerClass('dnn.dom.leakEvt');
-        
+dnn.dom.leakEvt = function (name, ctl, oPtr) {
+    this.name = name;
+    this.ctl = ctl;
+    this.ptr = oPtr;
+}
+dnn.dom.leakEvt.registerClass('dnn.dom.leakEvt');
 
-		dnn.dom.eventObject = function(e, srcElement)
-		{
-			this.object = e;
-			this.srcElement = srcElement;
-		}
-		dnn.dom.eventObject.registerClass('dnn.dom.eventObject');
-		
-		//--- dnn.dom.browser
-		//Kept as is, Atlas detects smaller number of browsers
-		dnn.dom.browserObject = function()
-		{
-			this.InternetExplorer = 'ie';
-			this.Netscape = 'ns';
-			this.Mozilla = 'mo';
-			this.Opera = 'op';
-			this.Safari = 'safari';
-			this.Konqueror = 'kq';
-			this.MacIE = 'macie';
-			
 
-			var type;
-			var agt=navigator.userAgent.toLowerCase();
+dnn.dom.eventObject = function (e, srcElement) {
+    this.object = e;
+    this.srcElement = srcElement;
+}
+dnn.dom.eventObject.registerClass('dnn.dom.eventObject');
 
-			if (agt.indexOf('konqueror') != -1) 
-				type = this.Konqueror;
-			else if (agt.indexOf('msie') != -1 && agt.indexOf('mac') != -1)
-			    type = this.MacIE;
-			else if (Sys.Browser.agent === Sys.Browser.InternetExplorer)
-			    type = this.InternetExplorer;
-			else if (Sys.Browser.agent === Sys.Browser.FireFox)
-			    type = this.Mozilla; //this.FireFox;
-            else if (Sys.Browser.agent === Sys.Browser.Safari)
-                type = this.Safari;
-            else if (Sys.Browser.agent === Sys.Browser.Opera)
-                type = this.Opera;
-            else
-                type = this.Mozilla;  
-						
-			this.type = type;
-			this.version = Sys.Browser.version;
-			var sAgent = navigator.userAgent.toLowerCase();
-			if (this.type == this.InternetExplorer)
-			{
-				var temp=navigator.appVersion.split("MSIE");
-				this.version=parseFloat(temp[1]);
-			}
-			if (this.type == this.Netscape)
-			{
-				var temp=sAgent.split("netscape");
-				this.version=parseFloat(temp[1].split("/")[1]);	
-			}
-		}
-		
+//--- dnn.dom.browser
+//Kept as is, Atlas detects smaller number of browsers
+dnn.dom.browserObject = function () {
+    this.InternetExplorer = 'ie';
+    this.Netscape = 'ns';
+    this.Mozilla = 'mo';
+    this.Opera = 'op';
+    this.Safari = 'safari';
+    this.Konqueror = 'kq';
+    this.MacIE = 'macie';
+
+
+    var type;
+    var agt = navigator.userAgent.toLowerCase();
+
+    if (agt.indexOf('konqueror') != -1)
+        type = this.Konqueror;
+    else if (agt.indexOf('msie') != -1 && agt.indexOf('mac') != -1)
+        type = this.MacIE;
+    else if (Sys.Browser.agent === Sys.Browser.InternetExplorer)
+        type = this.InternetExplorer;
+    else if (Sys.Browser.agent === Sys.Browser.FireFox)
+        type = this.Mozilla; //this.FireFox;
+    else if (Sys.Browser.agent === Sys.Browser.Safari)
+        type = this.Safari;
+    else if (Sys.Browser.agent === Sys.Browser.Opera)
+        type = this.Opera;
+    else
+        type = this.Mozilla;
+
+    this.type = type;
+    this.version = Sys.Browser.version;
+    var sAgent = navigator.userAgent.toLowerCase();
+    if (this.type == this.InternetExplorer) {
+        var temp = navigator.appVersion.split("MSIE");
+        this.version = parseFloat(temp[1]);
+    }
+    if (this.type == this.Netscape) {
+        var temp = sAgent.split("netscape");
+        this.version = parseFloat(temp[1].split("/")[1]);
+    }
+}
+
 dnn.dom.browserObject.prototype =
 {
-		toString: function()
-		{
-			return this.type + ' ' + this.version;
-		},
-		
-		isType: function()
-		{
-			for (var i=0; i<arguments.length; i++)
-			{
-				if (dnn.dom.browser.type == arguments[i])
-					return true;
-			}
-			return false;
-		}
-}	
+    toString: function () {
+        return this.type + ' ' + this.version;
+    },
+
+    isType: function () {
+        for (var i = 0; i < arguments.length; i++) {
+            if (dnn.dom.browser.type == arguments[i])
+                return true;
+        }
+        return false;
+    }
+}
 dnn.dom.browserObject.registerClass('dnn.dom.browserObject');
 dnn.dom.browser = new dnn.dom.browserObject();
 
 
 //-- shorthand functions.  Only define if not already present
-if (typeof($) == 'undefined')
-{
-eval("function $() {var ary = new Array(); for (var i=0; i<arguments.length; i++) {var arg = arguments[i]; var ctl; if (typeof arg == 'string') ctl = dnn.dom.getById(arg); else ctl = arg; if (ctl != null && typeof(Element) != 'undefined' && typeof(Element.extend) != 'undefined') Element.extend(ctl); if (arguments.length == 1) return ctl; ary[ary.length] = ctl;} return ary;}");
+if (typeof ($) == 'undefined') {
+    eval("function $() {var ary = new Array(); for (var i=0; i<arguments.length; i++) {var arg = arguments[i]; var ctl; if (typeof arg == 'string') ctl = dnn.dom.getById(arg); else ctl = arg; if (ctl != null && typeof(Element) != 'undefined' && typeof(Element.extend) != 'undefined') Element.extend(ctl); if (arguments.length == 1) return ctl; ary[ary.length] = ctl;} return ary;}");
 }
 
 //image flickering
-try {document.execCommand("BackgroundImageCache", false, true);} catch(err) {}
+try { document.execCommand("BackgroundImageCache", false, true); } catch (err) { }
 
-Sys.Application.add_load(dnn._onload); 
+Sys.Application.add_load(dnn._onload);

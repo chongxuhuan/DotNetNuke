@@ -109,7 +109,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
                                 if (fileNameWithoutExtension == "Default Website")
                                 {
-                                    cboTemplate.SelectedIndex = cboTemplate.Items.Count;
+                                    cboTemplate.SelectedIndex = cboTemplate.Items.Count - 1;
                                 }
                             }
                         }

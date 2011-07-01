@@ -236,7 +236,15 @@ namespace DotNetNuke.Services.FileSystem
         public abstract bool SupportsFileAttributes();
 
         /// <summary>
-        ///   Updates the content of the specified file.
+        ///   Updates the content of the specified file. It creates it if it doesn't exist.
+        /// </summary>
+        /// <remarks>
+        ///   Do not close content Stream.
+        /// </remarks>
+        public abstract void UpdateFile(IFileInfo file, Stream content);
+
+        /// <summary>
+        ///   Updates the content of the specified file. It creates it if it doesn't exist.
         /// </summary>
         /// <remarks>
         ///   Do not close content Stream.

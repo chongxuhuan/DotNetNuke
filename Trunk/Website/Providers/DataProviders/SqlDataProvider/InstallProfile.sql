@@ -21,15 +21,11 @@ SET ANSI_NULLS ON         -- We don't want (NULL = NULL) == TRUE
 GO
 SET ANSI_PADDING ON
 GO
-
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
-/*************************************************************/
+SET ANSI_NULL_DFLT_ON ON
+GO
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Applications')
                   AND (type = 'U')))
 BEGIN
@@ -37,7 +33,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Users')
                   AND (type = 'U')))
 BEGIN
@@ -45,7 +41,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Applications_CreateApplication')
                AND (type = 'P')))
 BEGIN
@@ -53,7 +49,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_CreateUser')
                AND (type = 'P')))
 BEGIN
@@ -61,7 +57,7 @@ BEGIN
 END
 
 IF (NOT EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Users_DeleteUser')
                AND (type = 'P')))
 BEGIN
@@ -75,13 +71,13 @@ END
 /*************************************************************/
 
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'aspnet_Profile')
                   AND (type = 'U')))
 BEGIN
   PRINT 'Creating the aspnet_Profile table...'
   CREATE TABLE dbo.aspnet_Profile (
-        UserId                   uniqueidentifier   PRIMARY KEY FOREIGN KEY REFERENCES dbo.aspnet_Users(UserId),
+        UserId                   uniqueidentifier  PRIMARY KEY FOREIGN KEY REFERENCES dbo.aspnet_Users(UserId),
         PropertyNames            ntext NOT NULL,
         PropertyValuesString     ntext NOT NULL,
         PropertyValuesBinary     image NOT NULL,
@@ -94,7 +90,7 @@ END
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_GetProperties')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_GetProperties
@@ -138,7 +134,7 @@ GO
 /*************************************************************/
 
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_SetProperties')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_SetProperties
@@ -246,7 +242,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_DeleteProfiles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_DeleteProfiles
@@ -323,7 +319,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_DeleteInactiveProfiles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_DeleteInactiveProfiles
@@ -365,7 +361,7 @@ GO
 /*************************************************************/
 /*************************************************************/
  IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_GetNumberOfInactiveProfiles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_GetNumberOfInactiveProfiles
@@ -403,7 +399,7 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (EXISTS (SELECT name
-              FROM sysobjects
+              FROM sys.objects
              WHERE (name = N'aspnet_Profile_GetProfiles')
                AND (type = 'P')))
 DROP PROCEDURE dbo.aspnet_Profile_GetProfiles
@@ -467,17 +463,17 @@ GO
 /*************************************************************/
 /*************************************************************/
 IF (NOT EXISTS (SELECT name
-                FROM sysobjects
+                FROM sys.objects
                 WHERE (name = N'vw_aspnet_Profiles')
                   AND (type = 'V')))
 BEGIN
   PRINT 'Creating the vw_aspnet_Profiles view...'
   EXEC(N'
   CREATE VIEW [dbo].[vw_aspnet_Profiles]
-  AS SELECT [dbo].[aspnet_Profile].[UserId], [dbo].[aspnet_Profile].[LastUpdatedDate],
-      [DataSize]=  DATALENGTH([dbo].[aspnet_Profile].[PropertyNames])
-                 + DATALENGTH([dbo].[aspnet_Profile].[PropertyValuesString])
-                 + DATALENGTH([dbo].[aspnet_Profile].[PropertyValuesBinary])
+  AS SELECT [UserId], [LastUpdatedDate],
+      [DataSize]=  DATALENGTH([PropertyNames])
+                 + DATALENGTH([PropertyValuesString])
+                 + DATALENGTH([PropertyValuesBinary])
   FROM [dbo].[aspnet_Profile]
   ')
 END
@@ -506,22 +502,22 @@ GO
 --
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Profile_FullAccess' ) )
-EXEC sp_addrole N'aspnet_Profile_FullAccess'
+CREATE ROLE aspnet_Profile_FullAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Profile_BasicAccess' ) )
-EXEC sp_addrole N'aspnet_Profile_BasicAccess'
+CREATE ROLE aspnet_Profile_BasicAccess
 
 IF ( NOT EXISTS ( SELECT name
-                  FROM sysusers
-                  WHERE issqlrole = 1
+                  FROM sys.database_principals
+                  WHERE [type] = 'R'
                   AND name = N'aspnet_Profile_ReportingAccess' ) )
-EXEC sp_addrole N'aspnet_Profile_ReportingAccess'
+CREATE ROLE aspnet_Profile_ReportingAccess
 GO
 
 EXEC sp_addrolemember N'aspnet_Profile_BasicAccess', N'aspnet_Profile_FullAccess'
@@ -585,11 +581,11 @@ BEGIN
     END
 END
 
-IF (@ver >= 8)
-BEGIN
-    EXEC sp_tableoption N'aspnet_Profile', 'text in row', 6000
-END
-GO
+--IF (@ver >= 8)
+--BEGIN
+--    EXEC sp_tableoption N'aspnet_Profile', 'text in row', 6000
+--END
+--GO
 /*************************************************************/
 /*************************************************************/
 /*************************************************************/

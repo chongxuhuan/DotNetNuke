@@ -1341,7 +1341,7 @@ namespace DotNetNuke.Services.Localization
         /// <param name="key">The resourcekey to find</param>
         /// <param name="resourceFileRoot">The Local Resource root</param>
         /// <param name="portalSettings">The current portals Portal Settings</param>
-        /// <param name="strLanguage">A specific language to lookup the string</param>
+        /// <param name="language">A specific language to lookup the string</param>
         /// <returns>The localized Text</returns>
         /// <history>
         /// 	[cnurse]	10/06/2004	Documented

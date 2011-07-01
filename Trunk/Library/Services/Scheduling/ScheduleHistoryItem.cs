@@ -229,7 +229,7 @@ namespace DotNetNuke.Services.Scheduling
         public void AddLogNote(string notes)
         {
             _LogNotes.Append(notes);
-            Instrumentation.DnnLog.Info(notes.Replace(@"<br/>", String.Empty));
+            Instrumentation.DnnLog.Trace(notes.Replace(@"<br/>", String.Empty));
         }
 
         public override void Fill(IDataReader dr)

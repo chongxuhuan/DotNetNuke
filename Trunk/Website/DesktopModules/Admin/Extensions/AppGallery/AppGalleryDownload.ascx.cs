@@ -32,7 +32,6 @@ using System.Xml;
 
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Host;
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Localization;
@@ -51,9 +50,9 @@ namespace DotNetNuke.Modules.Admin.AppGallery
         {
             base.OnInit(e);
 
-            cancel.Click +=new EventHandler(cancel_Click);
-            deployExtension.Click +=deployExtension_Click;
-            downloadExtension.Click +=downloadExtension_Click;
+            cancel.Click += cancel_Click;
+            deployExtension.Click += deployExtension_Click;
+            downloadExtension.Click += downloadExtension_Click;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -62,117 +61,107 @@ namespace DotNetNuke.Modules.Admin.AppGallery
 
             if (!Page.IsPostBack)
             {
-                string extensionId = Request.QueryString["ExtensionID"];
-                string extensionRequest = "http://appgallery.dotnetnuke.com" + "/AppGalleryService.svc/Extensions(" + extensionId + ")";
-            
+                var extensionId = Request.QueryString["ExtensionID"];
+                var extensionRequest = "http://appgallery.dotnetnuke.com" + "/AppGalleryService.svc/Extensions(" + extensionId + ")";
+                
+                var xmlDoc = new XmlDocument();
+                var xml = GetOData(extensionRequest);
 
-                XmlDocument xmlDoc = new XmlDocument();
-
-                string xml = GetOData(extensionRequest);
-
-                XmlNamespaceManager xmlNsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
+                var xmlNsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
                 xmlNsMgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
                 xmlNsMgr.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
                 xmlNsMgr.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
-           
-
                 xmlDoc.LoadXml(xml);
 
-                XmlNodeList elements = xmlDoc.DocumentElement.SelectNodes("/atom:entry", xmlNsMgr);
-                string extName="";
-                string extType = "";
-                string extDesc = "";
-                string extURL = "";
-                string extCatalogID = "";
-                foreach (XmlNode element in elements)
+                if (xmlDoc.DocumentElement != null)
                 {
-           
-                    XmlNodeList properties = element.SelectSingleNode("./atom:content/m:properties", xmlNsMgr).ChildNodes;
-                
-                    foreach (XmlNode property in properties)
+                    var elements = xmlDoc.DocumentElement.SelectNodes("/atom:entry", xmlNsMgr);
+                    string extName="";
+                    string extType = "";
+                    string extDesc = "";
+                    string extURL = "";
+                    string extCatalogID = "";
+                    foreach (XmlNode element in elements)
                     {
-
-                        string propertyName = property.LocalName;
-                        switch (propertyName)
+                        var properties = element.SelectSingleNode("./atom:content/m:properties", xmlNsMgr).ChildNodes;
+                
+                        foreach (XmlNode property in properties)
                         {
-                            case "ExtensionName":
-                                extName = property.InnerText;
-                                ViewState["extName"] = extName;
-                                break;
-                            case "ExtensionType":
-                                extType = property.InnerText;
-                                ViewState["extType"] = extType;
-                                break;
-                            case "Description":
-                                extDesc = property.InnerText;
-                                break;
-                            case "DownloadURL":
-                                extURL = property.InnerText;
-                                ViewState["extURL"] = extURL;
-                                break;
-                            case "CatalogID":
-                                extCatalogID = property.InnerText;
-                                break;
-                            default:
-                                break;   
+                            string propertyName = property.LocalName;
+                            switch (propertyName)
+                            {
+                                case "ExtensionName":
+                                    extName = property.InnerText;
+                                    ViewState["extName"] = extName;
+                                    break;
+                                case "ExtensionType":
+                                    extType = property.InnerText;
+                                    ViewState["extType"] = extType;
+                                    break;
+                                case "Description":
+                                    extDesc = property.InnerText;
+                                    break;
+                                case "DownloadURL":
+                                    extURL = property.InnerText;
+                                    ViewState["extURL"] = extURL;
+                                    break;
+                                case "CatalogID":
+                                    extCatalogID = property.InnerText;
+                                    break;
+                                default:
+                                    break;   
+                            }
                         }
                     }
 
-                }
+                    extensionType.Text = extType;
+                    extensionName.Text = extName;
+                    extensionDesc.Text = extDesc;
 
-                extensionType.Text = extType;
-                extensionName.Text = extName;
-                extensionDesc.Text = extDesc;
-
-                if (extURL == "")
-                {
-                    UI.Skins.Skin.AddModuleMessage(this, GetString("unexpectedRequest"), ModuleMessage.ModuleMessageType.RedError);
-                    return;
-                }
-                downloadExtension.Visible = true;
-                if (extCatalogID=="2")
-                {
-                    deployExtension.Visible = true;
+                    if (extURL == "")
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, GetString("unexpectedRequest"), ModuleMessage.ModuleMessageType.RedError);
+                        return;
+                    }
+                    downloadExtension.Visible = true;
+                    if (extCatalogID=="2")
+                    {
+                        deployExtension.Visible = true;
                 
+                    }
                 }
             }
 
        }
 
-        private void ProcessRequest(string action,bool doInstall)
+        private void ProcessRequest(string action, bool doInstall)
         {
-             string downloadURL = ViewState["extURL"].ToString();
- 
-            string extensionFolder= GetInstallationFolder(ViewState["extType"].ToString());
-            string installFolder = HttpContext.Current.Server.MapPath("~/Install/") + extensionFolder;
-
-            bool unknownCatalog = true;
+            var downloadURL = ViewState["extURL"].ToString();
+            var extensionFolder = GetInstallationFolder(ViewState["extType"].ToString());
+            var installFolder = HttpContext.Current.Server.MapPath("~/Install/") + extensionFolder;
 
             if (downloadURL.Contains("codeplex.com"))
             {
                 ProcessCodeplex(downloadURL, installFolder, action);
-                unknownCatalog = false;
             }
-            if (downloadURL.Contains("snowcovered.com"))
+            else if (downloadURL.Contains("snowcovered.com"))
             {
                 ProcessSnowcovered(downloadURL, installFolder, action);
-                unknownCatalog = false;
             }
-            if (unknownCatalog)
+            else
             {
                 ProcessUnknown(downloadURL, installFolder, action);
             }
-}
+        }
 
-        private string GetOData(string extensionRequest)
+        private static string GetOData(string extensionRequest)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(extensionRequest));
+            var request = (HttpWebRequest)WebRequest.Create(new Uri(extensionRequest));
             request.Method = "GET";
             request.Accept = "application/atom+xml";
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (var response = (HttpWebResponse)request.GetResponse())
             {
-                using (StreamReader readStream = new StreamReader(
-                    response.GetResponseStream(), Encoding.GetEncoding("utf-8")))
+                using (var readStream = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("utf-8")))
                 {
                     return readStream.ReadToEnd();
                 }
@@ -182,10 +171,8 @@ namespace DotNetNuke.Modules.Admin.AppGallery
 
         private void ProcessUnknown(string downloadURL, string installFolder, string catalogAction)
         {
-            WebResponse wr;
             string myfile = "";
-
-            wr = HttpAsWebResponse(downloadURL,
+            var wr = HttpAsWebResponse(downloadURL,
                                    null,
                                    null,
                                    null,
@@ -201,10 +188,8 @@ namespace DotNetNuke.Modules.Admin.AppGallery
 
         private void ProcessSnowcovered(string downloadURL, string installFolder, string catalogAction)
         {
-            WebResponse wr;
             string myfile = "";
-
-            wr = HttpAsWebResponse(downloadURL,
+            var wr = HttpAsWebResponse(downloadURL,
                                    null,
                                    null,
                                    null,
@@ -223,9 +208,8 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             string myfile = "";
             try
             {
-                WebResponse wr;
-                Uri url = new Uri(downloadURL);
-                string host = url.Host;
+                var url = new Uri(downloadURL);
+                var host = url.Host;
 
                 //convert path to download version
                 string directdownloadURL = "";
@@ -238,7 +222,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                 {
                     directdownloadURL = downloadURL;
                 }
-                wr = HttpAsWebResponse(directdownloadURL,
+                var wr = HttpAsWebResponse(directdownloadURL,
                                        null,
                                        null,
                                        null,
@@ -251,7 +235,6 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                                        out myfile);
                 DownloadDeploy(wr, myfile, installFolder, catalogAction);
                 UI.Skins.Skin.AddModuleMessage(this, String.Format(GetString("deploySuccess"), ViewState["extName"]), ModuleMessage.ModuleMessageType.GreenSuccess);
-
                 installExtension.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "", ViewState["extType"].ToString(), myfile.ToString());
                 installExtension.Visible = true;
                 deployExtension.Visible = false;
@@ -267,19 +250,24 @@ namespace DotNetNuke.Modules.Admin.AppGallery
         {
             if (catalogAction == "download")
             {
-                HttpResponse objResponse = HttpContext.Current.Response;
+                var objResponse = HttpContext.Current.Response;
+                var aByteArray = new byte[wr.ContentLength];
+
                 objResponse.ClearContent();
                 objResponse.ClearHeaders();
-                objResponse.AppendHeader("content-disposition", "attachment; filename=\"" + myfile + "\"");
+                objResponse.BufferOutput = true;
+                objResponse.AppendHeader("Content-Disposition", "attachment; filename=\"" + myfile + "\"");
                 objResponse.AppendHeader("Content-Length", wr.ContentLength.ToString());
                 objResponse.ContentType = wr.ContentType;
-                objResponse.Write(wr.GetResponseStream());
                 objResponse.Flush();
+                using (var aWriter = new BinaryWriter(Response.OutputStream))
+                {
+                    aWriter.Write(aByteArray, 0, aByteArray.Length);
+                }
                 objResponse.End();
             }
             else
             {
-                WebResponse response = null;
                 Stream remoteStream = null;
                 Stream localStream = null;
 
@@ -315,10 +303,6 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                     // Close the response and streams objects here 
                     // to make sure they're closed even if an exception
                     // is thrown at some point
-                    if (response != null)
-                    {
-                        response.Close();
-                    }
                     if (remoteStream != null)
                     {
                         remoteStream.Close();
@@ -328,24 +312,19 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                         localStream.Close();
                     }
                 }
-
-
             }
         }
 
 
-        public static WebResponse HttpAsWebResponse(string URL, byte[] Data, string Username, string Password, string Domain, string ProxyAddress, int ProxyPort, bool DoPOST, string UserAgent,
-                                                    string Referer, out string Filename)
+        public static WebResponse HttpAsWebResponse(string URL, byte[] Data, string Username, string Password, string Domain, string ProxyAddress, int ProxyPort, bool DoPOST, string UserAgent, string Referer, out string Filename)
         {
             if (!DoPOST && Data != null && Data.Length > 0)
             {
-                string restoftheurl = Encoding.ASCII.GetString(Data);
-
+                var restoftheurl = Encoding.ASCII.GetString(Data);
                 if (URL.IndexOf("?") <= 0)
                 {
                     URL = URL + "?";
                 }
-
                 URL = URL + restoftheurl;
             }
 
@@ -357,37 +336,20 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             {
                 wreq.Method = "POST";
             }
-
-            PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-            
+           
             wreq.Timeout = Host.WebRequestTimeout;
             
             if (!string.IsNullOrEmpty(Host.ProxyServer))
             {
-                WebProxy Proxy;
-                NetworkCredential ProxyCredentials;
-                Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
+                var proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
                 if (!string.IsNullOrEmpty(Host.ProxyUsername))
                 {
-                    ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
-                    Proxy.Credentials = ProxyCredentials;
+                    var proxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
+                    proxy.Credentials = proxyCredentials;
                 }
-                wreq.Proxy = Proxy;
+                wreq.Proxy = proxy;
             }
-            
 
-            //if (ProxyAddress != null && ProxyAddress.Trim() != "" && ProxyPort > 0)
-            //{
-            //    var webProxy = new WebProxy(ProxyAddress, ProxyPort);
-
-            //    webProxy.BypassProxyOnLocal = true;
-
-            //    wreq.Proxy = webProxy;
-            //}
-            //else
-            //{
-            //    wreq.Proxy = WebProxy.GetDefaultProxy();
-            //}
             if (Username != null && Password != null && Domain != null && Username.Trim() != "" && Password.Trim() != null && Domain.Trim() != null)
             {
                 wreq.Credentials = new NetworkCredential(Username, Password, Domain);
@@ -400,13 +362,13 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             if (DoPOST && Data != null && Data.Length > 0)
             {
                 wreq.ContentType = "application/x-www-form-urlencoded";
-                Stream request = wreq.GetRequestStream();
+                var request = wreq.GetRequestStream();
                 request.Write(Data, 0, Data.Length);
                 request.Close();
             }
             Filename = "";
-            WebResponse wrsp = wreq.GetResponse();
-            string cd = wrsp.Headers["Content-Disposition"];
+            var wrsp = wreq.GetResponse();
+            var cd = wrsp.Headers["Content-Disposition"];
             if (cd != null && cd.Trim() != "" && cd.StartsWith("attachment"))
             {
                 Filename = cd.Substring(cd.IndexOf("\"")).Replace("\"", "");
@@ -414,12 +376,9 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             return wrsp;
         }
 
-
-        private string GetInstallationFolder(string extensionType)
+        private static string GetInstallationFolder(string extensionType)
         {
-            string extensionFolder = "";
-
-
+            var extensionFolder = "";
             switch (extensionType)
             {
                 case "Library":
@@ -443,8 +402,6 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                 case "Other":
                     extensionFolder = "Module";
                     break;
-                //default:
-                //    extensionFolder = "Module";
             }
             return extensionFolder;
         }

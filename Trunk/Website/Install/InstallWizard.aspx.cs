@@ -381,10 +381,10 @@ namespace DotNetNuke.Services.Install
                             packageItem.Enabled = true;
                         }
                         packageItem.Value = strResource;
-                        strResource = strResource.Replace(".zip", "");
-                        strResource = strResource.Replace(".resources", "");
-                        strResource = strResource.Replace("_Install", ")");
-                        strResource = strResource.Replace("_Source", ")");
+                        strResource = Regex.Replace(strResource, ".zip", "", RegexOptions.IgnoreCase);
+                        strResource = Regex.Replace(strResource, ".resources", "", RegexOptions.IgnoreCase);
+                        strResource = Regex.Replace(strResource, "_Install", ")", RegexOptions.IgnoreCase);
+                        strResource = Regex.Replace(strResource, "_Source", ")", RegexOptions.IgnoreCase);
                         strResource = strResource.Replace("_", " (");
                         packageItem.Text = strResource;
 

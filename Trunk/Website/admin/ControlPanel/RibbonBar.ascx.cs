@@ -280,9 +280,13 @@ namespace DotNetNuke.UI.ControlPanels
 					cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
 				}
 
-				if (!cs.IsClientScriptIncludeRegistered("controlpanel"))
+				if (!cs.IsClientScriptIncludeRegistered("ControlPanel"))
 				{
-					cs.RegisterClientScriptInclude("controlpanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+#if DEBUG
+					cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
+#else
+                    cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+#endif
 				}
 			}
         	cmdVisibility.Visible = false;
