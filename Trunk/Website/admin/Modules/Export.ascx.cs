@@ -106,7 +106,9 @@ namespace DotNetNuke.Modules.Admin.Modules
                                     objStream.Close();
 
                                     //add file to Files table
+#pragma warning disable 612,618
                                     FileSystemUtils.AddFile(fileName, PortalId, folder, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");
+#pragma warning restore 612,618
                                 }
                                 else
                                 {

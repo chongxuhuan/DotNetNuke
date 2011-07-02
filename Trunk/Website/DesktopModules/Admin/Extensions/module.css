@@ -5,7 +5,6 @@
 		.dnnExtensionsPackageWriter .dnnFormItem input[type="text"]{margin-right:15px;min-width:35%;}
 		.dnnExtensionsPackageWriter .dnnFormItem.extPWMiltiLine textarea{width:60%;margin-left:26%;}
 		.dnnEditModuleControl .emcTextSource{margin-left:27%;margin-top:5px;}
-    .dnnInstallExtension .dnnFormItem label, .dnnUnInstallExtension .dnnFormItem label{width:50%;}
     .dnnInstallExtension .dnnFormItem > span, .dnnUnInstallExtension .dnnFormItem span{display:inline-block}
     .dnnEditDefinition .dnnFormInput.dnnSSRadioButtons label{width:125px;display:inline;}
     .dnnForm.dnnEditModuleControl .dnnFormItem label{width:25%;}

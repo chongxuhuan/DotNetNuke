@@ -173,7 +173,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 	                [LastModifiedOnDate] datetime NULL,
 		        CONSTRAINT [PK_{objectQualifier}WorkflowStatePermission] PRIMARY KEY CLUSTERED ([WorkflowStatePermissionID] ASC),
 		        CONSTRAINT [IX_{objectQualifier}WorkflowStatePermission] UNIQUE NONCLUSTERED ( [StateID] ASC, [PermissionID] ASC, [RoleID] ASC, [UserID] ASC )
-	        ) ON [PRIMARY]
+	        ) 
 
 	        ALTER TABLE {databaseOwner}[{objectQualifier}WorkflowStatePermission] 
 		        ADD CONSTRAINT [FK_{objectQualifier}WorkflowStatePermission_{objectQualifier}WorkflowStates] FOREIGN KEY([StateID]) REFERENCES {databaseOwner}[{objectQualifier}WorkflowStates] ([StateID]) ON DELETE CASCADE

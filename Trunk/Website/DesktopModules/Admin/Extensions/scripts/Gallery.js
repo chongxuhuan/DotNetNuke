@@ -668,9 +668,9 @@ Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {
     this.TimeoutInMinutes = TimeoutInMinutes;
     this.expireCallback = ExpireCallback;
     this.loadStore();
-    Cache.isEnabled = (typeof this.store != 'undefined') && (typeof JSON != 'undefined');
+    Cache.isEnabled = (typeof this.store != 'undefined') && (typeof JSON != 'undefined') && (typeof(this.TimeoutInMinutes) == 'undefined' || (typeof(this.TimeoutInMinutes) != 'undefined' && this.TimeoutInMinutes > 0));
     if (Cache.isEnabled) {
-        if (this.TimeoutInMinutes != 'undefined' && this.TimeoutInMinutes > 0) {
+        if (typeof(this.TimeoutInMinutes) != 'undefined') {
             this.cacheExpire = window.setInterval(Cache.ClearInterval, (TimeoutInMinutes * 60000), this);
         }
     }

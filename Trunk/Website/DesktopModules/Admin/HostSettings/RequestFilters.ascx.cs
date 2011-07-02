@@ -196,7 +196,9 @@ namespace DotNetNuke.Modules.Admin.Host
                 var configRules = new List<RequestFilterRule>();
 
                 //Deserialize into RewriterConfiguration
+#pragma warning disable 612,618
                 configRules = (List<RequestFilterRule>) XmlUtils.Deserialize(Convert.ToString(myState[1]), configRules.GetType());
+#pragma warning restore 612,618
                 Rules = configRules;
             }
         }

@@ -124,7 +124,7 @@ namespace DotNetNuke.Common
         
         private void Application_BeginRequest(object sender, EventArgs e)
         {
-            //DnnLog.MethodEntry();
+            DnnLog.MethodEntry();
             var app = (HttpApplication)sender;
             HttpRequest Request = app.Request;
             if (Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("webresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("gif") ||

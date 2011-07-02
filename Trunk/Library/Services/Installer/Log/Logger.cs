@@ -211,8 +211,9 @@ namespace DotNetNuke.Services.Installer.Log
         /// </history>
         /// -----------------------------------------------------------------------------
         public void AddInfo(string info)
-        {
+        {            
             _logs.Add(new LogEntry(LogType.Info, info));
+            DnnLog.Info(info);
         }
 
         /// -----------------------------------------------------------------------------
@@ -227,6 +228,7 @@ namespace DotNetNuke.Services.Installer.Log
         public void AddWarning(string warning)
         {
             _logs.Add(new LogEntry(LogType.Warning, warning));
+            DnnLog.Warn(warning);
             _hasWarnings = true;
         }
 

@@ -207,4 +207,7 @@
   <data name="FileSizeRestriction.Text" xml:space="preserve">
     <value>Your site is configured with a maximum file upload size of {0} MB. </value>
   </data>
+  <data name="Decompress.Help" xml:space="preserve">
+    <value>Check this box top optionally decompress any archive that you upload.</value>
+  </data>
 </root>

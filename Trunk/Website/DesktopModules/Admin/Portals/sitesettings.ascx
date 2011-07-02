@@ -146,7 +146,7 @@
 			<fieldset class="ssasSecuritySettings">
 				<div class="dnnFormItem">
 					<dnn:Label ID="plUserRegistration" runat="server" ControlName="optUserRegistration" />
-					<asp:RadioButtonList ID="optUserRegistration" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatLayout="Flow">
+					<asp:RadioButtonList ID="optUserRegistration" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
 						<asp:ListItem Value="0" resourcekey="None" />
 						<asp:ListItem Value="1" resourcekey="Private" />
 						<asp:ListItem Value="2" resourcekey="Public" />
@@ -210,14 +210,14 @@
 				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="plControlPanelMode" runat="server" ControlName="optControlPanelMode" />
-					<asp:radiobuttonlist id="optControlPanelMode" runat="server" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
+					<asp:radiobuttonlist id="optControlPanelMode" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
 						<asp:listitem value="VIEW" resourcekey="ControlPanelModeView" />
 						<asp:listitem value="EDIT" resourcekey="ControlPanelModeEdit" />
 					</asp:radiobuttonlist>
 				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="plControlPanelVisibility" runat="server" ControlName="optControlPanelVisibility" />
-					<asp:radiobuttonlist id="optControlPanelVisibility" runat="server" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
+					<asp:radiobuttonlist id="optControlPanelVisibility" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
 						<asp:listitem value="MIN" resourcekey="ControlPanelVisibilityMinimized" />
 						<asp:listitem value="MAX" resourcekey="ControlPanelVisibilityMaximized" />
 					</asp:radiobuttonlist>
@@ -235,7 +235,7 @@
 				<fieldset class="ssasPortalAlias">
 					<div class="dnnFormItem">
 						<dnn:Label ID="portalAliasModeButtonListLabel" runat="server" ControlName="portalAliasModeButtonList" />
-						<asp:RadioButtonList ID="portalAliasModeButtonList" runat="server" EnableViewState="False" RepeatLayout="Flow" CssClass="dnnFormRadioButtons">
+						<asp:RadioButtonList ID="portalAliasModeButtonList" runat="server" EnableViewState="False" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
 							<asp:ListItem Value="CANONICALURL" resourcekey="Canonical" />
 							<asp:ListItem Value="REDIRECT" resourcekey="Redirect" />
 							<asp:ListItem Value="NONE" resourcekey="None" />                        

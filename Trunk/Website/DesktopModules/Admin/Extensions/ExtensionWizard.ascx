@@ -20,7 +20,7 @@
         <StepNextButtonStyle CssClass="dnnPrimaryAction" />
         <FinishCompleteButtonStyle CssClass="dnnPrimaryAction" />
         <StepStyle VerticalAlign="Top" />
-        <NavigationButtonStyle CssClass="CommandButton" BorderStyle="None" BackColor="Transparent" />
+        <NavigationButtonStyle BorderStyle="None" BackColor="Transparent" />
         <HeaderTemplate>
             <asp:Label ID="lblTitle" CssClass="Head" runat="server"><% =GetText("Title") %></asp:Label><br /><br />
             <asp:Label ID="lblHelp" CssClass="WizardText" runat="server"><% =GetText("Help") %></asp:Label>
@@ -57,16 +57,16 @@
                 </div>
                  <dnn:DnnFormEditor id="extensionForm" runat="Server" FormMode="Short">
                     <Items>
-                        <dnn:DnnFormTextBoxItem ID="extensionName" runat="server" DataField = "Name" Required="true" />
-                        <dnn:DnnFormTextBoxItem ID="extensionFriendlyName" runat="server" DataField = "FriendlyName" Required="true" />
-                        <dnn:DnnFormTextBoxItem ID="description" runat="server" DataField = "Description" />
-                        <dnn:DnnFormEditControlItem ID="version" runat="server" DataField = "Version" 
+                        <dnn:DnnFormTextBoxItem ID="extensionName" runat="server" DataField="Name" Required="true" />
+                        <dnn:DnnFormTextBoxItem ID="extensionFriendlyName" runat="server" DataField="FriendlyName" Required="true" />
+                        <dnn:DnnFormTextBoxItem ID="description" runat="server" DataField="Description" />
+                        <dnn:DnnFormEditControlItem ID="version" runat="server" DataField="Version" 
                                         ControlType="DotNetNuke.UI.WebControls.VersionEditControl, DotNetNuke"/>
                     </Items>
                 </dnn:DnnFormEditor>
                 <div class="dnnForm">
                     <div class="dnnFormItem">
-                        <asp:Label ID="lblError" runat="server" cssClass="NormalRed" />
+                        <asp:Label ID="lblError" runat="server" cssClass="dnnFormMessage dnnFormValidationSummary" />
                     </div>
                 </div>               
             </asp:WizardStep>
@@ -76,10 +76,10 @@
             <asp:WizardStep ID="Step2" runat="server" Title="OwnerInfo" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="ownerForm" runat="Server" FormMode="Short">
                     <Items>
-                        <dnn:DnnFormTextBoxItem ID="owner" runat="server" DataField = "Owner" />
-                        <dnn:DnnFormTextBoxItem ID="organization" runat="server" DataField = "Organization" />
-                        <dnn:DnnFormTextBoxItem ID="url" runat="server" DataField = "Url" />
-                        <dnn:DnnFormTextBoxItem ID="email" runat="server" DataField = "Email" />
+                        <dnn:DnnFormTextBoxItem ID="owner" runat="server" DataField="Owner" />
+                        <dnn:DnnFormTextBoxItem ID="organization" runat="server" DataField="Organization" />
+                        <dnn:DnnFormTextBoxItem ID="url" runat="server" DataField="Url" />
+                        <dnn:DnnFormTextBoxItem ID="email" runat="server" DataField="Email" />
                     </Items>
                 </dnn:DnnFormEditor>                
             </asp:WizardStep>

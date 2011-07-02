@@ -402,4 +402,7 @@
   <data name="License.Text" xml:space="preserve">
     <value>License:</value>
   </data>
+  <data name="ListExtensions.Text" xml:space="preserve">
+    <value>Click this &lt;a href="http://www.dotnetnuke.com/App-Gallery.aspx " target="_blank"&gt;link&lt;/a&gt; to find out how you can get your extension listed here.</value>
+  </data>
 </root>

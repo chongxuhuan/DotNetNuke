@@ -9,7 +9,7 @@
         <StepNextButtonStyle CssClass="dnnPrimaryAction" />
         <FinishCompleteButtonStyle CssClass="dnnPrimaryAction" />
         <StepStyle VerticalAlign="Top" />
-        <NavigationButtonStyle CssClass="CommandButton" BorderStyle="None" BackColor="Transparent" />
+        <NavigationButtonStyle BorderStyle="None" BackColor="Transparent" />
         <HeaderTemplate>
             <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server"><% =GetText("Title") %></asp:Label></h2>
             <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server"><% =GetText("Help") %></asp:Label></div>
@@ -37,7 +37,7 @@
                     <div class="dnnFormItem"><asp:Label ID="lblBrowseFileHelp" runat="server" resourcekey="BrowseFileHelp" /></div>
                     <div class="dnnFormItem">
                         <input id="cmdBrowse" type="file" size="50" name="cmdBrowse" runat="server" />
-                        <asp:Label ID="lblLoadMessage" runat="server" CssClass="dnnFormMessage dnnFormError" Visible="false" />
+                        <asp:Label ID="lblLoadMessage" runat="server" CssClass="dnnFormMessage dnnFormValidationSummary" Visible="false" />
                     </div>
                 </div>
             </asp:WizardStep>
@@ -78,12 +78,12 @@
             </asp:WizardStep>
             <asp:WizardStep ID="Step3" runat="Server" Title="ReleaseNotes" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="releaseNotesForm" runat="Server" FormMode="Short">
-                    <Items><dnn:DnnFormLiteralItem ID="releaseNotes" runat="server" DataField = "ReleaseNotes" /></Items>
+                    <Items><dnn:DnnFormLiteralItem ID="releaseNotes" runat="server" DataField="ReleaseNotes" /></Items>
                 </dnn:DnnFormEditor>
             </asp:WizardStep>
             <asp:WizardStep ID="Step4" runat="server" Title="License" StepType="Step" AllowReturn="false">
                 <dnn:DnnFormEditor id="licenseForm" runat="Server" FormMode="Short">
-                    <Items><dnn:DnnFormLiteralItem ID="license" runat="server" DataField = "License" /></Items>
+                    <Items><dnn:DnnFormLiteralItem ID="license" runat="server" DataField="License" /></Items>
                 </dnn:DnnFormEditor>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plAcceptLicense" runat="server" resourcekey="AcceptLicense" ControlName="chkAcceptLicense" />

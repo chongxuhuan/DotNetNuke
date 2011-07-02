@@ -136,7 +136,9 @@ namespace DotNetNuke.Modules.Admin.Host
                 var config = new RewriterConfiguration();
 
                 //Deserialize into RewriterConfiguration
+#pragma warning disable 612,618
                 config = (RewriterConfiguration) XmlUtils.Deserialize(Convert.ToString(myState[1]), config.GetType());
+#pragma warning restore 612,618
                 Rules = config.Rules;
             }
         }

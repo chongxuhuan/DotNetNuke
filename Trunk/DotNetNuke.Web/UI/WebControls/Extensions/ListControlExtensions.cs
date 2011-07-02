@@ -63,6 +63,7 @@ namespace DotNetNuke.Web.UI.WebControls.Extensions
 
         public static void Select(this ListControl control, string initial, bool findByText, int fallbackIndex)
         {
+            control.ClearSelection(); 
             if (findByText)
             {
 				if (control.Items.FindByTextWithIgnoreCase(initial) != null)

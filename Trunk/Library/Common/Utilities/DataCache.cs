@@ -142,6 +142,10 @@ namespace DotNetNuke.Common.Utilities
         public const int FolderCacheTimeOut = 20;
         public const CacheItemPriority FolderCachePriority = CacheItemPriority.Normal;
 
+        public const string FolderUserCacheKey = "Folders|{0}|{1}|{2}";
+        public const int FolderUserCacheTimeOut = 20;
+        public const CacheItemPriority FolderUserCachePriority = CacheItemPriority.Normal;
+
         public const string FolderPermissionCacheKey = "FolderPermissions{0}";
         public const CacheItemPriority FolderPermissionCachePriority = CacheItemPriority.Normal;
         public const int FolderPermissionCacheTimeOut = 20;

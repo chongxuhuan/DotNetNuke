@@ -306,7 +306,7 @@ namespace DotNetNuke.Entities.Tabs
             get
             {
                 var key = string.Format("{0}_{1}", Globals.AddHTTP(PortalSettings.Current.PortalAlias.HTTPAlias),
-											Thread.CurrentThread.CurrentCulture);
+                                            Thread.CurrentThread.CurrentCulture);
 
                 string fullUrl;
                 using (_fullUrlDictionary.GetReadLock())
@@ -318,29 +318,29 @@ namespace DotNetNuke.Entities.Tabs
                 {
                     using (_fullUrlDictionary.GetWriteLock())
                     {
+                        switch (TabType)
+                        {
+                            case TabType.Normal:
+                                //normal tab
+                                fullUrl = Globals.NavigateURL(TabID, IsSuperTab);
+                                break;
+                            case TabType.Tab:
+                                //alternate tab url
+                                fullUrl = Globals.NavigateURL(Convert.ToInt32(Url));
+                                break;
+                            case TabType.File:
+                                //file url
+                                fullUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
+                                break;
+                            case TabType.Url:
+                                //external url
+                                fullUrl = Url;
+                                break;
+                        }
+
                         if (!_fullUrlDictionary.ContainsKey(key))
                         {
-                            switch (TabType)
-                            {
-                                case TabType.Normal:
-                                    //normal tab
-                                    fullUrl = Globals.NavigateURL(TabID, IsSuperTab);
-                                    break;
-                                case TabType.Tab:
-                                    //alternate tab url
-                                    fullUrl = Globals.NavigateURL(Convert.ToInt32(Url));
-                                    break;
-                                case TabType.File:
-                                    //file url
-                                    fullUrl = Globals.LinkClick(Url, TabID, Null.NullInteger);
-                                    break;
-                                case TabType.Url:
-                                    //external url
-                                    fullUrl = Url;
-                                    break;
-                            }
-
-                            _fullUrlDictionary.Add(key, fullUrl);
+                            _fullUrlDictionary.Add(key, fullUrl.Trim());
                         }
                     }
                 }
@@ -421,7 +421,7 @@ namespace DotNetNuke.Entities.Tabs
             get
             {
                 if (String.IsNullOrEmpty(TabPath)) return TabName;
-                
+
                 var key = Thread.CurrentThread.CurrentUICulture.ToString();
                 string localizedTabName;
                 using (_localizedTabNameDictionary.GetReadLock())
@@ -439,7 +439,10 @@ namespace DotNetNuke.Entities.Tabs
                             localizedTabName = TabName;
                         }
 
-                        _localizedTabNameDictionary.Add(key, localizedTabName.Trim());
+                        if (!_localizedTabNameDictionary.ContainsKey(key))
+                        {
+                            _localizedTabNameDictionary.Add(key, localizedTabName.Trim());
+                        }
                     }
                 }
 

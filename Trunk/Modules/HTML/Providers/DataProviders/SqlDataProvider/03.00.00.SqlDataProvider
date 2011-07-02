@@ -23,7 +23,7 @@ if not exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 
 		ALTER TABLE {databaseOwner}[{objectQualifier}HtmlText] ADD CONSTRAINT [PK_{objectQualifier}HtmlText] PRIMARY KEY NONCLUSTERED  ([ModuleID])
 
-		ALTER TABLE {databaseOwner}[{objectQualifier}HtmlText] WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}HtmlText_{objectQualifier}Modules] FOREIGN KEY ([ModuleID]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE NOT FOR REPLICATION
+		ALTER TABLE {databaseOwner}[{objectQualifier}HtmlText] WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}HtmlText_{objectQualifier}Modules] FOREIGN KEY ([ModuleID]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE
 	END
 GO
 

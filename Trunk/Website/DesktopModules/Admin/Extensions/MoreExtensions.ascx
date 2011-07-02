@@ -4,7 +4,6 @@
 <div id="dnnAppGallery" class="dnnForm dnnAppGallery dnnClear">
     <span id="loading" class="dnnAppGalleryLoading">Loading...</span>
     <div class="dnnAppGalleryTags">
-        <div class="header"><h1><%=LocalizeString("AppGallery") %></h1></div>
         <div class="dnnAppGallerySearch">
             <h2 class="dnnGallerySubHeading"><%=LocalizeString("AppGallerySearchTitle") %></h2>
             <div class="dnnFormItem">
@@ -42,6 +41,9 @@
         </div>      
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("TagCloud")%></h2>
         <div class="dnnAppGalleryTagList dnnClear" id="tag-list"></div>
+        <div class="dnnFormMessage dnnFormInfo">
+            <% =LocalizeString("ListExtensions") %>
+        </div>
     </div>
     <div class="dnnAppGalleryListing">
         <div id="extensionDetail"><div id="extensionDetailInner"></div></div>

@@ -372,8 +372,8 @@ namespace DotNetNuke.Services.FileSystem
 
             var folders = new List<IFolderInfo>();
 
-            var cacheKey = string.Format(DataCache.FolderCacheKey, portalID);
-            var cacheItemArgs = new CacheItemArgs(cacheKey, DataCache.FolderCacheTimeOut, DataCache.FolderCachePriority, portalID, permissions, userID);
+            var cacheKey = string.Format(DataCache.FolderUserCacheKey, portalID, permissions, userID);
+            var cacheItemArgs = new CacheItemArgs(cacheKey, DataCache.FolderUserCacheTimeOut, DataCache.FolderUserCachePriority, portalID, permissions, userID);
             CBOWrapper.Instance.GetCachedObject<List<FolderInfo>>(cacheItemArgs, GetFoldersByPermissionSortedCallBack).ForEach(folders.Add);
 
             return folders;

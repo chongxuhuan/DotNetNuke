@@ -253,15 +253,16 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnForm h2.dnnFormSectionHead a:hover{background:#f1f1f1 url(../../images/down-icn.png) no-repeat 98% center;}
 			.dnnForm h2.dnnFormSectionHead a.dnnSectionExpanded{background:url(../../images/up-icn.png) no-repeat 98% center;text-align:left}
 				.dnnForm h2.dnnFormSectionHead a.dnnSectionExpanded:hover{background:#f1f1f1 url(../../images/up-icn.png) no-repeat 98% center;}
-			.ui-tabs .dnnFormExpandContent{position:absolute;top:-35px;right:0;}
+			.dnnFormExpandContent{position:absolute;top:-32px;right:10px;}
 				.dnnFormExpandContent{text-align:right;}
 				.dnnForm .dnnFormExpandContent a{font-weight:bold;}
 			.dnnForm .dnnFormItem span.CommandButton input{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}	
-		.dnnForm .dnnFormItem{padding:4px 6px;clear:both;line-height:1.8;min-height:1.8em;position:relative;text-align:left;}
+		.dnnForm .dnnFormItem{padding:4px 6px;clear:both;line-height:1.8;min-height:1.8em;text-align:left;position:relative;}
 			.dnnForm .dnnFormItem label a span{line-height:1.4;}
 		.dnnForm .dnnFormItem:after{clear:both;content:".";display:block;height:0;visibility:hidden;font-size:0;}
 		.dnnForm fieldset{display:block;padding:1em 0;border:none;margin:0;text-align:left;}
-		.dnnFormItem label, .dnnFormItem .dnnFormLabel{display:block;width:30%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
+		.dnnFormItem label, .dnnFormItem .dnnFormLabel, .dnnFormItem .dnnTooltip{display:block;width:30%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
+			.dnnFormItem .dnnTooltip label{width:100%;padding:0;margin:0;}
 			.dnnForm .dnnFormSecondItem label{float:none;}
 		.dnnFormItem input, .dnnFormItem .dnnFormInput, .dnnFormItem textarea{float:left;-moz-border-radius:3px;border-radius:3px;padding:5px;
 		background:#fffff5;-moz-box-shadow:inset 0 0 3px 3px #fffbe1;-webkit-box-shadow:inset 0 0 3px 3px #fffbe1;box-shadow:inset 0 0 3px 3px #fffbe1;
@@ -280,12 +281,13 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnForm.dnnShortForm .dnnFormItem input, .dnnForm.dnnShortForm .dnnFormItem select, .dnnForm.dnnShortForm .dnnFormItem textarea{float:none;text-align:left;}
 		.dnnForm.dnnShortForm .dnnFormItem a.dnnFormHelp{background-position:left;padding-left:22px;}
 		
-		a.dnnFormHelp, .dnnForm .dnnFormItem a.dnnFormHelp, .dnnTooltip label a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;
+		a.dnnFormHelp, .dnnForm .dnnFormItem a.dnnFormHelp, .dnnTooltip label a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;padding-right:20px;
 		background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
 			.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 			.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
 	
-	    td > .dnnTooltip {min-width:120px;width:30%;}
+	    .dnnTooltip{position:relative;}
+		td > .dnnTooltip {min-width:120px;width:30%;}
 		.dnnTooltip a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left bottom;display:block;text-indent:-9991.2em;height:16px;width:16px;float:right;margin-top:1em;}
 			.dnnTooltip.dnnTooltipPinned a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left top;}
 	
@@ -302,7 +304,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormInfo{background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;}
 			.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px 10px;
 			-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #fff;font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
-			.dnnFormItem .dnnFormHelpContent{left:15em;max-width:30em;position:absolute;z-index:3;}
+			.dnnFormItem .dnnFormHelpContent{left:95%;max-width:30em;position:absolute;z-index:25;width:100%;overflow:hidden;top:0;}
 			.dnnFormHelpContent.ui-draggable{cursor:move;}
 				.dnnFormHelpContent.dnnClear, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent.dnnClear, .dnnFormItem label .dnnFormHelpContent.dnnClear{line-height:1.4;text-align:left;}
 	
@@ -360,136 +362,106 @@ div.SearchIcon img{margin-top:3px;}
 	.dnnFilePicker .dnnLeft a.dnnSecondaryAction{margin-left:80px;}
 	.dnnFilePicker .dnnLeft .dnnFormItem input[type=file]{margin-left:90px;width:180px;}
 
-/*  === Grids === */
+	/*  === Grids === */
 	.dnnGrid{font-size:inherit;}
 	.dnnGridHeader{border-bottom:1px #ddd solid;font-weight:bold;font-size:110%;}
 		.dnnGridItem{border-bottom:1px #eee solid;background:#fff;}
 			.dnnGridAltItem{background:#f1f1f1;}
 		.dnnGrid td{padding:3px 5px;}
 			.dnnGrid td input.dnnFormInput{width:42%;}
-
-/*  === jQuery UI === */
-	.dnnForm .ui-widget {font-family:inherit;font-size:inherit;}
-		.dnnForm .ui-widget .ui-widget {font-size:inherit;}
-			.dnnForm .ui-widget input, .dnnForm .ui-widget select, .dnnForm .ui-widget textarea, .dnnForm .ui-widget button {font-family:inherit;font-size:inherit;}
-			.dnnForm .ui-widget-content{border:none;color:#000;}
-				.dnnForm .ui-widget-header{border:none;background:none;}
-					.dnnForm .ui-widget-header a{color:#eaf5f7;}
-					
-		.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {border:none;background:none;font-weight:normal;color:#000;}
-		.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {color:#fff;text-decoration:none;}
-		.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, 
-		.ui-widget-header .ui-state-focus {border:none;background:none;font-weight:normal;color:#026890;}
-		.ui-state-hover a, .ui-state-hover a:hover {color:#026890;text-decoration:none;}
-		.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {border:none;background:none;font-weight:normal;color:#fff;}
-		.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color:#fff;text-decoration:none;}
-		.ui-widget:active {outline:none;}
-		
-		.ui-helper-clearfix:after {content: ".";display:block; height: 0; clear: both; visibility: hidden; }
-		.ui-helper-clearfix {display: inline-block;}
-		* html .ui-helper-clearfix { height:1%; }
-		.ui-helper-clearfix { display:block; }
-		
-		.dnnForm .ui-corner-tl, .dnnForm .ui-corner-tr, .dnnForm .ui-corner-bl, .dnnForm .ui-corner-br, .dnnForm .ui-corner-top, .dnnForm .ui-corner-bottom, 
-		.dnnForm .ui-corner-right, .dnnForm .ui-corner-left, .dnnForm .ui-corner-all{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0; border-top-left-radius:0;
-		-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;border-bottom-left-radius:0;-moz-border-radius:0;-webkit-border-radius:0;border-radius:0;}
-		.ui-widget-overlay {background:#000;opacity:.60;filter:Alpha(Opacity=60);position:absolute;top:0;left:0;width:100%;height:100%;}
-		.ui-widget-shadow {margin:5px 0 0 5px;padding:0px;background:#999;opacity:.45;filter:Alpha(Opacity=45);-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}
-		
-		.ui-dialog{position:absolute;padding:0;width:300px;border:5px #ccc solid;background:#fff;border-radius:10px;-moz-border-radius:10px;}
-		.dnnFormPopup{border-radius:10px;}
-		#iPopUp{width:100% !important}
-			.ui-dialog .ui-dialog-titlebar {padding:0.8em 1.2em;position:relative;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);
-			background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));
-			filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );
-			color:#fff;font-weight:bold;text-shadow:0px 1px 1px #000;cursor:move;-webkit-border-top-left-radius: 6px;-webkit-border-top-right-radius: 6px;
-			-webkit-border-bottom-right-radius: 0px;-webkit-border-bottom-left-radius: 0px;-moz-border-radius-topleft: 6px;-moz-border-radius-topright: 6px;-moz-border-radius-bottomright: 0px;
-			-moz-border-radius-bottomleft: 0px;border-top-left-radius: 6px;border-top-right-radius: 6px;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
-			.ui-dialog .ui-dialog-title{float:left;margin:.1em 16px .1em 0;position:relative;font-size:16px;}
-				.ui-dialog a.ui-dialog-titlebar-close{text-indent:-9999em;display:block;position:absolute;right:10px;top:10px;background:url(../../images/close-icn.png) no-repeat;height:24px;width:24px;}
-				.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus {padding:0;}
-				a.dnnToggleMax{float:right;display:block;text-indent:-9999em;background:url(../../images/modal-max-min-icn.png) no-repeat bottom;height:24px;width:24px;margin:1px 24px 0 0}
-				a.dnnToggleMax.ui-dialog-titlebar-max{background:url(../../images/modal-max-min-icn.png) no-repeat top;}
-			.ui-dialog .ui-dialog-content{position:relative;border:0;padding:0;background:#fff;overflow:auto;zoom:1;}
-				.ui-dialog .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em .5em .4em;}
-				.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {float:right;}
-				.ui-dialog .ui-dialog-buttonpane button {margin:.5em .4em .5em 0.8em;cursor:pointer;padding:0.5em 1em;}
-			.ui-dialog .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}
-		
-		.ui-tabs{position:relative;padding:.1em .2em;zoom:1;}
-			.ui-tabs .ui-tabs-nav, ul.dnnAdminTabNav {margin:0;padding:0;border-bottom:3px #282828 solid;}
-				.ui-tabs .ui-tabs-nav li, ul.dnnAdminTabNav li {list-style:none;float:left;position:relative;top:1px;margin:0 1px 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap;}
-					.ui-tabs .ui-tabs-nav li a, ul.dnnAdminTabNav li a{float:left;padding:.5em 1em;text-decoration:none;font-weight:bold;color:#fff;text-decoration:none;display:block;margin:0;
-					letter-spacing:-0.03em;background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));
-					filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius-topleft:3px;-moz-border-radius-topright:3px;-moz-border-radius-bottomright:0px;
-					-moz-border-radius-bottomleft:0px;border-top-left-radius:3px;border-top-right-radius:3px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;text-shadow:0px 1px 1px #000;}
-				.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px;}
-					.ui-tabs .ui-tabs-nav li a:hover, .ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a, ul.dnnAdminTabNav li a:hover {
-						cursor:pointer;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));
-						filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
-					.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {cursor:pointer;}
-				.ui-tabs .ui-tabs-panel {display:block;border-width:0;padding:0;background:none;position:relative;}
-				.ui-tabs .ui-tabs-hide {display:none !important;}
-		.ui-dialog .dnnDialog.ui-dialog-content{padding:1em;}
-
-	/* Datepicker ----------------------------------*/
-	#ui-datepicker-div{ background-color: #eee; }
-	.ui-datepicker { width: 17em; padding: .2em .2em 0; }
-	.ui-datepicker .ui-datepicker-header { position:relative; padding:.2em 0; }
-	.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next { position:absolute; top: 2px; width: 1.8em; height: 1.8em; }
-	.ui-datepicker .ui-datepicker-prev-hover, .ui-datepicker .ui-datepicker-next-hover { top: 1px; }
-	.ui-datepicker .ui-datepicker-prev { left:2px; }
-	.ui-datepicker .ui-datepicker-next { right:2px; }
-	.ui-datepicker .ui-datepicker-prev-hover { left:1px; }
-	.ui-datepicker .ui-datepicker-next-hover { right:1px; }
-	.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; position: absolute; left: 50%; margin-left: -8px; top: 50%; margin-top: -8px;  }
-	.ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
-	.ui-datepicker .ui-datepicker-title select { font-size:1em; margin:1px 0; }
-	.ui-datepicker select.ui-datepicker-month-year {width: 100%;}
-	.ui-datepicker select.ui-datepicker-month, 
-	.ui-datepicker select.ui-datepicker-year { width: 49%;}
-	.ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
-	.ui-datepicker th { padding: .7em .3em; text-align: center; font-weight: bold; border: 0;  }
-	.ui-datepicker td { border: 0; padding: 1px; }
-	.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .2em; text-align: right; text-decoration: none; }
-	.ui-datepicker .ui-datepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding:0 .2em; border-left: 0; border-right: 0; border-bottom: 0; }
-	.ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
-	.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float:left; }
+	/* Layout helpers
+	----------------------------------*/
+	.dnnForm .ui-helper-hidden { display: none; }
+	.dnnForm .ui-helper-hidden-accessible { position: absolute !important; clip: rect(1px 1px 1px 1px); clip: rect(1px,1px,1px,1px); }
+	.dnnForm .ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
+	.dnnForm .ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+	.dnnForm .ui-helper-clearfix { display: inline-block; }
+	/* required comment for clearfix to work in Opera \*/
+	* html .ui-helper-clearfix { height:1%; }
+	.dnnForm .ui-helper-clearfix { display:block; }
+	/* end clearfix */
+	.dnnForm .ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+	/* Interaction Cues----------------------------------*/
+	.dnnForm .ui-state-disabled { cursor: default !important; }
+	/* Overlays */
+	#Body .ui-widget-overlay {background:#000;opacity:.60;filter:Alpha(Opacity=60);position:absolute;top:0;left:0;width:100%;height:100%;}
+		#Body .ui-widget-shadow{margin:5px 0 0 5px;padding:0px;background:#999;opacity:.45;filter:Alpha(Opacity=45);-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}
+			.dnnFormPopup{position:absolute;padding:0;width:300px;border:4px #ccc solid;background:#fff;border-radius:10px;-moz-border-radius:10px;}
+			#iPopUp{width:100% !important}
+				.dnnFormPopup .ui-dialog-titlebar {padding:0.8em 1.2em;position:relative;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);overflow:hidden;
+				background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );
+				color:#fff;font-weight:bold;text-shadow:0px 1px 1px #000;cursor:move;-webkit-border-top-left-radius: 6px;-webkit-border-top-right-radius: 6px;-webkit-border-bottom-right-radius: 0px;-webkit-border-bottom-left-radius: 0px;
+				-moz-border-radius-topleft: 6px;-moz-border-radius-topright: 6px;-moz-border-radius-bottomright: 0px;-moz-border-radius-bottomleft: 0px;border-top-left-radius: 6px;border-top-right-radius: 6px;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
+				.dnnFormPopup .ui-dialog-title{float:left;margin:.1em 16px .1em 0;position:relative;font-size:14px;}
+					.dnnFormPopup a.ui-dialog-titlebar-close{text-indent:-9999em;display:block;position:absolute;right:10px;top:10px;background:url(../../images/close-icn.png) no-repeat;height:24px;width:24px;}
+					.dnnFormPopup a.dnnToggleMax{float:right;display:block;text-indent:-9999em;background:url(../../images/modal-max-min-icn.png) no-repeat bottom;height:24px;width:24px;margin:1px 24px 0 0}
+					.dnnFormPopup a.dnnToggleMax.ui-dialog-titlebar-max{background:url(../../images/modal-max-min-icn.png) no-repeat top;}
+				.dnnFormPopup .ui-dialog-content, #iPopUp .ui-dialog-content{position:relative;border:0;padding:0;background:#fff;overflow:auto;zoom:1;}
+					.dnnFormPopup .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em .5em .4em;}
+					.dnnFormPopup .ui-dialog-buttonpane .ui-dialog-buttonset {float:right;}
+					.dnnFormPopup .ui-dialog-buttonpane button {margin:.5em .4em .5em 0.8em;cursor:pointer;padding:0.5em 1em;}
+				.dnnFormPopup .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}
 	
-	/* with multiple calendars */
-	.ui-datepicker.ui-datepicker-multi { width:auto; }
-	.ui-datepicker-multi .ui-datepicker-group { float:left; }
-	.ui-datepicker-multi .ui-datepicker-group table { width:95%; margin:0 auto .4em; }
-	.ui-datepicker-multi-2 .ui-datepicker-group { width:50%; }
-	.ui-datepicker-multi-3 .ui-datepicker-group { width:33.3%; }
-	.ui-datepicker-multi-4 .ui-datepicker-group { width:25%; }
-	.ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header { border-left-width:0; }
-	.ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { border-left-width:0; }
-	.ui-datepicker-multi .ui-datepicker-buttonpane { clear:left; }
-	.ui-datepicker-row-break { clear:both; width:100%; }
+	/* Component containers
+	----------------------------------*/
+	.dnnForm .ui-widget .ui-widget { font-size: 1em; }
+	.dnnForm .ui-widget input, .dnnForm .ui-widget select, .dnnForm .ui-widget textarea, .dnnForm .ui-widget button {font-size: 1em; }
+	.dnnForm .ui-widget-header, .dnnFormPopup .ui-widget-header {font-weight:bold;border-bottom:4px solid #292929;}
+	.dnnForm .ui-widget-header a {color:#fff;}
 	
-	/* RTL support */
-	.ui-datepicker-rtl { direction: rtl; }
-	.ui-datepicker-rtl .ui-datepicker-prev { right: 2px; left: auto; }
-	.ui-datepicker-rtl .ui-datepicker-next { left: 2px; right: auto; }
-	.ui-datepicker-rtl .ui-datepicker-prev:hover { right: 1px; left: auto; }
-	.ui-datepicker-rtl .ui-datepicker-next:hover { left: 1px; right: auto; }
-	.ui-datepicker-rtl .ui-datepicker-buttonpane { clear:right; }
-	.ui-datepicker-rtl .ui-datepicker-buttonpane button { float: left; }
-	.ui-datepicker-rtl .ui-datepicker-buttonpane button.ui-datepicker-current { float:right; }
-	.ui-datepicker-rtl .ui-datepicker-group { float:right; }
-	.ui-datepicker-rtl .ui-datepicker-group-last .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
-	.ui-datepicker-rtl .ui-datepicker-group-middle .ui-datepicker-header { border-right-width:0; border-left-width:1px; }
+	/* Interaction states
+	----------------------------------*/
+	.dnnForm .ui-state-default, .dnnForm .ui-widget-content .ui-state-default, .dnnForm .ui-widget-header .ui-state-default {background:none;font-weight:bold;color:#fff;}
+	.dnnForm .ui-state-default a, .dnnForm .ui-state-default a:link, .dnnForm .ui-state-default a:visited {color:#eee;text-decoration: none; }
+	.dnnForm .ui-state-hover, .dnnForm .ui-widget-content .ui-state-hover, .dnnForm .ui-widget-header .ui-state-hover, .dnnForm .ui-state-focus, .dnnForm .ui-widget-content .ui-state-focus, .dnnForm .ui-widget-header .ui-state-focus {font-weight:bold;color:#fff; }
+	.dnnForm .ui-state-hover a, .dnnForm .ui-state-hover a:hover {color:#fff;text-decoration:none;cursor:pointer;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
+	.dnnForm .ui-state-active a, .dnnForm .ui-state-active a:link, .dnnForm .ui-state-active a:visited, .dnnForm .ui-state-active, .dnnForm .ui-widget-content .ui-state-active, .dnnForm .ui-widget-header .ui-state-active 
+		{font-weight:bold;color:#fff;cursor:pointer;background:#4E4E4E;background:-moz-linear-gradient(top, #4E4E4E 0%, #282828 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#4E4E4E), color-stop(100%,#282828));
+				filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#4E4E4E', endColorstr='#282828',GradientType=0 );}
+	.dnnForm .ui-widget :active { outline: none; }
+	/* Interaction Cues ----------------------------------*/
+	.dnnForm .ui-state-highlight, .dnnForm .ui-widget-content .ui-state-highlight, .dnnForm .ui-widget-header .ui-state-highlight  {border: 1px solid #fed22f; background: #ffe45c url(images/ui-bg_highlight-soft_75_ffe45c_1x100.png) 50% top repeat-x; color: #363636; }
+	.dnnForm .ui-state-highlight a, .dnnForm .ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a { color: #363636; }
+	.dnnForm .ui-state-error, .dnnForm .ui-widget-content .ui-state-error, .dnnForm .ui-widget-header .ui-state-error {border: 1px solid #cd0a0a; background: #b81900 url(images/ui-bg_diagonals-thick_18_b81900_40x40.png) 50% 50% repeat; color: #ffffff; }
+	.dnnForm .ui-state-error a, .dnnForm .ui-widget-content .ui-state-error a, .dnnForm .ui-widget-header .ui-state-error a { color: #ffffff; }
+	.dnnForm .ui-state-error-text, .dnnForm .ui-widget-content .ui-state-error-text, .dnnForm .ui-widget-header .ui-state-error-text { color: #ffffff; }
+	.dnnForm .ui-priority-primary, .dnnForm .ui-widget-content .ui-priority-primary, .dnnForm .ui-widget-header .ui-priority-primary { font-weight: bold; }
+	.dnnForm .ui-priority-secondary, .dnnForm .ui-widget-content .ui-priority-secondary,  .ui-widget-header .ui-priority-secondary { opacity: .7; filter:Alpha(Opacity=70); font-weight: normal; }
+	.dnnForm .ui-state-disabled, .dnnForm .ui-widget-content .ui-state-disabled, .dnnForm .ui-widget-header .ui-state-disabled { opacity: .35; filter:Alpha(Opacity=35); background-image: none; }
 	
-	/* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
-	.ui-datepicker-cover {
-		display: none; /*sorry for IE5*/
-		display/**/: block; /*sorry for IE5*/
-		position: absolute; /*must have*/
-		z-index: -1; /*must have*/
-		filter: mask(); /*must have*/
-		top: -4px; /*must have*/
-		left: -4px; /*must have*/
-		width: 200px; /*must have*/
-		height: 200px; /*must have*/
-	}
+	/* Corner radius */
+	.dnnForm .ui-corner-all, .dnnForm .ui-corner-top, .dnnForm .ui-corner-left, .dnnForm .ui-corner-tl { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; -khtml-border-top-left-radius: 4px; border-top-left-radius: 4px; }
+	.dnnForm .ui-corner-all, .dnnForm .ui-corner-top, .dnnForm .ui-corner-right, .dnnForm .ui-corner-tr { -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; -khtml-border-top-right-radius: 4px; border-top-right-radius: 4px; }
+	
+	/* Overlays */
+	.dnnForm .ui-widget-overlay { background: #666666 url(images/ui-bg_diagonals-thick_20_666666_40x40.png) 50% 50% repeat; opacity: .50;filter:Alpha(Opacity=50); }
+	.dnnForm .ui-widget-shadow { margin: -5px 0 0 -5px; padding: 5px; background: #000000 url(images/ui-bg_flat_10_000000_40x100.png) 50% 50% repeat-x; opacity: .20;filter:Alpha(Opacity=20); -moz-border-radius: 5px; -khtml-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+	
+	/*jQuery UI Resizable 1.8.14 */
+	.dnnForm .ui-resizable { position: relative;}
+	.dnnForm .ui-resizable-handle { position: absolute;font-size: 0.1px;z-index: 99999; display: block; }
+	.dnnForm .ui-resizable-disabled .ui-resizable-handle, .dnnForm .ui-resizable-autohide .ui-resizable-handle { display: none; }
+	.dnnForm .ui-resizable-n { cursor: n-resize; height: 7px; width: 100%; top: -5px; left: 0; }
+	.dnnForm .ui-resizable-s { cursor: s-resize; height: 7px; width: 100%; bottom: -5px; left: 0; }
+	.dnnForm .ui-resizable-e { cursor: e-resize; width: 7px; right: -5px; top: 0; height: 100%; }
+	.dnnForm .ui-resizable-w { cursor: w-resize; width: 7px; left: -5px; top: 0; height: 100%; }
+	.dnnForm .ui-resizable-se { cursor: se-resize; width: 12px; height: 12px; right: 1px; bottom: 1px; }
+	.dnnForm .ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
+	.dnnForm .ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
+	.dnnForm .ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}/*
+	
+	/*jQuery UI Tabs 1.8.14 */
+	.dnnForm .ui-tabs { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+	.dnnForm .ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0; }
+	.dnnForm .ui-tabs .ui-tabs-nav li, ul.dnnAdminTabNav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
+	.dnnForm .ui-tabs .ui-tabs-nav li a, ul.dnnAdminTabNav li a {float:left;padding:.5em 1em;text-decoration:none;font-weight:bold;color:#fff;text-decoration:none;display:block;margin:0;
+		letter-spacing:-0.03em;background:#818181;background:-moz-linear-gradient(top, #818181 0%, #656565 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#818181), color-stop(100%,#656565));
+		filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#818181', endColorstr='#656565',GradientType=0 );-moz-border-radius-topleft:3px;-moz-border-radius-topright:3px;-moz-border-radius-bottomright:0px;
+		-moz-border-radius-bottomleft:0px;border-top-left-radius:3px;border-top-right-radius:3px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;text-shadow:0px 1px 1px #000;}
+	.dnnForm .ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
+	.dnnForm .ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .dnnForm .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .dnnForm .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
+	.dnnForm .ui-tabs .ui-tabs-nav li a, .dnnForm .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
+	.dnnForm .ui-tabs .ui-tabs-panel{ display:block;border-width: 0; padding: 1em 1.4em; background: none;}
+		.dnnForm .ui-tabs-panel{position:relative;}
+	.dnnForm .ui-tabs-hide {display:none !important;}

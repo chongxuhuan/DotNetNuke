@@ -162,7 +162,9 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 {
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
                     cboFolders.Items.Insert(0, new ListItem("<" + Localization.GetString("None_Specified") + ">", "-"));
+#pragma warning disable 612,618
                     var folders = FileSystemUtils.GetFoldersByUser(PortalId, false, false, "BROWSE, ADD");
+#pragma warning restore 612,618
                     foreach (FolderInfo folder in folders)
                     {
                         var folderItem = new ListItem

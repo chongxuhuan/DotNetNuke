@@ -17,19 +17,19 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 				WorkflowName nvarchar(50) NOT NULL,
 				[Description] nvarchar(2000) NULL,
 				IsDeleted bit NOT NULL
-			)  ON [PRIMARY]
+			)  
 
 		ALTER TABLE {databaseOwner}{objectQualifier}Workflow ADD CONSTRAINT
 			PK_{objectQualifier}Workflow PRIMARY KEY CLUSTERED 
 			(
 			WorkflowID
-			) ON [PRIMARY]
+			) 
 
 		CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Workflow ON {databaseOwner}{objectQualifier}Workflow
 			(
 			PortalID,
 			WorkflowName
-			) ON [PRIMARY]
+			) 
 
 		CREATE TABLE {databaseOwner}{objectQualifier}WorkflowStates
 			(
@@ -39,19 +39,19 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 				[Order] int NOT NULL,
 				IsActive bit NOT NULL,
 				Notify bit NOT NULL
-			)  ON [PRIMARY]
+			)  
 
 		ALTER TABLE {databaseOwner}{objectQualifier}WorkflowStates ADD CONSTRAINT
 			PK_{objectQualifier}WorkflowStates PRIMARY KEY CLUSTERED 
 			(
 			StateID
-			) ON [PRIMARY]
+			) 
 
 		CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}WorkflowStates ON {databaseOwner}{objectQualifier}WorkflowStates
 			(
 			WorkflowID,
 			StateName
-			) ON [PRIMARY]
+			) 
 
 		ALTER TABLE {databaseOwner}{objectQualifier}WorkflowStates WITH NOCHECK ADD CONSTRAINT
 			FK_{objectQualifier}WorkflowStates_{objectQualifier}Workflow FOREIGN KEY
@@ -61,8 +61,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			(
 			WorkflowID
 			) ON UPDATE  NO ACTION 
-			 ON DELETE  CASCADE 
-			 NOT FOR REPLICATION
+			 ON DELETE  CASCADE 			 
 	END
 GO
 
@@ -90,7 +89,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			PK_{objectQualifier}HtmlText PRIMARY KEY CLUSTERED 
 			(
 			ItemID
-			) ON [PRIMARY]
+			) 
 	END
 GO
 
@@ -117,13 +116,13 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 				Approved bit NOT NULL,
 				CreatedByUserID int NOT NULL,
 				CreatedOnDate datetime NOT NULL
-			)  ON [PRIMARY]
+			)  
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlTextLog ADD CONSTRAINT
 			PK_{objectQualifier}HtmlTextLog PRIMARY KEY CLUSTERED 
 			(
 			HtmlTextLogID
-			) ON [PRIMARY]
+			) 
 
 		CREATE TABLE {databaseOwner}{objectQualifier}HtmlTextUsers
 			(
@@ -134,13 +133,13 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 				TabID int NOT NULL,
 				UserID int NOT NULL,
 				CreatedOnDate datetime NOT NULL
-			)  ON [PRIMARY]
+			)  
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlTextUsers ADD CONSTRAINT
 			PK_{objectQualifier}HtmlTextUsers PRIMARY KEY CLUSTERED 
 			(
 			HtmlTextUserID
-			) ON [PRIMARY]
+			) 
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlText WITH NOCHECK ADD CONSTRAINT
 			FK_{objectQualifier}HtmlText_{objectQualifier}WorkflowStates FOREIGN KEY
@@ -150,8 +149,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			(
 			StateID
 			) ON UPDATE  NO ACTION 
-			 ON DELETE  NO ACTION 
-			 NOT FOR REPLICATION
+			 ON DELETE  NO ACTION 			 
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlTextLog WITH NOCHECK ADD CONSTRAINT
 			FK_{objectQualifier}HtmlTextLog_{objectQualifier}HtmlText FOREIGN KEY
@@ -161,8 +159,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			(
 			ItemID
 			) ON UPDATE  NO ACTION 
-			 ON DELETE  CASCADE 
-			 NOT FOR REPLICATION
+			 ON DELETE  CASCADE 			 
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlTextLog WITH NOCHECK ADD CONSTRAINT
 			FK_{objectQualifier}HtmlTextLog_{objectQualifier}WorkflowStates FOREIGN KEY
@@ -172,8 +169,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			(
 			StateID
 			) ON UPDATE  NO ACTION 
-			 ON DELETE  NO ACTION 
-			 NOT FOR REPLICATION
+			 ON DELETE  NO ACTION 			 
 
 		ALTER TABLE {databaseOwner}{objectQualifier}HtmlTextUsers WITH NOCHECK ADD CONSTRAINT
 			FK_{objectQualifier}HtmlTextUsers_{objectQualifier}HtmlText FOREIGN KEY
@@ -183,8 +179,7 @@ IF NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwne
 			(
 			ItemID
 			) ON UPDATE  NO ACTION 
-			 ON DELETE  CASCADE 
-			 NOT FOR REPLICATION
+			 ON DELETE  CASCADE 			 
 	END
 GO
 

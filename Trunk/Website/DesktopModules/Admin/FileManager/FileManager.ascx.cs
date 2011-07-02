@@ -89,8 +89,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
         private string _ErrorMessage =
             "<TABLE><TR><TD height=100% class=NormalRed>{0}</TD></TR><TR valign=bottom><TD align=center><INPUT id=btnClearError onclick=clearErrorMessage(); type=button value=OK></TD></TR></TABLE>";
 
-        private string imageDirectory = "~/images/FileManager/Icons/";
-        private SortedList<int, string> m_FolderMappings;
+        private SortedList<int, string> _folderMappings;
 
 		#endregion
 
@@ -333,16 +332,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             get
             {
-                if (m_FolderMappings == null)
+                if (_folderMappings == null)
                 {
-                    m_FolderMappings = new SortedList<int, string>();
+                    _folderMappings = new SortedList<int, string>();
 
                     var folderMappingController = FolderMappingController.Instance;
                     var folderMappings = folderMappingController.GetFolderMappings(FolderPortalID);
-                    folderMappings.ForEach(f => m_FolderMappings.Add(f.FolderMappingID, f.MappingName));
+                    folderMappings.ForEach(f => _folderMappings.Add(f.FolderMappingID, f.MappingName));
                 }
 
-                return m_FolderMappings;
+                return _folderMappings;
             }
         }
 

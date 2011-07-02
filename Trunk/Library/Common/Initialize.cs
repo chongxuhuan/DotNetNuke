@@ -167,9 +167,12 @@ namespace DotNetNuke.Common
 
         private static string InitializeApp(HttpApplication app)
         {
+            DnnLog.MethodEntry();
             HttpServerUtility Server = app.Server;
             HttpRequest Request = app.Request;
             string redirect = Null.NullString;
+
+            DnnLog.Trace("Request " + Request.Url.LocalPath);
 
             //Don't process some of the AppStart methods if we are installing
             if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
@@ -298,29 +301,6 @@ namespace DotNetNuke.Common
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// StartScheduler starts the Scheduler
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        ///     [cnurse]    1/27/2005   Moved back to App_Start from Scheduling Module
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void StartScheduler()
-        {
-            //instantiate APPLICATION_START scheduled jobs
-            if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
-            {
-                SchedulingProvider scheduler = SchedulingProvider.Instance();
-                scheduler.RunEventSchedule(EventName.APPLICATION_START);
-                var newThread = new Thread(SchedulingProvider.Instance().Start);
-                newThread.IsBackground = true;
-                newThread.Start();
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// LogEnd logs the Application Start Event
         /// </summary>
         /// <remarks>
@@ -405,6 +385,8 @@ namespace DotNetNuke.Common
 
         public static void RunSchedule(HttpRequest request)
         {
+            DnnLog.MethodEntry();
+
             //First check if we are upgrading/installing
             if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
@@ -414,11 +396,11 @@ namespace DotNetNuke.Common
             {
                 if (SchedulingProvider.SchedulerMode == SchedulerMode.REQUEST_METHOD && SchedulingProvider.ReadyForPoll)
                 {
+                    DnnLog.Trace("Running Schedule " + (SchedulingProvider.SchedulerMode));
                     SchedulingProvider scheduler = SchedulingProvider.Instance();
-                    Thread RequestScheduleThread;
-                    RequestScheduleThread = new Thread(scheduler.ExecuteTasks);
-                    RequestScheduleThread.IsBackground = true;
-                    RequestScheduleThread.Start();
+                    var requestScheduleThread = new Thread(scheduler.ExecuteTasks);
+                    requestScheduleThread.IsBackground = true;
+                    requestScheduleThread.Start();
                     SchedulingProvider.ScheduleLastPolled = DateTime.Now;
                 }
             }
@@ -442,6 +424,32 @@ namespace DotNetNuke.Common
         {
             //stop scheduled jobs
             SchedulingProvider.Instance().Halt("Stopped by Application_End");
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// StartScheduler starts the Scheduler
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        ///     [cnurse]    1/27/2005   Moved back to App_Start from Scheduling Module
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static void StartScheduler()
+        {
+            DnnLog.MethodEntry();
+
+            //instantiate APPLICATION_START scheduled jobs
+            if (SchedulingProvider.SchedulerMode == SchedulerMode.TIMER_METHOD)
+            {
+                DnnLog.Trace("Running Schedule " + (SchedulingProvider.SchedulerMode));
+                SchedulingProvider scheduler = SchedulingProvider.Instance();
+                scheduler.RunEventSchedule(EventName.APPLICATION_START);
+                var newThread = new Thread(SchedulingProvider.Instance().Start);
+                newThread.IsBackground = true;
+                newThread.Start();
+            }
         }
     }
 }

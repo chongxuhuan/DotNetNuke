@@ -133,6 +133,12 @@ namespace DotNetNuke.Services.Install
                     Response.Write("<h2>Installation Complete</h2>");
                     Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
                     Response.Flush();
+
+                    //log APPLICATION_START event
+                    Initialize.LogStart();
+
+                    //Start Scheduler
+                    Initialize.StartScheduler();
                 }
                 else
                 {
@@ -143,12 +149,6 @@ namespace DotNetNuke.Services.Install
 				
                 //Write out Footer
                 HtmlUtils.WriteFooter(Response);
-
-                //log APPLICATION_START event
-                Initialize.LogStart();
-
-                //Start Scheduler
-                Initialize.StartScheduler();
             }
         }
 

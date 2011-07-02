@@ -51,12 +51,6 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:SettingsEditorControl runat=server></{0}:SettingsEditorControl>")]
     public class SettingsEditorControl : PropertyEditorControl
 	{
-		#region "Private Members"
-
-		private IEnumerable _UnderlyingDataSource;
-
-		#endregion
-
 		#region "Protected Properties"
 
 		/// -----------------------------------------------------------------------------

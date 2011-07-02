@@ -4,7 +4,7 @@
 <div class="dnnForm dnnFileUpload dnnClear" id="dnnFileUpload">
     <fieldset>
         <div id="rootRow" runat="server" visible="false" class="dnnFormItem">
-            <dnn:Label ID="lblRootType" runat="server" />
+            <asp:Label ID="lblRootType" runat="server" CssClass="dnnFormLabel" />
             <asp:Label ID="lblRootFolder" runat="server"  />
         </div>
         <div class="dnnFormItem">

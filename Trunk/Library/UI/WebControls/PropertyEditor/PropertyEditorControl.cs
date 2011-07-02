@@ -59,9 +59,7 @@ namespace DotNetNuke.UI.WebControls
 
         private bool _itemChanged;
         private Hashtable _sections;
-        private IEnumerable _underlyingDataSource;
-		
-		#endregion
+        #endregion
 		
 		#region "Constructors"
 

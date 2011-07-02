@@ -17,6 +17,7 @@
 	.dnnssStat p{float:left;padding-right:2em;}
 		p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 	.dnnGrid{float:right;}
+	.dnnGrid.dnnPermissionsGrid{float:none;}
 		.dnnGrid label{width:auto;font-weight:normal;text-align:left;margin-top:0;}
 			.dnnGrid td input.dnnFormInput{width:42%;}
 	.ssasPortalAlias .dnnFormItem span.CommandButton{clear:both;overflow:hidden;display:block;margin-left:26%;}

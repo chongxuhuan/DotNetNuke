@@ -101,7 +101,9 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 if (!Page.IsPostBack)
                 {
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
+#pragma warning disable 612,618
                     ArrayList folders = FileSystemUtils.GetFoldersByUser(PortalId, false, false, "ADD");
+#pragma warning restore 612,618
                     foreach (FolderInfo folder in folders)
                     {
                         var folderItem = new ListItem
@@ -158,7 +160,9 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 UI.Skins.Skin.AddModuleMessage(this, "", string.Format(Localization.GetString("ExportedMessage", LocalResourceFile), filename), ModuleMessage.ModuleMessageType.BlueInfo);
 
                 //add file to Files table
+#pragma warning disable 612,618
                 FileSystemUtils.AddFile(txtFile.Text + ".page.template", PortalId, cboFolders.SelectedItem.Value, PortalSettings.HomeDirectoryMapPath, "application/octet-stream");
+#pragma warning restore 612,618
             }
             catch (Exception exc)
             {
