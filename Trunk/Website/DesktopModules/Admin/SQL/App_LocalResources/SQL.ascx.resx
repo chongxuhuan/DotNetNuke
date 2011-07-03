@@ -127,7 +127,7 @@
     <value>Run as Script</value>
   </data>
   <data name="chkRunAsScript.ToolTip" xml:space="preserve">
-    <value>include 'GO' directives; for testing &amp;amp; update scripts</value>
+    <value>Select if the SQL statement does not return a value and only acts on the database to make changes</value>
   </data>
   <data name="QueryError.Text" xml:space="preserve">
     <value>There is an error in your query!</value>

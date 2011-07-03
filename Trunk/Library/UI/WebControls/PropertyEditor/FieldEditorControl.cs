@@ -430,7 +430,7 @@ namespace DotNetNuke.UI.WebControls
 			if (editInfo.LabelMode != LabelMode.None)
 			{
 				divLabel = new HtmlGenericControl("div");
-				divLabel.Attributes.Add("class", "dnnTooltip");
+				//divLabel.Attributes.Add("class", "dnnFormItem");
 				divLabel.Controls.Add(BuildLabel(editInfo));
 			}
 

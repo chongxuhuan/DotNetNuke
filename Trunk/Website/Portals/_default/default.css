@@ -97,7 +97,7 @@ tfoot, thead{font-size:12px;color:#036;}
 th{vertical-align:baseline;font-size:12px; font-weight:bold;color:#036;}
 img{border: none;}
 a:link, a:visited, a:active{text-decoration:none;color:#036;}
-    a:hover{text-decoration:underline;color:#f00;}
+	a:hover{text-decoration:underline;color:#f00;}
 small{font-size:8px;}
 big{font-size:14px;}
 blockquote, pre{font-family:Lucida Console, monospace;}
@@ -281,13 +281,16 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnForm.dnnShortForm .dnnFormItem input, .dnnForm.dnnShortForm .dnnFormItem select, .dnnForm.dnnShortForm .dnnFormItem textarea{float:none;text-align:left;}
 		.dnnForm.dnnShortForm .dnnFormItem a.dnnFormHelp{background-position:left;padding-left:22px;}
 		
-		a.dnnFormHelp, .dnnForm .dnnFormItem a.dnnFormHelp, .dnnTooltip label a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;padding-right:20px;
+		a.dnnFormHelp, .dnnForm .dnnFormItem a.dnnFormHelp, .dnnTooltip label a.dnnFormHelp{color:#333;text-decoration:none;font-weight:bold;
 		background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
 			.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 			.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
 	
-	    .dnnTooltip{position:relative;}
-		td > .dnnTooltip {min-width:120px;width:30%;}
+		.dnnTooltip{position:relative;}
+		
+		td > .dnnTooltip {min-width:120px;}
+		td > .dnnTooltip label{text-align:right;}
+		td > .dnnTooltip label a span{padding-right:20px;display:block}
 		.dnnTooltip a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left bottom;display:block;text-indent:-9991.2em;height:16px;width:16px;float:right;margin-top:1em;}
 			.dnnTooltip.dnnTooltipPinned a.pinHelp{background:url(../../images/pin-icn-16x16.png) no-repeat left top;}
 	
@@ -304,7 +307,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormInfo{background:#edf8ff url(../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;}
 			.dnnFormHelpContent, .dnnFormItem label .dnnFormHelpContent{border:#46a3d3 2px solid;color:#085b8f;background:#edf8ff url(../../images/help-icn.png) no-repeat 10px 10px;
 			-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px #fff;font-weight:normal;max-width:30em;padding:0.8em 1em 0.8em 3em;}
-			.dnnFormItem .dnnFormHelpContent{left:95%;max-width:30em;position:absolute;z-index:25;width:100%;overflow:hidden;top:0;}
+			 .dnnFormHelpContent, .dnnFormItem .dnnFormHelpContent{left:95%;max-width:30em;position:absolute;z-index:25;width:275px;overflow:hidden;top:0;}
 			.dnnFormHelpContent.ui-draggable{cursor:move;}
 				.dnnFormHelpContent.dnnClear, .dnnFormItem label.dnnFormLabel .dnnFormHelpContent.dnnClear, .dnnFormItem label .dnnFormHelpContent.dnnClear{line-height:1.4;text-align:left;}
 	
@@ -356,7 +359,7 @@ div.SearchIcon img{margin-top:3px;}
 	.urlControlFileRow{overflow:hidden;clear:both;}	
 		.urlControlFileRow span.dnnFormLabel{width:auto;text-align:right;}
 	.dnnFilePicker .dnnLeft .dnnFormItem{width:280px;overflow:hidden;padding:0;}
-	    .dnnFilePicker .dnnLeft .dnnFormItem input[type="file"]{display:block;}
+		.dnnFilePicker .dnnLeft .dnnFormItem input[type="file"]{display:block;}
 	.dnnFilePicker .dnnLeft .dnnFormItem span{display:block;float:left;width:80px;text-align:right;padding-right:10px;}
 	.dnnFilePicker .dnnLeft .dnnFormItem select{float:left;width:180px;}
 	.dnnFilePicker .dnnLeft a.dnnSecondaryAction{margin-left:80px;}

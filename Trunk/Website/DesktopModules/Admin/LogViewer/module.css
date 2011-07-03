@@ -1,7 +1,7 @@
 .dnnLogViewer, .dnnEditLogTypes{margin:2em auto;}
 .dnnlvOptions, .dnnlvLegend{width:49%;}
 	.dnnlvOptions{border-right:1px #ccc solid}
-	.dnnForm .dnnlvOptions .dnnFormItem label{width:36%;}
+.dnnLogViewer .dnnShortFormInfo{background:#edf8ff url(../../../images/help-icn.png) no-repeat 10px center;border:#46a3d3 2px solid;color:#085b8f;text-shadow:0px 1px 1px #fff;width: 350px;;}
 	.dnnLogViewer .dnnFormItem input[type="text"], .dnnLogViewer .dnnFormItem textarea{width:35%;}
 	.dnnlvFilter{}
 		.dnnlvFilter fieldset a{display:block;width:65px;text-align:right;padding-right:25px;font-weight:bold;float:left;}

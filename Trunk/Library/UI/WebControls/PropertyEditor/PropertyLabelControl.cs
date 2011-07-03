@@ -257,35 +257,37 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		protected override void CreateChildControls()
 		{
-		    CssClass += "dnnTooltip";
+			CssClass += "dnnTooltip";
 
 			label = new HtmlGenericControl {TagName = "label"};
 
-		    if (!DesignMode)
+			if (!DesignMode)
 			{
 				cmdHelp = new LinkButton {ID = ID + "_cmdHelp", CssClass = "dnnFormHelp", CausesValidation = false, EnableViewState = false, TabIndex = -1};
 
 				lblLabel = new Label {ID = ID + "_label", EnableViewState = false};
-			    cmdHelp.Controls.Add(lblLabel);
+				cmdHelp.Controls.Add(lblLabel);
 
 				label.Controls.Add(cmdHelp);
 			}
 
 			pnlHelp = new Panel {ID = ID + "_pnlHelp", EnableViewState = false, CssClass = "dnnFormHelpContent dnnClear"};
+			pnlHelp.Style.Clear();
+			pnlHelp.Style.Value = "display:none;";
 
 			lblHelp = new Label {ID = ID + "_lblHelp", EnableViewState = false};
-		    pnlHelp.Controls.Add(lblHelp);
+			pnlHelp.Controls.Add(lblHelp);
 
 			var aHelpPin = new HyperLink();
 			aHelpPin.CssClass = "pinHelp";
-            aHelpPin.Attributes.Add("href", "#"); 
+			aHelpPin.Attributes.Add("href", "#"); 
 			pnlHelp.Controls.Add(aHelpPin);
 
 			Controls.Add(label);
 			Controls.Add(pnlHelp);
 		}
 
-        /// <summary>
+		/// <summary>
 		/// OnDataBinding runs when the Control is being Data Bound (It is triggered by
 		/// a call to Control.DataBind()
 		/// </summary>
@@ -314,15 +316,15 @@ namespace DotNetNuke.UI.WebControls
 			}
 		}
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
 
-            ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
-            this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
-            jQuery.RequestDnnPluginsRegistration();
-            this.Page.ClientScript.RegisterClientScriptBlock(typeof(PropertyLabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
-        }
+			ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
+			Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+			jQuery.RequestDnnPluginsRegistration();
+			Page.ClientScript.RegisterClientScriptBlock(typeof(PropertyLabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+		}
 
 		/// <summary>
 		/// OnLoad runs just before the Control is rendered, and makes sure that any
@@ -336,13 +338,13 @@ namespace DotNetNuke.UI.WebControls
 			//Make sure the Child Controls are created before assigning any properties
 			EnsureChildControls();
 
-			DNNClientAPI.EnableMinMax(cmdHelp, pnlHelp, true, DNNClientAPI.MinMaxPersistanceType.None);
+			//DNNClientAPI.EnableMinMax(cmdHelp, pnlHelp, true, DNNClientAPI.MinMaxPersistanceType.None);
 			if (EditControl != null)
 			{
 				label.Attributes.Add("for", EditControl.ClientID);
 			}
 		}
 
-	    #endregion
+		#endregion
 	}
 }

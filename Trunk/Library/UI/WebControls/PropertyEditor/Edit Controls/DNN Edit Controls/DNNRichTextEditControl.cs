@@ -63,10 +63,10 @@ namespace DotNetNuke.UI.WebControls
                 RichTextEditor.Width = ControlStyle.Width;
                 if (RichTextEditor.Height.IsEmpty)
                 {
-                    RichTextEditor.Height = new Unit(300);
+                    RichTextEditor.Height = new Unit(250);
                 }
 
-                RichTextEditor.Width = new Unit(450);
+                RichTextEditor.Width = new Unit(400);
 
                 Controls.Clear();
                 pnlEditor.Controls.Add(RichTextEditor.HtmlEditorControl);

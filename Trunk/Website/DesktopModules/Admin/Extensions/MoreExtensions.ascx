@@ -7,14 +7,7 @@
         <div class="dnnAppGallerySearch">
             <h2 class="dnnGallerySubHeading"><%=LocalizeString("AppGallerySearchTitle") %></h2>
             <div class="dnnFormItem">
-                <label for="typeDDL">
-                    <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'typeDDLHelp')) return false;" class="dnnFormHelp" >
-                        <span><%=LocalizeString("TypeLabel") %></span>
-                    </a>
-                </label>
-                <div id="typeDDLHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
-		            <span><%=LocalizeString("TypeLabel.Help") %></span>
-	            </div>
+                <dnn:Label ID="dnnlblType" runat="server" ResourceKey="TypeLabel" ControlName="typeDDL" />
                 <select id="typeDDL">
                     <option value="all">All</option>
                     <option selected="selected" value="module"><%=LocalizeString("AppGalleryModule") %></option>
@@ -22,17 +15,8 @@
                 </select>        
             </div>
             <div class="dnnFormItem">
-                <label for="searchText">
-                    <a href="#" onclick="if (__dnn_SectionMaxMin(this,  'searchHelp')) return false;" class="dnnFormHelp" >
-                        <span><%=LocalizeString("SearchLabel") %></span>
-                    </a>
-                </label>
-                <div id="searchHelp" class="dnnFormHelpContent dnnClear" style="display:none;">
-		            <span><%=LocalizeString("SearchLabel.Help")%></span>
-	            </div>
-                <div class="dnnGallerySearch">
-                    <input type="text" id="searchText" title="<%=LocalizeString("SearchLabel.Help")%>" />        
-               </div>
+                <dnn:Label ID="dnnlblSearch" runat="server" ResourceKey="SearchLabel" ControlName="searchText" />
+                <input type="text" id="searchText" title="<%=LocalizeString("SearchLabel.Help")%>" />        
             </div>
             <div class="dnnClear">
                <a href="javascript:void(0);" id="search-go" class="dnnPrimaryAction"><%=LocalizeString("Search")%></a>

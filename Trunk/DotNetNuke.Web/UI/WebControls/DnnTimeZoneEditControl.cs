@@ -81,7 +81,6 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             base.OnPreRender(e);
 
-            TimeZones.Width = new Unit(450);
             TimeZones.DataBind(StringValue);
 
             if ((Page != null) && this.EditMode == PropertyEditorMode.Edit)

@@ -101,6 +101,8 @@ namespace DotNetNuke.UI.WebControls
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 			writer.Write(Localization.GetString("DisplayEnglish", Localization.SharedResourceFile));
+            //writer.Write("<br />");
+
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
 			if (DisplayMode == "Native")
 			{
@@ -206,8 +208,8 @@ namespace DotNetNuke.UI.WebControls
 			//Render Button Row
 			RenderModeButtons(writer);
 
-			////Render break
-			//writer.Write("<br />");
+			//Render break
+			writer.Write("<br />");
 
 			//Render the Select Tag
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);

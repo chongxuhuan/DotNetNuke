@@ -173,7 +173,7 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             //Load Item Style
             CssClass = "dnnFormItem";
-            CssClass += (FormMode == DnnFormMode.Long) ? " dnnFormLong" : " dnnFormShort";
+            CssClass += (FormMode == DnnFormMode.Long) ? "" : " dnnFormShort";
 
             if (String.IsNullOrEmpty(ResourceKey))
             {
