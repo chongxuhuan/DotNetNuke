@@ -110,33 +110,38 @@
     </script>
     
     <script type="text/javascript">
+		var _gallery; //global scope!
+		(function($){
+			$(document).ready(function () {
+				_gallery = new Gallery(
+					{
+						host: '<%=LocalizeString("appgalleryEndpoint") %>'
+						, NameTextASC: '<%=LocalizeString("NameAZ") %>'
+						, NameTextDESC: '<%=LocalizeString("NameZA") %>'
+						, PriceTextASC: '<%=LocalizeString("PriceLowHigh") %>'
+						, PriceTextDESC: '<%=LocalizeString("PriceHighLow") %>'
+						, tagLabel: '<%=LocalizeString("TagLabel") %>'
+						, searchLabel: '<%=LocalizeString("SearchLabel") %>'
+						, vendorLabel: '<%=LocalizeString("VendorLabel") %>'
+						, extensionLabel: '<%=LocalizeString("ExtensionsLabel") %>'
+						, noneLabel: '<%=LocalizeString("NoneLabel") %>'
+						, orderLabel: '<%=LocalizeString("OrderLabel") %>'
+						, typeLabel: '<%=LocalizeString("TypeLabel") %>'
+						, errorLabel: '<%=LocalizeString("ErrorLabel") %>'
+						, loadingLabel: '<%=LocalizeString("LoadingLabel") %>'
+						, siteRoot : '<%=ResolveUrl("~/")%>'
+						, DataBaseVersion : "<%=DotNetNuke.Common.Globals.DataBaseVersion%>"
+						, CacheTimeoutMinutes : <%=(IsDebugEnabled() ? 0: 1440) %>
+						, BaseDownLoadUrl : "<%=ModuleContext.EditUrl("ExtensionID", "{{ExtensionID}}", "AppGalleryDownload") %>"
+					});
 
-        var _gallery; //global scope!
-        $(document).ready(function () {
-            _gallery = new Gallery(
-                {
-                    host: '<%=LocalizeString("appgalleryEndpoint") %>'
-                    , NameTextASC: '<%=LocalizeString("NameAZ") %>'
-                    , NameTextDESC: '<%=LocalizeString("NameZA") %>'
-                    , PriceTextASC: '<%=LocalizeString("PriceLowHigh") %>'
-                    , PriceTextDESC: '<%=LocalizeString("PriceHighLow") %>'
-                    , tagLabel: '<%=LocalizeString("TagLabel") %>'
-                    , searchLabel: '<%=LocalizeString("SearchLabel") %>'
-                    , vendorLabel: '<%=LocalizeString("VendorLabel") %>'
-                    , extensionLabel: '<%=LocalizeString("ExtensionsLabel") %>'
-                    , noneLabel: '<%=LocalizeString("NoneLabel") %>'
-                    , orderLabel: '<%=LocalizeString("OrderLabel") %>'
-                    , typeLabel: '<%=LocalizeString("TypeLabel") %>'
-                    , errorLabel: '<%=LocalizeString("ErrorLabel") %>'
-                    , loadingLabel: '<%=LocalizeString("LoadingLabel") %>'
-                    , siteRoot : '<%=ResolveUrl("~/")%>'
-                    , DataBaseVersion : "<%=DotNetNuke.Common.Globals.DataBaseVersion%>"
-                    , CacheTimeoutMinutes : <%=(IsDebugEnabled() ? 0: 1440) %>
-                    , BaseDownLoadUrl : "<%=ModuleContext.EditUrl("ExtensionID", "{{ExtensionID}}", "AppGalleryDownload") %>"
-                });
-            _gallery.getCatalogs();
-            _gallery.getTags();
-            _gallery.Search();
-        });
+				setTimeout(function(){
+					_gallery.getCatalogs(function(){
+						_gallery.Search();
+					});
+					_gallery.getTags();
+				}, 0);
+			});
+		}(jQuery));
     </script>
 </div>

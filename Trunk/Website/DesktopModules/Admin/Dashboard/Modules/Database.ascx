@@ -7,7 +7,7 @@
         sortmode="SortOrderAttribute" 
         helpstyle-cssclass="dnnFormHelpContent dnnClear" 
         editmode="View" 
-        errorstyle-cssclass="NormalRed">
+        errorstyle-cssclass="dnnFormMessage dnnFormError">
         <Fields>
             <dnn:FieldEditorControl ID="fldProductVersion" runat="server" DataField="ProductVersion" />
             <dnn:FieldEditorControl ID="fldServicePack" runat="server" DataField="ServicePack" />

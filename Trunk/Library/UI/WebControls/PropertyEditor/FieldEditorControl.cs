@@ -425,17 +425,16 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		private void BuildDiv(EditorInfo editInfo)
 		{
-			HtmlGenericControl divLabel = null;
-
-			if (editInfo.LabelMode != LabelMode.None)
-			{
-				divLabel = new HtmlGenericControl("div");
-				//divLabel.Attributes.Add("class", "dnnFormItem");
-				divLabel.Controls.Add(BuildLabel(editInfo));
-			}
+			var propLabel = new PropertyLabelControl();
 
 			var propEditor = BuildEditor(editInfo);
 			var visibility = BuildVisibility(editInfo);
+
+			if (editInfo.LabelMode != LabelMode.None)
+			{
+				propLabel = BuildLabel(editInfo);
+				propLabel.EditControl = propEditor;
+			}
 
 			var strValue = editInfo.Value as string; 
 			if (ShowRequired && editInfo.Required && (editInfo.EditMode == PropertyEditorMode.Edit || (editInfo.Required && string.IsNullOrEmpty(strValue))))
@@ -445,7 +444,7 @@ namespace DotNetNuke.UI.WebControls
 
 			if (editInfo.LabelMode == LabelMode.Left || editInfo.LabelMode == LabelMode.Top)
 			{
-				Controls.Add(divLabel);
+				Controls.Add(propLabel);
 				Controls.Add(propEditor);
 				if (visibility != null)
 				{
@@ -459,9 +458,9 @@ namespace DotNetNuke.UI.WebControls
 				{
 					Controls.Add(visibility);
 				}
-				if ((divLabel != null))
+				if ((propLabel != null))
 				{
-					Controls.Add(divLabel);
+					Controls.Add(propLabel);
 				}
 			}
 			

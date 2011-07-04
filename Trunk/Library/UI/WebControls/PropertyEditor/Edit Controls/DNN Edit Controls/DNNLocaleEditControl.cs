@@ -100,8 +100,8 @@ namespace DotNetNuke.UI.WebControls
 			}
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
-			writer.Write(Localization.GetString("DisplayEnglish", Localization.SharedResourceFile));
-            //writer.Write("<br />");
+			writer.Write(Localization.GetString("EnglishName", Localization.GlobalResourceFile));
+			//writer.Write("<br />");
 
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
 			if (DisplayMode == "Native")
@@ -115,7 +115,7 @@ namespace DotNetNuke.UI.WebControls
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 
-			writer.Write(Localization.GetString("DisplayNative", Localization.SharedResourceFile));
+			writer.Write(Localization.GetString("NativeName", Localization.GlobalResourceFile));
 		}
 
 		private void RenderOption(HtmlTextWriter writer, CultureInfo culture)
@@ -200,16 +200,8 @@ namespace DotNetNuke.UI.WebControls
 		protected override void RenderEditMode(HtmlTextWriter writer)
 		{
 			//Render div
-			//ControlStyle.AddAttributesToRender(writer);
-
-			writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormRadioButtons");
-			writer.RenderBeginTag(HtmlTextWriterTag.Span);
-
-			//Render Button Row
-			RenderModeButtons(writer);
-
-			//Render break
-			writer.Write("<br />");
+			writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnLeft");
+			writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
 			//Render the Select Tag
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
@@ -270,6 +262,19 @@ namespace DotNetNuke.UI.WebControls
 				writer.Write(Localization.GetString("LanguageNotSelected", Localization.SharedResourceFile));
 				writer.RenderEndTag();
 			}
+
+			//Render break
+			writer.Write("<br />");
+
+			//Render Span
+			writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormRadioButtons");
+			writer.RenderBeginTag(HtmlTextWriterTag.Span);
+
+			//Render Button Row
+			RenderModeButtons(writer);
+
+			//close span
+			writer.RenderEndTag();
 
 			//close div
 			writer.RenderEndTag();

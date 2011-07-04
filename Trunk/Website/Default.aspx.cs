@@ -280,14 +280,22 @@ namespace DotNetNuke.Framework
             if (IsPopUp)
             {
                 var slaveModule = UIUtilities.GetSlaveModule(PortalSettings.ActiveTab.TabID);
-                var control = ModuleControlFactory.CreateModuleControl(slaveModule) as IModuleControl;
-                control.LocalResourceFile = slaveModule.ControlSrc.Replace(Path.GetFileName(slaveModule.ControlSrc), "") + 
-                                                Localization.LocalResourceDirectory + "/" +
+
+                //Skip is popup is just a tab (no slave module)
+                if (slaveModule.DesktopModuleID != Null.NullInteger)
+                {
+                    var control = ModuleControlFactory.CreateModuleControl(slaveModule) as IModuleControl;
+                    control.LocalResourceFile = slaveModule.ControlSrc.Replace(Path.GetFileName(slaveModule.ControlSrc), "") + Localization.LocalResourceDirectory + "/" +
                                                 Path.GetFileName(slaveModule.ControlSrc);
-                var title = Localization.LocalizeControlTitle(control);
- 
-                strTitle += string.Concat(" > ", PortalSettings.ActiveTab.TabName);
-                strTitle += string.Concat(" > ", title);
+                    var title = Localization.LocalizeControlTitle(control);
+                    
+                    strTitle += string.Concat(" > ", PortalSettings.ActiveTab.TabName);
+                    strTitle += string.Concat(" > ", title);
+                }
+                else
+                {
+                    strTitle += string.Concat(" > ", PortalSettings.ActiveTab.TabName);
+                }
             }
             else
             {
@@ -304,7 +312,7 @@ namespace DotNetNuke.Framework
                 }
             }
             Title = strTitle;
- 
+
             //set the background image if there is one selected
             if (!IsPopUp && FindControl("Body") != null)
             {

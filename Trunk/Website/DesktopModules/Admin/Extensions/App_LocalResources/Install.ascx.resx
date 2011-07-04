@@ -175,7 +175,7 @@
     <value>Package Information</value>
   </data>
   <data name="License.Help" xml:space="preserve">
-    <value>Before proceeding you must accept the terms of the license for this extension.  Please review the license and check the checkbox marked "Accept Terms"</value>
+    <value>Before proceeding you must accept the terms of the license for this extension.  Please review the license and check the checkbox marked "Accept License?"</value>
   </data>
   <data name="License.Title" xml:space="preserve">
     <value>Review License</value>

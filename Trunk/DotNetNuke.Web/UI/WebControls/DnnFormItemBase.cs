@@ -197,6 +197,8 @@ namespace DotNetNuke.Web.UI.WebControls
                 inputControl.CssClass += " dnnFormRequired";
             }
 
+            Controls.Add(inputControl);
+
             AddValidators(inputControl.ID);
         }
 

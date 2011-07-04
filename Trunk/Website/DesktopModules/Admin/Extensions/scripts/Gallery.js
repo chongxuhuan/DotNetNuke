@@ -549,7 +549,7 @@ Gallery.gotCatalogs = function (msg) {
     if (!_gallery.Cache.hasItem("catalogs")) _gallery.Cache.setItem("catalogs", msg);
 }
 
-Gallery.prototype.getCatalogs = function () {
+Gallery.prototype.getCatalogs = function (completeCallback) {
     var url = this.CatalogsUrl;
     url = url + "?$format=json";
 
@@ -563,6 +563,12 @@ Gallery.prototype.getCatalogs = function () {
     dnn.log(url);
 
     this.tagXHR = this.getXHR(url, "gotCatalogs");
+	
+	if(typeof(completeCallback) != "undefined" && $.isFunction(completeCallback)){
+		this.tagXHR.complete(function(){
+			completeCallback();
+		});
+	}
 }
 
 Gallery.prototype.getTags = function (callback) {

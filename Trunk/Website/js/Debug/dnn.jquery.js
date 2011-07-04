@@ -34,7 +34,8 @@
 			$wrap.tabs({
 				show: showEvent,
 				selected: opts.selected,
-				fx: {
+				disabled: opts.disabled,
+                fx: {
 					opacity: opts.opacity,
 					duration: opts.duration
 				}
@@ -144,7 +145,7 @@
         resizable: false,
         modal: true,
         title: 'Confirm',
-        dialogClass: 'dnnForm',
+        dialogClass: 'dnnFormPopup',
         isButton: false
     };
 
@@ -177,7 +178,7 @@
         autoOpen: false,
         resizable: false,
         modal: true,
-        dialogClass: 'dnnForm'
+        dialogClass: 'dnnFormPopup'
     };
 
 })(jQuery);

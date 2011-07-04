@@ -6,7 +6,7 @@
         autogenerate = "false"
         enableclientvalidation = "true"
         sortmode="SortOrderAttribute" 
-        helpstyle-cssclass="dnnFormHelpContent" 
+        helpstyle-cssclass="dnnFormHelpContent dnnClear" 
         editmode="Edit" 
         errorstyle-cssclass="dnnFormMessage dnnFormError">
         <Fields>

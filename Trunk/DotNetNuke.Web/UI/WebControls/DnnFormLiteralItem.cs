@@ -36,7 +36,6 @@ namespace DotNetNuke.Web.UI.WebControls
         protected override WebControl CreateControlInternal(Control container)
         {
             var literal = new Label {ID = ID + "_Label", Text = Convert.ToString(Value)};
-            container.Controls.Add(literal);
             return literal;
         }
     }
