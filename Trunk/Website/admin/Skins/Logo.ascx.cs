@@ -66,7 +66,7 @@ namespace DotNetNuke.UI.Skins.Controls
                         string imageUrl = FileManager.Instance.GetUrl(fileInfo);
                         if (!String.IsNullOrEmpty(imageUrl))
                         {
-                            imgLogo.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+                            imgLogo.ImageUrl = imageUrl;
                             logoVisible = true;
                         }
                     }

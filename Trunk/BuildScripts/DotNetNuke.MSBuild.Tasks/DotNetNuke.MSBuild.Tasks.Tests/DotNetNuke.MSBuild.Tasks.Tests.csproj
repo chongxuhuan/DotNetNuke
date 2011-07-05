@@ -83,10 +83,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AssemblyInfo.cs">
+    <Compile Include="CodePlexFixture.cs" />
+    <Content Include="Community\AssemblyInfo.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Compile Include="CodePlexFixture.cs" />
+    <Content Include="Enterprise\AssemblyInfo.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Professional\AssemblyInfo.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Compile Include="TFSCommentFixture.cs" />
     <Compile Include="DotNetNukeDeployFixture.cs" />
     <Compile Include="ExtensionPackagerFixture.cs" />
@@ -151,6 +157,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetNuke.MSBuild.Tasks.csproj">
+      <Project>{D9E0719E-A293-491A-B686-11D18E37097D}</Project>
+      <Name>DotNetNuke.MSBuild.Tasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

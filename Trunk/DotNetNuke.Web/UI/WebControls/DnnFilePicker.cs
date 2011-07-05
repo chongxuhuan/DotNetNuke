@@ -573,6 +573,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
 			//Create Upload Box
 			_txtFile = new HtmlInputFile();
+			_txtFile.Attributes.Add("size", "13");
 			_pnlUpload.Controls.Add(_txtFile);
 
 			_pnlLeftDiv.Controls.Add(_pnlUpload);

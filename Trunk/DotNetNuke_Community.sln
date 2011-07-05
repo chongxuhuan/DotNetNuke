@@ -141,11 +141,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{649E7B07-2170-4471-97C5-0941FBA12159}"
 	ProjectSection(SolutionItems) = preProject
+		Community\Templates\Blank Website.template = Community\Templates\Blank Website.template
 		Community\Templates\Default Website.template = Community\Templates\Default Website.template
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community_1", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"

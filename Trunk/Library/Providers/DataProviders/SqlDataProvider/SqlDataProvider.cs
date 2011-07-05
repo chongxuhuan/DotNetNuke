@@ -636,6 +636,7 @@ namespace DotNetNuke.Data
                         s = s.Replace("{objectQualifier}", ObjectQualifier);
                         try
                         {
+                            DnnLog.Trace("Executing SQL Script " + s);
                             ExecuteADOScript(s);
                         }
                         catch (SqlException objException)

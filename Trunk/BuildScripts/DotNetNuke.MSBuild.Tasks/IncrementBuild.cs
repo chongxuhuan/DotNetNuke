@@ -64,7 +64,8 @@ namespace DotNetNuke.MSBuild.Tasks
                 var content = File.ReadAllText(FilePath);
                 var indexStart = content.IndexOf(_versionStart) + 28;
                 var indexEnd = content.IndexOf(_versionEnd, indexStart);
-                var versionNumber = content.Substring(indexStart, indexEnd - indexStart - 1);
+                var originalVersionNumber = content.Substring(indexStart, indexEnd - indexStart - 1);
+                var versionNumber = originalVersionNumber;
                 if (DefaultVersion != default(string))
                 {
                     versionNumber = DefaultVersion;
@@ -90,7 +91,7 @@ namespace DotNetNuke.MSBuild.Tasks
                 if (AutoIncrementVersion || DefaultVersion != default(string))
                 {
                     var projectFileInfo = new FileInfo(FilePath) { IsReadOnly = false };
-                    content = content.Replace(versionNumber, BuildVersion);
+                    content = content.Replace(originalVersionNumber, BuildVersion);
                     var newProjectFile = new StreamWriter(FilePath);
                     newProjectFile.Write(content);
                     newProjectFile.Close();

@@ -37,9 +37,14 @@
     <RecentFiles>
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:CodePlexDelete.cs" caret="0" fromTop="0" />
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2604" fromTop="20" />
-      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="285" fromTop="13" />
-      <File id="d:Miscellaneous Files/f:CodePlexSVNCheckin.build/l:C!?DotNetNuke?TFS?DotNetNuke?src?DotNetNuke_CS?Tools?CodePlex?CodePlexSVNCheckin.build" caret="597" fromTop="6" />
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:ExtensionPackager.cs" caret="0" fromTop="0" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:TFSCommentFixture.cs" caret="271" fromTop="13" />
+      <File id="d:Miscellaneous Files/f:IncrementVersionx86.build/l:C!?DotNetNuke?TFS?DotNetNuke?src?DotNetNuke_CS?Tools?MSBuild?IncrementVersionx86.build" caret="1431" fromTop="22" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Professional/f:AssemblyInfo.cs" caret="2248" fromTop="26" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Enterprise/f:AssemblyInfo.cs" caret="2236" fromTop="26" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:IncrementBuild.cs" caret="3943" fromTop="26" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Community/f:AssemblyInfo.cs" caret="2193" fromTop="21" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="613" fromTop="1" />
     </RecentFiles>
     <RecentEdits>
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="533" fromTop="8" />
@@ -53,6 +58,18 @@
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2183" fromTop="6" />
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="2293" fromTop="10" />
       <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:TFSComments.cs" caret="1156" fromTop="10" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="871" fromTop="11" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Professional/f:AssemblyInfo.cs" caret="2248" fromTop="26" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Enterprise/f:AssemblyInfo.cs" caret="2231" fromTop="25" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/d:Community/f:AssemblyInfo.cs" caret="2424" fromTop="28" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="1239" fromTop="19" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="1479" fromTop="17" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="2394" fromTop="31" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="2324" fromTop="24" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="451" fromTop="15" />
+      <File id="E8822783-385E-4BF3-AF63-0BA4115E637F/f:IncrementBuildFixture.cs" caret="2379" fromTop="28" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:IncrementBuild.cs" caret="2189" fromTop="21" />
+      <File id="D9E0719E-A293-491A-B686-11D18E37097D/f:IncrementBuild.cs" caret="3455" fromTop="20" />
     </RecentEdits>
   </RecentFiles>
   <NAntValidationSettings>
@@ -62,8 +79,7 @@
     <Providers />
   </UnitTestRunner>
   <UnitTestRunnerNUnit>
-    <NUnitInstallDir IsNull="False">
-    </NUnitInstallDir>
+    <NUnitInstallDir>C:\Program Files\NUnit 2.5.10\bin\net-2.0\</NUnitInstallDir>
     <UseAddins>Never</UseAddins>
   </UnitTestRunnerNUnit>
 </Configuration>

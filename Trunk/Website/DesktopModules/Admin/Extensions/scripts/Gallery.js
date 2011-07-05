@@ -4,7 +4,7 @@
 //  finalized support for TagCloud/Type filtering
 
 if (typeof dnn === 'undefined') dnn = {};
-if (!dnn.log) dnn.log = function () { for (var a in arguments) { if (console) console.log(arguments[a]); } }
+if (typeof dnn.log === 'undefined') dnn.log = function () { for (var a in arguments) { if (typeof console !== 'undefined' && typeof console.log !== 'undefined') console.log(arguments[a]); } }
 
 function Gallery(params) {
 

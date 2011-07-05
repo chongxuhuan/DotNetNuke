@@ -23,6 +23,7 @@
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\unzip" />
   </Target>
   <Target Name="PortalTemplate">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Blank Website.template" DestinationFolder="../Website/Portals/_default" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template" DestinationFolder="../Website/Portals/_default" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template.resources" DestinationFolder="../Website/Portals/_default" />
   </Target>

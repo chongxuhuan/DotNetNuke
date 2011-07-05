@@ -31,6 +31,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Framework;
+using DotNetNuke.UI.UserControls;
 using DotNetNuke.UI.Utilities;
 
 #endregion
@@ -323,7 +324,7 @@ namespace DotNetNuke.UI.WebControls
 			ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
 			Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
 			jQuery.RequestDnnPluginsRegistration();
-			Page.ClientScript.RegisterClientScriptBlock(typeof(PropertyLabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+			Page.ClientScript.RegisterClientScriptBlock(typeof(LabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
 		}
 
 		/// <summary>

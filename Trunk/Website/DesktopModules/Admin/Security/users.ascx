@@ -68,7 +68,7 @@
                         </asp:Label>
                     </ItemTemplate>
                 </asp:TemplateColumn>
-                <asp:TemplateColumn HeaderText="Authorized">
+                <asp:TemplateColumn HeaderText="Authorized"  HeaderStyle-HorizontalAlign="Center"  ItemStyle-HorizontalAlign="Center">
                     <itemtemplate>
                         <dnn:DnnImage Runat="server" ID="imgApproved" IconKey="Checked" Visible="False" />
                         <dnn:DnnImage Runat="server" ID="imgNotApproved" IconKey="Unchecked" Visible="False" />

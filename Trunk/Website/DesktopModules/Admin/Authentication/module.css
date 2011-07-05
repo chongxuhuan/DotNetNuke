@@ -4,7 +4,7 @@
 	.dnnForm.dnnLoginService p{margin:0;padding:0;}
 	.dnnForm.dnnLoginService .dnnFormItem label{width:110px;padding-right:10px;}
 	.dnnLoginService a.dnnPrimaryAction{margin-left:125px;margin-top:5px;line-height:1.6;padding:3px 12px;}
-	.dnnLoginRememberMe{margin-left:205px;margin-top:-38px;}
+	.dnnLoginRememberMe{margin-left:235px;margin-top:-38px;}
 	.loginContent .LoginTabGroup{overflow:hidden;margin-left:125px;}
 	.LoginTab, .LoginTabSelected{float:left;background:#ccc;margin:0 3px 3px 0;padding:6px 12px;text-decoration:none;color:#333;text-shadow:1px 1px 0 #fff;border-radius:3px;-moz-border-radius:3px;}
 		.LoginTabSelected{background:#666;color:#fff;text-shadow:none;}

@@ -230,6 +230,8 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdAuthorize_Click(object sender, EventArgs e)
         {
+            if (Request.IsAuthenticated != true) return;
+
 			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
 
@@ -251,6 +253,8 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdPassword_Click(object sender, EventArgs e)
         {
+            if (Request.IsAuthenticated != true) return;
+
 			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
 
@@ -272,6 +276,8 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUnAuthorize_Click(object sender, EventArgs e)
         {
+            if (Request.IsAuthenticated != true) return;
+
 			//Get the Membership Information from the property editors
             User.Membership = (UserMembership)membershipForm.DataSource;
 
@@ -293,6 +299,8 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUnLock_Click(Object sender, EventArgs e)
         {
+            if (Request.IsAuthenticated != true) return;
+
 			//update the user record in the database
             bool isUnLocked = UserController.UnLockUser(User);
 

@@ -42,6 +42,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -332,7 +333,7 @@ namespace DotNetNuke.Framework
             }
             else
             {
-                strURL += (strURL.IndexOf("?") == -1 ? "?" : "&") + "error=" + (exc == null ? "" : Server.UrlEncode(exc.Message));
+                strURL += (strURL.IndexOf("?") == -1 ? "?" : "&") + "error=" + (exc == null || UserController.GetCurrentUserInfo() == null || !UserController.GetCurrentUserInfo().IsSuperUser ? "An unexpected error has occurred" : Server.UrlEncode(exc.Message));
                 if (!Globals.IsAdminControl())
                 {
                     strURL += "&content=0";

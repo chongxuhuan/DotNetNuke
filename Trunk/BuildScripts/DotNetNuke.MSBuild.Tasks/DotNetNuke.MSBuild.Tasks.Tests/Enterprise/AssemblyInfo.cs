@@ -21,14 +21,8 @@
 
 #endregion
 
-#region Usings
-
-using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-using DotNetNuke.Application;
-#endregion
+using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -36,27 +30,20 @@ using DotNetNuke.Application;
 
 // Review the values of the assembly attributes
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
+[assembly: AssemblyTitle("DotNetNuke.Enterprise")]
+[assembly: AssemblyDescription("DotNetNuke Enterprise Extensions")]
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
 [assembly: AssemblyProduct("http://www.dotnetnuke.com")]
 [assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("6.0.0.2755")]
-[assembly: AssemblyStatus(ReleaseMode.Stable)]
-// Allow internal variables to be visible to testing projects
-[assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")]
-// This assembly is the default dynamic assembly generated Castle DynamicProxy, 
-// used by Moq. Paste in a single line.
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-[assembly: InternalsVisibleTo("DotNetNuke.Web")]
+//[assembly: CLSCompliant(true)]
+
+[assembly: ComVisible(false)]
+
+//The following GUID is for the ID of the typelib if this project is exposed to COM
+
+[assembly: Guid("31a25ddd-7e7c-4f4e-b9c7-49bc9becca79")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.0.0")]
+
+[assembly: AssemblyDelaySign(false)]

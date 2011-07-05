@@ -4,11 +4,10 @@
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnManageSecurityRoles">
     <asp:Panel ID="pnlRoles" runat="server" Visible="True">
+        <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server" /></h2>
         <table cellspacing="0" cellpadding="0" border="0" class="dnnSecurityRoles dnnClear">
-            <tr><td colspan="7"><h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server" /></h2></td></tr>
-            <tr><td height="10"></td></tr>
             <tr class="dnnFormItem">
-                <td valign="top" width="300">
+                <td valign="top" width="250">
                     <dnn:Label ID="plUsers" runat="server" ControlName="cboUsers" />
                     <dnn:Label ID="plRoles" runat="server" ControlName="cboRoles" />
                 </td>
@@ -16,11 +15,11 @@
                 <td valign="top" width="150"><dnn:Label ID="plEffectiveDate" runat="server" ControlName="txtEffectiveDate" /></td>
                 <td width="10"></td>
                 <td valign="top" width="150"><dnn:Label ID="plExpiryDate" runat="server" ControlName="txtExpiryDate" /></td>
-                <td width="10"></td>
-                <td valign="top" width="150"></td>
+                <td width="30"></td>
+                <td valign="top" width="200"></td>
             </tr>
-            <tr>
-                <td valign="top" width="320">
+            <tr class="dnnFormItem">
+                <td valign="top" width="250">
                     <asp:TextBox ID="txtUsers" runat="server" Width="150" />
                     <asp:LinkButton ID="cmdValidate" runat="server" CssClass="dnnSecondaryAction" resourceKey="cmdValidate" />
                     <asp:DropDownList ID="cboUsers" runat="server" AutoPostBack="True" Width="100%" />
@@ -36,9 +35,9 @@
                     <asp:TextBox ID="txtExpiryDate" runat="server" Width="80" />
                     <asp:HyperLink ID="cmdExpiryCalendar" runat="server" />
                 </td>
-                <td width="10"></td>
-                <td valign="top" width="150" nowrap="nowrap">
-                    <asp:LinkButton ID="cmdAdd" CssClass="dnnSecondaryAction" runat="server"  CausesValidation="true" />
+                <td width="30"></td>
+                <td valign="top" width="200" nowrap="nowrap">
+                    <asp:LinkButton ID="cmdAdd" CssClass="dnnPrimaryAction" runat="server"  CausesValidation="true" />
                 </td>
             </tr>
         </table>

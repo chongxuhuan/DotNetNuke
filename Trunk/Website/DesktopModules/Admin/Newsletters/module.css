@@ -12,5 +12,6 @@ span.dnnNewsletterRadios{display:block;float:left;overflow:hidden;width:50%;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnUrlControl .dnnFormLabel{font-weight:normal;width:auto;margin-top:0;}
 	.dnnFormItem.dnnNewsletterAttachment .dnnUrlControl br{display:none;}
 	
-	.dnnLangSelector ul li{float:left;display:block;width:25%;}
+	.dnnNewsletters .dnnLangSelector{width:50%;float:left;}
+	.dnnLangSelector ul li{float:left;display:block;width:50%;}
 	.dnnLangSelector ul li label{width:auto}
