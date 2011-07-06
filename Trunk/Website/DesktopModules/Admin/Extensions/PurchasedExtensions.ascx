@@ -15,7 +15,10 @@
             <asp:GridView ID="grdSnow" runat="server"></asp:GridView>
     
             <ul class="dnnActions dnnClear">
-    	        <li><asp:LinkButton id="fetchExtensions" runat="server" CssClass="dnnPrimaryAction" resourcekey="fetchExtensions" /></li>
+    	        <li><asp:HyperLink id="snowcoveredLogin" runat="server" CssClass="dnnPrimaryAction" resourcekey="snowcoveredLogin" /></li>
+                <li><asp:HyperLink id="deleteCredentials" runat="server" CssClass="dnnPrimaryAction" resourcekey="deleteCredentials" /></li>
+                <li><asp:LinkButton id="fetchExtensions" runat="server" CssClass="dnnPrimaryAction" resourcekey="fetchExtensions" Visible="false" /></li>
+                
             </ul>
         </div>          
     </dnn:DnnAjaxPanel>

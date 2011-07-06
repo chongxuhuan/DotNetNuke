@@ -6,7 +6,7 @@
 		<div class="propertyList">
 			<dnn:ProfileEditorControl id="ProfileProperties" runat="Server" enableClientValidation="true" />
 		</div>
-		<ul class="dnnActions dnnClear">
+		<ul id="actionsRow" runat="server" class="dnnActions dnnClear">
 			<li><asp:LinkButton class="dnnPrimaryAction" id="cmdUpdate" runat="server" resourcekey="cmdUpdate" /></li>
 		</ul>
 	</fieldset>

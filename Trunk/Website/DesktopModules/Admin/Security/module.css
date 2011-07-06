@@ -7,7 +7,7 @@
 	#dnnUsers select.dnnUsersSearchFilter{padding:5px;margin:0 8px;width:20%;}
 	#dnnUsers .uLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
-.dnnUser, .dnnMembership{width:46%; float:left;}
+.dnnProfileDetails .dnnForm , .dnnUser, .dnnMembership{width:46%; float:left;}
 
 
 .dnnUserSettings .dnnFormItem input[type="radio"]{float:none;}
@@ -25,6 +25,7 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnProfile .dnnFormRadioButtons select{margin-left:10px;margin-right:10px;}
 	.dnnProfile .dnnFilePicker .dnnFormItem{padding:0;}
 	.dnnProfile .dnnFormItem input[type="text"], .dnnProfile .dnnFormItem select{margin-right:10px;}
+.dnnProfileDetails .dnnFormItem select{width: 300px;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%;float:right;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%;float:none;}
 .dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%;float:none;}

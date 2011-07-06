@@ -217,15 +217,15 @@ namespace DotNetNuke.UI.Containers
             }
         }
 
- /// -----------------------------------------------------------------------------
- /// <summary>
- /// Gets the Source for this container
- /// </summary>
- /// <returns>A String</returns>
- /// <history>
- /// 	[cnurse]	06/10/2009  documented
- /// </history>
- /// -----------------------------------------------------------------------------
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the Source for this container
+        /// </summary>
+        /// <returns>A String</returns>
+        /// <history>
+        /// 	[cnurse]	06/10/2009  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
         public string ContainerSrc { get; set; }
 
         [Obsolete("Deprecated in 5.1. Replaced by ContainerPath")]
@@ -236,6 +236,8 @@ namespace DotNetNuke.UI.Containers
                 return ContainerPath;
             }
         }
+
+        internal bool InjectActionMenu { get; set; }
 		
 		#endregion
 
@@ -405,10 +407,10 @@ namespace DotNetNuke.UI.Containers
                 ProcessContentPane();
 
                 // always add the actions menu as the first item in the content pane.
-                if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
+                if (InjectActionMenu && ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
                 {
                     ContentPane.Controls.Add(LoadControl("~/admin/Menus/DNNActions/DDRActionsMenu.ascx"));
-                    this.Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+                    Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
                 }
 
                 //Process Module Header

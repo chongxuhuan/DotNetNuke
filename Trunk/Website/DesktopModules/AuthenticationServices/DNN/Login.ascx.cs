@@ -124,8 +124,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 							if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
 							{
 								//Display Verification Rows 
-								divVerify1.Visible = true;
-								divVerify2.Visible = true;
+								divVerify.Visible = true;
 								txtVerification.Text = Request.QueryString["verificationcode"];
 							}
 						}
@@ -176,11 +175,10 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					//Check if its the first time logging in to a verified site
 					if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
 					{
-						if (!divVerify1.Visible)
+						if (!divVerify.Visible)
 						{
 							//Display Verification Rows so User can enter verification code
-							divVerify1.Visible = true;
-							divVerify2.Visible = true;
+							divVerify.Visible = true;
 							message = "EnterCode";
 						}
 						else

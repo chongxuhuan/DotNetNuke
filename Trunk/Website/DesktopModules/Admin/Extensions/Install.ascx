@@ -40,6 +40,9 @@
                         <asp:Label ID="lblLoadMessage" runat="server" CssClass="dnnFormMessage dnnFormValidationSummary" Visible="false" />
                     </div>
                 </div>
+                <div class="dnnFormMessage dnnFormInfo">
+                    <asp:Label id="maxSizeWarningLabel" runat="server" />
+                </div>
             </asp:WizardStep>
             <asp:WizardStep ID="Step1" runat="server" Title="Warnings" StepType="Step" AllowReturn="false">
                 <asp:Panel ID="pnlRepair" runat="server" Visible="false">

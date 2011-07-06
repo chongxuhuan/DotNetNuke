@@ -610,6 +610,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 CheckSecurity();
 
+                maxSizeWarningLabel.Text = String.Format(Localization.GetString("FileSizeRestriction", LocalResourceFile), (Config.GetMaxUploadSize() / (1024 * 1024)));
+
                 if(!Page.IsPostBack)
                 {
                     Initialize();

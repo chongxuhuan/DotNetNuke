@@ -125,11 +125,11 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return cmdUpdate.Visible;
+                return actionsRow.Visible;
             }
             set
             {
-                cmdUpdate.Visible = value;
+                actionsRow.Visible = value;
             }
         }
 
@@ -171,6 +171,10 @@ namespace DotNetNuke.Modules.Admin.Users
             if (IsAdmin)
             {
                 lblTitle.Text = string.Format(Localization.GetString("ProfileTitle.Text", LocalResourceFile), User.Username, User.UserID);
+            }
+            else if (IsRegister)
+            {
+                lblTitle.Text = Localization.GetString("RequireProfile.Text", LocalResourceFile);
             }
             else
             {

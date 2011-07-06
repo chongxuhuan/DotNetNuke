@@ -483,16 +483,14 @@ namespace DotNetNuke.UI.Skins
                 //Add Container to Dictionary
                 Containers.Add(container.ID, container);
 
-                // hide anything of type ActionBase that isn't an ActionButton - as we're injecting our own menu now.
-                foreach (var control in container.Controls.OfType<ActionBase>())
+                // hide anything of type ActionsMenu - as we're injecting our own menu now.
+                container.InjectActionMenu = (container.Controls.OfType<ActionBase>().Count() == 0);
+                if (!container.InjectActionMenu)
                 {
-                    var baseType = control.GetType().BaseType;
-                    if (baseType != null)
+                    foreach (var control in container.Controls.OfType<ActionsMenu>())
                     {
-                        if (baseType.ToString() != "DotNetNuke.UI.Containers.ActionButton")
-                        {
-                            control.Visible = false;
-                        }
+                        control.Visible = false;
+                        container.InjectActionMenu = true;
                     }
                 }
 

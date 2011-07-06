@@ -172,7 +172,7 @@
     <ProjectReference Include="..\..\DotNetNuke.Web.Razor\DotNetNuke.Web.Razor.csproj">
       <Project>{58FD62C7-3F26-4945-B810-428481E6300A}</Project>
       <Name>DotNetNuke.Web.Razor</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.csproj">
       <Project>{B1699614-39D4-468A-AB1D-A2FBA97CADDF}</Project>
@@ -321,6 +321,7 @@
       <Output TaskParameter="Include" ItemName="MySharedScripts" />
     </CreateItem>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\DotNetNuke.Web.Razor.dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
     <Copy SourceFiles="@(PackageSourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
     <Copy SourceFiles="@(PackageLocalResourceFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
     <Copy SourceFiles="@(ComponentReferences)" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />

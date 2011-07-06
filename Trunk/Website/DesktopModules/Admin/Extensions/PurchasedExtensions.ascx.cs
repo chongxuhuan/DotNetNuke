@@ -55,14 +55,35 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnLoad(e);
 
-            fetchExtensions.Click += fetchExtensions_Click;
+           fetchExtensions.Click += fetchExtensions_Click;
         }
 
         protected void fetchExtensions_Click(object sender, EventArgs e)
         {
-            if (CheckCanCallSnowcovered())
-            {
+           
                 GetSnowcoveredFiles();
+            CheckSnowcoveredConnection();
+
+        }
+
+        public void CheckSnowcoveredConnection()
+        {
+            snowcoveredLogin.Visible = false;
+            deleteCredentials.Visible = false;
+            fetchExtensions.Visible = false;
+            snowcoveredLogin.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "AppGallerySnowcovered",
+                                                                        true);
+            deleteCredentials.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "AppGallerySnowcovered",
+                                                                        true);
+            Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
+            if (settings.ContainsKey("Snowcovered_Username"))
+            {
+                fetchExtensions.Visible = true;
+                snowcoveredLogin.Visible = true;
+            }
+            else
+            {
+                deleteCredentials.Visible = true;
             }
 
         }
@@ -70,100 +91,51 @@ namespace DotNetNuke.Modules.Admin.Extensions
         private void GetSnowcoveredFiles()
         {
             string fileCheck = Localization.GetString("SnowCoveredFile", LocalResourceFile);
-            HttpWebRequest oRequest;
-            WebResponse oResponse;
+            string strPost = "";
+            bool blnValid = false;
+                    
+					//reconstruct post for postback validation
+					strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode("username"), Globals.HTTPPOSTEncode(""));
+                    strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode("password"), Globals.HTTPPOSTEncode(""));
+            
+                    var objRequest = (HttpWebRequest) WebRequest.Create(fileCheck.ToString());
+                    objRequest.Method = "POST";
+                    objRequest.ContentLength = strPost.Length;
+                    objRequest.ContentType = "application/x-www-form-urlencoded";
+                    using (var objStream = new StreamWriter(objRequest.GetRequestStream()))
+                    {
+                        objStream.Write(strPost);
+                    }
 
-            //temp code for snowcovered feed issue
-            StreamReader sReader;
-
-            string sRequest = fileCheck;
-                
-            try
-            {
-                oRequest = (HttpWebRequest) GetExternalRequest(sRequest);
-                oResponse = oRequest.GetResponse();
-                sReader= new StreamReader(oResponse.GetResponseStream());
-            }
-            catch (Exception)
-            {
-                error.Visible = true;
-                throw;
-            }
-            //temp code to workaround snowcovered feed issue
-
-            string returnText = sReader.ReadToEnd();
+                    string strResponse;
+                    using (var objResponse = (HttpWebResponse) objRequest.GetResponse())
+                    {
+                        using (var sr = new StreamReader(objResponse.GetResponseStream()))
+                        {
+                            strResponse = sr.ReadToEnd();
+                        }
+                    }
+                    switch (strResponse)
+                    {
+                        case null:
+                            //failure to connect/validate credentials/no data
+                            blnValid = false;
+                            break;
+                        default:
+							blnValid = true;
+                            break;
+                    }
+           
             //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
 
-            string orderPass = "<orders>";
-            if (returnText.Contains(orderPass))
+            
+            if (blnValid)
             {
-                XmlTextReader oReader = new XmlTextReader(returnText);
-
+                XmlTextReader oReader = new XmlTextReader(strResponse);
+        
                 grdSnow.DataSource = oReader;
                 grdSnow.DataBind();    
             }
-        }
-
-        private bool CheckCanCallSnowcovered()
-        {
-            string cookieCheck = Localization.GetString("SnowcoveredCookie", LocalResourceFile);
-            
-
-            //code added until snowcovered feed is changed
-            //string failCookie = null;
-            string failCookie = "Authenticated: False";
-            //check if logged in
-            HttpWebRequest oRequest;
-            
-            oRequest = (HttpWebRequest) GetExternalRequest(cookieCheck);
-            WebResponse oResponse;
-            oResponse = oRequest.GetResponse();
-            StreamReader sReader;
-            sReader = new StreamReader(oResponse.GetResponseStream());
-            
-            string returnText = sReader.ReadToEnd();
-            if (returnText.Contains(failCookie))
-            {
-                loginWarning.Visible = true;
-                return false;
-            }
-            
-            return true;
-        }
-
-        private HttpWebRequest GetExternalRequest(string address)
-        {
-            try
-            {
-                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-                
-                CookieContainer cookieJar = new CookieContainer();
-
-                var objRequest = (HttpWebRequest)WebRequest.Create(address);
-                objRequest.CookieContainer = cookieJar;
-                objRequest.Timeout = Host.WebRequestTimeout;
-                objRequest.UserAgent = "DotNetNuke";
-                if (!string.IsNullOrEmpty(Host.ProxyServer))
-                {
-                    WebProxy Proxy;
-                    NetworkCredential ProxyCredentials;
-                    Proxy = new WebProxy(Host.ProxyServer, Host.ProxyPort);
-                    if (!string.IsNullOrEmpty(Host.ProxyUsername))
-                    {
-                        ProxyCredentials = new NetworkCredential(Host.ProxyUsername, Host.ProxyPassword);
-                        Proxy.Credentials = ProxyCredentials;
-                    }
-                    objRequest.Proxy = Proxy;
-                }
-                return objRequest;
-            }
-            catch (Exception)
-            {
-
-                error.Visible = true;
-                return null;
-            }
-            
         }
 
         protected string GetLocalizedString(string key)

@@ -179,7 +179,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         private void BindPackageTypes()
         {
-            extensionTypeRepeater.DataSource = PackageTypesList;
+            //force modules to be the first in the list
+            extensionTypeRepeater.DataSource = PackageTypesList.OrderBy(p => p.Value.PackageType != "Module");
             extensionTypeRepeater.DataBind();
         }
 

@@ -61,10 +61,10 @@ namespace DotNetNuke.Entities.Content
         {
         }
 
-        public ContentType(string scopeType)
+        public ContentType(string contentType)
         {
             ContentTypeId = Null.NullInteger;
-            ContentType = scopeType;
+            ContentType = contentType;
         }
 
 		/// <summary>

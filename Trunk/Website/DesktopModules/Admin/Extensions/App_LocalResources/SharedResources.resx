@@ -213,8 +213,8 @@
   <data name="appgalleryTracker.Text" xml:space="preserve">
     <value>&amp;r=appgallery</value>
   </data>
-  <data name="SnowcoveredLogin.Text" xml:space="preserve">
-    <value>you need to login to &lt;a href="http://www.snowcovered.com" target=_new'&gt;snowcovered&lt;/a&gt;</value>
+  <data name="snowcoveredLogin.Text" xml:space="preserve">
+    <value>Provide Snowcovered details</value>
   </data>
   <data name="WebserviceFailure.Text" xml:space="preserve">
     <value>We cannot connect to the webservice</value>
@@ -236,5 +236,8 @@
   </data>
   <data name="PurchasedTitle.Text" xml:space="preserve">
     <value>Purchased Extensions</value>
+  </data>
+  <data name="deleteCredentials.Text" xml:space="preserve">
+    <value>Change Snowcovered details</value>
   </data>
 </root>

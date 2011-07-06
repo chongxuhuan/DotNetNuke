@@ -78,6 +78,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 purchasedExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
                 purchasedExtensionsTab.Visible = true;
                 purchasedExtensionsControl.Visible = true;
+                purchasedExtensionsControl.CheckSnowcoveredConnection();
             }
 
             var appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");

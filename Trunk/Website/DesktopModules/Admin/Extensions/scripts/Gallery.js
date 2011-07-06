@@ -556,19 +556,23 @@ Gallery.prototype.getCatalogs = function (completeCallback) {
     var cats = this.Cache.getItem("catalogs");
     if (cats) {
         Gallery.gotCatalogs(cats);
+        if (typeof (completeCallback) != "undefined" && $.isFunction(completeCallback)) {
+            completeCallback();
+        } 
         return;
     }
+
     this.showLoading();
 
     dnn.log(url);
 
     this.tagXHR = this.getXHR(url, "gotCatalogs");
-	
-	if(typeof(completeCallback) != "undefined" && $.isFunction(completeCallback)){
-		this.tagXHR.complete(function(){
-			completeCallback();
-		});
-	}
+
+    if (typeof (completeCallback) != "undefined" && $.isFunction(completeCallback)) {
+        this.tagXHR.complete(function () {
+            completeCallback();
+        });
+    }
 }
 
 Gallery.prototype.getTags = function (callback) {
