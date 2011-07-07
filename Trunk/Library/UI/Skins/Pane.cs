@@ -39,6 +39,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Containers;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.UI.WebControls;
 
 using Globals = DotNetNuke.Common.Globals;
 
@@ -487,10 +488,17 @@ namespace DotNetNuke.UI.Skins
                 container.InjectActionMenu = (container.Controls.OfType<ActionBase>().Count() == 0);
                 if (!container.InjectActionMenu)
                 {
-                    foreach (var control in container.Controls.OfType<ActionsMenu>())
+                    foreach (var actionControl in container.Controls.OfType<IActionControl>())
                     {
-                        control.Visible = false;
-                        container.InjectActionMenu = true;
+                        if (actionControl is ActionsMenu || actionControl is SolPartActions)
+                        {
+                            Control control = actionControl as Control;
+                            if (control != null)
+                            {
+                                control.Visible = false;
+                                container.InjectActionMenu = true;
+                            }
+                        }
                     }
                 }
 

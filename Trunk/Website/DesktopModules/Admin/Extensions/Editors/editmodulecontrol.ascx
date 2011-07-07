@@ -22,6 +22,9 @@
         <div class="dnnFormItem">
             <dnn:label id="plSource" controlname="cboSource" runat="server" />
             <asp:dropdownlist id="cboSource" runat="server" autopostback="True" />
+        </div>
+        <div class="dnnFormItem">
+            <div class="dnnTooltip"></div>
             <asp:textbox id="txtSource" columns="30" maxlength="100" runat="server" CssClass="emcTextSource" />
         </div>
         <div class="dnnFormItem">

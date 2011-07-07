@@ -70,7 +70,7 @@ namespace DotNetNuke.Services.Install
     /// -----------------------------------------------------------------------------
     public partial class InstallWizard : PageBase, IClientAPICallbackEventHandler
     {
-        #region "Private Members"
+        #region Private Members
 
         private readonly DataProvider _dataProvider = DataProvider.Instance();
         protected new string LocalResourceFile = "~/Install/App_LocalResources/InstallWizard.aspx.resx";
@@ -81,7 +81,7 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-        #region "Protected Members"
+        #region Protected Members
 
         protected Version ApplicationVersion
         {
@@ -182,7 +182,7 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -385,7 +385,7 @@ namespace DotNetNuke.Services.Install
                         strResource = Regex.Replace(strResource, ".resources", "", RegexOptions.IgnoreCase);
                         strResource = Regex.Replace(strResource, "_Install", ")", RegexOptions.IgnoreCase);
                         strResource = Regex.Replace(strResource, "_Source", ")", RegexOptions.IgnoreCase);
-                        strResource = strResource.Replace("_", " (");
+                        strResource = strResource.Replace("_0", " (0");
                         packageItem.Text = strResource;
 
                         list.Items.Add(packageItem);
@@ -1486,7 +1486,7 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1526,7 +1526,7 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>

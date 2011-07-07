@@ -183,5 +183,12 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="file">The file to download.</param>
         /// <param name="contentDisposition">Indicates how to display the document once downloaded.</param>
         void WriteFileToResponse(IFileInfo file, ContentDisposition contentDisposition);
+
+        /// <summary>
+        /// Sets the specified FileAttributes of the file.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="fileAttributes">The file attributes to add.</param>
+        void SetAttributes(IFileInfo file, FileAttributes fileAttributes);
     }
 }

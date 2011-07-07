@@ -45,7 +45,7 @@ namespace DotNetNuke.Services.FileSystem
         Guid UniqueId { get; set; }
         Guid VersionGuid { get; set; }
         int Width { get; set; }
-        Nullable<FileAttributes> FileAttributes { get; set; }
+        Nullable<FileAttributes> FileAttributes { get; }
         bool SupportsFileAttributes { get; }
         DateTime LastModificationTime { get; }
         int FolderMappingID { get; set; }

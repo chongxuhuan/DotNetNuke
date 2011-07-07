@@ -357,13 +357,13 @@
         $wrap.each(function () {
             var $this = $(this);
 
-            $this.children('label').click(function(e){
+            $this.click(function(e){
                 e.preventDefault();
             });
 
             $wrap.data("left", $wrap.position().left).data("top", $wrap.position().top);
             
-            $this.children('label').hoverIntent({
+            $this.hoverIntent({
                 over: function () {
                     $this.find(opts.helpSelector).show();
                 },

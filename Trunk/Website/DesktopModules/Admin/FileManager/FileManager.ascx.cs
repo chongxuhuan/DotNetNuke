@@ -2204,7 +2204,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     
                     try
                     {
-                        file.FileAttributes = (FileAttributes) iAttr;
+                        Services.FileSystem.FileManager.Instance.SetAttributes(file, (FileAttributes)iAttr);
                     }
                     catch (Exception ex)
                     {

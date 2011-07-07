@@ -75,6 +75,7 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             try
+
             {
                 FolderProvider.Instance(folderMapping.FolderProviderType).AddFolder(folderPath, folderMapping);
             }

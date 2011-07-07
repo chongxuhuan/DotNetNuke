@@ -193,6 +193,22 @@ namespace DotNetNuke.Common.Utilities
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        ///   Returns the decryptionkey from webconfig machinekey
+        /// </summary>
+        /// <returns>decryption key</returns>
+        /// -----------------------------------------------------------------------------
+        public static string GetDecryptionkey()
+        {
+            var configNav = Load();
+            var httpNode = configNav.SelectSingleNode("configuration//system.web//machineKey").CreateNavigator();
+
+            var result = XmlUtils.GetAttributeValue(httpNode, "decryptionKey");
+
+            return result;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         ///   Returns the maximum file size allowed to be uploaded to the application in bytes
         /// </summary>
         /// <returns>Size in bytes</returns>

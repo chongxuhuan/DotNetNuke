@@ -4,10 +4,8 @@
 	.dnnEditModuleControl .dnnFormItem input[type="text"]{min-width:35%;}
 		.dnnExtensionsPackageWriter .dnnFormItem input[type="text"]{margin-right:15px;min-width:35%;}
 		.dnnExtensionsPackageWriter .dnnFormItem.extPWMiltiLine textarea{width:60%;margin-left:26%;}
-		.dnnEditModuleControl .emcTextSource{margin-left:27%;margin-top:5px;}
     .dnnInstallExtension .dnnFormItem > span, .dnnUnInstallExtension .dnnFormItem span{display:inline-block}
     .dnnEditDefinition .dnnFormInput.dnnSSRadioButtons label{width:125px;display:inline;}
-    .dnnForm.dnnEditModuleControl .dnnFormItem label{width:25%;}
     .dnnAuthenticationSettings .dnnFormItem label{width:100%;}
 #dnnExtensions .dnnGridHeader{font-size:14px;color:#333;text-shadow:1px 1px 0 #fff;background:#eee}
 	#dnnExtensions .dnnGrid td{padding:14px 10px;}

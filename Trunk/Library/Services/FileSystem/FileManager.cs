@@ -345,12 +345,12 @@ namespace DotNetNuke.Services.FileSystem
 
             var folderPath = "";
             var seperatorIndex = relativePath.LastIndexOf('/');
-            
-            if(seperatorIndex > 0)
+
+            if (seperatorIndex > 0)
             {
                 folderPath = relativePath.Substring(0, seperatorIndex + 1);
             }
-            
+
             var folderInfo = FolderManager.Instance.GetFolder(portalId, folderPath);
             if (folderInfo == null)
             {
@@ -359,8 +359,8 @@ namespace DotNetNuke.Services.FileSystem
             else
             {
                 var fileName = relativePath.Substring(folderPath.Length);
-                return GetFile(folderInfo, fileName);                
-            }            
+                return GetFile(folderInfo, fileName);
+            }
         }
 
         /// <summary>
@@ -686,6 +686,12 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             WriteFileToHttpContext(file, contentDisposition);
+        }
+
+        public void SetAttributes(IFileInfo file, FileAttributes fileAttributes)
+        {
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+            FolderProvider.Instance(folderMapping.FolderProviderType).SetFileAttributes(file, fileAttributes);
         }
 
         #endregion
@@ -1030,8 +1036,8 @@ namespace DotNetNuke.Services.FileSystem
             //regex matches a dot followed by 1 or more chars followed by a semi-colon
             //regex is meant to block files like "foo.asp;.png" which can take advantage
             //of a vulnerability in IIS6 which treasts such files as .asp, not .png
-            return !string.IsNullOrEmpty(extension) 
-                   && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension) 
+            return !string.IsNullOrEmpty(extension)
+                   && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension)
                    && !Regex.IsMatch(fileName, @"\..+;");
         }
 

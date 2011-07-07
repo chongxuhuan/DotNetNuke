@@ -3668,6 +3668,10 @@ namespace DotNetNuke.Services.Upgrade
                 int moduleDefId = GetModuleDefinition("Languages", "Languages");
                 AddModuleControl(moduleDefId, "LocalizePages", "Localize Pages", "DesktopModules/Admin/Languages/LocalizePages.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0, Null.NullString, true);
 
+                //add appgallery snowcovered control
+                moduleDefId = AddModuleDefinition("Extensions", "", "Extensions");
+                AddModuleControl(moduleDefId, "AppGallerySnowcovered", "AppGallery Snowcovered Details", "DesktopModules/Admin/Extensions/AppGallery/AppGallerySnowcovered.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
+
                 EnableModalPopUps();
             }
             catch (Exception ex)
