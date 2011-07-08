@@ -292,7 +292,7 @@ namespace DotNetNuke.Security
             return BytesToHexString(buff);
         }
 
-        public static string EncryptString(string Message, string Passphrase)
+        public string EncryptString(string Message, string Passphrase)
         {
             byte[] Results;
             System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
@@ -332,7 +332,7 @@ namespace DotNetNuke.Security
             return Convert.ToBase64String(Results);
         }
 
-        public static string DecryptString(string Message, string Passphrase)
+        public string DecryptString(string Message, string Passphrase)
         {
             byte[] Results;
             System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();

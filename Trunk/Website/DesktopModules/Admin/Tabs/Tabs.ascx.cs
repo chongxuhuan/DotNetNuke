@@ -967,7 +967,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             else
             {
                 var tabController = new TabController();
-                var parent = tabController.GetTab(Convert.ToInt32(strParent), PortalId, false);
+                var parent = tabController.GetTab(Convert.ToInt32(strParent), -1, false);
                 if (parent != null)
                 {
                     rootNode.Text = parent.TabName;
@@ -1489,7 +1489,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
 
             var controller = new TabController();
-            var parentTab = controller.GetTab(parentId, PortalId, false);
+            var parentTab = controller.GetTab(parentId, -1, false);
 
             if (parentTab != null)
             {

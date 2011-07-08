@@ -40,9 +40,9 @@ using DotNetNuke.UI.Skins.Controls;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.AppGallery
+namespace DotNetNuke.Modules.Admin.Extensions
 {
-    public partial class AppGalleryDownload : ModuleUserControlBase
+    public partial class Download : ModuleUserControlBase
     {
         public static int BufferSize = 1024;
 
@@ -62,7 +62,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
             if (!Page.IsPostBack)
             {
                 var extensionId = Request.QueryString["ExtensionID"];
-                var extensionRequest = "http://appgallery.dotnetnuke.com" + "/AppGalleryService.svc/Extensions(" + extensionId + ")";
+                var extensionRequest = "http://" + LocalizeString("feedEndpoint") + "/AppGalleryService.svc/Extensions(" + extensionId + ")";
                 
                 var xmlDoc = new XmlDocument();
                 var xml = GetOData(extensionRequest);
@@ -235,7 +235,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                                        out myfile);
                 DownloadDeploy(wr, myfile, installFolder, catalogAction);
                 UI.Skins.Skin.AddModuleMessage(this, String.Format(GetString("deploySuccess"), ViewState["extName"]), ModuleMessage.ModuleMessageType.GreenSuccess);
-                installExtension.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "", ViewState["extType"].ToString(), myfile.ToString());
+                installExtension.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "", ViewState["extType"].ToString(), myfile.ToLower().Replace(".zip", ".resources").ToString());
                 installExtension.Visible = true;
                 deployExtension.Visible = false;
             }
@@ -278,7 +278,7 @@ namespace DotNetNuke.Modules.Admin.AppGallery
                     remoteStream = wr.GetResponseStream();
 
                     // Create the local file
-                    localStream = File.Create(installFolder + "/" + myfile);
+                    localStream = File.Create(installFolder + "/" + myfile.ToLower().Replace(".zip",".resources"));
 
                     // Allocate a 1k buffer
                     var buffer = new byte[1024];

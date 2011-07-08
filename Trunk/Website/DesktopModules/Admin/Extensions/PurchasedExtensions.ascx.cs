@@ -25,25 +25,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Xml.XPath;
-
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Installer;
-using DotNetNuke.Services.Installer.Packages;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
-using DotNetNuke.UI.Skins.Controls;
-
-using ICSharpCode.SharpZipLib.Zip;
 using System.Net;
 using System.Xml;
-using DotNetNuke.Entities.Host;
 
 #endregion
 
@@ -55,93 +47,145 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnLoad(e);
 
-           fetchExtensions.Click += fetchExtensions_Click;
+            fetchExtensions.Click += FetchExtensionsClick;
         }
 
-        protected void fetchExtensions_Click(object sender, EventArgs e)
+        protected void FetchExtensionsClick(object sender, EventArgs e)
         {
-           
-                GetSnowcoveredFiles();
-            CheckSnowcoveredConnection();
 
+            GetSnowcoveredFiles2();
+            CheckSnowcoveredConnection();
         }
 
         public void CheckSnowcoveredConnection()
         {
-            snowcoveredLogin.Visible = false;
-            deleteCredentials.Visible = false;
+            setupCredentials.Visible = false;
+            updateCredentials.Visible = false;
             fetchExtensions.Visible = false;
-            snowcoveredLogin.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "AppGallerySnowcovered",
-                                                                        true);
-            deleteCredentials.NavigateUrl = ModuleContext.NavigateUrl(ModuleContext.TabId, "AppGallerySnowcovered",
-                                                                        true);
+            setupCredentials.NavigateUrl = ModuleContext.EditUrl("Store");
+            updateCredentials.NavigateUrl = ModuleContext.EditUrl("Store");
             Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
-            if (settings.ContainsKey("Snowcovered_Username"))
+            if (settings.ContainsKey("Store_Username"))
             {
                 fetchExtensions.Visible = true;
-                snowcoveredLogin.Visible = true;
+                updateCredentials.Visible = true;
             }
             else
             {
-                deleteCredentials.Visible = true;
+                setupCredentials.Visible = true;
             }
 
         }
 
-        private void GetSnowcoveredFiles()
+        protected void GetSnowcoveredFiles2()
         {
-            string fileCheck = Localization.GetString("SnowCoveredFile", LocalResourceFile);
-            string strPost = "";
-            bool blnValid = false;
-                    
-					//reconstruct post for postback validation
-					strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode("username"), Globals.HTTPPOSTEncode(""));
-                    strPost += string.Format("&{0}={1}", Globals.HTTPPOSTEncode("password"), Globals.HTTPPOSTEncode(""));
-            
-                    var objRequest = (HttpWebRequest) WebRequest.Create(fileCheck.ToString());
-                    objRequest.Method = "POST";
-                    objRequest.ContentLength = strPost.Length;
-                    objRequest.ContentType = "application/x-www-form-urlencoded";
-                    using (var objStream = new StreamWriter(objRequest.GetRequestStream()))
-                    {
-                        objStream.Write(strPost);
-                    }
+            HttpWebRequest oRequest;
+            WebResponse oResponse;
+            Stream oStream;
+            XmlTextReader oReader;
+            XPathDocument oXMLDocument;
 
-                    string strResponse;
-                    using (var objResponse = (HttpWebResponse) objRequest.GetResponse())
-                    {
-                        using (var sr = new StreamReader(objResponse.GetResponseStream()))
-                        {
-                            strResponse = sr.ReadToEnd();
-                        }
-                    }
-                    switch (strResponse)
-                    {
-                        case null:
-                            //failure to connect/validate credentials/no data
-                            blnValid = false;
-                            break;
-                        default:
-							blnValid = true;
-                            break;
-                    }
-           
-            //  returnText=@"<orders><order orderid=""311326"" orderdate=""2011-03-21T14:12:23""><orderdetails><orderdetail packageid=""20524"" optionid=""19366"" packagename=""FREE Synapse 2 & Skin Tuner / 5 Colors / jQuery Banner (New)"" optionname=""Free Synapse & Skin Tuner""><files>  <file fileid=""68966"" filename=""Please Read Download Instructions.zip"" deploy=""false"" />   </files>  </orderdetail>  </orderdetails>  </order></orders>";
 
-            
-            if (blnValid)
+            string sRequest;
+
+            string fileCheck = Localization.GetString("StoreFile", LocalResourceFile);
+            Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
+            PortalSecurity ps = new PortalSecurity();
+            string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());
+            string password = ps.DecryptString(settings["Store_Password"], Config.GetDecryptionkey());
+            fileCheck = fileCheck + "&username=" + username + "&password=" + password;
+
+            try
             {
-                XmlTextReader oReader = new XmlTextReader(strResponse);
-        
-                grdSnow.DataSource = oReader;
-                grdSnow.DataBind();    
+
+                sRequest = fileCheck;
+                try
+                {
+                    //make remote request
+                    oRequest = (HttpWebRequest)WebRequest.Create(sRequest);
+                    oRequest.Timeout = 10000; //10 seconds
+                    oResponse = oRequest.GetResponse();
+                    oStream = oResponse.GetResponseStream();
+                }
+                catch (Exception oExc)
+                {
+                    throw oExc;
+                }
+
+                //load XML document
+                oReader = new XmlTextReader(oStream);
+
+
+                DataTable dt = new DataTable();
+                //instance of a datarow  
+                DataRow drow;
+                //creating two datacolums Column1 and Column2   
+                DataColumn dcol1 = new DataColumn("Package", typeof(string));
+                DataColumn dcol2 = new DataColumn("Filename", typeof(string));
+                DataColumn dcol3 = new DataColumn("Download", typeof(string));
+
+                DataColumn dcol4 = new DataColumn("Deploy", typeof(string));
+                //adding datacolumn to datatable  
+                dt.Columns.Add(dcol1);
+                dt.Columns.Add(dcol2);
+                dt.Columns.Add(dcol3);
+                dt.Columns.Add(dcol4);
+                oReader.XmlResolver = null;
+                oXMLDocument = new XPathDocument(oReader);
+                XPathNavigator nav = oXMLDocument.CreateNavigator();
+                var iterator = nav.Select("orders/order/orderdetails/orderdetail");
+                int i = 0;
+                while (iterator.MoveNext())
+                {
+                    //instance of a datarow  
+                    drow = dt.NewRow();
+                    //add rows to datatable  
+                    dt.Rows.Add(drow);
+                    var packageName = iterator.Current.GetAttribute("packagename", "").Replace("'", "''").Trim();
+                    var fileName = iterator.Current.SelectSingleNode("files/file").GetAttribute("filename", "");
+                    var fileId = iterator.Current.SelectSingleNode("files/file").GetAttribute("fileid", "");
+                    var deploy = iterator.Current.SelectSingleNode("files/file").GetAttribute("deploy", "");
+                    //add Column values  
+                    dt.Rows[i][dcol1] = packageName.ToString();
+                    dt.Rows[i][dcol2] = fileName.ToString();
+                    dt.Rows[i][dcol3] = "<a href='" + Localization.GetString("SnowCoveredFile", LocalResourceFile) + fileCheck.ToString() +
+                                        "&fileid=" + fileId.ToString() + "'>download</a>";
+                    if (deploy == "true")
+                    {
+                        PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                        dt.Rows[i][dcol4] = Globals.NavigateURL(_portalSettings.ActiveTab.TabID, Null.NullString, "deployid", fileId.ToString());
+                    }
+                    else
+                    {
+                        dt.Rows[i][dcol4] = "N/A";
+                    }
+                    i = i + 1;
+
+                }
+
+
+                grdSnow.DataSource = dt;
+                grdSnow.DataBind();
+
+            }
+            catch (Exception oExc)
+            {
+                throw oExc;
             }
         }
 
+        protected string NoData
+        {
+            get
+            {
+                return "no data available";
+            }
+        }
         protected string GetLocalizedString(string key)
         {
             return Localization.GetString(key, LocalResourceFile);
         }
-       
+
+
     }
 }

@@ -7,7 +7,7 @@
     <NavigationButtonStyle />
     <HeaderTemplate>
         <h2><% =Localization.GetString(Wizard.ActiveStep.Title + ".Title", LocalResourceFile)%></h2>
-        <div class="dnnFormMessage dnnFormHelpContent">
+        <div class="dnnFormMessage dnnFormInfo">
             <% =Localization.GetString(Wizard.ActiveStep.Title + ".Help", LocalResourceFile)%>
         </div>
     </HeaderTemplate>

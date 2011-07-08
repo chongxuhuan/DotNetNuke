@@ -714,8 +714,7 @@ namespace DotNetNuke.Modules.Admin.Users
             base.OnLoad(e);
 
             cmdCancel.Click += cmdCancel_Click;
-            cmdLogin.Click += cmdLogin_Click;
-            cmdRegister.Click += cmdRegister_Click;
+             cmdRegister.Click += cmdRegister_Click;
 
 
             ctlUser.UserCreateCompleted += UserCreateCompleted;
@@ -741,6 +740,13 @@ namespace DotNetNuke.Modules.Admin.Users
 
                 //Bind the User information to the controls
                 BindData();
+
+                loginLink.NavigateUrl = Globals.LoginURL(RedirectURL, (Request.QueryString["override"] != null));
+
+                if (PortalSettings.EnablePopUps)
+                {
+                    loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
+                }
             }
             catch (Exception exc) //Module failed to load
             {
@@ -753,10 +759,6 @@ namespace DotNetNuke.Modules.Admin.Users
             Response.Redirect(Globals.NavigateURL(), true);
         }
 
-        protected void cmdLogin_Click(object sender, EventArgs e)
-        {
-            Response.Redirect(RedirectURL, true);
-        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1065,7 +1067,7 @@ namespace DotNetNuke.Modules.Admin.Users
                             {
                                 DisableForm();
                                 cmdRegister.Visible = false;
-                                cmdLogin.Visible = true;
+                                loginLink.Visible = true;
                             }
                             else //redirect to after registration page
                             {
@@ -1073,7 +1075,7 @@ namespace DotNetNuke.Modules.Admin.Users
                             }
                             DisableForm();
                             cmdRegister.Visible = false;
-                            cmdLogin.Visible = true;
+                            loginLink.Visible = true;
                         }
                     }
                     else

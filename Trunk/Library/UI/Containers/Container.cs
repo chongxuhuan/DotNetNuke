@@ -407,7 +407,7 @@ namespace DotNetNuke.UI.Containers
                 ProcessContentPane();
 
                 // always add the actions menu as the first item in the content pane.
-                if (InjectActionMenu && ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
+                if (InjectActionMenu && ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, string.Empty, ModuleConfiguration))
                 {
                     ContentPane.Controls.Add(LoadControl("~/admin/Menus/DNNActions/DDRActionsMenu.ascx"));
                     Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));

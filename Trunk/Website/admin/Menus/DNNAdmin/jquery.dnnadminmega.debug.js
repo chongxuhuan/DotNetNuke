@@ -11,7 +11,7 @@
     }
 
     function hideAll() {
-        $(".megaborder").stop().fadeTo('fast', 0, function () { //Fade to 0 opacity
+        $(".dnnadminmega .megaborder").stop().fadeTo('fast', 0, function () { //Fade to 0 opacity
             $(this).hide();  //after fading, hide it
         });
     }
@@ -38,8 +38,8 @@
         } // function = onMouseOut callback (REQUIRED)
     };
 
-    $(".dnnadminmega > .megaborder").css({ 'opacity': '0' }); //Fade sub nav to 0 opacity on default
-    $(".megaborder").find(".dnnPrimaryAction").css({ opacity: 1 }); //Compact IE7
+    $(".dnnadminmega .megaborder").css({ 'opacity': '0' }); //Fade sub nav to 0 opacity on default
+    $(".dnnadminmega .megaborder").find(".dnnPrimaryAction").css({ opacity: 1 }); //Compact IE7
 
     $(".dnnadminmega > li").mouseenter(EnableHide); //Hovering over CP will re-enable hiding.
 
@@ -61,7 +61,7 @@
     $(".dnnadminmega > li").hoverIntent(hideConfig);
 
     //Hovering over a the dropdown will re-enable autohide
-    $(".megaborder").focus(function () {
+    $(".dnnadminmega .megaborder").focus(function () {
         canHide = true;
     });
 

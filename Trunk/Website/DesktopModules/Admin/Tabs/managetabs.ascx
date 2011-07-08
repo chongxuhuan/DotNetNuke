@@ -10,8 +10,8 @@
 <div class="dnnForm dnnPageSettings dnnClear" id="tabSettingsForm">
 	<ul class="dnnAdminTabNav dnnClear" id="">
 		<li><a href="#dnnPageDetails"><%=LocalizeString("PageDetails")%></a></li>
-        <li><a href="#dnnCopyPage"><%=LocalizeString("CopyPage")%></a></li>
-		<li><a href="#dnnPermissions"><%=LocalizeString("Permissions")%></a></li>
+        <li id="copyTab" runat="server"><a href="#dnnCopyPage"><%=LocalizeString("CopyPage")%></a></li>
+		<li id="permissionsTab" runat="server"><a href="#dnnPermissions"><%=LocalizeString("Permissions")%></a></li>
 		<li id="localizationTab" runat="server"><a href="#dnnLocalization"><%=LocalizeString("Localization")%></a></li>
 		<li><a href="#dnnAdvancedSettings"><%=LocalizeString("AdvancedSettings")%></a></li>
 	</ul>

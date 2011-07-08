@@ -54,6 +54,7 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.0.")]
         public double ClientToServerTimeZoneFactor
         {
             get
@@ -64,6 +65,7 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.0.")]
         public double ServerToClientTimeZoneFactor
         {
             get

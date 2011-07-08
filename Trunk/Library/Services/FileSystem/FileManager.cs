@@ -522,6 +522,30 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>
+        /// Sets the specified FileAttributes of the file.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="fileAttributes">The file attributes to add.</param>
+        public void SetAttributes(IFileInfo file, FileAttributes fileAttributes)
+        {
+            DnnLog.MethodEntry();
+
+            Requires.NotNull("file", file);
+
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+
+            try
+            {
+                FolderProvider.Instance(folderMapping.FolderProviderType).SetFileAttributes(file, fileAttributes);
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+                throw new FolderProviderException(Localization.Localization.GetExceptionMessage("UnderlyingSystemError", "The underlying system threw an exception."), ex);
+            }
+        }
+
+        /// <summary>
         /// Extracts the files and folders contained in the specified zip file to the folder where the file belongs.
         /// </summary>
         /// <param name="file">The file to unzip.</param>
@@ -686,12 +710,6 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             WriteFileToHttpContext(file, contentDisposition);
-        }
-
-        public void SetAttributes(IFileInfo file, FileAttributes fileAttributes)
-        {
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
-            FolderProvider.Instance(folderMapping.FolderProviderType).SetFileAttributes(file, fileAttributes);
         }
 
         #endregion

@@ -143,6 +143,13 @@ namespace DotNetNuke.Services.FileSystem
         IFileInfo RenameFile(IFileInfo file, string newFileName);
 
         /// <summary>
+        /// Sets the specified FileAttributes of the file.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="fileAttributes">The file attributes to add.</param>
+        void SetAttributes(IFileInfo file, FileAttributes fileAttributes);
+
+        /// <summary>
         /// Extracts the files and folders contained in the specified zip file to the folder where the file belongs.
         /// </summary>
         /// <param name="file">The file to unzip.</param>
@@ -183,12 +190,5 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="file">The file to download.</param>
         /// <param name="contentDisposition">Indicates how to display the document once downloaded.</param>
         void WriteFileToResponse(IFileInfo file, ContentDisposition contentDisposition);
-
-        /// <summary>
-        /// Sets the specified FileAttributes of the file.
-        /// </summary>
-        /// <param name="file">The file.</param>
-        /// <param name="fileAttributes">The file attributes to add.</param>
-        void SetAttributes(IFileInfo file, FileAttributes fileAttributes);
     }
 }

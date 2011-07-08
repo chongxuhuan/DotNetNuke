@@ -41,17 +41,17 @@ namespace DotNetNuke.Modules.SearchInput
     {
         private void ShowHideImages()
         {
-            string ShowGoImage = Convert.ToString(Settings["ShowGoImage"]);
-            string ShowSearchImage = Convert.ToString(Settings["ShowSearchImage"]);
+            string showGoImage = Convert.ToString(Settings["ShowGoImage"]);
+            string showSearchImage = Convert.ToString(Settings["ShowSearchImage"]);
             bool bShowGoImage = false;
             bool bShowSearchImage = false;
-            if (ShowGoImage != null)
+            if (!String.IsNullOrEmpty(showGoImage))
             {
-                bShowGoImage = Convert.ToBoolean(ShowGoImage);
+                bShowGoImage = Convert.ToBoolean(showGoImage);
             }
-            if (ShowSearchImage != null)
+            if (!String.IsNullOrEmpty(showSearchImage))
             {
-                bShowSearchImage = Convert.ToBoolean(ShowSearchImage);
+                bShowSearchImage = Convert.ToBoolean(showSearchImage);
             }
             imgSearch.Visible = bShowSearchImage;
             plSearch.Visible = !bShowSearchImage;

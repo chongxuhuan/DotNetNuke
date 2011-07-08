@@ -174,6 +174,12 @@ namespace DotNetNuke.Services.Cache
         private void ClearFolderCacheInternal(int portalId, bool clearRuntime)
         {
             RemoveFormattedCacheKey(DataCache.FolderCacheKey, clearRuntime, portalId);
+
+            // FolderUserCacheKey also includes permissions and userId but we don't have that information
+            // here so we remove them using a prefix
+            var folderUserCachePrefix = GetCacheKey(string.Format("Folders|{0}|", portalId));
+            ClearCacheInternal(folderUserCachePrefix, clearRuntime);
+            
             RemoveFormattedCacheKey(DataCache.FolderPermissionCacheKey, clearRuntime, portalId);
         }
 

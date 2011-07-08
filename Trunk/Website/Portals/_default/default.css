@@ -277,6 +277,7 @@ div.SearchIcon img{margin-top:3px;}
 			.dnnAddress input[type="checkbox"]{margin:0 5px}
 			.dnnForm input.dnnFormRequired, .dnnForm textarea.dnnFormRequired, .dnnForm select.dnnFormRequired{border-left:5px #F00 solid;}
 		.dnnFormRadioButtons{float:left;width:auto;display:block;}
+				.dnnFormRadioButtons input[type=radio]{ clear: both;}
 				.dnnFormRadioButtons label{font-weight:normal;margin:0 10px 0 4px;width:auto;text-align:left;padding-right:0;}
 		
 		.dnnForm.dnnShortForm .dnnFormItem label{float:none;width:100%;text-align:left;margin-bottom:0.25em}
@@ -355,11 +356,15 @@ div.SearchIcon img{margin-top:3px;}
 	.urlControl label{margin-top:0;width:auto;font-weight:normal}
 	.urlControlLinkType{width:auto;}
 		.urlControlLinkType span, .dnnFormItem .urlControlLinkType span{display:block;float:none;text-align:left;width:auto;}
-		.dnnFormItem .ucLinkTypeRadioButtons label{width:auto;font-weight:normal;text-align:left;padding-right:0;margin-top:0;}
+		.dnnFormItem .ucLinkTypeRadioButtons label{width:260px;font-weight:normal;text-align:left;padding-right:0;margin-top:0;display: inline-block;}
 		.urlControlLinkType span input{min-width:3%;}
 		.dnnForm.dnnModuleSettings .dnnFormItem .urlControlLinkType span label{text-align:left;}
 	.urlControlFileRow{overflow:hidden;clear:both;}	
 		.urlControlFileRow span.dnnFormLabel{width:auto;text-align:right;}
+		.urlControlFileRow select,.urlControlFileRow input[type=file]{ clear: both;}
+	.urlControlImagesRow{overflow:hidden;clear:both;}	
+		.urlControlImagesRow span.dnnFormLabel{width:auto;text-align:right;}
+		.urlControlImagesRow select{ clear: both;}
 	.dnnFilePicker .dnnLeft .dnnFormItem{width:280px;overflow:hidden;padding:0;}
 		.dnnFilePicker .dnnLeft .dnnFormItem input[type="file"]{display:block;}
 	.dnnFilePicker .dnnLeft .dnnFormItem span{display:block;float:left;width:80px;text-align:right;padding-right:10px;}

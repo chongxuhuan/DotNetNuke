@@ -70,9 +70,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 availableExtensionsTabExpand.Visible = true;
             }
 
-            var snowCoveredUri = Localization.GetString("SnowCoveredFile", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-
-            if (!String.IsNullOrEmpty(snowCoveredUri) && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
+            if (ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
                 purchasedExtensionsControl.LocalResourceFile = LocalResourceFile;
                 purchasedExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
@@ -81,9 +79,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 purchasedExtensionsControl.CheckSnowcoveredConnection();
             }
 
-            var appGalleryUri = Localization.GetString("appgalleryEndpoint", "~/DesktopModules/Admin/Extensions/App_LocalResources/SharedResources.resx");
-
-            if (!String.IsNullOrEmpty(appGalleryUri) && ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
+            if (ModuleContext.PortalSettings.ActiveTab.IsSuperTab)
             {
                 moreExtensionsControl.LocalResourceFile = LocalResourceFile;
                 moreExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;

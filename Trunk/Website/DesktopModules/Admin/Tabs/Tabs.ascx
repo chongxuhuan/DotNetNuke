@@ -320,7 +320,7 @@
 		</ul>     
 	</div>
 	<div runat="server" visible="false" id="pnlBulk" class="tmTabContainer">
-		<div class="dnnFormMessage dnnFormHelpContent"><asp:Literal ID="lblBulkIntro" runat="server" /></div>
+		<div class="dnnFormMessage dnnFormInfo"><asp:Literal ID="lblBulkIntro" runat="server" /></div>
 		<div class="dnnFormItem"><asp:TextBox ID="txtBulk" runat="server" TextMode="MultiLine" /></div>
 		<ul class="dnnActions dnnClear">
 			<li><asp:LinkButton ID="btnBulkCreate" runat="server" resourcekey="btnBulkCreate" CssClass="dnnPrimaryAction" /></li>

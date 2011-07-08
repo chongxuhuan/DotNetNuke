@@ -1384,7 +1384,7 @@ namespace DotNetNuke.Entities.Users
 			
             //Update User in Database with Last IP used
             user.LastIPAddress = ip;
-            UpdateUser(portalId, user);
+            UpdateUser(portalId, user, false);
 
             //set the forms authentication cookie ( log the user in )
             FormsAuthentication.SetAuthCookie(user.Username, createPersistentCookie);

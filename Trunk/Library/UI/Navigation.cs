@@ -124,7 +124,7 @@ namespace DotNetNuke.UI
 					//if action is visible and user has permission 
                     if (objAction.Visible &&
                         (objAction.Secure != SecurityAccessLevel.Anonymous ||
-                         ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", objActionControl.ModuleControl.ModuleContext.Configuration)) &&
+                         ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, string.Empty, objActionControl.ModuleControl.ModuleContext.Configuration)) &&
                         ModulePermissionController.HasModuleAccess(objAction.Secure, Null.NullString, objActionControl.ModuleControl.ModuleContext.Configuration))
                     {
                         if (blnPending)

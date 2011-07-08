@@ -161,7 +161,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             if (!Null.IsNull(portal.ExpiryDate))
             {
-                txtExpiryDate.Text = portal.ExpiryDate.ToShortDateString();
+                datepickerExpiryDate.SelectedDate = portal.ExpiryDate;
             }
             txtHostFee.Text = portal.HostFee.ToString();
             txtHostSpace.Text = portal.HostSpace.ToString();
@@ -820,9 +820,9 @@ namespace DotNetNuke.Modules.Admin.Portals
                     }
 					
                     DateTime datExpiryDate = Null.NullDate;
-                    if (!String.IsNullOrEmpty(txtExpiryDate.Text))
+                    if (datepickerExpiryDate.SelectedDate.HasValue)
                     {
-                        datExpiryDate = Convert.ToDateTime(txtExpiryDate.Text);
+                        datExpiryDate = datepickerExpiryDate.SelectedDate.Value;
                     }
 					
                     int intSplashTabId = Null.NullInteger;

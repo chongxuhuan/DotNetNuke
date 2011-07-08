@@ -75,7 +75,6 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             try
-
             {
                 FolderProvider.Instance(folderMapping.FolderProviderType).AddFolder(folderPath, folderMapping);
             }
@@ -407,12 +406,7 @@ namespace DotNetNuke.Services.FileSystem
             var portalID = user.PortalID;
             var userFolderPath = PathUtils.Instance.GetUserFolderPath(user);
 
-            var userFolder = GetFolder(portalID, userFolderPath);
-            if (userFolder == null)
-            {
-                AddUserFolder(user);
-                userFolder = GetFolder(portalID, userFolderPath);
-            }
+            var userFolder = GetFolder(portalID, userFolderPath) ?? AddUserFolder(user);
 
             foreach (var folder in GetFolders(portalID, permissions, user.UserID).Where(folder => folder.FolderPath != null))
             {

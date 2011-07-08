@@ -76,6 +76,6 @@
     <ul id="actionsRow" runat="server" visible="false" class="dnnActions dnnClear">
         <li><asp:LinkButton id="cmdRegister" runat="server" CssClass="dnnPrimaryAction" /></li>
         <li><asp:LinkButton id="cmdCancel" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" CausesValidation="false" /></li>
-        <li><asp:LinkButton id="cmdLogin" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdLogin" Visible="false" /></li>
+        <li><asp:Hyperlink id="loginLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdLogin" Visible="false" /></li>
     </ul>
 </div>	    

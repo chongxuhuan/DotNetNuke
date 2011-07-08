@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -46,15 +47,16 @@ using DotNetNuke.Common.Utilities;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.AppGallery
+namespace DotNetNuke.Modules.Admin.Extensions
 {
-    public partial class AppGallerySnowcovered : PortalModuleBase
+    public partial class Store : PortalModuleBase
     {
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             cmdSave.Click += OnSaveClick;
+            cmdCancel.Click += OnCancelClick;
 
         }
 
@@ -64,21 +66,28 @@ namespace DotNetNuke.Modules.Admin.AppGallery
 
             if (!Page.IsPostBack)
             {
-                if (Settings["Snowcovered_Username"] != null)
-                { txtUsername.Text = PortalSecurity.DecryptString(Settings["Snowcovered_Username"].ToString(),Config.GetDecryptionkey()); }
+                PortalSecurity ps = new PortalSecurity();
+                Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
+                if (settings.ContainsKey("Store_Username"))
+                { txtUsername.Text = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey()); }
 
-                if (Settings["Snowcovered_PasswordSettings"] != null)
-                { txtPassword.Text = PortalSecurity.DecryptString(Settings["Snowcovered_PasswordSettings"].ToString(),Config.GetDecryptionkey()); }
+                if (settings.ContainsKey("Store_Username"))
+                { txtPassword.Text = ps.DecryptString(settings["Store_Password"], Config.GetDecryptionkey()); }
             }
 
        }
         private void OnSaveClick(object sender, EventArgs e)
         {
-            PortalController.UpdatePortalSetting(PortalId, "Snowcovered_Username", PortalSecurity.EncryptString(txtUsername.Text.ToString(),Config.GetDecryptionkey()));
-            PortalController.UpdatePortalSetting(PortalId, "Snowcovered_Password", PortalSecurity.EncryptString(txtPassword.Text.ToString(),Config.GetDecryptionkey()));
+            PortalSecurity ps = new PortalSecurity();
+            PortalController.UpdatePortalSetting(PortalId, "Store_Username", ps.EncryptString(txtUsername.Text, Config.GetDecryptionkey()));
+            PortalController.UpdatePortalSetting(PortalId, "Store_Password", ps.EncryptString(txtPassword.Text, Config.GetDecryptionkey()));
+            Response.Redirect(Globals.NavigateURL());
         }
-      
 
+        protected void OnCancelClick(object sender, EventArgs e)
+        {
+            Response.Redirect(Globals.NavigateURL());
+        }
 
     }
 }

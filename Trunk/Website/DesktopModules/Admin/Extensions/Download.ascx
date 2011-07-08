@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="DotNetNuke.Modules.Admin.AppGallery.AppGalleryDownload" AutoEventWireup="false" CodeFile="AppGalleryDownload.ascx.cs" %>
+<%@ Control Language="C#" Inherits="DotNetNuke.Modules.Admin.Extensions.Download" AutoEventWireup="false" CodeFile="Download.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 
 <div class="dnnForm dnnDeployExtension dnnClear" id="dnnDeployExtension">

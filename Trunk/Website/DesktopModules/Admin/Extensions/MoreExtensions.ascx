@@ -115,7 +115,7 @@
 			$(document).ready(function () {
 				_gallery = new Gallery(
 					{
-						host: '<%=LocalizeString("appgalleryEndpoint") %>'
+						host: '<%=LocalizeString("feedEndpoint") %>'
 						, NameTextASC: '<%=LocalizeString("NameAZ") %>'
 						, NameTextDESC: '<%=LocalizeString("NameZA") %>'
 						, PriceTextASC: '<%=LocalizeString("PriceLowHigh") %>'
@@ -132,7 +132,7 @@
 						, siteRoot : '<%=ResolveUrl("~/")%>'
 						, DataBaseVersion : "<%=DotNetNuke.Common.Globals.DataBaseVersion%>"
 						, CacheTimeoutMinutes : <%=(IsDebugEnabled() ? 0: 1440) %>
-						, BaseDownLoadUrl : "<%=ModuleContext.EditUrl("ExtensionID", "{{ExtensionID}}", "AppGalleryDownload") %>"
+						, BaseDownLoadUrl : "<%=ModuleContext.EditUrl("ExtensionID", "{{ExtensionID}}", "Download") %>"
 					});
 
 				setTimeout(function(){
