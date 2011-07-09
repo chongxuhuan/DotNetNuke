@@ -7,7 +7,9 @@
 	#dnnUsers select.dnnUsersSearchFilter{padding:5px;margin:0 8px;width:20%;}
 	#dnnUsers .uLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
-.dnnProfileDetails .dnnForm , .dnnUser, .dnnMembership{width:46%; float:left;}
+.dnnRequireProfile .dnnForm , .dnnUser, .dnnMembership{width:46%; float:left;}
+.dnnProfileDetails .dnnFormItem .dnnTooltip{width:20%;}
+.dnnProfileDetails .dnnFormItem select.dnnFormVisibility{width:100px;}
 
 
 .dnnUserSettings .dnnFormItem input[type="radio"]{float:none;}

@@ -834,9 +834,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 
 			var returnUrl = Globals.NavigateURL();
-			string delimiter;
 			string url;
-			string popUpUrl;
 			if (PortalSettings.UserRegistration != (int)Globals.PortalRegistrationType.NoRegistration)
 			{
 				if (!string.IsNullOrEmpty(Request.QueryString["returnurl"]))
@@ -845,13 +843,11 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				}
 				returnUrl = HttpUtility.UrlEncode(returnUrl);
 				url = Globals.RegisterURL(returnUrl, Null.NullString);
-				delimiter = url.Contains("?") ? "&" : "?";
 
-				if (PortalSettings.EnablePopUps && HttpContext.Current.Request.Url.ToString().Contains("popUp"))
-				{
-					popUpUrl = String.Format("{0}{1}popUp=true", url, delimiter);
-					registerLink.NavigateUrl = popUpUrl;
-				}
+                if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
+                {
+                    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
+                }
 				else
 				{
 					registerLink.NavigateUrl = url;
@@ -863,12 +859,9 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 
 			url = Globals.NavigateURL("SendPassword", "returnurl=" + returnUrl);
-			delimiter = url.Contains("?") ? "&" : "?";
-
-			if (PortalSettings.EnablePopUps && HttpContext.Current.Request.Url.ToString().Contains("popUp"))
+			if (PortalSettings.EnablePopUps)
 			{
-				popUpUrl = String.Format("{0}{1}popUp=true" , url, delimiter);
-				passwordLink.NavigateUrl = popUpUrl;
+                passwordLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 300, 650));
 			}
 			else
 			{

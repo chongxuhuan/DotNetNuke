@@ -775,7 +775,7 @@ namespace DotNetNuke.UI.Modules
             return NavigateUrl(PortalSettings.ActiveTab.TabID, key, false, parameters);
         }
 
-        public string NavigateUrl(int tabID, string controlKey, bool pageReirect, params string[] additionalParameters)
+        public string NavigateUrl(int tabID, string controlKey, bool pageRedirect, params string[] additionalParameters)
         {
             var url = Globals.NavigateURL(tabID, controlKey, additionalParameters);
             // Making URLs call popups
@@ -783,7 +783,7 @@ namespace DotNetNuke.UI.Modules
             {
                 if (!UIUtilities.IsLegacyUI(ModuleId, controlKey, PortalId) && (url.Contains("ctl")))
                 {
-                    url = UrlUtils.PopUpUrl(url, null, PortalSettings, false, pageReirect);
+                    url = UrlUtils.PopUpUrl(url, null, PortalSettings, false, pageRedirect);
                 }
             }
             return url;

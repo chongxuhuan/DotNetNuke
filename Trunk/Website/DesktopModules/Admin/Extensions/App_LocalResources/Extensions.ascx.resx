@@ -288,16 +288,16 @@
   <data name="Language.Type" xml:space="preserve">
     <value>Language Packs</value>
   </data>
-  <data name="AppGallery.Text" xml:space="preserve">
+  <data name="Catalog.Text" xml:space="preserve">
     <value>Extension Feed</value>
   </data>
-  <data name="AppGalleryModule.Text" xml:space="preserve">
+  <data name="CatalogModule.Text" xml:space="preserve">
     <value>Module</value>
   </data>
-  <data name="AppGallerySearchTitle.Text" xml:space="preserve">
+  <data name="CatalogSearchTitle.Text" xml:space="preserve">
     <value>Search and Filter Options</value>
   </data>
-  <data name="AppGallerySkin.Text" xml:space="preserve">
+  <data name="CatalogSkin.Text" xml:space="preserve">
     <value>Skin</value>
   </data>
   <data name="SearchLabel.Help" xml:space="preserve">
@@ -368,18 +368,6 @@
   </data>
   <data name="OrderLabel.Text" xml:space="preserve">
     <value>Order:</value>
-  </data>
-  <data name="AppgGalleryDisplayName.Text" xml:space="preserve">
-    <value>DotNetNuke App Gallery (SnowCovered)</value>
-  </data>
-  <data name="AppgGalleryUrl.Text" xml:space="preserve">
-    <value>http://www.snowcovered.com/</value>
-  </data>
-  <data name="ForgeDisplayName.Text" xml:space="preserve">
-    <value>The Forge</value>
-  </data>
-  <data name="ForgeUrl.Text" xml:space="preserve">
-    <value>http://forge.dotnetnuke.com</value>
   </data>
   <data name="InUse.Header" xml:space="preserve">
     <value>In Use</value>

@@ -31,6 +31,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Modules;
 
 #endregion
 
@@ -115,7 +116,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
                     loginLink.NavigateUrl = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
 
-                    if (PortalSettings.EnablePopUps)
+                    if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger)
                     {
                         loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
                     }

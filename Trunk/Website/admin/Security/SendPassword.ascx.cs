@@ -211,9 +211,7 @@ namespace DotNetNuke.Modules.Admin.Security
             returnUrl = HttpUtility.UrlEncode(returnUrl);
 
             var url = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
-            var delimiter = url.Contains("?") ? "&" : "?";
-            var popUpUrl = String.Format("{0}{1}popUp=true", url, delimiter);
-            hlLogin.NavigateUrl = PortalSettings.EnablePopUps ? popUpUrl : url;
+            hlLogin.NavigateUrl = PortalSettings.EnablePopUps ? UrlUtils.PopUpUrl(url,this, PortalSettings, false,false): url;
         }
 
         /// <summary>

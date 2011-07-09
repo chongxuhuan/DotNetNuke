@@ -5,30 +5,30 @@
 </dnn:DnnAjaxLoadingPanel>
 <dnn:DnnAjaxPanel ID="ajaxPanel" runat="server" LoadingPanelID="loadingPanel" RestoreOriginalRenderDelegate="false">
     <div class="dnnForm dnnPurchasedExtensions dnnClear" id="dnnPurchasedExtensions">
-        <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server"><% =GetLocalizedString("PurchasedTitle")%></asp:Label></h2>
-        <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server"><% =GetLocalizedString("PurchasedHelp")%></asp:Label></div>
+        <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server"><% =LocalizeString("PurchasedTitle")%></asp:Label></h2>
+        <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server"><% =LocalizeString("PurchasedHelp")%></asp:Label></div>
         <div id="loginWarning" runat="server" class="dnnFormMessage dnnFormWarning" visible="false">
-            <asp:Label ID="Label1" runat="server"><% =GetLocalizedString("SnowcoveredLogin")%></asp:Label>
+            <asp:Label ID="Label1" runat="server"><% =LocalizeString("SnowcoveredLogin")%></asp:Label>
         </div>
         <div id="error" runat="server" class="dnnFormMessage dnnFormWarning" visible="false">
-            <asp:Label ID="Label2" runat="server"><% =GetLocalizedString("WebserviceFailure")%></asp:Label>
+            <asp:Label ID="Label2" runat="server"><% =LocalizeString("WebserviceFailure")%></asp:Label>
         </div>
-        <asp:GridView ID="grdSnow" runat="server" GridLines="None" AutoGenerateColumns="false"
-            EnableViewState="False" CssClass="dnnGrid">
-            <HeaderStyle CssClass="dnnGridHeader" VerticalAlign="Top" />
+        <asp:GridView ID="grdSnow" runat="server" CellPadding="0" CellSpacing="0" GridLines="None" AutoGenerateColumns="false"
+            EnableViewState="False"  Width="100%" CssClass="dnnGrid">
+            <HeaderStyle CssClass="dnnGridHeader" HorizontalAlign="Left"/>
             <RowStyle CssClass="dnnGridItem" HorizontalAlign="Left" />
             <AlternatingRowStyle CssClass="dnnGridAltItem" />
             <FooterStyle CssClass="dnnGridFooter" />
             <PagerStyle CssClass="dnnGridPager" />
             <Columns>
-                <asp:BoundField DataField="Package" HtmlEncode="true" HeaderText="Package Name" />
+                <asp:BoundField DataField="Package" HtmlEncode="true" HeaderText="Package Name" ItemStyle-Font-Bold="true" />
                 <asp:BoundField DataField="Filename" HtmlEncode="true" HeaderText="Filename" />
                 <asp:BoundField DataField="Download" HtmlEncode="false" HeaderText="Download" />
                 <asp:BoundField DataField="Deploy" HtmlEncode="false" HeaderText="Deploy" />
             </Columns>
             <EmptyDataTemplate>
                 <div class="dnnFormMessage dnnFormWarning">
-                    <%= NoData %></div>
+                    <%= LocalizeString("NoData") %></div>
             </EmptyDataTemplate>
         </asp:GridView>
         <ul class="dnnActions dnnClear">

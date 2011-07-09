@@ -1002,7 +1002,11 @@ namespace DotNetNuke.Entities.Tabs
         {
             TabInfo tab = null;
             //if we are using the cache
-            if (!ignoreCache)
+            if (ignoreCache || Host.Host.PerformanceSetting == Globals.PerformanceSettings.NoCaching) 
+            {
+                tab = CBO.FillObject<TabInfo>(Provider.GetTab(TabId));
+            }
+            else
             {
                 //if we do not know the PortalId then try to find it in the Portals Dictionary using the TabId
                 PortalId = GetPortalId(TabId, PortalId);
@@ -1013,10 +1017,6 @@ namespace DotNetNuke.Entities.Tabs
                 {
                     DnnLog.Warn("Unable to find tabId {0} of portal {1}", TabId, PortalId);
                 }
-            }
-            else
-            {
-                tab = CBO.FillObject<TabInfo>(Provider.GetTab(TabId));
             }
 
             return tab;

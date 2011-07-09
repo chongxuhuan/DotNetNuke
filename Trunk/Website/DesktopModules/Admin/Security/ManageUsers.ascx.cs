@@ -585,6 +585,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     {
                         ctlProfile.ShowUpdate = false;
                     }
+                    dnnProfileDetails.CssClass += " dnnRequireProfile";
                     ctlProfile.User = User;
                     ctlProfile.DataBind();
                 }

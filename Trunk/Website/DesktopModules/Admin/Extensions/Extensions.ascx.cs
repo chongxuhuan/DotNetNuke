@@ -76,7 +76,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 purchasedExtensionsControl.ModuleContext.Configuration = ModuleContext.Configuration;
                 purchasedExtensionsTab.Visible = true;
                 purchasedExtensionsControl.Visible = true;
-                purchasedExtensionsControl.CheckSnowcoveredConnection();
             }
 
             if (ModuleContext.PortalSettings.ActiveTab.IsSuperTab)

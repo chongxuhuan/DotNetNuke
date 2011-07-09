@@ -263,7 +263,7 @@ div.SearchIcon img{margin-top:3px;}
 			.dnnForm .dnnFormItem label a span{line-height:1.4;}
 		.dnnForm .dnnFormItem:after{clear:both;content:".";display:block;height:0;visibility:hidden;font-size:0;}
 		.dnnForm fieldset{display:block;padding:1em 0;border:none;margin:0;text-align:left;}
-		.dnnFormItem label, .dnnFormItem .dnnFormLabel, .dnnFormItem .dnnTooltip{display:block;width:30%;text-align:right;padding-right:2%;font-weight:bold;float:left;margin-top:3px;}
+		.dnnFormItem label, .dnnFormItem .dnnFormLabel, .dnnFormItem .dnnTooltip{display:block;width:30%;text-align:right;margin-right:16px;font-weight:bold;float:left;margin-top:3px;}
 			.dnnFormItem .dnnTooltip label{width:100%;padding:0;margin:0;}
 			.dnnForm .dnnFormSecondItem label{float:none;}
 		.dnnFormItem input, .dnnFormItem .dnnFormInput, .dnnFormItem textarea{float:left;-moz-border-radius:3px;border-radius:3px;padding:5px;

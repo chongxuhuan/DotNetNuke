@@ -153,10 +153,7 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		protected override void Render(HtmlTextWriter writer)
 		{
-			//writer.RenderBeginTag(HtmlTextWriterTag.Label);
-			//writer.Write(Caption);
-			//writer.RenderEndTag();
-
+            writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormVisibility");
 			var propValue = (UserVisibilityMode)(Convert.ToInt32(Value));
 
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);

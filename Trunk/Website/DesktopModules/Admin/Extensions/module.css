@@ -7,8 +7,8 @@
     .dnnInstallExtension .dnnFormItem > span, .dnnUnInstallExtension .dnnFormItem span{display:inline-block}
     .dnnEditDefinition .dnnFormInput.dnnSSRadioButtons label{width:125px;display:inline;}
     .dnnAuthenticationSettings .dnnFormItem label{width:100%;}
-#dnnExtensions .dnnGridHeader{font-size:14px;color:#333;text-shadow:1px 1px 0 #fff;background:#eee}
-	#dnnExtensions .dnnGrid td{padding:14px 10px;}
+#dnnExtensions .dnnGridHeader td, #dnnExtensions .dnnGridHeader th{font-size:14px;color:#333;text-shadow:1px 1px 0 #fff;background:#eee}
+	#dnnExtensions .dnnGrid td, #dnnExtensions .dnnGrid th{padding:14px 10px;}
 .dnnEditDefinition .dnnFormRadioButtons{min-width:35%;}
 .dnnInstallLogs{height:350px; overflow:auto;}
 
@@ -18,11 +18,11 @@
 
 /* ===========   More Extensions Module Styling   =========== */
 .dnnProduct{padding:10px 0;margin-bottom:20px;border-bottom:1px #ccc solid;}
-.dnnAppGalleryTags{width: 30%;float:left;}
-	.dnnAppGallerySearch input{width:60%;}
-	.dnnAppGallerySearch .dnnClear{margin-left:32.5%;}
-		.dnnAppGallerySearch .dnnClear a.dnnPrimaryAction{padding:6px 12px;line-height:1.2;}
-.dnnAppGalleryListing{width:68%;float:right;}
+.dnnCatalogTags{width: 30%;float:left;}
+	.dnnCatalogSearch input{width:60%;}
+	.dnnCatalogSearch .dnnClear{margin-left:32.5%;}
+		.dnnCatalogSearch .dnnClear a.dnnPrimaryAction{padding:6px 12px;line-height:1.2;}
+.dnnCatalogListing{width:68%;float:right;}
 .dnnProductImage{float:left;width:20%;}
 .dnnProductImage img {max-height:100px;max-width:100px;padding:5px 20px 5px 5px;}
 .dnnProductDetails{float:right;width:78%;}
@@ -38,5 +38,5 @@
 .dnnProduct {padding-top:10px;}
 .dnnSearchFilters, .dnnFormItem label .dnnSearchFilters{border:#46A3D3 2px solid;color:#085B8F;background:#EDF8FF;-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px white;filter: dropshadow(color=white, offx=1, offy=1);font-weight: normal;padding: 0.8em 1em 0.8em 1em;margin: 5px;}
 .loading-image {width:24px;height:24px;text-align:center;vertical-align:middle;}
-.dnnAppGalleryLoading{text-align:center;vertical-align:middle;width:150px;height:20px;background-color:#369;border:3px solid #000000;color:White;position:absolute;right:0;top:0px;z-index:1005;}
+.dnnCatalogLoading{text-align:center;vertical-align:middle;width:150px;height:20px;background-color:#369;border:3px solid #000000;color:White;position:absolute;right:0;top:0px;z-index:1005;}
 /* ===========   More Extensions Module Styling   =========== */

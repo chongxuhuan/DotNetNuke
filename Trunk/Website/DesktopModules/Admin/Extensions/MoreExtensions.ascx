@@ -1,17 +1,17 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Extensions.MoreExtensions" CodeFile="MoreExtensions.ascx.cs" %>
 <%@ Import Namespace="DotNetNuke.Entities.Icons" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>  
-<div id="dnnAppGallery" class="dnnForm dnnAppGallery dnnClear">
-    <span id="loading" class="dnnAppGalleryLoading">Loading...</span>
-    <div class="dnnAppGalleryTags">
-        <div class="dnnAppGallerySearch">
-            <h2 class="dnnGallerySubHeading"><%=LocalizeString("AppGallerySearchTitle") %></h2>
+<div id="dnnCatalog" class="dnnForm dnnCatalog dnnClear">
+    <span id="loading" class="dnnCatalogLoading">Loading...</span>
+    <div class="dnnCatalogTags">
+        <div class="dnnCatalogSearch">
+            <h2 class="dnnGallerySubHeading"><%=LocalizeString("CatalogSearchTitle") %></h2>
             <div class="dnnFormItem">
                 <dnn:Label ID="dnnlblType" runat="server" ResourceKey="TypeLabel" ControlName="typeDDL" />
                 <select id="typeDDL">
                     <option value="all">All</option>
-                    <option selected="selected" value="module"><%=LocalizeString("AppGalleryModule") %></option>
-                    <option value="skin"><%=LocalizeString("AppGallerySkin") %></option>
+                    <option selected="selected" value="module"><%=LocalizeString("CatalogModule") %></option>
+                    <option value="skin"><%=LocalizeString("CatalogSkin") %></option>
                 </select>        
             </div>
             <div class="dnnFormItem">
@@ -24,12 +24,12 @@
             </div>
         </div>      
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("TagCloud")%></h2>
-        <div class="dnnAppGalleryTagList dnnClear" id="tag-list"></div>
+        <div class="dnnCatalogTagList dnnClear" id="tag-list"></div>
         <div class="dnnFormMessage dnnFormInfo">
             <% =LocalizeString("ListExtensions") %>
         </div>
     </div>
-    <div class="dnnAppGalleryListing">
+    <div class="dnnCatalogListing">
         <div id="extensionDetail"><div id="extensionDetailInner"></div></div>
         <h2 class="dnnGallerySubHeading"><%=LocalizeString("Extensions")%></h2>
         <fieldset id="extensionsSummary">
@@ -59,10 +59,10 @@
                         {{/if}}
                         <div class='dnnProductPrice'>${_gallery.FormatCurrency(Price)}</div>
                         <div class="${Catalog.CatalogCSS}">
-                            <img class='productTypeImage dnnIcon' alt='${ExtensionType}'  title='${ExtensionType}'  src='<%=IconController.IconURL("AppGallery${ExtensionType}")%>' />                            
+                            <img class='productTypeImage dnnIcon' alt='${ExtensionType}'  title='${ExtensionType}'  src='<%=IconController.IconURL("Catalog${ExtensionType}")%>' />                            
                             {{if License}}                                
                                 <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${ExtensionID})">                    
-                                    <img class='productTypeImage dnnIcon' alt='License for ${ExtensionName}' title='License Specified' src='<%=IconController.IconURL("AppGalleryLicense")%>' />
+                                    <img class='productTypeImage dnnIcon' alt='License for ${ExtensionName}' title='License Specified' src='<%=IconController.IconURL("CatalogLicense")%>' />
                                 </a>
                             {{/if}}                            
                             {{if Catalog.CatalogUrl}}                                            

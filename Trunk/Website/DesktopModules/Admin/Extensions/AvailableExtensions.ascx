@@ -5,7 +5,8 @@
         <div class="dnnForm exieContent dnnClear">
             <h2 id="Panel-<%# GetPackageType(Container.DataItem) %>" class="dnnFormSectionHead"><a href="" class=""><%# GetPackageType(Container.DataItem) %></a></h2>
             <fieldset>
-                <asp:DataGrid ID="extensionsGrid" CellPadding="0" CellSpacing="0" AutoGenerateColumns="false" runat="server" GridLines="None" Width="100%" CssClass="dnnGrid">
+                <asp:DataGrid ID="extensionsGrid" CellPadding="0" CellSpacing="0" AutoGenerateColumns="false" 
+                    runat="server" GridLines="None" Width="100%" CssClass="dnnGrid">
                     <HeaderStyle Wrap="False" CssClass="dnnGridHeader" />
                     <ItemStyle CssClass="dnnGridItem" VerticalAlign="Top" />
                     <AlternatingItemStyle CssClass="dnnGridAltItem" />

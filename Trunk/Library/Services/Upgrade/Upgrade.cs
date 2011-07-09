@@ -3168,6 +3168,9 @@ namespace DotNetNuke.Services.Upgrade
         {
             var scriptFiles = new ArrayList();
             string[] files = Directory.GetFiles(providerPath, "*." + DefaultProvider);
+
+            DnnLog.Trace("GetUpgradedScripts databaseVersion:{0} applicationVersion:{1}", databaseVersion, DotNetNukeContext.Current.Application.Version);
+
             foreach (string file in files)
             {
                 // script file name must conform to ##.##.##.DefaultProviderName
@@ -3180,6 +3183,11 @@ namespace DotNetNuke.Services.Upgrade
                         if (version > databaseVersion && version <= DotNetNukeContext.Current.Application.Version)
                         {
                             scriptFiles.Add(file);
+                            DnnLog.Trace("GetUpgradedScripts including {0}", file);
+                        }
+                        else
+                        {
+                            DnnLog.Trace("GetUpgradedScripts excluding {0}", file);
                         }
                     }
                 }

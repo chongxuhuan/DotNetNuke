@@ -65,9 +65,9 @@
     <div id="dnnPasswordDetails" runat="server" class="dnnPasswordDetails dnnClear">
     	<dnn:Password id="ctlPassword" runat="server"></dnn:Password>
     </div>
-    <div id="dnnProfileDetails" runat="server" class="dnnProfileDetails dnnClear">
+    <asp:Panel id="dnnProfileDetails" runat="server" class="dnnProfileDetails dnnClear">
     	<dnn:Profile id="ctlProfile" runat="server"></dnn:Profile>
-    </div>
+    </asp:Panel>
     <div id="dnnServicesDetails" runat="server" visible="false" class="dnnServicesDetails dnnClear">
     	<dnn:MemberServices id="ctlServices" runat="server"></dnn:MemberServices>
     </div>

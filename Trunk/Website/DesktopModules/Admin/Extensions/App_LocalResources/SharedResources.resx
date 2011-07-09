@@ -208,7 +208,7 @@
     <value>Icon File:</value>
   </data>
   <data name="feedEndpoint.Text" xml:space="preserve">
-    <value>appgallery.dotnetnuke.com</value>
+    <value>catalog.dotnetnuke.com</value>
   </data>
   <data name="setupCredentials.Text" xml:space="preserve">
     <value>Enter Store credentials</value>
@@ -238,13 +238,13 @@
     <value>Update Store credentials</value>
   </data>
   <data name="deploy.Text" xml:space="preserve">
-    <value>Deploy Extension</value>
+    <value>Deploy</value>
   </data>
   <data name="deploySuccess.Text" xml:space="preserve">
-    <value>Extension - {0} - successfully deployed to site.  Select InstallExtension to install your new extension.</value>
+    <value>Extension - {0} - successfully deployed to site.  Select Install Extension to install your new extension.</value>
   </data>
   <data name="download.Text" xml:space="preserve">
-    <value>Download Extension</value>
+    <value>Download</value>
   </data>
   <data name="extensionDescLabel.Help" xml:space="preserve">
     <value>The description of the extension you have selected for deployment.</value>
@@ -275,5 +275,8 @@
   </data>
   <data name="unexpectedRequest.Text" xml:space="preserve">
     <value>An attempt was made to access an unexpected external file.</value>
+  </data>
+  <data name="NoData.Text" xml:space="preserve">
+    <value>There is no data to display</value>
   </data>
 </root>
