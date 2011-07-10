@@ -1365,7 +1365,6 @@ WHERE
 	OR ControlSrc = 'DesktopModules/Admin/Security/SecurityRoles.ascx'
 	OR ControlSrc = 'DesktopModules/Admin/Portals/Signup.ascx'
 	OR ControlSrc = 'DesktopModules/Admin/Portals/Portals.ascx'
-	OR ControlSrc = 'DesktopModules/Admin/SQL/SQL.ascx'
 	OR ControlSrc = 'DesktopModules/Admin/HostSettings/HostSettings.ascx'
 	OR ControlSrc = 'DesktopModules/Admin/Authentication/Login.ascx'
 	OR ControlSrc = 'DesktopModules/Admin/RecycleBin/RecycleBin.ascx'

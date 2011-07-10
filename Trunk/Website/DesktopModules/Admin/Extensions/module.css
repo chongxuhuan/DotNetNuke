@@ -40,3 +40,6 @@
 .loading-image {width:24px;height:24px;text-align:center;vertical-align:middle;}
 .dnnCatalogLoading{text-align:center;vertical-align:middle;width:150px;height:20px;background-color:#369;border:3px solid #000000;color:White;position:absolute;right:0;top:0px;z-index:1005;}
 /* ===========   More Extensions Module Styling   =========== */
+
+/* ===========   Store Login Styling   =========== */
+.dnnStore input[type=text], .dnnStore input[type=password]{min-width:35%;}

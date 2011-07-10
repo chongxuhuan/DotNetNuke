@@ -192,26 +192,30 @@ namespace DotNetNuke.Web.UI.WebControls
 			}
 		}
 
-		/// <summary>
-		///   Gets or sets the file PortalId to use
-		/// </summary>
-		/// <remarks>
-		///   Defaults to PortalSettings.PortalId
-		/// </remarks>
-		/// <value>An Integer</value>
-		/// <history>
-		///   [cnurse]	07/31/2006  created
-		/// </history>
-		protected int PortalId
+	    /// <summary>
+	    ///   Gets or sets the file PortalId to use
+	    /// </summary>
+	    /// <remarks>
+	    ///   Defaults to PortalSettings.PortalId
+	    /// </remarks>
+	    /// <value>An Integer</value>
+	    /// <history>
+	    ///   [cnurse]	07/31/2006  created
+	    /// </history>        
+        protected int PortalId
 		{
 			get
 			{
-				var portalId = Null.NullInteger;
-				if (!IsHost)
-				{
-					portalId = PortalSettings.PortalId;
-				}
-				return portalId;
+                if ((Page.Request.QueryString["pid"] != null) && (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) || UserController.GetCurrentUserInfo().IsSuperUser))
+                {
+                    return Int32.Parse(Page.Request.QueryString["pid"]);
+                }
+                else if (!IsHost)
+                {
+                    return PortalSettings.PortalId;
+                }
+                
+                return Null.NullInteger;			    
 			}
 		}
 
@@ -658,9 +662,8 @@ namespace DotNetNuke.Web.UI.WebControls
 			}
 			else
 			{
-				fileList = Globals.GetFileList(PortalId, FileFilter, NoneSpecified, _cboFolders.SelectedItem.Value);
-			}
-
+                fileList = Globals.GetFileList(PortalId, FileFilter, NoneSpecified, _cboFolders.SelectedItem.Value);				
+			}            
 			return fileList;
 		}
 
@@ -671,7 +674,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
 		private void LoadFiles()
 		{
-			_cboFiles.DataSource = GetFileList(!Required, _cboFolders.SelectedItem.Value);
+            _cboFiles.DataSource = Globals.GetFileList(PortalId, FileFilter, !Required, _cboFolders.SelectedItem.Value);							
 			_cboFiles.DataBind();
 		}
 
@@ -702,7 +705,7 @@ namespace DotNetNuke.Web.UI.WebControls
 			}
 			else
 			{
-				var folders = FolderManager.Instance.GetFolders(UserController.GetCurrentUserInfo(), "READ,ADD");
+				var folders = FolderManager.Instance.GetFolders(PortalId, "READ,ADD", UserController.GetCurrentUserInfo().UserID);
 				foreach (FolderInfo folder in folders)
 				{
 					var folderItem = new ListItem();
@@ -780,8 +783,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
 			if (image != null)
 			{
-				_imgPreview.ImageUrl = Globals.LinkClick("fileid=" + FileID, PortalSettings.ActiveTab.TabID, Null.NullInteger);
-
+			    _imgPreview.ImageUrl = FileManager.Instance.GetUrl(image);
 				try
 				{
 					Utilities.CreateThumbnail(image, _imgPreview, MaxWidth, MaxHeight);
@@ -811,7 +813,7 @@ namespace DotNetNuke.Web.UI.WebControls
 			EnsureChildControls();
 		}
 
-		/// <summary>
+	    /// <summary>
 		///   CreateChildControls overrides the Base class's method to correctly build the
 		///   control based on the configuration
 		/// </summary>

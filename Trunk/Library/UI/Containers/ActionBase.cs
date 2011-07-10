@@ -322,7 +322,6 @@ namespace DotNetNuke.UI.Containers
         /// -----------------------------------------------------------------------------
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
             try
             {
                 ActionRoot.Actions.AddRange(Actions);
@@ -331,6 +330,8 @@ namespace DotNetNuke.UI.Containers
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+
+			base.OnLoad(e);
         }
 		
 		

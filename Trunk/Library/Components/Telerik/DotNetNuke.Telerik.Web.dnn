@@ -42,7 +42,7 @@
                     <add verb="*" path="Telerik.Web.UI.WebResource.axd" validate="false" type="Telerik.Web.UI.WebResource, Telerik.Web.UI" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
-                    <add name="Telerik.Web.UI.WebResource" verb="*" path="Telerik.Web.UI.WebResource.axd" type="Telerik.Web.UI.WebResource, Telerik.Web.UI" />
+                    <add name="Telerik.Web.UI.WebResource" verb="*" path="Telerik.Web.UI.WebResource.axd" type="Telerik.Web.UI.WebResource, Telerik.Web.UI" preCondition="integratedMode" />
                   </node>
                   <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
                     <add name="RadUploadModule" type="Telerik.Web.UI.RadUploadHttpModule, Telerik.Web.UI" preCondition="managedHandler" />
@@ -54,7 +54,7 @@
                     <add verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4" validate="true" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
-                    <add name="Telerik.Web.UI.ChartHttpHandler" verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4" />
+                    <add name="Telerik.Web.UI.ChartHttpHandler" verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4"/>
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
                     <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2011.1.519.35" />
