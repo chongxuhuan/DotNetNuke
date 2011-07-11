@@ -31,7 +31,7 @@ function Gallery(params) {
         , loadTags: true
         , pagedExtensions: new Object()
         , protocol: ('https:' == location.protocol ? 'https://' : 'http://')
-        , host: "appgallery.dotnetnuke.com"
+        , host: "catalog.dotnetnuke.com"
         , ServiceRoot: "/AppGalleryService.svc"
         , DataBaseVersion: "06.00.00"
         , ExtensionServiceName: "/Extensions"
