@@ -492,7 +492,7 @@ namespace DotNetNuke.Services.Installer
         
         public static string ParsePackageIconFileName(PackageInfo package)
         {
-            string filename = string.Empty;
+            var filename = string.Empty;
             if ((package.IconFile !=null) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
             {
                 filename = package.IconFile.StartsWith("~/" + package.FolderName) ? package.IconFile.Remove(0, ("~/" + package.FolderName).Length).TrimStart('/'): package.IconFile;
@@ -502,10 +502,10 @@ namespace DotNetNuke.Services.Installer
 
         public static string ParsePackageIconFile(PackageInfo package)
         {
-            string iconFile = string.Empty;
+            var iconFile = string.Empty;
             if ((package.IconFile != null) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
             {
-                iconFile = !package.IconFile.StartsWith("~/" + package.FolderName) ? "~/" + package.FolderName + "/" + package.IconFile : package.IconFile;
+                iconFile = !package.IconFile.StartsWith("~/") ? "~/" + package.FolderName + "/" + package.IconFile : package.IconFile;
             }
             return iconFile;
         }

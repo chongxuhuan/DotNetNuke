@@ -160,7 +160,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -182,7 +182,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "37559"
+		SlnRelativePath = "Website\"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{93532801-CD42-40D1-B765-77676362F98C} = {93532801-CD42-40D1-B765-77676362F98C}
@@ -482,7 +482,7 @@ Global
 		SccWebProject60 = true
 		SccProjectUniqueName60 = http://localhost/DotNetNuke_Community
 		SccProjectName60 = Website
-		SccLocalPath60 = http://localhost/DotNetNuke_Community/
+		SccLocalPath60 = Website
 		SccProjectEnlistmentChoice60 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

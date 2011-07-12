@@ -17,4 +17,5 @@
 		.mspsContent .urlControlLinkType .dnnFormLabel{float:left;width:auto;}
 	.mspsContent .urlControlFileRow a.dnnSecondaryAction{margin-left:25%;}
 	.mspsContent .urlControlLinkType input[type="radio"]{width:auto;margin-right:5px;}
+	.dnnModuleSettings .dnnFormItem input[type="text"].msCacheDuration {width:100px; min-width:50px;}
 /* ===========   End Module Settings Styling   =========== */

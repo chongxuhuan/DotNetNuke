@@ -93,10 +93,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     if (Package != null)
                     {
-                        var _packageType = PackageController.GetPackageType(Package.PackageType);
-                        if ((_packageType != null) && (!string.IsNullOrEmpty(_packageType.EditorControlSrc)))
+                        var pkgType = PackageController.GetPackageType(Package.PackageType);
+                        if ((pkgType != null) && (!string.IsNullOrEmpty(pkgType.EditorControlSrc)))
                         {
-                            _control = ControlUtilities.LoadControl<Control>(this, _packageType.EditorControlSrc);
+                            _control = ControlUtilities.LoadControl<Control>(this, pkgType.EditorControlSrc);
                         }
                     }
                 }
@@ -177,9 +177,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                     Package.IconFile = Util.ParsePackageIconFileName(Package);
                 }
+                
                 switch (Package.PackageType)
-                {                    
-                    
+                {                                        
                     case "Auth_System":
                     case "Container":
                     case "Module":
@@ -224,8 +224,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 var package = packageForm.DataSource as PackageInfo;
                 if (package != null)
                 {
-                    var iconFile = Util.ParsePackageIconFileName(package);
-                    package.IconFile = (iconFile.Trim().Length > 0)? Util.ParsePackageIconFile(package) : null;
+                    var pkgIconFile = Util.ParsePackageIconFileName(package);
+                    package.IconFile = (pkgIconFile.Trim().Length > 0)? Util.ParsePackageIconFile(package) : null;
                     PackageController.UpdatePackage(package);
                 }
                 if (displayMessage)

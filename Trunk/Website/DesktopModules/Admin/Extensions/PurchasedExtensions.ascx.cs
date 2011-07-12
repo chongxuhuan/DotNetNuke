@@ -27,8 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
+using System.Xml;
 using System.Xml.XPath;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -36,8 +38,6 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
-using System.Net;
-using System.Xml;
 
 #endregion
 
@@ -48,7 +48,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            if (Request["fileid"]!=null && Request["fileAction"]!=null)
+            if (Request["fileid"] != null && Request["fileAction"] != null)
             {
                 GetFile(Request["fileAction"], Request["fileid"]);
             }
@@ -78,16 +78,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             string postData = "";
             Stream oStream;
             Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
-            PortalSecurity ps = new PortalSecurity();
+            var ps = new PortalSecurity();
             string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());
             string password = ps.DecryptString(settings["Store_Password"], Config.GetDecryptionkey());
             postData = postData + "username=" + username + "&password=" + password + "&fileid=" + fileId;
 
-            WebRequest request = WebRequest.Create(fileCheck.ToString());
+            WebRequest request = WebRequest.Create(fileCheck);
 
             request.Method = "POST";
             // Create POST data and convert it to a byte array.
-            
+
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
 
             request.ContentType = "application/x-www-form-urlencoded";
@@ -99,20 +99,20 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             WebResponse response = request.GetResponse();
             string myfile = "";
-            var cd = response.Headers["Content-Disposition"];
+            string cd = response.Headers["Content-Disposition"];
             if (cd != null && cd.Trim() != "" && cd.StartsWith("inline;filename="))
             {
                 myfile = cd.Replace("inline;filename=", "");
             }
-            
+
             Stream remoteStream = null;
             Stream localStream = null;
-            
-            
+
+
             if (fileAction == "download")
             {
-                var objResponse = HttpContext.Current.Response;
-                
+                HttpResponse objResponse = HttpContext.Current.Response;
+
 
                 var aByteArray = new byte[response.ContentLength];
 
@@ -138,85 +138,112 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
         protected void GetExtensions()
         {
-            string fileCheck = Localization.GetString("StoreFile", LocalResourceFile);
-            string postData="";
-            Stream oStream;
-            Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
-            PortalSecurity ps = new PortalSecurity();
-            string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());
-            string password = ps.DecryptString(settings["Store_Password"], Config.GetDecryptionkey());
-            postData = postData + "username=" + username + "&password=" + password;
-            
-            WebRequest request = WebRequest.Create(fileCheck.ToString());
-            
-            request.Method = "POST";
-            // Create POST data and convert it to a byte array.
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-            
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = byteArray.Length;
-            
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            dataStream.Close();
-
-            WebResponse response = request.GetResponse();
-            oStream = response.GetResponseStream();
-            XmlTextReader oReader;
-            XPathDocument oXMLDocument;
-            oReader = new XmlTextReader((oStream));
-            DataTable dt = new DataTable();
-            //instance of a datarow  
-            DataRow drow;
-            //creating two datacolums Column1 and Column2   
-            DataColumn dcol1 = new DataColumn("Package", typeof(string));
-            DataColumn dcol2 = new DataColumn("Filename", typeof(string));
-            DataColumn dcol3 = new DataColumn("Download", typeof(string));
-
-            DataColumn dcol4 = new DataColumn("Deploy", typeof(string));
-            //adding datacolumn to datatable  
-            dt.Columns.Add(dcol1);
-            dt.Columns.Add(dcol2);
-            dt.Columns.Add(dcol3);
-            dt.Columns.Add(dcol4);
-            oReader.XmlResolver = null;
-            oXMLDocument = new XPathDocument(oReader);
-            XPathNavigator nav = oXMLDocument.CreateNavigator();
-            var iterator = nav.Select("orders/order/orderdetails/orderdetail");
-            int i = 0;
-            while (iterator.MoveNext())
+            try
             {
+                string fileCheck = Localization.GetString("StoreFile", LocalResourceFile);
+                string postData = "";
+                Stream oStream;
+                Dictionary<string, string> settings =
+                    PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
+                var ps = new PortalSecurity();
+                string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());
+                string password = ps.DecryptString(settings["Store_Password"], Config.GetDecryptionkey());
+                postData = postData + "username=" + username + "&password=" + password;
+
+                WebRequest request = WebRequest.Create(fileCheck);
+
+                request.Method = "POST";
+                // Create POST data and convert it to a byte array.
+                byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = byteArray.Length;
+
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
+
+                WebResponse response = request.GetResponse();
+                oStream = response.GetResponseStream();
+                XmlTextReader oReader;
+                XPathDocument oXMLDocument;
+                oReader = new XmlTextReader((oStream));
+
+
+                var dt = new DataTable();
                 //instance of a datarow  
-                drow = dt.NewRow();
-                //add rows to datatable  
-                dt.Rows.Add(drow);
-                var packageName = iterator.Current.GetAttribute("packagename", "").Replace("'", "''").Trim();
-                var fileName = iterator.Current.SelectSingleNode("files/file").GetAttribute("filename", "");
-                var fileId = iterator.Current.SelectSingleNode("files/file").GetAttribute("fileid", "");
-                var deploy = iterator.Current.SelectSingleNode("files/file").GetAttribute("deploy", "");
-                //add Column values  
-                dt.Rows[i][dcol1] = packageName.ToString();
-                dt.Rows[i][dcol2] = fileName.ToString();
+                DataRow drow;
+                //creating two datacolums Column1 and Column2   
+                var dcol1 = new DataColumn("Package", typeof (string));
+                var dcol2 = new DataColumn("Filename", typeof (string));
+                var dcol3 = new DataColumn("Download", typeof (string));
 
-                PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-                dt.Rows[i][dcol3] = "<a class='dnnPrimaryAction' href='" + Globals.NavigateURL(_portalSettings.ActiveTab.TabID, Null.NullString, "fileAction","download","fileid", fileId.ToString()) + "'>" + LocalizeString("download") + "</a>";
-
-
-                if (deploy == "false")
+                var dcol4 = new DataColumn("Deploy", typeof (string));
+                //adding datacolumn to datatable  
+                dt.Columns.Add(dcol1);
+                dt.Columns.Add(dcol2);
+                dt.Columns.Add(dcol3);
+                dt.Columns.Add(dcol4);
+                oReader.XmlResolver = null;
+                try
                 {
-                    dt.Rows[i][dcol4] = "<a class='dnnPrimaryAction' href=" + "\"" + ModuleContext.EditUrl("fileID", fileId.ToString(), "Download","package", Server.UrlPathEncode (packageName.ToString()) ) + "\"" + ">" + LocalizeString("deploy") + "</a>";
+                    oXMLDocument = new XPathDocument(oReader);
                 }
-                else
+                catch (Exception)
                 {
-                    dt.Rows[i][dcol4] = "N/A";
+                    grdSnow.EmptyDataText = LocalizeString("NoData");
+                    grdSnow.DataBind();
+                    return;
                 }
-                i = i + 1;
 
+                XPathNavigator nav = oXMLDocument.CreateNavigator();
+                XPathNodeIterator iterator = nav.Select("orders/order/orderdetails/orderdetail");
+                int i = 0;
+                while (iterator.MoveNext())
+                {
+                    //instance of a datarow  
+                    drow = dt.NewRow();
+                    //add rows to datatable  
+                    dt.Rows.Add(drow);
+                    string packageName = iterator.Current.GetAttribute("packagename", "").Replace("'", "''").Trim();
+                    string fileName = iterator.Current.SelectSingleNode("files/file").GetAttribute("filename", "");
+                    string fileId = iterator.Current.SelectSingleNode("files/file").GetAttribute("fileid", "");
+                    string deploy = iterator.Current.SelectSingleNode("files/file").GetAttribute("deploy", "");
+                    //add Column values  
+                    dt.Rows[i][dcol1] = packageName;
+                    dt.Rows[i][dcol2] = fileName;
+
+                    PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
+                    dt.Rows[i][dcol3] = "<a class='dnnPrimaryAction' href='" +
+                                        Globals.NavigateURL(_portalSettings.ActiveTab.TabID, Null.NullString,
+                                                            "fileAction",
+                                                            "download", "fileid", fileId) + "'>" +
+                                        LocalizeString("download") + "</a>";
+
+
+                    if (deploy == "false")
+                    {
+                        dt.Rows[i][dcol4] = "<a class='dnnPrimaryAction' href=" + "\"" +
+                                            ModuleContext.EditUrl("fileID", fileId, "Download", "package",
+                                                                  Server.UrlPathEncode(packageName)) + "\"" + ">" +
+                                            LocalizeString("deploy") + "</a>";
+                    }
+                    else
+                    {
+                        dt.Rows[i][dcol4] = "N/A";
+                    }
+                    i = i + 1;
+                }
+
+
+                grdSnow.DataSource = dt;
+                grdSnow.DataBind();
             }
-
-
-            grdSnow.DataSource = dt;
-            grdSnow.DataBind();
+            catch (Exception)
+            {
+                grdSnow.EmptyDataText = LocalizeString("NoData");
+                grdSnow.DataBind();
+            }
         }
     }
 }

@@ -85,7 +85,7 @@ namespace DotNetNuke.UI.WebControls
             //Render the Select Tag
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + "_" + type);
-            writer.AddStyleAttribute("width", "40px");
+            writer.AddStyleAttribute("width", "60px");
             writer.RenderBeginTag(HtmlTextWriterTag.Select);
             for (int i = 0; i <= 99; i++)
             {

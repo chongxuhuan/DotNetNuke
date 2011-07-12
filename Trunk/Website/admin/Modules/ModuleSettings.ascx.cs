@@ -360,6 +360,10 @@ namespace DotNetNuke.Modules.Admin.Modules
                         settingsControl.ModuleContext.Configuration = Module;
 
                         hlSpecificSettings.Text = Localization.GetString("ControlTitle_settings", settingsControl.LocalResourceFile);
+                        if(String.IsNullOrEmpty(hlSpecificSettings.Text))
+                        {
+                            hlSpecificSettings.Text = String.Format(Localization.GetString("ControlTitle_settings", LocalResourceFile), Module.DesktopModule.FriendlyName);
+                        }
                         pnlSpecific.Controls.Add(_control);
                     }
                 }

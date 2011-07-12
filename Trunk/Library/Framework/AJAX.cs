@@ -51,45 +51,21 @@ namespace DotNetNuke.Framework
         {
             if (GetScriptManager(objPage) == null)
             {
-                if (HttpRuntime.UsingIntegratedPipeline)
+                using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true })
                 {
-                    using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true })
+                    if (objPage.Form != null)
                     {
-                        if (objPage.Form != null)
+                        try
                         {
-                            try
-                            {
-                                objPage.Form.Controls.AddAt(0, objScriptManager);
-                            }
-                            catch
-                            {
-                                //suppress error adding script manager to support edge-case of module developers custom aspx pages that inherit from basepage and use code blocks
-                            }
-                            if (HttpContext.Current.Items["System.Web.UI.ScriptManager"] == null)
-                            {
-                                HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", true);
-                            }
+                            objPage.Form.Controls.AddAt(0, objScriptManager);
                         }
-                    }
-                }
-                else
-                {
-                    using (var objScriptManager = new ScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true })
-                    {
-                        if (objPage.Form != null)
+                        catch
                         {
-                            try
-                            {
-                                objPage.Form.Controls.AddAt(0, objScriptManager);
-                            }
-                            catch
-                            {
-                                //suppress error adding script manager to support edge-case of module developers custom aspx pages that inherit from basepage and use code blocks
-                            }
-                            if (HttpContext.Current.Items["System.Web.UI.ScriptManager"] == null)
-                            {
-                                HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", true);
-                            }
+                            //suppress error adding script manager to support edge-case of module developers custom aspx pages that inherit from basepage and use code blocks
+                        }
+                        if (HttpContext.Current.Items["System.Web.UI.ScriptManager"] == null)
+                        {
+                            HttpContext.Current.Items.Add("System.Web.UI.ScriptManager", true);
                         }
                     }
                 }

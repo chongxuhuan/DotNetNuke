@@ -9,20 +9,17 @@
 <%@ Register TagPrefix="dnnweb" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnModuleSettings dnnClear" id="dnnModuleSettings">
     <ul class="dnnAdminTabNav dnnClear">
-        <li><a href="#msModuleSettings">
-            <%=LocalizeString("ModuleSettings")%></a></li>
-        <li><a href="#msPermissions">
-            <%=LocalizeString("Permissions")%></a></li>
-        <li><a href="#msPageSettings">
-            <%=LocalizeString("PageSettings")%></a></li>
+        <li><a href="#msModuleSettings"><%=LocalizeString("ModuleSettings")%></a></li>
+        <li><a href="#msPermissions"><%=LocalizeString("Permissions")%></a></li>
+        <li><a href="#msPageSettings"><%=LocalizeString("PageSettings")%></a></li>
         <li id="specificSettingsTab" runat="server">
             <asp:HyperLink href="#msSpecificSettings" ID="hlSpecificSettings" runat="server" />
         </li>
     </ul>
     <div class="msModuleSettings dnnClear" id="msModuleSettings">
         <div class="dnnFormExpandContent">
-            <a href="">
-                <%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
+            <a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a>
+        </div>
         <div class="msmsContent dnnClear">
             <h2 id="dnnPanel-ModuleGeneralDetails" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("GeneralDetails")%></a></h2>
             <fieldset>
@@ -220,13 +217,14 @@
                     <asp:Label ID="lblCacheInherited" runat="server" resourceKey="CacheInherited" CssClass="dnnFormError" />
                 </div>
                 <div class="dnnFormItem" id="divCacheDuration" runat="server" visible="false">
-                    <dnn:label id="lblCacheDuration" runat="server" controlname="txtCacheDuration" resourcekey="CacheDuration" />
-                    <asp:TextBox ID="txtCacheDuration" runat="server" />
+                     <div class="dnnFormMessage dnnFormWarning">
+                        <asp:Label ID="lblCacheDurationWarning" runat="server" ResourceKey="CacheDurationWarning" />                
+                    </div>
+                       <dnn:label id="lblCacheDuration" runat="server" controlname="txtCacheDuration" resourcekey="CacheDuration" />
+                    <asp:TextBox ID="txtCacheDuration" runat="server" class="msCacheDuration"/>
                     <asp:CompareValidator ID="valCacheTime" ControlToValidate="txtCacheDuration" Operator="DataTypeCheck"
                         Type="Integer" runat="server" Display="Dynamic" resourcekey="valCacheTime.ErrorMessage"
                         CssClass="dnnFormMessage dnnFormError" />
-                    <asp:Label ID="lblCacheDurationWarning" runat="server" ResourceKey="CacheDurationWarning"
-                        CssClass="dnnFormError" />
                 </div>
             </fieldset>
             <h2 id="dnnPanel-ModuleOtherSettings" class="dnnFormSectionHead">

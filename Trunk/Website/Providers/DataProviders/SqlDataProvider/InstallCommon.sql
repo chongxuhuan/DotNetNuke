@@ -140,7 +140,7 @@ IF (NOT EXISTS (SELECT name
                 FROM sys.objects
                 WHERE (name = N'aspnet_RegisterSchemaVersion')
                 AND (type = 'P')))
-    EXEC('CREATE PROCEDURE aspnet_RegisterSchemaVersion AS RAISERROR(''Empty aspnet_RegisterSchemaVersion Procedure!!'', 16, 1) WITH SETERROR')
+    EXEC('CREATE PROCEDURE [dbo].aspnet_RegisterSchemaVersion AS RAISERROR(''Empty aspnet_RegisterSchemaVersion Procedure!!'', 16, 1) WITH SETERROR')
 GO
 
 ALTER PROCEDURE [dbo].aspnet_RegisterSchemaVersion
