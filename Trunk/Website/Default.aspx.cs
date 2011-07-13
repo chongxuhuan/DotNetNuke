@@ -321,7 +321,7 @@ namespace DotNetNuke.Framework
                     var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.BackgroundFile);
                     var url = FileManager.Instance.GetUrl(fileInfo);
 
-                    ((HtmlGenericControl)FindControl("Body")).Attributes["style"] = string.Concat("background-image:url(", url, ");");
+                    ((HtmlGenericControl)FindControl("Body")).Attributes["style"] = string.Concat("background-image: url('", url, "')");
                 }
             }
 

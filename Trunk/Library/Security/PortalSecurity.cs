@@ -292,85 +292,70 @@ namespace DotNetNuke.Security
             return BytesToHexString(buff);
         }
 
-        public string EncryptString(string Message, string Passphrase)
+        public string EncryptString(string message, string passphrase)
         {
-            byte[] Results;
-            System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+            byte[] results;
+            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
 
-            // Step 1. We hash the passphrase using MD5 
-            // We use the MD5 hash generator as the result is a 128 bit byte array 
-            // which is a valid length for the TripleDES encoder we use below 
+            //hash the passphrase using MD5 to create 128bit byte array
+            MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
+            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
+            
+            TripleDESCryptoServiceProvider tdesAlgorithm = new TripleDESCryptoServiceProvider();
 
-            MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider();
-            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+            tdesAlgorithm.Key = tdesKey;
+            tdesAlgorithm.Mode = CipherMode.ECB;
+            tdesAlgorithm.Padding = PaddingMode.PKCS7;
+            
+            byte[] dataToEncrypt = utf8.GetBytes(message);
 
-            // Step 2. Create a new TripleDESCryptoServiceProvider object 
-            TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider();
-
-            // Step 3. Setup the encoder 
-            TDESAlgorithm.Key = TDESKey;
-            TDESAlgorithm.Mode = CipherMode.ECB;
-            TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-            // Step 4. Convert the input string to a byte[] 
-            byte[] DataToEncrypt = UTF8.GetBytes(Message);
-
-            // Step 5. Attempt to encrypt the string 
             try
             {
-                ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor();
-                Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
+                ICryptoTransform encryptor = tdesAlgorithm.CreateEncryptor();
+                results = encryptor.TransformFinalBlock(dataToEncrypt, 0, dataToEncrypt.Length);
             }
             finally
             {
                 // Clear the TripleDes and Hashprovider services of any sensitive information 
-                TDESAlgorithm.Clear();
-                HashProvider.Clear();
+                tdesAlgorithm.Clear();
+                hashProvider.Clear();
             }
 
-            // Step 6. Return the encrypted string as a base64 encoded string 
-            return Convert.ToBase64String(Results);
+            //Return the encrypted string as a base64 encoded string 
+            return Convert.ToBase64String(results);
         }
 
-        public string DecryptString(string Message, string Passphrase)
+        public string DecryptString(string message, string passphrase)
         {
-            byte[] Results;
-            System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+            byte[] results;
+            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
 
-            // Step 1. We hash the passphrase using MD5 
-            // We use the MD5 hash generator as the result is a 128 bit byte array 
-            // which is a valid length for the TripleDES encoder we use below 
+            //hash the passphrase using MD5 to create 128bit byte array
+            MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
+            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
 
-            MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider();
-            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+            TripleDESCryptoServiceProvider tdesAlgorithm = new TripleDESCryptoServiceProvider();
 
-            // Step 2. Create a new TripleDESCryptoServiceProvider object 
-            TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider();
+            tdesAlgorithm.Key = tdesKey;
+            tdesAlgorithm.Mode = CipherMode.ECB;
+            tdesAlgorithm.Padding = PaddingMode.PKCS7;
 
-            // Step 3. Setup the decoder 
-            TDESAlgorithm.Key = TDESKey;
-            TDESAlgorithm.Mode = CipherMode.ECB;
-            TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-            // Step 4. Convert the input string to a byte[] 
-            byte[] DataToDecrypt = Convert.FromBase64String(Message);
-
-            // Step 5. Attempt to decrypt the string 
+            byte[] dataToDecrypt = Convert.FromBase64String(message);
             try
             {
-                ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor();
-                Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
+                ICryptoTransform decryptor = tdesAlgorithm.CreateDecryptor();
+                results = decryptor.TransformFinalBlock(dataToDecrypt, 0, dataToDecrypt.Length);
             }
             finally
             {
                 // Clear the TripleDes and Hashprovider services of any sensitive information 
-                TDESAlgorithm.Clear();
-                HashProvider.Clear();
+                tdesAlgorithm.Clear();
+                hashProvider.Clear();
             }
 
-            // Step 6. Return the decrypted string in UTF8 format 
-            return UTF8.GetString(Results);
+            return utf8.GetString(results);
         }
+
         public string Decrypt(string strKey, string strData)
         {
             if (String.IsNullOrEmpty(strData))

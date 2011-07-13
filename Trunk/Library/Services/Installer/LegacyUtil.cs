@@ -368,78 +368,83 @@ namespace DotNetNuke.Services.Installer
             }
         }
 
+        public static void ProcessLegacyModule(DesktopModuleInfo desktopModule)
+        {
+            //Get the Module folder
+            string moduleFolder = Path.Combine(Globals.ApplicationMapPath, Path.Combine("DesktopModules", desktopModule.FolderName));
+
+            //Find legacy manifest
+            XPathNavigator rootNav = null;
+            try
+            {
+                string hostModules = "Portals, SQL, HostSettings, Scheduler, SearchAdmin, Lists, SkinDesigner, Extensions";
+                string[] files = Directory.GetFiles(moduleFolder, "*.dnn.config");
+                if (files.Length > 0)
+                {
+                    //Create an XPathDocument from the Xml
+                    var doc = new XPathDocument(new FileStream(files[0], FileMode.Open, FileAccess.Read));
+                    rootNav = doc.CreateNavigator().SelectSingleNode("dotnetnuke");
+                }
+
+                //Module is not affiliated with a Package
+                var package = new PackageInfo(new InstallerInfo());
+                package.Name = desktopModule.ModuleName;
+
+                package.FriendlyName = desktopModule.FriendlyName;
+                package.Description = desktopModule.Description;
+                package.Version = new Version(1, 0, 0);
+                if (!string.IsNullOrEmpty(desktopModule.Version))
+                {
+                    package.Version = new Version(desktopModule.Version);
+                }
+                if (hostModules.Contains(desktopModule.ModuleName))
+                {
+                    //Host Module so make this a system package
+                    package.IsSystemPackage = true;
+                    desktopModule.IsAdmin = true;
+                }
+                else
+                {
+                    desktopModule.IsAdmin = false;
+                }
+                package.PackageType = "Module";
+
+                //See if the Module is using a "Namespace" for its name
+                ParsePackageName(package);
+
+                if (files.Length > 0)
+                {
+                    var modulewriter = new ModulePackageWriter(desktopModule, rootNav, package);
+                    package.Manifest = modulewriter.WriteManifest(true);
+                }
+                else
+                {
+                    package.Manifest = ""; //module has no manifest
+                }
+
+                //Save Package
+                PackageController.SavePackage(package);
+
+                //Update Desktop Module with new PackageID
+                desktopModule.PackageID = package.PackageID;
+
+                //Save DesktopModule
+                DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
+            }
+            catch (Exception exc)
+            {
+                Instrumentation.DnnLog.Error(exc);
+
+            }            
+        }
+
         public static void ProcessLegacyModules()
         {
             foreach (DesktopModuleInfo desktopModule in DesktopModuleController.GetDesktopModules(Null.NullInteger).Values)
             {
                 if (desktopModule.PackageID == Null.NullInteger)
                 {
-                    //Get the Module folder
-                    string moduleFolder = Path.Combine(Globals.ApplicationMapPath, Path.Combine("DesktopModules", desktopModule.FolderName));
-
-                    //Find legacy manifest
-                    XPathNavigator rootNav = null;
-                    try
-                    {
-                        string hostModules = "Portals, SQL, HostSettings, Scheduler, SearchAdmin, Lists, SkinDesigner, Extensions";
-                        string[] files = Directory.GetFiles(moduleFolder, "*.dnn.config");
-                        if (files.Length > 0)
-                        {
-							//Create an XPathDocument from the Xml
-                            var doc = new XPathDocument(new FileStream(files[0], FileMode.Open, FileAccess.Read));
-                            rootNav = doc.CreateNavigator().SelectSingleNode("dotnetnuke");
-                        }
-						
-                        //Module is not affiliated with a Package
-                        var package = new PackageInfo(new InstallerInfo());
-                        package.Name = desktopModule.ModuleName;
-
-                        package.FriendlyName = desktopModule.FriendlyName;
-                        package.Description = desktopModule.Description;
-                        package.Version = new Version(1, 0, 0);
-                        if (!string.IsNullOrEmpty(desktopModule.Version))
-                        {
-                            package.Version = new Version(desktopModule.Version);
-                        }
-                        if (hostModules.Contains(desktopModule.ModuleName))
-                        {
-							//Host Module so make this a system package
-                            package.IsSystemPackage = true;
-                            desktopModule.IsAdmin = true;
-                        }
-                        else
-                        {
-                            desktopModule.IsAdmin = false;
-                        }
-                        package.PackageType = "Module";
-
-                        //See if the Module is using a "Namespace" for its name
-                        ParsePackageName(package);
-
-                        if (files.Length > 0)
-                        {
-                            var modulewriter = new ModulePackageWriter(desktopModule, rootNav, package);
-                            package.Manifest = modulewriter.WriteManifest(true);
-                        }
-                        else
-                        {
-                            package.Manifest = ""; //module has no manifest
-                        }
-						
-                        //Save Package
-                        PackageController.SavePackage(package);
-
-                        //Update Desktop Module with new PackageID
-                        desktopModule.PackageID = package.PackageID;
-
-                        //Save DesktopModule
-                        DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
-                    }
-                    catch (Exception exc)
-                    {
-                        Instrumentation.DnnLog.Error(exc);
-
-                    }
+                    ProcessLegacyModule(desktopModule);
                 }
             }
         }

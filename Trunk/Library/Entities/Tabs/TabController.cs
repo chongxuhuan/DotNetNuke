@@ -1013,6 +1013,11 @@ namespace DotNetNuke.Entities.Tabs
 
                 //if we have the PortalId then try to get the TabInfo object
                 tab = GetTabsByPortal(PortalId).WithTabId(TabId);
+                if(tab==null)
+                {
+                    //Maybe we have the wrong PortalId - try host
+                    tab = GetTabsByPortal(GetPortalId(TabId, Null.NullInteger)).WithTabId(TabId);                   
+                }
                 if (tab == null)
                 {
                     DnnLog.Warn("Unable to find tabId {0} of portal {1}", TabId, PortalId);

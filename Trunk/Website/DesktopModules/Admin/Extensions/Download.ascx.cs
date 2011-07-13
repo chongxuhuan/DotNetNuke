@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
@@ -240,7 +241,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             request.Method = "POST";
             // Create POST data and convert it to a byte array.
-            //  string postData = "username=tanyariepe&password=primavera";
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
 
             request.ContentType = "application/x-www-form-urlencoded";
@@ -318,19 +318,23 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 var objResponse = HttpContext.Current.Response;
                 var aByteArray = new byte[wr.ContentLength];
-
-                objResponse.ClearContent();
-                objResponse.ClearHeaders();
-                objResponse.BufferOutput = true;
                 objResponse.AppendHeader("Content-Disposition", "attachment; filename=\"" + myfile + "\"");
                 objResponse.AppendHeader("Content-Length", wr.ContentLength.ToString());
                 objResponse.ContentType = wr.ContentType;
-                objResponse.Flush();
-                using (var aWriter = new BinaryWriter(Response.OutputStream))
+
+                const int bufferLength = 4096;
+                byte[] byteBuffer = new byte[bufferLength];
+                Stream rs = wr.GetResponseStream();
+                int len = 0;
+                while ((len = rs.Read(byteBuffer, 0, byteBuffer.Length)) > 0)
                 {
-                    aWriter.Write(aByteArray, 0, aByteArray.Length);
+                    if (len < bufferLength)
+                    { objResponse.BinaryWrite(byteBuffer.Take(len).ToArray()); }
+                    else
+                    { objResponse.BinaryWrite(byteBuffer); }
+                    objResponse.Flush();
                 }
-                objResponse.End();
+                
             }
             else
             {

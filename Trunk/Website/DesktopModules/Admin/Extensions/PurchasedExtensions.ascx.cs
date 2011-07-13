@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
@@ -76,7 +77,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             string fileCheck = Localization.GetString("StoreFile", LocalResourceFile);
             string postData = "";
-            Stream oStream;
             Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
             var ps = new PortalSecurity();
             string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());
@@ -97,37 +97,34 @@ namespace DotNetNuke.Modules.Admin.Extensions
             dataStream.Write(byteArray, 0, byteArray.Length);
             dataStream.Close();
 
-            WebResponse response = request.GetResponse();
+            WebResponse wr = request.GetResponse();
             string myfile = "";
-            string cd = response.Headers["Content-Disposition"];
+            string cd = wr.Headers["Content-Disposition"];
             if (cd != null && cd.Trim() != "" && cd.StartsWith("inline;filename="))
             {
                 myfile = cd.Replace("inline;filename=", "");
             }
 
-            Stream remoteStream = null;
-            Stream localStream = null;
-
+            var objResponse = HttpContext.Current.Response;
 
             if (fileAction == "download")
             {
-                HttpResponse objResponse = HttpContext.Current.Response;
-
-
-                var aByteArray = new byte[response.ContentLength];
-
-                objResponse.ClearContent();
-                objResponse.ClearHeaders();
-                objResponse.BufferOutput = true;
                 objResponse.AppendHeader("Content-Disposition", "attachment; filename=\"" + myfile + "\"");
-                objResponse.AppendHeader("Content-Length", response.ContentLength.ToString());
-                objResponse.ContentType = response.ContentType;
-                objResponse.Flush();
-                using (var aWriter = new BinaryWriter(Response.OutputStream))
+                objResponse.AppendHeader("Content-Length", wr.ContentLength.ToString());
+                objResponse.ContentType = wr.ContentType;
+
+                const int bufferLength = 4096;
+                byte[] byteBuffer = new byte[bufferLength];
+                Stream rs = wr.GetResponseStream();
+                int len = 0;
+                while ((len = rs.Read(byteBuffer, 0, byteBuffer.Length)) > 0)
                 {
-                    aWriter.Write(aByteArray, 0, aByteArray.Length);
+                    if (len < bufferLength)
+                    { objResponse.BinaryWrite(byteBuffer.Take(len).ToArray()); }
+                    else
+                    { objResponse.BinaryWrite(byteBuffer); }
+                    objResponse.Flush();
                 }
-                objResponse.End();
             }
         }
 

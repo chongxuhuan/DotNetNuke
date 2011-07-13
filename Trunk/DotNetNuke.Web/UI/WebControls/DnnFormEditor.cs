@@ -305,38 +305,41 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             base.OnPreRender(e);
 
-            const string scriptName = "FormEditorjQuery";
-            ClientScriptManager cs = Page.ClientScript;
-
-
-            if (!cs.IsClientScriptBlockRegistered(GetType(), scriptName))
+            if(Tabs.Count > 0)
             {
-                //Render Script
-                var scriptBuilder = new StringBuilder();
-                scriptBuilder.Append("<script language=\"javascript\" type=\"text/javascript\">\r\n");
-                scriptBuilder.Append("\t(function ($, Sys) {\r\n");
-                scriptBuilder.Append("\t\tfunction setupFormEditor() {\r\n");
-                scriptBuilder.Append("\t\t\t$('#" + ClientID + "').dnnTabs().dnnPanels();\r\n");
-                foreach (DnnFormTab formTab in Tabs)
-                {
-                    if (formTab.IncludeExpandAll)
-                    {
-                        scriptBuilder.Append(formTab.ExpandAllScript);
-                    }
-                }
-                scriptBuilder.Append("\t\t}\r\n");
-                scriptBuilder.Append("\t\t$(document).ready(function () {\r\n");
-                scriptBuilder.Append("\t\t\tsetupFormEditor();\r\n");
-                scriptBuilder.Append("\t\t\tif (typeof Sys != 'undefined') {\r\n");
-                scriptBuilder.Append("\t\t\t\tSys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {\r\n");
-                scriptBuilder.Append("\t\t\t\t\tsetupFormEditor();\r\n");
-                scriptBuilder.Append("\t\t\t\t});\r\n");
-                scriptBuilder.Append("\t\t\t}\r\n"); 
-                scriptBuilder.Append("\t\t});\r\n");
-                scriptBuilder.Append("\t} (jQuery, window.Sys));\r\n");
+                const string scriptName = "FormEditorjQuery";
+                ClientScriptManager cs = Page.ClientScript;
 
-                scriptBuilder.Append("</script>\r\n");
-                cs.RegisterClientScriptBlock(GetType(), scriptName, scriptBuilder.ToString());
+
+                if (!cs.IsClientScriptBlockRegistered(GetType(), scriptName))
+                {
+                    //Render Script
+                    var scriptBuilder = new StringBuilder();
+                    scriptBuilder.Append("<script language=\"javascript\" type=\"text/javascript\">\r\n");
+                    scriptBuilder.Append("\t(function ($, Sys) {\r\n");
+                    scriptBuilder.Append("\t\tfunction setupFormEditor() {\r\n");
+                    scriptBuilder.Append("\t\t\t$('#" + ClientID + "').dnnTabs().dnnPanels();\r\n");
+                    foreach (DnnFormTab formTab in Tabs)
+                    {
+                        if (formTab.IncludeExpandAll)
+                        {
+                            scriptBuilder.Append(formTab.ExpandAllScript);
+                        }
+                    }
+                    scriptBuilder.Append("\t\t}\r\n");
+                    scriptBuilder.Append("\t\t$(document).ready(function () {\r\n");
+                    scriptBuilder.Append("\t\t\tsetupFormEditor();\r\n");
+                    scriptBuilder.Append("\t\t\tif (typeof Sys != 'undefined') {\r\n");
+                    scriptBuilder.Append("\t\t\t\tSys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {\r\n");
+                    scriptBuilder.Append("\t\t\t\t\tsetupFormEditor();\r\n");
+                    scriptBuilder.Append("\t\t\t\t});\r\n");
+                    scriptBuilder.Append("\t\t\t}\r\n");
+                    scriptBuilder.Append("\t\t});\r\n");
+                    scriptBuilder.Append("\t} (jQuery, window.Sys));\r\n");
+
+                    scriptBuilder.Append("</script>\r\n");
+                    cs.RegisterClientScriptBlock(GetType(), scriptName, scriptBuilder.ToString());
+                }
             }
         }
 

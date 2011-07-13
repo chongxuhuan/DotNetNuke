@@ -391,6 +391,6 @@
     <value>License:</value>
   </data>
   <data name="ListExtensions.Text" xml:space="preserve">
-    <value>Click this &lt;a href="http://www.dotnetnuke.com/App-Gallery.aspx " target="_blank"&gt;link&lt;/a&gt; to find out how you can get your extension listed here.</value>
+    <value>Learn &lt;strong&gt;&lt;a href="http://www.dotnetnuke.com/App-Gallery.aspx " target="_blank"&gt;more&lt;/a&gt;&lt;/strong&gt; about how to offer your extensions here.</value>
   </data>
 </root>

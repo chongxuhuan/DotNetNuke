@@ -800,6 +800,7 @@ namespace DotNetNuke.Services.Upgrade
 
             foreach (var desktopModuleInfo in DesktopModuleController.GetDesktopModules(Null.NullInteger))
             {
+                bool update = false;
                 switch (desktopModuleInfo.Value.ModuleName)
                 {
                     case "Portals":
@@ -830,11 +831,19 @@ namespace DotNetNuke.Services.Upgrade
                     case "Sitemap":
                     case "DotNetNuke.Taxonomy":
                         desktopModuleInfo.Value.Category = "Admin";
+                        update = true;
                         break;
                     default:
                         break;
                 }
-                DesktopModuleController.SaveDesktopModule(desktopModuleInfo.Value, false, false);
+                if (update)
+                {
+                    if (desktopModuleInfo.Value.PackageID == Null.NullInteger)
+                    {
+                        LegacyUtil.ProcessLegacyModule(desktopModuleInfo.Value);
+                    }
+                    DesktopModuleController.SaveDesktopModule(desktopModuleInfo.Value, false, false);
+                }
             }
         }
 
