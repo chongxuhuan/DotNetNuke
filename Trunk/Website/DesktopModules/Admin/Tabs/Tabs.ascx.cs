@@ -325,8 +325,11 @@ namespace DotNetNuke.Modules.Admin.Pages
                 case "makehome":
                     if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
                     {
+                        var portalController = new PortalController();
+                        PortalInfo portalInfo = portalController.GetPortal(PortalId);
+                        portalInfo.HomeTabId = objTab.TabID;
                         PortalSettings.HomeTabId = objTab.TabID;
-                        PortalController.UpdatePortalSetting(PortalId, "HomeTabId", objTab.TabID.ToString());
+                        portalController.UpdatePortalInfo(portalInfo);                        
                         DataCache.ClearPortalCache(PortalId, false);
                         BindTreeAndShowTab(objTab.TabID);
                         ShowSuccessMessage(string.Format(Localization.GetString("TabMadeHome", LocalResourceFile), objTab.TabName));

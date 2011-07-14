@@ -42,6 +42,7 @@
 .dnnSearchFilters, .dnnFormItem label .dnnSearchFilters{border:#46A3D3 2px solid;color:#085B8F;background:#EDF8FF;-moz-border-radius:3px;border-radius:3px;text-shadow:0px 1px 1px white;filter: dropshadow(color=white, offx=1, offy=1);font-weight: normal;padding: 0.8em 1em 0.8em 1em;margin: 5px;}
 .loading-image {width:24px;height:24px;text-align:center;vertical-align:middle;}
 .dnnCatalogLoading{text-align:center;vertical-align:middle;width:150px;height:20px;background-color:#369;border:3px solid #000000;color:White;position:absolute;right:0;top:0px;z-index:1005;}
+.dnnFormInfo a.info{ font-weight: bold;color: #269D2D;}
 /* ===========   More Extensions Module Styling   =========== */
 
 /* ===========   Store Login Styling   =========== */

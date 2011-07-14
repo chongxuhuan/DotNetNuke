@@ -473,5 +473,75 @@ namespace DotNetNuke.Services.Cache
         }
 		
 		#endregion
+
+        #region Obsolete Methods
+
+        [Obsolete("Deprecated in DNN 5.1 - Use one of the INsert methods")]
+        public virtual object Add(string CacheKey, object objObject, CacheDependency objDependency, DateTime AbsoluteExpiration, TimeSpan SlidingExpiration, CacheItemPriority Priority, CacheItemRemovedCallback OnRemoveCallback)
+        {
+            object retValue = GetItem(CacheKey);
+            if (retValue == null)
+            {
+                Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+            }
+            return retValue;
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
+        public virtual object GetPersistentCacheItem(string CacheKey, Type objType)
+        {
+            return GetItem(CacheKey);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
+        public virtual void Insert(string CacheKey, object objObject, bool PersistAppRestart)
+        {
+            Insert(CacheKey, objObject);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
+        public virtual void Insert(string CacheKey, object objObject, System.Web.Caching.CacheDependency objDependency, bool PersistAppRestart)
+        {
+            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
+        public virtual void Insert(string CacheKey, object objObject, System.Web.Caching.CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, bool PersistAppRestart)
+        {
+            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, CacheItemPriority.Default, null);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
+        public virtual void Insert(string Key, object Value, System.Web.Caching.CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, CacheItemPriority Priority, CacheItemRemovedCallback OnRemoveCallback, bool PersistAppRestart)
+        {
+            Insert(Key, Value, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
+        public virtual void Insert(string CacheKey, object objObject, CacheDependency objDependency)
+        {
+            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
+        public virtual void Insert(string CacheKey, object objObject, CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration)
+        {
+            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, CacheItemPriority.Default, null);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
+        public virtual void Insert(string CacheKey, object Value, CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, CacheItemPriority Priority, CacheItemRemovedCallback OnRemoveCallback)
+        {
+            Insert(CacheKey, Value, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+        }
+
+        [Obsolete("Deprecated in DNN 5.1.1 - Cache Persistence is not supported")]
+        public virtual void RemovePersistentCacheItem(string CacheKey)
+        {
+            Remove(CacheKey);
+        }
+
+
+        #endregion
     }
 }

@@ -22,9 +22,9 @@
                 <ItemTemplate>
 				    <dnn:Label ID="plPremium" runat="server" ControlName="ctlPortals" />
                     <dnn:DualListBox id="ctlPortals" runat="server" DataValueField="PortalID" DataTextField="PortalName" AddKey="AddPortal" RemoveKey="RemovePortal" AddAllKey="AddAllPortals" RemoveAllKey="RemoveAllPortals" AddImageURL="~/images/rt.gif" AddAllImageURL="~/images/ffwd.gif" RemoveImageURL="~/images/lt.gif" RemoveAllImageURL="~/images/frev.gif" ContainerStyle-HorizontalAlign="Center" >
-                        <AvailableListBoxStyle Height="130px" Width="275px" />
+                        <AvailableListBoxStyle Height="130px" Width="225px" />
                         <HeaderStyle />
-                        <SelectedListBoxStyle Height="130px" Width="275px"  />
+                        <SelectedListBoxStyle Height="130px" Width="225px"  />
                     </dnn:DualListBox>                            
                 </ItemTemplate>
             </dnn:DnnFormTemplateItem>

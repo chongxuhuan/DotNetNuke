@@ -1,6 +1,6 @@
-#dnnCPWrap{width:940px;position:fixed;top:0;z-index:10000;margin:0 auto;padding:6px 0;background:#f3f3f3;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));border:1px #999 solid;-webkit-border-bottom-right-radius: 5px;-webkit-border-bottom-left-radius: 5px;-moz-border-radius-bottomright: 5px;-moz-border-radius-bottomleft: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;}
+#dnnCPWrap{width:100%;position:fixed;left: 0;top:0;z-index:10000;padding:6px 0;background:#f3f3f3;background:-moz-linear-gradient(top, #F3F3F3 0%, #CFCFCF 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#F3F3F3), color-stop(100%,#CFCFCF));border:1px #999 solid;}
 	#dnnCPWrap .dnnCPContent {display:none;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border-radius:3px;-webkit-border-radius:3px;-moz-border-radius:3px;}
-	.dnnControlPanel{margin:0 auto;font-size:11px;}
+	.dnnControlPanel{margin:0 auto;font-size:11px;width: 940px;}
 		a.dnnCPHMessagednnLeft, a.dnnCPHMessagednnLeft img{display:block !important;}
 		.dnnControlPanel .dnnFormItem label, .dnnControlPanel .dnnFormItem .dnnFormLabel{margin-top:0;font-size:11px;}
 		.cbcpFiCol a, .cpcbAdmin a{display:block;line-height:1.8;min-height:1.8em;padding:0 15px 0 20px;font-weight:bold;float:left;}

@@ -48,6 +48,7 @@ AS
 				@AdminTabId=AdminTabId,
 				@RegisterTabId=RegisterTabId 
 			FROM {databaseOwner}{objectQualifier}PortalLocalization
+			WHERE PortalId = @PortalId
 			INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
 				PortalId,
 				CultureCode,

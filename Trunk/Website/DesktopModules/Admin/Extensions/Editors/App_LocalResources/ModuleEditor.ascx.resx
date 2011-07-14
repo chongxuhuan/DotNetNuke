@@ -348,4 +348,7 @@
   <data name="ModuleSettings.Text" xml:space="preserve">
     <value>Module Settings</value>
   </data>
+  <data name="None.Text" xml:space="preserve">
+    <value>&lt; None &gt;</value>
+  </data>
 </root>

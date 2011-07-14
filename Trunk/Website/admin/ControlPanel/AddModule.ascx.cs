@@ -336,7 +336,10 @@ namespace DotNetNuke.UI.ControlPanel
 			CategoryListPanel.Visible = !AddExistingModule.Checked;
 
 			ITermController termController = Util.GetTermController();
-			CategoryList.DataSource = termController.GetTermsByVocabulary("Module_Categories").OrderBy(t => t.Weight).ToList();
+			CategoryList.DataSource = termController.GetTermsByVocabulary("Module_Categories")
+                                            .OrderBy(t => t.Weight)
+                                            .Where(t => t.Name != "< None >")
+                                            .ToList();
 			CategoryList.DataBind();
 			CategoryList.Items.Add(new ListItem(Localization.GetString("AllCategories", LocalResourceFile), "All"));
 			if(!IsPostBack)

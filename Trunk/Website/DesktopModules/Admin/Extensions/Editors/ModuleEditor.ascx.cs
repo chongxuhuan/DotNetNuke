@@ -420,11 +420,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
         }
 
-        //protected void cmdAddControl_Click(object sender, EventArgs e)
-        //{
-        //    Response.Redirect(ModuleContext.EditUrl("ModuleControlID", "-1", "EditControl", "packageId=" + PackageID, "moduledefid=" + ModuleDefinition.ModuleDefID), true);
-        //}
-
         protected void cmdAddDefinition_Click(object sender, EventArgs e)
         {
             IsAddDefinitionMode = true;

@@ -1,5 +1,5 @@
 .dnnRazorHost{margin:1em auto;}
 .dnnRazorHostAddScript{padding:1em 2em;}
-.dnnRazorHost input[type="text"], .dnnRazorHost textarea{width:80%;}
-	.razorHostModSource{margin:1em 0 1em 24.5%;}
-.dnnRazorHost .dnnFormItem label{ width: 15%;}
+.dnnRazorHost .dnnFormItem input[type="text"], .dnnRazorHost .dnnFormItem textarea{width:80%;}
+	.razorHostModSource{margin:1em 0 1em 16%;}
+.dnnRazorHost .dnnFormItem .dnnTooltip{ width: 15%;}

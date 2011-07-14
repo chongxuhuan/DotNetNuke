@@ -795,8 +795,10 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void AddModuleCategories()
         {
+            DesktopModuleController.AddModuleCategory("< None >");
             DesktopModuleController.AddModuleCategory("Admin");
             DesktopModuleController.AddModuleCategory("Common");
+
 
             foreach (var desktopModuleInfo in DesktopModuleController.GetDesktopModules(Null.NullInteger))
             {
@@ -2304,8 +2306,20 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void UpgradeToVersion600()
         {
-            var settings = PortalController.GetCurrentPortalSettings();
             var tabController = new TabController();
+
+            var hostPages = tabController.GetTabsByPortal(Null.NullInteger);
+
+            //This ensures that all host pages have a tab path.
+            //so they can be found later. (DNNPRO-17129)
+            foreach (var hostPage in hostPages.Values)
+            {
+                hostPage.TabPath = Globals.GenerateTabPath(hostPage.ParentId, hostPage.TabName);
+                tabController.UpdateTab(hostPage);
+            }
+
+            var settings = PortalController.GetCurrentPortalSettings();
+
             var moduleController = new ModuleController();
 
             if (settings != null)

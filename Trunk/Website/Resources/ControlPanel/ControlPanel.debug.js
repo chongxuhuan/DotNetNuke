@@ -14,7 +14,8 @@
             $wrapper.parent().css({ paddingBottom: '0' });
         }
         else {
-            $wrapper.parent().css({ paddingBottom: $('.dnnCPHeader').height() + 5 + 'px' });
+            //$wrapper.parent().css({ paddingBottom: $('.dnnCPHeader').height() + 5 + 'px' });
+        	$(document.body).css({ marginTop: $wrapper.outerHeight() });
         }
     }
 
