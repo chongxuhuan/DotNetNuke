@@ -218,7 +218,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                                         LocalizeString("download") + "</a>";
 
 
-                    if (deploy == "false")
+                    if (deploy == "true")
                     {
                         dt.Rows[i][dcol4] = "<a class='dnnPrimaryAction' href=" + "\"" +
                                             ModuleContext.EditUrl("fileID", fileId, "Download", "package",
