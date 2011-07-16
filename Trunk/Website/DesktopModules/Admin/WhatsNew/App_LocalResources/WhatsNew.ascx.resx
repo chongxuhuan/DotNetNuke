@@ -1520,4 +1520,47 @@ corrected with each release. &lt;/p&gt;
         &lt;li&gt;none&lt;/li&gt;
     &lt;/ul&gt;</value>
   </data>
+    <data name="WhatsNew.06.00.00" xml:space="preserve">
+      <value>
+          &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+          &lt;ul&gt;
+          &lt;li&gt;Updated the UI / UX to a more simplified interface that accelerates productivity
+          by making it much easier to set up and maintain websites &lt;/li&gt;
+          &lt;li&gt;Updated the DotNetNuke Core to be compatible with Windows Azure and SQL
+          Azure which allows users to host their websites at Microsoft Data-centers
+          &lt;/li&gt;
+          &lt;li&gt;Updated the DotNetNuke Core to C#. From this release on, every new
+          feature, enhancement and bug fix will be implemented in C#&lt;/li&gt;
+          &lt;li&gt;Added support for .NET/Windows TimeZones - this allow for the correct management
+          of Daylight Savings.&lt;/li&gt;
+          &lt;li&gt;Fixed issue with Telerik Editor not rendering correctly in IE9 &lt;/li&gt;
+          &lt;li&gt;Fixed issue where users in the Administrator role are unable to see the
+          users folder in the File Manager&lt;/li&gt;
+          &lt;li&gt;Fixed the UnderlyingDataSource property of the Property Editor that caused
+          wrong data to be loaded &lt;/li&gt;
+          &lt;li&gt;Fixed the issue with sending the test email in the Newsletter module to
+          the wrong recipient &lt;/li&gt;
+          &lt;li&gt;Enabled event validation as a best practice &lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+          &lt;ul&gt;
+          &lt;li&gt;none&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+          &lt;ul&gt;
+          &lt;li&gt;Added DNNWerk&#39;s Page Management Module to the DotNetNuke Core &lt;/li&gt;
+          &lt;li&gt;Added DNNWerk&#39;s RadEditor Provider to the DotNetNuke Core &lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+          &lt;ul&gt;
+          &lt;li&gt;none&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+          &lt;ul&gt;
+          &lt;li&gt;Implemented a folder provider that enables users to transparently integrate
+          DotNetNuke folder options and modules with Cloud Storage Services and other
+          storage options through an open API &lt;/li&gt;
+          &lt;/ul&gt;
+      </value>
+      </data>
 </root>
