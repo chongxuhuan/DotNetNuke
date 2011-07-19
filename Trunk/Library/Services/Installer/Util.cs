@@ -30,6 +30,7 @@ using System.Xml.XPath;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Common.Utilities.Internal;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Installer.Log;
@@ -231,35 +232,7 @@ namespace DotNetNuke.Services.Installer
             }
             return propValue;
         }
-
-        private static void RetryAction(Action action, string logMessage)
-        {
-            Requires.NotNull("action", action);
-
-            int retrysRemaining = 30;
-
-            do
-            {
-                try
-                {
-                    action();
-                    return;
-                }
-                catch
-                {
-                    if (retrysRemaining <= 0)
-                    {
-                        DnnLog.Warn("All retries failed - " + logMessage);
-                        throw;
-                    }
-
-                    DnnLog.Info(string.Format("Retrying operation {0} - {1}", retrysRemaining, logMessage));
-                    Thread.Sleep(1000);
-                }
-                retrysRemaining--;
-            } while (true);
-        }
-
+        
         #endregion
 
 		#region Public Shared Methods
@@ -287,7 +260,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file to backup location
-            RetryAction(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName);
+            new RetryableAction(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName).TryIt();
             log.AddInfo(string.Format(FILE_CreateBackup, installFile.FullName));
         }
 
@@ -315,7 +288,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file from temp location
-            RetryAction(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName);
+            new RetryableAction(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName).TryIt();
 
             log.AddInfo(string.Format(FILE_Created, installFile.FullName));
         }
@@ -352,7 +325,7 @@ namespace DotNetNuke.Services.Installer
             string fullFileName = Path.Combine(basePath, fileName);
             if (File.Exists(fullFileName))
             {
-                RetryAction(() => FileSystemUtils.DeleteFile(fullFileName), "Delete file " + fullFileName);
+                new RetryableAction(() => FileSystemUtils.DeleteFile(fullFileName), "Delete file " + fullFileName).TryIt();
                 log.AddInfo(string.Format(FILE_Deleted, fileName));
                 string folderName = Path.GetDirectoryName(fullFileName);
                 if (folderName != null)

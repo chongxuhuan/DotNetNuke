@@ -53,16 +53,16 @@
                     <a name="ext-${ExtensionID}"></a>
                     <div class="dnnProductImage">
                         {{if ImageURL}}
-                            <img alt='${ExtensionName}' src="${ImageURL}" />
+                            <img alt='${Title}' src="${ImageURL}" />
                         {{else}}
-                            <img  alt='${ExtensionName}' src='<%=ResolveUrl("~/images/System-Box-Empty-icon.png")%>' />
+                            <img  alt='${Title}' src='<%=ResolveUrl("~/images/System-Box-Empty-icon.png")%>' />
                         {{/if}}
                         <div class='dnnProductPrice'>${_gallery.FormatCurrency(Price)}</div>
                         <div class="${Catalog.CatalogCSS}">
                             <img class='productTypeImage dnnIcon' alt='${ExtensionType}'  title='${ExtensionType}'  src='<%=IconController.IconURL("Catalog${ExtensionType}")%>' />                            
                             {{if License}}                                
                                 <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${ExtensionID})">                    
-                                    <img class='productTypeImage dnnIcon' alt='License for ${ExtensionName}' title='License Specified' src='<%=IconController.IconURL("CatalogLicense")%>' />
+                                    <img class='productTypeImage dnnIcon' alt='License for ${Title}' title='License Specified' src='<%=IconController.IconURL("CatalogLicense")%>' />
                                 </a>
                             {{/if}}                            
                             {{if Catalog.CatalogUrl}}                                            
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     <div class="dnnProductDetails">
-                        <h3 class="dnnProductTitle">${ExtensionName}</h3>
+                        <h3 class="dnnProductTitle">${Title}</h3>
                         <p class="dnnProductOwner">
                             {{if OwnerName}}<%=LocalizeString("By") %> <a href="javascript:void(0)" onclick="_gallery.OwnerFilterGallery('${OwnerName}')">${OwnerName}</a>{{/if}}
                         </p>
@@ -98,8 +98,8 @@
                         </div>
             
 
-                        {{if CatalogID !== 1 && DownloadURL }}<a class="dnnPrimaryAction" href="${_gallery.getDownloadUrl(ExtensionID)}">Deploy ${ExtensionName}</a>{{/if}}
-                        {{if CatalogID === 1}}<a class="dnnPrimaryAction" href="${DetailURL}&PackageOptionID=0&action=Add" target="_cart">Buy ${ExtensionName}</a>{{/if}}
+                        {{if CatalogID !== 1 && DownloadURL }}<a class="dnnPrimaryAction" href="${_gallery.getDownloadUrl(ExtensionID)}">Deploy ${Title}</a>{{/if}}
+                        {{if CatalogID === 1}}<a class="dnnPrimaryAction" href="${DetailURL}&PackageOptionID=0&action=Add" target="_cart">Buy ${Title}</a>{{/if}}
             
  
                         

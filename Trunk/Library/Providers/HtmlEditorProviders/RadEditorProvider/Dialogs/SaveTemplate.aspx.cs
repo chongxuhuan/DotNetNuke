@@ -1,0 +1,346 @@
+//
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2011
+// by DotNetNuke Corporation
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+//
+
+//INSTANT C# NOTE: Formerly VB project-level imports:
+using DotNetNuke;
+using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
+using DotNetNuke.Entities;
+using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Framework;
+using DotNetNuke.Modules;
+using DotNetNuke.Security;
+using DotNetNuke.Services;
+using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Localization;
+using DotNetNuke.UI;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Caching;
+using System.Web.SessionState;
+using System.Web.Security;
+using System.Web.Profile;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using System.Xml;
+using DotNetNuke.Services.Cache;
+using DotNetNuke.UI.WebControls;
+using DotNetNuke.Entities.Host;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Framework.Providers;
+using Telerik.Web.UI;
+
+namespace DotNetNuke.Providers.RadEditorProvider
+{
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	/// </history>
+	public partial class SaveTemplate : DotNetNuke.Framework.PageBase
+	{
+
+
+#region Event Handlers
+
+		protected void Page_Init(object sender, System.EventArgs e)
+		{
+
+			DotNetNuke.Framework.AJAX.RegisterScriptManager();
+
+			if (Request.IsAuthenticated == true)
+			{
+				Response.Cache.SetCacheability(System.Web.HttpCacheability.ServerAndNoCache);
+			}
+
+		}
+
+		protected void Page_Load(object sender, System.EventArgs e)
+		{
+			try
+			{
+
+				SetResStrings();
+
+				if (! IsPostBack)
+				{
+
+					FixAllowedExtensions();
+
+					int portalID = DotNetNuke.Entities.Portals.PortalController.GetCurrentPortalSettings().PortalId;
+					ArrayList folders = DotNetNuke.Common.Utilities.FileSystemUtils.GetFoldersByUser(portalID, true, true, "Add");
+
+					//filter out only folders below the editor's template path
+					string strStartFolder = "";
+					try
+					{
+						strStartFolder = Request.QueryString["path"];
+					}
+					catch
+					{
+					}
+					ArrayList tmpFolders = new ArrayList();
+					foreach (DotNetNuke.Services.FileSystem.FolderInfo folder in folders)
+					{
+						if (folder.FolderPath.StartsWith(strStartFolder))
+						{
+							tmpFolders.Add(folder);
+						}
+					}
+
+					if (tmpFolders.Count == 0)
+					{
+						msgError.InnerHtml = GetString("msgNoFolders.Text");
+						divInputArea.Visible = false;
+						cmdClose.Visible = true;
+					}
+					else
+					{
+						FolderList.Items.Clear();
+
+						FolderList.DataTextField = "FolderPath";
+						FolderList.DataValueField = "FolderPath";
+						FolderList.DataSource = tmpFolders;
+						FolderList.DataBind();
+
+						RadComboBoxItem rootFolder = FolderList.FindItemByText(string.Empty);
+						if (rootFolder != null)
+						{
+							rootFolder.Text = GetString("lblRootFolder.Text");
+						}
+
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				DotNetNuke.Services.Exceptions.LogException(ex);
+				throw ex;
+			}
+		}
+
+		protected void Save_OnClick(object sender, EventArgs e)
+		{
+			try
+			{
+				if (FolderList.Items.Count == 0)
+				{
+					return;
+				}
+
+				DotNetNuke.Entities.Portals.PortalSettings portalSettings = DotNetNuke.Entities.Portals.PortalSettings.Current;
+
+				string fileContents = htmlText2.Text.Trim();
+				string newFileName = FileName.Text;
+				if (! (newFileName.EndsWith(".html")))
+				{
+					newFileName = newFileName + ".html";
+				}
+
+				string rootFolder = portalSettings.HomeDirectoryMapPath;
+				string dbFolderPath = FolderList.SelectedValue;
+				string virtualFolder = (string)(string)FileSystemValidation.ToVirtualPath(dbFolderPath);
+				rootFolder = rootFolder + FolderList.SelectedValue;
+				rootFolder = rootFolder.Replace("/", "\\");
+
+				string errorMessage = string.Empty;
+				FileSystem.FolderController folderCtrl = new FileSystem.FolderController();
+				FileSystem.FolderInfo folder = folderCtrl.GetFolder(portalSettings.PortalId, dbFolderPath, false);
+
+				if ((folder == null))
+				{
+					ShowSaveTemplateMessage(GetString("msgFolderDoesNotExist.Text"));
+					return;
+				}
+
+				// Check file name is valid
+				FileSystemValidation dnnValidator = new FileSystemValidation();
+				errorMessage = dnnValidator.OnCreateFile(virtualFolder + newFileName, fileContents.Length);
+				if (! (string.IsNullOrEmpty(errorMessage)))
+				{
+					ShowSaveTemplateMessage(errorMessage);
+					return;
+				}
+
+				FileSystem.FileController fileCtrl = new FileSystem.FileController();
+				DotNetNuke.Services.FileSystem.FileInfo existingFile = fileCtrl.GetFile(newFileName, portalSettings.PortalId, folder.FolderID);
+
+				// error if file exists
+				if (! Overwrite.Checked && existingFile != null)
+				{
+					ShowSaveTemplateMessage(GetString("msgFileExists.Text"));
+					return;
+				}
+
+				FileSystem.FileInfo newFile = existingFile;
+				if ((newFile == null))
+				{
+					newFile = new FileSystem.FileInfo();
+				}
+
+				newFile.FileName = newFileName;
+				newFile.ContentType = "text/plain";
+				newFile.Extension = "html";
+				newFile.Size = fileContents.Length;
+				newFile.FolderId = folder.FolderID;
+
+				errorMessage = DotNetNuke.Common.Utilities.FileSystemUtils.CreateFileFromString(rootFolder, newFile.FileName, fileContents, newFile.ContentType, string.Empty, false);
+
+				if (! (string.IsNullOrEmpty(errorMessage)))
+				{
+					ShowSaveTemplateMessage(errorMessage);
+					return;
+				}
+
+				existingFile = fileCtrl.GetFile(newFileName, portalSettings.PortalId, folder.FolderID);
+				if (newFile.FileId != existingFile.FileId)
+				{
+					newFile.FileId = existingFile.FileId;
+				}
+
+				if (newFile.FileId != Null.NullInteger)
+				{
+					fileCtrl.UpdateFile(newFile.FileId, newFile.FileName, newFile.Extension, newFile.Size, newFile.Width, newFile.Height, newFile.ContentType, folder.FolderPath, folder.FolderID);
+				}
+				else
+				{
+					fileCtrl.AddFile(portalSettings.PortalId, newFile.FileName, newFile.Extension, newFile.Size, newFile.Width, newFile.Height, newFile.ContentType, folder.FolderPath, folder.FolderID, true);
+				}
+
+				ShowSaveTemplateMessage(string.Empty);
+			}
+			catch (Exception ex)
+			{
+				DotNetNuke.Services.Exceptions.LogException(ex);
+				throw ex;
+			}
+		}
+
+#endregion
+
+#region Properties
+
+#endregion
+
+#region Methods
+
+		private void FixAllowedExtensions()
+		{
+
+			bool blnHTML = true;
+
+			string validExtensions = DotNetNuke.Entities.Host.Host.FileExtensions.ToLowerInvariant();
+
+			if (("," + validExtensions + ",").IndexOf(",html,") == -1)
+			{
+				blnHTML = false;
+			}
+
+			if (blnHTML == false)
+			{
+				validExtensions = (string)AddComma(validExtensions).ToString() + "html";
+				HostSettingsController ctl = new HostSettingsController();
+				ctl.UpdateHostSetting("FileExtensions", validExtensions);
+				Config.Touch();
+			}
+
+		}
+
+		private object AddComma(string strExpression)
+		{
+			if (strExpression.EndsWith(","))
+			{
+				return strExpression;
+			}
+			else
+			{
+				return strExpression + ",";
+			}
+		}
+
+		private void ShowSaveTemplateMessage(string errorMessage)
+		{
+			if (string.IsNullOrEmpty(errorMessage))
+			{
+				msgSuccess.Visible = true;
+				msgError.Visible = false;
+			}
+			else
+			{
+				msgSuccess.Visible = false;
+				msgError.Visible = true;
+				msgError.InnerHtml += errorMessage;
+				DotNetNuke.Services.Exceptions.Exceptions.LogException(new FileManagerException("Error creating htmtemplate file [" + errorMessage + "]"));
+			}
+
+			divInputArea.Visible = false;
+			cmdClose.Visible = true;
+		}
+
+		private void SetResStrings()
+		{
+			this.lblTitle.Text = GetString("lblDialogTitle");
+			this.lblFolders.Text = GetString("lblFolders.Text");
+			this.lblFileName.Text = GetString("lblFileName.Text");
+			this.lblOverwrite.Text = GetString("lblOverwrite.Text");
+			this.cmdSave.Text = GetString("cmdSave.Text");
+			this.cmdCancel.Text = GetString("cmdCancel.Text");
+			this.cmdClose.Text = GetString("cmdClose.Text");
+			this.msgSuccess.InnerHtml = GetString("msgSuccess.Text");
+			this.msgError.InnerHtml = GetString("msgError.Text");
+		}
+
+		public string GetString(string key)
+		{
+			string resourceFile = System.IO.Path.Combine(this.TemplateSourceDirectory + "/", DotNetNuke.Services.Localization.Localization.LocalResourceDirectory + "/SaveTemplate.resx");
+			return DotNetNuke.Services.Localization.Localization.GetString(key, resourceFile);
+		}
+
+
+#endregion
+
+
+
+	public SaveTemplate()
+	{
+
+//INSTANT C# NOTE: Converted event handler wireups:
+		this.Init += new System.EventHandler(Page_Init);
+		this.Load += new System.EventHandler(Page_Load);
+	}
+	}
+
+}

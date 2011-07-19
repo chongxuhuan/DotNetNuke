@@ -148,6 +148,7 @@
     <Compile Include="Common\Utilities\ObjectMappingInfo.cs" />
     <Compile Include="Common\Utilities\EscapedString.cs" />
     <Compile Include="Common\Utilities\PathUtils.cs" />
+    <Compile Include="Common\Utilities\RetryableAction.cs" />
     <Compile Include="Common\Utilities\UrlController.cs">
       <SubType>Code</SubType>
     </Compile>

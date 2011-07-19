@@ -525,9 +525,8 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             var collisionNotifications = new List<string>();
-            var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
-
-            for (var i = mergedTree.Count - 1; i >= 0; i--)
+            var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);         
+            for (var i = 0; i < mergedTree.Count; i++)
             {
                 var item = mergedTree.Values[i];
 

@@ -109,7 +109,10 @@ namespace DotNetNuke.UI.WebControls
                 try
                 {
 					//Try and cast the value to an Integer
-                    int.TryParse(Value.ToString(), out intValue);
+                    if(Value != null)
+                    {
+                        Int32.TryParse(Value.ToString(), out intValue);
+                    }
                 }
                 catch (Exception exc)
                 {

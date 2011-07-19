@@ -96,40 +96,44 @@ namespace DotNetNuke.HttpModules.Compression
         /// <param name="e">Arguments to the event</param>
         private void CompressContent(object sender, EventArgs e)
         {
-            bool isOutputCached = Null.NullBoolean;
+            var isOutputCached = Null.NullBoolean;
             var app = (HttpApplication) sender;
-            if ((app == null) || (app.Context == null) || (app.Context.Items == null))
+            if ((app == null) || (app.Context == null))
             {
                 return;
             }
-            else
+            
+            //Check for Output Caching - if output caching is used the cached content will already be compressed, 
+            //but we still need to add the headers
+            var isCached = app.Context.Items["DNNOutputCache"] as string;
+            if (!string.IsNullOrEmpty(isCached))
             {
-                //Check for Output Caching - if output caching is used the cached content will already be compressed, 
-                //but we still need to add the headers
+                isOutputCached = bool.Parse(isCached);
+            }
 
-                var isCached = app.Context.Items["DNNOutputCache"] as string;
-                if (!string.IsNullOrEmpty(isCached))
+            if (!isOutputCached)
+            {
+                //Check if page is a content page
+                var page = app.Context.Handler as CDefault;
+                if (page == null)
                 {
-                    isOutputCached = bool.Parse(isCached);
-                }
-
-                if (!isOutputCached)
-                {
-                	//Check if page is a content page
-                    var page = app.Context.Handler as CDefault;
-                    if (page == null)
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
-            if (app.Response == null || app.Response.ContentType == null || app.Response.ContentType.ToLower() != "text/html")
+
+            if (app.Response.ContentType == null || app.Response.ContentType.ToLower() != "text/html")
             {
                 return;
             }
 			
             // Bypass Anthem CallBacks. They cannot be compressed
             if (app.Request.QueryString["Anthem_CallBack"] == "true")
+            {
+                return;
+            }
+
+            // Bypass JsXmlHttpRequest callbacks. These requests include a uniqueness parameter and they cannot be compressed
+            if (!string.IsNullOrEmpty(app.Request.QueryString["__U"]))
             {
                 return;
             }
@@ -147,27 +151,27 @@ namespace DotNetNuke.HttpModules.Compression
                 app.Context.Items.Add(INSTALLED_KEY, INSTALLED_TAG);
 
                 //path comparison is based on filename and querystring parameters ( ie. default.aspx?tabid=## )
-                string realPath = app.Request.Url.PathAndQuery;
+                var realPath = app.Request.Url.PathAndQuery;
 
                 //get the config settings
-                Settings _Settings = Settings.GetSettings();
-                if (_Settings == null)
+                var settings = Settings.GetSettings();
+                if (settings == null)
                 {
                     return;
                 }
-                bool compress = true;
-                if (_Settings.PreferredAlgorithm == Algorithms.None)
+                var compress = true;
+                if (settings.PreferredAlgorithm == Algorithms.None)
                 {
                     compress = false;
 
                     //Terminate processing if both compression and whitespace handling are disabled
-                    if (!_Settings.Whitespace)
+                    if (!settings.Whitespace)
                     {
                         return;
                     }
                 }
-                string acceptedTypes = app.Request.Headers["Accept-Encoding"];
-                if (_Settings.IsExcludedPath(realPath) || acceptedTypes == null)
+                var acceptedTypes = app.Request.Headers["Accept-Encoding"];
+                if (settings.IsExcludedPath(realPath) || acceptedTypes == null)
                 {
                     //skip if the file path excludes compression
                     //if we couldn't find the header, bail out
@@ -185,8 +189,8 @@ namespace DotNetNuke.HttpModules.Compression
                 if (compress)
                 {
                     //the actual types could be , delimited.  split 'em out.
-                    string[] types = acceptedTypes.Split(',');
-                    filter = GetFilterForScheme(types, app.Response.Filter, _Settings);
+                    var types = acceptedTypes.Split(',');
+                    filter = GetFilterForScheme(types, app.Response.Filter, settings);
                     //Add the headers - we do this now - becuase if Output Caching is enabled we need to
                     //add the Headers regardless of whether compresion actually occurs in this request.
                     filter.WriteHeaders();
@@ -195,9 +199,9 @@ namespace DotNetNuke.HttpModules.Compression
 				{
 					if (filter == null)
 					{
-						if (_Settings.Whitespace)
+						if (settings.Whitespace)
 						{
-							app.Response.Filter = new WhitespaceFilter(app.Response.Filter, _Settings.Reg);
+							app.Response.Filter = new WhitespaceFilter(app.Response.Filter, settings.Reg);
 						}
 						else
 						{
@@ -206,9 +210,9 @@ namespace DotNetNuke.HttpModules.Compression
 					}
 					else
 					{
-						if (_Settings.Whitespace)
+						if (settings.Whitespace)
 						{
-							app.Response.Filter = new WhitespaceFilter(filter, _Settings.Reg);
+							app.Response.Filter = new WhitespaceFilter(filter, settings.Reg);
 						}
 						else
 						{

@@ -379,6 +379,7 @@ div.SearchIcon img{margin-top:3px;}
 			.dnnGridAltItem{background:#f1f1f1;}
 		.dnnGrid td{padding:3px 5px;}
 			.dnnGrid td input.dnnFormInput{width:42%;}
+	.dnnPermissionsGrid .dnnFormItem label {width:12%;}
 	/* Layout helpers
 	----------------------------------*/
 	.dnnForm .ui-helper-hidden { display: none; }

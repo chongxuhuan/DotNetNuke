@@ -26,6 +26,7 @@
 using System;
 using System.IO;
 
+using DotNetNuke.Common.Utilities.Internal;
 using DotNetNuke.Instrumentation;
 
 #endregion
@@ -62,13 +63,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to create the File
                 try
                 {
-                    if (File.Exists(verifyPath))
-                    {
-                        File.Delete(verifyPath);
-                    }
-
-                    Stream fileStream = File.Create(verifyPath);
-                    fileStream.Close();
+                    new RetryableAction(() => FileCreateAction(verifyPath), "Creating verification file").TryIt();
                 }
                 catch (Exception exc)
                 {
@@ -78,6 +73,19 @@ namespace DotNetNuke.Common.Utilities
             }
 
             return verified;
+        }
+
+        private static void FileCreateAction(string verifyPath)
+        {
+            if (File.Exists(verifyPath))
+            {
+                File.Delete(verifyPath);
+            }
+
+            using(File.Create(verifyPath))
+            {
+                //do nothing just let it close
+            }
         }
 
         /// -----------------------------------------------------------------------------
@@ -95,7 +103,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to delete the File
                 try
                 {
-                    File.Delete(verifyPath);
+                    new RetryableAction(()=> File.Delete(verifyPath), "Deleting verification file").TryIt();
                 }
                 catch (Exception exc)
                 {
@@ -120,12 +128,7 @@ namespace DotNetNuke.Common.Utilities
             //Attempt to create the Directory
             try
             {
-                if (Directory.Exists(verifyPath))
-                {
-                    Directory.Delete(verifyPath, true);
-                }
-
-                Directory.CreateDirectory(verifyPath);
+                new RetryableAction(() => FolderCreateAction(verifyPath), "Creating verification folder").TryIt();
             }
             catch (Exception exc)
             {
@@ -134,6 +137,16 @@ namespace DotNetNuke.Common.Utilities
             }
 
             return verified;
+        }
+
+        private static void FolderCreateAction(string verifyPath)
+        {
+            if (Directory.Exists(verifyPath))
+            {
+                Directory.Delete(verifyPath, true);
+            }
+
+            Directory.CreateDirectory(verifyPath);
         }
 
         /// -----------------------------------------------------------------------------
@@ -151,7 +164,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to delete the Directory
                 try
                 {
-                    Directory.Delete(verifyPath);
+                    new RetryableAction(() => Directory.Delete(verifyPath), "Deleting verification folder").TryIt();
                 }
                 catch (Exception exc)
                 {
